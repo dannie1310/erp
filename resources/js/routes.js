@@ -2310,7 +2310,7 @@ export const routes = [
                                         name: 'ORÍGENES'
                                     },
                                     middleware: [auth, context, permission],
-                                    permission: ['consultar_tiro']
+                                    permission: ['consultar_origen']
                                 }
                             },
                             {

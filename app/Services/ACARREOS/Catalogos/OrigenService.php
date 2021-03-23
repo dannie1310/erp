@@ -7,6 +7,8 @@ namespace App\Services\ACARREOS\Catalogos;
 use App\CSV\Acarreos\Catalogos\OrigenLayout;
 use App\Models\ACARREOS\Origen;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
+use App\Models\ACARREOS\TipoOrigen;
+use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -30,6 +32,28 @@ class OrigenService
     public function paginate($data)
     {
         $this->conexionAcarreos();
+
+        if (isset($data['tipo']))
+        {
+            $tipo = TipoOrigen::where([['descripcion', 'LIKE', '%' . $data['tipo'] . '%']])->get();
+            foreach ($tipo as $e) {
+                $this->whereOr([['IdTipoOrigen', '=', $e->IdTipoOrigen]]);
+            }
+        }
+
+        if (isset($data['created_at']))
+        {
+            $this->repository->whereBetween( ['created_at', [ request( 'created_at' )." 00:00:00",request( 'created_at' )." 23:59:59"]] );
+        }
+
+        if (isset($data['usuario_registro']))
+        {
+            $usuario = Usuario::where([['descripcion', 'LIKE', '%' . $data['usuario_registro'] . '%']])->get();
+            foreach ($usuario as $e) {
+                $this->whereOr([['usuario_registro', '=', $e->idusuario]]);
+            }
+        }
+
         return  $this->repository->paginate($data);
     }
 

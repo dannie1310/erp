@@ -41,8 +41,9 @@ class OrigenController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_tiro')->only(['show','paginate','index','find']);
-        $this->middleware('permiso:registrar_tiro')->only(['store']);
+        $this->middleware('permiso:consultar_origen')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_origen')->only(['store']);
+        $this->middleware('permiso:editar_origen')->only(['activar', 'desactivar', 'update']);
 
         $this->fractal = $fractal;
         $this->service = $service;

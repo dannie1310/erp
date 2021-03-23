@@ -15,7 +15,7 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_tiro')">
+                    <li class="nav-item" v-if="$root.can('consultar_origen')">
                         <router-link :to="{name: 'origen'}" class="nav-link" :class="{active: this.$route.name == 'origen'}">
                             <i class="fa fa-layer-group nav-icon"></i>
                             <p> Orígenes</p>
