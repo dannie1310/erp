@@ -140,6 +140,11 @@
                                     <td style="text-align: right">{{concepto.descuento_format}}</td>
                                     <td style="text-align: right">{{concepto.importe_format}}</td>
                                 </tr>
+                                <tr v-for="(traslado, i) in concepto.traslados.data">
+                                    <td colspan="9">
+                                        <b>Impuesto Trasladado</b> Base: {{traslado.base_format}} Impuesto: {{traslado.impuesto_txt}} Tipo Factor: {{traslado.tipo_factor}} Tasa o Cuota: {{traslado.tasa_o_cuota}} Importe: {{traslado.importe_format}}
+                                    </td>
+                                </tr>
                             </template>
                             </tbody>
                         </table>
@@ -154,49 +159,49 @@
 
 <script>
 
-    export default {
-        name: "cfdi-show",
-        props: ["cfdi"],
-        data() {
-            return {
-                cargando:true,
-                cargado:false,
-            }
-        },
-        mounted() {
-
-        },
-        computed: {
-
-        },
-        methods:{
-            find() {
-
-            },
-            regresar() {
-                this.$router.go(-1);
-            },
+export default {
+    name: "cfdi-show",
+    props: ["cfdi"],
+    data() {
+        return {
+            cargando:true,
+            cargado:false,
         }
+    },
+    mounted() {
+
+    },
+    computed: {
+
+    },
+    methods:{
+        find() {
+
+        },
+        regresar() {
+            this.$router.go(-1);
+        },
     }
+}
 </script>
 <style>
-    .dropzone-custom-content {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
+.dropzone-custom-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
 
-    .dropzone-custom-title {
-        margin-top: 0;
-        color: #999;
-    }
+.dropzone-custom-title {
+    margin-top: 0;
+    color: #999;
+}
 
-    .subtitle {
-        color: #7ac142;
-    }
-    .vue-dropzone {
-        border: 2px dashed #e5e5e5;
-    }
+.subtitle {
+    color: #7ac142;
+}
+.vue-dropzone {
+    border: 2px dashed #e5e5e5;
+}
 </style>
