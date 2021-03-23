@@ -38,6 +38,11 @@ class Origen extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
+    public function usuarioDesactivo()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_desactivo', 'idusuario');
+    }
+
     /**
      * Scopes
      */
@@ -125,6 +130,22 @@ class Origen extends Model
             return null;
         }
     }
+
+    public function getNombreUsuarioDesactivoAttribute()
+    {
+        try{
+            return $this->usuarioDesactivo->nombre_completo;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getFechaDesactivoFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
+    }
+
 
     /**
      * Métodos

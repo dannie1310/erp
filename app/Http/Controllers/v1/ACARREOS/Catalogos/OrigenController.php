@@ -58,4 +58,9 @@ class OrigenController extends Controller
     {
         return $this->respondWithItem($this->service->desactivar($request->all(),$id));
     }
+
+    public function descargaLayout()
+    {
+        return $this->service->excel();
+    }
 }

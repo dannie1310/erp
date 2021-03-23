@@ -4,10 +4,12 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
+use App\CSV\Acarreos\Catalogos\OrigenLayout;
 use App\Models\ACARREOS\Origen;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OrigenService
 {
@@ -67,6 +69,12 @@ class OrigenService
     {
         $this->conexionAcarreos();
         return $this->repository->show($id)->editar($data);
+    }
+
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new OrigenLayout(), 'origenes.csv');
     }
 
     private function conexionAcarreos()
