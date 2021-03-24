@@ -1269,7 +1269,7 @@ export const routes = [
                                 name: 'factura',
                                 component: require('./components/finanzas/factura/Index').default,
                                 meta:{
-                                    title: 'Facturas',
+                                    title: 'Lista de Facturas',
                                     breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_factura'
