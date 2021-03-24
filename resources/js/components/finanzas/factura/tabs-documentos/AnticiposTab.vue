@@ -15,7 +15,7 @@
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="items">
+                    <tbody>
                         <tr v-for="item in items.anticipos">
                             <td>{{item.transaccion}}</td>
                             <td>{{item.fecha}}</td>
