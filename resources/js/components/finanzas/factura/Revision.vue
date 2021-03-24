@@ -583,12 +583,7 @@ export default {
     },
     mounted() {
         this.getDocumentos();
-        this.getConfiguracionObra();
         this.$Progress.start();
-        this.find()
-            .finally(() => {
-                this.$Progress.finish();
-            })
         },
     methods: {
         
@@ -832,12 +827,16 @@ export default {
             .then(data => {
                 this.factura = data;
                 this.setTipoCambio(data.tipo_cambio_fecha);
+            }).finally(()=>{
+                this.$Progress.finish();
             })
         },
         getConfiguracionObra(){
             return this.$store.dispatch('finanzas/estimacion/index', { } )
                 .then(data => {
                     this.configuracion = data.data[0]
+                }).finally(()=>{
+                    this.find();
                 });
         },
         getDocumentos(){
@@ -851,6 +850,8 @@ export default {
                     // this.$store.commit('finanzas/factura/SET_ITEMS_REVISION', data);
                     this.items = data;
                     this.cargando = false;
+                }).finally(()=>{
+                    this.getConfiguracionObra();
                 })
             }
            

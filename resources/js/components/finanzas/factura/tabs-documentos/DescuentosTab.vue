@@ -10,7 +10,7 @@
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="items">
+                    <tbody>
                         <tr v-for="item in items.descuentos">
                             <td>{{decode_utf8(item.concepto)}}</td>
                             <td>{{item.naturaleza}}</td>
