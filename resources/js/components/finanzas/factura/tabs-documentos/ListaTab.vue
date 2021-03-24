@@ -15,7 +15,7 @@
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="items">
+                    <tbody>
                         <tr v-for="item in items.lista">
                             <td>{{item.referencia}}</td>
                             <td>{{item.folio}}</td>

@@ -1117,14 +1117,26 @@ class Factura extends Transaccion
                 ]);
             }
 
-            $this->complemento->iva = $data['resumen']['iva_subtotal'];
-            $this->complemento->ieps = $data['resumen']['ieps'];
-            $this->complemento->imp_hosp = $data['resumen']['imp_hospedaje'];
-            $this->complemento->ret_iva_4 = $data['resumen']['ret_iva_4'];
-            $this->complemento->ret_iva_10 = $data['resumen']['ret_iva_23'];
-            $this->complemento->ret_isr_10 = $data['resumen']['ret_isr_10'];
-            $this->complemento->ret_iva_6 = $data['resumen']['ret_iva_6'];
-            $this->complemento->save();
+            if($this->complemento){
+                $this->complemento->iva = $data['resumen']['iva_subtotal'];
+                $this->complemento->ieps = $data['resumen']['ieps'];
+                $this->complemento->imp_hosp = $data['resumen']['imp_hospedaje'];
+                $this->complemento->ret_iva_4 = $data['resumen']['ret_iva_4'];
+                $this->complemento->ret_iva_10 = $data['resumen']['ret_iva_23'];
+                $this->complemento->ret_isr_10 = $data['resumen']['ret_isr_10'];
+                $this->complemento->ret_iva_6 = $data['resumen']['ret_iva_6'];
+                $this->complemento->save();
+            }else{
+                $this->complemento()->create([
+                    'iva' => $data['resumen']['iva_subtotal'],
+                    'ieps' => $data['resumen']['ieps'],
+                    'imp_hosp' => $data['resumen']['imp_hospedaje'],
+                    'ret_iva_4' => $data['resumen']['ret_iva_4'],
+                    'ret_iva_10' => $data['resumen']['ret_iva_23'],
+                    'ret_isr_10' => $data['resumen']['ret_isr_10'],
+                    'ret_iva_6' => $data['resumen']['ret_iva_6'],
+                ]);
+            }
 
             $impuestos = $this->impuesto + $data['resumen']['ieps'] + $data['resumen']['imp_hospedaje'];
             $impuestos_retenidos = $this->impuesto + $data['resumen']['ret_iva_4'] + $data['resumen']['ret_iva_6'] + $data['resumen']['ret_iva_23'] + $data['resumen']['ret_isr_10'];
