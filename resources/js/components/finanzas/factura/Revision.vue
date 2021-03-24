@@ -346,22 +346,7 @@
                     </div>
                 </div>
                 <div class="row">
-                     <div class="col-md-3 offset-6 ">
-                        <div class="form-group error-content">
-                            <div class="row">
-                                <div class="col-md-7" >
-                                    Importe de Factura:
-                                </div>
-                                <div class="col-md-4" style="text-align: right">
-                                    <b>
-                                        ${{parseFloat(factura.monto_format).formatMoney(2)}}
-                                    </b>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-3">
+                    <div class="col-md-3 offset-md-9">
                         <div class="form-group error-content">
                             <div class="row">
                                 <div class="col-md-8" >
@@ -379,10 +364,12 @@
                         <div class="form-group error-content">
                             <div class="row">
                                 <div class="col-md-7" >
-                                    Total de Revisión:
+                                    Importe de Factura:
                                 </div>
                                 <div class="col-md-4" style="text-align: right">
-                                    <b>${{parseFloat(resumen.total_documentos).formatMoney(2)}}</b>
+                                    <b>
+                                        ${{parseFloat(factura.monto_format).formatMoney(2)}}
+                                    </b>
                                 </div>
                             </div>
                         </div>
@@ -410,14 +397,14 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3 offset-6">
+                    <div class="col-md-3 offset-6 ">
                         <div class="form-group error-content">
                             <div class="row">
                                 <div class="col-md-7" >
-                                    Diferencia:
+                                    Total de Revisión:
                                 </div>
-                                <div class="col-md-4" style="text-align: right" :style="diferencia_sf()<0?`color : #F00`:``">
-                                    <b>${{diferencia()}}</b>
+                                <div class="col-md-4" style="text-align: right">
+                                    <b>${{parseFloat(resumen.total_documentos).formatMoney(2)}}</b>
                                 </div>
                             </div>
                         </div>
@@ -445,7 +432,20 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-md-3 offset-9">
+                    <div class="col-md-3 offset-6">
+                        <hr style="margin: 0px 0px 1em 0px">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-7" >
+                                    Diferencia:
+                                </div>
+                                <div class="col-md-4" style="text-align: right" :style="diferencia_sf()<0?`color : #F00`:``">
+                                    <b>${{diferencia()}}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
                         <div class="form-group error-content">
                             <div class="row">
                                 <label class="col-md-8" for="ret_iva_6">Retención IVA (6%):</label>
@@ -615,7 +615,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
             <div class="card-footer">
                 <span class="pull-right">
