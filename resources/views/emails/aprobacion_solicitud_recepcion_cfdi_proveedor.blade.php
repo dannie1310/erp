@@ -4,14 +4,14 @@
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>SAO-Solicitud de Recepción de CFDI</title>
+        <title>SAO-Solicitud de Revisión de CFDI</title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://kit.fontawesome.com/4a7d805650.js" crossorigin="anonymous"></script>
 
     </head>
     <div id="app">
-        Se le informa que su solicitud de recepción de CFDI ha sido aprobada para su revisión en el proyecto.
+        Se le informa que su solicitud de revisión de CFDI ha sido aprobada.
         <br>
         <br>
         <div class="card" >

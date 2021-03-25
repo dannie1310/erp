@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        <b>Se le informa que hemos registrado su solicitud de recepción de CFDI  para una posible emisión de contrarecibo y se le recuerda que esta no representa un compromiso de pago por parte de {{$solicitud->empresa->razon_social}}</b>
+        <b>Se le informa que hemos registrado su solicitud de revisión de CFDI  para una posible emisión de contrarecibo; se le recuerda que esta la solcitud de recepción no representa un compromiso de pago por parte de {{$solicitud->empresa->razon_social}}</b>
         <br>
         <br>
         <div class="card" >
