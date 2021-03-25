@@ -165,7 +165,7 @@ class CFDSAT extends Model
             ->whereNull("repositorio_facturas.uuid")
             ->orWhere("repositorio_facturas.id_proyecto","=", $proyecto_contexto)->where("repositorio_facturas.id_obra","=",Context::getIdObra())
             ->select("cfd_sat.*")->distinct()
-           ;
+            ;
     }
 
     public function scopePorProveedor($query, $id_proveedor)
@@ -241,7 +241,12 @@ class CFDSAT extends Model
             $cfd = $this->create($data);
             if(key_exists("conceptos",$data)){
                 foreach($data["conceptos"] as $concepto){
-                    $cfd->conceptos()->create($concepto);
+                    $conceptoObj = $cfd->conceptos()->create($concepto);
+                    if(key_exists("traslados",$concepto)){
+                        foreach($concepto["traslados"] as $traslado){
+                            $conceptoObj->traslados()->create($traslado);
+                        }
+                    }
                 }
             }
 

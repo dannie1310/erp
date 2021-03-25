@@ -55,9 +55,9 @@ class CFDI extends Rotation
         $this->SetTextColors(['0,0,0','0,0,0','0,0,0']);
 
         $this->Row([
-            $this->factura["emisor"]["rfc"]."-".$this->factura["emisor"]["razon_social"]
+            utf8_decode($this->factura["emisor"]["rfc"]."-".$this->factura["emisor"]["razon_social"])
             , ''
-            , ($this->factura["receptor"]["rfc"]."-".$this->factura["receptor"]["razon_social"])
+            , utf8_decode($this->factura["receptor"]["rfc"]."-".$this->factura["receptor"]["razon_social"])
         ]);
 
         $this->SetFont('Helvetica', '', 8);

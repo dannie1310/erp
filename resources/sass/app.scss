@@ -201,6 +201,13 @@ td.cantidad_input,.td_cantidad_input
 
 th.cantidad_input,.th_cantidad_input
 {
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
+}
+
+th.cantidad_input,.th_cantidad_input
+{
   width: 120px;
   max-width: 120px;
   min-width: 120px;
