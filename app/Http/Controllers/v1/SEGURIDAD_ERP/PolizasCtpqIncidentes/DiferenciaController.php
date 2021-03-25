@@ -58,6 +58,7 @@ class DiferenciaController extends Controller
 
     public function buscarDiferencias(Request $request)
     {
+        //$this->service->actualizaDiferencias();
         $respuesta =$this->service->buscarDiferencias($request);
         return response()->json($respuesta, 200);
     }
@@ -72,7 +73,7 @@ class DiferenciaController extends Controller
     {
         return $this->service->impresionPolizas($id)->create();
     }
-    
+
     public function pdfDiferencias(Request $request){
         return $this->service->pdfDiferencias($request);
     }
