@@ -71,12 +71,12 @@ class Transaccion extends Model
 
     public function getMontoFormatAttribute()
     {
-        return '$ ' . number_format(abs($this->monto),2);
+        return '$' . number_format(abs($this->monto),2);
     }
 
     public function getSaldoFormatAttribute()
     {
-        return '$ ' . number_format($this->saldo,2);
+        return '$' . number_format($this->saldo,2);
     }
 
     public function getFechaFormatAttribute()
@@ -264,11 +264,11 @@ class Transaccion extends Model
     }
 
     public function getSubtotalFormatAttribute(){
-        return '$ ' . number_format($this->subtotal, 2, '.', ',');
+        return '$' . number_format($this->subtotal, 2, '.', ',');
     }
 
     public function getImpuestoFormatAttribute(){
-        return '$ ' . number_format($this->impuesto, 2, '.', ',');
+        return '$' . number_format($this->impuesto, 2, '.', ',');
     }
 
     public function moneda()
