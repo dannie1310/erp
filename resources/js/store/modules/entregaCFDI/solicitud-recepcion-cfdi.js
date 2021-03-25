@@ -69,7 +69,7 @@ export default {
         cancelar(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cancelar solicitud de recepción de CFDI",
+                    title: "Cancelar solicitud de revisión de CFDI",
                     text: "¿Está seguro de que desea cancelar la solicitud de recepción de este CFDI?",
                     icon: "warning",
                     buttons: {
@@ -108,7 +108,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Solicitud de Recepción de CFDI",
+                    title: "Registrar solicitud de revisión de CFDI",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
