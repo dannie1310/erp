@@ -16,7 +16,7 @@
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="items">
+                    <tbody>
                         <tr v-for="item in items.renta">
                             <td>{{item.equipo}}</td>
                             <td>{{item.numero_serie}}</td>

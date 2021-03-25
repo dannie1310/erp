@@ -110,7 +110,7 @@ class ContrareciboPDF extends Rotation
         $this->CellFitScale(7, 1.5,'', 1, 1, 'R');
         $this->Cell(12.5);
         $this->SetFont('Arial', '', 8);
-        $this->CellFitScale(7,.5,utf8_decode($this->factura->usuario->nombre_completo),1,1,"C");
+        $this->CellFitScale(7,.5,$this->factura->usuario ? utf8_decode($this->factura->usuario->nombre_completo) : '',1,1,"C");
     }
 
     function Footer(){

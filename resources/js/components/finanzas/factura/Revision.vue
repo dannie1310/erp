@@ -1,547 +1,628 @@
 <template>
     <span>
-        <div class="row">
-            <div class="col-12">
-                <div class="invoice p-3 mb-3">
-                    <div class="row" v-if="Object.keys(factura).length > 0">
-                        <div class="col-md-10">
-                            <div class="form-group error-content">
-                                <label for="fecha">Empresa/Sucursal:</label>
-                                {{factura.empresa}}
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <!--Referencia-->
-                            <div class="form-group error-content">
-                                <label for="referencia">Fecha:</label>
-                                {{factura.fecha_format}}
-                            </div>
-                        </div>
-                    <!-- </div>
-                    <div class="row"> -->
-                        <div class="col-md-5">
-                            <div class="form-group error-content">
-                                <label for="fecha">Referencia:</label>
-                                {{factura.referencia}}
-                            </div>
-                        </div>
-                        <div class="col-md-5">
-                            <div class="form-group error-content">
-                                <label for="fecha">Contrarecibo:</label>
-                                {{factura.contra_recibo.numero_folio_format}}
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <!--Referencia-->
-                            <div class="form-group error-content">
-                                <label for="referencia">Vencimiento:</label>
-                                {{factura.vencimiento_format}}
-                            </div>
-                        </div>
+        <div class="card" v-if="!Object.keys(factura).length > 0">
+            <div class="card-body">
+                <div >
+                    <div class="row" >
                         <div class="col-md-12">
-                            <!--Referencia-->
-                            <div class="form-group error-content">
-                                <label for="observaciones">Observaciones:</label>
-                                 <input class="form-control"
-                                    style="width: 100%"
-                                    placeholder="Observaciones"
-                                    name="observaciones"
-                                    id="observaciones"
-                                    data-vv-as="Observaciones"
-                                    v-validate="{required: true}"
-                                    v-model="factura.observaciones"
-                                    :class="{'is-invalid': errors.has('observaciones')}"
-                                    >
-                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
-            <div class="col-12" v-if="Object.keys(factura).length > 0">
-                <div class="invoice p-3 mb-3">
-                    <div class="row">
-                        <div class="col-md-12">
-                            
-                            <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/> 
-                            <Conceptos v-bind:items="items" @created="actualizar()" /><br><br>
-                        </div>
-                        <div class="col-12 table-responsive">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th class="bg-gray-light">Item Facturado</th>
-                                        <th class="bg-gray-light">Unidad</th>
-                                        <th class="bg-gray-light">Cantidad</th>
-                                        <th class="bg-gray-light">Precio</th>
-                                        <th class="bg-gray-light">Anticipo</th>
-                                        <th class="bg-gray-light">Total</th>
-                                        <th class="bg-gray-light">T/C</th>
-                                        <th class="bg-gray-light">Referencia</th>
-                                    </tr>
-                                </thead>
-                                <tbody v-if="Object.keys(items).length > 0">
-                                    
-                                    <tr v-for="item in items.pendientes" v-if="item.seleccionado">
-                                        
-                                            <td>{{item.insumo}}</td>
-                                            <td>{{item.unidad}}</td>
-                                            <td>{{item.cantidad}}</td>
-                                            <td>$ {{item.precio}}</td>
-                                            <td>$({{item.anticipo}})</td>
-                                            <td class="money">{{total_pendiente(item)}}</td>
-                                            <td>$ {{item.id_moneda}}</td>
-                                            <td> {{item.remision}}</td>
-                                        
-                                        
-                                    </tr>
-                                    <tr v-for="item in items.subcontratos" v-if="item.seleccionado">
-                                        <td colspan="5">{{item_subcontrato_desc(item)}}</td>
-                                        <td>
-                                            <input 
-                                                type="number"
-                                                step=".01" 
-                                                class="form-control"
+        </div>
+
+        <div class="card" v-if="Object.keys(factura).length > 0">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="invoice p-3 mb-3">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <div class="form-group error-content">
+                                        <label >Empresa/Sucursal:</label>
+                                        {{factura.empresa}}
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <!--Referencia-->
+                                    <div class="form-group error-content">
+                                        <label>Fecha:</label>
+                                        {{factura.fecha_format}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group error-content">
+                                        <label >Referencia:</label>
+                                        {{factura.referencia}}
+                                    </div>
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="form-group error-content">
+                                        <label >Contrarecibo:</label>
+                                        {{factura.contra_recibo.numero_folio_format}}
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <!--Referencia-->
+                                    <div class="form-group error-content">
+                                        <label >Vencimiento:</label>
+                                        {{factura.vencimiento_format}}
+                                    </div>
+                                </div>
+                            </div>
+                             <div class="row">
+                                <div class="col-md-12">
+                                    <!--Referencia-->
+                                    <div class="form-group error-content">
+                                        <label for="observaciones">Observaciones:</label>
+                                         <input class="form-control"
                                                 style="width: 100%"
-                                                placeholder="Monto"
-                                                name="monto_revision"
-                                                id="monto_revision"
-                                                data-vv-as="Monto Revision"
+                                                placeholder="Observaciones"
+                                                name="observaciones"
+                                                id="observaciones"
+                                                data-vv-as="Observaciones"
                                                 v-validate="{required: true}"
-                                                v-model="item.monto_revision"
-                                                v-on:keyup="actualizar_subtotal()"
-                                                :class="{'is-invalid': errors.has('monto_revision')}"
-                                                >
-                                            <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
-                                        </td>
-                                        <td>{{getTipoCambioItem(item)}}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr v-for="item in items.anticipos" v-if="item.seleccionado">
-                                        <td colspan="5">{{item.descripcion_item}}</td>
-                                        <td><input 
-                                                type="number"
-                                                step=".01"
-                                                class="form-control"
-                                                style="width: 100%"
-                                                placeholder="Monto"
-                                                name="monto_revision"
-                                                id="monto_revision"
-                                                data-vv-as="Monto Revision"
-                                                v-validate="{required: true}"
-                                                v-model="item.anticipo_sf"
-                                                v-on:keyup="actualizar_subtotal()"
-                                                :class="{'is-invalid': errors.has('monto_revision')}"
-                                                >
-                                            <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div></td>
-                                        <td>1</td>
-                                        <td>{{item.transaccion}}</td>
-                                    </tr>
-                                    <tr v-for="item in items.renta" v-if="item.seleccionado">
-                                        <td>{{item.equipo}}</td>
-                                        <td>{{item.unidad}}</td>
-                                        <td><input 
-                                                type="number"
-                                                step=".01"
-                                                class="form-control"
-                                                style="width: 100%"
-                                                placeholder="Renta"
-                                                name="renta"
-                                                id="renta"
-                                                data-vv-as="Renta"
-                                                v-validate="{required: true}"
-                                                v-model="item.rentas"
-                                                v-on:keyup="actualizar_total_renta(item)"
-                                                :class="{'is-invalid': errors.has('renta')}"
-                                                >
-                                            <div class="invalid-feedback" v-show="errors.has('renta')">{{ errors.first('renta') }}</div>
-                                        </td>
-                                        <td class="money">$ {{parseFloat(item.precio_unitario).formatMoney(2)}}</td>
-                                        <td></td>
-                                        <td class="money">{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
-                                        <td>{{item.id_moneda}}</td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr v-for="item in items.lista" v-if="item.seleccionado">
-                                        <td colspan="5">{{decode_utf8(item.referencia)}}</td>
-                                        <td class="money" v-if="item.tipo_transaccion == 99">{{item.importe_total}}</td>
-                                        <td v-else>
-                                            <input 
-                                                type="number"
-                                                step=".01"
-                                                class="form-control"
-                                                style="width: 100%"
-                                                placeholder="Monto"
-                                                name="importe_total"
-                                                id="importe_total"
-                                                data-vv-as="Monto Revision"
-                                                v-validate="{required: true}"
-                                                v-model="item.importe_total_sf"
-                                                v-on:keyup="actualizar_subtotal()"
-                                                :class="{'is-invalid': errors.has('importe_total')}"
-                                                >
-                                            <div class="invalid-feedback" v-show="errors.has('importe_total')">{{ errors.first('importe_total') }}</div>
-                                        </td>
-                                        <td>{{item.id_moneda}}</td>
-                                        <td>{{item.referencia_folio}}</td>
-                                    </tr>
-                                    <tr v-for="item in items.descuentos" v-if="item.seleccionado">
-                                        <td colspan="5">{{decode_utf8(item.concepto)}}</td>
-                                        <td>
-                                            <input 
-                                                type="number"
-                                                step=".01"
-                                                class="form-control"
-                                                style="width: 100%"
-                                                placeholder="Monto"
-                                                name="monto_revision"
-                                                id="monto_revision"
-                                                data-vv-as="Monto Revision"
-                                                v-validate="{required: true}"
-                                                v-model="item.monto_revision"
-                                                v-on:keyup="actualizar_subtotal()"
-                                                :class="{'is-invalid': errors.has('monto_revision')}"
-                                                >
-                                            <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
-                                        </td>
-                                        <td>1</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr v-for="item in items.conceptosEstimacion" v-if="item.seleccionado">
-                                        <td colspan="5">{{item.descripcion_insumo}}</td>
-                                        <td>
-                                            <input 
-                                                type="number"
-                                                step=".01"
-                                                class="form-control"
-                                                style="width: 100%"
-                                                placeholder="Monto"
-                                                name="monto_revision"
-                                                id="monto_revision"
-                                                data-vv-as="Monto Revision"
-                                                v-validate="{required: true}"
-                                                v-model="item.monto_revision"
-                                                v-on:keyup="actualizar_subtotal()"
-                                                :class="{'is-invalid': errors.has('monto_revision')}"
-                                                >
-                                            <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
-                                        </td>
-                                        <td>1</td>
-                                        <td></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                v-model="factura.observaciones"
+                                                :class="{'is-invalid': errors.has('observaciones')}"
+                                         >
+                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-3 offset-6 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Moneda:</label>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <Documento v-bind:id="id" v-bind:items="items" v-bind:id_moneda="factura.id_moneda" v-bind:cambios="tipo_cambio" @created="actualizar()"/>
+                        <Conceptos v-bind:items="items" @created="actualizar()" /><br><br>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gray-light cantidad_input">Item Facturado</th>
+                                    <th class="bg-gray-light cantidad_input">Unidad</th>
+                                    <th class="bg-gray-light cantidad_input">Cantidad</th>
+                                    <th class="bg-gray-light cantidad_input">Precio</th>
+                                    <th class="bg-gray-light cantidad_input">Anticipo</th>
+                                    <th class="bg-gray-light cantidad_input">Total</th>
+                                    <th class="bg-gray-light cantidad_input">Tipo de Cambio</th>
+                                    <th class="bg-gray-light cantidad_input">Referencia</th>
+                                </tr>
+                            </thead>
+                            <tbody v-if="Object.keys(items).length > 0">
+
+                                <tr v-for="item in items.pendientes" v-if="item.seleccionado">
+
+                                        <td>{{item.insumo}}</td>
+                                        <td>{{item.unidad}}</td>
+                                        <td>{{item.cantidad}}</td>
+                                        <td>${{item.precio}}</td>
+                                        <td>$({{item.anticipo}})</td>
+                                        <td>{{total_pendiente(item)}}</td>
+                                        <td>$ {{item.id_moneda}}</td>
+                                        <td> {{item.remision}}</td>
+
+
+                                </tr>
+                                <tr v-for="item in items.subcontratos" v-if="item.seleccionado">
+                                    <td colspan="5">{{item_subcontrato_desc(item)}}</td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            style="width: 100%; text-align: right"
+                                            placeholder="Monto"
+                                            name="monto_revision"
+                                            id="monto_revision"
+                                            data-vv-as="Monto Revision"
+                                            v-validate="{required: true}"
+                                            v-model="item.monto_revision"
+                                            v-on:keyup="actualizar_subtotal()"
+                                            :class="{'is-invalid': errors.has('monto_revision')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
+                                    </td>
+                                    <td>{{getTipoCambioItem(item)}}</td>
+                                    <td></td>
+                                </tr>
+                                <tr v-for="item in items.anticipos" v-if="item.seleccionado">
+                                    <td colspan="5">{{item.descripcion_item}}</td>
+                                    <td><input
+                                        type="text"
+                                        class="form-control"
+                                        style="width: 100%; text-align: right"
+                                        placeholder="Monto"
+                                        name="monto_revision"
+                                        id="monto_revision"
+                                        data-vv-as="Monto Revision"
+                                        v-validate="{required: true}"
+                                        v-model="item.anticipo_sf"
+                                        v-on:keyup="actualizar_subtotal()"
+                                        :class="{'is-invalid': errors.has('monto_revision')}"
+                                    >
+                                        <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div></td>
+                                    <td>1</td>
+                                    <td>{{item.transaccion}}</td>
+                                </tr>
+                                <tr v-for="item in items.renta" v-if="item.seleccionado">
+                                    <td>{{item.equipo}}</td>
+                                    <td>{{item.unidad}}</td>
+                                    <td><input
+                                        type="text"
+                                        class="form-control"
+                                        style="width: 100%; text-align: right"
+                                        placeholder="Renta"
+                                        name="renta"
+                                        id="renta"
+                                        data-vv-as="Renta"
+                                        v-validate="{required: true}"
+                                        v-model="item.rentas"
+                                        v-on:keyup="actualizar_total_renta(item)"
+                                        :class="{'is-invalid': errors.has('renta')}"
+                                    >
+                                        <div class="invalid-feedback" v-show="errors.has('renta')">{{ errors.first('renta') }}</div>
+                                    </td>
+                                    <td class="money">$ {{parseFloat(item.precio_unitario).formatMoney(2)}}</td>
+                                    <td></td>
+                                    <td class="money">{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
+                                    <td>{{item.id_moneda}}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr v-for="item in items.lista" v-if="item.seleccionado">
+                                    <td colspan="5">{{decode_utf8(item.referencia)}}</td>
+                                    <td class="money" v-if="item.tipo_transaccion == 99">{{item.importe_total}}</td>
+                                    <td v-else>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            style="width: 100%; text-align: right"
+                                            placeholder="Monto"
+                                            name="importe_total"
+                                            id="importe_total"
+                                            data-vv-as="Monto Revision"
+                                            v-validate="{required: true}"
+                                            v-model="item.importe_total_sf"
+                                            v-on:keyup="actualizar_subtotal()"
+                                            :class="{'is-invalid': errors.has('importe_total')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('importe_total')">{{ errors.first('importe_total') }}</div>
+                                    </td>
+                                    <td>{{item.id_moneda}}</td>
+                                    <td>{{item.referencia_folio}}</td>
+                                </tr>
+                                <tr v-for="item in items.descuentos" v-if="item.seleccionado">
+                                    <td colspan="5">{{decode_utf8(item.concepto)}}</td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            style="width: 100%; text-align: right"
+                                            placeholder="Monto"
+                                            name="monto_revision"
+                                            id="monto_revision"
+                                            data-vv-as="Monto Revision"
+                                            v-validate="{required: true}"
+                                            v-model="item.monto_revision"
+                                            v-on:keyup="actualizar_subtotal()"
+                                            :class="{'is-invalid': errors.has('monto_revision')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
+                                    </td>
+                                    <td>1</td>
+                                    <td></td>
+                                </tr>
+                                <tr v-for="item in items.conceptosEstimacion" v-if="item.seleccionado">
+                                    <td colspan="5">{{item.descripcion_insumo}}</td>
+                                    <td>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            style="width: 100%; text-align: right"
+                                            placeholder="Monto"
+                                            name="monto_revision"
+                                            id="monto_revision"
+                                            data-vv-as="Monto Revision"
+                                            v-validate="{required: true}"
+                                            v-model="item.monto_revision"
+                                            v-on:keyup="actualizar_subtotal()"
+                                            :class="{'is-invalid': errors.has('monto_revision')}"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
+                                    </td>
+                                    <td>1</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-6">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Moneda:
+                                </div>
+                                <div class="col-md-3" style="text-align: right">
                                     {{factura.moneda}}
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Amortización de Anticipo:</label>
-                                    {{resumen.monto_anticipo_aplicado}}
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Amortización de Anticipo:
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-6 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="tc_usd" class="col-md-5">Tipo Cambio USD:</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                        style="width: 100%"
-                                        placeholder="Tipo Cambio USD"
-                                        name="tc_usd"
-                                        id="tc_usd"
-                                        data-vv-as="Tipo Cambio USD"
-                                        v-validate="{required: true}"
-                                        v-model="tipo_cambio[2]"
-                                        v-on:keyup="actualizar_resumen()"
-                                        :class="{'is-invalid': errors.has('tc_usd')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('tc_usd')">{{ errors.first('tc_usd') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Total Deductivas:</label>
-                                    {{resumen.total_deductivas_estimacion}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-6 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="tc_eur" class="col-md-5">Tipo Cambio EUR:</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Tipo Cambio EUR"
-                                           name="tc_eur"
-                                           id="tc_eur"
-                                           data-vv-as="Tipo Cambio EUR"
-                                           v-validate="{required: true}"
-                                           v-model="tipo_cambio[3]"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('tc_eur')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('tc_eur')">{{ errors.first('tc_eur') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Subtotal:</label>
-                                    {{resumen.subtotal}}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-3 offset-6 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Diferencia:</label>
-                                    {{diferencia()}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Fondo de Garantia:</label>
-                                    {{resumen.fondo_garantia}}
-                                </div>
-                            </div>
-                        </div>
-                        
-                        
-                        <div class="col-md-3 offset-6 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Documento Original:</label>
-                                    {{factura.monto_format}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">IVA Subtotal:</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="IVA Subtotal"
-                                           name="iva_subtotal"
-                                           id="iva_subtotal"
-                                           data-vv-as="IVA Subtotal"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.iva_subtotal"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('iva_subtotal')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('iva_subtotal')">{{ errors.first('iva_subtotal') }}</div>
-                                </div>
-                                
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Ret IVA (4%):</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Ret IVA (4%)"
-                                           name="ret_iva_4"
-                                           id="ret_iva_4"
-                                           data-vv-as="Ret IVA (4%)"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.ret_iva_4"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('ret_iva_4')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('ret_iva_4')">{{ errors.first('ret_iva_4') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Ret IVA (6%):</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Ret IVA (6%)"
-                                           name="ret_iva_6"
-                                           id="ret_iva_6"
-                                           data-vv-as="Ret IVA (10%)"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.ret_iva_6"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('ret_iva_6')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('ret_iva_6')">{{ errors.first('ret_iva_6') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Ret IVA (2/3):</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Ret IVA (2/3%)"
-                                           name="ret_iva_23"
-                                           id="ret_iva_23"
-                                           data-vv-as="Ret IVA (10%)"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.ret_iva_23"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('ret_iva_23')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('ret_iva_23')">{{ errors.first('ret_iva_23') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">IVA A Pagar:</label>
-                                    {{resumen.iva_pagar}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">IEPS:</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="IEPS"
-                                           name="ieps"
-                                           id="ieps"
-                                           data-vv-as="IEPS"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.ieps"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('ieps')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('ieps')">{{ errors.first('ieps') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Imp Hospedaje:</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Imp Hospedaje"
-                                           name="imp_hospedaje"
-                                           id="imp_hospedaje"
-                                           data-vv-as="Imp Hospedaje"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.imp_hospedaje"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('imp_hospedaje')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('imp_hospedaje')">{{ errors.first('imp_hospedaje') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Ret. ISR (10%):</label>
-                                    <input 
-                                        type="number"
-                                        step=".01" 
-                                        class="form-control col-md-6"
-                                           style="width: 100%"
-                                           placeholder="Ret ISR (10%)"
-                                           name="ret_isr_10"
-                                           id="ret_isr_10"
-                                           data-vv-as="Ret ISR (10%)"
-                                           v-validate="{required: true}"
-                                           v-model="resumen.ret_isr_10"
-                                           v-on:keyup="actualizar_resumen()"
-                                           :class="{'is-invalid': errors.has('ret_isr_10')}"
-                                        >
-                                    <div class="invalid-feedback" v-show="errors.has('ret_isr_10')">{{ errors.first('ret_isr_10') }}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Retenciones Subcontratos:</label>
-                                    {{resumen.ret_subcontratos}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Devolución Retenciones Subcontratos:</label>
-                                    {{resumen.dev_ret_subcontratos}}
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-3 offset-9 ">
-                            <div class="form-group error-content">
-                                <div class="row">
-                                    <label for="referencia" class="col-md-5">Total:</label>
-                                    {{resumen.total_documentos}}
+                                <div class="col-md-4" style="text-align: right">
+                                    ${{parseFloat(resumen.monto_anticipo_aplicado).formatMoney(2)}}
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
-                    
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-6 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label for="tc_usd" class="col-md-8">Tipo Cambio USD:</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-3"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Tipo Cambio USD"
+                                    name="tc_usd"
+                                    id="tc_usd"
+                                    data-vv-as="Tipo Cambio USD"
+                                    v-validate="{required: true, decimal:4}"
+                                    v-model="tipo_cambio[2]"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('tc_usd')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('tc_usd')">{{ errors.first('tc_usd') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Total Deductivas:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    ${{parseFloat(resumen.total_deductivas_estimacion).formatMoney(2)}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-6 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label for="tc_eur" class="col-md-8">Tipo Cambio EUR:</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-3"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Tipo Cambio EUR"
+                                    name="tc_eur"
+                                    id="tc_eur"
+                                    data-vv-as="Tipo Cambio EUR"
+                                    v-validate="{required: true, decimal:4}"
+                                    v-model="tipo_cambio[3]"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('tc_eur')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('tc_eur')">{{ errors.first('tc_eur') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Subtotal:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    <b>
+                                        ${{parseFloat(resumen.subtotal).formatMoney(2)}}
+                                    </b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-md-9">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Fondo de Garantia:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    ${{parseFloat(resumen.fondo_garantia).formatMoney(2)}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-6 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-7" >
+                                    Importe de Factura:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    <b>
+                                        ${{parseFloat(factura.monto_format).formatMoney(2)}}
+                                    </b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="iva_subtotal">IVA Subtotal:</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="IVA Subtotal"
+                                    name="iva_subtotal"
+                                    id="iva_subtotal"
+                                    data-vv-as="IVA Subtotal"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.iva_subtotal"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('iva_subtotal')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('iva_subtotal')">{{ errors.first('iva_subtotal') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-6 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-7" >
+                                    Total de Revisión:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    <b>${{parseFloat(resumen.total_documentos).formatMoney(2)}}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="ret_iva_4">Retención IVA (4%):</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Ret IVA (4%)"
+                                    name="ret_iva_4"
+                                    id="ret_iva_4"
+                                    data-vv-as="Ret IVA (4%)"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.ret_iva_4"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('ret_iva_4')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('ret_iva_4')">{{ errors.first('ret_iva_4') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-6">
+                        <hr style="margin: 0px 0px 1em 0px">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-7" >
+                                    Diferencia:
+                                </div>
+                                <div class="col-md-4" style="text-align: right" :style="diferencia_sf()<0?`color : #F00`:``">
+                                    <b>${{diferencia()}}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="ret_iva_6">Retención IVA (6%):</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Ret IVA (6%)"
+                                    name="ret_iva_6"
+                                    id="ret_iva_6"
+                                    data-vv-as="Ret IVA (10%)"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.ret_iva_6"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('ret_iva_6')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('ret_iva_6')">{{ errors.first('ret_iva_6') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="ret_iva_23">Retención IVA (2/3):</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Ret IVA (2/3)"
+                                    name="ret_iva_23"
+                                    id="ret_iva_23"
+                                    data-vv-as="Ret IVA (10%)"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.ret_iva_23"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('ret_iva_23')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('ret_iva_23')">{{ errors.first('ret_iva_23') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    IVA A Pagar:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    ${{parseFloat(resumen.iva_pagar).formatMoney(2)}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="ieps">IEPS:</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="IEPS"
+                                    name="ieps"
+                                    id="ieps"
+                                    data-vv-as="IEPS"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.ieps"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('ieps')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('ieps')">{{ errors.first('ieps') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="imp_hospedaje">Impuesto a Hospedaje:</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Impuesto a Hospedaje"
+                                    name="imp_hospedaje"
+                                    id="imp_hospedaje"
+                                    data-vv-as="Impuesto a Hospedaje"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.imp_hospedaje"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('imp_hospedaje')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('imp_hospedaje')">{{ errors.first('imp_hospedaje') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <label class="col-md-8" for="ret_isr_10">Retención a ISR (10%):</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Retención a ISR (10%)"
+                                    name="ret_isr_10"
+                                    id="ret_isr_10"
+                                    data-vv-as="Retención a ISR (10%)"
+                                    v-validate="{required: true}"
+                                    v-model="resumen.ret_isr_10"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('ret_isr_10')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('ret_isr_10')">{{ errors.first('ret_isr_10') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Retenciones Subcontratos:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    ${{parseFloat(resumen.ret_subcontratos).formatMoney(2)}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    Devolución Retenciones Subcontratos:
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    ${{parseFloat(resumen.dev_ret_subcontratos).formatMoney(2)}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
+                                <div class="col-md-8" >
+                                    <b>Total de revisión:</b>
+                                </div>
+                                <div class="col-md-4" style="text-align: right">
+                                    <b>${{parseFloat(resumen.total_documentos).formatMoney(2)}}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-12" v-if="Object.keys(factura).length > 0">
-                <div class="invoice p-3 mb-3">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <button type="button" class="btn btn-primary float-right" v-on:click="validate">Aceptar</button>
-                            <button type="button" class="btn btn-default float-right" style="margin-right:5px" v-on:click="salir">Cerrar</button>
-                        </div>
-                        
-                    </div>
-                </div>
-                        
+            <div class="card-footer">
+                <span class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                    <i class="fa fa-angle-left"></i> Regresar
+                    </button>
+                    <button type="button" class="btn btn-primary" v-on:click="validate"><i class="fa fa-check"></i> Revisar</button>
+                </span>
             </div>
         </div>
     </span>
@@ -578,20 +659,15 @@ export default {
             },
             items:[],
             tipo_cambio:[]
-            
+
         }
     },
     mounted() {
         this.getDocumentos();
-        this.getConfiguracionObra();
         this.$Progress.start();
-        this.find()
-            .finally(() => {
-                this.$Progress.finish();
-            })
         },
     methods: {
-        
+
         actualizar(){
             this.resumen.subtotal = parseFloat(0);
             this.resumen.fondo_garantia = parseFloat(0);
@@ -613,7 +689,7 @@ export default {
                     if(pendiente.seleccionado){
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo) / this.tipo_cambio[this.factura.id_moneda]);
                     }
-                    
+
                 });
                 this.items.anticipos.forEach(anticipo => {
                     if(anticipo.seleccionado){
@@ -642,7 +718,7 @@ export default {
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
                         }
                     }
-                    
+
                 });
                 this.items.renta.forEach(rent => {
                     if(rent.seleccionado){
@@ -654,28 +730,28 @@ export default {
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(list.importe_total_sf / this.tipo_cambio[this.factura.id_moneda]);
                     }
                 });
-                
-                
+
+
                 if(this.configuracion.ret_fon_gar_antes_iva == 1){
-                    this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia; 
+                    this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia;
                 }
                 if(this.configuracion.penalizacion_antes_iva == 1){
                     this.resumen.subtotal = parseFloat(this.resumen.subtotal) - (this.resumen.ret_subcontratos) + (this.resumen.dev_ret_subcontratos);
                 }
-                
+
                 if(this.configuracion.desc_pres_mat_antes_iva == 1){
                     this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.total_deductivas_estimacion);
                 }
-                
+
                 let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje) + parseFloat(this.resumen.ieps) + parseFloat(this.resumen.ret_isr_10);
                 let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
                 this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.monto_anticipo_aplicado);
-                
+
                 this.resumen.iva_subtotal = parseFloat(this.resumen.subtotal * 0.16);
                 this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
 
                 if(this.configuracion.ret_fon_gar_antes_iva == 0 && this.configuracion.ret_fon_gar_con_iva == 0){
-                    this.resumen.total_documentos = this.resumen.total_documentos -  this.resumen.fondo_garantia;  
+                    this.resumen.total_documentos = this.resumen.total_documentos -  this.resumen.fondo_garantia;
                 }
                 if(this.configuracion.penalizacion_antes_iva == 0){
                     this.resumen.total_documentos = this.resumen.total_documentos - this.resumen.ret_subcontratos + this.resumen.dev_ret_subcontratos;
@@ -698,7 +774,7 @@ export default {
                         if(descuento.naturaleza === 'Recargo'){
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
                         }
-                        
+
                     }
                 });
                 this.items.conceptosEstimacion.forEach(conceptoEst => {
@@ -709,7 +785,7 @@ export default {
                         if(conceptoEst.mascara === 12288){
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(conceptoEst.monto_revision);
                         }
-                        
+
                     }
                 });
         },
@@ -719,7 +795,7 @@ export default {
                 if(pendiente.seleccionado){
                     this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo);
                 }
-                
+
             });
             this.items.anticipos.forEach(anticipo => {
                 if(anticipo.seleccionado){
@@ -739,7 +815,7 @@ export default {
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
                     }
                 }
-                
+
             });
             this.items.renta.forEach(rent => {
                 if(rent.seleccionado){
@@ -760,7 +836,7 @@ export default {
             //         if(descuento.naturaleza === 'Recargo'){
             //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
             //         }
-                    
+
             //     }
             // });
             // this.items.conceptosEstimacion.forEach(conceptoEst => {
@@ -772,30 +848,30 @@ export default {
             //         if(conceptoEst.mascara === 12288){
             //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(conceptoEst.monto_revision);
             //         }
-                    
+
             //     }
             // });
 
             if(this.configuracion.ret_fon_gar_antes_iva == 1){
-                this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia; 
+                this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia;
             }
             if(this.configuracion.penalizacion_antes_iva == 1){
                 this.resumen.subtotal = parseFloat(this.resumen.subtotal) - (this.resumen.ret_subcontratos) + (this.resumen.dev_ret_subcontratos);
             }
-            
+
             if(this.configuracion.desc_pres_mat_antes_iva == 1){
                 this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.total_deductivas_estimacion);
             }
-            
+
             let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje) + parseFloat(this.resumen.ieps) + parseFloat(this.resumen.ret_isr_10);
             let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
             this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.monto_anticipo_aplicado);
-            
+
             //this.resumen.iva_subtotal = parseFloat(this.resumen.subtotal * 0.16);
             this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
 
             if(this.configuracion.ret_fon_gar_antes_iva == 0 && this.configuracion.ret_fon_gar_con_iva == 0){
-                this.resumen.total_documentos = this.resumen.total_documentos -  this.resumen.fondo_garantia;  
+                this.resumen.total_documentos = this.resumen.total_documentos -  this.resumen.fondo_garantia;
             }
             if(this.configuracion.penalizacion_antes_iva == 0){
                 this.resumen.total_documentos = this.resumen.total_documentos - this.resumen.ret_subcontratos + this.resumen.dev_ret_subcontratos;
@@ -809,7 +885,6 @@ export default {
             this.actualizar_resumen();
         },
         actualizar_resumen(){
-            this.resumen.iva_subtotal = this.resumen.iva_subtotal === ''?0:parseFloat(this.resumen.iva_subtotal);
             this.resumen.ret_iva_4 = this.resumen.ret_iva_4 === ''?0:parseFloat(this.resumen.ret_iva_4);
             this.resumen.ret_iva_6 = this.resumen.ret_iva_6 === ''?0:parseFloat(this.resumen.ret_iva_6);
             this.resumen.ret_iva_23 = this.resumen.ret_iva_23 === ''?0:parseFloat(this.resumen.ret_iva_23);
@@ -822,7 +897,6 @@ export default {
             let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje  +  this.resumen.ieps  +  this.resumen.ret_isr_10);
             let retenciones = parseFloat(this.resumen.ret_iva_4 + this.resumen.ret_iva_6);
             this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + this.resumen.iva_pagar - otros_impuestos - retenciones;
-            this.format_money();
         },
         find(){
             return this.$store.dispatch('finanzas/factura/find', {
@@ -832,12 +906,16 @@ export default {
             .then(data => {
                 this.factura = data;
                 this.setTipoCambio(data.tipo_cambio_fecha);
+            }).finally(()=>{
+                this.$Progress.finish();
             })
         },
         getConfiguracionObra(){
             return this.$store.dispatch('finanzas/estimacion/index', { } )
                 .then(data => {
                     this.configuracion = data.data[0]
+                }).finally(()=>{
+                    this.find();
                 });
         },
         getDocumentos(){
@@ -851,9 +929,11 @@ export default {
                     // this.$store.commit('finanzas/factura/SET_ITEMS_REVISION', data);
                     this.items = data;
                     this.cargando = false;
+                }).finally(()=>{
+                    this.getConfiguracionObra();
                 })
             }
-           
+
         },
         format_money(){
             this.resumen.monto_anticipo_aplicado = parseFloat(this.resumen.monto_anticipo_aplicado).toFixed(2);
@@ -866,6 +946,9 @@ export default {
         },
         diferencia(){
             return parseFloat(this.resumen.total_documentos - this.factura.monto).formatMoney(2);
+        },
+        diferencia_sf(){
+            return this.resumen.total_documentos - this.factura.monto;
         },
         item_subcontrato_desc(item){
             if(item.tipo_transaccion == 51){
@@ -900,7 +983,7 @@ export default {
                 .then((data) => {
                     this.$router.push({name: 'factura'});
                 });
-            
+
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -910,7 +993,7 @@ export default {
                     }else{
                         this.store()
                     }
-                    
+
                 }
             });
         },
@@ -928,7 +1011,7 @@ export default {
                 if(pendiente.seleccionado){
                     resp.pendientes.push(pendiente);
                 }
-                
+
             });
             this.items.anticipos.forEach(anticipo => {
                 if(anticipo.seleccionado){
@@ -939,7 +1022,7 @@ export default {
                 if(subcontrato.seleccionado){
                     resp.subcontratos.push(subcontrato);
                 }
-                
+
             });
             this.items.renta.forEach(rent => {
                 if(rent.seleccionado){
@@ -982,13 +1065,13 @@ export default {
             }else{
                 return parseFloat(item.monto_revision / item.anticipo_monto).toFixed(6)
             }
-            
+
         },
     },
     computed:{
         total(){
-            
-            
+
+
             return 0;
         },
         // items(){

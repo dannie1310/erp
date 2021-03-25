@@ -19,7 +19,7 @@
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="items">
+                    <tbody>
                         <tr v-for="item in items.pendientes">
                             <td>{{item.remision}}</td>
                             <td>{{item.fecha}}</td>

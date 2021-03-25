@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\catCFDI\ClaveProductoServicio;
 use Illuminate\Database\Eloquent\Model;
 
 class CFDSATConceptos extends Model
@@ -32,6 +33,16 @@ class CFDSATConceptos extends Model
         return $this->belongsTo(CFDSAT::class, 'id_cfd_sat', 'id');
     }
 
+    public function traslados()
+    {
+        return $this->hasMany(CFDSATTraslados::class, 'id_cfd_sat_concepto', 'id');
+    }
+
+    public function claveProductoServicio()
+    {
+        return $this->belongsTo(ClaveProductoServicio::class, 'clave_prod_serv', 'clave');
+    }
+
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad,2);
@@ -50,5 +61,14 @@ class CFDSATConceptos extends Model
     public function getDescuentoFormatAttribute()
     {
         return '$ ' . number_format(($this->descuento),2);
+    }
+
+    public function getDescripcionSatAttribute()
+    {
+        try{
+            return $this->claveProductoServicio->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
     }
 }
