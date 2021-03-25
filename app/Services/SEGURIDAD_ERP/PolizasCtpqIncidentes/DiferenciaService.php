@@ -129,11 +129,16 @@ class DiferenciaService
             //dd(count($cfd));
             foreach ($cfd as $rcfd) {
 
-                $rcfd->ejercicio = $rcfd->poliza->Ejercicio;
-                $rcfd->periodo = $rcfd->poliza->Periodo;
-                $rcfd->tipo_poliza = $rcfd->poliza->tipo_poliza->Nombre;
-                $rcfd->folio_poliza = $rcfd->poliza->Folio;
-                $rcfd->save();
+                try{
+                    $rcfd->ejercicio = $rcfd->poliza->Ejercicio;
+                    $rcfd->periodo = $rcfd->poliza->Periodo;
+                    $rcfd->tipo_poliza = $rcfd->poliza->tipo_poliza->Nombre;
+                    $rcfd->folio_poliza = $rcfd->poliza->Folio;
+                    $rcfd->save();
+
+                }catch (\Exception $e) {
+
+                }
             }
         }
     }
