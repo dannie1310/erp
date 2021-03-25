@@ -69,7 +69,7 @@ export default {
         cancel(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cancelar solicitud de recepción de CFDI",
+                    title: "Cancelar solicitud de revisión de CFDI",
                     text: "¿Está seguro de que deseas cancelar esta solicitud?",
                     icon: "warning",
                     buttons: {
@@ -109,7 +109,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Solicitud de Recepción de CFDI",
+                    title: "Registrar solicitud de revisión de CFDI",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -147,8 +147,8 @@ export default {
         aprobar(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Aprobar solicitud de recepción de CFDI",
-                    text: "¿Está seguro de que desea aprobar la recepción de este CFDI?",
+                    title: "Aprobar solicitud de revisión de CFDI",
+                    text: "¿Está seguro de que desea aprobar la solicitud de revisión de este CFDI?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -186,8 +186,8 @@ export default {
         rechazar(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Rechazar solicitud de recepción de CFDI",
-                    text: "¿Está seguro de que desea rechazar la recepción de este CFDI?",
+                    title: "Rechazar solicitud de revisión de CFDI",
+                    text: "¿Está seguro de que desea rechazar la solicitud de revisión de este CFDI?",
                     icon: "warning",
                     buttons: {
                         cancel: {
