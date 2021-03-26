@@ -29,7 +29,7 @@ class SolicitudRecepcionCFDIPDF extends Rotation
     function Header()
     {
 
-        $this->setY(1.5);
+        $this->setY(1.2);
         $this->SetFont('Arial', 'B', 18);
         $this->Cell(13, .7, utf8_decode('SOLICITUD DE RECEPCIÓN DE CFDI'), 0, 1, 'C', 0);
 
@@ -38,11 +38,7 @@ class SolicitudRecepcionCFDIPDF extends Rotation
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(13);
         $this->Cell(3.5, .5, 'FOLIO: ', 'LT', 0, 'L');
-        $this->Cell(3, .5, $this->solicitud->numero_folio_global_format . ' ', 'RT', 1, 'L');
-
-        $this->Cell(13);
-        $this->Cell(3.5, .5, 'FOLIO PROVEEDOR: ', 'L', 0, 'L');
-        $this->Cell(3, .5, $this->solicitud->numero_folio_format . ' ', 'R', 1, 'L');
+        $this->Cell(3, .5, $this->solicitud->numero_folio_format . ' ', 'RT', 1, 'L');
 
         $this->Cell(13);
         $this->Cell(3.5, .5, 'FECHA: ', 'LB', 0, 'L');

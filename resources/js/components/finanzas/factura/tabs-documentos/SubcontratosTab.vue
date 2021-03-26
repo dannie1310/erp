@@ -16,7 +16,7 @@
                             <th class="bg-gray-light"></th>
                         </tr>
                     </thead>
-                    <tbody v-if="items">
+                    <tbody>
                         <tr v-for="item in items.subcontratos">
                             <td>{{item.folio_revision_format}}</td>
                             <td>{{item.referencia_revision}}</td>

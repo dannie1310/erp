@@ -19,7 +19,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-factura"> <i class="fa fa-eye"></i> SELECCIONAR TIPO DE REVISIÓN FACTURA</h5>
+                        <h5 class="modal-title" id="modal-factura"> <i class="fa fa-tasks"></i> Revisión de Factura</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -27,15 +27,17 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <router-link  :to="{ name: 'factura-varios-revisar', params: {id: value.id}}" type="button" data-dismiss="modal" class="btn btn-sm btn-outline-dark" title="Revisar" v-if="value.revisar_varios">
-                                    <i class="fa fa-tasks"></i> Factura de Varios
-                                </router-link>
-                                <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" data-dismiss="modal" class="btn btn-sm btn-outline-dark" title="Revisar" v-if="value.revisar">
-                                    <i class="fa fa-tasks"></i> Revisión de Facturas
-                                </router-link>
+                                <span class="pull-right">
+                                    <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" data-dismiss="modal" class="btn btn-sm btn-secondary" title="Revisar Factura" v-if="value.revisar">
+                                         Revisar Factura
+                                    </router-link>
+                                    <router-link  :to="{ name: 'factura-varios-revisar', params: {id: value.id}}" type="button" data-dismiss="modal" class="btn btn-sm btn-secondary" title="Generar Factura de Varios" v-if="value.revisar_varios">
+                                        Generar Factura de Varios
+                                    </router-link>
+                                </span>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -60,7 +62,7 @@
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show')
                }
-                
+
            },
            cerrar(){
                $(this.$refs.modal).modal('hide')

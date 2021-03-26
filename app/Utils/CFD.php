@@ -45,6 +45,15 @@ class CFD
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($this->archivo_xml);
+            if($factura_xml === false)
+            {
+                $factura_xml = simplexml_load_string($this->archivo_xml);
+            }
+
+            if(!$factura_xml){
+                $errors = libxml_get_errors();
+                //dd(var_export($errors, true));
+            }
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
@@ -156,6 +165,7 @@ class CFD
 
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
+            $ic = 1;
             foreach ($conceptos as $concepto) {
                 $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["NoIdentificacion"];
@@ -166,7 +176,8 @@ class CFD
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["ValorUnitario"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["Importe"];
                 $this->arreglo_factura["conceptos"][$i]["descuento"] = (float)$concepto["Descuento"];
-                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[".$ic."]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+
                 $itc = 0;
                 foreach ($traslados_concepto as $traslado_concepto) {
                     $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["base"] = (float)$traslado_concepto["Base"];
@@ -177,7 +188,7 @@ class CFD
                     $itc++;
                 }
 
-                $retenciones_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto/cfdi:Impuestos/cfdi:Retenciones/cfdi:Retencion");
+                $retenciones_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[".$ic."]/cfdi:Impuestos/cfdi:Retenciones/cfdi:Retencion");
                 $irc = 0;
                 foreach ($retenciones_concepto as $retencion_concepto) {
                     $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["base"] = (float)$retencion_concepto["Base"];
@@ -188,6 +199,7 @@ class CFD
                     $irc++;
                 }
                 $i++;
+                $ic++;
             }
 
         } catch (\Exception $e) {

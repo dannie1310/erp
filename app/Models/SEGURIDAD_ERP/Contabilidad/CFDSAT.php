@@ -159,13 +159,11 @@ class CFDSAT extends Model
         $proyecto_contexto = Proyecto::where("base_datos","=",Context::getDatabase())->first()->id;
         return $query->where("cfd_sat.rfc_receptor","=", $rfc_contexto)
             ->join(Context::getDatabase().".dbo.empresas","rfc_emisor","=","empresas.rfc")
-            ->join(Context::getDatabase().".dbo.transacciones","empresas.id_empresa","=","transacciones.id_empresa")
             ->leftJoin("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
-            ->where("transacciones.id_obra","=",Context::getIdObra())
             ->whereNull("repositorio_facturas.uuid")
             ->orWhere("repositorio_facturas.id_proyecto","=", $proyecto_contexto)->where("repositorio_facturas.id_obra","=",Context::getIdObra())
             ->select("cfd_sat.*")->distinct()
-           ;
+            ;
     }
 
     public function scopePorProveedor($query, $id_proveedor)
@@ -241,7 +239,12 @@ class CFDSAT extends Model
             $cfd = $this->create($data);
             if(key_exists("conceptos",$data)){
                 foreach($data["conceptos"] as $concepto){
-                    $cfd->conceptos()->create($concepto);
+                    $conceptoObj = $cfd->conceptos()->create($concepto);
+                    if(key_exists("traslados",$concepto)){
+                        foreach($concepto["traslados"] as $traslado){
+                            $conceptoObj->traslados()->create($traslado);
+                        }
+                    }
                 }
             }
 
