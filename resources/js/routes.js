@@ -2300,6 +2300,20 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'camion',
+                                name: 'camion',
+                                component: require('./components/acarreos/catalogos/camion/Index').default,
+                                meta: {
+                                    title: 'Camiones',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'CAMIONES'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_origen']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,

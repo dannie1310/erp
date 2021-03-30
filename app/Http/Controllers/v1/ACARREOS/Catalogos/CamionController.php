@@ -39,6 +39,9 @@ class CamionController extends Controller
     public function __construct(Manager $fractal, CamionService $service, CamionTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('context')->except(['catalogo','cambiarClave','registrar','cargaImagenes']);
+
+        $this->middleware('permiso:consultar_origen')->only(['show','paginate','index','find']);
 
         $this->fractal = $fractal;
         $this->service = $service;
