@@ -94,7 +94,7 @@
                                     <div class="row">
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <h6><b>Usuario Registró:</b></h6>
+                                                <h6><b>Usuario Registro:</b></h6>
                                             </div>
                                         </div>
                                         <div class="col-md-8">
