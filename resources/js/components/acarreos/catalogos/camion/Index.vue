@@ -39,7 +39,7 @@
                     { title: 'Fecha Registro', field: 'FechaAlta', sortable: true, thComp: require('../../../globals/th-Date').default},
                     { title: 'Registro', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                  //  { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -101,12 +101,13 @@
                         FechaAlta: camion.fecha_registro,
                         usuario_registro : camion.nombre_registro,
                         estatus: this.getEstado(camion.estado_format, camion.estado_color),
-                        /*buttons: $.extend({}, {
-                            id: origen.id,
-                            activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
-                            desactivar: (origen.estado === 1 && self.$root.can('activar_desactivar_origen')) ? true : false,
-                            edit: self.$root.can('editar_origen') ? true : false,
-                        })*/
+                        buttons: $.extend({}, {
+                            id: camion.id,
+                            show : self.$root.can('consultar_camion') ? true : false
+                          //  activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
+                           // desactivar: (origen.estado === 1 && self.$root.can('activar_desactivar_origen')) ? true : false,
+                           // edit: self.$root.can('editar_origen') ? true : false,
+                        })
                     }));
                 },
                 deep: true

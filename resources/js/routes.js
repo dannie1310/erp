@@ -2314,6 +2314,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id',
+                                name: 'camion-show',
+                                props: true,
+                                component: require('./components/acarreos/catalogos/camion/Show').default,
+                                meta: {
+                                    title: 'Consultar Póliza',
+                                    breadcrumb: {parent: 'camion', name: 'CONSULTAR'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_camion'
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,
