@@ -384,7 +384,7 @@ class Factura extends Transaccion
     public function getAutorizadoAttribute()
     {
         $pagar = $this->monto * $this->tipo_cambio;
-        return '$ ' . number_format($pagar, 2);
+        return '$' . number_format($pagar, 2);
     }
 
     public function getEstadoStringAttribute()
@@ -404,12 +404,12 @@ class Factura extends Transaccion
 
     public function getACuentaFormatAttribute()
     {
-        return '$ ' . number_format(abs($this->ordenesPago->sum('monto')), 2, ".", ",");
+        return '$' . number_format(abs($this->ordenesPago->sum('monto')), 2, ".", ",");
     }
 
     public function getSaldoFormatAttribute()
     {
-        return '$ ' . number_format(abs($this->saldo), 2, ".", ",");
+        return '$' . number_format(abs($this->saldo), 2, ".", ",");
     }
 
     public function getTipoTransaccionStringAttribute()
@@ -561,7 +561,7 @@ class Factura extends Transaccion
     }
 
     public function getFondoGarantiaFormatAttribute(){
-        return '$ ' . number_format($this->fondo_garantia, 2);
+        return '$' . number_format($this->fondo_garantia, 2);
     }
 
     public function getRetencionesSubcontratoAttribute(){
@@ -578,7 +578,7 @@ class Factura extends Transaccion
     }
 
     public function getRetencionesSubcontratoFormatAttribute(){
-        return '$ ' . number_format($this->retenciones_subcontrato, 2);
+        return '$' . number_format($this->retenciones_subcontrato, 2);
     }
 
     public function getDevolucionesSubcontratoAttribute(){
@@ -595,7 +595,7 @@ class Factura extends Transaccion
     }
 
     public function getDevolucionesSubcontratoFormatAttribute(){
-        return '$ ' . number_format($this->devoluciones_subcontrato, 2);
+        return '$' . number_format($this->devoluciones_subcontrato, 2);
     }
 
     public function getObservacionesFormatAttribute(){
@@ -651,28 +651,28 @@ class Factura extends Transaccion
         [transacciones].[id_transaccion] as id_item,
         [transacciones].[tipo_transaccion] as tipo_transaccion
       , [Subcontratos].[id_transaccion]  as id_transaccion_antecedente
-      , [transacciones].[id_moneda] 	
-      , CASE [transacciones].[tipo_transaccion] 
-           WHEN 52 THEN 'EST #' + CAST([transacciones].[numero_folio] AS VARCHAR(10)) 
-           WHEN 51 THEN 'SUB #' + CAST([transacciones].[numero_folio] AS VARCHAR(10)) 
+      , [transacciones].[id_moneda]
+      , CASE [transacciones].[tipo_transaccion]
+           WHEN 52 THEN 'EST #' + CAST([transacciones].[numero_folio] AS VARCHAR(10))
+           WHEN 51 THEN 'SUB #' + CAST([transacciones].[numero_folio] AS VARCHAR(10))
         END transaccion
       , CASE WHEN [transacciones].[tipo_transaccion] = 51 THEN [transacciones].[referencia]
            ELSE [Subcontratos].[referencia]
-        END subcontrato	
+        END subcontrato
       , CONVERT(VARCHAR(10), [transacciones].[cumplimiento], 105)  AS desde
       , CONVERT(VARCHAR(10), [transacciones].[vencimiento], 105)   AS hasta
       , CASE WHEN [transacciones].[tipo_transaccion] = 52 THEN (
-      ( 
+      (
           CONVERT(VARCHAR(100), CAST(( select sum(importe) from items where id_transaccion = [transacciones].[id_transaccion] ) - [transacciones].[autorizado] AS MONEY), 1)
       ) )
               ELSE CONVERT(VARCHAR(100), CAST([transacciones].[anticipo_saldo] AS MONEY), 1)
           END monto
       , CASE WHEN [transacciones].[tipo_transaccion] = 52 THEN (
-      ( 
-          ( select sum(importe) from items where id_transaccion = [transacciones].[id_transaccion] ) - [transacciones].[autorizado] 
+      (
+          ( select sum(importe) from items where id_transaccion = [transacciones].[id_transaccion] ) - [transacciones].[autorizado]
       ) )
-              ELSE [transacciones].[anticipo_saldo] 
-          END monto_sf    
+              ELSE [transacciones].[anticipo_saldo]
+          END monto_sf
       FROM
           [dbo].[transacciones]
       INNER JOIN [dbo].[transacciones] AS Subcontratos
@@ -680,21 +680,21 @@ class Factura extends Transaccion
       WHERE
           [transacciones].[tipo_transaccion] IN ( 51, 52 )
           AND (([transacciones].[estado] IN ( -1, 1 ) AND transacciones.tipo_transaccion = 52) OR
-      ([transacciones].[estado] IN ( -1, 0, 1 ) AND transacciones.tipo_transaccion = 51)) 
-          AND [transacciones].[id_obra] = ".Context::getIdObra()." 
-          AND [transacciones].[id_empresa] = ".$this->id_empresa." 
+      ([transacciones].[estado] IN ( -1, 0, 1 ) AND transacciones.tipo_transaccion = 51))
+          AND [transacciones].[id_obra] = ".Context::getIdObra()."
+          AND [transacciones].[id_empresa] = ".$this->id_empresa."
           AND  (
-              SELECT 
+              SELECT
                   CASE WHEN [transacciones].[tipo_transaccion] = 52 THEN ( ABS(( [transacciones].[saldo] - [transacciones].[impuesto] ) - [transacciones].[autorizado]) )
                   ELSE [transacciones].[anticipo_saldo]
                   END MontoOriginal
-               ) >0 
+               ) >0
           AND  (
-              SELECT 
+              SELECT
                   CASE WHEN [transacciones].[tipo_transaccion] = 52 THEN ( [transacciones].[autorizado] )
                   else 0
                   END MontoAutorizado
-               ) = 0     
+               ) = 0
       ORDER BY
           [transacciones].[tipo_transaccion] DESC
       , [transacciones].[numero_folio]
@@ -718,13 +718,13 @@ class Factura extends Transaccion
         foreach($fondos as $fondo){
             $items[] = $fondo_transform->transform($fondo);
         }
-        
+
         return $items;
     }
 
     public function getItemsPendientes(){
         $items_pend = DB::connection('cadeco')->select(DB::raw("SELECT
-                    r.[id_transaccion] 
+                    r.[id_transaccion]
                     ,i.unidad
                     , r.id_item
                     , r.[referencia] as remision
@@ -741,7 +741,7 @@ class Factura extends Transaccion
                     , CONVERT(VARCHAR(100), CAST((r.[cantidad] * r.[precio_unitario]) - r.anticipo AS MONEY), 1) AS monto
                 FROM
                     [dbo].[RemisionesPorFacturar] r
-                    join items i on  i.id_item = r.id_item 
+                    join items i on  i.id_item = r.id_item
                 WHERE
                 r.[id_obra] = ".Context::getIdObra()."  AND
                 r.[tipo_transaccion] = 33 AND
@@ -749,7 +749,7 @@ class Factura extends Transaccion
                 r.[opciones] = 1 AND
                 r.[estado] = 0
                 ORDER BY
-                r.[referencia] 
+                r.[referencia]
                     , r.[descripcion]"));
 
         $resp_items = json_decode(json_encode($items_pend), true);
@@ -764,19 +764,19 @@ class Factura extends Transaccion
                     [id_item], 'false' as seleccionado
                     , [id_transaccion]
                     , CASE [opciones]
-                        WHEN 8 THEN 'O/R #' + CAST([numero_folio] AS VARCHAR(10)) 
-                        WHEN 1 THEN 'O/C #' + CAST([numero_folio] AS VARCHAR(10)) 
+                        WHEN 8 THEN 'O/R #' + CAST([numero_folio] AS VARCHAR(10))
+                        WHEN 1 THEN 'O/C #' + CAST([numero_folio] AS VARCHAR(10))
                     END  transaccion
                     , CONVERT(VARCHAR(10), [fecha], 105) AS fecha
                     , CASE [opciones]
                         WHEN 8 THEN 'Anticipo ' + CAST([anticipo] AS VARCHAR(10)) + '% Sobre '
                             + CAST([numero] AS VARCHAR(10)) + 'Tipo' + [descripcion] + ' ( '
                             + CAST([cantidad] AS VARCHAR(MAX)) + ' ' + [unidad] + ' @'
-                            + CAST([precio_unitario] AS VARCHAR(MAX)) + ' )' 
+                            + CAST([precio_unitario] AS VARCHAR(MAX)) + ' )'
                         WHEN 1 THEN 'Anticipo ' + CAST([anticipo] AS VARCHAR(10)) + '% de '
                             + [descripcion] + ' ( '
                             + CAST([cantidad] AS VARCHAR(MAX)) + ' ' + [unidad] + ' @'
-                            + CAST([precio_unitario] AS VARCHAR(MAX)) + ' )'  
+                            + CAST([precio_unitario] AS VARCHAR(MAX)) + ' )'
                         END  'descripcion_item'
                     , CONVERT(VARCHAR(100), CAST([anticipo_total] - [anticipo_facturado] AS MONEY), 1) AS 'anticipo'
                     , [anticipo_total] - [anticipo_facturado] as anticipo_sf
@@ -789,20 +789,20 @@ class Factura extends Transaccion
                     AND [id_empresa] = ".$this->id_empresa."
                 ORDER BY
                     [descripcion]"));
-        
+
         $resp_items = json_decode(json_encode($items_ant), true);
         $item_final = [];
         foreach($resp_items as $item){$item['seleccionado'] = false; $item_final[] = $item;}
         return $item_final;
-        
+
     }
 
     public function getItemsRentas(){
         $items_rentas = DB::connection('cadeco')->select(DB::raw("SELECT
                     [RentasPorFacturar].[id_item], 'false' as seleccionado
-                , [RentasPorFacturar].[descripcion] AS equipo  
+                , [RentasPorFacturar].[descripcion] AS equipo
                 , [RentasPorFacturar].[referencia] AS numero_serie
-                , [RentasPorFacturar].[precio_unitario] AS precio_unitario 
+                , [RentasPorFacturar].[precio_unitario] AS precio_unitario
                 , [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS importe_total_sf
                 , [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS importe_total_rentas
                 , CONVERT(VARCHAR(100), CAST([RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) AS MONEY), 1) AS importe_total
@@ -810,7 +810,7 @@ class Factura extends Transaccion
                 , [RentasPorFacturar].[unidad]
                 , t.id_moneda
                 FROM
-                    [dbo].[RentasPorFacturar] join items as i on(i.id_item = [RentasPorFacturar].id_item) 
+                    [dbo].[RentasPorFacturar] join items as i on(i.id_item = [RentasPorFacturar].id_item)
             JOIN transacciones as t on(t.id_transaccion = i.id_transaccion)
                 WHERE
                     [RentasPorFacturar].[monto_total]-([RentasPorFacturar].[monto_pagado] + [RentasPorFacturar].[monto_facturado]) > 0
@@ -848,10 +848,10 @@ class Factura extends Transaccion
                 [dbo].[transacciones]
             WHERE
                 [tipo_transaccion] IN ( 99, 102 )
-                AND [estado] != 2 
-                AND [id_obra] = ".Context::getIdObra()." 
+                AND [estado] != 2
+                AND [id_obra] = ".Context::getIdObra()."
                 AND [id_empresa] = ".$this->id_empresa." "));
-        
+
         $resp_items = json_decode(json_encode($items_lista), true);
         $item_final = [];
         foreach($resp_items as $item){$item['seleccionado'] = false; $item_final[] = $item;}
@@ -864,12 +864,12 @@ class Factura extends Transaccion
                 descripcion as concepto,
                 case mascara when 12288 then 'Recargo' when 8192 then 'Descuento' end naturaleza,
                 mascara
-            FROM 
+            FROM
                 [varios]
-            WHERE 
-                [mascara] IN (12288,8192) AND 
+            WHERE
+                [mascara] IN (12288,8192) AND
                 id_obra = ".Context::getIdObra()." "));
-        
+
         $resp_items = json_decode(json_encode($items_desc), true);
         $item_final = [];
         foreach($resp_items as $item){$item['seleccionado'] = false; $item_final[] = $item;}
@@ -889,7 +889,7 @@ class Factura extends Transaccion
             "seleccionado"=>false,
             "tcp"=>1
         ];
-        
+
         $id_lib_ant = Vario::where('descripcion', '=', utf8_encode('(+) Liberación de Anticipo'))->first();
         $concpEstim[] = [
             "insumo"=>("(+) Liberación de Anticipo"),
@@ -1019,22 +1019,22 @@ class Factura extends Transaccion
                     $fondo_gar->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 52){
-                    $estimacion_ = Estimacion::find($subcontrato['id']);
+                    $estimacion_ = Estimacion::withoutGlobalScopes()->find($subcontrato['id']);
                     $estimacion_->estado = 2;
                     $estimacion_->autorizado = $subcontrato['monto_revision'];
                     $estimacion_->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 51){
-                    $subcont = Subcontrato::find($subcontrato['id']);
+                    $subcont = Subcontrato::withoutGlobalScopes()->find($subcontrato['id']);
                     $subcont->estado = 1;
                     $subcont->anticipo_saldo = 0;
                     $subcont->save();
                 }
-                
+
                 if($subcontrato['tipo_transaccion'] == 52 || $subcontrato['tipo_transaccion'] == 51){
                     $resp = DB::connection('cadeco')->select(DB::raw("
                     DECLARE @RC int
-                    EXECUTE @RC = [sp_aplicar_anticipos] 
+                    EXECUTE @RC = [sp_aplicar_anticipos]
                     @id_item = $item->id_item
                     SELECT	'res' = @RC "));
                     $resp_ = json_decode(json_encode($resp), true);
@@ -1117,14 +1117,26 @@ class Factura extends Transaccion
                 ]);
             }
 
-            $this->complemento->iva = $data['resumen']['iva_subtotal'];
-            $this->complemento->ieps = $data['resumen']['ieps'];
-            $this->complemento->imp_hosp = $data['resumen']['imp_hospedaje'];
-            $this->complemento->ret_iva_4 = $data['resumen']['ret_iva_4'];
-            $this->complemento->ret_iva_10 = $data['resumen']['ret_iva_23'];
-            $this->complemento->ret_isr_10 = $data['resumen']['ret_isr_10'];
-            $this->complemento->ret_iva_6 = $data['resumen']['ret_iva_6'];
-            $this->complemento->save();
+            if($this->complemento){
+                $this->complemento->iva = $data['resumen']['iva_subtotal'];
+                $this->complemento->ieps = $data['resumen']['ieps'];
+                $this->complemento->imp_hosp = $data['resumen']['imp_hospedaje'];
+                $this->complemento->ret_iva_4 = $data['resumen']['ret_iva_4'];
+                $this->complemento->ret_iva_10 = $data['resumen']['ret_iva_23'];
+                $this->complemento->ret_isr_10 = $data['resumen']['ret_isr_10'];
+                $this->complemento->ret_iva_6 = $data['resumen']['ret_iva_6'];
+                $this->complemento->save();
+            }else{
+                $this->complemento()->create([
+                    'iva' => $data['resumen']['iva_subtotal'],
+                    'ieps' => $data['resumen']['ieps'],
+                    'imp_hosp' => $data['resumen']['imp_hospedaje'],
+                    'ret_iva_4' => $data['resumen']['ret_iva_4'],
+                    'ret_iva_10' => $data['resumen']['ret_iva_23'],
+                    'ret_isr_10' => $data['resumen']['ret_isr_10'],
+                    'ret_iva_6' => $data['resumen']['ret_iva_6'],
+                ]);
+            }
 
             $impuestos = $this->impuesto + $data['resumen']['ieps'] + $data['resumen']['imp_hospedaje'];
             $impuestos_retenidos = $this->impuesto + $data['resumen']['ret_iva_4'] + $data['resumen']['ret_iva_6'] + $data['resumen']['ret_iva_23'] + $data['resumen']['ret_isr_10'];
@@ -1148,7 +1160,7 @@ class Factura extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
-        
+
     }
 
     public function storeRevisionVarios($data){
@@ -1200,7 +1212,7 @@ class Factura extends Transaccion
                 ]);
 
             }
-            
+
 
             DB::connection('cadeco')->commit();
             return $this;

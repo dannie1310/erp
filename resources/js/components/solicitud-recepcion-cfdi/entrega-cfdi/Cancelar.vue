@@ -13,7 +13,7 @@
                 </div>
             </div>
         </div>
-        <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
+
         <div class="card" v-if="cargado" >
             <div class="card-body">
                 <div class="row">
@@ -40,16 +40,15 @@
                     </div>
                 </div>
             </div>
-            <div class="card-footer">
-                <span class="pull-right">
-                    <button type="button" class="btn btn-secondary" v-on:click="regresar" >
-                        <i class="fa fa-angle-left"></i>Regresar
-                    </button>
-                    <button v-if="solicitud.estado==0" @click="cancelar" title="Cancelar" class="btn btn-danger">
-                        <i class="fa fa-times-circle"></i>Cancelar
-                    </button>
-                </span>
-            </div>
+        </div>
+        <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
+        <div class="pull-right" style="padding-bottom: 48px">
+            <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                <i class="fa fa-angle-left"></i>Regresar
+            </button>
+            <button v-if="solicitud.estado==0" @click="cancelar" title="Cancelar" class="btn btn-danger">
+                <i class="fa fa-times-circle"></i>Cancelar
+            </button>
         </div>
     </span>
 </template>
