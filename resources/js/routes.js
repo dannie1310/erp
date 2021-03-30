@@ -2310,7 +2310,7 @@ export const routes = [
                                         name: 'CAMIONES'
                                     },
                                     middleware: [auth, context, permission],
-                                    permission: ['consultar_origen']
+                                    permission: ['consultar_camion']
                                 }
                             },
                             {

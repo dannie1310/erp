@@ -41,7 +41,7 @@ class CamionController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context')->except(['catalogo','cambiarClave','registrar','cargaImagenes']);
 
-        $this->middleware('permiso:consultar_origen')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:consultar_camion')->only(['show','paginate','index','find']);
 
         $this->fractal = $fractal;
         $this->service = $service;

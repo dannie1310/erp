@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //ACARREOS
+import camion from "./modules/acarreos/camion";
 import origen from './modules/acarreos/origen';
 import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
@@ -201,6 +202,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'acarreos/camion' : camion,
         'acarreos/origen' : origen,
         'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,

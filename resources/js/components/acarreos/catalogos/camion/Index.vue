@@ -31,13 +31,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'Clave', field: 'IdOrigen',sortable: true},
-                    { title: 'Tipo', field: 'tipo', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
-                    { title: 'Tipo de origen', field: 'interno', sortable: true},
+                    { title: 'Economico', field: 'economico',sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Propietario', field: 'propietario', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Operador', field: 'IdOperador', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Cubicación Real', field: 'CubicacionReal', sortable: true},
+                    { title: 'Cubicación Pago', field: 'CubicacionParaPago', sortable: true},
+                    { title: 'Fecha Registro', field: 'FechaAlta', sortable: true, thComp: require('../../../globals/th-Date').default},
                     { title: 'Registro', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                   // { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                   //  { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -75,7 +76,7 @@
             },
         },
         computed: {
-            origenes(){
+            camiones(){
                 return this.$store.getters['acarreos/camion/camiones'];
             },
             meta(){
@@ -92,13 +93,14 @@
                     self.$data.data = []
                     self.$data.data = camiones.map((camion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        IdOrigen: origen.clave_format,
-                        tipo: origen.tipo,
-                        descripcion: origen.descripcion,
-                        created_at: origen.fecha_registro_format,
-                        interno: origen.tipo_origen,
-                        usuario_registro : origen.usuario_registro,
-                       // estatus: this.getEstado(origen.estado_format, origen.estado_color),
+                        economico: camion.economico,
+                        propietario: camion.propietario,
+                        IdOperador : camion.operador,
+                        CubicacionReal: camion.cubicacion_real+' m3',
+                        CubicacionParaPago: camion.cubicacion_pago+' m3',
+                        FechaAlta: camion.fecha_registro,
+                        usuario_registro : camion.nombre_registro,
+                        estatus: this.getEstado(camion.estado_format, camion.estado_color),
                         /*buttons: $.extend({}, {
                             id: origen.id,
                             activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
