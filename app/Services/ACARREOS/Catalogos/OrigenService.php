@@ -35,10 +35,8 @@ class OrigenService
 
         if (isset($data['tipo']))
         {
-            $tipo = TipoOrigen::where([['descripcion', 'LIKE', '%' . $data['tipo'] . '%']])->get();
-            foreach ($tipo as $e) {
-                $this->repository->whereOr([['IdTipoOrigen', '=', $e->IdTipoOrigen]]);
-            }
+            $tipo = TipoOrigen::where([['descripcion', 'LIKE', '%' . $data['tipo'] . '%']])->pluck('IdTipoOrigen');
+            $this->repository->whereIn(['IdTipoOrigen', $tipo]);
         }
 
         if (isset($data['descripcion']))
@@ -53,12 +51,9 @@ class OrigenService
 
         if (isset($data['usuario_registro']))
         {
-            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->get();
-            foreach ($usuario as $e) {
-                $this->repository->whereOr([['usuario_registro', '=', $e->idusuario]]);
-            }
+            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->pluck('idusuario');
+            $this->repository->whereIn(['usuario_registro', $usuario]);
         }
-
         return  $this->repository->paginate($data);
     }
 
