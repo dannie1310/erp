@@ -41,7 +41,8 @@
         computed: {
             catalogos() {
                 return this.$root.can([
-                    'consultar_tiro'
+                    'consultar_tiro',
+                    'consultar_origen'
                 ])
             },
         },
