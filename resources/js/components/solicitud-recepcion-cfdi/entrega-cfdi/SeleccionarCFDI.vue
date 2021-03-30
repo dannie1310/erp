@@ -22,137 +22,16 @@
                 </div>
             </div>
         </div>
-        <div class="card" v-if="cargado">
-            <div class="card-header">
-                <h5>Datos del CFDI</h5>
-            </div>
-            <div class="card-body">
-                <span>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label >Emisión:</label>
-                                <input class="form-control" v-model="dato.fecha_format" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label >Serie y Folio:</label>
-                                <input class="form-control" v-model="dato.referencia" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label >Tipo:</label>
-                                <input class="form-control" v-model="dato.tipo_comprobante" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                            <label >UUID:</label>
-                                <input class="form-control" v-model="dato.uuid" readonly="readonly" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-10">
-                            <div class="form-group">
-                            <label >Empresa:</label>
-                                <input class="form-control" v-model="dato.empresa.razon_social" readonly="readonly" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >RFC:</label>
-                                <input class="form-control" v-model="dato.empresa.rfc" readonly="readonly" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Descuento:</label>
-                                <input class="form-control" v-model="dato.descuento_format" readonly="readonly" style="text-align: right" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Impuestos Retenidos:</label>
-                                <input class="form-control" v-model="dato.impuestos_retenidos_format" readonly="readonly" style="text-align: right" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Impuestos Trasladados:</label>
-                                <input class="form-control" v-model="dato.impuestos_trasladados_format" readonly="readonly" style="text-align: right" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Total:</label>
-                                <input class="form-control" v-model="dato.total_format" readonly="readonly" style="text-align: right" />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Moneda:</label>
-                                <input class="form-control" v-model="dato.moneda" readonly="readonly"  />
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <label >Tipo de Cambio:</label>
-                                <input class="form-control" v-model="dato.tipo_cambio" readonly="readonly" style="text-align: right" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th class="index_corto">#</th>
-                                        <th class="no_parte">Clave Producto / Servicio</th>
-                                        <th>Descripción</th>
-                                        <th>Clave Unidad</th>
-                                        <th>Unidad</th>
-                                        <th>Cantidad</th>
-                                        <th>Valor Unitario</th>
-                                        <th>Descuento</th>
-                                        <th>Importe</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                <template v-for="(concepto, i) in dato.conceptos.data">
-                                    <tr >
-                                        <td>{{i+1}}</td>
-                                        <td>{{concepto.clave_prod_serv}}</td>
-                                        <td>{{concepto.descripcion}}</td>
-                                        <td>{{concepto.clave_unidad}}</td>
-                                        <td>{{concepto.unidad}}</td>
-                                        <td style="text-align: right">{{concepto.cantidad_format}}</td>
-                                        <td style="text-align: right">{{concepto.valor_unitario_format}}</td>
-                                        <td style="text-align: right">{{concepto.descuento_format}}</td>
-                                        <td style="text-align: right">{{concepto.importe_format}}</td>
-                                    </tr>
-                                </template>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </span>
-            </div>
-            <div class="card-footer">
-                <span class="pull-right">
-                    <button type="button" class="btn btn-secondary" >
-                        <i class="fa fa-angle-left"></i>Regresar
-                    </button>
-                    <button type="button" class="btn btn-primary" @click="continuar()" >
-                        Continuar <i class="fa fa-angle-right"></i>
-                    </button>
-                </span>
-            </div>
+        <cfdi-show v-if="cargado" v-bind:cfdi="dato"></cfdi-show>
+        <div class="pull-right" style="padding-bottom: 48px" >
+            <button type="button" class="btn btn-secondary" >
+                <i class="fa fa-angle-left"></i>Regresar
+            </button>
+            <button type="button" class="btn btn-primary" @click="continuar()" :disabled="!cargado" >
+                Continuar <i class="fa fa-angle-right"></i>
+            </button>
         </div>
+
     </span>
 
 
@@ -160,8 +39,10 @@
 
 <script>
 
+    import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
     export default {
         name: "seleccionar-cfdi",
+        components: {CfdiShow},
         data() {
             return {
                 cargando:true,

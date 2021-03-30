@@ -75,6 +75,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'anticipo_format' => $model->anticipo_format,
             'anticipo_monto_format'=>(string) '$ '.number_format($model->anticipo_monto, 2, ".", ","),
+            'anticipo_monto'=>$model->anticipo_monto,
             'observaciones'=>(string)$model->observaciones,
             'id_moneda' =>(int)$model->id_moneda,
             'destino' =>(string)$model->destino,

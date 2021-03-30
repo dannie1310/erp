@@ -133,8 +133,8 @@ export const routes = [
                         name: 'solicitud-recepcion-cfdi',
                         component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Index').default,
                         meta: {
-                            title: 'Solicitudes de Recepcion de CFDI',
-                            breadcrumb: {parent:'home', name: 'SOLICITUDES DE RECEPCIÓN DE CFDI'},
+                            title: 'Listado de Solicitudes de Revisión de CFDI',
+                            breadcrumb: {parent:'home', name: 'SOLICITUDES DE REVISIÓN DE CFDI'},
                             middleware: [auth, context, permission],
                             permission: 'consultar_solicitud_recepcion_cfdi_proyecto'
                         }
@@ -1269,7 +1269,7 @@ export const routes = [
                                 name: 'factura',
                                 component: require('./components/finanzas/factura/Index').default,
                                 meta:{
-                                    title: 'Facturas',
+                                    title: 'Lista de Facturas',
                                     breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_factura'
@@ -2878,7 +2878,7 @@ export const routes = [
                 name: 'entrega-cfdi',
                 component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
                     meta: {
-                    title: 'Solicitudes de Recepción de CFDI a Revisión',
+                    title: 'Listado de Solicitudes de Revisión de CFDI',
                     middleware: [auth, permission],
                     permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
                     general: true

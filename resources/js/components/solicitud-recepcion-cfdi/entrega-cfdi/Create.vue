@@ -1,6 +1,29 @@
 <template>
     <span>
-        <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
+        <div class="row">
+            <div class="offset-md-8 col-md-4">
+                <span class="pull-right">
+                    <div class="card">
+                        <div class="card-body">
+                            <table style="font-size: 1.3em">
+                                <tbody>
+                                    <tr>
+                                        <td>Referencia CFDI:</td>
+                                        <td><b><CFDI v-bind:id="cfdi.id" v-bind:txt="cfdi.referencia"></CFDI></b></td>
+                                    </tr>
+                                    <tr>
+                                        <td>Total CFDI:</td>
+                                        <td style="text-align: right"><b>{{cfdi.total_format}}</b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </span>
+            </div>
+        </div>
+        <br>
         <form role="form" @submit.prevent="validate">
             <div class="card" v-if="cargado">
                 <div class="card-header">
@@ -93,9 +116,10 @@
 <script>
 
     import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
+    import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
     export default {
         name: "solicitud-recepcion-cfdi-create",
-        components: {CfdiShow},
+        components: {CFDI, CfdiShow},
         props: ["id_cfdi"],
         data() {
             return {

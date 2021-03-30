@@ -1,13 +1,13 @@
 <template>
     <span>
         <button @click="show" type="button"  class="btn  btn-primary float-right"  title="Ver Conceptos Estimación">
-            <i class="fa fa-archive"></i>Conceptos para Estimación
+            <i class="fa fa-building"></i>Conceptos para Estimación
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CONCEPTOS PARA ESTIMACIÓN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-building"></i> CONCEPTOS PARA ESTIMACIÓN</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
