@@ -47,7 +47,6 @@ import unidad from './modules/cadeco/unidad'
 import unificacionProveedores from './modules/catalogos/unificacion-proveedores';
 import proyecto from './modules/catalogos/proyecto';
 
-
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
 import cotizacion from './modules/compras/cotizacion';
@@ -111,6 +110,8 @@ import subcontrato from './modules/contratos/subcontrato';
 //ENTREGA CFDI
 
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
+import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
+import archivoCFDI from './modules/entregaCFDI/archivo';
 
 //RECEPCIÓN CFDI
 
@@ -346,6 +347,8 @@ export default new Vuex.Store({
         'fiscal/no-deducido' : noDeducido,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
+        'entrega-cfdi/tipo-archivo' : tipoArchivo,
+        'entrega-cfdi/archivo' : archivoCFDI,
 
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,

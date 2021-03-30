@@ -221,6 +221,11 @@ class CFDSAT extends Model
         return '$ ' . number_format(($this->total_impuestos_trasladados),2);
     }
 
+    public function getReferenciaAttribute()
+    {
+        return $this->serie .' '. $this->folio;
+    }
+
     public function getXMLAttribute()
     {
         $xml = DB::table("Contabilidad.cfd_sat")
