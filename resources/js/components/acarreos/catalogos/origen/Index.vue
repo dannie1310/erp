@@ -36,7 +36,7 @@
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
                     { title: 'Tipo de origen', field: 'interno', sortable: true},
-                    { title: 'Registro', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Registró', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],

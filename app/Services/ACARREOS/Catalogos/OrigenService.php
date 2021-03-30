@@ -53,7 +53,7 @@ class OrigenService
 
         if (isset($data['usuario_registro']))
         {
-            $usuario = Usuario::where([['descripcion', 'LIKE', '%' . $data['usuario_registro'] . '%']])->get();
+            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->get();
             foreach ($usuario as $e) {
                 $this->repository->whereOr([['usuario_registro', '=', $e->idusuario]]);
             }
