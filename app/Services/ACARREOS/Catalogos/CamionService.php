@@ -440,4 +440,10 @@ class CamionService
 
         return  $this->repository->paginate($data);
     }
+
+    public function show($id)
+    {
+        $this->conexionAcarreosContexto();
+        return $this->repository->show($id);
+    }
 }

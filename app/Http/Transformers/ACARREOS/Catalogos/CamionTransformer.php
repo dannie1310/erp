@@ -22,10 +22,12 @@ class CamionTransformer extends TransformerAbstract
     public function transform(Camion $model) {
         return [
             'id' => (int) $model->getKey(),
+            'sindicato' => $model->descripcion_sindicato,
+            'empresa' => $model->razon_social_empresa,
             'propietario' => $model->Propietario,
             'operador' => $model->nombre_operador,
-            'placas' => $model->Placas,
-            'placas_caja' => (string) $model->PlacasCaja,
+            'placa' => $model->Placas,
+            'placa_caja' => (string) $model->PlacasCaja,
             'economico' => $model->Economico,
             'marca' => $model->descripcion_marca,
             'modelo' => $model->modelo,

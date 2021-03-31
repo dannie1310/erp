@@ -137,6 +137,26 @@ class Camion extends Model
         }
     }
 
+    public function getDescripcionSindicatoAttribute()
+    {
+        try{
+            return $this->sindicato->Descripcion;
+        }catch (\Exception $exception)
+        {
+            return null;
+        }
+    }
+
+    public function getRazonSocialEmpresaAttribute()
+    {
+        try{
+            return $this->empresa->razonSocial;
+        }catch (\Exception $exception)
+        {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */

@@ -448,6 +448,7 @@ $api->version('v1', function ($api) {
             $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@registrar');
             $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@show')->where(['id' => '[0-9]+']);
         });
 
         //ORIGEN

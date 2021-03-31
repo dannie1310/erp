@@ -2301,29 +2301,32 @@ export const routes = [
                             },
                             {
                                 path: 'camion',
-                                name: 'camion',
-                                component: require('./components/acarreos/catalogos/camion/Index').default,
-                                meta: {
-                                    title: 'Camiones',
-                                    breadcrumb: {
-                                        parent: 'catalogo',
-                                        name: 'CAMIONES'
+                                component: require('./components/acarreos/catalogos/camion/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'camion',
+                                        component: require('./components/acarreos/catalogos/camion/Index').default,
+                                        meta: {
+                                            title: 'Camiones',
+                                            breadcrumb: {parent: 'catalogo', name: 'CAMIONES'},
+                                            middleware: [auth, context, permission],
+                                            permission: ['consultar_camion']
+                                        }
                                     },
-                                    middleware: [auth, context, permission],
-                                    permission: ['consultar_camion']
-                                }
-                            },
-                            {
-                                path: ':id',
-                                name: 'camion-show',
-                                props: true,
-                                component: require('./components/acarreos/catalogos/camion/Show').default,
-                                meta: {
-                                    title: 'Consultar Póliza',
-                                    breadcrumb: {parent: 'camion', name: 'CONSULTAR'},
-                                    middleware: [auth, permission],
-                                    permission: 'consultar_camion'
-                                }
+                                    {
+                                        path: ':id',
+                                        name: 'camion-show',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Show').default,
+                                        meta: {
+                                            title: 'Consultar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'CONSULTAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'consultar_camion'
+                                        }
+                                    },
+                                ]
                             },
                             {
                                 path: 'origen',
