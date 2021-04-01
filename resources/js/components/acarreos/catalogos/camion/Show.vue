@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div v-if="!camion">
+        <div v-if="cargando">
             <div class="row">
                 <div class="col-md-12">
                     <div class="spinner-border text-success" role="status">
@@ -124,7 +124,7 @@
                                 </div>
                                 <label class="col-md-1 col-form-label">Imagenes:</label>
                                 <div class="col-md-1">
-                                    <button @click="init" class="btn btn-primary pull-center">
+                                    <button @click="getImagenes()" class="btn btn-primary pull-center" :disabled="tieneImagen">
                                         <i class="fa fa-file-image-o"></i> Ver Imagenes
                                     </button>
                                 </div>
@@ -225,17 +225,27 @@
                      <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                  </div>
             </div>
+            <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
+                <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
+                    <div class="modal-content">
+                        <Imagen v-bind:imagenes="camion.imagenes.data" v-bind:id="camion.id"></Imagen>
+                    </div>
+                </div>
+            </div>
         </div>
     </span>
 </template>
 
 <script>
+    import Imagen from '../../../globals/archivos/Imagen';
     export default {
         name: "camion-show",
         props: ['id'],
+        components: {Imagen},
         data() {
             return {
-                cargando : true
+                cargando : true,
+                tieneImagen : false
             }
         },
         mounted() {
@@ -249,12 +259,20 @@
                 this.$store.commit('acarreos/camion/SET_CAMION', null);
                 return this.$store.dispatch('acarreos/camion/find', {
                     id: this.id,
-                    params: {}
+                    params: {include: 'imagenes'}
                 }).then(data => {
                     this.$store.commit('acarreos/camion/SET_CAMION', data);
+                    if(data.imagenes.data.length == 0)
+                    {
+                        this.tieneImagen = true
+                    }
                 }).finally(() => {
                     this.cargando = false;
                 })
+            },
+            getImagenes() {
+                $(this.$refs.modalImagen).appendTo('body');
+                $(this.$refs.modalImagen).modal('show');
             },
         },
         computed: {

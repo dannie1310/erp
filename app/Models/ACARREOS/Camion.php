@@ -46,6 +46,11 @@ class Camion extends Model
         return $this->belongsTo(Usuario::class,  'usuario_desactivo', 'idusuario');
     }
 
+    public function imagenes()
+    {
+        return $this->hasMany(CamionImagen::class, 'IdCamion', 'IdCamion');
+    }
+
     /**
      * Scopes
      */

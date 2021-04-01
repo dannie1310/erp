@@ -15,7 +15,7 @@ class CamionTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'imagenes'
     ];
 
 
@@ -50,5 +50,18 @@ class CamionTransformer extends TransformerAbstract
             'nombre_desactivo' => (string) $model->nombre_desactivo,
             'motivo' => $model->motivo
         ];
+    }
+
+    /**
+     * @param Camion $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeImagenes(Camion $model)
+    {
+        if($imagenes = $model->imagenes)
+        {
+            return $this->collection($imagenes, new CamionImagenTransformer);
+        }
+        return null;
     }
 }
