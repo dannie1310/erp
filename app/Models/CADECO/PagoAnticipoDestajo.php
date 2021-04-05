@@ -51,14 +51,14 @@ class PagoAnticipoDestajo extends Pago
         return $this->belongsTo(Transaccion::class, 'id_referente', 'id_transaccion');
     }
 
-    public function anticipo()
+    public function anticipoTransaccion()
     {
         return $this->hasOne(Anticipo::class, "id_antecedente", "id_transaccion");
     }
 
     public function generaAnticipo()
     {
-        $anticipo = $this->anticipo;
+        $anticipo = $this->anticipoTransaccion;
         if($anticipo){
             return $anticipo;
         }else{
@@ -73,7 +73,7 @@ class PagoAnticipoDestajo extends Pago
                 "monto" => $this->monto,
                 "saldo" => $this->saldo,
             );
-            $anticipo = $this->anticipo()->create($datos_anticipo);
+            $anticipo = $this->anticipoTransaccion()->create($datos_anticipo);
             $this->validaAnticipo($anticipo);
             DB::connection('cadeco')->commit();
             return $anticipo;
@@ -95,16 +95,16 @@ class PagoAnticipoDestajo extends Pago
     {
         if ($this->transaccion->opciones < 65536)
         {
-            if($this->anticipo)
+            if($this->anticipoTransaccion)
             {
-                $saldo = $this->transaccion->anticipo_saldo - $this->anticipo->saldo;
+                $saldo = $this->transaccion->anticipo_saldo - $this->anticipoTransaccion->saldo;
                 $consulta = "'Pago 131073: Pago anticipado destajo edita transaccion id_referente".$this->id_referente." anticipo_saldo = ".$this->transaccion->anticipo_saldo." cambio a ".$saldo."'";
                 $this->transaccion->update([
                     'anticipo_saldo' => $saldo
                 ]);
                 $this->crearLogRespaldo($consulta);
-                $consulta = "'Pago 131073: Pago anticipado destajo elimina anticipo id_transaccion".$this->anticipo->id_transaccion."'";
-                $this->anticipo->delete();
+                $consulta = "'Pago 131073: Pago anticipado destajo elimina anticipo id_transaccion".$this->anticipoTransaccion->id_transaccion."'";
+                $this->anticipoTransaccion->delete();
                 $this->crearLogRespaldo($consulta);
             }
         }
