@@ -65,7 +65,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Activar el Camión",
-                    text: "¿Está seguro de que deseas activar el camión?",
+                    text: "¿Está seguro de que desea activar el camión?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -104,7 +104,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Desactivar el Camión",
-                    text: "¿Está seguro de que deseas desactivar el camión?",
+                    text: "¿Está seguro de que desea desactivar el camión?",
                     icon: "warning",
                     buttons: {
                         cancel: {

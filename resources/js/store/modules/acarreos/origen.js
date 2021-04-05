@@ -103,7 +103,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Activar el Origen",
-                    text: "¿Está seguro de que deseas activar el origen?",
+                    text: "¿Está seguro de que desea activar el origen?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -142,7 +142,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Desactivar el Origen",
-                    text: "¿Está seguro de que deseas desactivar el origen?",
+                    text: "¿Está seguro de que desea desactivar el origen?",
                     icon: "warning",
                     buttons: {
                         cancel: {

@@ -103,9 +103,9 @@
                         estatus: this.getEstado(camion.estado_format, camion.estado_color),
                         buttons: $.extend({}, {
                             id: camion.id,
-                            show : self.$root.can('consultar_camion') ? true : false
-                          //  activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
-                           // desactivar: (origen.estado === 1 && self.$root.can('activar_desactivar_origen')) ? true : false,
+                            show : self.$root.can('consultar_camion') ? true : false,
+                            activar: (camion.estado === 0 && self.$root.can('activar_desactivar_camion')) ? true : false,
+                            desactivar: (camion.estado === 1 && self.$root.can('activar_desactivar_camion')) ? true : false,
                            // edit: self.$root.can('editar_origen') ? true : false,
                         })
                     }));
