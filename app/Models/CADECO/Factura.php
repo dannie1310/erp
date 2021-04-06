@@ -1019,13 +1019,13 @@ class Factura extends Transaccion
                     $fondo_gar->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 52){
-                    $estimacion_ = Estimacion::find($subcontrato['id']);
+                    $estimacion_ = Estimacion::withoutGlobalScopes()->find($subcontrato['id']);
                     $estimacion_->estado = 2;
                     $estimacion_->autorizado = $subcontrato['monto_revision'];
                     $estimacion_->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 51){
-                    $subcont = Subcontrato::find($subcontrato['id']);
+                    $subcont = Subcontrato::withoutGlobalScopes()->find($subcontrato['id']);
                     $subcont->estado = 1;
                     $subcont->anticipo_saldo = 0;
                     $subcont->save();
