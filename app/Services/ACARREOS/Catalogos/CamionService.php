@@ -446,4 +446,24 @@ class CamionService
         $this->conexionAcarreosContexto();
         return $this->repository->show($id);
     }
+
+    public function activar($id)
+    {
+        $this->conexionAcarreosContexto();
+        $camion = $this->show($id);
+        if ($camion->Estatus == 1) {
+            abort(400, "El camión se encuentra " . $camion->estado_format . " previamente.");
+        }
+        return $camion->activar();
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreosContexto();
+        $camion = $this->show($id);
+        if ($camion->Estatus == 0) {
+            abort(400, "El camión se encuentra " . $camion->estado_format . " previamente.");
+        }
+        return $camion->desactivar($data['motivo']);
+    }
 }

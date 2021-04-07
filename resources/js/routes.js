@@ -2326,6 +2326,18 @@ export const routes = [
                                             permission: 'consultar_camion'
                                         }
                                     },
+                                    {
+                                        path: ':id/edit',
+                                        name: 'camion-edit',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Edit').default,
+                                        meta: {
+                                            title: 'Editar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'EDITAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'editar_camion'
+                                        }
+                                    },
                                 ]
                             },
                             {
