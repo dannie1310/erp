@@ -37,6 +37,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
 
+    public function getRFCReceptoras()
+    {
+        $empresas = EmpresaSAT::all()->pluck("rfc")->toArray();
+        return $empresas;
+    }
+
     public function getIdEmpresa($datos_receptor){
         try{
             $empresa = EmpresaSAT::where("rfc","=",$datos_receptor["rfc"])

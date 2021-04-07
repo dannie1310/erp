@@ -94,6 +94,7 @@ use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\NotaCredito;
 use App\Models\CADECO\NuevoLote;
 use App\Models\CADECO\NuevoLotePartida;
 use App\Models\CADECO\OrdenCompra;
@@ -250,6 +251,7 @@ use App\Observers\CADECO\Inventarios\MarbeteObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\MaterialObserver;
 use App\Observers\CADECO\MovimientoObserver;
+use App\Observers\CADECO\NotaCreditoObserver;
 use App\Observers\CADECO\NuevoLoteObserver;
 use App\Observers\CADECO\NuevoLotePartidaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
@@ -333,6 +335,8 @@ use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
+use App\Observers\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -364,6 +368,12 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
         \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
+
+        /**
+        *RECEPCIÓN CFDI
+         */
+        SolicitudRecepcionCFDI::observe(SolicitudRecepcionCFDIObserver::class);
+
 
         /**
          * CADECO
@@ -535,6 +545,7 @@ class AppServiceProvider extends ServiceProvider
             ItemEstimacion::observe(EstimacionPartidaObserver::class);
             ItemSolicitudCompra::observe(SolicitudCompraPartidaObserver::class);
             Factura::observe(FacturaObserver::class);
+            NotaCredito::observe(NotaCreditoObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
             Inventario::observe(InventarioObserver::class);
