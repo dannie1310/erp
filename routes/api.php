@@ -337,7 +337,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarIndividual');
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
             $api->post('cargar-xml-proveedor', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaXMLProveedor');
-
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
@@ -600,6 +599,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@store');
         });
+
         //PROYECTOS
         $api->group(['prefix' => 'proyecto'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ProyectoController@index');
@@ -993,6 +993,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}/getDocumentos', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@getDocumentos')->where(['id' => '[0-9]+']);
             $api->post('/storeRevision', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevision');
             $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
+
             /**
              * FORMATO DE CONTRARECIBO
              */
