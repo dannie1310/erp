@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\PolizasCtpqIncidentes;
 
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use stdClass;
 use App\Models\CTPQ\Poliza;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,6 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use App\PDF\ContabilidadGeneral\InformeDiferenciasPolizas;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\CtgTipo;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Busqueda;
-use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia as Model;
 use App\Repositories\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaRepository as Repository;
@@ -114,6 +114,33 @@ class DiferenciaService
             ];
         }
         return $datos_lote;
+    }
+
+    public function actualizaDiferencias()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+        $cantidad = Diferencia::count();
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad); $i += $take) {
+            //dd($i, $cantidad, $take);
+            $cfd = Diferencia::skip($i)->take($take)->get();
+            //dd(count($cfd));
+            foreach ($cfd as $rcfd) {
+
+                try{
+                    $rcfd->ejercicio = $rcfd->poliza->Ejercicio;
+                    $rcfd->periodo = $rcfd->poliza->Periodo;
+                    $rcfd->tipo_poliza = $rcfd->poliza->tipo_poliza->Nombre;
+                    $rcfd->folio_poliza = $rcfd->poliza->Folio;
+                    $rcfd->save();
+
+                }catch (\Exception $e) {
+
+                }
+            }
+        }
     }
 
     private function generaPeticionesBusquedas($parametros)

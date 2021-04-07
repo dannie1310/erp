@@ -29,6 +29,12 @@ class ContrareciboPDF extends Rotation
 
         $this->obra = Obra::find(Context::getIdObra());
         $this->factura = Factura::find($id);
+
+        $this->SetMargins(1, 0.5, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,3.75);
+        $this->factura();
     }
     function Header()
     {
@@ -87,7 +93,7 @@ class ContrareciboPDF extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->CellFitScale(19.5, .5, 'Observaciones:', 0, 0, 'L');
         $this->Ln(.5);
-        $this->MultiCell(19.5, .5, $this->factura->contra_recibo->observaciones . ' ', 1, 'J',  0);
+        $this->MultiCell(19.5, .5, utf8_decode($this->factura->contra_recibo->observaciones) . ' ', 1, 'J',  0);
         $this->Ln(.5);
         $this->SetFont('Arial', 'B', 15);
         $this->CellFitScale(19.5, .5, utf8_decode('Los presente factura se toma a revisión SIN originar obligación alguna para pago'), 0, 0, 'L');
@@ -97,11 +103,14 @@ class ContrareciboPDF extends Rotation
         $this->SetY(-3.8);
         $this->Cell(12.5);
         $this->SetTextColor('0,0,0');
-        $this->SetFont('Arial', '', 10);
-        $this->CellFitScale(7, .5, ('Recibi '), 1, 0, 'C');
+        $this->SetFont('Arial', '', 8);
+        $this->CellFitScale(7, .5, utf8_decode('Recibí'), 1, 0, 'C');
         $this->Ln(.5);
         $this->Cell(12.5);
-        $this->CellFitScale(7, 2, ' ', 1, 0, 'R');
+        $this->CellFitScale(7, 1.5,'', 1, 1, 'R');
+        $this->Cell(12.5);
+        $this->SetFont('Arial', '', 8);
+        $this->CellFitScale(7,.5,$this->factura->usuario ? utf8_decode($this->factura->usuario->nombre_completo) : '',1,1,"C");
     }
 
     function Footer(){
@@ -133,13 +142,6 @@ class ContrareciboPDF extends Rotation
     }
 
     function create() {
-        $this->SetMargins(1, 0.5, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->SetAutoPageBreak(true,3.75);
-        $this->factura();
-
-
         try {
             $this->Output('I', 'Formato - Contrarecibo.pdf', 1);
         } catch (\Exception $ex) {

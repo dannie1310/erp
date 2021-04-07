@@ -20,12 +20,32 @@ class CFDSATTraslados extends Model
         "tipo_factor",
         "tasa_o_cuota",
         "importe",
-        "impuesto"
+        "impuesto",
+        "base"
     ];
 
     public function cfd_sat()
     {
         return $this->belongsTo(CFDSAT::class, 'id_cfd_sat', 'id');
+    }
+
+    public function getImporteFormatAttribute()
+    {
+        return "$".number_format($this->importe,2);
+    }
+
+    public function getBaseFormatAttribute()
+    {
+        return "$".number_format($this->base,2);
+    }
+
+    public function getImpuestoTxtAttribute()
+    {
+        if($this->impuesto == "002")
+        {
+            return "IVA";
+        }
+        return $this->impuesto;
     }
 
 }

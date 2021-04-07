@@ -45,6 +45,7 @@ import unidad from './modules/cadeco/unidad'
 
 //CATALOGOS
 import unificacionProveedores from './modules/catalogos/unificacion-proveedores';
+import proyecto from './modules/catalogos/proyecto';
 
 
 //COMPRAS
@@ -106,6 +107,14 @@ import fondoGarantia from './modules/contratos/fondo-garantia';
 import presupuesto from './modules/contratos/presupuesto';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
+
+//ENTREGA CFDI
+
+import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
+
+//RECEPCIÓN CFDI
+
+import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
 
 
 //FINANZAS
@@ -226,6 +235,7 @@ export default new Vuex.Store({
         'documentacion/archivo' : archivo,
 
         'catalogos/unificacion-proveedores' : unificacionProveedores,
+        'catalogos/proyecto' : proyecto,
 
         'compras/asignacion' : asignacion,
         'compras/cotizacion' : cotizacion,
@@ -335,6 +345,8 @@ export default new Vuex.Store({
         'fiscal/efos' : efos,
         'fiscal/no-deducido' : noDeducido,
 
+        'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
+
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,
         'padronProveedores/ctg-area' : ctgArea,
@@ -342,6 +354,8 @@ export default new Vuex.Store({
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
+
+        'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

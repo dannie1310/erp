@@ -2,6 +2,10 @@
     <span>
         <div class="btn-group">
             <FacturaShow v-if="value.show" v-bind:id="value.id" />
+            <!-- <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" class="btn btn-sm btn-outline-dark" title="Revisar">
+                <i class="fa fa-tasks"></i>
+            </router-link> -->
+            <button @click="modalRevision" v-if="value.revisar || value.revisar_varios"  type="button" class="btn btn-sm btn-outline-secondary" title="Revisar"><i class="fa fa-tasks"></i></button>
             <Edit v-if="value.edit" v-bind:id="value.id" />
             <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
             <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
@@ -12,6 +16,33 @@
                 <i class="fa fa-folder-open"></i>
             </router-link>
         </div>
+         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-factura"> <i class="fa fa-tasks"></i> Revisión de Factura</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <span class="pull-right">
+                                    <router-link  :to="{ name: 'factura-revisar', params: {id: value.id}}"  type="button" data-dismiss="modal" class="btn btn-sm btn-secondary" title="Revisar Factura" v-if="value.revisar">
+                                         Revisar Factura
+                                    </router-link>
+                                    <router-link  :to="{ name: 'factura-varios-revisar', params: {id: value.id}}" type="button" data-dismiss="modal" class="btn btn-sm btn-secondary" title="Generar Factura de Varios" v-if="value.revisar_varios">
+                                        Generar Factura de Varios
+                                    </router-link>
+                                </span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+         </div>
     </span>
 </template>
 
@@ -27,6 +58,18 @@
         name: "action-buttons",
         components: {Revertir, PDF,  Eliminar, Relaciones, CFDI, FacturaShow, Edit},
         props: ['value'],
+        methods: {
+           modalRevision(){
+               if(this.value.revisar_varios || this.value.revisar){
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show')
+               }
+
+           },
+           cerrar(){
+               $(this.$refs.modal).modal('hide')
+           }
+        },
     }
 </script>
 
