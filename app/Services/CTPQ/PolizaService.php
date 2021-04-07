@@ -61,7 +61,7 @@ class PolizaService
 
     public function update(array $data, $id)
     {
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
         $data["empresa"] = $empresa->AliasBDD;
         DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
