@@ -61,7 +61,7 @@ class PolizaService
 
     public function update(array $data, $id)
     {
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
         $data["empresa"] = $empresa->AliasBDD;
         DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database',$empresa->AliasBDD);
@@ -126,14 +126,14 @@ class PolizaService
 
     public function pdf($data, $id)
     {
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
         $pdf = new PolizaFormatoT1A($this->show($data->all(), $id), $empresa);
         return $pdf->create();
     }
 
     public function pdfCaidaB($data, $id)
     {
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
         $pdf = new PolizaFormatoT1B($this->show($data, $id), $empresa);
         return $pdf->create();
     }
@@ -143,7 +143,7 @@ class PolizaService
         ini_set('memory_limit', -1) ;
         ini_set('max_execution_time', '7200') ;
 
-        $empresa = Empresa::find($data["id_empresa"]);
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
         DB::purge('cntpq');
         \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
         foreach($this->busqueda($data)->all() as $i => $poliza){
@@ -168,7 +168,7 @@ class PolizaService
 
     private function busqueda($data){
         try {
-            $empresa = Empresa::find($data["id_empresa"]);
+            $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
             $poliza = $this->repository;
@@ -221,7 +221,7 @@ class PolizaService
             ini_set('memory_limit', -1) ;
             ini_set('max_execution_time', '7200') ;
 
-            $empresa = Empresa::find($data["id_empresa"]);
+            $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
             DB::purge('cntpq');
             \Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
             $file = $this->getFileXLS($data['name'], $data['file']);
