@@ -40,6 +40,7 @@ export default {
 
         INSERT_ARCHIVO(state, data){
             state.archivos.splice(0, 0, data);
+            //state.archivos.splice(data.index, 0, {info:true, especificacion:data.text, id_area:data.id_area});
         },
         DELETE_ARCHIVO(state, id){
             state.archivos = state.archivos.filter(archivo => {
@@ -78,7 +79,7 @@ export default {
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit("UPDATE_ARCHIVO", data);
+                                            //context.commit("INSERT_ARCHIVO", data);
                                             resolve(data);
                                         })
                                 })
@@ -93,7 +94,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Cargar archivo.",
+                    text: "Cargar archivo",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -109,22 +110,22 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI + 'cargarArchivo', payload.data,{ params: payload.params } )
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Archivo cargado correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
+                            .post(URI + 'cargarArchivo', payload.data,{ params: payload.params } )
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Archivo cargado correctamente.", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        //context.commit("UPDATE_ARCHIVO", data);
+                                        resolve(data);
                                     })
-                                        .then(() => {
-                                            context.commit("INSERT_ARCHIVO", data);
-                                            resolve(data);
-                                        })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
                         }
                     });
             });
@@ -158,7 +159,7 @@ export default {
                                         buttons: false
                                     })
                                         .then(() => {
-                                            context.commit("UPDATE_ARCHIVO", data);
+                                            //context.commit("UPDATE_ARCHIVO", data);
                                             resolve(data);
                                         })
                                 })

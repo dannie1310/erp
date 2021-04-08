@@ -207,7 +207,8 @@ export default {
                     params: { _method: 'POST'}
                 }
             }).then((data) => {
-
+                this.$store.commit('entrega-cfdi/archivo/INSERT_ARCHIVO', data);
+                $(this.$refs.modal).modal('hide');
             }).finally(()=> {
                 $(this.$refs.modal).modal('hide');
             })

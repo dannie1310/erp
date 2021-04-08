@@ -126,7 +126,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(archivo, i) in cfdi.archivos.data" >
+                                            <tr v-for="(archivo, i) in archivos" >
                                                 <td>{{i+1}}</td>
                                                 <td>
                                                     <small class="label bg-success" v-if="archivo.estatus && archivo.obligatorio == 1" style="padding: 3px 2px 3px 5px">
@@ -242,6 +242,7 @@
                         params:{include: ['archivos', 'tipo_transaccion']}
                     }).then(data => {
                         this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data);
+                        this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', data.archivos.data);
                     }).finally(()=>{
                         //this.getArchivos();
                         this.cargado = true;
@@ -256,7 +257,7 @@
                     id_cfdi: this.id_cfdi,
                     params: {include: [], sort: 'id', order: 'desc'}
                 }).then(data => {
-                    //this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', data);
+                    this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', data);
                     this.cargando = false;
                 }).finally(()=>{
                     this.cargado = true;
@@ -327,9 +328,9 @@
             cfdi(){
                 return this.$store.getters['fiscal/cfd-sat/currentCFDSAT'];
             },
-            /*archivos(){
+            archivos(){
                 return this.$store.getters['entrega-cfdi/archivo/archivos'];
-            }*/
+            }
         },
     }
 </script>

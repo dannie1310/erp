@@ -5,7 +5,7 @@
             <i class="fa fa-upload" v-else></i>
         </button>
 
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
+        <div class="modal fade" ref="modal_upload" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -151,7 +151,7 @@ export default {
                     }
                     this.names = [];
                     this.files = [];
-                    $(this.$refs.modal).modal('hide');
+                    $(this.$refs.modal_upload).modal('hide');
                 })
             }
 
@@ -162,8 +162,8 @@ export default {
             }
             this.names = [];
             this.files = [];
-            $(this.$refs.modal).appendTo('body')
-            $(this.$refs.modal).modal('show');
+            $(this.$refs.modal_upload).appendTo('body')
+            $(this.$refs.modal_upload).modal('show');
         },
         validarExtensiones(){
             return ['pdf'/*, 'jpg', 'jpeg', 'png'*/];
@@ -183,10 +183,11 @@ export default {
                     params: { _method: 'POST'}
                 }
             }).then((data) => {
-
-            }).finally(()=> {
-                $(this.$refs.modal).modal('hide');
-            })
+                this.$store.commit('entrega-cfdi/archivo/UPDATE_ARCHIVO', data);
+                $(this.$refs.modal_upload).modal('hide');
+            }).finally(() => {
+                $(this.$refs.modal_upload).modal('hide');
+            });
         },
         validate() {
             this.$validator.validate().then(result => {
