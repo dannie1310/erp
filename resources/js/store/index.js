@@ -112,6 +112,7 @@ import subcontrato from './modules/contratos/subcontrato';
 import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
 import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
 import archivoCFDI from './modules/entregaCFDI/archivo';
+import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
 
 //RECEPCIÓN CFDI
 
@@ -349,6 +350,7 @@ export default new Vuex.Store({
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,
         'entrega-cfdi/archivo' : archivoCFDI,
+        'entrega-cfdi/tipo-transaccion' : tipoTransaccion,
 
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,

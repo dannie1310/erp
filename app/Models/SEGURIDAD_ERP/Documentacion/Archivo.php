@@ -41,4 +41,9 @@ class Archivo extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
+    public function getEstatusAttribute()
+    {
+        return $this->hashfile?true:false;
+    }
+
 }

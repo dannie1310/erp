@@ -1,15 +1,15 @@
 <template>
     <span>
-        <button  @click="openModal" type="button" class="btn btn-sm btn-outline-primary pull-right" title="Cargar Archivo" >
+        <button  @click="openModal" type="button" class="btn btn-sm btn-outline-danger pull-right" title="Reemplazar Archivo" >
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-upload" v-else></i>
+            <i class="fa fa-retweet" v-else></i>
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> {{archivo.tipo_archivo.descripcion}}</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-retweet"></i> {{archivo.tipo_archivo.descripcion}}</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -60,8 +60,8 @@
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
                             <span v-else>
-                                <i class="fa fa-upload"></i>
-                            </span> Cargar
+                                <i class="fa fa-retweet"></i>
+                            </span> Reemplazar
                         </button>
                     </div>
                 </div>
@@ -74,7 +74,7 @@
 import {ModelListSelect} from "vue-search-select";
 
 export default {
-    name: "upload-proveedor",
+    name: "replace-proveedor",
     components: {ModelListSelect},
     props: ["archivo"],
     data(){
@@ -157,13 +157,30 @@ export default {
 
         },
         openModal(){
-            if(this.$refs.cargar_file !== undefined){
-                this.$refs.cargar_file.value = '';
-            }
-            this.names = [];
-            this.files = [];
-            $(this.$refs.modal).appendTo('body')
-            $(this.$refs.modal).modal('show');
+            swal("Se Perderá el Archivo Anterior", "¿Desea reemplazar el archivo cargado previamente?",{
+                icon: "warning",
+                buttons: {
+                    cancel: {
+                        text: 'Cancelar',
+                        visible: true
+                    },
+                    confirm: {
+                        text: 'Si, Reemplazar',
+                        closeModal: true,
+                    }
+                }
+            }) .then((value) => {
+                if (value) {
+                    if(this.$refs.cargar_file !== undefined){
+                        this.$refs.cargar_file.value = '';
+                    }
+                    this.names = [];
+                    this.files = [];
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show');
+                }
+            });
+
         },
         validarExtensiones(){
             return ['pdf'/*, 'jpg', 'jpeg', 'png'*/];
@@ -177,7 +194,7 @@ export default {
             this.uploadPDF(formData);
         },
         uploadPDF(data){
-            return this.$store.dispatch('entrega-cfdi/archivo/cargarArchivo', {
+            return this.$store.dispatch('entrega-cfdi/archivo/reemplazarArchivo', {
                 data: data,
                 config: {
                     params: { _method: 'POST'}

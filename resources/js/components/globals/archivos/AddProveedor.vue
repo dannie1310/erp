@@ -1,20 +1,43 @@
 <template>
     <span>
-        <button  @click="openModal" type="button" class="btn btn-sm btn-outline-primary pull-right" title="Cargar Archivo" >
+        <button  @click="openModal" type="button" class="btn btn-success pull-right" title="Agregar Archivo" >
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-upload" v-else></i>
+            <i class="fa fa-plus" v-else></i>
+            Agregar Archivo
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> {{archivo.tipo_archivo.descripcion}}</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i> AGREGAR ARCHIVO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
+                        <div class="row justify-content-between">
+                            <div class="col-md-12">
+                                <div class="form-group error-content">
+                                    <label class="col-form-label">Tipo de Archivo:</label>
+                                    <model-list-select v-if="tipos_archivo"
+                                        name="tipo"
+                                        id="tipo"
+                                        placeholder="Seleccionar o buscar"
+                                        data-vv-as="Tipo de Archivo"
+                                        v-validate="{required: true}"
+                                        v-model="id_tipo_archivo"
+                                        option-value="id"
+                                        option-text="descripcion"
+                                        :list="tipos_archivo"
+                                        :isError="errors.has('tipo')"
+                                    ></model-list-select>
+                                    <input v-else class="form-control" value="Cargando..." readonly="readonly"/>
+
+                                    <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row justify-content-between">
                             <div class="col-md-12">
                                 <div class="form-group error-content">
@@ -60,8 +83,8 @@
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
                             <span v-else>
-                                <i class="fa fa-upload"></i>
-                            </span> Cargar
+                                <i class="fa fa-plus"></i>
+                            </span> Agregar
                         </button>
                     </div>
                 </div>
@@ -74,9 +97,9 @@
 import {ModelListSelect} from "vue-search-select";
 
 export default {
-    name: "upload-proveedor",
+    name: "add-proveedor",
     components: {ModelListSelect},
-    props: ["archivo"],
+    props: ["id_cfdi"],
     data(){
         return{
             id:'',
@@ -84,7 +107,7 @@ export default {
             tipo:'',
             documentos:[],
             observaciones:'',
-
+            archivo:'',
             imagenes:[],
             file:'',
             file_name:'',
@@ -95,7 +118,6 @@ export default {
             id_tipo_archivo:null
         }
     },
-
     mounted() {
         this.getTiposArchivo();
     },
@@ -170,14 +192,16 @@ export default {
         },
         upload(){
             var formData = new FormData();
-            formData.append('id_archivo',  this.archivo.id);
+            formData.append('id_cfdi',  this.id_cfdi);
+            formData.append('id_tipo_archivo',  this.id_tipo_archivo);
+            formData.append('id_archivo',  null);
             formData.append('observaciones',  this.observaciones);
             formData.append('archivos',  JSON.stringify(this.files));
             formData.append('archivos_nombres',  JSON.stringify(this.names));
             this.uploadPDF(formData);
         },
         uploadPDF(data){
-            return this.$store.dispatch('entrega-cfdi/archivo/cargarArchivo', {
+            return this.$store.dispatch('entrega-cfdi/archivo/agregarArchivo', {
                 data: data,
                 config: {
                     params: { _method: 'POST'}

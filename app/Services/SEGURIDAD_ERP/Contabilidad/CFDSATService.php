@@ -1025,8 +1025,10 @@ class CFDSATService
         $exp = explode("base64,", $data["xml"]);
         $contenido_xml = base64_decode($exp[1]);
         $arreglo_cfd["contenido_xml"] = $contenido_xml;
+        $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
         $cfd->validaCFDI33($contenido_xml);
         $cfdi = $this->registraCFDI($arreglo_cfd);
+        $cfdi->generaDocumentos();
         return $cfdi;
     }
 
@@ -1055,6 +1057,11 @@ class CFDSATService
                     if($cfdi->solicitudRecepcion->estado>=0){
                         abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
                     }
+                }
+                if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
+                {
+                    $cfdi->id_tipo_transaccion = $arreglo_factura["id_tipo_transaccion"];
+                    $cfdi->save();
                 }
             }
             return $cfdi;

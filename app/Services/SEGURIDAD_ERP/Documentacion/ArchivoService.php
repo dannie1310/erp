@@ -30,13 +30,35 @@ class ArchivoService
         $this->repository = new Repository($model);
     }
 
-    public function cargarArchivo($data){
-        return $this->cargarArchivosPDF($data);
+    public function agregarArchivo($data){
+        $archivos_nombres = \json_decode($data['archivos_nombres']);
+        $archivos_pdf = \json_decode($data['archivos']);
+        $paths = $this->generaDirectorioTemporal();
+
+        //1.-SE GUARDAN ARCHIVOS EN DIRECTORIOS TEMPORALES
+        foreach($archivos_pdf as $key => $archivo_pdf){
+            $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
+            if(strtolower ( $nombre_explode[count($nombre_explode)-1]) != 'pdf'){
+                abort(403, 'No se puede procesar el archivo '. $archivos_nombres[$key]->nombre . '  porque no es un documento PDF.');
+            }
+            $exp = explode("base64,", $archivo_pdf->archivo);
+            $decode = base64_decode($exp[1]);
+            $path = public_path($paths["dir_tempo"]);
+            file_put_contents($path . $archivos_nombres[$key]->nombre,$decode);
+        }
+        //2.-SE OBTIENE UN ARREGLO CON LOS NOMBRES DE ARCHIVOS DEL DIRECTORIO TEMPORAL OMITIENDO LOS ARCHIVOS . .. Y __MACOSX
+        $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
+        //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
+        sort($files, SORT_NUMERIC);
+        //4.-SE GUARDA EL ÚNICO ARCHIVO QUE SE ENVÍA
+        $archivo = $this->guardarArchivo($data,$paths["dir_tempo"], $files[0]);
+        //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
+        Files::eliminaDirectorio($paths["dir_tempo"]);
+
+        return $archivo;
     }
 
-
-
-    public function cargarArchivosPDF($data){
+    public function cargarArchivo($data){
 
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_pdf = \json_decode($data['archivos']);
@@ -48,51 +70,140 @@ class ArchivoService
             if(strtolower ( $nombre_explode[count($nombre_explode)-1]) != 'pdf'){
                 abort(403, 'No se puede procesar el archivo '. $archivos_nombres[$key]->nombre . '  porque no es un documento PDF.');
             }
-            $hashfile = hash_file('sha1', $archivo_pdf->archivo);
-            $this->validaRepetido($hashfile,$data["id_cfdi"],$archivos_nombres[$key]->nombre);
             $exp = explode("base64,", $archivo_pdf->archivo);
             $decode = base64_decode($exp[1]);
             $path = public_path($paths["dir_tempo"]);
             file_put_contents($path . $archivos_nombres[$key]->nombre,$decode);
         }
-
+        //2.-SE OBTIENE UN ARREGLO CON LOS NOMBRES DE ARCHIVOS DEL DIRECTORIO TEMPORAL OMITIENDO LOS ARCHIVOS . .. Y __MACOSX
         $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
+        //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
         sort($files, SORT_NUMERIC);
-
-        $archivo = $this->guardarArchivo($data,$paths["dir_tempo"], $files[0]);
+        //4.-SE GUARDA EL ÚNICO ARCHIVO QUE SE ENVÍA
+        $archivo = $this->actualizarArchivo($data,$paths["dir_tempo"], $files[0]);
+        //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
         Files::eliminaDirectorio($paths["dir_tempo"]);
+
         return $archivo;
     }
 
+    public function reemplazarArchivo($data){
+        $archivos_nombres = \json_decode($data['archivos_nombres']);
+        $archivos_pdf = \json_decode($data['archivos']);
+        $paths = $this->generaDirectorioTemporal();
 
+        //1.-SE GUARDAN ARCHIVOS EN DIRECTORIOS TEMPORALES
+        foreach($archivos_pdf as $key => $archivo_pdf){
+            $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
+            if(strtolower ( $nombre_explode[count($nombre_explode)-1]) != 'pdf'){
+                abort(403, 'No se puede procesar el archivo '. $archivos_nombres[$key]->nombre . '  porque no es un documento PDF.');
+            }
+            $exp = explode("base64,", $archivo_pdf->archivo);
+            $decode = base64_decode($exp[1]);
+            $path = public_path($paths["dir_tempo"]);
+            file_put_contents($path . $archivos_nombres[$key]->nombre,$decode);
+        }
+        //2.-SE OBTIENE UN ARREGLO CON LOS NOMBRES DE ARCHIVOS DEL DIRECTORIO TEMPORAL OMITIENDO LOS ARCHIVOS . .. Y __MACOSX
+        $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
+        //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
+        sort($files, SORT_NUMERIC);
+        //4.-SE GUARDA EL ÚNICO ARCHIVO QUE SE ENVÍA
+        $archivo = $this->actualizarArchivo($data,$paths["dir_tempo"], $files[0]);
+        //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
+        Files::eliminaDirectorio($paths["dir_tempo"]);
 
-    private function guardarArchivo( $data, $path, $archivo)
+        return $archivo;
+    }
+
+    public function eliminarArchivo($data)
     {
-        $hashfile = hash_file('sha1', $path.$archivo);
-        $this->validaRepetido($hashfile, $data["id_cfdi"], $data["observaciones"]);
-        $nombre_archivo = explode('.', $archivo);
+        $archivo = $this->repository->show($data["id"]);
+
+        $data_actualizacion["id_archivo"] = $data["id"];
+        $data_actualizacion["observaciones"] = null;
+        $data_actualizacion["hashfile"] = null;
+        $data_actualizacion["nombre"] = null;
+        $data_actualizacion["extension"] = null;
+
+        $archivo->update($data_actualizacion);
+        return $archivo;
+    }
+
+    private function guardarArchivo( $data, $path, $nombre_archivo)
+    {
+        $hashfile = hash_file('sha1', $path.$nombre_archivo);
+        $this->validaTipoRepetido($data["id_tipo_archivo"], $data["id_cfdi"]);
+        $this->validaRepetido($hashfile, $data["id_cfdi"], $nombre_archivo);
+
+        $nombre_archivo_exp = explode('.', $nombre_archivo);
+
+        $tipos_obligatorios = $this->repository->getTiposObligatorios($data["id_cfdi"]);
+        $data_registro["obligatorio"] = (in_array($data["id_tipo_archivo"], $tipos_obligatorios))?1:0;
 
         $data_registro["id_cfdi"] = $data["id_cfdi"];
         $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
         $data_registro["observaciones"] = $data["observaciones"];
         $data_registro["hashfile"] = $hashfile;
-        $data_registro["nombre"] = $archivo;
-        $data_registro["extension"] = $nombre_archivo[count($nombre_archivo)-1];
+        $data_registro["nombre"] = $nombre_archivo;
+        $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
 
-        $file = fopen($path.$archivo, 'r');
-        Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo[count($nombre_archivo)-1], $file );
-        return $this->repository->registrarArchivo($data_registro);
+        $file = fopen($path.$nombre_archivo, 'r');
+        Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1], $file );
+        return $this->repository->create($data_registro);
     }
 
-    private function validaRepetido($hashfile,$id_cfdi,$archivo)
+    private function actualizarArchivo($data, $path, $nombre_archivo)
+    {
+        $hashfile = hash_file('sha1', $path.$nombre_archivo);
+        $this->validaRepetido($hashfile, null,$nombre_archivo, $data["id_archivo"]);
+        $nombre_archivo_exp = explode('.', $nombre_archivo);
+
+        $data_actualizacion["id_archivo"] = $data["id_archivo"];
+        $data_actualizacion["observaciones"] = $data["observaciones"];
+        $data_actualizacion["hashfile"] = $hashfile;
+        $data_actualizacion["nombre"] = $nombre_archivo;
+        $data_actualizacion["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
+
+        $file = fopen($path.$nombre_archivo, 'r');
+        Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1], $file );
+        $archivo = $this->repository->show($data_actualizacion["id_archivo"]);
+        $archivo->update($data_actualizacion);
+        return $archivo;
+    }
+
+    private function validaTipoRepetido($id_tipo_archivo, $id_cfdi)
+    {
+        $tipos_cargados = $this->repository->getTiposCargados($id_cfdi);
+        if(in_array($id_tipo_archivo, $tipos_cargados))
+        {
+            $tipo_archivo = $this->repository->getTipoArchivo($id_tipo_archivo);
+            abort(403, 'El tipo de archivo: "'. $tipo_archivo.'" ha sido relacionado previamente a este CFDI');
+        }
+    }
+
+    private function validaRepetido($hashfile, $id_cfdi, $archivo, $id_archivo = null)
     {
         $repetido = $this->repository->getRepetido($hashfile);
-        if($repetido)
+        if($id_cfdi){
+            if($repetido)
+            {
+                if($repetido->id_cfdi == $id_cfdi){
+                    abort(403, 'El archivo '. $archivo.' ha sido relacionado previamente a este CFDI');
+                } else {
+                    abort(403, 'El archivo '. $archivo.' ha sido relacionado previamente al CFDI con serie y folio: '.$repetido->cfdi->referencia);
+                }
+            }
+        } else if($id_archivo)
         {
-            if($repetido->id_cfdi == $id_cfdi){
-                abort(403, 'El archivo '. $archivo.' ha sido relacionado previamente a este CFDI');
-            } else {
-                abort(403, 'El archivo '. $archivo.' ha sido relacionado previamente al CFDI con serie y folio: '.$repetido->cfdi->referencia);
+
+            $objArchivo = $this->repository->show($id_archivo);
+            if($repetido)
+            {
+                if($repetido->id_cfdi == $objArchivo->cfdi->id){
+                    abort(403, 'El archivo '. $archivo.' ha sido relacionado previamente a este CFDI');
+                } else {
+                    abort(403, 'El archivo '. $archivo.' ha sido relacionado previamente al CFDI con serie y folio: '.$repetido->cfdi->referencia);
+                }
             }
         }
     }

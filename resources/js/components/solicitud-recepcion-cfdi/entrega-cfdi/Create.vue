@@ -101,12 +101,12 @@
                 </div>
                 <div class="card" v-if="cargado">
                     <div class="card-header">
-                        <h5>Soporte Documental</h5>
+                        <h5>Soporte documental para {{cfdi.tipo_transaccion.descripcion}}</h5>
                     </div>
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <upload-proveedor v-bind:id_cfdi="id_cfdi"></upload-proveedor>
+                                <add-proveedor v-bind:id_cfdi="id_cfdi"></add-proveedor>
                             </div>
                         </div>
                         <br>
@@ -117,20 +117,34 @@
                                         <thead>
                                             <tr>
                                                 <th class="index_corto">#</th>
-                                                <th >Tipo de Archivo</th>
-                                                <th >Nombre de Archivo</th>
+                                                <th class="index_corto"></th>
+                                                <th class="th_c350">Tipo de Archivo</th>
+
+                                                <th class="th_c350">Nombre de Archivo</th>
                                                 <th >Observaciones</th>
                                                 <th class="th_c100">Acciones</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(archivo, i) in archivos" >
+                                            <tr v-for="(archivo, i) in cfdi.archivos.data" >
                                                 <td>{{i+1}}</td>
+                                                <td>
+                                                    <small class="label bg-success" v-if="archivo.estatus && archivo.obligatorio == 1" style="padding: 3px 2px 3px 5px">
+                                                        <i class="fa fa-check"></i>
+                                                    </small>
+                                                    <small class="label bg-danger" v-else-if="archivo.obligatorio == 1" style="padding: 2px 2px 2px 5px">
+                                                        <i class="fa fa-times"></i>
+                                                    </small>
+                                                </td>
                                                 <td>{{archivo.tipo_archivo.descripcion}}</td>
+
                                                 <td>{{archivo.nombre}}</td>
                                                 <td>{{archivo.observaciones}}</td>
                                                 <td>
                                                     <div class="btn-group">
+                                                        <replace-proveedor v-if="archivo.nombre" v-bind:archivo="archivo"></replace-proveedor>
+                                                        <upload-proveedor v-else v-bind:archivo="archivo"></upload-proveedor>
+
                                                         <Documento v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.nombre && archivo.extension == 'pdf'"></Documento>
                                                         <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
                                                             <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
@@ -143,6 +157,10 @@
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="archivo.nombre" :disabled="eliminando">
                                                             <i class="fa fa-spin fa-spinner" v-if="eliminando"></i>
                                                             <i class="fa fa-trash" v-else></i>
+                                                        </button>
+                                                        <button @click="eliminarTipo(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-else-if="archivo.obligatorio == 0" :disabled="eliminando">
+                                                            <i class="fa fa-spin fa-spinner" v-if="eliminando"></i>
+                                                            <i class="fa fa-minus" v-else></i>
                                                         </button>
                                                     </div>
                                                 </td>
@@ -182,20 +200,19 @@
             </div>
         </div>
     </span>
-
-
-
 </template>
 
 <script>
 
     import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
     import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
+    import AddProveedor from "../../globals/archivos/AddProveedor";
     import UploadProveedor from "../../globals/archivos/UploadProveedor";
+    import ReplaceProveedor from "../../globals/archivos/ReplaceProveedor";
     import Documento from "../../globals/archivos/Documento";
     export default {
         name: "solicitud-recepcion-cfdi-create",
-        components: {UploadProveedor, CFDI, CfdiShow, Documento},
+        components: {AddProveedor, CFDI, CfdiShow, Documento, UploadProveedor, ReplaceProveedor},
         props: ["id_cfdi"],
         data() {
             return {
@@ -222,11 +239,12 @@
                     this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', null);
                     return this.$store.dispatch('fiscal/cfd-sat/find', {
                         id: this.id_cfdi,
-                        params:{}
+                        params:{include: ['archivos', 'tipo_transaccion']}
                     }).then(data => {
                         this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data);
                     }).finally(()=>{
-                        this.getArchivos();
+                        //this.getArchivos();
+                        this.cargado = true;
                     });
                 } else {
                     this.cargado = true;
@@ -286,6 +304,16 @@
             eliminar(archivo){
                 this.eliminando = true;
                 return this.$store.dispatch('entrega-cfdi/archivo/eliminar', {
+                    params: {id: archivo.id}
+                }).then(data => {
+                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
+                }).finally( ()=>{
+                    this.eliminando = false;
+                })
+            },
+            eliminarTipo(archivo){
+                this.eliminando = true;
+                return this.$store.dispatch('entrega-cfdi/archivo/eliminarTipo', {
                     id: archivo.id,
                     params: {}
                 }).then(data => {
@@ -299,9 +327,9 @@
             cfdi(){
                 return this.$store.getters['fiscal/cfd-sat/currentCFDSAT'];
             },
-            archivos(){
+            /*archivos(){
                 return this.$store.getters['entrega-cfdi/archivo/archivos'];
-            }
+            }*/
         },
     }
 </script>

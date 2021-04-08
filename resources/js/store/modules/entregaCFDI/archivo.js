@@ -49,6 +49,46 @@ export default {
     },
 
     actions: {
+        agregarArchivo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Agregar archivo.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'agregarArchivo', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo agregado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit("UPDATE_ARCHIVO", data);
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         cargarArchivo(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -89,6 +129,47 @@ export default {
                     });
             });
         },
+        reemplazarArchivo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Reemplazar archivo.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Reemplazar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'reemplazarArchivo', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo reemplazado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit("UPDATE_ARCHIVO", data);
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+
         cargarArchivoZIP(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -164,10 +245,53 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .delete(URI + payload.id, {params: payload.params})
+                                .post(URI + 'eliminarArchivo', payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Archivo eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit("UPDATE_ARCHIVO", data);
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
+        eliminarTipo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Tipo de Archivo",
+                    text: "¿Está seguro que desea eliminar el tipo de archivo?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Tipo de archivo eliminado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
