@@ -52,7 +52,7 @@
             <button type="button" class="btn btn-secondary" >
                 <i class="fa fa-angle-left"></i>Regresar
             </button>
-            <button type="button" class="btn btn-primary" @click="validate()" :disabled="errors.count() > 0"  >
+            <button type="button" class="btn btn-primary" @click="validate()" :disabled="errors.count() > 0 || !cargado"  >
                 Continuar <i class="fa fa-angle-right"></i>
             </button>
         </div>
@@ -194,8 +194,6 @@
                     this.$refs.archivo.value = '';
                     this.dato.archivo = null;
                 }
-
-
 
             },
             validate() {

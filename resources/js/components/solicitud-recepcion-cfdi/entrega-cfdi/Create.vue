@@ -239,7 +239,7 @@
                     this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', null);
                     return this.$store.dispatch('fiscal/cfd-sat/find', {
                         id: this.id_cfdi,
-                        params:{include: ['archivos', 'tipo_transaccion']}
+                        params:{include: ['archivos']}
                     }).then(data => {
                         this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data);
                         this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', data.archivos.data);
@@ -248,6 +248,7 @@
                         this.cargado = true;
                     });
                 } else {
+                    this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', this.cfdi.archivos.data);
                     this.cargado = true;
                 }
             },
