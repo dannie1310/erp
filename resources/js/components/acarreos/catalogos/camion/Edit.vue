@@ -122,12 +122,6 @@
                                            class="form-control"
                                            v-model="camion.modelo" />
                                 </div>
-                                <label class="col-md-1 col-form-label">Imagenes:</label>
-                                <div class="col-md-1">
-                                    <button @click="getImagenes()" class="btn btn-primary pull-center" :disabled="tieneImagen">
-                                        <i class="fa fa-file-image-o"></i> Ver Imagenes
-                                    </button>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -139,17 +133,29 @@
                 </div>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <vue-dropzone ref="myVueDropzone"
+                        <div class="col-md-12">
+                             <div class="form-group row">
+                                 <label class="col-md-1 col-form-label">Frente:</label>
+                                 <div class="col-md-5">
+                                    <!-- <vue-dropzone ref="myVueDropzone"
                                           id = "dropzone_1"
-                                          name = "imagen_frente"
-                                          v-model="imagen_frente"
-                                          :options="dropzoneOptions" />
-                        </div>
-                         <div class="col-md-6">
-                            <vue-dropzone ref="myVueDropzone"
-                                          id = "dropzone_2"
-                                          :options="dropzoneOptions" />
+                                          :options="dropzoneOptions"
+                                           />
+                                           -->
+                                 </div>
+                                 <label class="col-md-2 col-form-label">Derecha:</label>
+                                <div class="col-md-4">
+                                    <vue-dropzone ref="imagen_frente"
+                                                  id = "imagen_frente"
+                                                  v-model="imagen_frente"
+                                                  :options="dropzoneOptions"
+                                       v-on:vdropzone-sending="sendingEvent"
+                                                  v-validate="{required:true}"
+                                                  :class="{'is-invalid': errors.has('imagen_frente')}"
+                                    />
+                                     <div class="invalid-feedback" v-show="errors.has('imagen_frente')">{{ errors.first('imagen_frente') }} <span>ERROR</span></div>
+                                </div>
+                             </div>
                         </div>
                     </div>
                 </div>
@@ -243,15 +249,11 @@
                     </div>
                 </div>
                  <div class="modal-footer">
+                      <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
+                          <i class="fa fa-save"></i> Guardar
+                      </button>
                      <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                  </div>
-            </div>
-            <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">
-                <div class="modal-dialog modal-xl modal-dialog-centered"  role="document" id="mdialTamanio">
-                    <div class="modal-content">
-                        <Imagen v-bind:imagenes="camion.imagenes.data" v-bind:id="camion.id"></Imagen>
-                    </div>
-                </div>
             </div>
         </div>
     </span>
@@ -267,13 +269,16 @@
         data() {
             return {
                 cargando : true,
-                tieneImagen : false,
                 imagen_frente : '',
                 dropzoneOptions: {
-                    url: 'acarreos/camion/find',
+                    url: 'prueba',
+                    chunking : false,
+                    uploadMultiple:false,
+                    autoProcessQueue:false,
                     thumbnailWidth: 200,
-                    addRemoveLinks: true,
-                    type: "image/png",
+                    paramName: "prueba",
+                    maxFiles : 1,
+                    aceptedFiles: "image/*",
                     dictDefaultMessage: "<i class='fa fa-cloud-upload'></i><b>Selecciona ó arrastra una imagen"
                 },
             }
@@ -292,17 +297,26 @@
                     params: {include: 'imagenes'}
                 }).then(data => {
                     this.$store.commit('acarreos/camion/SET_CAMION', data);
-                    if(data.imagenes.data.length == 0)
-                    {
-                        this.tieneImagen = true
-                    }
                 }).finally(() => {
                     this.cargando = false;
                 })
             },
-            getImagenes() {
-                $(this.$refs.modalImagen).appendTo('body');
-                $(this.$refs.modalImagen).modal('show');
+            sendingEvent (file, xhr, formData) {
+                console.log("BUSCARS", file)
+                formData.delete();
+                console.log("A", formData)
+                formData.append('paramName', 'some value or other');
+            },
+            validate() {
+                this.$refs.imagen_frente.processQueue()
+                console.log(this.imagen_frente)
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        console.log(this.$refs)
+                        this.$refs.prueba.processQueue()
+                       console.log(this.imagen_frente)
+                    }
+                });
             },
         },
         computed: {
