@@ -171,7 +171,6 @@
                     })
                     .then(data => {
                         var count = Object.keys(data).length;
-
                         if(count > 0 ){
 
                             this.dato = data;
@@ -186,7 +185,11 @@
                             this.cleanData();
                             swal('Cargar XML', 'Archivo sin datos válidos', 'warning')
                         }
-                    }).finally(() => {
+                    }).catch(() => {
+                        this.$refs.archivo.value = '';
+                        this.dato.archivo = null;
+                    })
+                    .finally(() => {
                         this.cargando = false;
                     });
                 }else {

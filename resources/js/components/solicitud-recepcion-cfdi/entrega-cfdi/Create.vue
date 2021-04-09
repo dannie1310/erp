@@ -119,6 +119,7 @@
                                                 <th class="index_corto">#</th>
                                                 <th class="index_corto"></th>
                                                 <th class="th_c350">Tipo de Archivo</th>
+                                                <th class="th_c100">Obligatorio</th>
 
                                                 <th class="th_c350">Nombre de Archivo</th>
                                                 <th >Observaciones</th>
@@ -136,7 +137,9 @@
                                                         <i class="fa fa-times"></i>
                                                     </small>
                                                 </td>
+
                                                 <td>{{archivo.tipo_archivo.descripcion}}</td>
+                                                <td style="text-align: center"><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
 
                                                 <td>{{archivo.nombre}}</td>
                                                 <td>{{archivo.observaciones}}</td>
@@ -145,7 +148,7 @@
                                                         <replace-proveedor v-if="archivo.nombre" v-bind:archivo="archivo"></replace-proveedor>
                                                         <upload-proveedor v-else v-bind:archivo="archivo"></upload-proveedor>
 
-                                                        <Documento v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.nombre && archivo.extension == 'pdf'"></Documento>
+                                                        <Documento v-bind:descripcion="archivo.tipo_archivo.descripcion" v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.nombre && archivo.extension == 'pdf'"></Documento>
                                                         <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
                                                             <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
                                                                 <i class="fa fa-spin fa-spinner"></i>
@@ -176,7 +179,7 @@
                             <button type="button" class="btn btn-secondary" v-on:click="regresar" >
                                 <i class="fa fa-angle-left"></i>Regresar
                             </button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0 " >
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" >
                                 <i class="fa fa-save"></i> Registrar
                             </button>
                         </span>
@@ -226,6 +229,7 @@
                 observaciones:'',
                 proyecto:null,
                 id_cfdi_solicitar:'',
+                obligatorios_completos: false,
             }
         },
         mounted() {
@@ -287,7 +291,11 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        if(this.obligatorios_completos){
+                            this.store()
+                        } else {
+                            swal(  'Archivos Faltantes', 'No puede realizar el registro de la solicitud si hay archivos obligatorios pendientes de cargar', 'error');
+                        }
                     }
                 });
             },
@@ -333,6 +341,25 @@
                 return this.$store.getters['entrega-cfdi/archivo/archivos'];
             }
         },
+        watch:{
+            archivos:{
+                deep: true,
+                immediate : true,
+                handler(archivos) {
+                    let self = this
+                    let completos = true;
+                    archivos.forEach(function (archivo, i) {
+                        if(archivo.obligatorio && !archivo.estatus){
+                            self.obligatorios_completos = false;
+                            completos = false;
+                        }
+                    });
+                    if(completos){
+                        self.obligatorios_completos = true;
+                    }
+                },
+            }
+        }
     }
 </script>
 <style>
