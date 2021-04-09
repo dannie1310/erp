@@ -1025,9 +1025,37 @@ class CFDSATService
         $exp = explode("base64,", $data["xml"]);
         $contenido_xml = base64_decode($exp[1]);
         $arreglo_cfd["contenido_xml"] = $contenido_xml;
+
+        $this->validaTipoTransaccion($data["id_tipo_transaccion"], $arreglo_cfd["tipo_comprobante"]);
+
+        $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
         $cfd->validaCFDI33($contenido_xml);
+
         $cfdi = $this->registraCFDI($arreglo_cfd);
+
+
+
+
         return $cfdi;
+    }
+
+    private function validaDisponibilidad($cfdi)
+    {
+        if($cfdi->id_solicitud_recepcion>0){
+            if($cfdi->solicitudRecepcion->estado>=0){
+                abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $this->solicitudRecepcion->numero_folio);
+            }
+        }
+    }
+
+    private function validaTipoTransaccion($id_tipo_transaccion, $tipo_comprobante_actual)
+    {
+        $tipo_transaccion = $this->repository->getTipoTransaccion($id_tipo_transaccion);
+        $tipo_comprobante = $tipo_transaccion->tipo_comprobante;
+        $tipoComprobanteActual = $this->repository->getTipoComprobante($tipo_comprobante_actual);
+        if($tipo_comprobante != $tipo_comprobante_actual){
+            abort(500, "El tipo de transacción seleccionada: '".$tipo_transaccion->descripcion."' requiere un CFDI tipo: '".$tipo_transaccion->tipoComprobante->descripcion."', el CFDI seleccionado es de tipo: '".$tipoComprobanteActual->descripcion."'");
+        }
     }
 
     private function validaReceptor($arreglo_cfd)
@@ -1050,13 +1078,19 @@ class CFDSATService
                     Storage::disk('xml_sat')->put($arreglo_factura["uuid"].".xml", $contenido_archivo_xml);
                 }
             } else {
-                if($cfdi->id_solicitud_recepcion>0)
+                $this->validaDisponibilidad($cfdi);
+                if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
                 {
-                    if($cfdi->solicitudRecepcion->estado>=0){
-                        abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
-                    }
+                    $cfdi->id_tipo_transaccion = $arreglo_factura["id_tipo_transaccion"];
+                    $cfdi->save();
+                    $cfdi->eliminaDocumentos();
+                    $cfdi->actualizaObligatoriedadDocumentos();
                 }
             }
+
+            $cfdi->generaDocumentos();
+            $cfdi->load("archivos");
+
             return $cfdi;
         }
         return null;

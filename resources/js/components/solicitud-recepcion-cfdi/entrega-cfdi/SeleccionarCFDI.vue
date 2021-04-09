@@ -4,6 +4,31 @@
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-2">
+                        <label >Tipo de Transacción:</label>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group error-content" >
+                            <model-list-select
+                                v-if="tipos_transaccion"
+                                name="tipo"
+                                id="tipo"
+                                placeholder="Seleccionar o buscar"
+                                data-vv-as="Tipo de Transacción"
+                                v-validate="{required: true}"
+                                v-model="id_tipo_transaccion"
+                                option-value="id"
+                                option-text="descripcion"
+                                :list="tipos_transaccion"
+                                :isError="errors.has('tipo')"
+                            ></model-list-select>
+                            <input type="text" class="form-control" value="Cargando..." v-else disabled="disabled" />
+                            <div class="invalid-feedback" v-show="errors.has('tipo')">{{ errors.first('tipo') }}</div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row" >
+                    <div class="col-md-2">
                         <label for="archivo">Archivo del CFDI (XML):</label>
                     </div>
                     <div class="col-md-4">
@@ -27,7 +52,7 @@
             <button type="button" class="btn btn-secondary" >
                 <i class="fa fa-angle-left"></i>Regresar
             </button>
-            <button type="button" class="btn btn-primary" @click="continuar()" :disabled="!cargado" >
+            <button type="button" class="btn btn-primary" @click="validate()" :disabled="errors.count() > 0 || !cargado"  >
                 Continuar <i class="fa fa-angle-right"></i>
             </button>
         </div>
@@ -40,13 +65,15 @@
 <script>
 
     import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
+    import {ModelListSelect} from "vue-search-select";
     export default {
         name: "seleccionar-cfdi",
-        components: {CfdiShow},
+        components: {CfdiShow, ModelListSelect},
         data() {
             return {
                 cargando:true,
                 cargado:false,
+                id_tipo_transaccion:null,
                 dato:{
                     id_cfdi : '',
                     con_nota_credito:0,
@@ -68,9 +95,18 @@
         },
 
         mounted() {
-
+            this.getTiposTransaccion();
         },
         methods:{
+            getTiposTransaccion(){
+                this.$store.commit('entrega-cfdi/tipo-transaccion/SET_TIPOS', null);
+                return this.$store.dispatch('entrega-cfdi/tipo-transaccion/index', {
+                    params: {include: [], sort: 'orden', order: 'asc'}
+                }).then(data => {
+                    this.$store.commit('entrega-cfdi/tipo-transaccion/SET_TIPOS', data);
+                    this.cargando = false;
+                })
+            },
             cleanData(){
                 this.dato.id_moneda =1;
                 this.dato.fecha = new Date();
@@ -104,7 +140,7 @@
                         this.cargarXML(1)
                     }, 500);
                 } else {
-                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+                    swal('Cargar XML', 'El archivo debe ser en formato XML', 'error')
                 }
 
             },
@@ -122,14 +158,11 @@
                 var formData = new FormData();
                 formData.append('tipo',  tipo);
                 formData.append('id_empresa',  this.dato.id_empresa);
-                if(tipo == 1){
-                    formData.append('xml',  this.dato.archivo);
-                    formData.append('nombre_archivo',  this.dato.archivo_name);
-                } else if(tipo == 2){
-                    formData.append('xml',  this.dato.archivo_nc);
-                    formData.append('nombre_archivo',  this.dato.archivo_name_nc);
-                }
-                return this.$store.dispatch('fiscal/cfd-sat/cargarXMLProveedor',
+                formData.append("id_tipo_transaccion", this.id_tipo_transaccion);
+                formData.append('xml',  this.dato.archivo);
+                formData.append('nombre_archivo',  this.dato.archivo_name);
+                if(this.id_tipo_transaccion){
+                    return this.$store.dispatch('fiscal/cfd-sat/cargarXMLProveedor',
                     {
                         data: formData,
                         config: {
@@ -138,7 +171,6 @@
                     })
                     .then(data => {
                         var count = Object.keys(data).length;
-
                         if(count > 0 ){
 
                             this.dato = data;
@@ -151,16 +183,26 @@
                             }
                             this.cargado = false;
                             this.cleanData();
-                            swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
+                            swal('Cargar XML', 'Archivo sin datos válidos', 'warning')
                         }
-                    }).finally(() => {
+                    }).catch(() => {
+                        this.$refs.archivo.value = '';
+                        this.dato.archivo = null;
+                    })
+                    .finally(() => {
                         this.cargando = false;
                     });
+                }else {
+                    swal( 'Seleccione tipo de transacción','Seleccione el tipo de transacción antes de seleccionar el archivo del CFDI', 'error');
+                    this.$refs.archivo.value = '';
+                    this.dato.archivo = null;
+                }
+
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        this.continuar()
                     }
                 });
             },
@@ -173,6 +215,11 @@
             },
             continuar() {
                 this.$router.push({name: 'solicitud-recepcion-cfdi-create', params: { id_cfdi: this.dato.id }});
+            },
+        },
+        computed: {
+            tipos_transaccion(){
+                return this.$store.getters['entrega-cfdi/tipo-transaccion/tipos'];
             },
         }
     }

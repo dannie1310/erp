@@ -316,6 +316,26 @@ $api->version('v1', function ($api) {
         $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@show')->where(['id' => '[0-9]+']);
         $api->post('{id}/cancelar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@cancelar');
         $api->get('{id}/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@pdfSolicitudRecepcion')->where(['id' => '[0-9]+']);
+
+        $api->group(['prefix' => 'ctg-tipo-archivo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\CtgTipoArchivoController@index');
+        });
+
+        $api->group(['prefix' => 'ctg-tipo-transaccion'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccionController@index');
+        });
+
+        $api->group(['prefix' => 'archivo'], function ($api){
+            $api->post('cargarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@cargarArchivo');
+            $api->post('reemplazarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@reemplazarArchivo');
+            $api->post('eliminarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@eliminarArchivo');
+            $api->post('agregarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@agregarArchivo');
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/imagenes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+            $api->get('/cfdi/{id_cfdi}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@getArchivosCFDI')->where(['id_cfdi' => '[0-9]+']);
+        });
+
     });
 
     /**

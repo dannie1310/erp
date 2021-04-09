@@ -10,9 +10,11 @@ namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
 use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
+use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
@@ -108,6 +110,17 @@ class CFDSATRepository extends Repository implements RepositoryInterface
             }
 
         }
+    }
+
+    public function getTipoTransaccion($id_tipo_transaccion)
+    {
+        $tipo_transaccion = CtgTipoTransaccion::find($id_tipo_transaccion);
+        return $tipo_transaccion;
+    }
+
+    public function getTipoComprobante($tipo_transaccion)
+    {
+        return TipoComprobante::where("tipo_comprobante", "=", $tipo_transaccion)->first();
     }
 
     public function getEstadoEFO($rfc)
