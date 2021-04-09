@@ -145,7 +145,7 @@ class CFDSATTransformer extends TransformerAbstract
 
     public function includeArchivos(CFDSAT $model)
     {
-        if($items = $model->archivos)
+        if($items = $model->archivos()->orderBy("obligatorio", "desc")->get())
         {
             return $this->collection($items, new ArchivoTransformer);
         }

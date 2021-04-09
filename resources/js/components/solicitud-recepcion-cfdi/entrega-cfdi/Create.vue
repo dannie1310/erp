@@ -256,18 +256,6 @@
                     this.cargado = true;
                 }
             },
-            getArchivos(){
-                //this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', null);
-                return this.$store.dispatch('entrega-cfdi/archivo/getArchivosCFDI', {
-                    id_cfdi: this.id_cfdi,
-                    params: {include: [], sort: 'id', order: 'desc'}
-                }).then(data => {
-                    this.$store.commit('entrega-cfdi/archivo/SET_ARCHIVOS', data);
-                    this.cargando = false;
-                }).finally(()=>{
-                    this.cargado = true;
-                });
-            },
             loadOptions({ action, searchQuery, callback }) {
                 if(searchQuery.length >= 3) {
                     return this.$store.dispatch('catalogos/proyecto/index', {

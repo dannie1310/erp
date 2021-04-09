@@ -1030,10 +1030,22 @@ class CFDSATService
 
         $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
         $cfd->validaCFDI33($contenido_xml);
+
         $cfdi = $this->registraCFDI($arreglo_cfd);
-        $cfdi->generaDocumentos();
-        $cfdi->load("archivos");
+
+
+
+
         return $cfdi;
+    }
+
+    private function validaDisponibilidad($cfdi)
+    {
+        if($cfdi->id_solicitud_recepcion>0){
+            if($cfdi->solicitudRecepcion->estado>=0){
+                abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $this->solicitudRecepcion->numero_folio);
+            }
+        }
     }
 
     private function validaTipoTransaccion($id_tipo_transaccion, $tipo_comprobante_actual)
@@ -1066,21 +1078,19 @@ class CFDSATService
                     Storage::disk('xml_sat')->put($arreglo_factura["uuid"].".xml", $contenido_archivo_xml);
                 }
             } else {
-                if($cfdi->id_solicitud_recepcion>0)
-                {
-                    if($cfdi->solicitudRecepcion->estado>=0){
-                        abort(500, "Este CFDI esta asociado a la solicitud de recepción con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
-                    }
-                }
+                $this->validaDisponibilidad($cfdi);
                 if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
                 {
-
                     $cfdi->id_tipo_transaccion = $arreglo_factura["id_tipo_transaccion"];
                     $cfdi->save();
-
                     $cfdi->eliminaDocumentos();
+                    $cfdi->actualizaObligatoriedadDocumentos();
                 }
             }
+
+            $cfdi->generaDocumentos();
+            $cfdi->load("archivos");
+
             return $cfdi;
         }
         return null;
