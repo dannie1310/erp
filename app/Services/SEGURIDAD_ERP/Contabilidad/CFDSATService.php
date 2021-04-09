@@ -1025,11 +1025,24 @@ class CFDSATService
         $exp = explode("base64,", $data["xml"]);
         $contenido_xml = base64_decode($exp[1]);
         $arreglo_cfd["contenido_xml"] = $contenido_xml;
+
+        $this->validaTipoTransaccion($data["id_tipo_transaccion"], $arreglo_cfd["tipo_comprobante"]);
+
         $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
         $cfd->validaCFDI33($contenido_xml);
         $cfdi = $this->registraCFDI($arreglo_cfd);
         $cfdi->generaDocumentos();
         return $cfdi;
+    }
+
+    private function validaTipoTransaccion($id_tipo_transaccion, $tipo_comprobante_actual)
+    {
+        $tipo_transaccion = $this->repository->getTipoTransaccion($id_tipo_transaccion);
+        $tipo_comprobante = $tipo_transaccion->tipo_comprobante;
+        $tipoComprobanteActual = $this->repository->getTipoComprobante($tipo_comprobante_actual);
+        if($tipo_comprobante != $tipo_comprobante_actual){
+            abort(500, "El tipo de transacción seleccionada: '".$tipo_transaccion->descripcion."' requiere un CFDI tipo: '".$tipo_transaccion->tipoComprobante->descripcion."', el CFDI seleccionado es de tipo: '".$tipoComprobanteActual->descripcion."'");
+        }
     }
 
     private function validaReceptor($arreglo_cfd)

@@ -4,6 +4,7 @@
 namespace App\Models\SEGURIDAD_ERP\Documentacion;
 
 
+use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use Illuminate\Database\Eloquent\Model;
 
 class CtgTipoTransaccion extends Model
@@ -15,6 +16,11 @@ class CtgTipoTransaccion extends Model
     public function tiposArchivo()
     {
         return $this->hasMany(TipoArchivoTipoTransaccion::class, "id_tipo_transaccion", "id");
+    }
+
+    public function tipoComprobante()
+    {
+        return $this->belongsTo(TipoComprobante::class, "tipo_comprobante", "tipo_comprobante");
     }
 
 }

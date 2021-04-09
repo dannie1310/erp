@@ -11,6 +11,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\Documentacion\Archivo;
 use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
@@ -120,6 +121,11 @@ class CFDSAT extends Model
     public function tipoTransaccion()
     {
         return $this->belongsTo(CtgTipoTransaccion::class, "id_tipo_transaccion", "id");
+    }
+
+    public function tipoComprobante()
+    {
+        return $this->belongsTo(TipoComprobante::class, "tipo_comprobante", "tipo_comprobante");
     }
 
     public function facturaRepositorio()
