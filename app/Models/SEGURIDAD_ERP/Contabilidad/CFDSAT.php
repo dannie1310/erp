@@ -299,17 +299,31 @@ class CFDSAT extends Model
 
     public function generaDocumentos()
     {
+        //print_r($this->id_tipo_transaccion.'*');
         if($this->id_tipo_transaccion>0)
         {
+
             $tiposArchivo = $this->tipoTransaccion->tiposArchivo;
             foreach($tiposArchivo as $tipoArchivo){
-                $archivo["id_tipo_archivo"] = $tipoArchivo->id;
+                //print_r($tipoArchivo->id_tipo_archivo.'-');
+                $archivo["id_tipo_archivo"] = $tipoArchivo->id_tipo_archivo;
                 $archivo["obligatorio"] = $tipoArchivo->obligatorio;
                 try{
                     $this->archivos()->create($archivo);
                 }catch (\Exception $e){
 
                 }
+            }
+        }
+    }
+
+    public function eliminaDocumentos()
+    {
+        $archivos = $this->archivos;
+        foreach($archivos as $archivo)
+        {
+            if(!$archivo->hashfile){
+                $archivo->delete();
             }
         }
     }

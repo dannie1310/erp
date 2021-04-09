@@ -1032,6 +1032,7 @@ class CFDSATService
         $cfd->validaCFDI33($contenido_xml);
         $cfdi = $this->registraCFDI($arreglo_cfd);
         $cfdi->generaDocumentos();
+        $cfdi->load("archivos");
         return $cfdi;
     }
 
@@ -1073,8 +1074,11 @@ class CFDSATService
                 }
                 if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
                 {
+
                     $cfdi->id_tipo_transaccion = $arreglo_factura["id_tipo_transaccion"];
                     $cfdi->save();
+
+                    $cfdi->eliminaDocumentos();
                 }
             }
             return $cfdi;
