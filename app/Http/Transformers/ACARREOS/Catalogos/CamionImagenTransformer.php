@@ -13,7 +13,8 @@ class CamionImagenTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'descripcion' => $model->descripcion_imagen,
-            'imagen' => "data:image/jpeg;base64,".$model->Imagen
+            'imagen' => $model->imagen_compuesta,
+            'tipo' => $model->TipoC
         ];
     }
 

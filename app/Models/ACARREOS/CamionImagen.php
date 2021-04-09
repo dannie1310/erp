@@ -67,6 +67,15 @@ class CamionImagen extends Model
         }
     }
 
+    public function getImagenCompuestaAttribute()
+    {
+        if($this->Tipo != 0)
+        {
+            return "data:image/jpeg;base64,".$this->Imagen;
+        }
+        return "data:".$this->Tipo.";base64,".$this->Imagen;
+    }
+
     /**
      * Métodos
      */
