@@ -75,6 +75,7 @@ class FacturaTransformer extends TransformerAbstract
             'id_moneda' => $model->id_moneda,
             'id_costo' => $model->id_costo,
             'empresa' => $model->empresa->razon_social,
+            'id_rubro' => (int) $model->id_rubro,
             'rubro' => $model->rubro,
             'datos_registro' => $model->datos_registro,
             'comentario' => $model->comentario,

@@ -108,6 +108,7 @@
                             buttons: $.extend({}, {
                                 id: factura.id,
                                 show: self.$root.can('consultar_factura') ? true : false,
+                                edit: self.$root.can('editar_factura') ? true : false,
                                 factura: factura,
                                 borrar: self.$root.can('eliminar_factura') && factura.estado === 0 ? true : false,
                                 revisar: self.$root.can('revisar_factura') && factura.estado === 0 ? true : false,

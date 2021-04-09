@@ -65,6 +65,13 @@ class Factura extends Transaccion
         }
     }
 
+    public function getIdRubroAttribute()
+    {
+        if ($this->transaccion_rubro) {
+            return  $this->transaccion_rubro->id_rubro;
+        }
+    }
+
     public function transaccion_rubro()
     {
         return $this->hasOne(TransaccionRubro::class, "id_transaccion", "id_transaccion");
@@ -1019,13 +1026,13 @@ class Factura extends Transaccion
                     $fondo_gar->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 52){
-                    $estimacion_ = Estimacion::find($subcontrato['id']);
+                    $estimacion_ = Estimacion::withoutGlobalScopes()->find($subcontrato['id']);
                     $estimacion_->estado = 2;
                     $estimacion_->autorizado = $subcontrato['monto_revision'];
                     $estimacion_->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 51){
-                    $subcont = Subcontrato::find($subcontrato['id']);
+                    $subcont = Subcontrato::withoutGlobalScopes()->find($subcontrato['id']);
                     $subcont->estado = 1;
                     $subcont->anticipo_saldo = 0;
                     $subcont->save();
@@ -1222,4 +1229,23 @@ class Factura extends Transaccion
         }
     }
 
+    public function editar(array $data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            if(!$this->transaccion_rubro)
+            {
+               $this->registrarRubro($this, $data);
+            }else{
+                $this->transaccion_rubro()->update([
+                    'id_rubro' => $data['rubro']
+                ]);
+            }
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }

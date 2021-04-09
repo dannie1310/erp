@@ -386,7 +386,7 @@
                                     name="iva_subtotal"
                                     id="iva_subtotal"
                                     data-vv-as="IVA Subtotal"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.iva_subtotal"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('iva_subtotal')}"
@@ -421,7 +421,7 @@
                                     name="ret_iva_4"
                                     id="ret_iva_4"
                                     data-vv-as="Ret IVA (4%)"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.ret_iva_4"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('ret_iva_4')}"
@@ -457,7 +457,7 @@
                                     name="ret_iva_6"
                                     id="ret_iva_6"
                                     data-vv-as="Ret IVA (10%)"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.ret_iva_6"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('ret_iva_6')}"
@@ -480,7 +480,7 @@
                                     name="ret_iva_23"
                                     id="ret_iva_23"
                                     data-vv-as="Ret IVA (10%)"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.ret_iva_23"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('ret_iva_23')}"
@@ -517,7 +517,7 @@
                                     name="ieps"
                                     id="ieps"
                                     data-vv-as="IEPS"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.ieps"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('ieps')}"
@@ -540,7 +540,7 @@
                                     name="imp_hospedaje"
                                     id="imp_hospedaje"
                                     data-vv-as="Impuesto a Hospedaje"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.imp_hospedaje"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('imp_hospedaje')}"
@@ -563,7 +563,7 @@
                                     name="ret_isr_10"
                                     id="ret_isr_10"
                                     data-vv-as="Retención a ISR (10%)"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                     v-model="resumen.ret_isr_10"
                                     v-on:keyup="actualizar_resumen()"
                                     :class="{'is-invalid': errors.has('ret_isr_10')}"
@@ -885,17 +885,9 @@ export default {
             this.actualizar_resumen();
         },
         actualizar_resumen(){
-            this.resumen.ret_iva_4 = this.resumen.ret_iva_4 === ''?0:parseFloat(this.resumen.ret_iva_4);
-            this.resumen.ret_iva_6 = this.resumen.ret_iva_6 === ''?0:parseFloat(this.resumen.ret_iva_6);
-            this.resumen.ret_iva_23 = this.resumen.ret_iva_23 === ''?0:parseFloat(this.resumen.ret_iva_23);
-            this.resumen.ieps = this.resumen.ieps === ''?0:parseFloat(this.resumen.ieps);
-            this.resumen.imp_hospedaje = this.resumen.imp_hospedaje === ''?0:parseFloat(this.resumen.imp_hospedaje);
-            this.resumen.ret_isr_10 = this.resumen.ret_isr_10 === ''?0:parseFloat(this.resumen.ret_isr_10);
-            this.resumen.iva_subtotal = this.resumen.iva_subtotal === ''?0:parseFloat(this.resumen.iva_subtotal);
-
-            this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal - this.resumen.ret_iva_23);
-            let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje  +  this.resumen.ieps  +  this.resumen.ret_isr_10);
-            let retenciones = parseFloat(this.resumen.ret_iva_4 + this.resumen.ret_iva_6);
+            this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
+            let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje)  +  parseFloat(this.resumen.ieps)  +  parseFloat(this.resumen.ret_isr_10);
+            let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
             this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + this.resumen.iva_pagar - otros_impuestos - retenciones;
         },
         find(){
