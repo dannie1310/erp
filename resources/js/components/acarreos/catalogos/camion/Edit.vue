@@ -36,7 +36,7 @@
                                             data-vv-as="Sindicato"
                                             v-model="camion.id_sindicato"
                                             v-validate="{required: true}"
-                                            :error="errors.has('id_sindicato')"
+                                            :class="{'is-invalid': errors.has('id_sindicato')}"
                                             id="id_sindicato">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="sindicato in sindicatos" :value="sindicato.id" >{{ sindicato.descripcion}}</option>
@@ -49,8 +49,8 @@
                                               name="id_empresa"
                                               data-vv-as="Empresa"
                                               v-model="camion.id_empresa"
-                                              v-validate="{required: true}"
-                                              :error="errors.has('id_empresa')"
+                                              v-validate="{}"
+                                              :class="{'is-invalid': errors.has('id_empresa')}"
                                               id="id_empresa">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="empresa in empresas" :value="empresa.id" >{{ empresa.razon_social}}</option>
@@ -68,6 +68,7 @@
                                            v-validate="{required: true}"
                                            id="propietario"
                                            class="form-control"
+                                           data-vv-as="Propietario"
                                            :class="{'is-invalid': errors.has('propietario')}"
                                            v-model="camion.propietario" />
                                     <div class="invalid-feedback" v-show="errors.has('propietario')">{{ errors.first('propietario') }}</div>
@@ -79,7 +80,7 @@
                                             data-vv-as="Operador"
                                             v-model="camion.id_operador"
                                             v-validate="{required: true}"
-                                            :error="errors.has('id_operador')"
+                                            :class="{'is-invalid': errors.has('id_operador')}"
                                             id="id_operador">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="operador in operadores" :value="operador.id" >{{ operador.nombre}}</option>
@@ -126,10 +127,10 @@
                                 <div class="col-md-4">
                                     <select class="form-control"
                                             name="id_marca"
-                                            data-vv-as="Operador"
+                                            data-vv-as="Marca"
                                             v-model="camion.id_marca"
                                             v-validate="{required: true}"
-                                            :error="errors.has('id_marca')"
+                                            :class="{'is-invalid': errors.has('id_marca')}"
                                             id="id_marca">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="marca in marcas" :value="marca.id" >{{ marca.descripcion}}</option>
@@ -139,6 +140,7 @@
                                 <label class="col-md-1 col-form-label">Modelo:</label>
                                 <div class="col-md-4">
                                     <input type="text"
+                                           data-vv-as="Modelo"
                                            name="modelo"
                                            v-validate="{required: true}"
                                            :class="{'is-invalid': errors.has('modelo')}"
@@ -211,7 +213,7 @@
                                 <div class="col-md-6">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h6>Atras:
+                                            <h6>Atrás:
                                                 <button type="button" @click="eliminarImagen('t')" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
@@ -425,10 +427,12 @@
                     </div>
                 </div>
                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" v-on:click="salir">
+                          <i class="fa fa-angle-left"></i>Regresar
+                      </button>
                       <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                           <i class="fa fa-save"></i> Guardar
                       </button>
-                     <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                  </div>
             </div>
         </div>

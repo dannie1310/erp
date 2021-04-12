@@ -1,8 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <!-- <Create @created="paginate()" />
-            <DescargaLayout />-->
+            <!--<DescargaLayout />-->
         </div>
         <div class="col-12">
             <div class="card">
@@ -21,11 +20,10 @@
 </template>
 
 <script>
-   // import Create from './Create'
     //import DescargaLayout from "./DescargaLayout";
     export default {
         name: "camion-index",
-      //  components: {Create, DescargaLayout},
+      //  components: {DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,
