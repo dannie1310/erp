@@ -41,7 +41,7 @@ class CamionController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context')->except(['catalogo','cambiarClave','registrar','cargaImagenes']);
 
-        $this->middleware('permiso:consultar_camion')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:consultar_camion')->only(['show','paginate','index','find', 'descargaLayout']);
         $this->middleware('permiso:activar_desactivar_camion')->only(['activar', 'desactivar']);
         $this->middleware('permiso:editar_camion')->only(['update']);
 
@@ -114,5 +114,14 @@ class CamionController extends Controller
     public function desactivar(Request $request, $id)
     {
         return $this->respondWithItem($this->service->desactivar($request->all(),$id));
+    }
+
+    /**
+     * Descargar Layout con los camiones
+     * @return mixed
+     */
+    public function descargaLayout()
+    {
+        return $this->service->excel();
     }
 }

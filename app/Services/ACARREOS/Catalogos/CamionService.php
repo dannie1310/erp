@@ -4,6 +4,7 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
+use App\CSV\Acarreos\Catalogos\CamionLayout;
 use App\Models\ACARREOS\Camion;
 use App\Models\ACARREOS\Operador;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
@@ -15,6 +16,7 @@ use App\Models\ACARREOS\SolicitudReactivacionCamionImagen;
 use App\Models\IGH\Usuario;
 use App\Repositories\ACARREOS\Camion\Repository;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CamionService
 {
@@ -475,5 +477,11 @@ class CamionService
             abort(400, "La cubicación del camión no puede ser mayor a 40.");
         }
         return $this->repository->show($id)->editar($data);
+    }
+
+    public function excel()
+    {
+        $this->conexionAcarreosContexto();
+        return Excel::download(new CamionLayout(), 'camiones.csv');
     }
 }

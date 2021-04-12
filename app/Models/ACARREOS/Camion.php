@@ -163,6 +163,12 @@ class Camion extends Model
         }
     }
 
+    public function getFechaDesactivacionFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
+    }
+
     /**
      * Métodos
      */

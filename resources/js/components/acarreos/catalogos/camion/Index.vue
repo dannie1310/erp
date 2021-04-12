@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <!--<DescargaLayout />-->
+            <DescargaLayout />
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,10 +20,10 @@
 </template>
 
 <script>
-    //import DescargaLayout from "./DescargaLayout";
+    import DescargaLayout from "./DescargaLayout";
     export default {
         name: "camion-index",
-      //  components: {DescargaLayout},
+        components: {DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,
