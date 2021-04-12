@@ -14,7 +14,8 @@ class CamionImagenTransformer extends TransformerAbstract
             'id' => (int) $model->getKey(),
             'descripcion' => $model->descripcion_imagen,
             'imagen' => $model->imagen_compuesta,
-            'tipo' => $model->TipoC
+            'tipoC' => $model->TipoC,
+            'tipo' => $model->Tipo
         ];
     }
 

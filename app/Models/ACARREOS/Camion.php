@@ -163,6 +163,12 @@ class Camion extends Model
         }
     }
 
+    public function getFechaDesactivacionFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
+    }
+
     /**
      * Métodos
      */
@@ -197,6 +203,125 @@ class Camion extends Model
             DB::connection('acarreos')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function editar($data)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->IdSindicato = $data['id_sindicato'];
+            $this->IdEmpresa = $data['id_empresa'];
+            $this->Propietario = $data['propietario'];
+            $this->IdOperador = $data['id_operador'];
+            $this->PlacasCaja = $data['placa_caja'];
+            $this->IdMarca = $data['id_marca'];
+            $this->Modelo = $data['modelo'];
+            $this->PolizaSeguro = $data['poliza_seguro'];
+            $this->VigenciaPolizaSeguro = $data['vigencia_poliza'];
+            $this->Aseguradora = $data['aseguradora'];
+            $this->Ancho = $data['ancho'];
+            $this->Largo = $data['largo'];
+            $this->Alto = $data['alto'];
+            $this->AlturaExtension = $data['altura_extension'];
+            $this->EspacioDeGato = $data['espacio_gato'];
+            $this->Disminucion = $data['disminucion'];
+            $this->CubicacionReal = $data['cubicacion_real'];
+            $this->CubicacionParaPago = $data['cubicacion_pago'];
+
+            if($data['imagenes'] != [])
+            {
+                $this->editarImagenes($data['imagenes']);
+            }
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function editarImagenes($imagenes)
+    {
+        /*
+         * Imagen Frente
+         */
+        if(array_key_exists('id_frente', $imagenes) && $imagenes['id_frente'] == '' && array_key_exists('frente', $imagenes) &&  (array_key_exists('frente', $imagenes) && $imagenes['frente'] == ''))
+        {
+            $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
+                ->where('TipoC', 'f')->first();
+            $imagen->cancelarImagen($imagen);
+        }
+
+        if((!array_key_exists('id_frente', $imagenes) || (array_key_exists('id_frente', $imagenes) && $imagenes['id_frente'] == '')) && $imagenes['frente'] != '')
+        {
+            CamionImagen::create([
+                'IdCamion' => $this->getKey(),
+                'TipoC' => 'f',
+                'Imagen' => $imagenes['frente'],
+                'Tipo' => $imagenes['tipo_frente']
+            ]);
+        }
+
+        /*
+         * Imagen Derecha
+         */
+        if(array_key_exists('id_derecha', $imagenes) && $imagenes['id_derecha'] == '' && array_key_exists('id_derecha', $imagenes) && (array_key_exists('derecha', $imagenes) && $imagenes['derecha'] == ''))
+        {
+            $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
+                ->where('TipoC', 'd')->first();
+            $imagen->cancelarImagen($imagen);
+        }
+
+        if((!array_key_exists('id_derecha', $imagenes) || (array_key_exists('id_derecha', $imagenes) && $imagenes['id_derecha'] == '')) && $imagenes['derecha'] != '')
+        {
+            CamionImagen::create([
+                'IdCamion' => $this->getKey(),
+                'TipoC' => 'd',
+                'Imagen' => $imagenes['derecha'],
+                'Tipo' => $imagenes['tipo_derecha']
+            ]);
+        }
+
+        /*
+         * Imagen Atrás
+         */
+        if(array_key_exists('id_atras', $imagenes) && $imagenes['id_atras'] == '' && array_key_exists('atras', $imagenes) && $imagenes['atras'] == '')
+        {
+            $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
+                ->where('TipoC', 'f')->first();
+            $imagen->cancelarImagen($imagen);
+        }
+
+        if((!array_key_exists('id_atras', $imagenes) || (array_key_exists('id_atras', $imagenes) && $imagenes['id_atras'] == '')) && (array_key_exists('atras', $imagenes) && $imagenes['atras'] != ''))
+        {
+            CamionImagen::create([
+                'IdCamion' => $this->getKey(),
+                'TipoC' => 't',
+                'Imagen' => $imagenes['atras'],
+                'Tipo' => $imagenes['tipo_atras']
+            ]);
+        }
+
+        /*
+        * Imagen Izquierda
+        */
+        if(array_key_exists('id_izquierda', $imagenes) && $imagenes['id_izquierda'] == '' && array_key_exists('izquierda', $imagenes) && $imagenes['izquierda'] == '')
+        {
+            $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
+                ->where('TipoC', 'f')->first();
+            $imagen->cancelarImagen($imagen);
+        }
+
+        if((!array_key_exists('id_izquierda', $imagenes) || (array_key_exists('id_izquierda', $imagenes) && $imagenes['id_izquierda'] == '')) && (array_key_exists('izquierda', $imagenes) && $imagenes['izquierda'] != ''))
+        {
+            CamionImagen::create([
+                'IdCamion' => $this->getKey(),
+                'TipoC' => 't',
+                'Imagen' => $imagenes['izquierda'],
+                'Tipo' => $imagenes['tipo_izquierda']
+            ]);
         }
     }
 }

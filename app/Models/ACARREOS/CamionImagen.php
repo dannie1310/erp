@@ -12,7 +12,11 @@ class CamionImagen extends Model
     protected $table = 'camiones_imagenes';
     public $primaryKey = 'Id';
     protected $fillable = [
-
+        'IdCamion',
+        'TipoC',
+        'Imagen',
+        'Tipo',
+        'Estatus'
     ];
     public $timestamps = false;
 
@@ -28,6 +32,10 @@ class CamionImagen extends Model
     /**
      * Relaciones Eloquent
      */
+    public function historico()
+    {
+        return $this->hasMany(CamionImagenHistorico::class, 'IdCamion', 'IdCamion');
+    }
 
 
     /**
@@ -79,5 +87,51 @@ class CamionImagen extends Model
     /**
      * Métodos
      */
+    public function buscarImagenesCamion()
+    {
+        $imagenes = self::where('IdCamion', $this->IdCamion)
+            ->where('TipoC', $this->TipoC)->get();
+        if(count($imagenes))
+        {
+            foreach ($imagenes as $imagen) {
+                $this->cancelarImagen($imagen);
+            }
+        }
+    }
 
+    /**
+     * Elimina en caso de que la imagen tenga al inicio 'data:image/png;base64,'
+     */
+    public function limpiarStringImagen()
+    {
+        $img = str_replace('data:image/','',$this->Imagen);
+        $index = strpos($img,'base64,');
+
+        if($index != false) {
+            return substr($img, $index + 7);
+        }
+        return $this->Imagen;
+    }
+
+    public function historicoImagen()
+    {
+        $this->historico()->create([
+            'Id' => $this->getKey(),
+            'IdCamion' => $this->IdCamion,
+            'TipoC' => $this->TipoC,
+            'Imagen' => $this->Imagen,
+            'Tipo' => $this->Tipo
+
+        ]);
+    }
+
+    /**
+     * Cambiar estatus = 0
+     * @param $imagen
+     */
+    public function cancelarImagen($imagen)
+    {
+        $imagen->Estatus = 0;
+        $imagen->save();
+    }
 }

@@ -36,7 +36,7 @@
                                             data-vv-as="Sindicato"
                                             v-model="camion.id_sindicato"
                                             v-validate="{required: true}"
-                                            :error="errors.has('id_sindicato')"
+                                            :class="{'is-invalid': errors.has('id_sindicato')}"
                                             id="id_sindicato">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="sindicato in sindicatos" :value="sindicato.id" >{{ sindicato.descripcion}}</option>
@@ -49,8 +49,8 @@
                                               name="id_empresa"
                                               data-vv-as="Empresa"
                                               v-model="camion.id_empresa"
-                                              v-validate="{required: true}"
-                                              :error="errors.has('id_empresa')"
+                                              v-validate="{}"
+                                              :class="{'is-invalid': errors.has('id_empresa')}"
                                               id="id_empresa">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="empresa in empresas" :value="empresa.id" >{{ empresa.razon_social}}</option>
@@ -68,6 +68,7 @@
                                            v-validate="{required: true}"
                                            id="propietario"
                                            class="form-control"
+                                           data-vv-as="Propietario"
                                            :class="{'is-invalid': errors.has('propietario')}"
                                            v-model="camion.propietario" />
                                     <div class="invalid-feedback" v-show="errors.has('propietario')">{{ errors.first('propietario') }}</div>
@@ -79,7 +80,7 @@
                                             data-vv-as="Operador"
                                             v-model="camion.id_operador"
                                             v-validate="{required: true}"
-                                            :error="errors.has('id_operador')"
+                                            :class="{'is-invalid': errors.has('id_operador')}"
                                             id="id_operador">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="operador in operadores" :value="operador.id" >{{ operador.nombre}}</option>
@@ -113,7 +114,6 @@
                                     <input type="text"
                                            name="placa_caja"
                                            id="placa_caja"
-                                           v-validate="{required: true}"
                                            class="form-control"
                                            v-model="camion.placa_caja"
                                            :class="{'is-invalid': errors.has('placa_caja')}" />
@@ -127,10 +127,10 @@
                                 <div class="col-md-4">
                                     <select class="form-control"
                                             name="id_marca"
-                                            data-vv-as="Operador"
+                                            data-vv-as="Marca"
                                             v-model="camion.id_marca"
                                             v-validate="{required: true}"
-                                            :error="errors.has('id_marca')"
+                                            :class="{'is-invalid': errors.has('id_marca')}"
                                             id="id_marca">
                                                 <option value>-- Seleccionar--</option>
                                                 <option v-for="marca in marcas" :value="marca.id" >{{ marca.descripcion}}</option>
@@ -139,8 +139,8 @@
                                 </div>
                                 <label class="col-md-1 col-form-label">Modelo:</label>
                                 <div class="col-md-4">
-                                    <input disabled="true"
-                                           type="text"
+                                    <input type="text"
+                                           data-vv-as="Modelo"
                                            name="modelo"
                                            v-validate="{required: true}"
                                            :class="{'is-invalid': errors.has('modelo')}"
@@ -166,7 +166,7 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <h6>Frente:
-                                                <button type="button" @click="eliminarImagen(1)" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" @click="eliminarImagen('f')" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </h6>
@@ -179,7 +179,7 @@
                                                 <vue-dropzone ref="imagen_frente" id = "imagen_frente" :options="dropzoneOptions"/>
                                             </div>
                                             <hr>
-                                            <button @click="eliminarImagen(1)" type="button" class="btn btn-sm btn-default float-right">
+                                            <button @click="eliminarImagen('f')" type="button" class="btn btn-sm btn-default float-right">
                                                 <i class="fa fa-trash"></i> Eliminar
                                             </button>
                                         </div>
@@ -189,7 +189,7 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <h6>Derecha:
-                                            <button type="button" @click="eliminarImagen(2)" class="close" data-dismiss="modal" aria-label="Close">
+                                            <button type="button" @click="eliminarImagen('d')" class="close" data-dismiss="modal" aria-label="Close">
                                                 <span aria-hidden="true">&times;</span>
                                             </button>
                                             </h6>
@@ -204,7 +204,7 @@
                                                               :options="dropzoneOptions"/>
                                             </div>
                                             <hr>
-                                            <button @click="eliminarImagen(2)" type="button" class="btn btn-sm btn-default float-right">
+                                            <button @click="eliminarImagen('d')" type="button" class="btn btn-sm btn-default float-right">
                                                 <i class="fa fa-trash"></i> Eliminar
                                             </button>
                                         </div>
@@ -213,8 +213,8 @@
                                 <div class="col-md-6">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h6>Atras:
-                                                <button type="button" @click="eliminarImagen(3)" class="close" data-dismiss="modal" aria-label="Close">
+                                            <h6>Atrás:
+                                                <button type="button" @click="eliminarImagen('t')" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </h6>
@@ -227,7 +227,7 @@
                                                 <vue-dropzone ref="imagen_atras" id = "imagen_atras" :options="dropzoneOptions"/>
                                             </div>
                                             <hr>
-                                            <button @click="eliminarImagen(3)" type="button" class="btn btn-sm btn-default float-right">
+                                            <button @click="eliminarImagen('t')" type="button" class="btn btn-sm btn-default float-right">
                                                 <i class="fa fa-trash"></i> Eliminar
                                             </button>
                                         </div>
@@ -237,7 +237,7 @@
                                     <div class="card">
                                         <div class="card-header">
                                             <h6>Izquierda:
-                                                <button type="button" @click="eliminarImagen(4)" class="close" data-dismiss="modal" aria-label="Close">
+                                                <button type="button" @click="eliminarImagen('i')" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
                                             </h6>
@@ -250,7 +250,7 @@
                                                 <vue-dropzone ref="imagen_izquierda" id = "imagen_izquierda" :options="dropzoneOptions"/>
                                             </div>
                                             <hr>
-                                            <button @click="eliminarImagen(4)" type="button" class="btn btn-sm btn-default float-right">
+                                            <button @click="eliminarImagen('i')" type="button" class="btn btn-sm btn-default float-right">
                                                 <i class="fa fa-trash"></i> Eliminar
                                             </button>
                                         </div>
@@ -275,7 +275,6 @@
                                            id="aseguradora"
                                            name="aseguradora"
                                            class="form-control"
-                                           v-validate="{required: true}"
                                            :class="{'is-invalid': errors.has('aseguradora')}"
                                            v-model="camion.aseguradora" />
                                     <div class="invalid-feedback" v-show="errors.has('aseguradora')">{{ errors.first('aseguradora') }}</div>
@@ -285,7 +284,6 @@
                                     <input type="text"
                                            name="poliza_seguro"
                                            id="poliza_seguro"
-                                           v-validate="{required: true}"
                                            :class="{'is-invalid': errors.has('poliza_seguro')}"
                                            class="form-control"
                                            v-model="camion.poliza_seguro" />
@@ -299,7 +297,6 @@
                                                 :language = "es"
                                                 :bootstrap-styling = "true"
                                                 class = "form-control"
-                                                v-validate="{required: true}"
                                                 :disabled-dates="fechasDeshabilitadas"
                                                 :class="{'is-invalid': errors.has('vigencia_poliza')}"/>
                                     <div class="invalid-feedback" v-show="errors.has('vigencia_poliza')">{{ errors.first('vigencia_poliza') }}</div>
@@ -380,7 +377,7 @@
                                            step="1"
                                            class="form-control"
                                            :name="disminucion"
-                                           data-vv-as="Ancho"
+                                           data-vv-as="Disminución"
                                            v-validate="{min_value:0}"
                                            :class="{'is-invalid': errors.has('disminucion')}"
                                            v-model="disminucion"/>
@@ -405,6 +402,7 @@
                                            min="0"
                                            step="0.01"
                                            disabled="true"
+                                           v-validate="{min_value:0, max_value:40}"
                                            class="form-control"
                                            :name="cubicacion_real"
                                            data-vv-as="Cubicación Real"
@@ -419,7 +417,7 @@
                                         class="form-control"
                                         :name="cubicacion_pago"
                                         data-vv-as="Cubicación para pago"
-                                        v-validate="{min_value:0}"
+                                        v-validate="{min_value:0, max_value:40}"
                                         :class="{'is-invalid': errors.has('cubicacion_pago')}"
                                         v-model="cubicacion_pago"/>
                                     <div class="invalid-feedback" v-show="errors.has('cubicacion_pago')">{{ errors.first('cubicacion_pago') }}</div>
@@ -429,10 +427,12 @@
                     </div>
                 </div>
                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" v-on:click="salir">
+                          <i class="fa fa-angle-left"></i>Regresar
+                      </button>
                       <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                           <i class="fa fa-save"></i> Guardar
                       </button>
-                     <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
                  </div>
             </div>
         </div>
@@ -528,7 +528,7 @@
             },
             inicializarImagenes(imagenes) {
                 for (let imagen of imagenes) {
-                    switch (imagen.tipo) {
+                    switch (imagen.tipoC) {
                         case 't':
                             this.bandera_atras = true
                             this.imagenes['atras'] = imagen.imagen
@@ -579,8 +579,7 @@
             },
             eliminarImagen(tipo) {
                 switch (tipo) {
-                    case 1:
-                        console.log(this.$refs.imagen_frente, this.imagenes)
+                    case 'f':
                         if (this.$refs.imagen_frente != undefined && this.$refs.imagen_frente.dropzone.files.length != 0) {
                             this.$refs.imagen_frente.removeAllFiles()
                         }
@@ -591,7 +590,7 @@
                         this.imagenes['frente'] = ''
                         this.imagenes['tipo_frente'] = ''
                         break;
-                    case 2:
+                    case 'd':
                         if (this.$refs.imagen_derecha != undefined && this.$refs.imagen_derecha.dropzone.files.length != 0) {
                             this.$refs.imagen_derecha.removeAllFiles()
                         }
@@ -603,7 +602,7 @@
                         this.imagenes['tipo_derecha'] = ''
                         break;
 
-                    case 3:
+                    case 't':
                         if (this.$refs.imagen_atras != undefined && this.$refs.imagen_atras.dropzone.files.length != 0) {
                             this.$refs.imagen_atras.removeAllFiles()
                         }
@@ -615,7 +614,7 @@
                         this.imagenes['tipo_atras'] = ''
                         break;
 
-                    case 4:
+                    case 'i':
                         if (this.$refs.imagen_izquierda != undefined && this.$refs.imagen_izquierda.dropzone.files.length != 0) {
                             this.$refs.imagen_izquierda.removeAllFiles()
                         }
@@ -658,18 +657,58 @@
                 })
                     .then(data => {
                         this.sindicatos = data.data;
+                    }).finally(() => {
+                        this.cargando = false;
                     })
             },
             validate() {
                 this.obtenerArrayImagenes();
                 this.$validator.validate().then(result => {
                     if (result) {
-
+                        if(this.cubicacion_real > 40)
+                        {
+                            swal('¡Error!', 'La Cubicación no debe ser mayor a 40.', 'error')
+                        }else{
+                            this.update()
+                        }
                     }
                 });
             },
+            update() {
+                var cambios = {
+                    'alto' : this.alto,
+                    'altura_extension' : this.altura_extension,
+                    'ancho' : this.ancho,
+                    'aseguradora' : this.camion.aseguradora,
+                    'disminucion' : this.disminucion,
+                    'id_empresa' : this.camion.id_empresa,
+                    'id_marca' : this.camion.id_marca,
+                    'id_operador' : this.camion.id_operador,
+                    'id_sindicato' : this.camion.id_sindicato,
+                    'imagenes' : this.imagenes,
+                    'largo' : this.largo,
+                    'modelo' : this.camion.modelo,
+                    'placa_caja' : this.camion.placa_caja,
+                    'poliza_seguro' : this.camion.poliza_seguro,
+                    'propietario' : this.camion.propietario,
+                    'vigencia_poliza' : this.camion.vigencia_poliza,
+                    'cubicacion_pago' : this.cubicacion_pago,
+                    'cubicacion_real' : this.cubicacion_real,
+                    'disminucion' : this.disminucion,
+                    'espacio_gato' : this.espacio_gato,
+                    'largo' : this.largo
+                 }
+
+                return this.$store.dispatch('acarreos/camion/update', {
+                    id: this.id,
+                    data: cambios
+                })
+                    .then((data) => {
+                        this.$router.push({name: 'camion'});
+                    })
+            },
             calculaCubicacion(){
-                this.cubicacion_pago = this.ancho * this.largo * this.alto - this.espacio_gato - this.disminucion + this.altura_extension
+                this.cubicacion_pago = this.ancho * this.largo * (this.alto + this.altura_extension) - this.espacio_gato - this.disminucion
             }
         },
         watch: {

@@ -41,7 +41,7 @@ class OrigenController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_origen')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:consultar_origen')->only(['show','paginate','index','find', 'descargaLayout']);
         $this->middleware('permiso:registrar_origen')->only(['store']);
         $this->middleware('permiso:editar_origen')->only(['update']);
         $this->middleware('permiso:activar_desactivar_origen')->only(['activar', 'desactivar']);
