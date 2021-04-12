@@ -65,6 +65,13 @@ class Factura extends Transaccion
         }
     }
 
+    public function getIdRubroAttribute()
+    {
+        if ($this->transaccion_rubro) {
+            return  $this->transaccion_rubro->id_rubro;
+        }
+    }
+
     public function transaccion_rubro()
     {
         return $this->hasOne(TransaccionRubro::class, "id_transaccion", "id_transaccion");
@@ -1222,4 +1229,23 @@ class Factura extends Transaccion
         }
     }
 
+    public function editar(array $data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            if(!$this->transaccion_rubro)
+            {
+               $this->registrarRubro($this, $data);
+            }else{
+                $this->transaccion_rubro()->update([
+                    'id_rubro' => $data['rubro']
+                ]);
+            }
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
 }
