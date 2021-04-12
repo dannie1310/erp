@@ -247,8 +247,12 @@ class PolizaService
                     $cantidad++;
                 }
             }
-
-            if($cantidad == 0){abort(403, "");}
+        }catch (\Exception $e) {
+            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            throw $e;
+        } 
+        if($cantidad == 0){abort(500, "No hay pólizas con los datos de búsqueda.");}
+        try{
             $zip_name = 'Polizas '.date("Ymdhis") . '.zip';
             $zipper = new Zipper;
             $files = glob(config('filesystems.disks.polizas_pdf.root').'/*');
@@ -258,7 +262,7 @@ class PolizaService
             return $zip_name;
 
         }catch (\Exception $e) {
-            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            abort(500, "No se pudo generar correctamente el ZIP con las pólizas solicitadas.");
             throw $e;
         }
     }
