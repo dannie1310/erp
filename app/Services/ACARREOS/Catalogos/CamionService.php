@@ -466,4 +466,14 @@ class CamionService
         }
         return $camion->desactivar($data['motivo']);
     }
+
+    public function update(array $data, $id)
+    {
+        $this->conexionAcarreosContexto();
+        if($data['cubicacion_pago'] > 40)
+        {
+            abort(400, "La cubicación del camión no puede ser mayor a 40.");
+        }
+        return $this->repository->show($id)->editar($data);
+    }
 }

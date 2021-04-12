@@ -43,7 +43,7 @@ class CamionController extends Controller
 
         $this->middleware('permiso:consultar_camion')->only(['show','paginate','index','find']);
         $this->middleware('permiso:activar_desactivar_camion')->only(['activar', 'desactivar']);
-        $this->middleware('permiso:editar_camion')->only(['editar']);
+        $this->middleware('permiso:editar_camion')->only(['update']);
 
         $this->fractal = $fractal;
         $this->service = $service;

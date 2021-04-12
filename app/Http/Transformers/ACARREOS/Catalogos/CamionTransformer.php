@@ -34,7 +34,7 @@ class CamionTransformer extends TransformerAbstract
             'economico' => $model->Economico,
             'id_marca' => $model->IdMarca,
             'marca' => $model->descripcion_marca,
-            'modelo' => $model->modelo,
+            'modelo' => $model->Modelo,
             'poliza_seguro' => $model->PolizaSeguro,
             'vigencia_poliza' => $model->VigenciaPolizaSeguro,
             'aseguradora' => $model->Aseguradora,
