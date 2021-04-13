@@ -28,7 +28,7 @@
             <form role="form" @submit.prevent="validate">
                 <div class="card" v-if="cargado">
                     <div class="card-header">
-                        <h5>Datos para la Solicitud de Recepción</h5>
+                        <h5>Datos para la Solicitud de Revisión</h5>
                     </div>
                     <div class="card-body">
                         <span>
@@ -99,91 +99,15 @@
                     </div>
 
                 </div>
-                <div class="card" v-if="cargado">
-                    <div class="card-header">
-                        <h5>Soporte documental para {{cfdi.tipo_transaccion.descripcion}}</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <add-proveedor v-bind:id_cfdi="id_cfdi"></add-proveedor>
-                            </div>
-                        </div>
-                        <br>
-                        <div class="row"  >
-                            <div class="col-md-12">
-                                <div class="table-responsive">
-                                    <table class="table table-striped" id="documentos" name="documentos">
-                                        <thead>
-                                            <tr>
-                                                <th class="index_corto">#</th>
-                                                <th class="index_corto"></th>
-                                                <th class="th_c350">Tipo de Archivo</th>
-                                                <th class="th_c100">Obligatorio</th>
 
-                                                <th class="th_c350">Nombre de Archivo</th>
-                                                <th >Observaciones</th>
-                                                <th class="th_c100">Acciones</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(archivo, i) in archivos" >
-                                                <td>{{i+1}}</td>
-                                                <td>
-                                                    <small class="label bg-success" v-if="archivo.estatus && archivo.obligatorio == 1" style="padding: 3px 2px 3px 5px">
-                                                        <i class="fa fa-check"></i>
-                                                    </small>
-                                                    <small class="label bg-danger" v-else-if="archivo.obligatorio == 1" style="padding: 2px 2px 2px 5px">
-                                                        <i class="fa fa-times"></i>
-                                                    </small>
-                                                </td>
-
-                                                <td>{{archivo.tipo_archivo.descripcion}}</td>
-                                                <td style="text-align: center"><i class="fa fa-check" v-if="archivo.obligatorio == 1"></i></td>
-
-                                                <td>{{archivo.nombre}}</td>
-                                                <td>{{archivo.observaciones}}</td>
-                                                <td>
-                                                    <div class="btn-group">
-                                                        <replace-proveedor v-if="archivo.nombre" v-bind:archivo="archivo"></replace-proveedor>
-                                                        <upload-proveedor v-else v-bind:archivo="archivo"></upload-proveedor>
-
-                                                        <Documento v-bind:descripcion="archivo.tipo_archivo.descripcion" v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.nombre && archivo.extension == 'pdf'"></Documento>
-                                                        <button v-if="archivo.extension && archivo.extension != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
-                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
-                                                                <i class="fa fa-spin fa-spinner"></i>
-                                                            </span>
-                                                            <span v-else>
-                                                                <i class="fa fa-picture-o"></i>
-                                                            </span>
-                                                        </button>
-                                                        <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-if="archivo.nombre" :disabled="eliminando">
-                                                            <i class="fa fa-spin fa-spinner" v-if="eliminando"></i>
-                                                            <i class="fa fa-trash" v-else></i>
-                                                        </button>
-                                                        <button @click="eliminarTipo(archivo)" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar" v-else-if="archivo.obligatorio == 0" :disabled="eliminando">
-                                                            <i class="fa fa-spin fa-spinner" v-if="eliminando"></i>
-                                                            <i class="fa fa-minus" v-else></i>
-                                                        </button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-footer">
-                        <span class="pull-right">
-                            <button type="button" class="btn btn-secondary" v-on:click="regresar" >
-                                <i class="fa fa-angle-left"></i>Regresar
-                            </button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" >
-                                <i class="fa fa-save"></i> Registrar
-                            </button>
-                        </span>
-                    </div>
+                <soporte-documental v-bind:id_cfdi="id_cfdi" v-bind:configuracion="{agregar:true, eliminar:true, eliminar_tipo:true, reemplazar:true, cargar:true}"></soporte-documental>
+                <div class="pull-right" style="padding-bottom: 48px">
+                    <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                        <i class="fa fa-angle-left"></i>Regresar
+                    </button>
+                    <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" >
+                        <i class="fa fa-save"></i> Registrar
+                    </button>
                 </div>
             </form>
         </span>
@@ -207,15 +131,11 @@
 
 <script>
 
-    import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
+    import SoporteDocumental from "../SoporteDocumental";
     import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
-    import AddProveedor from "../../globals/archivos/AddProveedor";
-    import UploadProveedor from "../../globals/archivos/UploadProveedor";
-    import ReplaceProveedor from "../../globals/archivos/ReplaceProveedor";
-    import Documento from "../../globals/archivos/Documento";
     export default {
         name: "solicitud-recepcion-cfdi-create",
-        components: {AddProveedor, CFDI, CfdiShow, Documento, UploadProveedor, ReplaceProveedor},
+        components: {SoporteDocumental, CFDI},
         props: ["id_cfdi"],
         data() {
             return {

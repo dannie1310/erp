@@ -61,6 +61,11 @@ class ArchivoController extends Controller
         return $this->respondWithItem($archivo);
     }
 
+    public function agregarTipoArchivo(Request $request){
+        $archivo = $this->service->agregarTipoArchivo($request->all());
+        return $this->respondWithItem($archivo);
+    }
+
     public function reemplazarArchivo(Request $request){
         $archivo = $this->service->reemplazarArchivo($request->all());
         return $this->respondWithItem($archivo);

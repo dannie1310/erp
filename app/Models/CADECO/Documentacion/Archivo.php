@@ -19,6 +19,7 @@ class Archivo extends Model
 
     protected $fillable = [
         'id_tipo_archivo',
+        'id_tipo_general_archivo',
         'id_categoria',
         'id_transaccion',
         'hashfile',
@@ -47,7 +48,12 @@ class Archivo extends Model
 
     public function tipoArchivo()
     {
-        return $this->belongsTo(CtgTipoArchivo::class, 'id_categoria','id');
+        return $this->belongsTo(CtgTipoArchivo::class, 'id_tipo_archivo','id');
+    }
+
+    public function tipoGeneralArchivo()
+    {
+        return $this->belongsTo(\App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoArchivo::class, 'id_tipo_general_archivo','id');
     }
 
     public function getRegistroAttribute()
@@ -67,6 +73,23 @@ class Archivo extends Model
     public function getNombreArchivoCompletoAttribute()
     {
         return $this->nombre_archivo .'.'. $this->extension_archivo;
+    }
+
+    public function getTipoArchivoTxtAttribute()
+    {
+        try{
+            return $this->tipoGeneralArchivo->descripcion;
+        } catch (\Exception $e){
+            return $this->tipoArchivo->descripcion;
+        }
+    }
+
+    public function getEliminableAttribute()
+    {
+        if(!$this->id_tipo_general_archivo>0){
+            return true;
+        }
+        return false;
     }
 
 }

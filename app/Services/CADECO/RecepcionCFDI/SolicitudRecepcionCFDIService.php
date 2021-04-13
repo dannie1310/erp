@@ -168,9 +168,11 @@ class SolicitudRecepcionCFDIService
         $facturaRepositorio = $cfdi->facturaRepositorio;
 
         if($facturaRepositorio){
-            if($facturaRepositorio->id_proyecto !=  Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey()
-                || $facturaRepositorio->id_obra != Context::getIdObra()){
-                abort(500, "El CFDI ".$cfdi->uuid." ya esta asociado al proyecto: [".$facturaRepositorio->proyecto->base_datos."] ".$facturaRepositorio->obra . " la solicitud se rechazará automáticamente");
+            if($facturaRepositorio->id_proyecto > 0){
+                if($facturaRepositorio->id_proyecto !=  Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey()
+                    || $facturaRepositorio->id_obra != Context::getIdObra()){
+                    abort(500, "El CFDI ".$cfdi->uuid." ya esta asociado al proyecto: [".$facturaRepositorio->proyecto->base_datos."] ".$facturaRepositorio->obra . " la solicitud se rechazará automáticamente");
+                }
             }
         }
 
@@ -195,6 +197,7 @@ class SolicitudRecepcionCFDIService
             "saldo" => $cfdi->total,
             "referencia" => $cfdi->serie.$cfdi->folio,
             "observaciones" => $data["observaciones"],
+            "id_referente" => $id
         ];
         $datos_rubro = [
             'id_rubro' => $data["id_rubro"],

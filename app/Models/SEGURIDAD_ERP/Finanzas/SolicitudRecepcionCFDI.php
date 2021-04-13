@@ -274,6 +274,8 @@ class SolicitudRecepcionCFDI extends Model
             $this->cfdi->id_factura_repositorio = $facturaRepositorio->id;
             $this->cfdi->save();
 
+            $this->heredaDocumentosAFactura($factura);
+
             $this->estado = 1;
             $this->save();
 
@@ -285,6 +287,23 @@ class SolicitudRecepcionCFDI extends Model
             DB::connection('cadeco')->rollBack();
             DB::connection('seguridad')->rollBack();
             abort(500, $e->getMessage());
+        }
+    }
+
+    private function heredaDocumentosAFactura(Factura $factura)
+    {
+        $documentos = $this->cfdi->archivos;
+        foreach ($documentos as $documento) {
+            $data_registro["id_tipo_archivo"] = 1;
+            $data_registro["id_categoria"] = 1;
+            $data_registro["id_tipo_general_archivo"] = $documento->id_tipo_archivo;
+            $data_registro["descripcion"] = $documento->observaciones;
+            $data_registro["hashfile"] = $documento->hashfile;
+            $data_registro["nombre"] = $documento->nombre;
+            $data_registro["extension"] = $documento->extension;
+            $factura->archivos()->create(
+                $data_registro
+            );
         }
     }
 

@@ -13,52 +13,55 @@
                 </div>
             </div>
         </div>
-        <div class="card" v-if="cargado" >
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <label>Motivo de Rechazo: </label>
+        <div v-else>
+            <encabezado v-bind:solicitud="solicitud"></encabezado>
+            <div class="card" v-if="cargado" >
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Motivo de Rechazo: </label>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group row error-content">
-                            <div class="col-md-12">
-                                <textarea
-                                    name="motivo"
-                                    id="motivo"
-                                    class="form-control"
-                                    v-model="motivo"
-                                    v-validate="{required: true}"
-                                    data-vv-as="Motivo de Rechazo"
-                                    :class="{'is-invalid': errors.has('motivo')}"
-                                ></textarea>
-                                <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row error-content">
+                                <div class="col-md-12">
+                                    <textarea
+                                        name="motivo"
+                                        id="motivo"
+                                        class="form-control"
+                                        v-model="motivo"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Motivo de Rechazo"
+                                        :class="{'is-invalid': errors.has('motivo')}"
+                                    ></textarea>
+                                    <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-bind:configuracion="{agregar_tipo:true}" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
+            <div class="pull-right" style="padding-bottom: 48px" v-if="solicitud">
+                <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                    <i class="fa fa-angle-left"></i>Regresar
+                </button>
+                <button v-if="solicitud.estado==0" @click="rechazar" title="Rechazar" class="btn btn-danger">
+                    <i class="fa fa-times-circle"></i>Rechazar
+                </button>
+            </div>
         </div>
-        <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
-        <div class="pull-right" style="padding-bottom: 48px">
-            <button type="button" class="btn btn-secondary" v-on:click="regresar" >
-                <i class="fa fa-angle-left"></i>Regresar
-            </button>
-            <button v-if="solicitud.estado==0" @click="rechazar" title="Rechazar" class="btn btn-danger">
-                <i class="fa fa-times-circle"></i>Rechazar
-            </button>
-        </div>
-
     </span>
 </template>
 
 <script>
 
     import SolicitudRecepcionCfdiDetalle from "../partials/Detalle";
+    import Encabezado from "../partials/Encabezado";
     export default {
         name: "solicitud-recepcion-cfdi-rechazar",
-        components: {SolicitudRecepcionCfdiDetalle},
+        components: {Encabezado, SolicitudRecepcionCfdiDetalle},
         props: ["id"],
         data() {
             return {
