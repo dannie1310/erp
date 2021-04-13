@@ -17,6 +17,7 @@ use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\FondoGarantia;
 use App\Models\CADECO\ItemOrdenCompra;
@@ -48,6 +49,7 @@ class Factura extends Transaccion
         "saldo",
         "referencia",
         "observaciones",
+        "id_referente"
     ];
 
     protected static function boot()
@@ -126,6 +128,11 @@ class Factura extends Transaccion
     public function pagos()
     {
         return $this->hasManyThrough(PagoFactura::class, OrdenPago::class, 'id_referente', 'numero_folio', 'id_transaccion', 'id_transaccion');
+    }
+
+    public function solicitudRecepcion()
+    {
+        return $this->belongsTo(SolicitudRecepcionCFDI::class, "id_referente", "id");
     }
 
     public function facturaRepositorio()
@@ -252,6 +259,13 @@ class Factura extends Transaccion
         if($this->estado == 2)
         {
             throw New \Exception("No se puede eliminar la factura debido a que ya se encuentra Pagada");
+        }
+    }
+
+    public function validarOrigen()
+    {
+        if($this->id_referente>0){
+            throw New \Exception("No se puede eliminar la factura debido a que se origino a partir de la aprobación de la solicitud de revisión con folio: ".$this->solicitudRecepcion->numero_folio_format);
         }
     }
 
