@@ -13,14 +13,15 @@
                 </div>
             </div>
         </div>
+
         <div class="card" v-if="solicitud">
             <div class="card-header">
-                <h5>Datos de la Solicitud de Recepción</h5>
+                <h5>Datos de la Solicitud de Revisión</h5>
             </div>
             <div class="card-body">
                 <span>
                     <div class="row">
-                        <div class="col-md-2 offset-md-8">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label >Folio:</label>
                                 <div>
@@ -36,9 +37,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label >Proyecto:</label>
                                 <div>
@@ -46,7 +45,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label >Contacto HI:</label>
                                 <div>
@@ -54,7 +53,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label >Correo para recibir notificaciones:</label>
                                 <div>
@@ -141,17 +140,19 @@
                 </span>
             </div>
         </div>
-        <cfdi-show v-bind:cfdi="solicitud.cfdi"></cfdi-show>
+        <soporte-documental v-bind:id_cfdi="solicitud.cfdi.id" v-bind:configuracion="configuracion" ></soporte-documental>
     </span>
 </template>
 
 <script>
 
     import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
+    import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
+    import SoporteDocumental from "../SoporteDocumental";
     export default {
         name: "solicitud-recepcion-cfdi-detalle",
-        components: {CfdiShow},
-        props: ["solicitud"],
+        components: {SoporteDocumental, CFDI, CfdiShow},
+        props: ["solicitud", "configuracion"],
     }
 </script>
 <style>

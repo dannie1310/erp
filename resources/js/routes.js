@@ -150,7 +150,7 @@ export const routes = [
                         name: 'recepcion-cfdi',
                         component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/BandejaEntrada').default,
                         meta: {
-                            title: 'Recepción de CFDI',
+                            title: 'Recepción de CFDI a Revisión',
                             breadcrumb: {parent:'home', name: 'RECEPCIÓN DE CFDI'},
                             middleware: [auth, context, permission],
                             permission: 'aprobar_solicitud_recepcion_cfdi'
@@ -162,7 +162,7 @@ export const routes = [
                         component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Aprobar').default,
                         props: true,
                         meta: {
-                            title: 'Aprobar Recepción de CFDI',
+                            title: 'Aprobar Solicitud de Revisión de CFDI',
                             breadcrumb: { parent: 'recepcion-cfdi', name: 'APROBAR'},
                             middleware: [auth, context, permission],
                             permission: 'aprobar_solicitud_recepcion_cfdi'
@@ -174,7 +174,7 @@ export const routes = [
                         component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Rechazar').default,
                         props: true,
                         meta: {
-                            title: 'Rechazar Recepción de CFDI',
+                            title: 'Rechazar Solicitud de Revisión de CFDI',
                             breadcrumb: { parent: 'recepcion-cfdi', name: 'RECHAZAR'},
                             middleware: [auth, context, permission],
                             permission: 'rechazar_solicitud_recepcion_cfdi'
@@ -186,8 +186,8 @@ export const routes = [
                         component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Show').default,
                         props: true,
                         meta: {
-                            title: 'CONSULTAR SOLICITUD',
-                            breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                            title: 'Consultar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'VER SOLICITUD'},
                             middleware: [auth, permission],
                             permission: 'consultar_solicitud_recepcion_cfdi_proyecto',
                         }
@@ -2888,7 +2888,7 @@ export const routes = [
                 name: 'solicitud-recepcion-cfdi-create',
                 component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
                 meta: {
-                    title: 'REGISTRAR SOLICITUD',
+                    title: 'Registrar Solicitud de Revisión de CFDI',
                     breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
                     middleware: [auth, permission],
                     permission: ['registrar_solicitud_recepcion_cfdi'],
@@ -2901,7 +2901,7 @@ export const routes = [
                 component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
                 props: true,
                 meta: {
-                    title: 'CONSULTAR SOLICITUD',
+                    title: 'Consultar Solicitud de Revisión de CFDI',
                     breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
                     middleware: [auth, permission],
                     permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
@@ -2914,7 +2914,7 @@ export const routes = [
                 component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
                 props: true,
                 meta: {
-                    title: 'CANCELAR SOLICITUD',
+                    title: 'Cancelar Solicitud de Revisión de CFDI',
                     breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
                     middleware: [auth, permission],
                     permission: 'cancelar_solicitud_recepcion_cfdi',

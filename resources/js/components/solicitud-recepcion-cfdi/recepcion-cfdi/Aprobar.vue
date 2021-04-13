@@ -13,32 +13,93 @@
                 </div>
             </div>
         </div>
-
-        <div class="card" v-if="cargado && solicitud.cfdi.tipo_comprobante == 'I'">
-            <div class="card-header">
-                <h5>Datos del Contrarecibo</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-3">
-                        <div class="form-group error-content">
-                            <label for="rubro">Rubro de Factura:</label>
-                            <model-list-select
-                                name="id_rubro"
-                                id="id_rubro"
-                                placeholder="Seleccionar o buscar"
-                                data-vv-as="Rubro"
-                                v-validate="{required: true}"
-                                v-model="id_rubro"
-                                option-value="id"
-                                option-text="descripcion"
-                                :list="rubros"
-                                :isError="errors.has('id_rubro')">
-                            </model-list-select>
-                            <div class="invalid-feedback" v-show="errors.has('id_rubro')">{{ errors.first('id_rubro') }}</div>
+        <div v-else>
+            <encabezado v-bind:solicitud="solicitud"></encabezado>
+            <div class="card" v-if="cargado && solicitud.cfdi.tipo_comprobante == 'I'">
+                <div class="card-header">
+                    <h5>Datos del Contrarecibo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group error-content">
+                                <label for="rubro">Rubro de Factura:</label>
+                                <model-list-select
+                                    name="id_rubro"
+                                    id="id_rubro"
+                                    placeholder="Seleccionar o buscar"
+                                    data-vv-as="Rubro"
+                                    v-validate="{required: true}"
+                                    v-model="id_rubro"
+                                    option-value="id"
+                                    option-text="descripcion"
+                                    :list="rubros"
+                                    :isError="errors.has('id_rubro')">
+                                </model-list-select>
+                                <div class="invalid-feedback" v-show="errors.has('id_rubro')">{{ errors.first('id_rubro') }}</div>
+                            </div>
                         </div>
+                        <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    <label for="id_moneda">Moneda:</label>
+                                    <select
+                                        class="form-control"
+                                        name="id_moneda"
+                                        id="id_moneda"
+                                        data-vv-as="Moneda"
+                                        v-validate="{required: true}"
+                                        v-model="id_moneda"
+                                    >
+                                        <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
+                                            {{ moneda.nombre }}
+                                        </option>
+                                    </select>
+
+                                    <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
+                                </div>
+                            </div>
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="vencimiento">Vencimiento:</label>
+                                <datepicker v-model = "vencimiento"
+                                            name = "vencimiento"
+                                            id = "vencimiento"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :class="{'is-invalid': errors.has('vencimiento')}"
+                                ></datepicker>
+                                <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                                <div class="form-group error-content">
+                                    <label for="observaciones">Observaciones:</label>
+                                    <textarea
+                                        name="observaciones"
+                                        id="observaciones"
+                                        class="form-control"
+                                        v-model="observaciones"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Observaciones"
+                                        :class="{'is-invalid': errors.has('observaciones')}"
+                                    ></textarea>
+                                    <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                </div>
+                            </div>
                     </div>
-                    <div class="col-md-2">
+
+                </div>
+            </div>
+            <div class="card" v-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && solicitud.cfdi.tipo_relacion == 0">
+                <div class="card-header">
+                    <h5>Datos del Contrarecibo</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
                             <div class="form-group error-content">
                                 <label for="id_moneda">Moneda:</label>
                                 <select
@@ -57,23 +118,8 @@
                                 <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
                             </div>
                         </div>
-                    <div class="col-md-2">
-                        <div class="form-group error-content">
-                            <label for="vencimiento">Vencimiento:</label>
-                            <datepicker v-model = "vencimiento"
-                                        name = "vencimiento"
-                                        id = "vencimiento"
-                                        :format = "formatoFecha"
-                                        :language = "es"
-                                        :bootstrap-styling = "true"
-                                        class = "form-control"
-                                        v-validate="{required: true}"
-                                        :class="{'is-invalid': errors.has('vencimiento')}"
-                            ></datepicker>
-                            <div class="invalid-feedback" v-show="errors.has('vencimiento')">{{ errors.first('vencimiento') }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-5">
+
+                        <div class="col-md-10">
                             <div class="form-group error-content">
                                 <label for="observaciones">Observaciones:</label>
                                 <textarea
@@ -88,205 +134,159 @@
                                 <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                             </div>
                         </div>
+                    </div>
+
                 </div>
-
             </div>
-        </div>
-        <div class="card" v-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && solicitud.cfdi.tipo_relacion == 0">
-            <div class="card-header">
-                <h5>Datos del Contrarecibo</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group error-content">
-                            <label for="id_moneda">Moneda:</label>
-                            <select
-                                class="form-control"
-                                name="id_moneda"
-                                id="id_moneda"
-                                data-vv-as="Moneda"
-                                v-validate="{required: true}"
-                                v-model="id_moneda"
-                            >
-                                <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
-                                    {{ moneda.nombre }}
-                                </option>
-                            </select>
-
-                            <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-10">
-                        <div class="form-group error-content">
-                            <label for="observaciones">Observaciones:</label>
-                            <textarea
-                                name="observaciones"
-                                id="observaciones"
-                                class="form-control"
-                                v-model="observaciones"
-                                v-validate="{required: true}"
-                                data-vv-as="Observaciones"
-                                :class="{'is-invalid': errors.has('observaciones')}"
-                            ></textarea>
-                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                        </div>
-                    </div>
+            <div class="card" v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && ((solicitud.cfdi.tipo_relacion != 1 && solicitud.cfdi.tipo_relacion != 7) || !solicitud.cfdi.cfdi_asociado)">
+                <div class="card-header">
+                    <h5>Datos del Contrarecibo</h5>
                 </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="id_moneda">Moneda:</label>
+                                <select
+                                    class="form-control"
+                                    name="id_moneda"
+                                    id="id_moneda"
+                                    data-vv-as="Moneda"
+                                    v-validate="{required: true}"
+                                    v-model="id_moneda"
+                                >
+                                    <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
+                                        {{ moneda.nombre }}
+                                    </option>
+                                </select>
 
-            </div>
-        </div>
-        <div class="card" v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && ((solicitud.cfdi.tipo_relacion != 1 && solicitud.cfdi.tipo_relacion != 7) || !solicitud.cfdi.cfdi_asociado)">
-            <div class="card-header">
-                <h5>Datos del Contrarecibo</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group error-content">
-                            <label for="id_moneda">Moneda:</label>
-                            <select
-                                class="form-control"
-                                name="id_moneda"
-                                id="id_moneda"
-                                data-vv-as="Moneda"
-                                v-validate="{required: true}"
-                                v-model="id_moneda"
-                            >
-                                <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
-                                    {{ moneda.nombre }}
-                                </option>
-                            </select>
+                                <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
+                            </div>
+                        </div>
 
-                            <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
+                        <div class="col-md-10">
+                            <div class="form-group error-content">
+                                <label for="observaciones">Observaciones:</label>
+                                <textarea
+                                    name="observaciones"
+                                    id="observaciones"
+                                    class="form-control"
+                                    v-model="observaciones"
+                                    v-validate="{required: true}"
+                                    data-vv-as="Observaciones"
+                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="col-md-10">
-                        <div class="form-group error-content">
-                            <label for="observaciones">Observaciones:</label>
-                            <textarea
-                                name="observaciones"
-                                id="observaciones"
-                                class="form-control"
-                                v-model="observaciones"
-                                v-validate="{required: true}"
-                                data-vv-as="Observaciones"
-                                :class="{'is-invalid': errors.has('observaciones')}"
-                            ></textarea>
-                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                        </div>
-                    </div>
                 </div>
-
             </div>
-        </div>
-        <template v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && solicitud.cfdi.cfdi_asociado">
-            <template v-if="solicitud.cfdi.cfdi_asociado.transaccion_factura && (solicitud.cfdi.tipo_relacion == 1 || solicitud.cfdi.tipo_relacion == 7)">
-                <div class="card" v-if="solicitud.cfdi.cfdi_asociado.transaccion_factura.estado==0">
-                    <div class="card-header">
-                        <h5>Datos del Contrarecibo del CFDI Asociado</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="alert alert-warning" role="alert">
-                           <i class="fa fa-info-circle"></i> La nota de crédito se incorporará al contrarecibo restandose al monto de la factura
+            <template v-else-if="cargado && solicitud.cfdi.tipo_comprobante == 'E' && solicitud.cfdi.cfdi_asociado">
+                <template v-if="solicitud.cfdi.cfdi_asociado.transaccion_factura && (solicitud.cfdi.tipo_relacion == 1 || solicitud.cfdi.tipo_relacion == 7)">
+                    <div class="card" v-if="solicitud.cfdi.cfdi_asociado.transaccion_factura.estado==0">
+                        <div class="card-header">
+                            <h5>Datos del Contrarecibo del CFDI Asociado</h5>
                         </div>
-                        <div class="row" >
-                            <div class="col-md-2">
-                                <label >Folio CR:</label>
-                                <div>
-                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.contra_recibo.numero_folio_format}}
-                                </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning" role="alert">
+                               <i class="fa fa-info-circle"></i> La nota de crédito se incorporará al contrarecibo restandose al monto de la factura
                             </div>
-                            <div class="col-md-2">
-                                <label >Folio Factura:</label>
-                                <div>
-                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.numero_folio_format}}
+                            <div class="row" >
+                                <div class="col-md-2">
+                                    <label >Folio CR:</label>
+                                    <div>
+                                        {{solicitud.cfdi.cfdi_asociado.transaccion_factura.contra_recibo.numero_folio_format}}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <label >Fecha:</label>
-                                <div>
-                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.fecha_format}}
+                                <div class="col-md-2">
+                                    <label >Folio Factura:</label>
+                                    <div>
+                                        {{solicitud.cfdi.cfdi_asociado.transaccion_factura.numero_folio_format}}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <label >Monto:</label>
-                                <div>
-                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.monto_format}}
+                                <div class="col-md-2">
+                                    <label >Fecha:</label>
+                                    <div>
+                                        {{solicitud.cfdi.cfdi_asociado.transaccion_factura.fecha_format}}
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-md-4">
-                                <label >Observaciones:</label>
-                                <div>
-                                    {{solicitud.cfdi.cfdi_asociado.transaccion_factura.observaciones}}
+                                <div class="col-md-2">
+                                    <label >Monto:</label>
+                                    <div>
+                                        {{solicitud.cfdi.cfdi_asociado.transaccion_factura.monto_format}}
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label >Observaciones:</label>
+                                    <div>
+                                        {{solicitud.cfdi.cfdi_asociado.transaccion_factura.observaciones}}
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </template>
+                <div class="card" v-else-if="!solicitud.cfdi.cfdi_asociado.transaccion_factura && (solicitud.cfdi.tipo_relacion == 1 || solicitud.cfdi.tipo_relacion == 7)">
+                <div class="card-header">
+                    <h5>Datos del Contrarecibo</h5>
                 </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group error-content">
+                                <label for="id_moneda">Moneda:</label>
+                                <select
+                                    class="form-control"
+                                    name="id_moneda"
+                                    id="id_moneda"
+                                    data-vv-as="Moneda"
+                                    v-validate="{required: true}"
+                                    v-model="id_moneda"
+                                >
+                                    <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
+                                        {{ moneda.nombre }}
+                                    </option>
+                                </select>
+
+                                <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-10">
+                            <div class="form-group error-content">
+                                <label for="observaciones">Observaciones:</label>
+                                <textarea
+                                    name="observaciones"
+                                    id="observaciones"
+                                    class="form-control"
+                                    v-model="observaciones"
+                                    v-validate="{required: true}"
+                                    data-vv-as="Observaciones"
+                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+
             </template>
-            <div class="card" v-else-if="!solicitud.cfdi.cfdi_asociado.transaccion_factura && (solicitud.cfdi.tipo_relacion == 1 || solicitud.cfdi.tipo_relacion == 7)">
-            <div class="card-header">
-                <h5>Datos del Contrarecibo</h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <div class="form-group error-content">
-                            <label for="id_moneda">Moneda:</label>
-                            <select
-                                class="form-control"
-                                name="id_moneda"
-                                id="id_moneda"
-                                data-vv-as="Moneda"
-                                v-validate="{required: true}"
-                                v-model="id_moneda"
-                            >
-                                <option  v-for="(moneda, i) in monedas" :value="moneda.id" >
-                                    {{ moneda.nombre }}
-                                </option>
-                            </select>
-
-                            <div class="invalid-feedback" v-show="errors.has('moneda')">{{ errors.first('moneda') }}</div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-10">
-                        <div class="form-group error-content">
-                            <label for="observaciones">Observaciones:</label>
-                            <textarea
-                                name="observaciones"
-                                id="observaciones"
-                                class="form-control"
-                                v-model="observaciones"
-                                v-validate="{required: true}"
-                                data-vv-as="Observaciones"
-                                :class="{'is-invalid': errors.has('observaciones')}"
-                            ></textarea>
-                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
+            <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud" v-bind:configuracion="{agregar : true}"></solicitud-recepcion-cfdi-detalle>
+            <span class="pull-right" style="padding-bottom: 48px" v-if="solicitud">
+                <button type="button" class="btn btn-secondary" v-on:click="regresar" >
+                    <i class="fa fa-angle-left"></i>Regresar
+                </button>
+                <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
+                    <i class="fa fa-check-circle"></i>Aprobar
+                </button>
+            </span>
         </div>
-
-
-
-        </template>
-
-        <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
-
-        <span class="pull-right" style="padding-bottom: 48px" v-if="solicitud">
-            <button type="button" class="btn btn-secondary" v-on:click="regresar" >
-                <i class="fa fa-angle-left"></i>Regresar
-            </button>
-            <button v-if="solicitud.estado==0" @click="aprobar" title="Aprobar" class="btn btn-primary">
-                <i class="fa fa-check-circle"></i>Aprobar
-            </button>
-        </span>
     </span>
 </template>
 
@@ -295,10 +295,11 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from "vue-search-select";
     import SolicitudRecepcionCfdiDetalle from "../partials/Detalle";
+    import Encabezado from "../partials/Encabezado";
 
     export default {
         name: "solicitud-recepcion-cfdi-aprobar",
-        components: {SolicitudRecepcionCfdiDetalle, datepicker, ModelListSelect},
+        components: {Encabezado, SolicitudRecepcionCfdiDetalle, datepicker, ModelListSelect},
         props: ["id"],
         data() {
             return {

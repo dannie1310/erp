@@ -330,6 +330,7 @@ $api->version('v1', function ($api) {
             $api->post('reemplazarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@reemplazarArchivo');
             $api->post('eliminarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@eliminarArchivo');
             $api->post('agregarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@agregarArchivo');
+            $api->post('agregarTipoArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@agregarTipoArchivo');
             $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);

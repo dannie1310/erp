@@ -90,6 +90,46 @@ export default {
                     });
             });
         },
+        agregarTipoArchivo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Agregar tipo de archivo.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'agregarTipoArchivo', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Tipo de archivo agregado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            //context.commit("INSERT_ARCHIVO", data);
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         cargarArchivo(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

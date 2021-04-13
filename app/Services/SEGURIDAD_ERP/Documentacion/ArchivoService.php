@@ -30,6 +30,15 @@ class ArchivoService
         $this->repository = new Repository($model);
     }
 
+    public function agregarTipoArchivo($data)
+    {
+        $data_registro["obligatorio"] = 1;
+        $data_registro["id_cfdi"] = $data["id_cfdi"];
+        $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
+
+        return $this->repository->create($data_registro);
+    }
+
     public function agregarArchivo($data){
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $archivos_pdf = \json_decode($data['archivos']);
