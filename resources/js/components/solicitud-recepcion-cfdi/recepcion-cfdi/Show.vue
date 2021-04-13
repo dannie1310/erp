@@ -57,6 +57,7 @@
                     params: {include: ['cfdi.conceptos', 'empresa', 'obra']}
                 }).then(data => {
                     this.$store.commit('recepcion-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', data);
+                    this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data.cfdi);
                 }).finally(() => {
                     this.cargando = false;
                     this.cargado = true;
