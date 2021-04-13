@@ -94,7 +94,6 @@ class Repository implements RepositoryInterface
     }
     public function whereIn($where)
     {
-
         $this->model = $this->model->whereIn($where[0], $where[1]);
         return $this;
     }

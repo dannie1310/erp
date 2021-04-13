@@ -124,7 +124,7 @@
                         <div class="col-md-12">
                             <div class="form-group row">
                                 <label class="col-md-1 col-form-label">Marca:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-5">
                                     <select class="form-control"
                                             name="id_marca"
                                             data-vv-as="Marca"
@@ -138,7 +138,7 @@
                                     <div class="invalid-feedback" v-show="errors.has('id_marca')">{{ errors.first('id_marca') }}</div>
                                 </div>
                                 <label class="col-md-1 col-form-label">Modelo:</label>
-                                <div class="col-md-4">
+                                <div class="col-md-5">
                                     <input type="text"
                                            data-vv-as="Modelo"
                                            name="modelo"
