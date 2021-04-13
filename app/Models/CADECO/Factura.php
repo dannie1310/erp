@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Cambio;
 use App\Models\CADECO\Estimacion;
@@ -90,6 +91,11 @@ class Factura extends Transaccion
     public function documento()
     {
         return $this->belongsTo(Documento::class, 'id_transaccion', 'IDTransaccionCDC');
+    }
+
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class, 'id_transaccion', 'id_transaccion');
     }
 
     public function empresa()
