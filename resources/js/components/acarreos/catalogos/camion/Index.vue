@@ -35,7 +35,7 @@
                     { title: 'Cubicación Real', field: 'CubicacionReal', sortable: true},
                     { title: 'Cubicación Pago', field: 'CubicacionParaPago', sortable: true},
                     { title: 'Fecha Registro', field: 'FechaAlta', sortable: true, thComp: require('../../../globals/th-Date').default},
-                    { title: 'Registro', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Registró', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],

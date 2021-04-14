@@ -5,6 +5,8 @@ namespace App\Models\ACARREOS;
 
 
 use App\Models\IGH\Usuario;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -13,6 +15,22 @@ class Camion extends Model
     protected $connection = 'acarreos';
     protected $table = 'camiones';
     public $primaryKey = 'IdCamion';
+
+    protected $fillable = [
+        'IdSindicato',
+        'IdEmpresa',
+        'Propietario',
+        'IdOperador',
+        'PlacasCaja',
+        'IdMarca',
+        'VigenciaPolizaSeguro',
+        'Aseguradora',
+        'Ancho',
+        'EspacioDeGato',
+        'Disminucion',
+        'CubicacionReal',
+        'CubicacionParaPago',
+    ];
 
     /**
      * Relaciones Eloquent
@@ -210,25 +228,28 @@ class Camion extends Model
     {
         try {
             DB::connection('acarreos')->beginTransaction();
-            $this->IdSindicato = $data['id_sindicato'];
-            $this->IdEmpresa = $data['id_empresa'];
-            $this->Propietario = $data['propietario'];
-            $this->IdOperador = $data['id_operador'];
-            $this->PlacasCaja = $data['placa_caja'];
-            $this->IdMarca = $data['id_marca'];
-            $this->Modelo = $data['modelo'];
-            $this->PolizaSeguro = $data['poliza_seguro'];
-            $this->VigenciaPolizaSeguro = $data['vigencia_poliza'];
-            $this->Aseguradora = $data['aseguradora'];
-            $this->Ancho = $data['ancho'];
-            $this->Largo = $data['largo'];
-            $this->Alto = $data['alto'];
-            $this->AlturaExtension = $data['altura_extension'];
-            $this->EspacioDeGato = $data['espacio_gato'];
-            $this->Disminucion = $data['disminucion'];
-            $this->CubicacionReal = $data['cubicacion_real'];
-            $this->CubicacionParaPago = $data['cubicacion_pago'];
-
+            $fecha = New DateTime($data['vigencia_poliza']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'IdSindicato' => $data['id_sindicato'],
+                'IdEmpresa' => $data['id_empresa'],
+                'Propietario' => $data['propietario'],
+                'IdOperador' => $data['id_operador'],
+                'PlacasCaja' => $data['placa_caja'],
+                'IdMarca' => $data['id_marca'],
+                'Modelo' => $data['modelo'],
+                'PolizaSeguro' => $data['poliza_seguro'],
+                'VigenciaPolizaSeguro' => $fecha->format("Y-m-d"),
+                'Aseguradora' => $data['aseguradora'],
+                'Ancho' => $data['ancho'],
+                'Largo' => $data['largo'],
+                'Alto' => $data['alto'],
+                'AlturaExtension' => $data['altura_extension'],
+                'EspacioDeGato' => $data['espacio_gato'],
+                'Disminucion' => $data['disminucion'],
+                'CubicacionReal' => $data['cubicacion_real'],
+                'CubicacionParaPago' => $data['cubicacion_pago']
+            ]);
             if($data['imagenes'] != [])
             {
                 $this->editarImagenes($data['imagenes']);

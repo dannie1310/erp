@@ -8,7 +8,6 @@ use App\CSV\Acarreos\Catalogos\CamionLayout;
 use App\Models\ACARREOS\Camion;
 use App\Models\ACARREOS\Operador;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
-use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
 use App\Models\ACARREOS\SolicitudActualizacionCamion;
 use App\Models\ACARREOS\SolicitudActualizacionCamionImagen;
 use App\Models\ACARREOS\SolicitudReactivacionCamion;
@@ -421,10 +420,8 @@ class CamionService
 
         if (isset($data['IdOperador']))
         {
-            $operador = Operador::where([['Nombre', 'LIKE', '%' . $data['IdOperador'] . '%']])->get();
-            foreach ($operador as $e) {
-                $this->repository->whereOr([['IdOperador', '=', $e->IdOperador]]);
-            }
+            $operador = Operador::where([['Nombre', 'LIKE', '%' . $data['IdOperador'] . '%']])->pluck('IdOperador');
+            $this->repository->whereIn(['IdOperador', $operador]);
         }
 
         if (isset($data['FechaAlta']))
@@ -434,10 +431,8 @@ class CamionService
 
         if (isset($data['usuario_registro']))
         {
-            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->get();
-            foreach ($usuario as $e) {
-                $this->repository->whereOr([['usuario_registro', '=', $e->idusuario]]);
-            }
+            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->pluck('idusuario');
+            $this->repository->whereIn(['usuario_registro', $usuario]);
         }
 
         return  $this->repository->paginate($data);
