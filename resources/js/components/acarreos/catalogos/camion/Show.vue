@@ -122,10 +122,10 @@
                                            class="form-control"
                                            v-model="camion.modelo" />
                                 </div>
-                                <label class="col-md-1 col-form-label">Imagenes:</label>
+                                <label class="col-md-1 col-form-label">Imágenes:</label>
                                 <div class="col-md-1">
                                     <button @click="getImagenes()" class="btn btn-primary pull-center" :disabled="tieneImagen">
-                                        <i class="fa fa-file-image-o"></i> Ver Imagenes
+                                        <i class="fa fa-file-image-o"></i> Ver Imágenes
                                     </button>
                                 </div>
                             </div>
