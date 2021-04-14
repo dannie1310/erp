@@ -8,7 +8,7 @@
                  <div class="modal-dialog modal-lg" id="mdialTamanio">
                      <div class="modal-content">
                         <div class="modal-header">
-                            <h4 class="modal-title">Formato de Solicitud de Recepción de CFDI</h4>
+                            <h4 class="modal-title">Formato de Solicitud de Revisión de CFDI</h4>
                             <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                         </div>
                         <div class="modal-body modal-lg" style="height: 800px" ref="body">
@@ -32,7 +32,7 @@
             },
             pdf(){
                 var url = '/api/entrega-cfdi/' + this.id +'/pdf?access_token='+this.$session.get('jwt');
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Solicitud de Recepción de CFDI</iframe>');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Solicitud de Revisión de CFDI</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }

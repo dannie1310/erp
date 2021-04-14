@@ -13,8 +13,9 @@
                 </div>
             </div>
         </div>
-
-        <div class="card" v-if="cargado" >
+        <div v-else>
+            <encabezado v-bind:solicitud="solicitud" v-if="cargado"></encabezado>
+            <div class="card" v-if="cargado" >
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -41,8 +42,8 @@
                 </div>
             </div>
         </div>
-        <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
-        <div class="pull-right" style="padding-bottom: 48px">
+            <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud" v-bind:configuracion="{}"></solicitud-recepcion-cfdi-detalle>
+            <div class="pull-right" style="padding-bottom: 48px">
             <button type="button" class="btn btn-secondary" v-on:click="regresar" >
                 <i class="fa fa-angle-left"></i>Regresar
             </button>
@@ -50,15 +51,17 @@
                 <i class="fa fa-times-circle"></i>Cancelar
             </button>
         </div>
+        </div>
     </span>
 </template>
 
 <script>
 
     import SolicitudRecepcionCfdiDetalle from "../partials/Detalle";
+    import Encabezado from "../partials/Encabezado";
     export default {
         name: "solicitud-recepcion-cfdi-cancelar",
-        components: {SolicitudRecepcionCfdiDetalle},
+        components: {Encabezado, SolicitudRecepcionCfdiDetalle},
         props: ["id"],
         data() {
             return {
@@ -86,6 +89,7 @@
                     params: {include: ['cfdi.conceptos', 'empresa', 'obra']}
                 }).then(data => {
                     this.$store.commit('entrega-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', data);
+                    this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data.cfdi);
                 }).finally(() => {
                     this.cargando = false;
                     this.cargado = true;

@@ -11,6 +11,9 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
+use App\Models\SEGURIDAD_ERP\Documentacion\Archivo;
+use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
@@ -59,6 +62,7 @@ class CFDSAT extends Model
         ,"cfdi_relacionado"
         ,"forma_pago"
         ,"fecha_pago"
+        ,"id_tipo_transaccion"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
@@ -114,6 +118,16 @@ class CFDSAT extends Model
         return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
     }
 
+    public function tipoTransaccion()
+    {
+        return $this->belongsTo(CtgTipoTransaccion::class, "id_tipo_transaccion", "id");
+    }
+
+    public function tipoComprobante()
+    {
+        return $this->belongsTo(TipoComprobante::class, "tipo_comprobante", "tipo_comprobante");
+    }
+
     public function facturaRepositorio()
     {
         return $this->hasOne(FacturaRepositorio::class, "uuid", "uuid");
@@ -132,6 +146,11 @@ class CFDSAT extends Model
     public function pagos()
     {
         return $this->hasMany(CFDSATDocumentosPagados::class, "id_cfdi_pagado", "id");
+    }
+
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class, "id_cfdi", "id");
     }
 
     public function scopeDeEFO($query)
@@ -221,6 +240,11 @@ class CFDSAT extends Model
         return '$ ' . number_format(($this->total_impuestos_trasladados),2);
     }
 
+    public function getReferenciaAttribute()
+    {
+        return $this->serie .' '. $this->folio;
+    }
+
     public function getXMLAttribute()
     {
         $xml = DB::table("Contabilidad.cfd_sat")
@@ -270,6 +294,48 @@ class CFDSAT extends Model
             dd($e->getMessage(),$data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function generaDocumentos()
+    {
+        if($this->id_tipo_transaccion>0)
+        {
+            $tiposArchivo = $this->tipoTransaccion->tiposArchivo;
+            foreach($tiposArchivo as $tipoArchivo){
+                $archivo["id_tipo_archivo"] = $tipoArchivo->id_tipo_archivo;
+                $archivo["obligatorio"] = $tipoArchivo->obligatorio;
+                try{
+                    $this->archivos()->create($archivo);
+                }catch (\Exception $e){
+
+                }
+            }
+        }
+    }
+
+    public function actualizaObligatoriedadDocumentos()
+    {
+        if($this->id_tipo_transaccion>0)
+        {
+            $idTiposArchivoObligatorios = $this->tipoTransaccion->tiposArchivo->where("obligatorio","=","1")->pluck("id_tipo_archivo")->toArray();
+            foreach($this->archivos as $archivo){
+                if(!in_array($archivo->id_tipo_archivo, $idTiposArchivoObligatorios)){
+                    $archivo->obligatorio = 0;
+                    $archivo->save();
+                }
+            }
+        }
+    }
+
+    public function eliminaDocumentos()
+    {
+        $archivos = $this->archivos;
+        foreach($archivos as $archivo)
+        {
+            if(!$archivo->hashfile){
+                $archivo->delete();
+            }
         }
     }
 }

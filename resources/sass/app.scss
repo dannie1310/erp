@@ -113,6 +113,14 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   text-align: center;
 }
 
+.th_c350, th.c350
+{
+    width: 350px;
+    max-width: 350px;
+    min-width: 350px;
+    text-align: center;
+}
+
 .td_index, td.index{
   text-align: left;
   width: 60px;
