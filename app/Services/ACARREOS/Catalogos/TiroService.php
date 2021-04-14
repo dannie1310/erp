@@ -100,12 +100,18 @@ class TiroService
 
     private function conexionAcarreos()
     {
-        try{
-            DB::purge('acarreos');
-            \Config::set('database.connections.acarreos.database',Proyecto::pluck('base_datos')->first());
-        }catch (\Exception $e){
+        $base_datos = Proyecto::pluck('base_datos')->first();
+        if(!is_null($base_datos))
+        {
+            try {
+                DB::purge('acarreos');
+                \Config::set('database.connections.acarreos.database', $base_datos);
+            } catch (\Exception $e) {
+                abort(500, "El proyecto no se encuentra activo en acarreos.");
+                throw $e;
+            }
+        }else{
             abort(500, "El proyecto no se encuentra activo en acarreos.");
-            throw $e;
         }
     }
 }
