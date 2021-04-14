@@ -333,6 +333,7 @@
                     params: {include: ['cfdi.conceptos', 'empresa', 'obra', 'cfdi.cfdi_asociado.transaccion_factura.contra_recibo']}
                 }).then(data => {
                     this.$store.commit('recepcion-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', data);
+                    this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data.cfdi);
                     if(data.cfdi.tipo_comprobante == 'E' && data.cfdi.cfdi_asociado && (data.cfdi.tipo_relacion == 1 || data.cfdi.tipo_relacion == 7)){
                         if(data.cfdi.cfdi_asociado.transaccion_factura){
                             if(data.cfdi.cfdi_asociado.transaccion_factura.estado==0){
