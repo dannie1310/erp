@@ -16,6 +16,22 @@ class Camion extends Model
     protected $table = 'camiones';
     public $primaryKey = 'IdCamion';
 
+    protected $fillable = [
+        'IdSindicato',
+        'IdEmpresa',
+        'Propietario',
+        'IdOperador',
+        'PlacasCaja',
+        'IdMarca',
+        'VigenciaPolizaSeguro',
+        'Aseguradora',
+        'Ancho',
+        'EspacioDeGato',
+        'Disminucion',
+        'CubicacionReal',
+        'CubicacionParaPago',
+    ];
+
     /**
      * Relaciones Eloquent
      */
