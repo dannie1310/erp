@@ -30,6 +30,11 @@ class Camion extends Model
         'Disminucion',
         'CubicacionReal',
         'CubicacionParaPago',
+        'Modelo',
+        'PolizaSeguro',
+        'Largo',
+        'Alto',
+        'AlturaExtension',
     ];
 
     /**
