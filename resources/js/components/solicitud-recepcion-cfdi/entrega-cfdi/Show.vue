@@ -13,20 +13,24 @@
                 </div>
             </div>
         </div>
-        <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud"></solicitud-recepcion-cfdi-detalle>
-        <button type="button" class="btn btn-secondary pull-right" v-on:click="regresar" >
-            <i class="fa fa-angle-left"></i>Regresar
-        </button>
+        <div v-else>
+            <encabezado v-bind:solicitud="solicitud"></encabezado>
+            <solicitud-recepcion-cfdi-detalle v-bind:solicitud="solicitud" v-if="solicitud" v-bind:configuracion="{}"></solicitud-recepcion-cfdi-detalle>
+            <div class="pull-right" style="padding-bottom: 48px" v-if="solicitud">
+                <button type="button" class="btn btn-secondary"  v-on:click="regresar" >
+                    <i class="fa fa-angle-left"></i>Regresar
+                </button>
+            </div>
+        </div>
     </span>
-
-
 </template>
 
 <script>
     import SolicitudRecepcionCfdiDetalle from "../partials/Detalle";
+    import Encabezado from "../partials/Encabezado";
     export default {
         name: "solicitud-recepcion-cfdi-show",
-        components: {SolicitudRecepcionCfdiDetalle},
+        components: {Encabezado, SolicitudRecepcionCfdiDetalle},
         props: ["id"],
         data() {
             return {
@@ -53,6 +57,7 @@
                     params: {include: ['cfdi.conceptos', 'empresa', 'obra']}
                 }).then(data => {
                     this.$store.commit('entrega-cfdi/solicitud-recepcion-cfdi/SET_SOLICITUD', data);
+                    this.$store.commit('fiscal/cfd-sat/SET_cCFDSAT', data.cfdi);
                 }).finally(() => {
                     this.cargando = false;
                     this.cargado = true;

@@ -10,6 +10,8 @@ namespace App\Http\Transformers\SEGURIDAD_ERP\Contabilidad;
 
 
 use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Documentacion\ArchivoTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccionTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\FacturaRepositorioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\CtgEstadosCFDTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
@@ -26,7 +28,9 @@ class CFDSATTransformer extends TransformerAbstract
         'estatus',
         'conceptos',
         'empresa',
-        'proveedor'
+        'proveedor',
+        'archivos',
+        'tipo_transaccion'
     ];
 
     protected $availableIncludes = [
@@ -37,7 +41,9 @@ class CFDSATTransformer extends TransformerAbstract
         'poliza_cfdi',
         'conceptos',
         'cfdi_asociado',
-        'transaccion_factura'
+        'transaccion_factura',
+        'archivos',
+        'tipo_transaccion'
     ];
 
     public function transform(CFDSAT $model) {
@@ -137,6 +143,15 @@ class CFDSATTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeArchivos(CFDSAT $model)
+    {
+        if($items = $model->archivos()->orderBy("obligatorio", "desc")->get())
+        {
+            return $this->collection($items, new ArchivoTransformer);
+        }
+        return null;
+    }
+
     public function includeCFDIAsociado(CFDSAT $model)
     {
         if($item = $model->asociado)
@@ -152,6 +167,21 @@ class CFDSATTransformer extends TransformerAbstract
             if($item = $model->facturaRepositorio->transaccion_factura)
             {
                 return $this->item($item, new FacturaTransformer);
+            }
+            return null;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+
+    }
+
+    public function includeTipoTransaccion(CFDSAT $model)
+    {
+        try{
+            if($item = $model->tipoTransaccion)
+            {
+                return $this->item($item, new CtgTipoTransaccionTransformer);
             }
             return null;
         }catch (\Exception $e)
