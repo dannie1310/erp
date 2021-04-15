@@ -41,6 +41,11 @@ class Tiro extends Model
         return $this->hasMany(TiroConcepto::class, 'id_tiro','IdTiro');
     }
 
+    public function historicos()
+    {
+        return $this->hasMany(TiroHistorico::class, 'IdTiro', 'IdTiro');
+    }
+
     /**
      * Scopes
      */

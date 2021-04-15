@@ -23,6 +23,14 @@
                             </div>
                         </div>
                         <div v-else>
+                            <div class="row justify-content-end">
+                                <historico v-bind:historicos="tiro.historicos.data" v-bind:id="id" v-if="tiro" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br>
+                                </div>
+                            </div>
                             <div class="row" v-if="tiro">
                                 <div class="col-md-12">
                                     <div class="form-group row">
@@ -89,9 +97,11 @@
 </template>
 
 <script>
+    import Historico from "./ShowHistorico";
     export default {
         name: "tiro-show",
         props: ['id'],
+        components: {Historico},
         data() {
             return {
                cargando : true
@@ -108,7 +118,7 @@
                 $(this.$refs.modal).modal('show');
                 return this.$store.dispatch('acarreos/tiro/find', {
                     id: this.id,
-                    params: {}
+                    params: {include : 'historicos'}
                 }).then(data => {
                     this.$store.commit('acarreos/tiro/SET_TIRO', data);
                 }).finally(() => {
