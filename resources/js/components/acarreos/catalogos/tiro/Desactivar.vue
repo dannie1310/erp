@@ -92,7 +92,7 @@
         data() {
             return {
                 motivo : '',
-                carga : false
+                cargando : true
             }
         },
         methods: {
@@ -109,7 +109,8 @@
                     params: {}
                 }).then(data => {
                     this.$store.commit('acarreos/tiro/SET_TIRO', data);
-                    this.carga = true;
+                }).finally(() => {
+                    this.cargando = false;
                 })
             },
             desactivar() {
