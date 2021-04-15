@@ -903,7 +903,7 @@ export default {
             })
         },
         getConfiguracionObra(){
-            return this.$store.dispatch('finanzas/estimacion/index', { } )
+            return this.$store.dispatch('finanzas/estimacion/index', {params: { scope: 'porObra' } } )
                 .then(data => {
                     this.configuracion = data.data[0]
                 }).finally(()=>{
