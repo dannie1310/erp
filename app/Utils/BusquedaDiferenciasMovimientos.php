@@ -80,7 +80,7 @@ class BusquedaDiferenciasMovimientos
             "periodo"=>$this->relacion->movimiento_revisado->poliza->Periodo,
             "tipo_poliza"=>$this->relacion->movimiento_revisado->poliza->Nombre,
             "folio_poliza"=>$this->relacion->movimiento_revisado->poliza->Folio,
-            "fecha_poliza"=>$this->relacion->movimiento_revisado->poliza->Fecha
+            "fecha_poliza"=>$this->relacion->movimiento_revisado->poliza->Fecha,
         ];
         return $datos_diferencia;
     }
