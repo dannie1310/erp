@@ -10,6 +10,14 @@
             </div>
         </div>
         <div v-else>
+            <div class="row justify-content-end">
+                <historico v-bind:historicos="camion.historicos.data" v-bind:id="id" v-if="camion" />
+            </div>
+             <div class="row">
+                 <div class="col-md-12">
+                     <br>
+                 </div>
+             </div>
             <div class="row">
                 <div class="offset-md-8 col-md-4">
                     <span class="pull-right">
@@ -237,11 +245,12 @@
 </template>
 
 <script>
+    import Historico from './ShowHistorico';
     import Imagen from '../../../globals/archivos/Imagen';
     export default {
         name: "camion-show",
         props: ['id'],
-        components: {Imagen},
+        components: {Imagen, Historico},
         data() {
             return {
                 cargando : true,
@@ -259,7 +268,7 @@
                 this.$store.commit('acarreos/camion/SET_CAMION', null);
                 return this.$store.dispatch('acarreos/camion/find', {
                     id: this.id,
-                    params: {include: 'imagenes'}
+                    params: {include: ['imagenes', 'historicos']}
                 }).then(data => {
                     this.$store.commit('acarreos/camion/SET_CAMION', data);
                     if(data.imagenes.data.length == 0)
