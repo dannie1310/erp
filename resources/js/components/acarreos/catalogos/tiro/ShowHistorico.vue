@@ -23,7 +23,7 @@
                             </div>
                         </div>
                         <div v-else>
-                            <div class="col-md-12">
+                            <div class="col-md-12 table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
                                     <tr>
