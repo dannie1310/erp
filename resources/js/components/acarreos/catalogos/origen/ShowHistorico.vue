@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-clock"></i> CONSULTAR HISTORICO TIRO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-clock"></i> CONSULTAR HISTORICO ORIGEN</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
