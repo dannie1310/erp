@@ -246,7 +246,9 @@ class Poliza extends Model
                 "folio" => $this->Folio,
                 "ejercicio" => $this->Ejercicio,
                 "periodo" => $this->Periodo,
-                "tipo" => $this->TipoPol
+                "tipo_poliza"=>$this->TipoPol,
+                "folio_poliza"=>$this->Folio,
+                "fecha_poliza"=>$this->Fecha
             ];
             $relacion_poliza = RelacionPolizas::registrar($datos_relacion);
             $relaciones_movimientos = $this->relaciona_movimientos($busqueda);
