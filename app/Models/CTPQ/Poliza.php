@@ -246,9 +246,7 @@ class Poliza extends Model
                 "folio" => $this->Folio,
                 "ejercicio" => $this->Ejercicio,
                 "periodo" => $this->Periodo,
-                "tipo_poliza"=>$this->TipoPol,
-                "folio_poliza"=>$this->Folio,
-                "fecha_poliza"=>$this->Fecha
+                "tipo" => $this->TipoPol
             ];
             $relacion_poliza = RelacionPolizas::registrar($datos_relacion);
             $relaciones_movimientos = $this->relaciona_movimientos($busqueda);
@@ -291,6 +289,11 @@ class Poliza extends Model
             "tipo_busqueda" => $busqueda->id_tipo_busqueda,
             "observaciones" => "",
             "id_busqueda" => $busqueda->id,
+            "ejercicio"=>$this->Ejercicio,
+            "periodo"=>$this->Periodo,
+            "tipo_poliza"=>$this->tipo_poliza->Nombre,
+            "folio_poliza"=>$this->Folio,
+            "fecha_poliza"=>$this->Fecha
         ];
         Diferencia::registrar($datos_diferencia);
     }
