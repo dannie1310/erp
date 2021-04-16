@@ -79,7 +79,8 @@ class BusquedaDiferenciasMovimientos
             "ejercicio"=>$this->poliza_a->Ejercicio,
             "periodo"=>$this->poliza_a->Periodo,
             "tipo_poliza"=>$this->poliza_a->tipo_poliza->Nombre,
-            "folio_poliza"=>$this->poliza_a->Folio
+            "folio_poliza"=>$this->poliza_a->Folio,
+            "fecha_poliza"=>$this->poliza_a->Fecha
         ];
         return $datos_diferencia;
     }
