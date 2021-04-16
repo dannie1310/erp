@@ -86,7 +86,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
+                            <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="origen"><i class="fa fa-save"></i> Guardar</button>
                         </div>
                     </form>
                 </div>

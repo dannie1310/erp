@@ -104,6 +104,7 @@
                             activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
                             desactivar: (origen.estado === 1 && self.$root.can('activar_desactivar_origen')) ? true : false,
                             edit: self.$root.can('editar_origen') ? true : false,
+                            show: self.$root.can('consultar_origen') ? true : false,
                         })
                     }));
                 },

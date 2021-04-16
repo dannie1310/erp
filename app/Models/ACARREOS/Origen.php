@@ -43,6 +43,11 @@ class Origen extends Model
         return $this->belongsTo(Usuario::class, 'usuario_desactivo', 'idusuario');
     }
 
+    public function historicos()
+    {
+        return $this->hasMany(OrigenHistorico::class, 'IdOrigen', 'IdOrigen');
+    }
+
     /**
      * Scopes
      */
