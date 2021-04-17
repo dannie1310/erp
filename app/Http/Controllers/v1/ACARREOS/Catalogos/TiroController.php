@@ -65,4 +65,9 @@ class TiroController extends Controller
     {
         return $this->respondWithItem($this->service->desactivar($request->all(),$id));
     }
+
+    public function descargaTiros()
+    {
+        return $this->service->excel();
+    }
 }

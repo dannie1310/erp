@@ -519,6 +519,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
             $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaTiros', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@descargaTiros');
         });
 
         //TAG

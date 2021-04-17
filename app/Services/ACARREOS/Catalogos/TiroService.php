@@ -114,4 +114,11 @@ class TiroService
             abort(500, "El proyecto no se encuentra activo en acarreos.");
         }
     }
+
+    
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new TiroLayout(), 'tiros.csv');
+    }
 }
