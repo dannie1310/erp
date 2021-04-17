@@ -10,7 +10,9 @@ namespace App\Models\SEGURIDAD_ERP\PolizasCtpq;
 
 
 use App\Models\CTPQ\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class RelacionMovimientos extends Model
