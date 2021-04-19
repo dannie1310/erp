@@ -219,7 +219,7 @@ class CtgEfos extends Model
                         }
                     }
 
-                    $fecha_desvirtuado = (!isset($renglon[$t + 5])) ? '' : $renglon[$t + 5];
+                    $fecha_desvirtuado = (!isset($renglon[$t + 6])) ? '' : $renglon[$t + 6];
                     if($fecha_desvirtuado != ''){
                         // $fecha_desvirtuado = str_replace(' ', '', $fecha_desvirtuado);
                         // if(strlen($fecha_desvirtuado) > 10) $fecha_desvirtuado = \substr($fecha_desvirtuado, 0, 10);
@@ -231,7 +231,7 @@ class CtgEfos extends Model
                         }
                     }
 
-                    $fecha_desvirtuado_dof = (!isset($renglon[$t + 7])) ? '' : $renglon[$t + 7];
+                    $fecha_desvirtuado_dof = (!isset($renglon[$t + 8])) ? '' : $renglon[$t + 8];
                     if($fecha_desvirtuado_dof != ''){
                         $fecha_desvirtuado_dof = $this->validarFormatoFecha($fecha_desvirtuado_dof);
                         $fecha_desvirtuado_dof_obj = DateTime::createFromFormat('d/m/Y', $fecha_desvirtuado_dof);
@@ -241,7 +241,7 @@ class CtgEfos extends Model
                         }
                     }
 
-                    $fecha_definitivo = (!isset($renglon[$t + 9])) ? '' : $renglon[$t + 9];
+                    $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
                     if($fecha_definitivo != '')
                     {
                         // $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
@@ -254,7 +254,7 @@ class CtgEfos extends Model
                         }
                     }
 
-                    $fecha_definitivo_dof = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
+                    $fecha_definitivo_dof = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
                     if($fecha_definitivo_dof != '')
                     {
                         $fecha_definitivo_dof = $this->validarFormatoFecha($fecha_definitivo_dof);
@@ -265,7 +265,7 @@ class CtgEfos extends Model
                         }
                     }
 
-                    $fecha_favorable = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
+                    $fecha_favorable = (!isset($renglon[$t + 14])) ? '' : $renglon[$t + 14];
                     if($fecha_favorable != '')
                     {
                         // $fecha_favorable = str_replace(' ', '', $fecha_favorable);
@@ -278,7 +278,7 @@ class CtgEfos extends Model
                         }
                     }
 
-                    $fecha_favorable_dof = (!isset($renglon[$t + 14])) ? '' : $renglon[$t + 14];
+                    $fecha_favorable_dof = (!isset($renglon[$t + 16])) ? '' : $renglon[$t + 16];
                     if($fecha_favorable_dof != '')
                     {
                         $fecha_favorable_dof = $this->validarFormatoFecha($fecha_favorable_dof);
