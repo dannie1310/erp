@@ -61,7 +61,7 @@ class MovimientoBancarioService
         try {
             DB::connection('cadeco')->beginTransaction();
 
-            $data['impuesto'] = isset($data['impuesto']) ? : 0;
+            $data['impuesto'] = isset($data['impuesto']) ? $data['impuesto'] : 0;
             $movimiento = $this->repository->create($data);
 
             $transaccionRepository = new Repository($movimiento->tipo->naturaleza == 1 ? new Credito : new Debito);
