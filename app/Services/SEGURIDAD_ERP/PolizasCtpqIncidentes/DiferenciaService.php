@@ -134,6 +134,7 @@ class DiferenciaService
                     $rcfd->periodo = $rcfd->poliza->Periodo;
                     $rcfd->tipo_poliza = $rcfd->poliza->tipo_poliza->Nombre;
                     $rcfd->folio_poliza = $rcfd->poliza->Folio;
+                    $rcfd->fecha_poliza = $rcfd->poliza->Fecha;
                     $rcfd->save();
 
                 }catch (\Exception $e) {

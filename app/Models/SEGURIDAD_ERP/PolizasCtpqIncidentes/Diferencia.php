@@ -42,7 +42,8 @@ class Diferencia extends Model
         "ejercicio",
         "periodo",
         "tipo_poliza",
-        "folio_poliza"
+        "folio_poliza",
+        "fecha_poliza"
     ];
 
     public function partida_solicitud()
