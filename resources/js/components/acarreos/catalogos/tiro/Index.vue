@@ -2,6 +2,7 @@
     <div class="row">
         <div class="col-12">
             <Create @created="paginate()" />
+            <DescargaLayout />
         </div>
         <div class="col-12">
             <div class="card">
@@ -21,9 +22,10 @@
 
 <script>
     import Create from './Create'
+    import DescargaLayout from "./DescargaLayout";
     export default {
         name: "tiro-index",
-        components: {Create},
+        components: {Create,DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,

@@ -31,6 +31,11 @@ class Tiro extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
+    public function usuarioDesactivo()
+    {
+        return $this->belongsTo(Usuario::class, 'usuario_desactivo', 'idusuario');
+    }
+
     public function proyecto()
     {
         return $this->belongsTo(Proyecto::class, 'IdProyecto', 'IdProyecto');
@@ -61,6 +66,15 @@ class Tiro extends Model
     {
         try{
             return $this->usuario->nombre_completo;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getNombreUsuarioDesactivoAttribute()
+    {
+        try{
+            return $this->usuarioDesactivo->nombre_completo;
         }catch (\Exception $e){
             return null;
         }
@@ -107,6 +121,15 @@ class Tiro extends Model
     {
         $date = date_create($this->created_at);
         return date_format($date,"d/m/Y H:i");
+    }
+    
+    public function getFechaDesactivoFormatAttribute()
+    {
+        if($this->usuario_desactivo){
+            $date = date_create($this->updated_at);
+            return date_format($date,"d/m/Y H:i");
+        }
+        return null;
     }
 
     public function getConceptoArrayAttribute()

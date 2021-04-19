@@ -4,10 +4,12 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
-use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 use App\Models\ACARREOS\Tiro;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\CSV\Acarreos\Catalogos\TiroLayout;
+use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 
 class TiroService
 {
@@ -113,5 +115,12 @@ class TiroService
         }else{
             abort(500, "El proyecto no se encuentra activo en acarreos.");
         }
+    }
+
+    
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new TiroLayout(), 'tiros.csv');
     }
 }
