@@ -4,23 +4,12 @@
 namespace App\Http\Transformers\ACARREOS\Catalogos;
 
 
-use App\Models\ACARREOS\Camion;
+use App\Models\ACARREOS\CamionHistorico;
 use League\Fractal\TransformerAbstract;
 
-class CamionTransformer extends TransformerAbstract
+class CamionHistoricoTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources possible to include
-     *
-     * @var array
-     */
-    protected $availableIncludes = [
-        'imagenes',
-        'historicos'
-    ];
-
-
-    public function transform(Camion $model) {
+    public function transform(CamionHistorico $model) {
         return [
             'id' => (int) $model->getKey(),
             'id_sindicato' => $model->IdSindicato,
@@ -53,33 +42,8 @@ class CamionTransformer extends TransformerAbstract
             'estado_color' => $model->color_estado,
             'nombre_registro' => (string) $model->nombre_registro,
             'nombre_desactivo' => (string) $model->nombre_desactivo,
-            'motivo' => $model->motivo
+            'motivo' => $model->motivo,
+            'fecha_desactivo' => $model->fecha_desactivacion_format,
         ];
-    }
-
-    /**
-     * @param Camion $model
-     * @return \League\Fractal\Resource\Collection|null
-     */
-    public function includeImagenes(Camion $model)
-    {
-        if($imagenes = $model->imagenes)
-        {
-            return $this->collection($imagenes, new CamionImagenTransformer);
-        }
-        return null;
-    }
-
-    /**
-     * @param Camion $model
-     * @return \League\Fractal\Resource\Collection|null
-     */
-    public function includeHistoricos(Camion $model)
-    {
-        if($historicos = $model->historicos)
-        {
-            return $this->collection($historicos, new CamionHistoricoTransformer);
-        }
-        return null;
     }
 }

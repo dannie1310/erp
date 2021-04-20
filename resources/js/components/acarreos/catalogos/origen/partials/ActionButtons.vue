@@ -1,5 +1,6 @@
 <template>
     <div class="btn-group">
+        <Show v-bind:id="value.id" v-if="value.show" />
         <Edit v-bind:id="value.id" v-if="value.edit" />
         <button @click="activar" v-if="value.activar" type="button" class="btn btn-sm btn-outline-success" title="Activar">
             <i class="fa fa-check-square"></i>
@@ -11,10 +12,11 @@
 <script>
     import Desactivar from "../Desactivar";
     import Edit from "../Edit";
+    import Show from "../Show"
     export default {
         name: "ActionButtons",
         props: ['value'],
-        components: {Desactivar, Edit},
+        components: {Desactivar, Edit, Show},
         methods: {
             activar() {
                 return this.$store.dispatch('acarreos/origen/activar', {

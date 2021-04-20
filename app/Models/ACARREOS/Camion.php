@@ -75,6 +75,11 @@ class Camion extends Model
         return $this->hasMany(CamionImagen::class, 'IdCamion', 'IdCamion');
     }
 
+    public function historicos()
+    {
+        return $this->hasMany(CamionHistorico::class, 'IdCamion', 'IdCamion');
+    }
+
     /**
      * Scopes
      */
