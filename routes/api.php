@@ -469,6 +469,22 @@ $api->version('v1', function ($api) {
             $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
         });
 
+        //ORIGEN
+        $api->group(['prefix' => 'origen'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@descargaLayout');
+        });
+
+        //TIPOORIGEN
+        $api->group(['prefix' => 'tipo-origen'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TipoOrigenController@index');
+        });
+
         //TIRO
         $api->group(['prefix' => 'tiro'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');
