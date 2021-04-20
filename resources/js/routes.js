@@ -2300,6 +2300,47 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'camion',
+                                component: require('./components/acarreos/catalogos/camion/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'camion',
+                                        component: require('./components/acarreos/catalogos/camion/Index').default,
+                                        meta: {
+                                            title: 'Camiones',
+                                            breadcrumb: {parent: 'catalogo', name: 'CAMIONES'},
+                                            middleware: [auth, context, permission],
+                                            permission: ['consultar_camion']
+                                        }
+                                    },
+                                    {
+                                        path: ':id',
+                                        name: 'camion-show',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Show').default,
+                                        meta: {
+                                            title: 'Consultar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'CONSULTAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'consultar_camion'
+                                        }
+                                    },
+                                    {
+                                        path: ':id/edit',
+                                        name: 'camion-edit',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Edit').default,
+                                        meta: {
+                                            title: 'Editar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'EDITAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'editar_camion'
+                                        }
+                                    },
+                                ]
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,

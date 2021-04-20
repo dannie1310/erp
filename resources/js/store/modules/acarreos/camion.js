@@ -1,38 +1,38 @@
-const URI = '/api/acarreos/origen/';
+const URI = '/api/acarreos/camion/';
 
 export default {
     namespaced: true,
     state: {
-        origenes: [],
-        currentOrigen: '',
+        camiones: [],
+        currentCamion: '',
         meta:{}
     },
 
     mutations: {
-        SET_ORIGENES(state, data) {
-            state.origenes = data;
+        SET_CAMIONES(state, data) {
+            state.camiones = data;
         },
-        SET_ORIGEN(state, data) {
-            state.currentOrigen = data;
+        SET_CAMION(state, data) {
+            state.currentCamion = data;
         },
         SET_META(state, data) {
             state.meta = data;
         },
 
         UPDATE_ATTRIBUTE(state, data) {
-            _.set(state.currentOrigen, data.attribute, data.value);
+            _.set(state.currentCamion, data.attribute, data.value);
         },
 
-        UPDATE_ORIGEN(state, data) {
-            state.origenes = state.origenes.map(origen => {
-                if (origen.id === data.id) {
-                    return Object.assign({}, origen, data)
+        UPDATE_CAMION(state, data) {
+            state.camiones = state.camiones.map(ca => {
+                if (ca.id === data.id) {
+                    return Object.assign({}, ca, data)
                 }
-                return origen
+                return ca
             })
-            state.currentOrigen = data;
+            state.currentCamion = data;
         },
-},
+    },
 
     actions: {
         paginate(context, payload) {
@@ -47,44 +47,6 @@ export default {
                         reject(error);
                     })
             })
-        },
-        store(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "Registrar Origen",
-                    text: "¿Está seguro de que la información es correcta?",
-                    icon: "info",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Registrar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .post(URI, payload)
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Origen registrado correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                });
-                        }
-                    });
-            });
         },
         find(context, payload) {
             return new Promise((resolve, reject) => {
@@ -102,8 +64,8 @@ export default {
         activar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Activar el Origen",
-                    text: "¿Está seguro de que desea activar el origen?",
+                    title: "Activar el Camión",
+                    text: "¿Está seguro de que desea activar el camión?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -123,7 +85,7 @@ export default {
                                 .get(URI + payload.id+'/activar', { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Origen activado correctamente", {
+                                    swal("Camión activado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -141,8 +103,8 @@ export default {
         desactivar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Desactivar el Origen",
-                    text: "¿Está seguro de que desea desactivar el origen?",
+                    title: "Desactivar el Camión",
+                    text: "¿Está seguro de que desea desactivar el camión?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -162,7 +124,7 @@ export default {
                                 .get(URI + payload.id+'/desactivar', { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Origen desactivado correctamente", {
+                                    swal("Camión desactivado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -181,7 +143,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar el origen",
+                    text: "Actualizar el camión",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -200,7 +162,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Origen actualizado correctamente", {
+                                    swal("Camión actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -231,11 +193,11 @@ export default {
     },
 
     getters: {
-        origenes(state) {
-            return state.origenes
+        camiones(state) {
+            return state.camiones
         },
-        currentOrigen(state) {
-            return state.currentOrigen
+        currentCamion(state) {
+            return state.currentCamion
         },
         meta(state) {
             return state.meta;

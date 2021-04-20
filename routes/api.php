@@ -467,6 +467,27 @@ $api->version('v1', function ($api) {
             $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cambiarClave');
             $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@registrar');
             $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@descargaLayout');
+        });
+
+        //EMPRESA
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@index');
+        });
+
+        //MARCA
+        $api->group(['prefix' => 'marca'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');
+        });
+
+        //OPERADOR
+        $api->group(['prefix' => 'operador'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@index');
         });
 
         //ORIGEN
@@ -478,6 +499,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@desactivar')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@descargaLayout');
+        });
+
+        //SINDICATO
+        $api->group(['prefix' => 'sindicato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\SindicatoController@index');
         });
 
         //TIPOORIGEN
