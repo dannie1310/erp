@@ -6,6 +6,7 @@ namespace App\Services\ACARREOS\Catalogos;
 
 use App\Models\ACARREOS\Empresa;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
+use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -29,6 +30,34 @@ class EmpresaService
     {
         $this->conexionAcarreos();
         return $this->repository->all($data);
+    }
+
+    public function paginate($data)
+    {
+        $this->conexionAcarreos();
+
+        if (isset($data['razonSocial'])) {
+            $this->repository->where([['razonSocial', 'LIKE', '%' . $data['razonSocial'] . '%']]);
+        }
+
+        if (isset($data['rfc'])) {
+            $this->repository->where([['rfc', 'LIKE', '%' . $data['rfc'] . '%']]);
+        }
+
+        if (isset($data['created_at'])) {
+            $this->repository->whereBetween(['created_at', [request('created_at') . " 00:00:00", request('created_at') . " 23:59:59"]]);
+        }
+
+        if (isset($data['razonSocial'])) {
+            $this->repository->where([['razonSocial', 'LIKE', '%' . $data['razonSocial'] . '%']]);
+        }
+
+        if (isset($data['usuario_registro'])) {
+            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->pluck('idusuario');
+            $this->repository->whereIn(['usuario_registro', $usuario]);
+        }
+
+        return $this->repository->paginate($data);
     }
 
     private function conexionAcarreos()
