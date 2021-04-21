@@ -97,6 +97,7 @@
                         estatus: this.getEstado(empresa.estado_format, empresa.estado_color),
                         buttons: $.extend({}, {
                             id: empresa.id,
+                            edit: self.$root.can('editar_empresa') ? true : false,
                             //activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
                             //desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
                             show : self.$root.can('consultar_empresa') ? true : false,
