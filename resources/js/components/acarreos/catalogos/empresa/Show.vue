@@ -24,7 +24,7 @@
                         </div>
                         <div v-else>
                             <div class="row justify-content-end">
-                              <!--  <historico v-bind:historicos="origen.historicos.data" v-bind:id="id" v-if="origen" />-->
+                                <historico v-bind:historicos="empresa.historicos.data" v-bind:id="id" v-if="empresa" />
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -61,7 +61,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                 <div class="col-md-12">
+                                <div class="col-md-12">
                                     <div class="form-group row">
                                          <label class="col-md-2 col-form-label">Registró:</label>
                                         <div class="col-md-7">
@@ -73,6 +73,24 @@
                                         <label class="col-md-1 col-form-label">Estatus:</label>
                                         <div class="col-md-2">
                                             <span class="badge" :style="{'background-color': empresa.estado_color}">{{ empresa.estado_format }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12" v-if="empresa.estado == 0">
+                                    <div class="form-group row">
+                                        <label class="col-md-2 col-form-label">Desactivó:</label>
+                                        <div class="col-md-4">
+                                            <input disabled="true"
+                                                   type="text"
+                                                   class="form-control"
+                                                   v-model="empresa.nombre_desactivo" />
+                                        </div>
+                                        <label class="col-md-2 col-form-label">Fecha Desactivación:</label>
+                                        <div class="col-md-4">
+                                            <input disabled="true"
+                                                   type="text"
+                                                   class="form-control"
+                                                   v-model="empresa.fecha_desactivo" />
                                         </div>
                                     </div>
                                 </div>
@@ -89,11 +107,11 @@
 </template>
 
 <script>
-   // import Historico from "./ShowHistorico";
+    import Historico from "./ShowHistorico";
     export default {
         name: "origen-show",
         props: ['id'],
-     //   components: {Historico},
+        components: {Historico},
         data() {
             return {
                 cargando : true
@@ -110,7 +128,7 @@
                 this.$store.commit('acarreos/empresa/SET_EMPRESA', null);
                 return this.$store.dispatch('acarreos/empresa/find', {
                     id: this.id,
-                    params: ''//{include : 'historicos'}
+                    params: {include : 'historicos'}
                 }).then(data => {
                     this.$store.commit('acarreos/empresa/SET_EMPRESA', data);
                 }).finally(()=>

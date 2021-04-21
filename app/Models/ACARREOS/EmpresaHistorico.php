@@ -7,11 +7,11 @@ namespace App\Models\ACARREOS;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 
-class Empresa extends Model
+class EmpresaHistorico extends Model
 {
     protected $connection = 'acarreos';
-    protected $table = 'empresas';
-    public $primaryKey = 'IdEmpresa';
+    protected $table = 'empresas_historicos';
+    public $primaryKey = 'Id';
 
     /**
      * Relaciones Eloquent
@@ -26,18 +26,9 @@ class Empresa extends Model
         return $this->belongsTo(Usuario::class,  'usuario_desactivo', 'idusuario');
     }
 
-    public function historicos()
-    {
-        return $this->hasMany(EmpresaHistorico::class, 'IdEmpresa', 'IdEmpresa');
-    }
-
     /**
      * Scopes
      */
-    public function scopeActivo($query)
-    {
-        return $query->where('Estatus',  1);
-    }
 
     /**
      * Attributes
