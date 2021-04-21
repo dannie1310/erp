@@ -36,7 +36,7 @@
                     { title: 'Fecha y hora registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
                     { title: 'Registró', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estatus', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                   // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -95,13 +95,12 @@
                         created_at: empresa.fecha_registro,
                         usuario_registro :  empresa.nombre_registro,
                         estatus: this.getEstado(empresa.estado_format, empresa.estado_color),
-                        /*buttons: $.extend({}, {
-                            id: tiro.id,
-                            concepto: self.$root.can('editar_tiro') ? true : false,
-                            activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
-                            desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
-                            show : self.$root.can('consultar_tiro') ? true : false,
-                        })*/
+                        buttons: $.extend({}, {
+                            id: empresa.id,
+                            //activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
+                            //desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
+                            show : self.$root.can('consultar_empresa') ? true : false,
+                        })
                     }));
                 },
                 deep: true

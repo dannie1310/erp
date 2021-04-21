@@ -60,6 +60,12 @@ class EmpresaService
         return $this->repository->paginate($data);
     }
 
+    public function show($id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id);
+    }
+
     private function conexionAcarreos()
     {
         $base_datos = Proyecto::pluck('base_datos')->first();
