@@ -53,7 +53,7 @@ export default {
                 if(item.tipo_transaccion == 52){
                     item.monto_revision = parseFloat(item.subtotal).toFixed(2);
                     return item.subtotal_format;
-                }else{
+                }else if (item.tipo_transaccion == 51){
                     item.monto_revision = parseFloat(item.anticipo_monto).toFixed(2);
                     return item.anticipo_monto_format;
                 }
@@ -62,7 +62,7 @@ export default {
             else{
                 if(item.tipo_transaccion == 52){
                     item.monto_revision = parseFloat(item.subtotal / this.cambios[this.id_moneda]).toFixed(2);
-                }else{
+                }else if(item.tipo_transaccion == 51){
                     item.monto_revision = parseFloat(item.anticipo_monto / this.cambios[this.id_moneda]).toFixed(2);
                 }
                 
