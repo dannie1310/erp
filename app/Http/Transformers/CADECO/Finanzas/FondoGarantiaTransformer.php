@@ -30,7 +30,7 @@ class FondoGarantiaTransformer extends TransformerAbstract
             'numero_folio_format'=>(string)$model->numero_folio_format,
             'folio_revision_format'=>(string)$model->numero_folio_revision,
             'monto_revision_format' => $model->monto_revision_format,
-            'monto_revision'=>$model->monto_pesos,
+            'monto_revision'=>$model->saldo_pesos,
             'tipo_cambio' => $model->tipo_cambio,
             'monto_format'=>$model->monto_format,
             'monto_pesos'=>$model->monto_pesos,
