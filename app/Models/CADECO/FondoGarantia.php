@@ -26,7 +26,7 @@ class FondoGarantia extends Transaccion
 
     public function getMontoRevisionFormatAttribute()
     {
-        return '$ ' . number_format($this->monto, 2, ".", ",");
+        return '$ ' . number_format($this->saldo, 2, ".", ",");
     }
 
     public function getTipoCambioAttribute(){
@@ -47,6 +47,10 @@ class FondoGarantia extends Transaccion
 
     public function getMontoPesosAttribute(){
         return $this->monto * $this->tipo_cambio;
+    }
+
+    public function getSaldoPesosAttribute(){
+        return $this->saldo * $this->tipo_cambio;
     }
     
     public function getMontoPesosFormatAttribute(){

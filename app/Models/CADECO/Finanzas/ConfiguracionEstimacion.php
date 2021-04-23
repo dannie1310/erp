@@ -39,4 +39,8 @@ class ConfiguracionEstimacion extends Model
     {
         return $this->belongsTo(Obra::class, 'id_obra');
     }
+
+    public function scopePorObra($query){
+        return $query->where('id_obra', '=', Context::getIdObra());
+    }
 }
