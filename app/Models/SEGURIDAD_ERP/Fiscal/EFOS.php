@@ -113,6 +113,7 @@ class EFOS extends Model
 
             }
         }
+        self::editarFechaLimite();
     }
 
     public static function editarFechaLimite()
