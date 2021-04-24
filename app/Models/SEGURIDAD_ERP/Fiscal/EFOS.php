@@ -115,7 +115,7 @@ class EFOS extends Model
         }
     }
 
-    public function editarFechaLimite()
+    public static function editarFechaLimite()
     {
         $efos = self::all();
         foreach ($efos as $efo)
@@ -126,7 +126,7 @@ class EFOS extends Model
         }
     }
 
-    public function calculaFechaLimite($fecha)
+    private function calculaFechaLimite($fecha)
     {
         $i = 0;
         while ($i < 30)
