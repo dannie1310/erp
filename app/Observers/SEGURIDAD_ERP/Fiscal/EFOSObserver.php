@@ -20,6 +20,7 @@ class EFOSObserver
             "id_procesamiento_efos"=>$efos->id_procesamiento_registro,
             "id_carga_cfd"=>$efos->id_carga_cfd,
         ]);
+        $efos->editarFechaLimite();
     }
 
     public function updated(EFOS $efos){
@@ -31,5 +32,6 @@ class EFOSObserver
                 "id_procesamiento_efos"=>$efos->id_procesamiento_actualizacion
             ]);
         }
+        $efos->editarFechaLimite();
     }
 }

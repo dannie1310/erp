@@ -27,7 +27,9 @@ class EFOS extends Model
         'id_proveedor_sat',
         'id_procesamiento_registro',
         'id_procesamiento_actualizacion',
-        'id_carga_cfd'
+        'id_carga_cfd',
+        'fecha_limite_sat',
+        'fecha_limite_dot'
     ];
 
     public function proveedor()
@@ -68,7 +70,8 @@ class EFOS extends Model
         return $query->where('estado', '=', 0);
     }
 
-    public static function actualizaEFOS(ProcesamientoListaEfos $procesamiento = null, CargaCFDSAT $carga = null) {
+    public static function actualizaEFOS(ProcesamientoListaEfos $procesamiento = null, CargaCFDSAT $carga = null)
+    {
         if($procesamiento){
             $existentes = CtgEfos::esProveedor()->registrado()->get();
             foreach($existentes as $existente){
@@ -110,5 +113,38 @@ class EFOS extends Model
 
             }
         }
+    }
+
+    public function editarFechaLimite()
+    {
+        $efos = self::all();
+        foreach ($efos as $efo)
+        {
+            $efo->fecha_limite_sat = $efo->calculaFechaLimite($efo->efo->fecha_definitivo);
+            $efo->fecha_limite_dot = $efo->calculaFechaLimite($efo->efo->fecha_definitivo_dof);
+            $efo->save();
+        }
+    }
+
+    public function calculaFechaLimite($fecha)
+    {
+        $i = 0;
+        while ($i < 30)
+        {
+            $num_dia_fecha = date("N", strtotime($fecha));
+            if($num_dia_fecha < 6)
+            {
+                $fecha_inhabil = FechaInhabilSat::where('fecha',date("Y-m-d",strtotime($fecha)))->count();
+                if ($fecha_inhabil == 0)
+                {
+                    $i++;
+                }
+            }
+            if ($i < 30)
+            {
+                $fecha = date("Y-m-d", strtotime($fecha . "+ 1 days"));
+            }
+        }
+        return $fecha;
     }
 }
