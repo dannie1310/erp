@@ -3087,6 +3087,24 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'fechas-inhabiles-sat',
+                component: require('./components/fiscal/fechas-inhabiles-sat/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"fechas-inhabiles-sat",
+                        component: require('./components/fiscal/fechas-inhabiles-sat/Index.vue').default,
+                        meta: {
+                            title: 'FECHAS INHÁBILES SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'FECHAS INHÁBILES'},
+                            middleware: [auth],
+                            //permission: ['consultar_fechas_inhabiles_sat'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
