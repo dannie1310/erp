@@ -16,7 +16,7 @@ class TiroTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'historicos'
     ];
 
 
@@ -35,5 +35,18 @@ class TiroTransformer extends TransformerAbstract
             'path__corta_concepto' => $model->path_corta_concepto,
             'path_concepto' => $model->path_concepto
         ];
+    }
+
+    /**
+     * @param Tiro $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeHistoricos(Tiro $model)
+    {
+        if($historicos = $model->historicos)
+        {
+            return $this->collection($historicos, new TiroHistoricoTransformer);
+        }
+        return null;
     }
 }
