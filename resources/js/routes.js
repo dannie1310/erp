@@ -3098,8 +3098,8 @@ export const routes = [
                         meta: {
                             title: 'FECHAS INHÁBILES SAT',
                             breadcrumb: {parent: 'fiscal', name: 'FECHAS INHÁBILES'},
-                            middleware: [auth],
-                            //permission: ['consultar_fechas_inhabiles_sat'],
+                            middleware: [auth, permission],
+                            permission: ['consultar_fechas_inhabiles_sat'],
                             general: true
                         }
                     },
