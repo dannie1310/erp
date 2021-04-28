@@ -124,13 +124,16 @@ class EFOS extends Model
             if(!is_null($efo->efo) && !is_null($efo->efo->fecha_definitivo))
             {
                 $efo->fecha_limite_sat = $efo->calculaFechaLimite($efo->efo->fecha_definitivo);
-                $efo->save();
+            }else{
+                $efo->fecha_limite_sat = NULL;
             }
             if(!is_null($efo->efo) && !is_null($efo->efo->fecha_definitivo_dof))
             {
                 $efo->fecha_limite_dot = $efo->calculaFechaLimite($efo->efo->fecha_definitivo_dof);
-                $efo->save();
+            }else{
+                $efo->fecha_limite_dot = NULL;
             }
+            $efo->save();
         }
     }
 
