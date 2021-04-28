@@ -148,6 +148,7 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfosLog;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Finanzas\FechaInhabilSat;
 use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
@@ -303,6 +304,7 @@ use App\Observers\SEGURIDAD_ERP\ControlInterno\IncidenciaObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
+use App\Observers\SEGURIDAD_ERP\FechaInhabilSatObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDNoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
@@ -612,6 +614,7 @@ class AppServiceProvider extends ServiceProvider
             CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
             CFDNoDeducido::observe(CFDNoDeducidoObserver::class);
             EFOS::observe(EFOSObserver::class);
+            FechaInhabilSat::observe(FechaInhabilSatObserver::class);
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
 
