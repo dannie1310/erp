@@ -90,7 +90,7 @@
                     registro: fecha.fecha_registro_format,
                     buttons: $.extend({}, {
                         id: fecha.id,
-                        eliminar: (self.$root.can('consultar_fechas_inhabiles_sat',true) || true) ? true : false,
+                        eliminar: (self.$root.can('eliminar_fechas_inhabiles_sat',true)) ? true : false,
                     })
                 }));
             },

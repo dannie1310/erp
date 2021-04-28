@@ -6,6 +6,7 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 use App\Models\IGH\Usuario;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgTipoFecha;
 
 class FechaInhabilSat extends Model
@@ -36,13 +37,6 @@ class FechaInhabilSat extends Model
 
     public function usuario_elimino(){
         return $this->belongsTo(Usuario::class, 'usuario_cancelo', 'idusuario');
-    }
-
-    public function eliminar(){
-        $this->estado = 0;
-        $this->usuario_cancelo = auth()->id();
-        $this->fecha_hora_cancelacion = date('Y-m-d H:i:s');
-        $this->save();
     }
 
     public function scopeVigente($query){

@@ -64,14 +64,14 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_fechas_inhabiles_sat',true) || true">
+            <li class="nav-item"  v-if="$root.can('consultar_fechas_inhabiles_sat',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-cog nav-icon"></i>
                     <p>Configuración</p>
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview">
-                    <li class="nav-item"  v-if="$root.can('consultar_fechas_inhabiles_sat',true) || true">
+                    <li class="nav-item"  v-if="$root.can('consultar_fechas_inhabiles_sat',true)">
                         <router-link :to="{name: 'fechas-inhabiles-sat'}" class="nav-link" :class="{active: this.$route.name == 'fechas-inhabiles-sat'}">
                             <i class="fa fa-calendar nav-icon"></i>
                             <p>Fechas Inhábiles SAT</p>
