@@ -124,13 +124,16 @@ class EFOS extends Model
             if(!is_null($efo->efo) && !is_null($efo->efo->fecha_definitivo))
             {
                 $efo->fecha_limite_sat = $efo->calculaFechaLimite($efo->efo->fecha_definitivo);
-                $efo->save();
+            }else{
+                $efo->fecha_limite_sat = NULL;
             }
             if(!is_null($efo->efo) && !is_null($efo->efo->fecha_definitivo_dof))
             {
                 $efo->fecha_limite_dot = $efo->calculaFechaLimite($efo->efo->fecha_definitivo_dof);
-                $efo->save();
+            }else{
+                $efo->fecha_limite_dot = NULL;
             }
+            $efo->save();
         }
     }
 
@@ -139,6 +142,10 @@ class EFOS extends Model
         $i = 0;
         while ($i < 30)
         {
+            if ($i < 30)
+            {
+                $fecha = date("Y-m-d", strtotime($fecha . "+ 1 days"));
+            }
             $num_dia_fecha = date("N", strtotime($fecha));
             if($num_dia_fecha < 6)
             {
@@ -147,10 +154,6 @@ class EFOS extends Model
                 {
                     $i++;
                 }
-            }
-            if ($i < 30)
-            {
-                $fecha = date("Y-m-d", strtotime($fecha . "+ 1 days"));
             }
         }
         return $fecha;
