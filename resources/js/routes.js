@@ -2658,6 +2658,24 @@ export const routes = [
                 ]
             },
             {
+                path: 'cuentas-saldo-negativo',
+                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-saldo-negativo",
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                        meta: {
+                            title: 'Cuentas contables con saldos negativos',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CUENTAS CON SALDOS NEGATIVOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
                 path: 'consolidacion',
                 component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
                 children:[
