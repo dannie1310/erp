@@ -139,6 +139,10 @@ class EFOS extends Model
         $i = 0;
         while ($i < 30)
         {
+            if ($i < 30)
+            {
+                $fecha = date("Y-m-d", strtotime($fecha . "+ 1 days"));
+            }
             $num_dia_fecha = date("N", strtotime($fecha));
             if($num_dia_fecha < 6)
             {
@@ -147,10 +151,6 @@ class EFOS extends Model
                 {
                     $i++;
                 }
-            }
-            if ($i < 30)
-            {
-                $fecha = date("Y-m-d", strtotime($fecha . "+ 1 days"));
             }
         }
         return $fecha;
