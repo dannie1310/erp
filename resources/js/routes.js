@@ -3096,10 +3096,10 @@ export const routes = [
                         name:"fechas-inhabiles-sat",
                         component: require('./components/fiscal/fechas-inhabiles-sat/Index.vue').default,
                         meta: {
-                            title: 'FECHAS INHÁBILES SAT',
+                            title: 'Fechas Inhábiles SAT',
                             breadcrumb: {parent: 'fiscal', name: 'FECHAS INHÁBILES'},
-                            middleware: [auth],
-                            //permission: ['consultar_fechas_inhabiles_sat'],
+                            middleware: [auth, permission],
+                            permission: ['consultar_fechas_inhabiles_sat'],
                             general: true
                         }
                     },
