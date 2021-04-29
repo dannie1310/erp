@@ -171,6 +171,7 @@ import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
 import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
+import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -348,6 +349,7 @@ export default new Vuex.Store({
         'fiscal/efos' : efos,
         'fiscal/fecha-inhabil-sat' : fechaInhabilSat,
         'fiscal/no-deducido' : noDeducido,
+        'fiscal/tipo-fecha-sat' : tipoFechaSat,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,

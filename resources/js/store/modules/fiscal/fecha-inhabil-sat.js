@@ -81,8 +81,8 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Asignación de Contratistas",
-                    text: "¿Está seguro/a de que desea registrar la asignación de contratistas?",
+                    title: "Registrar la Fecha inhábil",
+                    text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -101,7 +101,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Asignación de contratistas registrada correctamente", {
+                                    swal("Fecha registrada correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false

@@ -29,4 +29,9 @@ class FechaInhabilSatService
     public function delete($data, $id){
         return $this->repository->update(['estado' => 0],$id);
     }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
 }
