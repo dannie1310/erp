@@ -48,7 +48,8 @@ class FechaInhabilSat extends Model
         return date_format($date,"d/m/Y");
     }
 
-    public function getUsuarioRegistroFormatAttribute(){
+    public function getUsuarioRegistroFormatAttribute()
+    {
         return $this->usuario_registro->nombre_completo;
     }
 
