@@ -28,7 +28,7 @@ class FechaInhabilSat extends Model
     ];
 
     public function tipo_fecha(){
-        $this->belongsTo(CtgTipoFecha::class, 'id_tipo_fecha', 'id');
+        return $this->belongsTo(CtgTipoFecha::class, 'id_tipo_fecha', 'id');
     }
 
     public function usuario_registro(){
@@ -50,7 +50,12 @@ class FechaInhabilSat extends Model
 
     public function getUsuarioRegistroFormatAttribute()
     {
-        return $this->usuario_registro->nombre_completo;
+        try {
+            return $this->usuario_registro->nombre_completo;
+        }catch (\Exception $exception)
+        {
+            return null;
+        }
     }
 
     public function getFechaRegistroFormatAttribute(){
