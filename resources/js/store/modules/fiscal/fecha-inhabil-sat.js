@@ -24,6 +24,20 @@ export default{
                 return t.id !== id;
             })
         },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentFecha, data.attribute, data.value);
+        },
+
+        UPDATE_FECHA(state, data) {
+            state.fechas_inhabiles = state.fechas_inhabiles.map(fecha => {
+                if (fecha.id === data.id) {
+                    return Object.assign({}, fecha, data)
+                }
+                return fecha
+            })
+            state.currentFecha = data;
+        },
     },
     actions: {
         paginate(context, payload) {
