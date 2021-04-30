@@ -10,9 +10,9 @@
         props: ['value'],
         methods: {
             destroy() {
-                return this.$store.dispatch('finanzas/fecha-inhabil-sat/delete', this.value.id)
+                return this.$store.dispatch('fiscal/fecha-inhabil-sat/delete', this.value.id)
                     .then(() => {
-                        this.$store.commit('finanzas/fecha-inhabil-sat/DELETE_FECHA', this.value.id);
+                        this.$store.commit('fiscal/fecha-inhabil-sat/DELETE_FECHA', this.value.id);
                     })
             }
         }

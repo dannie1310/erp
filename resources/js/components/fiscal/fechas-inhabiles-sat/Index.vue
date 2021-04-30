@@ -35,7 +35,7 @@
                 { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                 { title: 'Fecha Inhábil SAT', thClass: 'fecha_hora', field: 'fecha'},
                 { title: 'Tipo Fecha', field: 'tipo'},
-                { title: 'Usuario Registro', field: 'usuario'},
+                { title: 'Usuario Registró', field: 'usuario'},
                 { title: 'Fecha Hora Registro', thClass: 'fecha_hora', field: 'registro'},
                 { title: 'Acciones', field: 'buttons', thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
             ],
