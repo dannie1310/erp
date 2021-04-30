@@ -43,4 +43,8 @@ class FechaInhabilSatController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function delete($id){
+        return $this->service->eliminar($id);
+    }
 }

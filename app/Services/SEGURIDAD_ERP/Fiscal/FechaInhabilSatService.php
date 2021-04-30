@@ -26,7 +26,9 @@ class FechaInhabilSatService
         return $this->repository->paginate($data);
     }
 
-    public function delete($data, $id){
-        return $this->repository->update(['estado' => 0],$id);
+    public function eliminar($id){
+        $item = $this->repository->show($id);
+        $item->eliminar();
+        return $item;
     }
 }

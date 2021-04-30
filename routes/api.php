@@ -375,6 +375,7 @@ $api->version('v1', function ($api) {
         });
         $api->group(['prefix' => 'fecha-inhabil-sat'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@paginate');
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@delete')->where(['id' => '[0-9]+']);
         });
     });
 
