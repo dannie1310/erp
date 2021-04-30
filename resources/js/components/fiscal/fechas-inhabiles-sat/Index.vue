@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12"  v-if="$root.can('registrar_fechas_inhabiles_sat', true)" :disabled="cargando">
-            <Create />
+            <Create  @created="paginate()"/>
         </div>
         <div class="col-12">
             <div class="card">

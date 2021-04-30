@@ -109,6 +109,7 @@
                     'id_tipo_fecha' : this.id_tipo_fecha
                 })
                     .then((data) => {
+                        this.$emit('created', data)
                         this.salir()
                     });
             },
