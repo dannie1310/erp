@@ -7,10 +7,12 @@ use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
 
 class FechaInhabilSatObserver
 {
-    public function updated(FechaInhabilSat $fecha_inhabil){
+    public function updating(FechaInhabilSat $fecha_inhabil){
         $fecha_inhabil->usuario_cancelo = auth()->id();
         $fecha_inhabil->fecha_hora_cancelacion = date('Y-m-d H:i:s');
-        $fecha_inhabil->save();
+    }
+
+    public function updated(FechaInhabilSat $fecha_inhabil){
         EFOS::editarFechaLimite();
     }
 }

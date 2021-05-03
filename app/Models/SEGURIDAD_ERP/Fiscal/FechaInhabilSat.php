@@ -66,5 +66,6 @@ class FechaInhabilSat extends Model
     public function eliminar(){
         $this->estado = 0;
         $this->save();
+        return $this;
     }
 }
