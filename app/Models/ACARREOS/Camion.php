@@ -285,7 +285,7 @@ class Camion extends Model
             $imagen->cancelarImagen($imagen);
         }
 
-        if((!array_key_exists('id_frente', $imagenes) || (array_key_exists('id_frente', $imagenes) && $imagenes['id_frente'] == '')) && $imagenes['frente'] != '')
+        if((!array_key_exists('id_frente', $imagenes) || (array_key_exists('id_frente', $imagenes) && $imagenes['id_frente'] == '')) && (array_key_exists('frente', $imagenes) && $imagenes['frente'] != ''))
         {
             CamionImagen::create([
                 'IdCamion' => $this->getKey(),
@@ -298,14 +298,14 @@ class Camion extends Model
         /*
          * Imagen Derecha
          */
-        if(array_key_exists('id_derecha', $imagenes) && $imagenes['id_derecha'] == '' && array_key_exists('id_derecha', $imagenes) && (array_key_exists('derecha', $imagenes) && $imagenes['derecha'] == ''))
+        if(array_key_exists('id_derecha', $imagenes) && $imagenes['id_derecha'] == '' && array_key_exists('derecha', $imagenes) && (array_key_exists('derecha', $imagenes) && $imagenes['derecha'] == ''))
         {
             $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
                 ->where('TipoC', 'd')->first();
             $imagen->cancelarImagen($imagen);
         }
 
-        if((!array_key_exists('id_derecha', $imagenes) || (array_key_exists('id_derecha', $imagenes) && $imagenes['id_derecha'] == '')) && $imagenes['derecha'] != '')
+        if((!array_key_exists('id_derecha', $imagenes) || (array_key_exists('id_derecha', $imagenes) && $imagenes['id_derecha'] == '')) && (array_key_exists('derecha', $imagenes) && $imagenes['derecha'] != ''))
         {
             CamionImagen::create([
                 'IdCamion' => $this->getKey(),
@@ -318,7 +318,7 @@ class Camion extends Model
         /*
          * Imagen Atrás
          */
-        if(array_key_exists('id_atras', $imagenes) && $imagenes['id_atras'] == '' && array_key_exists('atras', $imagenes) && $imagenes['atras'] == '')
+        if(array_key_exists('id_atras', $imagenes) && $imagenes['id_atras'] == '' && array_key_exists('atras', $imagenes) && (array_key_exists('atras', $imagenes) && $imagenes['atras'] == ''))
         {
             $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
                 ->where('TipoC', 'f')->first();
@@ -338,7 +338,7 @@ class Camion extends Model
         /*
         * Imagen Izquierda
         */
-        if(array_key_exists('id_izquierda', $imagenes) && $imagenes['id_izquierda'] == '' && array_key_exists('izquierda', $imagenes) && $imagenes['izquierda'] == '')
+        if(array_key_exists('id_izquierda', $imagenes) && $imagenes['id_izquierda'] == '' && array_key_exists('izquierda', $imagenes) && (array_key_exists('izquierda', $imagenes) && $imagenes['izquierda'] == ''))
         {
             $imagen = CamionImagen::where('IdCamion', $this->IdCamion)
                 ->where('TipoC', 'f')->first();
