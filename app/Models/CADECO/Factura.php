@@ -1041,8 +1041,10 @@ class Factura extends Transaccion
                 ]);
                 if($subcontrato['tipo_transaccion'] == 53){
                     $fondo_gar = FondoGarantia::find($subcontrato['id']);
-                    $fondo_gar->estado = 2;
                     $fondo_gar->saldo = $fondo_gar->saldo - $subcontrato['monto_revision'];
+                    if($fondo_gar->saldo < 1){
+                        $fondo_gar->estado = 2;
+                    }
                     $fondo_gar->save();
                 }
                 if($subcontrato['tipo_transaccion'] == 52){

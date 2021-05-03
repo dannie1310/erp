@@ -31,4 +31,9 @@ class FechaInhabilSatService
         $item->eliminar();
         return $item;
     }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
 }

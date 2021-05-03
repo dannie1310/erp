@@ -24,6 +24,20 @@ export default{
                 return t.id !== id;
             })
         },
+
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentFecha, data.attribute, data.value);
+        },
+
+        UPDATE_FECHA(state, data) {
+            state.fechas_inhabiles = state.fechas_inhabiles.map(fecha => {
+                if (fecha.id === data.id) {
+                    return Object.assign({}, fecha, data)
+                }
+                return fecha
+            })
+            state.currentFecha = data;
+        },
     },
     actions: {
         paginate(context, payload) {
@@ -74,6 +88,44 @@ export default{
                                 .catch(error => {
                                     reject(error);
                                 })
+                        }
+                    });
+            });
+        },
+        store(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar la Fecha inhábil",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Fecha registrada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
                         }
                     });
             });

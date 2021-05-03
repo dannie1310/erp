@@ -3,6 +3,13 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //ACARREOS
+import camion from "./modules/acarreos/camion";
+import empresaAcarreo from "./modules/acarreos/empresa";
+import marcaAcarreo from "./modules/acarreos/marca";
+import operador from "./modules/acarreos/operador";
+import origen from './modules/acarreos/origen';
+import sindicato from "./modules/acarreos/sindicato";
+import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
 
 //ALMACENES
@@ -171,6 +178,7 @@ import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
 import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
+import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -202,6 +210,13 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'acarreos/camion' : camion,
+        'acarreos/empresa' : empresaAcarreo,
+        'acarreos/marca' : marcaAcarreo,
+        'acarreos/operador' : operador,
+        'acarreos/origen' : origen,
+        'acarreos/sindicato' : sindicato,
+        'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,
 
         'almacenes/conteo' : conteo,
@@ -348,6 +363,7 @@ export default new Vuex.Store({
         'fiscal/efos' : efos,
         'fiscal/fecha-inhabil-sat' : fechaInhabilSat,
         'fiscal/no-deducido' : noDeducido,
+        'fiscal/tipo-fecha-sat' : tipoFechaSat,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,
