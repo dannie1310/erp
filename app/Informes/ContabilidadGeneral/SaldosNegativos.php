@@ -192,12 +192,15 @@ where Cuentas.Id = ".$cuenta->id_cuenta." and Fecha < '".$fecha."'";
     private static function getMeses()
     {
         $query = "
+select * from (
         SELECT
-        CatalogoMeses.NombreCorto AS mes_txt,
-        CatalogoMeses.NombreMes AS nombre_mes,
+        CatalogoMeses.MesID AS mes_txt,
+        CatalogoMeses.MesID AS nombre_mes,
         CatalogoMeses.MesID as id
         FROM SEGURIDAD_ERP.Reportes.CatalogoMeses CatalogoMeses
-
+      union select '13', '13','13'
+union select '14', '14','14') as sub
+order by id
 
 
         ";/*union select '13', '13','13'

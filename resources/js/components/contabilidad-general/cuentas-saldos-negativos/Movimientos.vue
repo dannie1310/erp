@@ -16,7 +16,7 @@
                 <table class="table">
                     <tbody>
                         <tr>
-                            <td style="text-align: center; background-color: #bbb" colspan="9" >Movimientos de {{this.mes_txt}} {{this.anio}}</td>
+                            <td style="text-align: center; background-color: #bbb" colspan="9" >Movimientos del periodo {{this.mes_txt}} del ejercicio {{this.anio}}</td>
                         </tr>
                         <tr>
                             <td style="text-align: center; background-color: #bbb">#</td>

@@ -47,7 +47,7 @@
                                         <td style="text-align: center" colspan="3">{{item.anio}}</td>
                                     </tr>
                                     <tr style="background-color: #bbb" v-if="item.anio != informe.data[i-1].anio">
-                                        <td style="text-align: center">Mes</td>
+                                        <td style="text-align: center">Periodo</td>
                                         <td style="text-align: center">Monto</td>
                                         <td style="text-align: center">Saldo</td>
                                     </tr>
@@ -103,6 +103,7 @@ export default {
             })
             .then(data => {
                 this.informe = data.informe;
+                this.getMovimientos(this.informe.data[0])
             })
             .finally(() => {
                 this.cargando = false;
