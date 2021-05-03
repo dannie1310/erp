@@ -49,4 +49,17 @@ class CuentaSaldoNegativoController extends Controller
         $res = $this->service->sincronizar();
         return response()->json($res, 200);
     }
+
+    public function obtenerInforme(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerInforme($id);
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerInformeMovimientos(Request $request, $id)
+    {
+        $data = $request->all();
+        $respuesta =$this->service->obtenerInformeMovimientos($data);
+        return response()->json($respuesta, 200);
+    }
 }

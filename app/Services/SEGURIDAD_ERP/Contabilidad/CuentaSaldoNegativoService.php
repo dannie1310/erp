@@ -51,4 +51,14 @@ class CuentaSaldoNegativoService
     {
         return $this->repository->sincronizar();
     }
+
+    public function obtenerInforme($id)
+    {
+        return $this->repository->obtenerInforme($id);
+    }
+
+    public function obtenerInformeMovimientos($data)
+    {
+        return $this->repository->obtenerInformeMovimientos($data);
+    }
 }

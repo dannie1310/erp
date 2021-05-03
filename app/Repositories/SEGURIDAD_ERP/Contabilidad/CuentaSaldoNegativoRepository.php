@@ -2,6 +2,7 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
+use App\Informes\ContabilidadGeneral\SaldosNegativos;
 use App\Informes\EFOSEmpresaInforme;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativo;
 use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
@@ -74,5 +75,27 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
         return [
             "insertados"=>$insertados
         ];
+    }
+
+    public function obtenerInforme($id)
+    {
+        $cuenta = $this->show($id);
+        $informe["informe"]["encabezado"] = [
+            "base_datos"=>$cuenta->base_datos
+            , "empresa"=>$cuenta->nombre_empresa
+            , "codigo_cuenta" =>$cuenta->codigo_cuenta
+            , "nombre_cuenta" =>$cuenta->nombre_cuenta
+            , "tipo_cuenta" =>$cuenta->tipo
+            , "saldo_cuenta" =>$cuenta->saldo_real
+            , "saldo_cuenta_format" =>$cuenta->saldo_real_format
+        ];
+        $informe["informe"]["data"] = SaldosNegativos::get($cuenta);
+        return $informe;
+    }
+
+    public function obtenerInformeMovimientos($data)
+    {
+        $informe = SaldosNegativos::getMovimientos($data);
+        return $informe;
     }
 }

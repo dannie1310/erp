@@ -11,8 +11,12 @@
         <br />
         <div class="row">
             <div class="col-md-12">
-                <div class="table-responsive">
-                    <datatable v-bind="$data" />
+                <div class="card">
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <datatable v-bind="$data" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -33,7 +37,7 @@
                     { title: 'Nombre de Empresa Contpaq', field: 'nombre_empresa', thClass: 'th_c350', thComp: require('../../globals/th-Filter').default, sortable: false},
                     { title: 'Código de Cuenta', field: 'codigo_cuenta', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Nombre de Cuenta', field: 'nombre_cuenta', thClass: 'th_c350', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Saldo de Cuenta', field: 'saldo_cuenta', tdClass:'money', sortable: true},
+                    { title: 'Saldo de Cuenta', field: 'saldo_cuenta', tdClass:'td_money_input', sortable: true,  tdComp: require('./partials/RouterSaldo').default},
                     { title: 'Tipo de Cuenta', field: 'tipo', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Acciones', field: '', sortable: true},
                 ],
@@ -100,8 +104,8 @@
                             codigo_cuenta:cuenta.codigo_cuenta,
                             nombre_cuenta:cuenta.nombre_cuenta,
                             tipo:cuenta.tipo,
-                            saldo_cuenta:cuenta.saldo_cuenta,
                             fecha_actualizacion:cuenta.fecha_actualizacion,
+                            saldo_cuenta: $.extend({},{saldo: cuenta.saldo_cuenta, id: cuenta.id}),
                         })
                     });
                 },

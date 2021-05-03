@@ -2659,7 +2659,7 @@ export const routes = [
             },
             {
                 path: 'cuentas-saldo-negativo',
-                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Layout.vue').default,
                 children:[
                     {
                         path:"/",
@@ -2672,7 +2672,35 @@ export const routes = [
                             permission: ['consultar_poliza'],
                             general: true
                         }
-                    }
+                    },
+                    {
+                        path: ':id',
+                        name: 'cuenta-saldo-negativo-detalle',
+                        props: true,
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Informe').default,
+                        meta: {
+                            title: 'Detalle de Saldo',
+                            breadcrumb: {parent: 'cuentas-saldo-negativo', name: 'DETALLE'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        },
+                        children:[
+                            {
+                                path: 'movimientos/:aniomes',
+                                name: 'cuenta-saldo-negativo-detalle-movimientos',
+                                props: true,
+                                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Movimientos').default,
+                                meta: {
+                                    title: 'Detalle de Movimientos',
+                                    breadcrumb: {parent: 'cuenta-saldo-negativo-detalle', name: 'MOVIMIENTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                },
+                            }
+                        ]
+                    },
                 ]
             },
             {
