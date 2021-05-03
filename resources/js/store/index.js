@@ -176,6 +176,7 @@ import autocorreccion from './modules/fiscal/autocorreccion';
 import CFDSAT from './modules/fiscal/cfd-sat';
 import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
+import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
 
 //SUBCONTRATOSESTIMACIONES
@@ -359,6 +360,7 @@ export default new Vuex.Store({
         'fiscal/autocorreccion' : autocorreccion,
         'fiscal/cfd-sat': CFDSAT,
         'fiscal/efos' : efos,
+        'fiscal/fecha-inhabil-sat' : fechaInhabilSat,
         'fiscal/no-deducido' : noDeducido,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
