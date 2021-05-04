@@ -149,7 +149,7 @@ class EFOS extends Model
             $num_dia_fecha = date("N", strtotime($fecha));
             if($num_dia_fecha < 6)
             {
-                $fecha_inhabil = FechaInhabilSat::where('fecha',date("Y-m-d",strtotime($fecha)))->count();
+                $fecha_inhabil = FechaInhabilSat::where('fecha',date("Y-m-d",strtotime($fecha)))->vigente()->count();
                 if ($fecha_inhabil == 0)
                 {
                     $i++;
