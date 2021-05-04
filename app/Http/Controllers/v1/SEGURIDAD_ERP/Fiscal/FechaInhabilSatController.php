@@ -38,6 +38,8 @@ class FechaInhabilSatController extends Controller
     public function __construct(Manager $fractal, FechaInhabilSatService $service, FechaInhabilSatTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permisoGlobal:consultar_fechas_inhabiles_sat')->only(['show','paginate','index','find']);
+        $this->middleware('permisoGlobal:registrar_fechas_inhabiles_sat')->only('store');
 
         $this->fractal = $fractal;
         $this->service = $service;

@@ -15,4 +15,16 @@ class FechaInhabilSatObserver
     public function updated(FechaInhabilSat $fecha_inhabil){
         EFOS::editarFechaLimite();
     }
+
+    public function creating(FechaInhabilSat $fechaInhabilSat)
+    {
+        $fechaInhabilSat->usuario_registro = auth()->id();
+        $fechaInhabilSat->fecha_hora_registro = date('Y-m-d H:i:s');
+        $fechaInhabilSat->estado = 1;
+    }
+
+    public function created(FechaInhabilSat $fechaInhabilSat)
+    {
+        EFOS::editarFechaLimite();
+    }
 }
