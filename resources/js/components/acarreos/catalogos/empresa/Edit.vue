@@ -28,8 +28,7 @@
                                    <div class="form-group row">
                                        <label class="col-md-2 col-form-label">Razón Social:</label>
                                        <div class="col-md-10">
-                                           <input disabled="true"
-                                                  type="text"
+                                           <input type="text"
                                                   class="form-control"
                                                   v-model="empresa.razon_social" />
                                        </div>
