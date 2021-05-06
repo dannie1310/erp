@@ -103,6 +103,7 @@ import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
 import polizaCFDI from './modules/contabilidadGeneral/poliza-cfdi';
+import cuentaSaldoNegativo from './modules/contabilidadGeneral/cuenta-saldo-negativo';
 
 //CONTRATOS
 import asigacionContratista from './modules/contratos/asignacion-contratista'
@@ -327,6 +328,7 @@ export default new Vuex.Store({
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/tipo-poliza' : tipoPoliza,
         'contabilidadGeneral/poliza-cfdi' : polizaCFDI,
+        'contabilidadGeneral/cuenta-saldo-negativo' : cuentaSaldoNegativo,
 
         'reportes/reporte': reporte,
 
