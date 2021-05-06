@@ -61,6 +61,7 @@
                 )
                 .then(data => {
                     this.resultado = data;
+                    this.paginate();
 
                 }).finally(() => {
                     this.sincronizando = false;
