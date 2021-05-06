@@ -144,7 +144,7 @@ class SolicitudCompraService
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
                 'descripcion' => $partida->material->descripcion,
-                'descripcion_corta' => substr($partida->material->descripcion, 0, 35),
+                'descripcion_corta' => ucfirst((mb_substr($partida->material->descripcion,0,35,'UTF-8'))),
                 'unidad' => $partida->material->unidad,
                 'cantidad_solicitada' => number_format($partida->cantidad, 4, '.', ''),
                 'cantidad_asignada' => number_format($cantidad_asig_previamente, 4, '.', ''),
