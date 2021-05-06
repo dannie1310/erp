@@ -62,8 +62,16 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
             }
             if(count($values)>0){
                 try{
-                    CuentaSaldoNegativo::insert($values);
-                    $insertados ++;
+
+                    $cantidad = count($values);
+                    for($i = 0; $i<=$cantidad+100; $i+=100)
+                    {
+                        $values_new = array_slice($values, $i, 100);
+                        if(count($values_new)>0){
+                            CuentaSaldoNegativo::insert($values_new);
+                            $insertados+=count($values_new);
+                        }
+                    }
                 }catch (\Exception $e)
                 {
                     abort(500, $e->getMessage());
