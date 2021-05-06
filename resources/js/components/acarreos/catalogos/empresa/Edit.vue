@@ -30,7 +30,13 @@
                                        <div class="col-md-10">
                                            <input type="text"
                                                   class="form-control"
+                                                  id="razon_social"
+                                                  name="razon_social"
+                                                  data-vv-as="Razón Social"
+                                                  v-validate="{required: true, min:6}"
+                                                  :class="{'is-invalid': errors.has('razon_social')}"
                                                   v-model="empresa.razon_social" />
+                                           <div class="invalid-feedback" v-show="errors.has('razon_social')">{{ errors.first('razon_social') }}</div>
                                        </div>
                                    </div>
                                 </div>
@@ -38,50 +44,31 @@
                                     <div class="form-group row">
                                         <label class="col-md-2 col-form-label">RFC:</label>
                                         <div class="col-md-4">
-                                            <input disabled="true"
+                                            <input id="rfc"
+                                                   name="rfc"
+                                                   data-vv-as="RFC"
+                                                   :class="{'is-invalid': errors.has('rfc')}"
+                                                   v-validate="{ required: true, regex: /^([A-ZÑ&]{3,4})(\d{2}(?:0[1-9]|1[0-2])(?:0[1-9]|[12]\d|3[01]))([A-Z\d]{2})([A\d])$/ }"
                                                    type="text"
                                                    class="form-control"
-                                                   v-model="empresa.rfc" />
+                                                   v-model="empresa.rfc"
+                                                   :maxlength="13" />
+                                            <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
                                         </div>
-                                        <label class="col-md-2 col-form-label">Fecha Registro:</label>
+                                        <label class="col-md-2 col-form-label">Estatus:</label>
                                         <div class="col-md-4">
-                                            <input disabled="true"
-                                                   type="text"
-                                                   class="form-control"
-                                                   v-model="empresa.fecha_registro" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                         <label class="col-md-2 col-form-label">Registró:</label>
-                                        <div class="col-md-7">
-                                            <input disabled="true"
-                                                   type="text"
-                                                   class="form-control"
-                                                   v-model="empresa.nombre_registro" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">Estatus:</label>
-                                        <div class="col-md-2">
-                                            <span class="badge" :style="{'background-color': empresa.estado_color}">{{ empresa.estado_format }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12" v-if="empresa.estado == 0">
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label">Desactivó:</label>
-                                        <div class="col-md-4">
-                                            <input disabled="true"
-                                                   type="text"
-                                                   class="form-control"
-                                                   v-model="empresa.nombre_desactivo" />
-                                        </div>
-                                        <label class="col-md-2 col-form-label">Fecha Desactivación:</label>
-                                        <div class="col-md-4">
-                                            <input disabled="true"
-                                                   type="text"
-                                                   class="form-control"
-                                                   v-model="empresa.fecha_desactivo" />
+                                            <select class="form-control"
+                                                    name="estado"
+                                                    data-vv-as="Estado"
+                                                    v-model="empresa.estado"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('estado')}"
+                                                    id="estado">
+                                                    <option value>-- Seleccionar--</option>
+                                                    <option value="1" >ACTIVO</option>
+                                                    <option value="0" >INACTIVO</option>
+                                            </select>
+                                            <div class="invalid-feedback" v-show="errors.has('estado')">{{ errors.first('estado') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -89,7 +76,12 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir">
+                            <i class="fa fa-angle-left"></i>Regresar
+                        </button>
+                        <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
+                          <i class="fa fa-save"></i> Guardar
+                      </button>
                     </div>
                 </div>
             </div>
@@ -123,6 +115,23 @@
                 {
                     this.cargando = false;
                 })
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.update()
+                    }
+                });
+            },
+            update() {
+                return this.$store.dispatch('acarreos/empresa/update', {
+                    id: this.id,
+                    data: this.empresa
+                })
+                    .then((data) => {
+                        this.$store.commit('acarreos/empresa/UPDATE_EMPRESA', data);
+                        this.salir()
+                    })
             },
         }
     }

@@ -66,6 +66,12 @@ class EmpresaService
         return $this->repository->show($id);
     }
 
+    public function update(array $data, $id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id)->editar($data);
+    }
+
     private function conexionAcarreos()
     {
         $base_datos = Proyecto::pluck('base_datos')->first();
