@@ -94,7 +94,7 @@
                                                                    :disabled="enable[i] == false"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
-                                                                   v-validate="{required: true, min_value:0.1, decimal:4}"
+                                                                   v-validate="{required: true, min_value:0.01, decimal:4}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                    v-model="precio[i]"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>

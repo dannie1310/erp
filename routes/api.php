@@ -300,6 +300,15 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@update')->where(['id' => '[0-9]+']);
         });
+
+        $api->group(['prefix' => 'cuenta-saldo-negativo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@paginate');
+            $api->post('{id}/obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@obtenerInforme')->where(['id' => '[0-9]+']);
+            $api->post('{id}/obtener-informe-movimientos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@obtenerInformeMovimientos')->where(['id' => '[0-9]+']);
+            $api->post('sincronizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@sincronizar');
+        });
+
         $api->group(['prefix' => 'tipo-poliza'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\TipoPolizaController@index');
         });
@@ -467,6 +476,48 @@ $api->version('v1', function ($api) {
             $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cambiarClave');
             $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@registrar');
             $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@descargaLayout');
+        });
+
+        //EMPRESA
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@index');
+        });
+
+        //MARCA
+        $api->group(['prefix' => 'marca'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');
+        });
+
+        //OPERADOR
+        $api->group(['prefix' => 'operador'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@index');
+        });
+
+        //ORIGEN
+        $api->group(['prefix' => 'origen'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@descargaLayout');
+        });
+
+        //SINDICATO
+        $api->group(['prefix' => 'sindicato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\SindicatoController@index');
+        });
+
+        //TIPOORIGEN
+        $api->group(['prefix' => 'tipo-origen'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TipoOrigenController@index');
         });
 
         //TIRO
@@ -477,6 +528,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
             $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaTiros', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@descargaTiros');
         });
 
         //TAG

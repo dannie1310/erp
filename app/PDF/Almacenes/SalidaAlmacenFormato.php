@@ -14,8 +14,6 @@ use Illuminate\Support\Facades\App;
 class SalidaAlmacenFormato extends Rotation
 {
     protected $obra;
-    protected $entrada_almacen;
-    private $dim_aux=0;
     var $encola = '';
     const DPI = 96;
     const MM_IN_INCH = 25.4;
@@ -25,54 +23,38 @@ class SalidaAlmacenFormato extends Rotation
     const MAX_HEIGHT = 180;
 
     /**
-     *EntradaAlmacenFormato constructor.
-     * @param $entrada
+     * SalidaAlmacenFormato constructor.
+     * @param $id
      */
-
     public function __construct($id)
     {
-
         parent::__construct('P', 'cm', 'A4');
         $this->obra = Obra::find(Context::getIdObra());
-
-
+        $this->SetAutoPageBreak(true, 3);
         $this->salida = SalidaAlmacen::find($id);
-
-
-
         $this->numero_folio = $this->salida->numero_folio_format;
-
         $this->fecha = $this->salida->fecha_format;
         $this->fecha_registro = $this->salida->fecha_hora_registro_format;
-
         $this->almacen = $this->salida->almacen->descripcion;
-
-
-
-
     }
+
     public function Header()
     {
-
         $postTitle = .7;
-
         $this->Cell(11.5);
         $x_f = $this->GetX();
         $y_f = $this->GetY();
-
         $this->SetTextColor('0,0,0');
         $this->SetFont('Arial', 'B', 14);
         $this->Cell(4.5, .7, utf8_decode('FOLIO'), 'LT', 0, 'L');
         $this->Cell(3.5, .7, ''.$this->numero_folio.'', 'RT', 0, 'L');
         $this->Ln(.7);
         $y_f = $this->GetY();
-
         $this->SetY(1);
         if($this->salida['opciones']==='65537'){
             $this->SetFont('Arial', 'B', 18);
             $this->Cell(11.5, $postTitle, utf8_decode( 'TRANSFERENCIA DE MATERIALES'), 0, 0, 'C', 0);
         }
-
         if($this->salida['opciones']==='1'){
             if($this->salida->entrega_contratista){
                 $this->SetY(.7);
@@ -85,12 +67,10 @@ class SalidaAlmacenFormato extends Rotation
                 $this->SetFont('Arial', 'B', 24);
                 $this->Cell(11.5, $postTitle, utf8_decode( 'SALIDA DE MATERIALES'), 0, 0, 'C', 0);
             }
-
         }
         $this->Ln();
         $this->SetFont('Arial', 'B', 10);
         $this->SetY($y_f);
-
 
         if($this->salida['NumeroFolioAlt']>0){
             $this->SetX($x_f);
@@ -195,12 +175,14 @@ class SalidaAlmacenFormato extends Rotation
         $this->SetFont('Arial', '', 6);
         $this->SetHeights([0.8]);
 
-
+        $currentPage = $this->PageNo();
+        if($currentPage>1){
+            $this->Ln();
+        }
     }
 
     public function tableHeader()
     {
-
         $this->Ln(1.8);
         $this->SetFont('Arial', '', 6);
         $this->SetFillColor(180,180,180);
@@ -215,23 +197,16 @@ class SalidaAlmacenFormato extends Rotation
         $this->Row(["#","No. Parte",utf8_decode("Descripción"), "Unidad", "Cantidad"]);
     }
 
-
     public function partidas()
     {
-            if($this->PageNo()==1){
-                $this->tableHeader();
-            }
-
-
+        $this->tableHeader();
             foreach ($this->salida->partidas as $i => $p) {
                 $this->dim = $this->GetY();
-
                 $this->SetWidths([1, 2.5, 12, 2, 2]);
                 $this->SetRounds(['', '', '', '', '']);
                 $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
                 $this->SetAligns(['L', 'L', 'L', 'L', 'R']);
                 $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-
                 $this->Row([
                        $i + 1,
                        $p->material['numero_parte'],
@@ -249,32 +224,27 @@ class SalidaAlmacenFormato extends Rotation
                 $this->Row(["---"]);
 
                 $this->dim_2 = $this->GetY();
-
-                if($this->dim_2>25.7) {
+                if($this->dim_2>24) {
                     $this->AddPage();
-                    $this->Ln(1.8);
-                    $this->Ln(.7);
+                    $this->tableHeader();
                     if ($p->concepto['nivel'] > 0) {
-
                         $nivel = $p->concepto['nivel'];
-
                         $nivel = $p->concepto->getAncestrosAttribute($nivel);
-
-
+                        $this->SetHeights([0.4]);
                         $this->SetWidths([1, 18.5]);
+                        $this->SetFont('Arial', '', 6);
                         $this->SetRounds(['', '']);
                         $this->SetFills(['180,180,180', '255,255,255']);
                         $this->SetAligns(['L', 'L']);
                         $this->SetTextColors(['0,0,0', '0,0,0']);
-
                         $this->Row([
                             "Destino:",
                             utf8_decode($nivel),
                         ]);
 
                     } else {
-
                         $this->SetWidths([1, 18.5]);
+                        $this->SetFont('Arial', '', 6);
                         $this->SetRounds(['', '']);
                         $this->SetFills(['180,180,180', '255,255,255']);
                         $this->SetAligns(['L', 'L']);
@@ -290,55 +260,43 @@ class SalidaAlmacenFormato extends Rotation
                             utf8_decode($destino),
                         ]);
                     }
-
-                }else{
-
-                    if ($p->concepto['nivel'] > 0) {
-
-                        $nivel = $p->concepto['nivel'];
-
-                        $nivel = $p->concepto->getAncestrosAttribute($nivel);
-
-
-                        $this->SetWidths([1, 18.5]);
-                        $this->SetRounds(['', '']);
-                        $this->SetFills(['180,180,180', '255,255,255']);
-                        $this->SetAligns(['L', 'L']);
-                        $this->SetTextColors(['0,0,0', '0,0,0']);
-
-                        $this->Row([
-                            "Destino:",
-                            utf8_decode($nivel),
-                        ]);
-
-                    } else {
-
-                        $this->SetWidths([1, 18.5]);
-                        $this->SetRounds(['', '']);
-                        $this->SetFills(['180,180,180', '255,255,255']);
-                        $this->SetAligns(['L', 'L']);
-                        $this->SetTextColors(['0,0,0', '0,0,0']);
-
-                        if (empty($p->almacen['descripcion'])) {
-                            $destino = '';
-                        } else {
-                            $destino = $p->almacen['descripcion'];
-                        }
-                        $this->Row([
-                            "Destino:",
-                            utf8_decode($destino),
-                        ]);
-                    }
-
                 }
+                else{
+                    if ($p->concepto['nivel'] > 0) {
+                        $nivel = $p->concepto['nivel'];
+                        $nivel = $p->concepto->getAncestrosAttribute($nivel);
+                        $this->SetWidths([1, 18.5]);
+                        $this->SetRounds(['', '']);
+                        $this->SetFills(['180,180,180', '255,255,255']);
+                        $this->SetAligns(['L', 'L']);
+                        $this->SetTextColors(['0,0,0', '0,0,0']);
+                        $this->Row([
+                            "Destino:",
+                            utf8_decode($nivel),
+                        ]);
+                    } else {
+                        $this->SetWidths([1, 18.5]);
+                        $this->SetRounds(['', '']);
+                        $this->SetFills(['180,180,180', '255,255,255']);
+                        $this->SetAligns(['L', 'L']);
+                        $this->SetTextColors(['0,0,0', '0,0,0']);
 
-
-
+                        if (empty($p->almacen['descripcion'])) {
+                            $destino = '';
+                        } else {
+                            $destino = $p->almacen['descripcion'];
+                        }
+                        $this->Row([
+                            "Destino:",
+                            utf8_decode($destino),
+                        ]);
+                    }
+                }
             }
 
         $this->dim_2 = $this->GetY();
 
-        if($this->dim_2>25.6) {
+        if($this->dim_2>24) {
             $this->AddPage();
             $this->Ln(1.8);
             $this->Ln(.7);
@@ -347,7 +305,7 @@ class SalidaAlmacenFormato extends Rotation
             $this->SetRadius([0.2]);
             $this->SetFills(['180,180,180']);
             $this->SetTextColors(['0,0,0']);
-            $this->SetHeights([0.5]);
+            $this->SetHeights([0.4]);
             $this->SetFont('Arial', '', 9);
             $this->SetAligns(['C']);
             $this->encola="observaciones_encabezado";
@@ -358,7 +316,7 @@ class SalidaAlmacenFormato extends Rotation
             $this->SetStyles(['DF']);
             $this->SetFills(['255,255,255']);
             $this->SetTextColors(['0,0,0']);
-            $this->SetHeights([0.5]);
+            $this->SetHeights([0.4]);
             $this->SetFont('Arial', '', 9);
             $this->SetWidths([19.5]);
             $this->encola="observaciones";
@@ -371,7 +329,7 @@ class SalidaAlmacenFormato extends Rotation
             $this->SetRadius([0.2]);
             $this->SetFills(['180,180,180']);
             $this->SetTextColors(['0,0,0']);
-            $this->SetHeights([0.5]);
+            $this->SetHeights([0.4]);
             $this->SetFont('Arial', '', 9);
             $this->SetAligns(['C']);
             $this->encola="observaciones_encabezado";
@@ -382,7 +340,7 @@ class SalidaAlmacenFormato extends Rotation
             $this->SetStyles(['DF']);
             $this->SetFills(['255,255,255']);
             $this->SetTextColors(['0,0,0']);
-            $this->SetHeights([0.5]);
+            $this->SetHeights([0.4]);
             $this->SetFont('Arial', '', 9);
             $this->SetWidths([19.5]);
             $this->encola="observaciones";
@@ -447,10 +405,10 @@ class SalidaAlmacenFormato extends Rotation
 
     function create()
     {
-        $this->SetMargins(1, .5, 2);
-        $this->SetAutoPageBreak(true, 2);
+        $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();
         $this->AddPage();
+        $this->SetAutoPageBreak(true, 3);
         $this->partidas();
 
         try {

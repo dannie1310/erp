@@ -2300,6 +2300,61 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'camion',
+                                component: require('./components/acarreos/catalogos/camion/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'camion',
+                                        component: require('./components/acarreos/catalogos/camion/Index').default,
+                                        meta: {
+                                            title: 'Camiones',
+                                            breadcrumb: {parent: 'catalogo', name: 'CAMIONES'},
+                                            middleware: [auth, context, permission],
+                                            permission: ['consultar_camion']
+                                        }
+                                    },
+                                    {
+                                        path: ':id',
+                                        name: 'camion-show',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Show').default,
+                                        meta: {
+                                            title: 'Consultar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'CONSULTAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'consultar_camion'
+                                        }
+                                    },
+                                    {
+                                        path: ':id/edit',
+                                        name: 'camion-edit',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Edit').default,
+                                        meta: {
+                                            title: 'Editar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'EDITAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'editar_camion'
+                                        }
+                                    },
+                                ]
+                            },
+                            {
+                                path: 'origen',
+                                name: 'origen',
+                                component: require('./components/acarreos/catalogos/origen/Index').default,
+                                meta: {
+                                    title: 'Orígenes',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'ORÍGENES'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_origen']
+                                }
+                            },
+                            {
                                 path: 'tiro',
                                 name: 'tiro',
                                 component: require('./components/acarreos/catalogos/tiro/Index').default,
@@ -2655,6 +2710,52 @@ export const routes = [
                             general: true
                         }
                     }
+                ]
+            },
+            {
+                path: 'cuentas-saldo-negativo',
+                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-saldo-negativo",
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                        meta: {
+                            title: 'Cuentas contables con saldos negativos',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CUENTAS CON SALDOS NEGATIVOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'cuenta-saldo-negativo-detalle',
+                        props: true,
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Informe').default,
+                        meta: {
+                            title: 'Detalle de Saldo',
+                            breadcrumb: {parent: 'cuentas-saldo-negativo', name: 'DETALLE'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        },
+                        children:[
+                            {
+                                path: 'movimientos/:aniomes',
+                                name: 'cuenta-saldo-negativo-detalle-movimientos',
+                                props: true,
+                                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Movimientos').default,
+                                meta: {
+                                    title: 'Detalle de Movimientos',
+                                    breadcrumb: {parent: 'cuenta-saldo-negativo-detalle', name: 'MOVIMIENTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                },
+                            }
+                        ]
+                    },
                 ]
             },
             {

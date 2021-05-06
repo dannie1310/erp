@@ -903,7 +903,9 @@ export default {
             })
         },
         getConfiguracionObra(){
-            return this.$store.dispatch('finanzas/estimacion/index', { } )
+            return this.$store.dispatch('finanzas/estimacion/index', {
+                    params: { scope: 'porObra' } 
+                })
                 .then(data => {
                     this.configuracion = data.data[0]
                 }).finally(()=>{
@@ -1054,10 +1056,10 @@ export default {
         getTipoCambioItem(item){
             if(item.tipo_transaccion == 52){
                 return parseFloat(item.monto_revision / item.subtotal).toFixed(6)
-            }else{
+            }else if(item.tipo_transaccion == 51){
                 return parseFloat(item.monto_revision / item.anticipo_monto).toFixed(6)
             }
-
+            return parseFloat(item.tipo_cambio).toFixed(6);
         },
     },
     computed:{

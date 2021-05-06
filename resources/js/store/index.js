@@ -3,6 +3,13 @@ import Vuex from 'vuex';
 import auth from './modules/auth';
 
 //ACARREOS
+import camion from "./modules/acarreos/camion";
+import empresaAcarreo from "./modules/acarreos/empresa";
+import marcaAcarreo from "./modules/acarreos/marca";
+import operador from "./modules/acarreos/operador";
+import origen from './modules/acarreos/origen';
+import sindicato from "./modules/acarreos/sindicato";
+import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
 
 //ALMACENES
@@ -96,6 +103,7 @@ import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
 import polizaCFDI from './modules/contabilidadGeneral/poliza-cfdi';
+import cuentaSaldoNegativo from './modules/contabilidadGeneral/cuenta-saldo-negativo';
 
 //CONTRATOS
 import asigacionContratista from './modules/contratos/asignacion-contratista'
@@ -201,6 +209,13 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'acarreos/camion' : camion,
+        'acarreos/empresa' : empresaAcarreo,
+        'acarreos/marca' : marcaAcarreo,
+        'acarreos/operador' : operador,
+        'acarreos/origen' : origen,
+        'acarreos/sindicato' : sindicato,
+        'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,
 
         'almacenes/conteo' : conteo,
@@ -313,6 +328,7 @@ export default new Vuex.Store({
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/tipo-poliza' : tipoPoliza,
         'contabilidadGeneral/poliza-cfdi' : polizaCFDI,
+        'contabilidadGeneral/cuenta-saldo-negativo' : cuentaSaldoNegativo,
 
         'reportes/reporte': reporte,
 

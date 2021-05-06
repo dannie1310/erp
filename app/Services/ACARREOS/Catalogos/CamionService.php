@@ -4,8 +4,10 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
+use App\CSV\Acarreos\Catalogos\CamionLayout;
 use App\Models\ACARREOS\Camion;
-use App\Models\ACARREOS\SCA_CONFIGURACION\UsuarioProyecto;
+use App\Models\ACARREOS\Operador;
+use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 use App\Models\ACARREOS\SolicitudActualizacionCamion;
 use App\Models\ACARREOS\SolicitudActualizacionCamionImagen;
 use App\Models\ACARREOS\SolicitudReactivacionCamion;
@@ -13,6 +15,7 @@ use App\Models\ACARREOS\SolicitudReactivacionCamionImagen;
 use App\Models\IGH\Usuario;
 use App\Repositories\ACARREOS\Camion\Repository;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CamionService
 {
@@ -43,6 +46,27 @@ class CamionService
         } catch (\Exception $e) {
             abort(500, "Error al conectar con la base de datos.");
             throw $e;
+        }
+    }
+
+    /**
+     *  Establecer conexión a base de datos de acarreos (MySQL) usando el contexto.
+     * @throws \Exception
+     */
+    private function conexionAcarreosContexto()
+    {
+        $base_datos = Proyecto::pluck('base_datos')->first();
+        if(!is_null($base_datos))
+        {
+            try {
+                DB::purge('acarreos');
+                \Config::set('database.connections.acarreos.database', $base_datos);
+            } catch (\Exception $e) {
+                abort(500, "El proyecto no se encuentra activo en acarreos.");
+                throw $e;
+            }
+        }else{
+            abort(500, "El proyecto no se encuentra activo en acarreos.");
         }
     }
 
@@ -378,5 +402,81 @@ class CamionService
             $cantidad_imagenes_a_registrar." Imagenes Registradas: ".
             $imagenes." Imagenes con Error: ".($error), "imagenes_registradas" => $json_registrado,
             "imagenes_no_registradas" => $json_no_registrado));
+    }
+
+    public function paginate($data)
+    {
+        $this->conexionAcarreosContexto();
+
+        if (isset($data['economico']))
+        {
+            $this->repository->where([['Economico', 'LIKE', '%'.$data['economico'].'%']]);
+        }
+
+        if (isset($data['propietario']))
+        {
+            $this->repository->where([['Propietario', 'LIKE', '%'.$data['propietario'].'%']]);
+        }
+
+        if (isset($data['IdOperador']))
+        {
+            $operador = Operador::where([['Nombre', 'LIKE', '%' . $data['IdOperador'] . '%']])->pluck('IdOperador');
+            $this->repository->whereIn(['IdOperador', $operador]);
+        }
+
+        if (isset($data['FechaAlta']))
+        {
+            $this->repository->whereBetween( ['FechaAlta', [ request( 'FechaAlta' )." 00:00:00",request( 'FechaAlta' )." 23:59:59"]] );
+        }
+
+        if (isset($data['usuario_registro']))
+        {
+            $usuario = Usuario::where([['nombre', 'LIKE', '%' . $data['usuario_registro'] . '%']])->pluck('idusuario');
+            $this->repository->whereIn(['usuario_registro', $usuario]);
+        }
+
+        return  $this->repository->paginate($data);
+    }
+
+    public function show($id)
+    {
+        $this->conexionAcarreosContexto();
+        return $this->repository->show($id);
+    }
+
+    public function activar($id)
+    {
+        $this->conexionAcarreosContexto();
+        $camion = $this->show($id);
+        if ($camion->Estatus == 1) {
+            abort(400, "El camión se encuentra " . $camion->estado_format . " previamente.");
+        }
+        return $camion->activar();
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreosContexto();
+        $camion = $this->show($id);
+        if ($camion->Estatus == 0) {
+            abort(400, "El camión se encuentra " . $camion->estado_format . " previamente.");
+        }
+        return $camion->desactivar($data['motivo']);
+    }
+
+    public function update(array $data, $id)
+    {
+        $this->conexionAcarreosContexto();
+        if($data['cubicacion_pago'] > 40)
+        {
+            abort(400, "La cubicación del camión no puede ser mayor a 40.");
+        }
+        return $this->repository->show($id)->editar($data);
+    }
+
+    public function excel()
+    {
+        $this->conexionAcarreosContexto();
+        return Excel::download(new CamionLayout(), 'camiones.csv');
     }
 }
