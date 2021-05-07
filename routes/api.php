@@ -482,6 +482,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@update')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
+
         });
 
         //MARCA

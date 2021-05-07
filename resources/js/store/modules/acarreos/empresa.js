@@ -153,6 +153,84 @@ export default{
                     });
             });
         },
+        activar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Activar la Empresa",
+                    text: "¿Está seguro de que desea activar la empresa?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Activar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id+'/activar', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Empresa activada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        desactivar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Desactivar la empresa",
+                    text: "¿Está seguro de que desea desactivar la empresa?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Desactivar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .get(URI + payload.id+'/desactivar', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Empresa desactivada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

@@ -78,6 +78,26 @@ class EmpresaService
         return $this->repository->create($data);
     }
 
+    public function activar($id)
+    {
+        $this->conexionAcarreos();
+        $empresa = $this->show($id);
+        if ($empresa->Estatus == 1) {
+            abort(400, "La empresa se encuentra " . $empresa->estado_format . " previamente.");
+        }
+        return $empresa->activar();
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreos();
+        $empresa = $this->show($id);
+        if ($empresa->Estatus == 0) {
+            abort(400, "La empresa se encuentra " . $empresa->estado_format . " previamente.");
+        }
+        return $empresa->desactivar($data['motivo']);
+    }
+
     private function conexionAcarreos()
     {
         $base_datos = Proyecto::pluck('base_datos')->first();

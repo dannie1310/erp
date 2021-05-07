@@ -98,8 +98,8 @@
                         buttons: $.extend({}, {
                             id: empresa.id,
                             edit: self.$root.can('editar_empresa') ? true : false,
-                            //activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
-                            //desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
+                            activar: (empresa.estado === 0 && self.$root.can('activar_desactivar_empresa')) ? true : false,
+                            desactivar: (empresa.estado === 1 && self.$root.can('activar_desactivar_empresa')) ? true : false,
                             show : self.$root.can('consultar_empresa') ? true : false,
                         })
                     }));

@@ -146,4 +146,38 @@ class Empresa extends Model
             abort(400, "El RFC '".$this->RFC."' de la empresa ya se encuentra registrado previamente.");
         }
     }
+
+    public function activar()
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->Estatus = 1;
+            $this->usuario_desactivo = NULL;
+            $this->motivo = NULL;
+            $this->save();
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function desactivar($motivo)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->Estatus = 0;
+            $this->usuario_desactivo = auth()->id();
+            $this->motivo = $motivo;
+            $this->save();
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }
