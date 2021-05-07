@@ -9,6 +9,7 @@ use App\Repositories\Repository;
 use App\Models\ACARREOS\Material;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\CSV\Acarreos\Catalogos\MaterialLayout;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 
 class MaterialService
@@ -81,11 +82,11 @@ class MaterialService
         return $origen->desactivar($data['motivo']);
     }
 
-    // public function excel()
-    // {
-    //     $this->conexionAcarreos();
-    //     return Excel::download(new OrigenLayout(), 'origenes.csv');
-    // }
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new MaterialLayout(), 'materiales.csv');
+    }
 
     private function conexionAcarreos()
     {

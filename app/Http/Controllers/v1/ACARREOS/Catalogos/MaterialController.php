@@ -41,9 +41,9 @@ class MaterialController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        // $this->middleware('permiso:consultar_material')->only(['show','paginate','index','find', 'descargaLayout']);
-        // $this->middleware('permiso:registrar_material')->only(['store']);
-        // $this->middleware('permiso:activar_desactivar_material')->only(['activar', 'desactivar']);
+        $this->middleware('permiso:consultar_material')->only(['show','paginate','index','find', 'descargaLayout']);
+        $this->middleware('permiso:registrar_material')->only(['store']);
+        $this->middleware('permiso:activar_desactivar_material')->only(['activar', 'desactivar']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -60,8 +60,8 @@ class MaterialController extends Controller
         return $this->respondWithItem($this->service->desactivar($request->all(),$id));
     }
 
-    // public function descargaLayout()
-    // {
-    //     return $this->service->excel();
-    // }
+    public function descargaLayout()
+    {
+        return $this->service->excel();
+    }
 }

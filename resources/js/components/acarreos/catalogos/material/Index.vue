@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <Create @created="paginate()" />
-            <!-- <DescargaLayout /> -->
+            <DescargaLayout />
         </div>
         <div class="col-12">
             <div class="card">
@@ -22,10 +22,10 @@
 
 <script>
     import Create from './Create'
-    // import DescargaLayout from "./DescargaLayout";
+    import DescargaLayout from "./DescargaLayout";
     export default {
         name: "material-index",
-        components: {Create},
+        components: {Create, DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,
@@ -95,11 +95,8 @@
                         estatus: this.getEstado(material.estado_format, material.estado_color),
                         buttons: $.extend({}, {
                             id: material.id,
-                            activar: (material.estado === 0) ? true : false,
-                            desactivar: (material.estado === 1) ? true : false,
-                            // activar: (material.estado === 0 && self.$root.can('activar_desactivar_material'))|| true ? true : false,
-                            // desactivar: (material.estado === 1 && self.$root.can('activar_desactivar_material')) || true ? true : false,
-                            // edit: self.$root.can('editar_origen') ? true : false,
+                            activar: (material.estado === 0 && self.$root.can('activar_desactivar_material')) ? true : false,
+                            desactivar: (material.estado === 1 && self.$root.can('activar_desactivar_material')) ? true : false,
                             show: self.$root.can('consultar_material') || true ? true : false,
                         })
                     }));
