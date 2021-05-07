@@ -33,8 +33,8 @@ class MaterialController extends Controller
     /**
      * OrigenController constructor.
      * @param Manager $fractal
-     * @param OrigenService $service
-     * @param OrigenTransformer $transformer
+     * @param MaterialService $service
+     * @param MaterialTransformer $transformer
      */
     public function __construct(Manager $fractal, MaterialService $service, MaterialTransformer $transformer)
     {
