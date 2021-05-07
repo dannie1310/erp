@@ -359,6 +359,7 @@ class AppServiceProvider extends ServiceProvider
          */
         CamionImagen::observe(CamionImagenObserver::class);
         Camion::observe(CamionObserver::class);
+        \App\Models\ACARREOS\Empresa::observe(\App\Observers\ACARREOS\EmpresaObserver::class);
         InicioCamion::observe(InicioCamionObserver::class);
         Origen::observe(OrigenObserver::class);
         Tag::observe(TagObserver::class);

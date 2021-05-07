@@ -16,7 +16,10 @@ class Empresa extends Model
     protected $fillable = [
         'razonSocial',
         'RFC',
-        'Estatus'
+        'Estatus',
+        'usuario_registro',
+        'usuario_desactivo',
+        'motivo'
     ];
 
     /**
@@ -128,6 +131,19 @@ class Empresa extends Model
             DB::connection('acarreos')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function validarRegistro()
+    {
+        if(self::where('razonSocial', $this->razonSocial)->first())
+        {
+            abort(400, "La razón social '".$this->razonSocial."' de la empresa ya se encuentra registrado previamente.");
+        }
+
+        if(self::where('RFC', $this->RFC)->first())
+        {
+            abort(400, "El RFC '".$this->RFC."' de la empresa ya se encuentra registrado previamente.");
         }
     }
 }

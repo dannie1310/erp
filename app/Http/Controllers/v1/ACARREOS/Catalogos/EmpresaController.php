@@ -42,6 +42,7 @@ class EmpresaController extends Controller
 
         $this->middleware('permiso:consultar_empresa')->only(['show','paginate','index','find']);
         $this->middleware('permiso:editar_empresa')->only(['update']);
+        $this->middleware('permiso:registrar_empresa')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;

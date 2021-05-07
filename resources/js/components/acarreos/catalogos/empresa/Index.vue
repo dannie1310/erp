@@ -1,8 +1,8 @@
 <template>
     <div class="row">
         <div class="col-12">
-           <!-- <Create @created="paginate()" />
-            <DescargaLayout />-->
+            <Create @created="paginate()" />
+           <!-- <DescargaLayout />-->
         </div>
         <div class="col-12">
             <div class="card">
@@ -21,11 +21,11 @@
 </template>
 
 <script>
-    //import Create from './Create'
+    import Create from './Create'
     //import DescargaLayout from "./DescargaLayout";
     export default {
         name: "empresa-acarreos-index",
-        //components: {Create,DescargaLayout},
+        components: {Create},
         data() {
             return {
                 HeaderSettings: false,
