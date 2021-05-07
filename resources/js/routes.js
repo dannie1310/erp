@@ -2341,6 +2341,20 @@ export const routes = [
                                 ]
                             },
                             {
+                                path: 'materiales',
+                                name: 'materiales',
+                                component: require('./components/acarreos/catalogos/material/Index').default,
+                                meta: {
+                                    title: 'Materiales',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'MATERIALES'
+                                    },
+                                    middleware: [auth, context],
+                                    //permission: ['consultar_material']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,

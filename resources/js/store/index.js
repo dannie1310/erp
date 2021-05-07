@@ -6,6 +6,7 @@ import auth from './modules/auth';
 import camion from "./modules/acarreos/camion";
 import empresaAcarreo from "./modules/acarreos/empresa";
 import marcaAcarreo from "./modules/acarreos/marca";
+import materialAcarreo from "./modules/acarreos/material";
 import operador from "./modules/acarreos/operador";
 import origen from './modules/acarreos/origen';
 import sindicato from "./modules/acarreos/sindicato";
@@ -211,6 +212,7 @@ export default new Vuex.Store({
         'acarreos/camion' : camion,
         'acarreos/empresa' : empresaAcarreo,
         'acarreos/marca' : marcaAcarreo,
+        'acarreos/material' : materialAcarreo,
         'acarreos/operador' : operador,
         'acarreos/origen' : origen,
         'acarreos/sindicato' : sindicato,
