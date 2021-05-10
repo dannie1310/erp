@@ -6,6 +6,7 @@ namespace App\Http\Transformers\ACARREOS\Catalogos;
 
 use App\Models\ACARREOS\Material;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\ACARREOS\Catalogos\MaterialHistoricoTransformer;
 
 class MaterialTransformer extends TransformerAbstract
 {
@@ -15,6 +16,7 @@ class MaterialTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'historicos'
     ];
 
 
@@ -30,4 +32,16 @@ class MaterialTransformer extends TransformerAbstract
         ];
     }
 
+    /**
+     * @param Material $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeHistoricos(Material $model)
+    {
+        if($historicos = $model->historicos)
+        {
+            return $this->collection($historicos, new MaterialHistoricoTransformer);
+        }
+        return null;
+    }
 }

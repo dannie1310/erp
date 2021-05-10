@@ -23,6 +23,14 @@
                             </div>
                         </div>
                         <div v-else>
+                            <div class="row justify-content-end">
+                                <historico v-bind:historicos="material.historicos.data" v-bind:id="id" v-if="material" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <br>
+                                </div>
+                            </div>
                             <div class="row" v-if="material">
                                 <div class="col-md-12">
                                     <div class="form-group row">
@@ -75,9 +83,11 @@
 </template>
 
 <script>
+    import Historico from "./ShowHistorico";
     export default {
         name: "material-show",
         props: ['id'],
+        components: {Historico},
         data() {
             return {
                 cargando : true
@@ -94,7 +104,7 @@
                 this.$store.commit('acarreos/material/SET_MATERIAL', null);
                 return this.$store.dispatch('acarreos/material/find', {
                     id: this.id,
-                    params: {}
+                    params: {include : 'historicos'}
                 }).then(data => {
                     this.$store.commit('acarreos/material/SET_MATERIAL', data);
                 }).finally(()=>
