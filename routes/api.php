@@ -484,7 +484,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@store');
             $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
-
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
         });
 
         //MARCA

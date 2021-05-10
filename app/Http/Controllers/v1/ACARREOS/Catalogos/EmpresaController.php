@@ -41,7 +41,7 @@ class EmpresaController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_empresa')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:consultar_empresa')->only(['show','paginate','index','find','descargaLayout']);
         $this->middleware('permiso:editar_empresa')->only(['update']);
         $this->middleware('permiso:registrar_empresa')->only(['store']);
         $this->middleware('permiso:activar_desactivar_empresa')->only(['activar', 'desactivar']);
@@ -61,4 +61,8 @@ class EmpresaController extends Controller
         return $this->respondWithItem($this->service->desactivar($request->all(),$id));
     }
 
+    public function descargaLayout()
+    {
+        return $this->service->excel();
+    }
 }

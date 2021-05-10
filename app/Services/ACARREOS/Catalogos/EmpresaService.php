@@ -4,11 +4,13 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
+use App\CSV\Acarreos\Catalogos\EmpresaLayout;
 use App\Models\ACARREOS\Empresa;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EmpresaService
 {
@@ -96,6 +98,12 @@ class EmpresaService
             abort(400, "La empresa se encuentra " . $empresa->estado_format . " previamente.");
         }
         return $empresa->desactivar($data['motivo']);
+    }
+
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new EmpresaLayout(), 'empresas.csv');
     }
 
     private function conexionAcarreos()
