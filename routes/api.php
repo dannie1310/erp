@@ -494,6 +494,17 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');
         });
 
+        //MATERIAL
+        $api->group(['prefix' => 'material'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@desactivar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@store');
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@descargaLayout');
+        });
+
         //OPERADOR
         $api->group(['prefix' => 'operador'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@index');
