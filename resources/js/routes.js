@@ -3042,6 +3042,24 @@ export const routes = [
                 }
             },
             {
+                path: 'no-localizados',
+                component: require('./components/fiscal/no-localizados/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"no-localizados",
+                        component: require('./components/fiscal/no-localizados/Index.vue').default,
+                        meta: {
+                            title: 'GESTIÓN NO LOCALIZADOS',
+                            breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'efos-empresa',
                 component: require('./components/fiscal/efos/Layout.vue').default,
                 children:[
