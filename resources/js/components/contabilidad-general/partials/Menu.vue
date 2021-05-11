@@ -1,12 +1,7 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
-                <router-link :to="{name: 'poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi'}">
-                    <i class="fa fa-file-code nav-icon"></i>
-                    <p>Pólizas CFDI</p>
-                </router-link>
-            </li>
+
             <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-file-powerpoint nav-icon"></i>
@@ -52,6 +47,27 @@
                         <router-link :to="{name: 'diferencia-poliza'}" class="nav-link" :class="{active: this.$route.name == 'diferencia-poliza'}">
                             <i class="fa fa-not-equal nav-icon"></i>
                             <p>Diferencias</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item"  v-if="$root.can('editar_poliza',true) || $root.can('consultar_poliza',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-info-circle nav-icon"></i>
+                    <p>Informes</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+                        <router-link :to="{name: 'poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi'}">
+                            <i class="fa fa-file-code nav-icon"></i>
+                            <p>Pólizas - CFDI</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_poliza',true) || true">
+                        <router-link :to="{name: 'cuentas-saldo-negativo'}" class="nav-link" :class="{active: this.$route.name == 'cuentas-saldos-negativos'}">
+                            <i class="fa fa-minus nav-icon"></i>
+                            <p>Cuentas con saldos negativos</p>
                         </router-link>
                     </li>
                 </ul>
