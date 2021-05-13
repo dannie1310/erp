@@ -26,6 +26,9 @@ class CtgNoLocalizado extends Model
         'estado'
     ];
 
+    /*protected $dates =["primera_fecha_publicacion"];
+    protected $dateFormat = 'M d Y h:i:s A';*/
+
     public $timestamps = false;
 
     public function carga_cfd_sat(){
@@ -43,12 +46,12 @@ class CtgNoLocalizado extends Model
     public function scopeVigente($query){
         return $query->where('estado', '=', 1);
     }
-    
+
     public function getPrimeraFechaPublicacionFormatAttribute(){
         $date = date_create($this->primera_fecha_publicacion);
         return date_format($date,"d/m/Y");
     }
-    
+
     public function getTipoPersonaFormatAttribute(){
         switch($this->tipo_persona){
             case 'F':

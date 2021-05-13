@@ -76,7 +76,7 @@ class CtgNoLocalizadoService
         $hash = hash_file('sha1', $data['file']);
         $exp = explode("base64,", $data['file']);
         $data = base64_decode($exp[1]);
-        $file = public_path($paths["dir_csv"].$name);
+        $file = public_path($paths["dir_csv"].$hash.".csv");
         file_put_contents($file, $data);
         return $this->cargarCatalogo($paths["dir_csv"], $hash);
     }
@@ -178,7 +178,7 @@ class CtgNoLocalizadoService
         $dir_zip = "uploads/fiscal/ctg-no-localizado/zip/";
         $dir_csv = "uploads/fiscal/ctg-no-localizado/csv/";
         if($ext == 'csv'){
-            $dir_csv = $dir_csv . $nombre . '/';
+            $dir_csv = $dir_csv . '/';
         }
         $path_csv = $dir_csv . $nombre . "/";
         $path_zip = $dir_zip . $nombre_zip;
