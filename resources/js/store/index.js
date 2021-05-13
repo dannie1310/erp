@@ -194,6 +194,9 @@ import aplicacion from "./modules/igh/aplicacion";
 //PRESUPUESTO
 import conceptoPresupuesto from './modules/presupuesto/concepto';
 
+//REMESAS
+import folio from './modules/remesas/remesa-folio';
+
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
@@ -377,6 +380,8 @@ export default new Vuex.Store({
         'padronProveedores/giro' : giro,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
+
+        'remesas/remesa-folio' : folio,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

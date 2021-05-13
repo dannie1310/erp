@@ -3266,7 +3266,7 @@ export const routes = [
                 meta: {
                     title: 'REMESAS',
                     middleware: [auth, permission],
-                    permission: ['consultar_expediente_proveedor'],
+                    permission: ['consultar_limite_remesa'],
                     general: true
                 }
             },
@@ -3282,7 +3282,7 @@ export const routes = [
                             title: 'Configuración',
                             breadcrumb: {parent: 'remesas', name: 'CONFIGURACIÓN'},
                             middleware: [auth, permission],
-                            permission: 'configurar_limite_remesa',
+                            permission: 'consultar_limite_remesa',
                             general: true,
                         }
                     },
@@ -3294,7 +3294,7 @@ export const routes = [
                             title: 'Limite de Remesas',
                             breadcrumb: {name: 'LIMITE DE REMESAS', parent: 'configuracion'},
                             middleware: [auth, permission],
-                            permission: ['configurar_limite_remesa'],
+                            permission: ['consultar_limite_remesa'],
                             general: true
                         }
                     },

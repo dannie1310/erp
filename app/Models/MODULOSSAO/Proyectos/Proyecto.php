@@ -8,6 +8,9 @@
 
 namespace App\Models\MODULOSSAO\Proyectos;
 
+use App\Models\MODULOSSAO\Seguridad\Usuario;
+use App\Models\MODULOSSAO\Seguridad\UsuarioProyecto;
+use App\Models\MODULOSSAO\UnificacionObra;
 use Illuminate\Database\Eloquent\Model;
 
 class Proyecto extends Model
@@ -26,7 +29,29 @@ class Proyecto extends Model
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function proyectoUnificado(){
         return $this->belongsTo(ProyectoUnificado::class, 'IDProyecto', 'IDProyecto');
+    }
+
+    public function usuarioProyecto()
+    {
+        return $this->belongsTo(UsuarioProyecto::class, 'IDUsuario', 'IDUsuario');
+    }
+
+    /**
+     * Scope
+     */
+    public function scopePorUsuario($query)
+    {
+        $usuario = Usuario::getUsuario()->first();
+        if($usuario->AccesoTodosProyectos == 1)
+        {
+            return $query;
+        }else {
+            return $query->whereIn('IDProyecto',$usuario->usuarioProyectos->pluck('IDProyecto'));
+        }
     }
 }
