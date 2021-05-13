@@ -2,8 +2,8 @@
     <span>
          <div class="row">
              <div class="col md 12">
-                 <button @click="init" class="btn btn-app btn-info pull-right" title="Cargar CSV" v-if="$root.can('registrar_proveedores_no_localizados', true)" >
-                    <i class="fa fa-upload"></i>Cargar CSV
+                 <button @click="init" class="btn btn-app pull-right" title="Cargar CSV" v-if="$root.can('registrar_proveedores_no_localizados', true)" >
+                    <i class="fa fa-upload"></i>Cargar Listado
                 </button>
              </div>
          </div>
@@ -11,21 +11,28 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-th"></i> CARGAR CSV PROVEEDORES NO LOCALIZADOS</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> Cargar Listado de Proveedores No Localizados</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                      <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a href="http://omawww.sat.gob.mx/cifras_sat/Documents/No%20localizados.csv" class="pull-right">
+                                        <b>Descargar Listado</b><i class="fa fa-file-excel-o"></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <br>
                             <div class="row justify-content-between">
                                 <div class="col-md-12">
-                                     <label for="carga_layout" class="col-lg-12 col-form-label">Cargar Layout</label>
                                     <div class="col-lg-12">
                                         <input type="file" class="form-control" id="carga_layout"
                                                @change="onFileChange"
                                                row="3"
-                                               v-validate="{ ext: ['csv', 'zip'], size: 3072}"
+                                               v-validate="{ ext: ['csv', 'zip'], size: 102400}"
                                                name="carga_layout"
                                                data-vv-as="Layout"
                                                ref="carga_layout"
@@ -38,8 +45,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file">Cargar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal"><i class="fa fa-times"></i>Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file"><i class="fa fa-upload"></i>Cargar</button>
                         </div>
                     </form>
                 </div>
@@ -128,7 +135,7 @@ export default {
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
-            
+
             this.file_name = files[0].name;
             if(e.target.id == 'carga_layout') {
                 this.createImage(files[0]);

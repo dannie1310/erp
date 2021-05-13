@@ -3050,7 +3050,7 @@ export const routes = [
                         name:"no-localizados",
                         component: require('./components/fiscal/no-localizados/Index.vue').default,
                         meta: {
-                            title: 'GESTIÓN NO LOCALIZADOS',
+                            title: 'Lista de contribuyentes no localizados por el SAT',
                             breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
                             middleware: [auth,permission],
                             permission: ['consultar_proveedores_no_localizados'],

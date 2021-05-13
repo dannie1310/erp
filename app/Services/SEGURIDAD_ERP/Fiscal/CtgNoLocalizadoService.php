@@ -66,19 +66,18 @@ class CtgNoLocalizadoService
         $file = public_path($paths["path_zip"]);
         file_put_contents($file, $data);
         $this->extraeZIP($paths["path_zip"], $paths["path_csv"]);
-        
+
         return $this->cargarCatalogo($paths["path_csv"], $hash);
     }
-    
+
     public function cargarCsv($data){
         $name = $data['file_name'];
         $paths = $this->generaDirectorios('csv');
-        $hash = hash_file('md5', $data['file']);
+        $hash = hash_file('sha1', $data['file']);
         $exp = explode("base64,", $data['file']);
         $data = base64_decode($exp[1]);
         $file = public_path($paths["dir_csv"].$name);
         file_put_contents($file, $data);
-        
         return $this->cargarCatalogo($paths["dir_csv"], $hash);
     }
 
@@ -98,14 +97,14 @@ class CtgNoLocalizadoService
                 'nombre_archivo' => $resp['file_name'],
                 'hash_file' => $hash_file,
             ]);
-            
+
             $ctg_vigente = $this->repository->actualizarEstado();
-            
+
             foreach($resp['data'] as $registro){
                 $registro['id_procesamiento'] = $procesamiento->id;
                 $reg = $this->repository->create($registro);
                 $reg->validaCargaCfd();
-                
+
             }
 
             NoLocalizado::where('estado', '=', 2)->update(array('estado' => 0, 'id_procesamiento_baja' => $procesamiento->id));
@@ -122,7 +121,7 @@ class CtgNoLocalizadoService
     public function getCatalogoCSVData($file){
         $files = array_diff(scandir($file), array('.', '..','__MACOSX'));
         sort($files, SORT_NUMERIC);
-        
+
         $myfile = fopen($file . $files[0], "r") or die("Unable to open file!");
         $content = array();
         $linea = 1;

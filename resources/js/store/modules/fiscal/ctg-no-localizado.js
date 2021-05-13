@@ -34,8 +34,8 @@ export default {
         cargarCsv(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Cargar Csv Proveedores No Localizados",
-                    text: "¿Está seguro/a de que desea cargar el archivo?",
+                    title: "Cargar listado de contribuyentes no localizados",
+                    text: "¿Está seguro de que desea cargar el archivo?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -54,7 +54,7 @@ export default {
                                 .post(URI + 'cargarCsv', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Carga registrada correctamente.", {
+                                    swal("Carga realizada correctamente.", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
