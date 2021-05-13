@@ -25,11 +25,11 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Proyecto', field: 'proyecto',sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Año', field: 'anio', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Número Semana', field: 'numeroSemana', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Cantidad Limite Extraordinarias', field: 'CantidadExtraordinariasPermitidas',  tdClass: 'money', thClass: 'th_money', sortable: true},
-                    { title: 'Monto Limite Extraordinarias', field: 'MontoLimiteExtraordinarias', tdClass: 'money', thClass: 'th_money', sortable: true},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Año', field: 'anio', tdClass:'center', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Número de Semana', tdClass:'center', field: 'numeroSemana', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Cantidad Límite Extraordinarias', field: 'CantidadExtraordinariasPermitidas',  tdClass: 'money', thClass: 'th_money', sortable: true},
+                    { title: 'Monto Límite Extraordinarias', field: 'MontoLimiteExtraordinarias', tdClass: 'money', thClass: 'th_money', sortable: true},
+                    { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,

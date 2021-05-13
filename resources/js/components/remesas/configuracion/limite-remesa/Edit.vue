@@ -4,10 +4,10 @@
             <i class="fa fa-pencil"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-pencil"></i> EDITAR CONFIGURACIÓN LIMITE REMESA EXTRAORDINARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-pencil"></i> EDITAR CONFIGURACIÓN DE LÍMITES DE REMESA EXTRAORDINARIA</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -42,13 +42,13 @@
                                 </div>
                                 <div class="col-md-12">
                                    <div class="form-group row">
-                                       <label class="col-md-6 col-form-label">Remesas Extraordinarias Máximas:</label>
+                                       <label class="col-md-6 col-form-label">Cantidad Límite Extraordinarias:</label>
                                        <div class="col-md-6">
                                            <input type="number"
                                                   class="form-control"
                                                   id="CantidadExtraordinariasPermitidas"
                                                   name="CantidadExtraordinariasPermitidas"
-                                                  data-vv-as="REMESAS EXTRAORDINARIAS MÁXIMAS"
+                                                  data-vv-as="CANTIDAD LÍMITE EXTRAORDINARIAS"
                                                   v-validate="{required: true}"
                                                   :class="{'is-invalid': errors.has('CantidadExtraordinariasPermitidas')}"
                                                   v-model="folio.cantidad_limite" />
@@ -60,16 +60,15 @@
                                     <div class="form-group row">
                                         <label class="col-md-6 col-form-label">Monto Límite:</label>
                                         <div class="col-md-6">
-                                            <input type="number"
-                                                   id="MontoLimiteExtraordinarias"
+                                            <input id="MontoLimiteExtraordinarias"
                                                    name="MontoLimiteExtraordinarias"
                                                    data-vv-as="Monto Limite"
                                                    :class="{'is-invalid': errors.has('MontoLimiteExtraordinarias')}"
-                                                   v-validate="{ required: true }"
+                                                   v-validate="{ required: true, numeric:true  }"
                                                    class="form-control"
                                                    v-model="folio.monto_limite"
-                                                   :maxlength="13" />
-                                            <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
+                                            />
+                                            <div class="invalid-feedback" v-show="errors.has('MontoLimiteExtraordinarias')">{{ errors.first('MontoLimiteExtraordinarias') }}</div>
                                         </div>
                                     </div>
                                 </div>

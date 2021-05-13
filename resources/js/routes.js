@@ -3264,7 +3264,7 @@ export const routes = [
                 path: '',
                 name: 'remesas',
                 meta: {
-                    title: 'REMESAS',
+                    title: 'SISTEMA DE REMESAS',
                     middleware: [auth, permission],
                     permission: ['consultar_limite_remesa'],
                     general: true
@@ -3291,8 +3291,8 @@ export const routes = [
                         name: 'limite-remesa',
                         component: require('./components/remesas/configuracion/limite-remesa/Index').default,
                         meta: {
-                            title: 'Limite de Remesas',
-                            breadcrumb: {name: 'LIMITE DE REMESAS', parent: 'configuracion'},
+                            title: 'Configuración de Límites de Remesas Extraordinarias',
+                            breadcrumb: {name: 'LÍMITE DE REMESAS EXTRAORDINARIAS', parent: 'configuracion'},
                             middleware: [auth, permission],
                             permission: ['consultar_limite_remesa'],
                             general: true
