@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-plus"></i> EDITAR CONFIGURACIÓN LIMITE REMESA EXTRAORDINARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-pencil"></i> EDITAR CONFIGURACIÓN LIMITE REMESA EXTRAORDINARIA</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -24,48 +24,26 @@
                         </div>
                         <div v-else>
                             <div class="row" v-if="folio">
-                                <div class="card">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <h6><b>Proyecto:</b></h6>
-                                            </div>
+                                <div class="col-md-12">
+                                    <div class="form-group row">
+                                        <label class="col-md-2 col-form-label">Proyecto</label>
+                                        <div class="col-md-10">
+                                            {{folio.proyecto}}
                                         </div>
+                                        <label class="col-md-2 col-form-label">Año</label>
                                         <div class="col-md-4">
-                                            <div class="form-group">
-                                                <h6>{{folio.proyecto}}</h6>
-                                            </div>
+                                            {{folio.anio}}
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <h6><b>Año:</b></h6>
-                                            </div>
-                                        </div>
+                                        <label class="col-md-2 col-form-label">Número Semana:</label>
                                         <div class="col-md-4">
-                                            <div class="form-group">
-                                                <h6>{{folio.anio}}</h6>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <h6><b>Número Semana:</b></h6>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <h6>{{folio.numero_semana}}</h6>
-                                            </div>
+                                            {{folio.numero_semana}}
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                                 <div class="col-md-12">
                                    <div class="form-group row">
-                                       <label class="col-md-2 col-form-label">Remesas Extraordinarias Máximas:</label>
-                                       <div class="col-md-10">
+                                       <label class="col-md-6 col-form-label">Remesas Extraordinarias Máximas:</label>
+                                       <div class="col-md-6">
                                            <input type="number"
                                                   class="form-control"
                                                   id="CantidadExtraordinariasPermitidas"
@@ -80,8 +58,8 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group row">
-                                        <label class="col-md-2 col-form-label">Monto Límite:</label>
-                                        <div class="col-md-4">
+                                        <label class="col-md-6 col-form-label">Monto Límite:</label>
+                                        <div class="col-md-6">
                                             <input type="number"
                                                    id="MontoLimiteExtraordinarias"
                                                    name="MontoLimiteExtraordinarias"
@@ -119,7 +97,7 @@
         data() {
             return {
                 cargando : true,
-                folio : ''
+                folio : null
             }
         },
         methods: {
@@ -127,13 +105,14 @@
                 $(this.$refs.modal).modal('hide');
             },
             find() {
+                this.folio = null;
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 return this.$store.dispatch('remesas/remesa-folio/find', {
-                    id: this.id_proyecto,
                     params: {
+                        id_proyecto: this.id_proyecto,
                         anio: this.anio,
-                        semana: this.semana
+                        numero_semana: this.semana
                     }
                 }).then(data => {
                     this.folio = data
@@ -151,7 +130,6 @@
             },
             update() {
                 return this.$store.dispatch('remesas/remesa-folio/update', {
-                    id: this.id,
                     data: this.folio
                 })
                     .then((data) => {

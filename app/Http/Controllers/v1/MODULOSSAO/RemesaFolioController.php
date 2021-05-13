@@ -9,6 +9,7 @@ use App\Http\Transformers\MODULOSSAO\ControlRemesas\RemesaFolioTransformer;
 use App\Services\MODULOSSAO\RemesaFolioService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
 
 class RemesaFolioController extends Controller
 {
@@ -43,5 +44,17 @@ class RemesaFolioController extends Controller
         $this->transformer = $transformer;
         $this->fractal = $fractal;
         $this->service = $service;
+    }
+
+    public function show(Request $request)
+    {
+        $item = $this->service->show($request->all());
+        return $this->respondWithItem($item);
+    }
+
+    public function update(Request $request)
+    {
+        $item = $this->service->update($request->all());
+        return $this->respondWithItem($item);
     }
 }

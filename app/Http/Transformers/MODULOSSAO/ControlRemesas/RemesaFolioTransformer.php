@@ -18,7 +18,8 @@ class RemesaFolioTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(RemesaFolio $model) {
+    public function transform(RemesaFolio $model)
+    {
         return [
             'anio' => $model->Anio,
             'numero_semana' => $model->NumeroSemana,

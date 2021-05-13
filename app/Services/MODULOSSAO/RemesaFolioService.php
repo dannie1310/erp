@@ -6,11 +6,10 @@ namespace App\Services\MODULOSSAO;
 
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
-use App\Repositories\Repository;
+use App\Repositories\MODULOSSAO\Remesa\RemesaFolio\Repository;
 
 class RemesaFolioService
 {
-
     /**
      * @var Repository
      */
@@ -56,13 +55,13 @@ class RemesaFolioService
         return  $this->repository->paginate($data);
     }
 
-    public function show($id)
+    public function show($data)
     {
-        return $this->repository->show($id);
+        return  $this->repository->findFolio($data);
     }
 
-    public function store($data)
+    public function update(array $data)
     {
-        return $this->repository->create($data);
+        return $this->repository->findFolio($data)->editar($data);
     }
 }

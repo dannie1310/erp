@@ -7,12 +7,17 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 use App\Models\MODULOSSAO\BaseDatosObra;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class RemesaFolio extends Model
 {
     protected $connection = 'modulosao';
     protected $table = 'ControlRemesas.RemesasFolios';
     public $timestamps = false;
+    protected $fillable = [
+        'CantidadExtraordinariasPermitidas',
+        'MontoLimiteExtraordinarias'
+    ];
 
     protected static function boot()
     {
@@ -29,7 +34,7 @@ class RemesaFolio extends Model
      */
     public function proyecto()
     {
-        return $this->hasOne(Proyecto::class, 'IDProyecto', 'IDProyecto');
+        return $this->belongsTo(Proyecto::class, 'IDProyecto', 'IDProyecto');
     }
 
     /**
@@ -55,8 +60,27 @@ class RemesaFolio extends Model
     /**
      * Métodos
      */
+    public function editar(array $data)
+    {
+        try {
+            DB::connection('modulosao')->beginTransaction();
+            $this->update([
+               'CantidadExtraordinariasPermitidas' => $data['cantidad_limite'],
+               'MontoLimiteExtraordinarias' => $data['monto_limite']
+            ])->where('IDProyecto', $data['id_proyecto'])->where('Anio', $data['anio'])->where('NumeroSemana', $data['numero_semana']);
+            DB::connection('modulosao')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('modulosao')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
     public function validarEdicion()
     {
-        dd("validar aqui");
+        if($this->Anio != date('Y') && $this->NumeroSemana != date('W')+1)
+        {
+            abort(400, "No se puede editar limite de remesa extraordinaria a semanas anteriores a la actual.");
+        }
     }
 }

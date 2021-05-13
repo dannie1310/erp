@@ -37,7 +37,7 @@ export default {
         find(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id, { params: payload.params })
+                    .get(URI, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);
@@ -47,19 +47,19 @@ export default {
                     })
             });
         },
-        store(context, payload) {
+        update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Limite de Remesa Extraordinaria",
-                    text: "¿Está seguro de que la información es correcta?",
-                    icon: "info",
+                    title: "¿Está seguro?",
+                    text: "Actualizar el limite de remesa extraordinaria",
+                    icon: "warning",
                     buttons: {
                         cancel: {
                             text: 'Cancelar',
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Registrar',
+                            text: 'Si, Actualizar',
                             closeModal: false,
                         }
                     }
@@ -67,20 +67,21 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI, payload)
+                                .patch(URI, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Limite de remesa extraordinaria fue registrada correctamente", {
+                                    swal("Limite de remesa extraordinaria actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
-                                    }).then(() => {
-                                        resolve(data);
                                     })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
                                 })
                                 .catch(error => {
                                     reject(error);
-                                });
+                                })
                         }
                     });
             });
