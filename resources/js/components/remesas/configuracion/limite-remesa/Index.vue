@@ -29,7 +29,7 @@
                     { title: 'Número Semana', field: 'numeroSemana', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Cantidad Limite Extraordinarias', field: 'CantidadExtraordinariasPermitidas',  tdClass: 'money', thClass: 'th_money', sortable: true},
                     { title: 'Monto Limite Extraordinarias', field: 'MontoLimiteExtraordinarias', tdClass: 'money', thClass: 'th_money', sortable: true},
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -80,7 +80,13 @@
                         anio: folio.anio,
                         numeroSemana: folio.numero_semana,
                         CantidadExtraordinariasPermitidas: folio.cantidad_limite,
-                        MontoLimiteExtraordinarias: folio.monto_limite
+                        MontoLimiteExtraordinarias: folio.monto_limite,
+                        buttons: $.extend({}, {
+                            anio: folio.anio,
+                            semana: folio.numero_semana,
+                            id_proyecto : folio.id_proyecto,
+                            edit: self.$root.can('editar_limite_remesa') ? true : true,
+                        })
                     }));
                 },
                 deep: true

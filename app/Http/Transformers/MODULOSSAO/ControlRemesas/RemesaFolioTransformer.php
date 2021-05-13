@@ -24,6 +24,7 @@ class RemesaFolioTransformer extends TransformerAbstract
             'numero_semana' => $model->NumeroSemana,
             'cantidad_limite' => $model->CantidadExtraordinariasPermitidas,
             'monto_limite' => $model->MontoLimiteExtraordinarias,
+            'id_proyecto' => $model->IDProyecto,
             'proyecto' => $model->nombre_proyecto
         ];
     }

@@ -60,4 +60,9 @@ class RemesaFolioService
     {
         return $this->repository->show($id);
     }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
 }
