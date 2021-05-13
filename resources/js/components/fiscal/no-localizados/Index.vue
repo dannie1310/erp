@@ -32,7 +32,7 @@
                     { title: 'RFC', field: 'rfc', thClass:'th_rfc', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Razón Social', field: 'razon_social',thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Entidad Federativa', thClass:'th_c180', field: 'entidad_federativa',thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Primera de Fecha Publicación', field: 'primera_fecha_publicacion', tdClass: 'td_fecha',  thComp: require('../../globals/th-Date').default, sortable: true},
+                    { title: 'Fecha de Primera Publicación', field: 'primera_fecha_publicacion', tdClass: 'td_fecha',  thComp: require('../../globals/th-Date').default, sortable: true},
                 ],
                 data: [],
                 total: 0,

@@ -4,7 +4,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\Fiscal\NoLocalizado;
 
 use App\Repositories\RepositoryInterface;
-use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado as Model;
+use App\Models\SEGURIDAD_ERP\Fiscal\NoLocalizado as Model;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
 {
@@ -14,7 +14,4 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         $this->model = $model;
     }
 
-    public function actualizarEstado(){
-        $this->model->actualizarEstado();
-    }
 }

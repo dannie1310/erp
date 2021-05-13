@@ -22,4 +22,14 @@ class ProcesamientoListaNoLocalizados extends Model
     ];
 
     public $timestamps = false;
+
+    public function bajasNoLocalizados()
+    {
+        return $this->hasMany(NoLocalizado::class,"id_procesamiento_baja", "id");
+    }
+
+    public function altasNoLocalizados()
+    {
+        return $this->hasMany(NoLocalizado::class,"id_procesamiento_alta", "id");
+    }
 }

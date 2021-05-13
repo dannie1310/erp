@@ -4,8 +4,8 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
-use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
+use Illuminate\Database\Eloquent\Model;
 
 class NoLocalizado extends Model
 {
@@ -24,7 +24,7 @@ class NoLocalizado extends Model
 
     public $timestamps = false;
 
-    public function ctg_no_localizados_registro(){
+    public function ctgNoLocalizado(){
         return $this->belongsTo(CtgNoLocalizado::class, 'rfc', 'rfc');
     }
 
@@ -32,4 +32,7 @@ class NoLocalizado extends Model
         return $query->where('estado', '=', 1);
     }
 
+    public function scopeSinOrigen($query){
+        return $query->doesntHave("ctgNoLocalizado");
+    }
 }

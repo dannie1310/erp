@@ -5,11 +5,8 @@ namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
 use DateTime;
 use Chumper\Zipper\Zipper;
-use Illuminate\Support\Facades\DB;
-use App\Models\SEGURIDAD_ERP\Fiscal\NoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
-use App\Repositories\SEGURIDAD_ERP\Fiscal\NoLocalizado\Repository;
-use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
+use App\Repositories\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoRepository as Repository;
 
 class CtgNoLocalizadoService
 {
@@ -78,51 +75,28 @@ class CtgNoLocalizadoService
         $data = base64_decode($exp[1]);
         $file = public_path($paths["dir_csv"].$hash.".csv");
         file_put_contents($file, $data);
-        return $this->cargarCatalogo($paths["dir_csv"], $hash);
+        return $this->cargarCatalogo($file, $hash);
     }
 
-    public function cargarCatalogo($ruta_csv, $hash_file){
+    public function cargarCatalogo($file, $hash_file){
         ini_set('memory_limit', -1) ;
         ini_set('max_execution_time', '7200') ;
-        DB::connection('seguridad')->beginTransaction();
         try {
-            $resp = $this->getCatalogoCSVData($ruta_csv);
-            $proc_ante = ProcesamientoListaNoLocalizados::where('hash_file', '=', $hash_file)->first();
-            if($proc_ante){
-                abort(403, "Archivo procesado previamente");
+            $resp = $this->getCatalogoCSVData($file);
+            $proc_ante = $this->repository->listaRegistradoPreviamente($hash_file);
+            if($proc_ante>0){
+                abort(403, "Este listado ha sido procesado previamente");
             }
-            $procesamiento =  ProcesamientoListaNoLocalizados::create([
-                'id_usuario' => auth()->id(),
-                'fecha_actualizacion_sat' => date("Y-m-d"),
-                'nombre_archivo' => $resp['file_name'],
-                'hash_file' => $hash_file,
-            ]);
-
-            $ctg_vigente = $this->repository->actualizarEstado();
-
-            foreach($resp['data'] as $registro){
-                $registro['id_procesamiento'] = $procesamiento->id;
-                $reg = $this->repository->create($registro);
-                $reg->validaCargaCfd();
-
-            }
-
-            NoLocalizado::where('estado', '=', 2)->update(array('estado' => 0, 'id_procesamiento_baja' => $procesamiento->id));
-
-            DB::connection('seguridad')->commit();
+            $procesamiento = $this->repository->cargaListado($hash_file, $resp);
             return $procesamiento;
         } catch (\Exception $e) {
-            DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
-            throw $e;
         }
     }
 
     public function getCatalogoCSVData($file){
-        $files = array_diff(scandir($file), array('.', '..','__MACOSX'));
-        sort($files, SORT_NUMERIC);
 
-        $myfile = fopen($file . $files[0], "r") or die("Unable to open file!");
+        $myfile = fopen($file, "r") or die("Unable to open file!");
         $content = array();
         $linea = 1;
         $tipo_persona = array('F','M');
@@ -157,7 +131,7 @@ class CtgNoLocalizadoService
                 $linea++;
             }
         }
-        return array('data' => $content, 'file_name' => $files[0]);
+        return array('data' => $content, 'file_name' => basename($file));
     }
 
     private function extraeZIP($ruta_origen, $ruta_destino)
