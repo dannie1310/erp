@@ -4,7 +4,6 @@
 namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
-use App\Models\MODULOSSAO\BaseDatosObra;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;

@@ -133,7 +133,7 @@
                 })
                     .then((data) => {
                         this.salir()
-                        return this.$store.dispatch('remesas/remesa-folio/paginate', { params: this.query})
+                        return this.$store.dispatch('remesas/remesa-folio/paginate', { params: {scope:'ordenarPorAnioSemana'}})
                             .then(data => {
                                 this.$store.commit('remesas/remesa-folio/SET_FOLIOS', data.data);
                                 this.$store.commit('remesas/remesa-folio/SET_META', data.meta);
