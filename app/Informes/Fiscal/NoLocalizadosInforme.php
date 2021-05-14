@@ -32,6 +32,7 @@ class NoLocalizadosInforme
        no_localizados.razon_social,
        ctg_no_localizados.entidad_federativa,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       CONVERT(varchar,ctg_no_localizados.primera_fecha_publicacion,103) as fecha_primera_publicacion,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
           sum (
@@ -76,7 +77,8 @@ GROUP BY
          no_localizados.rfc,
          no_localizados.razon_social,
          ListaEmpresasSAT.nombre_corto,
-         ctg_no_localizados.entidad_federativa
+         ctg_no_localizados.entidad_federativa,
+         ctg_no_localizados.primera_fecha_publicacion
 
 ORDER BY ListaEmpresasSAT.nombre_corto ASC;
         ")

@@ -35,11 +35,8 @@
                                             <td class="index_corto">#</td>
                                             <td>RFC</td>
                                             <td>Razón Social</td>
-                                            <td>Fecha Presunto</td>
-                                            <td>Fecha Presunto DOF</td>
-                                            <td>Fecha Definitivo</td>
-                                            <td>Fecha Definitivo DOF</td>
-                                            <td>Fecha Corrección</td>
+                                            <td>Fecha Primera Publicación</td>
+                                            <td>Entidad Federativa</td>
                                             <td>Empresa</td>
                                             <td># CFD</td>
                                             <td>Importe incluyendo IVA</td>
@@ -49,11 +46,8 @@
                                         <td class="index_corto">{{partidas.indice}}</td>
                                         <td>{{partidas.rfc}}</td>
                                         <td>{{partidas.razon_social}}</td>
-                                        <td>{{partidas.fecha_presunto}}</td>
-                                        <td>{{partidas.fecha_presunto_dof}}</td>
-                                        <td>{{partidas.fecha_definitivo}}</td>
-                                        <td>{{partidas.fecha_definitivo_dof}}</td>
-                                        <td>{{partidas.fecha_autocorreccion}}</td>
+                                        <td>{{partidas.fecha_primera_publicacion}}</td>
+                                        <td>{{partidas.entidad_federativa}}</td>
                                         <td>{{partidas.empresa}}</td>
                                         <td style="text-align:right">{{partidas.no_CFDI}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
@@ -62,13 +56,8 @@
                                     <tr v-else :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}"  >
                                         <td class="index_corto">{{partidas.contador}}</td>
                                         <td></td>
-                                        <td>{{partidas.etiqueta}}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td colspan="4">{{partidas.etiqueta}}</td>
+
                                         <td style="text-align:right">{{partidas.contador_cfdi}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
                                     </tr>
