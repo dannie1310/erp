@@ -5,6 +5,7 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
+use App\Scopes\EstadoActivoScope;
 use Illuminate\Database\Eloquent\Model;
 
 class NoLocalizado extends Model
@@ -23,6 +24,12 @@ class NoLocalizado extends Model
     ];
 
     public $timestamps = false;
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstadoActivoScope);
+    }
 
     public function ctgNoLocalizado(){
         return $this->belongsTo(CtgNoLocalizado::class, 'rfc', 'rfc');

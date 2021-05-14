@@ -47,6 +47,14 @@ class CtgNoLocalizado extends Model
         return $this->belongsTo(ProveedorSAT::class, 'rfc', 'rfc');
     }
 
+    public function proveedorSAT(){
+        return $this->belongsTo(ProveedorSAT::class, 'rfc', 'rfc');
+    }
+
+    public function noLocalizado(){
+        return $this->belongsTo(NoLocalizado::class, 'rfc', 'rfc');
+    }
+
     public function scopeVigente($query){
         return $query->where('estado', '=', 1);
     }
@@ -66,6 +74,14 @@ class CtgNoLocalizado extends Model
             break;
         }
         return '';
+    }
+
+    public function scopeAsociadoProveedorSAT($query){
+        return $query->has("proveedorSAT");
+    }
+
+    public function scopeSinNoLocalizadoAsociado($query){
+        return $query->doesntHave("noLocalizado");
     }
 
 }

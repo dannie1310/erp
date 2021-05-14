@@ -233,6 +233,7 @@ class CFDSATService
         $this->procesaCFD($paths["path_xml"]);
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
         $this->carga->update($this->log);
+        $this->repository->actualizaNoLocalizados($this->carga);
         return $this->carga;
     }
 
@@ -322,6 +323,8 @@ class CFDSATService
             event(new CambioEFOS($this->carga->cambios));
         }
         $this->carga->load("usuario");
+
+        $this->repository->actualizaNoLocalizados($this->carga);
 
         return $this->carga;
     }

@@ -3,6 +3,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
@@ -78,6 +79,21 @@ class CtgNoLocalizadoRepository extends Repository implements RepositoryInterfac
                     'razon_social' => $noLocalizadoSAT->razon_social
                 ]);
             }
+        }
+    }
+
+    public function actualizaNoLocalizado(CargaCFDSAT $cargaCFDSAT)
+    {
+        $a_registrar = CtgNoLocalizado::asociadoProveedorSAT()
+            ->sinNoLocalizadoAsociado()
+            ->get();
+        foreach ($a_registrar as $registrar)
+        {
+            NoLocalizado::create([
+                'id_carga_cfd' => $cargaCFDSAT->id,
+                'rfc' => $registrar->rfc,
+                'razon_social' => $registrar->razon_social
+            ]);
         }
     }
 }
