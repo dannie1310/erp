@@ -3254,6 +3254,55 @@ export const routes = [
         ]
     },
     {
+        path: '/remesas',
+        components:  {
+            default: require('./components/remesas/partials/Layout.vue').default,
+            menu: require('./components/remesas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'remesas',
+                meta: {
+                    title: 'SISTEMA DE REMESAS',
+                    middleware: [auth, permission],
+                    permission: ['consultar_limite_remesa'],
+                    general: true
+                }
+            },
+            {
+                path: 'configuracion',
+                component: require('./components/remesas/configuracion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'configuracion',
+                        component: require('./components/remesas/configuracion/Index').default,
+                        meta: {
+                            title: 'Configuración',
+                            breadcrumb: {parent: 'remesas', name: 'CONFIGURACIÓN'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'limite-remesa',
+                        name: 'limite-remesa',
+                        component: require('./components/remesas/configuracion/limite-remesa/Index').default,
+                        meta: {
+                            title: 'Configuración de Límites de Remesas Extraordinarias',
+                            breadcrumb: {name: 'LÍMITE DE REMESAS EXTRAORDINARIAS', parent: 'configuracion'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/sao/configuracion',
         name: 'configuracion',
         components: {
