@@ -99,12 +99,14 @@ class RemesaFolio extends Model
         }
 
         $remesas = Remesa::withoutGlobalScopes()->solicitada()->extraordinaria()->where('IDProyecto', $this->IDProyecto)->where('Anio', $this->Anio)->where('NumeroSemana', $this->NumeroSemana)->get();
+        $sumatoria_solicitado = 0;
         foreach ($remesas as $remesa)
         {
-            if($remesa->monto_total_solicitado > $this->MontoLimiteExtraordinarias)
-            {
-                abort(400, "No se puede modificar el monto límite de extraordinarias.");
-            }
+            $sumatoria_solicitado += $remesa->monto_total_solicitado;
+        }
+        if($sumatoria_solicitado > ($data["monto_limite"]+0.99))
+        {
+            abort(400, "No se puede actualizar el monto límite de remesas extraordinarias a $".number_format($data["monto_limite"],2)." debido a que existen ".count($remesas)." remesas extraordinarias solicitadas que suman $".number_format($sumatoria_solicitado,2).".");
         }
     }
 }
