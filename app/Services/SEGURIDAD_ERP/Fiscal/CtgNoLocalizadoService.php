@@ -167,4 +167,8 @@ class CtgNoLocalizadoService
         }
         return ["path_zip" => $path_zip, "path_csv" => $path_csv, "dir_csv" => $dir_csv];
     }
+
+    public function obtenerInforme(){
+        return $this->repository->getInforme();
+    }
 }

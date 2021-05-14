@@ -28,8 +28,8 @@ class CtgNoLocalizado extends Model
         'estado'
     ];
 
-    /*protected $dates =["primera_fecha_publicacion"];
-    protected $dateFormat = 'M d Y h:i:s A';*/
+    protected $dates =["primera_fecha_publicacion"];
+    protected $dateFormat = 'M d Y h:i:s A';
 
     public $timestamps = false;
 

@@ -3,6 +3,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Informes\Fiscal\NoLocalizadosInforme;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoLocalizado;
@@ -95,5 +96,11 @@ class CtgNoLocalizadoRepository extends Repository implements RepositoryInterfac
                 'razon_social' => $registrar->razon_social
             ]);
         }
+    }
+
+    public function getInforme()
+    {
+        $informe = NoLocalizadosInforme::getInforme();
+        return $informe;
     }
 }

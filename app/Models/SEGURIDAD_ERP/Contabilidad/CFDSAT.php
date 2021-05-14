@@ -211,7 +211,7 @@ class CFDSAT extends Model
         $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
         $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
         $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
-        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
+        $fecha = "CFDI cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
         return $fecha;
     }
 

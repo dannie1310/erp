@@ -48,4 +48,10 @@ class CtgNoLocalizadoController extends Controller
     public function cargarCsv(Request $request){
         return $this->service->cargarLista($request->all());
     }
+
+    public function obtenerInforme(Request $request)
+    {
+        $respuesta =$this->service->obtenerInforme();
+        return response()->json($respuesta, 200);
+    }
 }

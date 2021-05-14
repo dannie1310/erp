@@ -10,7 +10,7 @@
         <span v-else-if="informe && cargando== false">
             <div class="row" >
                 <div class="col-md-6">
-                    <div v-if="fechas">{{fechas.lista_efos}}</div>
+                    <div v-if="fechas">{{fechas.lista_no_localizados}}</div>
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
@@ -106,8 +106,8 @@
         },
         methods :{
             getInforme() {
-                /*this.cargando = true;
-                return this.$store.dispatch('seguridad/finanzas/ctg-efos/obtenerInformeCFD', {
+                this.cargando = true;
+                return this.$store.dispatch('fiscal/ctg-no-localizado/obtenerInforme', {
 
                 })
                     .then(data => {
@@ -116,7 +116,7 @@
                     })
                     .finally(() => {
                         this.cargando = false;
-                    });*/
+                    });
             }
         }
     }
