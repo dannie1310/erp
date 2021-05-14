@@ -11,7 +11,7 @@
                     <li class="nav-item"  v-if="$root.can('consultar_limite_remesa',true)">
                         <router-link :to="{name: 'limite-remesa'}" class="nav-link" :class="{active: this.$route.name == 'limite-remesa'}">
                             <i class="fa fa-file-alt nav-icon"></i>
-                            <p>Limite Remesas</p>
+                            <p>Límites de Remesas Extraordinarias</p>
                         </router-link>
                     </li>
                 </ul>

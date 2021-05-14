@@ -26,7 +26,7 @@
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Proyecto', field: 'proyecto',sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Año', field: 'anio', tdClass:'center', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Número de Semana', tdClass:'center', field: 'numeroSemana', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Semana', tdClass:'center', field: 'numeroSemana', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Cantidad Límite Extraordinarias', field: 'CantidadExtraordinariasPermitidas',  tdClass: 'money', thClass: 'th_money', sortable: true},
                     { title: 'Monto Límite Extraordinarias', field: 'MontoLimiteExtraordinarias', tdClass: 'money', thClass: 'th_money', sortable: true},
                     { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
@@ -80,7 +80,7 @@
                         anio: folio.anio,
                         numeroSemana: folio.numero_semana,
                         CantidadExtraordinariasPermitidas: folio.cantidad_limite,
-                        MontoLimiteExtraordinarias: folio.monto_limite,
+                        MontoLimiteExtraordinarias: folio.monto_limite_format,
                         buttons: $.extend({}, {
                             anio: folio.anio,
                             semana: folio.numero_semana,

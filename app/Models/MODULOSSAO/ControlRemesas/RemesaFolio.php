@@ -56,6 +56,11 @@ class RemesaFolio extends Model
         }
     }
 
+    public function getMontoLimiteFormatAttribute()
+    {
+        return '$' . number_format($this->MontoLimiteExtraordinarias,2);
+    }
+
     /**
      * Métodos
      */

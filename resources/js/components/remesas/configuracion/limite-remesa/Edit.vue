@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-info" title="Editar">
+        <button @click="find" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
             <i class="fa fa-pencil"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-pencil"></i> EDITAR CONFIGURACIÓN DE LÍMITES DE REMESA EXTRAORDINARIA</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-pencil"></i> Editar Límites de Remesa Extraordinaria</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -24,42 +24,55 @@
                         </div>
                         <div v-else>
                             <div class="row" v-if="folio">
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label">Proyecto</label>
-                                        <div class="col-md-10">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Proyecto:</label>
+                                        <div >
                                             {{folio.proyecto}}
-                                        </div>
-                                        <label class="col-md-2 col-form-label">Año</label>
-                                        <div class="col-md-4">
-                                            {{folio.anio}}
-                                        </div>
-                                        <label class="col-md-2 col-form-label">Número Semana:</label>
-                                        <div class="col-md-4">
-                                            {{folio.numero_semana}}
                                         </div>
                                     </div>
                                 </div>
+                                <div class="col-md-3">
+                                     <div class="form-group">
+                                         <div style="text-align: center">
+                                            <label >Año:</label>
+                                         </div>
+                                        <div style="text-align: center">
+                                            {{folio.anio}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                     <div class="form-group">
+                                         <div style="text-align: center">
+                                              <label >Semana:</label>
+                                         </div>
+                                         <div style="text-align: center">
+                                            {{folio.numero_semana}}
+                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row" v-if="folio">
                                 <div class="col-md-12">
                                    <div class="form-group row">
-                                       <label class="col-md-6 col-form-label">Cantidad Límite Extraordinarias:</label>
-                                       <div class="col-md-6">
+                                       <label class="col-md-3 col-form-label" for="CantidadExtraordinariasPermitidas">Cantidad Límite:</label>
+                                       <div class="col-md-3">
                                            <input type="number"
                                                   class="form-control"
                                                   id="CantidadExtraordinariasPermitidas"
                                                   name="CantidadExtraordinariasPermitidas"
-                                                  data-vv-as="CANTIDAD LÍMITE EXTRAORDINARIAS"
+                                                  data-vv-as="Cantidad Límite de Remesas extraordinarias"
                                                   v-validate="{required: true}"
                                                   :class="{'is-invalid': errors.has('CantidadExtraordinariasPermitidas')}"
-                                                  v-model="folio.cantidad_limite" />
+                                                  v-model="folio.cantidad_limite"
+                                                  style="text-align: right"
+                                           />
                                            <div class="invalid-feedback" v-show="errors.has('CantidadExtraordinariasPermitidas')">{{ errors.first('CantidadExtraordinariasPermitidas') }}</div>
                                        </div>
-                                   </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                        <label class="col-md-6 col-form-label">Monto Límite:</label>
-                                        <div class="col-md-6">
+                                       <label class="col-md-3 col-form-label" for="MontoLimiteExtraordinarias" >Monto Límite:</label>
+                                       <div class="col-md-3">
                                             <input id="MontoLimiteExtraordinarias"
                                                    name="MontoLimiteExtraordinarias"
                                                    data-vv-as="Monto Limite"
@@ -67,10 +80,11 @@
                                                    v-validate="{ required: true, numeric:true  }"
                                                    class="form-control"
                                                    v-model="folio.monto_limite"
+                                                   style="text-align: right"
                                             />
                                             <div class="invalid-feedback" v-show="errors.has('MontoLimiteExtraordinarias')">{{ errors.first('MontoLimiteExtraordinarias') }}</div>
                                         </div>
-                                    </div>
+                                   </div>
                                 </div>
                             </div>
                         </div>
