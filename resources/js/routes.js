@@ -3057,6 +3057,18 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: 'informe',
+                        name: 'informe-no-localizados',
+                        component: require('./components/fiscal/no-localizados/InformeNoLocalizados.vue').default,
+                        meta: {
+                            title: 'Informe de Proveedores No Localizados',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
                 ]
             },
             {

@@ -73,8 +73,14 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item"  v-if="$root.can('consultar_proveedores_no_localizados',true)">
                         <router-link :to="{name: 'no-localizados'}" class="nav-link" :class="{active: this.$route.name == 'no-localizados'}">
-                            <i class="fa fa-file-alt nav-icon"></i>
+                            <i class="fa fa-user-ninja nav-icon"></i>
                             <p>No Localizados SAT</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">
+                        <router-link :to="{name: 'informe-no-localizados'}" class="nav-link" :class="{active: this.$route.name == 'informe-no-localizados'}">
+                            <i class="fa fa-file-alt nav-icon"></i>
+                            <p>Informe No Localizados</p>
                         </router-link>
                     </li>
                 </ul>
