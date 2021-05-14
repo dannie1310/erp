@@ -117,6 +117,9 @@ class CtgNoLocalizadoService
                         $col++;
                     }
                     $fecha_convert= DateTime::createFromFormat('d/m/Y', $renglon[$col+2]);
+                    if($fecha_convert->format("Y")<2000){
+                        $fecha_convert->add(new \DateInterval("P2000Y"));
+                    }
                     $content[] = array(
                         'rfc' => \utf8_encode($renglon[0]),
                         'razon_social' => \utf8_encode($r_s),
