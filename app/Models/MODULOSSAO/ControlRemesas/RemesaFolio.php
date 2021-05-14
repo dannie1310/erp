@@ -66,7 +66,7 @@ class RemesaFolio extends Model
      */
     public function editar(array $data)
     {
-        $this->validarEdicion();
+        $this->validarEdicion($data);
         try {
             DB::connection('modulosao')->beginTransaction();
             $this->where('IDProyecto', $data['id_proyecto'])->where('Anio', $data['anio'])->where('NumeroSemana', $data['numero_semana'])->update([
@@ -81,21 +81,21 @@ class RemesaFolio extends Model
         }
     }
 
-    public function validarEdicion()
+    public function validarEdicion($data)
     {
-        if((Int) $this->Anio != (Int) date('Y') || (Int) $this->NumeroSemana != (Int) date('W')+1)
+        /*if((Int) $this->Anio != (Int) date('Y') || (Int) $this->NumeroSemana != (Int) date('W')+1)
         {
             abort(400, "No se puede editar limite de remesa extraordinaria a semanas anteriores a la actual.");
-        }
-        $this->validarRemesas();
+        }*/
+        $this->validarRemesas($data);
     }
 
-    private function validarRemesas()
+    private function validarRemesas($data)
     {
         $remesas = Remesa::withoutGlobalScopes()->extraordinaria()->where('IDProyecto', $this->IDProyecto)->where('Anio', $this->Anio)->where('NumeroSemana', $this->NumeroSemana)->count();
-        if($remesas > (Int) $this->CantidadExtraordinariasPermitidas)
+        if($remesas > (Int) $data["cantidad_limite"])
         {
-            abort(400, "No se puede modificar la cantidad de extraordinarias.");
+            abort(400, "No se puede actualizar la cantidad límite de remesas extraordinarias a ".$data["cantidad_limite"]." debido a que ya existen ".$remesas." remesas extraordinarias registradas.");
         }
 
         $remesas = Remesa::withoutGlobalScopes()->solicitada()->extraordinaria()->where('IDProyecto', $this->IDProyecto)->where('Anio', $this->Anio)->where('NumeroSemana', $this->NumeroSemana)->get();
