@@ -62,12 +62,13 @@ class RemesaFolio extends Model
      */
     public function editar(array $data)
     {
+        $this->validarEdicion();
         try {
             DB::connection('modulosao')->beginTransaction();
-            $this->update([
+            $this->where('IDProyecto', $data['id_proyecto'])->where('Anio', $data['anio'])->where('NumeroSemana', $data['numero_semana'])->update([
                'CantidadExtraordinariasPermitidas' => $data['cantidad_limite'],
                'MontoLimiteExtraordinarias' => $data['monto_limite']
-            ])->where('IDProyecto', $data['id_proyecto'])->where('Anio', $data['anio'])->where('NumeroSemana', $data['numero_semana']);
+            ]);
             DB::connection('modulosao')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -78,9 +79,28 @@ class RemesaFolio extends Model
 
     public function validarEdicion()
     {
-        if($this->Anio != date('Y') && $this->NumeroSemana != date('W')+1)
+        if((Int) $this->Anio != (Int) date('Y') || (Int) $this->NumeroSemana != (Int) date('W')+1)
         {
             abort(400, "No se puede editar limite de remesa extraordinaria a semanas anteriores a la actual.");
+        }
+        $this->validarRemesas();
+    }
+
+    private function validarRemesas()
+    {
+        $remesas = Remesa::withoutGlobalScopes()->extraordinaria()->where('IDProyecto', $this->IDProyecto)->where('Anio', $this->Anio)->where('NumeroSemana', $this->NumeroSemana)->count();
+        if($remesas > (Int) $this->CantidadExtraordinariasPermitidas)
+        {
+            abort(400, "No se puede modificar la cantidad de extraordinarias.");
+        }
+
+        $remesas = Remesa::withoutGlobalScopes()->solicitada()->extraordinaria()->where('IDProyecto', $this->IDProyecto)->where('Anio', $this->Anio)->where('NumeroSemana', $this->NumeroSemana)->get();
+        foreach ($remesas as $remesa)
+        {
+            if($remesa->monto_total_solicitado > $this->MontoLimiteExtraordinarias)
+            {
+                abort(400, "No se puede modificar el monto límite de extraordinarias.");
+            }
         }
     }
 }

@@ -33,6 +33,9 @@ class Remesa extends Model
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function documento()
     {
         return $this->hasMany(Documento::class, 'IDRemesa', 'IDRemesa');
@@ -52,11 +55,32 @@ class Remesa extends Model
         return $this->hasMany(DistribucionRecursoRemesa::class, 'id_remesa', 'IDRemesa');
     }
 
+    /**
+     * Scopes
+     */
     public function scopeLiberada($query)
     {
         return $query->has('remesaLiberada');
     }
 
+    public function scopeOrdinaria($query)
+    {
+        return $query->where('IDTipoRemesa', 1);
+    }
+
+    public function scopeExtraordinaria($query)
+    {
+        return $query->where('IDTipoRemesa', 2);
+    }
+
+    public function scopeSolicitada($query)
+    {
+        return $query->where('IDEstadoRemesa', 2);
+    }
+
+    /**
+     * Atributos
+     */
     public function getTipoAttribute(){
         if($this->IDTipoRemesa == 1){
             return 'Ordinaria';
@@ -66,4 +90,14 @@ class Remesa extends Model
         }
         return null;
     }
+
+    public function getMontoTotalSolicitadoAttribute()
+    {
+        $remesas =  $this->documento()->withoutGlobalScopes()->seleccionado()->selectRaw('SUM(MontoTotalSolicitado) as monto_total')->first();
+        return $remesas->monto_total;
+    }
+
+    /**
+     * Métodos
+     */
 }

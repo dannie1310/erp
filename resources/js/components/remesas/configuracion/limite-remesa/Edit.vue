@@ -77,7 +77,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="salir">
-                            <i class="fa fa-angle-left"></i>Regresar
+                            <i class="fa fa-times"></i>Cerrar
                         </button>
                         <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                           <i class="fa fa-save"></i> Guardar
@@ -132,8 +132,12 @@
                     data: this.folio
                 })
                     .then((data) => {
-                        this.$store.commit('remesas/remesa-folio/UPDATE_FOLIO', data);
                         this.salir()
+                        return this.$store.dispatch('remesas/remesa-folio/paginate', { params: this.query})
+                            .then(data => {
+                                this.$store.commit('remesas/remesa-folio/SET_FOLIOS', data.data);
+                                this.$store.commit('remesas/remesa-folio/SET_META', data.meta);
+                            })
                     })
             },
         }
