@@ -48,7 +48,7 @@
                                             <td>Fecha Definitivo DOF</td>
                                             <td>Fecha Corrección</td>
                                             <td>Empresa</td>
-                                            <td># CFD</td>
+                                            <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
                                         </tr>
                                     </template>

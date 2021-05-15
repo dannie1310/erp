@@ -14,8 +14,7 @@
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
-
-
+                    <ImpresionInforme ></ImpresionInforme>
                 </div>
             </div>
             <br>
@@ -38,7 +37,7 @@
                                             <td>Fecha Primera Publicación</td>
                                             <td>Entidad Federativa</td>
                                             <td>Empresa</td>
-                                            <td># CFD</td>
+                                            <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
                                         </tr>
                                     </template>
@@ -73,9 +72,10 @@
 </template>
 
 <script>
+    import ImpresionInforme from './partials/ImpresionInforme';
     export default {
         name: "InformeNoLocalizados",
-        components:{},
+        components:{ImpresionInforme},
         data() {
             return {
                 informe : [],
