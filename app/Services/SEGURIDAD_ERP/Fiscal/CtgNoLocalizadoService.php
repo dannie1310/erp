@@ -3,6 +3,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
+use App\PDF\Fiscal\InformeNoLocalizados;
 use DateTime;
 use Chumper\Zipper\Zipper;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
@@ -170,5 +171,11 @@ class CtgNoLocalizadoService
 
     public function obtenerInforme(){
         return $this->repository->getInforme();
+    }
+
+    public function obtenerInformePDF(){
+        $informe = $this->obtenerInforme();
+        $pdf = new InformeNoLocalizados($informe);
+        return $pdf->create();
     }
 }

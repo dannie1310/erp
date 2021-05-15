@@ -14,8 +14,7 @@
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
-
-
+                    <ImpresionInforme ></ImpresionInforme>
                 </div>
             </div>
             <br>
@@ -73,9 +72,10 @@
 </template>
 
 <script>
+    import ImpresionInforme from './partials/ImpresionInforme';
     export default {
         name: "InformeNoLocalizados",
-        components:{},
+        components:{ImpresionInforme},
         data() {
             return {
                 informe : [],
