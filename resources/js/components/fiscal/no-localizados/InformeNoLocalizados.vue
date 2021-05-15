@@ -37,7 +37,7 @@
                                             <td>Fecha Primera Publicación</td>
                                             <td>Entidad Federativa</td>
                                             <td>Empresa</td>
-                                            <td># CFD</td>
+                                            <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
                                         </tr>
                                     </template>
