@@ -20,6 +20,10 @@ class InformeNoLocalizados extends Rotation
     {
         parent::__construct("P", "cm", "Letter");
         $this->informe = $informe;
+        $this->SetMargins(1, .5, 2);
+        $this->SetAutoPageBreak(true, 1);
+        $this->AliasNbPages();
+        $this->partidas();
     }
 
     function logo()
@@ -178,12 +182,6 @@ class InformeNoLocalizados extends Rotation
 
     function create()
     {
-        $this->SetMargins(1, .5, 2);
-        $this->SetAutoPageBreak(true, 1);
-        $this->AliasNbPages();
-        //$this->AddPage();
-        $this->partidas();
-
         try {
             $this->Output('I', 'Informe - NoLocalizadosVsCFDI'.date("d-m-Y h:i:s").'.pdf', 1);
         } catch (\Exception $ex) {

@@ -3,6 +3,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
+use App\Events\CambioNoLocalizados;
 use App\PDF\Fiscal\InformeNoLocalizados;
 use DateTime;
 use Chumper\Zipper\Zipper;
@@ -76,7 +77,11 @@ class CtgNoLocalizadoService
         $data = base64_decode($exp[1]);
         $file = public_path($paths["dir_csv"].$hash.".csv");
         file_put_contents($file, $data);
-        return $this->cargarCatalogo($file, $hash);
+        $procesamiento = $this->cargarCatalogo($file, $hash);
+        if(count($procesamiento->altasNoLocalizados)>0 || count($procesamiento->bajasNoLocalizados)>0){
+            event(new CambioNoLocalizados($procesamiento->altasNoLocalizados, $procesamiento->bajasNoLocalizados));
+        }
+        return $procesamiento;
     }
 
     public function cargarCatalogo($file, $hash_file){
