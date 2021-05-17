@@ -11,13 +11,16 @@ namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
+use App\Repositories\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoRepository;
 use Illuminate\Support\Facades\DB;
 
 class CFDSATRepository extends Repository implements RepositoryInterface
@@ -152,5 +155,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     {
         $informe["informe"] = CFDICompleto::get();
         return $informe;
+    }
+
+    public function actualizaNoLocalizados(CargaCFDSAT $cargaCFDSAT)
+    {
+        $ctgNoLocalizadoModel = new CtgNoLocalizado();
+        $ctgNoLocalizadoRepository = new CtgNoLocalizadoRepository($ctgNoLocalizadoModel);
+        $ctgNoLocalizadoRepository->actualizaNoLocalizado($cargaCFDSAT);
     }
 }

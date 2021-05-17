@@ -3,7 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
-use App\Events\CambioEFOS;
+use App\Events\CambioNoLocalizados;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use DateTime;
@@ -120,7 +120,7 @@ class CtgEfos extends Model
 
             DB::connection('seguridad')->commit();
             if(count($procesamiento->cambios)>0){
-                event(new CambioEFOS($procesamiento->cambios));
+                event(new CambioNoLocalizados($procesamiento->cambios));
             }
             return [];
         } catch (\Exception $e) {
