@@ -1090,7 +1090,7 @@ class Factura extends Transaccion
             }
 
             foreach($data['items']['lista'] as $lista){
-                $item_trns = Transaccion::find($lista['id_item']);
+                $item_trns = Transaccion::withoutGlobalScopes()->find($lista['id_item']);
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "id_antecedente" => $lista['id_item'],
@@ -1098,11 +1098,11 @@ class Factura extends Transaccion
                     "saldo" => $lista['importe_total_sf'],
                     "numero" => 4,
                 ]);
-                if($item_trns->tipo_transacicon == 99){
+                if($item_trns->tipo_transaccion == 99){
                     $item_trns->estado = 2;
                     $item_trns->save();
                 }
-                if($item_trns->tipo_transacicon == 102){
+                if($item_trns->tipo_transaccion == 102){
                     if($item_trns->saldo - $lista['importe_total_sf'] == 0){
                         $item_trns->estado = 2;
                     }else{

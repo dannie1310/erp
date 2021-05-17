@@ -2713,6 +2713,52 @@ export const routes = [
                 ]
             },
             {
+                path: 'cuentas-saldo-negativo',
+                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-saldo-negativo",
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                        meta: {
+                            title: 'Cuentas contables con saldos negativos',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CUENTAS CON SALDOS NEGATIVOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'cuenta-saldo-negativo-detalle',
+                        props: true,
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Informe').default,
+                        meta: {
+                            title: 'Detalle de Saldo',
+                            breadcrumb: {parent: 'cuentas-saldo-negativo', name: 'DETALLE'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        },
+                        children:[
+                            {
+                                path: 'movimientos/:aniomes',
+                                name: 'cuenta-saldo-negativo-detalle-movimientos',
+                                props: true,
+                                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Movimientos').default,
+                                meta: {
+                                    title: 'Detalle de Movimientos',
+                                    breadcrumb: {parent: 'cuenta-saldo-negativo-detalle', name: 'MOVIMIENTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                },
+                            }
+                        ]
+                    },
+                ]
+            },
+            {
                 path: 'consolidacion',
                 component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
                 children:[
@@ -2994,6 +3040,36 @@ export const routes = [
                     permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_no_deducido_cfd_efo'],
                     general: true
                 }
+            },
+            {
+                path: 'no-localizados',
+                component: require('./components/fiscal/no-localizados/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"no-localizados",
+                        component: require('./components/fiscal/no-localizados/Index.vue').default,
+                        meta: {
+                            title: 'Lista de contribuyentes no localizados por el SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-no-localizados',
+                        component: require('./components/fiscal/no-localizados/InformeNoLocalizados.vue').default,
+                        meta: {
+                            title: 'Informe de Proveedores No Localizados',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
+                ]
             },
             {
                 path: 'efos-empresa',
