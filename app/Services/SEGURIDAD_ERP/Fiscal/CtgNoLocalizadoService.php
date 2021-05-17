@@ -128,7 +128,7 @@ class CtgNoLocalizadoService
                     }
                     $content[] = array(
                         'rfc' => \utf8_encode($renglon[0]),
-                        'razon_social' => \utf8_encode($r_s),
+                        'razon_social' => \utf8_encode(str_replace("\"","",$r_s)),
                         'tipo_persona' => \utf8_encode($renglon[$col]),
                         'primera_fecha_publicacion' => $fecha_convert->format('Y-m-d'),
                         'entidad_federativa' => \utf8_encode($renglon[$col+3]),
