@@ -25,12 +25,12 @@ class ProcesamientoListaNoLocalizados extends Model
 
     public function bajasNoLocalizados()
     {
-        return $this->hasMany(NoLocalizado::class,"id_procesamiento_baja", "id");
+        return $this->hasMany(NoLocalizado::class,"id_procesamiento_baja", "id")->withoutGlobalScopes();
     }
 
     public function altasNoLocalizados()
     {
-        return $this->hasMany(NoLocalizado::class,"id_procesamiento_alta", "id");
+        return $this->hasMany(NoLocalizado::class,"id_procesamiento_registro", "id");
     }
 
     public function getFechaHoraCargaFormatAttribute()
@@ -41,7 +41,12 @@ class ProcesamientoListaNoLocalizados extends Model
 
     public static function getFechaUltimaCarga(){
         $proceso = ProcesamientoListaNoLocalizados::orderBy("id","desc")->first();
-        $fecha_actualizacion_txt = "Lista de contribuyentes no localizados cargada el ".$proceso->fecha_hora_carga_format;
+        try{
+            $fecha_actualizacion_txt = "Lista de contribuyentes no localizados cargada el ".$proceso->fecha_hora_carga_format;
+
+        } catch (\Exception $e){
+            $fecha_actualizacion_txt = "Lista de contribuyentes no localizados no cargada";
+        }
         return $fecha_actualizacion_txt;
     }
 }

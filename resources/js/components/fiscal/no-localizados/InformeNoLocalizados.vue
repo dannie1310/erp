@@ -14,10 +14,21 @@
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
-                    <ImpresionInforme ></ImpresionInforme>
+                    <ImpresionInforme v-if="cantidad_partidas > 0" ></ImpresionInforme>
                 </div>
             </div>
             <br>
+            <div v-if="cantidad_partidas == 0">
+                 <table class="table">
+                     <tbody>
+                         <tr>
+                             <td style="text-align: center">
+                                 <h5>No existen contribuyentes no localizados por el SAT relacionados con las empresas del grupo.</h5>
+                             </td>
+                         </tr>
+                     </tbody>
+                 </table>
+            </div>
             <div class="row" >
                 <div class="col-md-12">
                     <table class="table">
@@ -80,7 +91,8 @@
             return {
                 informe : [],
                 fechas : [],
-                cargando : false
+                cargando : false,
+                cantidad_partidas : 0,
             }
         },
         mounted() {
@@ -95,6 +107,7 @@
                     .then(data => {
                         this.informe = data.informe;
                         this.fechas = data.fechas;
+                        this.cantidad_partidas = data.informe[0].length;
                     })
                     .finally(() => {
                         this.cargando = false;

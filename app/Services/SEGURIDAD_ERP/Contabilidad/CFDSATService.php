@@ -9,6 +9,7 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Events\CambioEFOS;
+use App\Events\CambioNoLocalizados;
 use App\Events\FinalizaCargaCFD;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
@@ -325,6 +326,10 @@ class CFDSATService
         $this->carga->load("usuario");
 
         $this->repository->actualizaNoLocalizados($this->carga);
+
+        if(count($this->carga->noLocalizados)>0){
+            event(new CambioNoLocalizados($this->carga->noLocalizados));
+        }
 
         return $this->carga;
     }

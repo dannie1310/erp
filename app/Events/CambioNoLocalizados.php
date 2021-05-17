@@ -15,10 +15,11 @@ class CambioNoLocalizados
     public $cambios;
     public $tipo;
 
-    public function __construct($cambios)
+    public function __construct($altas, $bajas = [])
     {
-        $this->cambios = $cambios;
-        $this->tipo = 3;
+        $this->altas = $altas;
+        $this->bajas = $bajas;
+        $this->tipo = 7;
     }
 
     /**
