@@ -24,6 +24,13 @@ class EFOSEmpresaInforme
         return $informe;
     }
 
+    public static function  getInformeDefinitivos()
+    {
+        $informe["informe"][] = EFOSEmpresaInforme::getPartidasInformeDefinitivos();
+        $informe["fechas"] = EFOSEmpresaInforme::getFechasInforme();
+        return $informe;
+    }
+
     private static function getFechasInforme()
     {
         $fechas["lista_efos"]= ProcesamientoListaEfos::getFechaActualizacion();

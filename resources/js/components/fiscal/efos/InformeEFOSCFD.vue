@@ -15,6 +15,7 @@
                 </div>
                 <div class="col-md-6">
                     <ImpresionInforme ></ImpresionInforme>
+                    <ImpresionInformeDefinitivos></ImpresionInformeDefinitivos>
                     <button @click="descargarInforme" class="btn btn-primary pull-right" title="Descargar Informe">
                         <i class="fa fa-download"></i> Descargar
                     </button>
@@ -46,9 +47,9 @@
                                             <td>Fecha Presunto DOF</td>
                                             <td>Fecha Definitivo</td>
                                             <td>Fecha Definitivo DOF</td>
-                                            <td>Fecha Corrección</td>
                                             <td>Fecha Límte Aclaración SAT</td>
                                             <td>Fecha Límte Aclaración DOF</td>
+                                            <td>Fecha Corrección</td>
                                             <td>Empresa</td>
                                             <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
@@ -63,9 +64,9 @@
                                         <td>{{partidas.fecha_presunto_dof}}</td>
                                         <td>{{partidas.fecha_definitivo}}</td>
                                         <td>{{partidas.fecha_definitivo_dof}}</td>
-                                        <td>{{partidas.fecha_autocorreccion}}</td>
                                         <td>{{partidas.fecha_limite_sat}}</td>
                                         <td>{{partidas.fecha_limite_dof}}</td>
+                                        <td>{{partidas.fecha_autocorreccion}}</td>
                                         <td>{{partidas.empresa}}</td>
                                         <td style="text-align:right">{{partidas.no_CFDI}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
@@ -100,9 +101,10 @@
 
 <script>
     import ImpresionInforme from './partials/ImpresionInforme';
+    import ImpresionInformeDefinitivos from "./partials/ImpresionInformeDefinitivos";
     export default {
         name: "InformeEFOSCFD",
-        components:{ImpresionInforme},
+        components:{ImpresionInformeDefinitivos, ImpresionInforme},
         data() {
             return {
                 informe : [],
