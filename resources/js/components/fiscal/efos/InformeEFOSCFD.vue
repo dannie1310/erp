@@ -15,11 +15,15 @@
                 </div>
                 <div class="col-md-6">
                     <div class="pull-right">
-                        <ImpresionInforme ></ImpresionInforme>
-                        <ImpresionInformeDefinitivos></ImpresionInformeDefinitivos>
+                        <button @click="calculaFechasLimite" class="btn btn-primary" title="Calcular Fechas Límite de Aclaración ante el SAT">
+                            <i class="fa fa-calendar-check"></i> Calcular Fechas de Aclaración
+                        </button>
                         <button @click="descargarInforme" class="btn btn-primary" title="Descargar Informe">
                             <i class="fa fa-download"></i> Descargar
                         </button>
+                        <ImpresionInforme ></ImpresionInforme>
+                        <ImpresionInformeDefinitivos></ImpresionInformeDefinitivos>
+
                     </div>
 
                 </div>
@@ -112,7 +116,8 @@
             return {
                 informe : [],
                 fechas : [],
-                cargando : false
+                cargando : false,
+                calculando : false,
             }
         },
         mounted() {
@@ -142,6 +147,18 @@
                     })
                     .finally(() => {
                         this.cargando = false;
+                    });
+            },
+            calculaFechasLimite() {
+                this.calculando = true;
+                return this.$store.dispatch('seguridad/finanzas/ctg-efos/calcularFechasLimite', {
+
+                })
+                    .then(data => {
+                        this.getInforme();
+                    })
+                    .finally(() => {
+                        this.calculando = false;
                     });
             }
         }
