@@ -33,7 +33,7 @@ class NoLocalizadosInforme
 
     private static function getPartidasProyectoEmpresa(){
         $informe = DB::select("
-        SELECT 'No Localizado' AS estatus,
+       SELECT 'No Localizado' AS estatus,
        no_localizados.rfc,
        no_localizados.razon_social,
        ctg_no_localizados.entidad_federativa,
@@ -53,7 +53,8 @@ class NoLocalizadosInforme
              WHEN 'I' THEN cfd_sat.total
              WHEN 'E' THEN cfd_sat.total * -1
           END)
-          AS importe
+          AS importe,
+             QueryImportes.importe_proyecto
   FROM ((((((SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
              INNER JOIN
              SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
@@ -72,6 +73,41 @@ class NoLocalizadosInforme
           ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
            )
 
+
+      join
+      (select cfd_sat.id_empresa_sat,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe_proyecto
+          from Contabilidad.cfd_sat
+      LEFT OUTER JOIN
+        SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+           ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id)
+        LEFT OUTER JOIN SEGURIDAD_ERP.Fiscal.cfd_no_deducidos cfd_no_deducidos
+          ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
+      INNER JOIN SEGURIDAD_ERP.Fiscal.no_localizados no_localizados
+              ON (no_localizados.rfc = cfd_sat.rfc_emisor)
+       INNER JOIN (select * from Fiscal.ctg_no_localizados where estado = 1) as ctg_no_localizados
+              ON (no_localizados.rfc = ctg_no_localizados.rfc)
+
+      WHERE
+       (no_localizados.estado = 1)
+       AND (cfd_sat_autocorrecciones.id IS NULL)
+       AND (cfd_no_deducidos.id IS NULL)
+       AND (cfd_sat.estado !=8)
+       AND cfd_sat.cancelado != 1
+       AND cfd_sat.tipo_comprobante != 'P'
+      AND cfd_sat.tipo_comprobante != 'T'
+
+          group by id_empresa_sat
+          ) as QueryImportes
+      on(QueryImportes.id_empresa_sat = cfd_sat.id_empresa_sat)
+
+
+
  WHERE
        (no_localizados.estado = 1)
        AND (cfd_sat_autocorrecciones.id IS NULL)
@@ -79,14 +115,15 @@ class NoLocalizadosInforme
        AND (cfd_sat.estado !=8)
        AND cfd_sat.cancelado != 1
        AND cfd_sat.tipo_comprobante != 'P'
+      AND cfd_sat.tipo_comprobante != 'T'
 GROUP BY
          no_localizados.rfc,
          no_localizados.razon_social,
          ListaEmpresasSAT.nombre_corto,
          ctg_no_localizados.entidad_federativa,
-         ctg_no_localizados.primera_fecha_publicacion
-
-ORDER BY ListaEmpresasSAT.nombre_corto ASC;
+         ctg_no_localizados.primera_fecha_publicacion,
+          QueryImportes.importe_proyecto
+ORDER BY QueryImportes.importe_proyecto desc, ListaEmpresasSAT.nombre_corto, importe desc
         ")
         ;
         $informe = array_map(function ($value) {
@@ -205,7 +242,8 @@ ORDER BY ListaEmpresasSAT.nombre_corto ASC;
              WHEN 'I' THEN cfd_sat.total
              WHEN 'E' THEN cfd_sat.total * -1
           END)
-          AS importe
+          AS importe,
+             QueryImportes.importe_empresa
   FROM ((((((SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
              INNER JOIN
              SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
@@ -224,6 +262,39 @@ ORDER BY ListaEmpresasSAT.nombre_corto ASC;
           ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
            )
 
+
+      join
+      (select cfd_sat.id_proveedor_sat,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe_empresa
+          from Contabilidad.cfd_sat
+      LEFT OUTER JOIN
+        SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+           ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id)
+        LEFT OUTER JOIN SEGURIDAD_ERP.Fiscal.cfd_no_deducidos cfd_no_deducidos
+          ON (cfd_no_deducidos.id_cfd_sat = cfd_sat.id)
+      INNER JOIN SEGURIDAD_ERP.Fiscal.no_localizados no_localizados
+              ON (no_localizados.rfc = cfd_sat.rfc_emisor)
+       INNER JOIN (select * from Fiscal.ctg_no_localizados where estado = 1) as ctg_no_localizados
+              ON (no_localizados.rfc = ctg_no_localizados.rfc)
+      WHERE
+       (no_localizados.estado = 1)
+       AND (cfd_sat_autocorrecciones.id IS NULL)
+       AND (cfd_no_deducidos.id IS NULL)
+       AND (cfd_sat.estado !=8)
+       AND cfd_sat.cancelado != 1
+       AND cfd_sat.tipo_comprobante != 'P'
+      AND cfd_sat.tipo_comprobante != 'T'
+          group by id_proveedor_sat
+          ) as QueryImportes
+      on(QueryImportes.id_proveedor_sat = cfd_sat.id_proveedor_sat)
+
+
+
  WHERE
        (no_localizados.estado = 1)
        AND (cfd_sat_autocorrecciones.id IS NULL)
@@ -231,14 +302,15 @@ ORDER BY ListaEmpresasSAT.nombre_corto ASC;
        AND (cfd_sat.estado !=8)
        AND cfd_sat.cancelado != 1
        AND cfd_sat.tipo_comprobante != 'P'
+      AND cfd_sat.tipo_comprobante != 'T'
 GROUP BY
          no_localizados.rfc,
          no_localizados.razon_social,
          ListaEmpresasSAT.nombre_corto,
          ctg_no_localizados.entidad_federativa,
-         ctg_no_localizados.primera_fecha_publicacion
-
-ORDER BY no_localizados.razon_social ASC;
+         ctg_no_localizados.primera_fecha_publicacion,
+          QueryImportes.importe_empresa
+ORDER BY QueryImportes.importe_empresa desc, no_localizados.razon_social, importe desc
         ")
         ;
         $informe = array_map(function ($value) {
