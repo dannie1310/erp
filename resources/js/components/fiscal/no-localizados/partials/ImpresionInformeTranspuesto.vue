@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="init" type="button" class="btn btn-primary" title="Ver Informe en formato PDF">
-            <i class="fa fa-file-pdf-o"></i>Ver en PDF Proyecto->Empresa
+            <i class="fa fa-file-pdf-o"></i>Ver en PDF Empresa->Proyecto
         </button>
 
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
@@ -30,7 +30,7 @@
                 this.pdf()
             },
             pdf(){
-                var url = '/api/fiscal/ctg-no-localizado/obtener-informe/pdf?'+'&access_token='+this.$session.get('jwt');
+                var url = '/api/fiscal/ctg-no-localizado/obtener-informe/empresa-proyecto/pdf?'+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Informe</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');

@@ -14,7 +14,10 @@
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
-                    <ImpresionInforme v-if="cantidad_partidas > 0" ></ImpresionInforme>
+                    <div class="pull-right">
+                        <ImpresionInforme v-if="cantidad_partidas > 0" ></ImpresionInforme>
+                        <ImpresionInformeTranspuesto v-if="cantidad_partidas > 0"></ImpresionInformeTranspuesto>
+                    </div>
                 </div>
             </div>
             <br>
@@ -84,9 +87,10 @@
 
 <script>
     import ImpresionInforme from './partials/ImpresionInforme';
+    import ImpresionInformeTranspuesto from "./partials/ImpresionInformeTranspuesto";
     export default {
         name: "InformeNoLocalizados",
-        components:{ImpresionInforme},
+        components:{ImpresionInformeTranspuesto, ImpresionInforme},
         data() {
             return {
                 informe : [],

@@ -59,4 +59,9 @@ class CtgNoLocalizadoController extends Controller
     {
         return $this->service->obtenerInformePDF()->create();
     }
+
+    public function obtenerInformeEmpresaProyectoPDF(Request $request)
+    {
+        return $this->service->obtenerInformeEmpresaProyectoPDF()->create();
+    }
 }
