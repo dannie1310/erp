@@ -1,15 +1,15 @@
 <template>
     <span>
-        <button @click="init" class="btn btn-app btn-info float-right">
+        <button @click="init" class="btn btn-app float-right">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR FECHA INHÁBILES</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-plus"></i>Registrar</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -32,28 +32,31 @@
                                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-12">
-                                    <label for="id_tipo_fecha" class="col-md-2 col-form-label">Tipo Fecha</label>
-                                    <div class="col-md-10">
-                                        <select
-                                            name="id_tipo_fecha"
-                                            id="id_tipo_fecha"
-                                            data-vv-as="Tipo Fecha"
-                                            v-validate="{required: true}"
-                                            class="form-control"
-                                            v-model="id_tipo_fecha"
-                                            :class="{'is-invalid': errors.has('id_tipo_fecha')}"
-                                        >
-                                            <option value>-- Tipo Fecha --</option>
-                                            <option v-for="tipo in tipos" :value="tipo.id">{{ tipo.descripcion }}</option>
-                                        </select>
-                                        <div class="invalid-feedback" v-show="errors.has('id_tipo_fecha')">{{ errors.first('id_tipo_fecha') }}</div>
+                                    <label class="col-md-12 col-form-label">Tipo de Fecha:</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="btn-group btn-group-toggle">
+                                        <label class="btn btn-outline-secondary" :class="id_tipo_fecha === Number(key) ? 'active': ''" v-for="(tipo, key) in tipos" :key="key">
+                                            <input type="radio"
+                                                   class="btn-group-toggle"
+                                                   name="id_tipo_solicitud"
+                                                   :id="'tipo_' + key"
+                                                   :value="key"
+                                                   autocomplete="off"
+                                                   v-model.number="id_tipo_fecha">
+                                            {{ tipo.descripcion }}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
                             <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                         </div>
                     </form>
@@ -117,7 +120,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        if(this.id_tipo_fecha > 0){
+                            this.store()
+                        } else {
+                            swal('Error', 'Debe indicar el tipo de fecha a registrar', 'error')
+                        }
+
                     }
                 });
             },

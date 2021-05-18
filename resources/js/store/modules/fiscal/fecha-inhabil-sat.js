@@ -95,7 +95,7 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar la Fecha inhábil",
+                    title: "Registrar Fecha Inhábil",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {

@@ -33,7 +33,7 @@
                 { title: 'Tipo Fecha', field: 'tipo'},
                 { title: 'Usuario Registró', field: 'usuario'},
                 { title: 'Fecha Hora Registro', thClass: 'fecha_hora', field: 'registro'},
-                { title: 'Acciones', field: 'buttons', thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
+                { title: '', field: 'buttons', thClass: 'th_index',  tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
