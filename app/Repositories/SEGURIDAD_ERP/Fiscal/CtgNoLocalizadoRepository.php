@@ -103,4 +103,10 @@ class CtgNoLocalizadoRepository extends Repository implements RepositoryInterfac
         $informe = NoLocalizadosInforme::getInforme();
         return $informe;
     }
+
+    public function getInformeEmpresaProyecto()
+    {
+        $informe = NoLocalizadosInforme::getInformeEmpresaProyecto();
+        return $informe;
+    }
 }

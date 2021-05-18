@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\EfosTransformer;
 use App\Services\SEGURIDAD_ERP\Fiscal\EfosService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class EfosController extends Controller
@@ -42,5 +43,10 @@ class EfosController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function calcularFechasLimite(Request $request)
+    {
+        return $this->service->calcularFechasLimite();
     }
 }

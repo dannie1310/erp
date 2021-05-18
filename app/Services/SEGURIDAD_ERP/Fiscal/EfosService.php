@@ -5,7 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
-use App\Repositories\Repository;
+use App\Repositories\SEGURIDAD_ERP\Fiscal\EfosRepository as Repository;
 
 class EfosService
 {
@@ -26,5 +26,10 @@ class EfosService
     public function index($data)
     {
         return $this->repository->all($data);
+    }
+
+    public function calcularFechasLimite()
+    {
+        return $this->repository->calcularFechasLimite();
     }
 }

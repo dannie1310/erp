@@ -7,7 +7,7 @@ namespace App\Notifications;
 use App\Informes\Fiscal\NoLocalizadosInforme;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
-use App\PDF\Fiscal\InformeNoLocalizados;
+use App\PDF\Fiscal\InformeNoLocalizadosEmpresaProyecto;
 use App\Repositories\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoRepository as Repository;
 use Illuminate\Bus\Queueable;
 use Illuminate\Database\Eloquent\Model;
@@ -50,10 +50,10 @@ class NotificacionCambioNoLocalizados extends Notification
     public function toMail($notifiable)
     {
 
-        $informe = NoLocalizadosInforme::getInforme();
+        $informe = NoLocalizadosInforme::getInformeEmpresaProyecto();
         $pdf = null;
         if(count($informe["informe"][0])>0){
-            $pdf = new InformeNoLocalizados($informe);
+            $pdf = new InformeNoLocalizadosEmpresaProyecto($informe);
         }
 
         if($pdf){
