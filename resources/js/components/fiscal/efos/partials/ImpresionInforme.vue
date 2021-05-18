@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-primary pull-right" title="Ver Informe">
+        <button @click="init" type="button" class="btn btn-primary" title="Ver Informe">
             <i class="fa fa-file-pdf-o"></i>Ver PDF
         </button>
 

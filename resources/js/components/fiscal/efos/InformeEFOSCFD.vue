@@ -14,11 +14,14 @@
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
-                    <ImpresionInforme ></ImpresionInforme>
-                    <ImpresionInformeDefinitivos></ImpresionInformeDefinitivos>
-                    <button @click="descargarInforme" class="btn btn-primary pull-right" title="Descargar Informe">
-                        <i class="fa fa-download"></i> Descargar
-                    </button>
+                    <div class="pull-right">
+                        <ImpresionInforme ></ImpresionInforme>
+                        <ImpresionInformeDefinitivos></ImpresionInformeDefinitivos>
+                        <button @click="descargarInforme" class="btn btn-primary" title="Descargar Informe">
+                            <i class="fa fa-download"></i> Descargar
+                        </button>
+                    </div>
+
                 </div>
             </div>
             <br>
