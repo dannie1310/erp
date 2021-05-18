@@ -3042,6 +3042,36 @@ export const routes = [
                 }
             },
             {
+                path: 'no-localizados',
+                component: require('./components/fiscal/no-localizados/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"no-localizados",
+                        component: require('./components/fiscal/no-localizados/Index.vue').default,
+                        meta: {
+                            title: 'Lista de contribuyentes no localizados por el SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-no-localizados',
+                        component: require('./components/fiscal/no-localizados/InformeNoLocalizados.vue').default,
+                        meta: {
+                            title: 'Informe de Proveedores No Localizados',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'efos-empresa',
                 component: require('./components/fiscal/efos/Layout.vue').default,
                 children:[
