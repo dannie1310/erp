@@ -30,10 +30,10 @@
                                 <template v-for="(partidas, j) in tipo">
                                      <template v-if="partidas.tipo == 'titulo'">
                                          <tr>
-                                            <td colspan="12" style="background-color: #fff" ></td>
+                                            <td colspan="14" style="background-color: #fff" ></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="12" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
+                                            <td colspan="14" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
                                                 {{partidas.etiqueta}}
                                             </td>
                                         </tr>
@@ -47,6 +47,8 @@
                                             <td>Fecha Definitivo</td>
                                             <td>Fecha Definitivo DOF</td>
                                             <td>Fecha Corrección</td>
+                                            <td>Fecha Límte Aclaración SAT</td>
+                                            <td>Fecha Límte Aclaración DOF</td>
                                             <td>Empresa</td>
                                             <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
@@ -62,6 +64,8 @@
                                         <td>{{partidas.fecha_definitivo}}</td>
                                         <td>{{partidas.fecha_definitivo_dof}}</td>
                                         <td>{{partidas.fecha_autocorreccion}}</td>
+                                        <td>{{partidas.fecha_limite_sat}}</td>
+                                        <td>{{partidas.fecha_limite_dof}}</td>
                                         <td>{{partidas.empresa}}</td>
                                         <td style="text-align:right">{{partidas.no_CFDI}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
@@ -72,6 +76,8 @@
                                         <td></td>
                                         <td></td>
                                         <td>{{partidas.etiqueta}}</td>
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>

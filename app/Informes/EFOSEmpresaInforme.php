@@ -285,6 +285,8 @@ ORDER BY 7 DESC
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
+       CONVERT(varchar,efos.fecha_limite_sat,103)  as fecha_limite_sat,
+       CONVERT(varchar,efos.fecha_limite_dof,103)  as fecha_limite_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -348,7 +350,9 @@ GROUP BY ctg_estados_efos.descripcion,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_definitivo_dof,
-         Subquery.fecha_devinitivo_maxima
+         Subquery.fecha_devinitivo_maxima,
+         efos.fecha_limite_dof,
+         efos.fecha_limite_sat
 ORDER BY Subquery.fecha_devinitivo_maxima DESC,
          empresa ASC,
          ctg_efos.fecha_definitivo DESC
