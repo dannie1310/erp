@@ -47,7 +47,7 @@ class CFDAutocorreccion extends Model
     {
         if ($this->cfdSat->estado != 0)
         {
-            abort(400, "El CFD (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
+            abort(400, "El CFDI (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
         }
     }
 
@@ -55,7 +55,7 @@ class CFDAutocorreccion extends Model
     {
         if ($this->cfdSat->estado != 5)
         {
-            abort(400, "El CFD (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
+            abort(400, "El CFDI (" . $this->uuid . ") tiene estado: ".$this->cfdSat->ctgEstado->descripcion.".");
         }
     }
 }

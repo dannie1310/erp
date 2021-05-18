@@ -300,6 +300,15 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@update')->where(['id' => '[0-9]+']);
         });
+
+        $api->group(['prefix' => 'cuenta-saldo-negativo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@paginate');
+            $api->post('{id}/obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@obtenerInforme')->where(['id' => '[0-9]+']);
+            $api->post('{id}/obtener-informe-movimientos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@obtenerInformeMovimientos')->where(['id' => '[0-9]+']);
+            $api->post('sincronizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@sincronizar');
+        });
+
         $api->group(['prefix' => 'tipo-poliza'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\TipoPolizaController@index');
         });
@@ -380,6 +389,15 @@ $api->version('v1', function ($api) {
         });
         $api->group(['prefix' => 'tipo-fecha-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\TipoFechaController@index');
+        });
+        $api->group(['prefix' => 'no-localizado'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoLocalizadoController@paginate');
+        });
+        $api->group(['prefix' => 'ctg-no-localizado'], function ($api){
+            $api->post('cargarCsv', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@cargarCsv');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@paginate');
+            $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInforme');
+            $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformePDF');
         });
     });
 
@@ -1302,6 +1320,8 @@ $api->version('v1', function ($api) {
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
             $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
             $api->get('obtener-informe-cfdi-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@descargaInformeCFDIDesglosado');
+            $api->get('obtener-informe-definitivos/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDefinitivoPDF');
+
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');

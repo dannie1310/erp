@@ -29,7 +29,7 @@ class EFOS extends Model
         'id_procesamiento_actualizacion',
         'id_carga_cfd',
         'fecha_limite_sat',
-        'fecha_limite_dot'
+        'fecha_limite_dof'
     ];
 
     public function proveedor()
@@ -129,9 +129,9 @@ class EFOS extends Model
             }
             if(!is_null($efo->efo) && !is_null($efo->efo->fecha_definitivo_dof))
             {
-                $efo->fecha_limite_dot = $efo->calculaFechaLimite($efo->efo->fecha_definitivo_dof);
+                $efo->fecha_limite_dof = $efo->calculaFechaLimite($efo->efo->fecha_definitivo_dof);
             }else{
-                $efo->fecha_limite_dot = NULL;
+                $efo->fecha_limite_dof = NULL;
             }
             $efo->save();
         }

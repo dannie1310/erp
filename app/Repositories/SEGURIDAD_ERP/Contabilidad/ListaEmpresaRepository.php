@@ -52,7 +52,7 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
 
         $cancelaciones = $this->cancela($empresas_actuales, $empresas_contpaq);
         $registros = $this->registra($empresas_actuales, $empresas_contpaq);
-        $actualizaciones = $this->actualiza($empresas_actuales, $empresas_contpaq);
+        $actualizaciones = $this->actualiza();
 
         DB::connection('seguridad')->commit();
         return [
@@ -97,8 +97,14 @@ class ListaEmpresaRepository extends Repository implements RepositoryInterface
         return $cancelaciones;
     }
 
-    private function actualiza($empresas_actuales,$empresas_contpaq)
+    private function actualiza()
     {
+        $empresas_contpaq = \App\Models\CTPQ\Empresa::all()
+            ->pluck("Nombre","AliasBDD")
+            ->toArray();
+        $empresas_actuales = Empresa::all()
+            ->pluck("Nombre","AliasBDD")
+            ->toArray();
         $actualizaciones=0;
         foreach($empresas_actuales as $alias_bdd=>$nombre){
             $empresa_contpaq = \App\Models\CTPQ\Empresa::where("AliasBDD", "=", $alias_bdd)

@@ -62,6 +62,6 @@ class NoDeducidoService
                 break;
             }
         }
-        throw new \Exception('Se debe seleccionar al menos un CFD');
+        throw new \Exception('Se debe seleccionar al menos un CFDI');
     }
 }

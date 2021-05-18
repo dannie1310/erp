@@ -50,6 +50,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendCancelacionSolicitudRecepcionCFDINotification',
         ],
 
+        'App\Events\CambioNoLocalizados' => [
+            'App\Listeners\SendCambiosNoLocalizadosNotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],

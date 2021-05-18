@@ -84,4 +84,9 @@ class CtgEfosController extends Controller
         return Excel::download(new InformeCFDIDesglosado(), 'informe_efos_cfdi_desglosado'.date("Ymd_his").'.xlsx');
     }
 
+    public function obtenerInformeDefinitivoPDF(Request $request)
+    {
+        return $this->service->obtenerInformeDefinitivoPDF()->create();
+    }
+
 }

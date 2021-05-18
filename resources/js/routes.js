@@ -2713,6 +2713,52 @@ export const routes = [
                 ]
             },
             {
+                path: 'cuentas-saldo-negativo',
+                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-saldo-negativo",
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                        meta: {
+                            title: 'Cuentas contables con saldos negativos',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CUENTAS CON SALDOS NEGATIVOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'cuenta-saldo-negativo-detalle',
+                        props: true,
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Informe').default,
+                        meta: {
+                            title: 'Detalle de Saldo',
+                            breadcrumb: {parent: 'cuentas-saldo-negativo', name: 'DETALLE'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        },
+                        children:[
+                            {
+                                path: 'movimientos/:aniomes',
+                                name: 'cuenta-saldo-negativo-detalle-movimientos',
+                                props: true,
+                                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Movimientos').default,
+                                meta: {
+                                    title: 'Detalle de Movimientos',
+                                    breadcrumb: {parent: 'cuenta-saldo-negativo-detalle', name: 'MOVIMIENTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                },
+                            }
+                        ]
+                    },
+                ]
+            },
+            {
                 path: 'consolidacion',
                 component: require('./components/contabilidad-general/consolidacion/Index.vue').default,
                 children:[
@@ -2996,6 +3042,36 @@ export const routes = [
                 }
             },
             {
+                path: 'no-localizados',
+                component: require('./components/fiscal/no-localizados/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"no-localizados",
+                        component: require('./components/fiscal/no-localizados/Index.vue').default,
+                        meta: {
+                            title: 'Lista de contribuyentes no localizados por el SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-no-localizados',
+                        component: require('./components/fiscal/no-localizados/InformeNoLocalizados.vue').default,
+                        meta: {
+                            title: 'Informe de Proveedores No Localizados',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'efos-empresa',
                 component: require('./components/fiscal/efos/Layout.vue').default,
                 children:[
@@ -3016,7 +3092,7 @@ export const routes = [
                         name: 'informe-efos-vs-cfd',
                         component: require('./components/fiscal/efos/InformeEFOSCFD').default,
                         meta: {
-                            title: 'Informe Listado EFOS vs CFD Recibidos',
+                            title: 'Informe Listado EFOS vs CFDI Recibidos',
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
@@ -3028,7 +3104,7 @@ export const routes = [
                         name: 'informe-efos-vs-cfd-5a',
                         component: require('./components/fiscal/efos/InformeEFOSCFD5A').default,
                         meta: {
-                            title: 'Informe Listado EFOS vs CFD Recibidos (Desglosado)',
+                            title: 'Informe Listado EFOS vs CFDI Recibidos (Desglosado)',
                             breadcrumb: {name: 'INFORME DESGLOSADO', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
@@ -3047,8 +3123,8 @@ export const routes = [
                         name:"cfd-sat",
                         component: require('./components/fiscal/cfd/cfd-sat/Index.vue').default,
                         meta: {
-                            title: 'CFD SAT',
-                            breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
+                            title: 'CFDI SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'CFDI SAT'},
                             middleware: [auth, permission],
                             permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo', 'consultar_informe_cfd_x_empresa_x_mes','consultar_no_deducido_cfd_efo'],
                             general: true
@@ -3063,8 +3139,8 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'Autocorrección de CFD EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    title: 'Autocorrección de CFDI EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFDI'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_autocorreccion_cfd_efo',
                                     general: true,
@@ -3076,7 +3152,7 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    title: 'Registrar Autocorrección de CFDI EFOS',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_autocorreccion_cfd_efo'],
@@ -3094,8 +3170,8 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'CFD No Deducidos de EFOS Definitivos',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD NO DEDUCIDOS'},
+                                    title: 'CFDI No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFDI NO DEDUCIDOS'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_no_deducido_cfd_efo',
                                     general: true,
@@ -3107,7 +3183,7 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar CFD No Deducidos de EFOS Definitivos',
+                                    title: 'Registrar CFDI No Deducidos de EFOS Definitivos',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_no_deducido_cfd_efo'],
