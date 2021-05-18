@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="init" type="button" class="btn btn-primary" title="Ver Informe">
-            <i class="fa fa-file-pdf-o"></i>Ver PDF
+            <i class="fa fa-file-pdf-o"></i>Ver PDF Definitivos
         </button>
 
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
@@ -30,7 +30,7 @@
                 this.pdf()
             },
             pdf(){
-                var url = '/api/SEGURIDAD_ERP/efo/obtener-informe/pdf?'+'&access_token='+this.$session.get('jwt');
+                var url = '/api/SEGURIDAD_ERP/efo/obtener-informe-definitivos/pdf?'+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Informe</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');

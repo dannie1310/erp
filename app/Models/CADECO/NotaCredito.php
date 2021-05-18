@@ -124,7 +124,7 @@ class NotaCredito extends Transaccion
             if($data){
                 $factura_repositorio = $factura->facturaRepositorio()->create($data);
                 if (!$factura_repositorio) {
-                    abort(400, "Hubo un error al registrar el CFD en el repositorio");
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
                 }
             }
         }
