@@ -10,6 +10,7 @@ use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\CSV\Acarreos\Catalogos\MarcaLayout;
 
 class MarcaService
 {
@@ -96,7 +97,7 @@ class MarcaService
     public function excel()
     {
         $this->conexionAcarreos();
-        return Excel::download(new OrigenLayout(), 'origenes.csv');
+        return Excel::download(new MarcaLayout(), 'marca.csv');
     }
 
     private function conexionAcarreos()
