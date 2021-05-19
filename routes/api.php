@@ -502,6 +502,13 @@ $api->version('v1', function ($api) {
         //MARCA
         $api->group(['prefix' => 'marca'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@descargaLayout');
         });
 
         //OPERADOR
