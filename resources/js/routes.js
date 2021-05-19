@@ -2341,6 +2341,20 @@ export const routes = [
                                 ]
                             },
                             {
+                                path: 'marca',
+                                name: 'marca',
+                                component: require('./components/acarreos/catalogos/marca/Index').default,
+                                meta: {
+                                    title: 'Marcas',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'MARCAS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_marca']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,
