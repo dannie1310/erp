@@ -41,12 +41,12 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="btn-group btn-group-toggle">
-                                        <label class="btn btn-outline-secondary" :class="id_tipo_fecha === Number(key) ? 'active': ''" v-for="(tipo, key) in tipos" :key="key">
+                                        <label class="btn btn-outline-secondary" :class="id_tipo_fecha === Number(tipos[key].id) ? 'active': ''" v-for="(tipo, key) in tipos" :key="key">
                                             <input type="radio"
                                                    class="btn-group-toggle"
                                                    name="id_tipo_solicitud"
-                                                   :id="'tipo_' + key"
-                                                   :value="key"
+                                                   :id="'tipo_' + tipos[key].id"
+                                                   :value="tipos[key].id"
                                                    autocomplete="off"
                                                    v-model.number="id_tipo_fecha">
                                             {{ tipo.descripcion }}
