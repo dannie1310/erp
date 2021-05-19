@@ -3106,7 +3106,7 @@ export const routes = [
                         name: 'informe-efos-vs-cfd',
                         component: require('./components/fiscal/efos/InformeEFOSCFD').default,
                         meta: {
-                            title: 'Informe Listado EFOS vs CFD Recibidos',
+                            title: 'Informe Listado EFOS vs CFDI Recibidos',
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
@@ -3118,7 +3118,7 @@ export const routes = [
                         name: 'informe-efos-vs-cfd-5a',
                         component: require('./components/fiscal/efos/InformeEFOSCFD5A').default,
                         meta: {
-                            title: 'Informe Listado EFOS vs CFD Recibidos (Desglosado)',
+                            title: 'Informe Listado EFOS vs CFDI Recibidos (Desglosado)',
                             breadcrumb: {name: 'INFORME DESGLOSADO', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
@@ -3137,8 +3137,8 @@ export const routes = [
                         name:"cfd-sat",
                         component: require('./components/fiscal/cfd/cfd-sat/Index.vue').default,
                         meta: {
-                            title: 'CFD SAT',
-                            breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
+                            title: 'CFDI SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'CFDI SAT'},
                             middleware: [auth, permission],
                             permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo', 'consultar_informe_cfd_x_empresa_x_mes','consultar_no_deducido_cfd_efo'],
                             general: true
@@ -3153,8 +3153,8 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'Autocorrección de CFD EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    title: 'Autocorrección de CFDI EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFDI'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_autocorreccion_cfd_efo',
                                     general: true,
@@ -3166,7 +3166,7 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    title: 'Registrar Autocorrección de CFDI EFOS',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_autocorreccion_cfd_efo'],
@@ -3184,8 +3184,8 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'CFD No Deducidos de EFOS Definitivos',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD NO DEDUCIDOS'},
+                                    title: 'CFDI No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFDI NO DEDUCIDOS'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_no_deducido_cfd_efo',
                                     general: true,
@@ -3197,7 +3197,7 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar CFD No Deducidos de EFOS Definitivos',
+                                    title: 'Registrar CFDI No Deducidos de EFOS Definitivos',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_no_deducido_cfd_efo'],
@@ -3227,6 +3227,24 @@ export const routes = [
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfdi_x_empresa_desglosado'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'fechas-inhabiles-sat',
+                component: require('./components/fiscal/fechas-inhabiles-sat/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"fechas-inhabiles-sat",
+                        component: require('./components/fiscal/fechas-inhabiles-sat/Index.vue').default,
+                        meta: {
+                            title: 'Fechas Inhábiles SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'FECHAS INHÁBILES'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_fechas_inhabiles_sat'],
                             general: true
                         }
                     },

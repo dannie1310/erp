@@ -178,8 +178,10 @@ import CFDSAT from './modules/fiscal/cfd-sat';
 import ctgNoLocalizado from './modules/fiscal/ctg-no-localizado';
 import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
+import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
 import noLocalizado from './modules/fiscal/no-localizado';
+import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -364,8 +366,10 @@ export default new Vuex.Store({
         'fiscal/cfd-sat': CFDSAT,
         'fiscal/ctg-no-localizado': ctgNoLocalizado,
         'fiscal/efos' : efos,
+        'fiscal/fecha-inhabil-sat' : fechaInhabilSat,
         'fiscal/no-deducido' : noDeducido,
         'fiscal/no-localizado' : noLocalizado,
+        'fiscal/tipo-fecha-sat' : tipoFechaSat,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,

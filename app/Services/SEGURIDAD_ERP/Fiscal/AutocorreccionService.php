@@ -54,7 +54,7 @@ class AutocorreccionService
                 break;
             }
         }
-        throw new \Exception('Se debe seleccionar al menos un CFD');
+        throw new \Exception('Se debe seleccionar al menos un CFDI');
     }
 
     public function aplicar($id, array $data)

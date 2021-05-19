@@ -40,10 +40,12 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function getInformeCFD()
     {
-        $informe = [];
-        /*$empresa = Empresa::find($id_empresa);
-        $informe ["informe"] = $empresa->getInformeDiferencias($sin_solicitud_relacionada, $solo_diferencias_activas, $tipo_agrupacion);*/
         $informe = EFOSEmpresaInforme::getInforme();
+        return $informe;
+    }
+    public function getInformeDefinitivos()
+    {
+        $informe = EFOSEmpresaInforme::getInformeDefinitivos();
         return $informe;
     }
     public function getInformeCFDDesglosado()
