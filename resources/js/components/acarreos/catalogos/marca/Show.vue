@@ -24,51 +24,44 @@
                         </div>
                         <div v-else>
                             <div class="row justify-content-end">
-                                <historico v-bind:historicos="tiro.historicos.data" v-bind:id="id" v-if="tiro" />
+                                <historico v-bind:historicos="marca.historicos.data" v-bind:id="id" v-if="marca" />
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <br>
                                 </div>
                             </div>
-                            <div class="row" v-if="tiro">
+                            <div class="row" v-if="marca">
                                 <div class="col-md-12">
                                     <div class="form-group row">
-                                        <label class="col-md-1 col-form-label">ID:</label>
-                                        <div class="col-md-2">
-                                            <input disabled="true"
-                                                   type="text"
-                                                   class="form-control"
-                                                   v-model="marca.clave_format" />
-                                        </div>
-                                        <label class="col-md-2 col-form-label">Descripción:</label>
-                                        <div class="col-md-7">
+                                        <label class="col-md-1 col-form-label">Descripción:</label>
+                                        <div class="col-md-9">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="marca.descripcion" />
+                                        </div>
+                                        <label class="col-md-1 col-form-label">Estatus:</label>
+                                        <div class="col-md-1">
+                                            <span class="badge" :style="{'background-color': marca.estado_color}">{{ marca.estado_format }}</span>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group row">
                                         <label class="col-md-1 col-form-label">Registró:</label>
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="marca.usuario_registro" />
                                         </div>
                                         <label class="col-md-2 col-form-label">Fecha Registro:</label>
-                                        <div class="col-md-3">
+                                        <div class="col-md-4">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="marca.fecha_registro_format" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">Estatus:</label>
-                                        <div class="col-md-1">
-                                            <span class="badge" :style="{'background-color': marca.estado_color}">{{ marca.estado_format }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +80,7 @@
 <script>
     import Historico from "./ShowHistorico";
     export default {
-        name: "tiro-show",
+        name: "marca-show",
         props: ['id'],
         components: {Historico},
         data() {

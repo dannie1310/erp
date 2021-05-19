@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12">
             <Create @created="paginate()" />
-            <DescargaLayout />
+            <!--<DescargaLayout />-->
         </div>
         <div class="col-12">
             <div class="card">
@@ -31,7 +31,6 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'ID Marca', field: 'idMarca', thClass: 'th_100', tdClass: 'td_100', sortable: true, thComp: require('../../../globals/th-Filter').default },
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
                     { title: 'Registró', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
@@ -90,7 +89,6 @@
                     self.$data.data = []
                     self.$data.data = marcas.map((marca, i) => ({
                         index: (i + 1) + self.query.offset,
-                        IdMarca: marca.clave_format,
                         descripcion: marca.descripcion,
                         created_at: marca.fecha_registro_format,
                         usuario_registro : marca.usuario_registro,

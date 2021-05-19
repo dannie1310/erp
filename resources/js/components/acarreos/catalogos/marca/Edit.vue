@@ -55,49 +55,49 @@
 
 <script>
 export default {
-    name: "edit-marca",
-        data() {
-            return {
-                cargando: true,
-                descripcion: '',
-            }
-        },
-        methods : {
-            find() {
-                this.cargando = true;
-                this.descripcion= '';
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
-                return this.$store.dispatch('acarreos/marca/find', {
-                    id: this.id,
-                    params: {}
-                }).then(data => {
-                    this.descripcion = data.descripcion
-                    this.cargando = false;
-                })
-            },
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.update()
-                    }
-                });
-            },
-            update() {
-                var datos = {
-                    'Descripcion' : this.descripcion,
-                }
-                return this.$store.dispatch('acarreos/marca/update', {
-                    id: this.id,
-                    data: datos
-                })
-                .then((data) => {
-                    this.$store.commit('acarreos/marca/UPDATE_MARCA', data);
-                    $(this.$refs.modal).modal('hide');
-                })
-            },
+    name: "marca-edit",
+    props: ['id'],
+    data() {
+        return {
+            cargando: true,
+            descripcion: '',
         }
-
+    },
+    methods : {
+        find() {
+            this.cargando = true;
+            this.descripcion= '';
+            $(this.$refs.modal).appendTo('body')
+            $(this.$refs.modal).modal('show');
+            return this.$store.dispatch('acarreos/marca/find', {
+                id: this.id,
+                params: {}
+            }).then(data => {
+                this.descripcion = data.descripcion
+                this.cargando = false;
+            })
+        },
+        validate() {
+            this.$validator.validate().then(result => {
+                if (result) {
+                    this.update()
+                }
+            });
+        },
+        update() {
+            var datos = {
+                'Descripcion' : this.descripcion.toUpperCase(),
+            }
+            return this.$store.dispatch('acarreos/marca/update', {
+                id: this.id,
+                data: datos
+            })
+            .then((data) => {
+                this.$store.commit('acarreos/marca/UPDATE_MARCA', data);
+                $(this.$refs.modal).modal('hide');
+            })
+        },
+    }
 }
 </script>
 

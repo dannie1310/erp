@@ -4,69 +4,60 @@
             <i class="fa fa-close"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modl-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-close"></i> DESACTIVAR TIRO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-close"></i> DESACTIVAR MARCA</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="marca">
-                        <div class="card">
-                           <div class="card-body">
-                               <div class="row">
-                                   <div class="col-md-2">
-                                       <div class="form-group">
-                                           <h6><b>ID Marca:</b></h6>
-                                       </div>
-                                   </div>
-                                   <div class="col-md-4">
-                                       <div class="form-group">
-                                           <h6>{{marca.clave_format}}</h6>
-                                       </div>
-                                   </div>
-                                   <div class="col-md-2">
-                                       <div class="form-group">
-                                           <h6><b>Estado:</b></h6>
-                                       </div>
-                                   </div>
-                                   <div class="col-md-4">
-                                       <div class="form-group">
-                                           <span class="badge" :style="{'background-color': marca.estado_color}">{{ marca.estado_format }}</span>
-                                       </div>
-                                   </div>
-                               </div>
-                               <div class="row">
-                                   <div class="col-md-3">
-                                       <div class="form-group">
-                                           <h6><b>Descripción:</b></h6>
-                                       </div>
-                                   </div>
-                                   <div class="col-md-9" v-if="tiro.concepto">
-                                       <div class="form-group">
-                                           <h6>{{marca.descripcion}}</h6>
-                                       </div>
-                                   </div>
-                               </div>
-                           </div>
-                        </div>
-                        <div class="card" v-if="marca.estado == 1">
-                            <div class="card-body">
+                    <div class="modal-body">
+                        <div v-if="cargando">
+                            <div class="row">
                                 <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="motivo" class="col-md-2 col-form-label">Motivo:</label>
-                                        <div class="col-md-10">
-                                            <textarea
-                                                name="motivo"
-                                                id="motivo"
-                                                class="form-control"
-                                                v-model="motivo"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Motivo"
-                                                :class="{'is-invalid': errors.has('motivo')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="sr-only">Cargando...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-else>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-group row">
+                                                <div class="col-md-10">
+                                                    <h6><b>Descripción:</b></h6>
+                                                    <h6>{{marca.descripcion}}</h6>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <h6><b>Estado:</b></h6>
+                                                    <span class="badge" :style="{'background-color': marca.estado_color}">{{ marca.estado_format }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="col-md-12">
+                                        <div class="form-group row error-content">
+                                            <label for="motivo" class="col-md-2 col-form-label">Motivo:</label>
+                                            <div class="col-md-10">
+                                                <textarea
+                                                    name="motivo"
+                                                    id="motivo"
+                                                    class="form-control"
+                                                    v-model="motivo"
+                                                    v-validate="{required: true}"
+                                                    data-vv-as="Motivo"
+                                                    :class="{'is-invalid': errors.has('motivo')}"
+                                                ></textarea>
+                                                <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -87,7 +78,7 @@
 
 <script>
     export default {
-        name: "desactivar_marca",
+        name: "marca-desactivar",
         props: ['id'],
         data() {
             return {

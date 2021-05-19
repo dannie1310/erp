@@ -28,7 +28,6 @@
                                     <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Descripción</th>
                                         <th scope="col">Estatus</th>
                                         <th scope="col">Registró</th>
@@ -41,7 +40,6 @@
                                     <tbody>
                                      <tr v-for="(historico, i) in historicos">
                                          <td>{{i+1}}</td>
-                                         <td>{{historico.clave_format}}</td>
                                          <td>{{historico.descripcion}}</td>
                                          <td>{{historico.estado_format}}</td>
                                          <td>{{historico.usuario_registro}}</td>
