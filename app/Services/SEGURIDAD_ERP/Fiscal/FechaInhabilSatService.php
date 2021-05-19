@@ -4,6 +4,8 @@ namespace App\Services\SEGURIDAD_ERP\Fiscal;
 
 use App\Repositories\Repository;
 use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
+use DateTime;
+use DateTimeZone;
 
 class FechaInhabilSatService
 {
@@ -34,6 +36,11 @@ class FechaInhabilSatService
 
     public function store($data)
     {
+        /** EL front envía la fecha con timezone Z (Zero) (+6 horas), por ello se actualiza el time zone a America/Mexico_City
+         * */
+        $fecha = New DateTime($data["fecha"]);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha"] = $fecha->format("Y/m/d");
         return $this->repository->create($data);
     }
 }
