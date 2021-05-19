@@ -40,9 +40,9 @@ class MarcaLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->setCellValue("A" . $i, ($i - 1));
                     $event->sheet->setCellValue("B" . $i, $marca->Descripcion);
                     $event->sheet->setCellValue("C" . $i, $marca->estado_format);
-                    $event->sheet->setCellValue("D" . $i, $marca->nombre_usuario);
+                    $event->sheet->setCellValue("D" . $i, $marca->nombre_registro);
                     $event->sheet->setCellValue("E" . $i, $marca->fecha_registro_completa_format);
-                    $event->sheet->setCellValue("F" . $i, $marca->nombre_usuario_desactivo);
+                    $event->sheet->setCellValue("F" . $i, $marca->nombre_desactivo);
                     $event->sheet->setCellValue("G" . $i, $marca->fecha_desactivo_format);
                     $event->sheet->setCellValue("H" . $i, $marca->motivo);
                     $i++;
@@ -53,6 +53,6 @@ class MarcaLayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-        return array(['#','CLAVE', 'TIPO', 'DESCRIPCION', 'ESTADO', 'REGISTRO','FECHA Y HORA REGISTRO','DESACTIVO','FECHA Y HORA DE DESACTIVACION','MOTIVO DE DESACTIVACION']);
+        return array(['#','DESCRIPCION', 'ESTADO', 'REGISTRO','FECHA Y HORA REGISTRO','DESACTIVO','FECHA Y HORA DE DESACTIVACION','MOTIVO DE DESACTIVACION']);
     }
 }
