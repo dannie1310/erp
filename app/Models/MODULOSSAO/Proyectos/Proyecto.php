@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: DBenitezc
- * Date: 23/05/2019
- * Time: 06:33 PM
- */
 
 namespace App\Models\MODULOSSAO\Proyectos;
 
@@ -19,6 +13,7 @@ class Proyecto extends Model
     protected $table = 'Proyectos.Proyectos';
     protected $primaryKey = 'IDProyecto';
     public $timestamps = false;
+    protected $fillable = ["CantidadExtraordinariasPermitidas"];
 
     protected static  function  boot()
     {
@@ -39,6 +34,26 @@ class Proyecto extends Model
     public function usuarioProyecto()
     {
         return $this->belongsTo(UsuarioProyecto::class, 'IDUsuario', 'IDUsuario');
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(TipoProyecto::class, "IDTipoProyecto", "IDTipoProyecto");
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, "IDEmpresa", "IDEmpresa");
+    }
+
+    public function logs()
+    {
+        return $this->hasMany(ProyectoLog::class, "IDProyecto", "IDProyecto");
+    }
+
+    public function unificacionProyectoObra()
+    {
+        return $this->belongsTo(UnificacionObra::class, "IDProyecto", "IDProyecto")->withoutGlobalScopes();
     }
 
     /**

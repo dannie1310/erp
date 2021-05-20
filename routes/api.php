@@ -1410,5 +1410,10 @@ $api->version('v1', function ($api) {
             $api->get('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@show');
             $api->patch('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@update');
         });
+        $api->group(['prefix' => 'proyecto'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@update')->where(['id' => '[0-9]+']);
+        });
     });
 });
