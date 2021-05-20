@@ -68,7 +68,7 @@
                     'consultar_tiro',
                     'consultar_origen',
                     'consultar_camion',
-                    'consultar_material'
+                    'consultar_material',
                     'consultar_marca',
                     'consultar_camion'
                 ])
