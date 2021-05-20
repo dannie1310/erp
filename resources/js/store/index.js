@@ -5,6 +5,7 @@ import auth from './modules/auth';
 //ACARREOS
 import camion from "./modules/acarreos/camion";
 import empresaAcarreo from "./modules/acarreos/empresa";
+import impresora from "./modules/acarreos/impresora";
 import marcaAcarreo from "./modules/acarreos/marca";
 import operador from "./modules/acarreos/operador";
 import origen from './modules/acarreos/origen';
@@ -215,6 +216,7 @@ export default new Vuex.Store({
         auth,
         'acarreos/camion' : camion,
         'acarreos/empresa' : empresaAcarreo,
+        'acarreos/impresora' : impresora,
         'acarreos/marca' : marcaAcarreo,
         'acarreos/operador' : operador,
         'acarreos/origen' : origen,
