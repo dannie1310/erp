@@ -141,6 +141,7 @@ use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
+use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -301,7 +302,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
-use App\Observers\MODULOSSAO\ControlRemesas\RemesaFolioObserver;
+use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
@@ -383,7 +384,7 @@ class AppServiceProvider extends ServiceProvider
         /**
          * MODULOSSAO
          */
-        RemesaFolio::observe(RemesaFolioObserver::class);
+        Proyecto::observe(ProyectoObserver::class);
 
         /**
         *RECEPCIÓN CFDI

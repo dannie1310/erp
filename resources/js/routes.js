@@ -3292,9 +3292,21 @@ export const routes = [
                         component: require('./components/remesas/configuracion/limite-remesa/Index').default,
                         meta: {
                             title: 'Configuración de Límites de Remesas Extraordinarias',
-                            breadcrumb: {name: 'LÍMITE DE REMESAS EXTRAORDINARIAS', parent: 'configuracion'},
+                            breadcrumb: {name: 'LÍMITE SEMANAL', parent: 'configuracion'},
                             middleware: [auth, permission],
                             permission: ['consultar_limite_remesa'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'limite-remesa-proyecto',
+                        name: 'limite-remesa-proyecto',
+                        component: require('./components/remesas/configuracion/limite-remesa-proyecto/Index').default,
+                        meta: {
+                            title: 'Configuración de Límites de Remesas Extraordinarias por Proyecto',
+                            breadcrumb: {name: 'LÍMITE POR PROYECTO', parent: 'configuracion'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa_proyecto'],
                             general: true
                         }
                     },
