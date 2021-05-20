@@ -42,9 +42,9 @@
                                          <td>{{i+1}}</td>
                                          <td>{{historico.descripcion}}</td>
                                          <td>{{historico.estado_format}}</td>
-                                         <td>{{historico.usuario_registro}}</td>
+                                         <td>{{historico.registro}}</td>
                                          <td>{{historico.fecha_registro_format}}</td>
-                                         <td>{{historico.usuario_desactivo}}</td>
+                                         <td>{{historico.desactivo}}</td>
                                          <td>{{historico.fecha_desactivo_format}}</td>
                                          <td>{{historico.motivo}}</td>
                                     </tr>
