@@ -24,7 +24,8 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'Proyecto', field: 'nombre',sortable: false, },
+                    { title: 'Obra SAO', field: 'obra',sortable: false, },
+                    { title: 'Proyecto Remesa', field: 'nombre',sortable: false, },
                     { title: 'Empresa', field: 'empresa',sortable: false, },
                     { title: 'Tipo', field: 'tipo',sortable: false, },
                     { title: 'Cantidad Límite Extraordinarias', field: 'cantidad_limite_extraordinarias',  tdClass: 'money', thClass: 'th_money', sortable: false},
@@ -32,7 +33,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { sort: 'Nombre', order: 'asc'},
+                query: {scope:'activo', sort: 'Nombre', order: 'asc'},
                 cargando: false
             }
         },
@@ -77,6 +78,7 @@
                         index: (i + 1) + self.query.offset,
                         nombre: proyecto.nombre,
                         empresa: (proyecto.empresa)? proyecto.empresa.descripcion :'',
+                        obra: proyecto.obra,
                         tipo: (proyecto.tipo)? proyecto.tipo.descripcion :'',
                         cantidad_limite_extraordinarias : proyecto.cantidad_limite_extraordinarias,
                         buttons: $.extend({}, {

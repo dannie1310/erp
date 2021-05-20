@@ -31,6 +31,7 @@ class ProyectoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'nombre' => $model->Nombre,
+            'obra' => $model->obra_sao,
             'cantidad_limite_extraordinarias' => $model->CantidadExtraordinariasPermitidas,
         ];
     }
