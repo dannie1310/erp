@@ -14,10 +14,18 @@
                     <div v-if="fechas">{{fechas.cfd_recibidos}}</div>
                 </div>
                 <div class="col-md-6">
-                    <ImpresionInforme ></ImpresionInforme>
-                    <button @click="descargarInforme" class="btn btn-primary pull-right" title="Descargar Informe">
-                        <i class="fa fa-download"></i> Descargar
-                    </button>
+                    <div class="pull-right">
+                        <button @click="calculaFechasLimite" class="btn btn-primary" title="Calcular Fechas Límite de Aclaración ante el SAT">
+                            <i class="fa fa-calendar-check"></i> Calcular Fechas de Aclaración
+                        </button>
+                        <button @click="descargarInforme" class="btn btn-primary" title="Descargar Informe">
+                            <i class="fa fa-download"></i> Descargar
+                        </button>
+                        <ImpresionInforme ></ImpresionInforme>
+                        <ImpresionInformeDefinitivos></ImpresionInformeDefinitivos>
+
+                    </div>
+
                 </div>
             </div>
             <br>
@@ -30,10 +38,10 @@
                                 <template v-for="(partidas, j) in tipo">
                                      <template v-if="partidas.tipo == 'titulo'">
                                          <tr>
-                                            <td colspan="12" style="background-color: #fff" ></td>
+                                            <td colspan="14" style="background-color: #fff" ></td>
                                         </tr>
                                         <tr>
-                                            <td colspan="12" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
+                                            <td colspan="14" :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}" >
                                                 {{partidas.etiqueta}}
                                             </td>
                                         </tr>
@@ -46,9 +54,11 @@
                                             <td>Fecha Presunto DOF</td>
                                             <td>Fecha Definitivo</td>
                                             <td>Fecha Definitivo DOF</td>
+                                            <td>Fecha Límte Aclaración SAT</td>
+                                            <td>Fecha Límte Aclaración DOF</td>
                                             <td>Fecha Corrección</td>
                                             <td>Empresa</td>
-                                            <td># CFD</td>
+                                            <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
                                         </tr>
                                     </template>
@@ -61,6 +71,8 @@
                                         <td>{{partidas.fecha_presunto_dof}}</td>
                                         <td>{{partidas.fecha_definitivo}}</td>
                                         <td>{{partidas.fecha_definitivo_dof}}</td>
+                                        <td>{{partidas.fecha_limite_sat}}</td>
+                                        <td>{{partidas.fecha_limite_dof}}</td>
                                         <td>{{partidas.fecha_autocorreccion}}</td>
                                         <td>{{partidas.empresa}}</td>
                                         <td style="text-align:right">{{partidas.no_CFDI}}</td>
@@ -72,6 +84,8 @@
                                         <td></td>
                                         <td></td>
                                         <td>{{partidas.etiqueta}}</td>
+                                        <td></td>
+                                        <td></td>
                                         <td></td>
                                         <td></td>
                                         <td></td>
@@ -94,14 +108,16 @@
 
 <script>
     import ImpresionInforme from './partials/ImpresionInforme';
+    import ImpresionInformeDefinitivos from "./partials/ImpresionInformeDefinitivos";
     export default {
         name: "InformeEFOSCFD",
-        components:{ImpresionInforme},
+        components:{ImpresionInformeDefinitivos, ImpresionInforme},
         data() {
             return {
                 informe : [],
                 fechas : [],
-                cargando : false
+                cargando : false,
+                calculando : false,
             }
         },
         mounted() {
@@ -131,6 +147,18 @@
                     })
                     .finally(() => {
                         this.cargando = false;
+                    });
+            },
+            calculaFechasLimite() {
+                this.calculando = true;
+                return this.$store.dispatch('seguridad/finanzas/ctg-efos/calcularFechasLimite', {
+
+                })
+                    .then(data => {
+                        this.getInforme();
+                    })
+                    .finally(() => {
+                        this.calculando = false;
                     });
             }
         }
