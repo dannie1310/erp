@@ -6,40 +6,25 @@ namespace App\Models\ACARREOS;
 
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ACARREOS\ImpresoraHistorico;
 
-class Impresora extends Model
+class ImpresoraHistorico extends Model
 {
     protected $connection = 'acarreos';
-    protected $table = 'impresoras';
-    public $primaryKey = 'id';
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('estatus',  1);;
-        });
-    }
+    protected $table = 'impresoras_historicos';
+    protected $primaryKey = 'id';
 
     /**
      * Relaciones Eloquent
      */
 
-    public function usuario()
+    public function usuario_registro()
     {
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
     }
 
-    public function usuarioDesactivo()
+    public function usuario_desactivo()
     {
         return $this->belongsTo(Usuario::class, 'elimino', 'idusuario');
-    }
-
-    public function historicos()
-    {
-        return $this->hasMany(ImpresoraHistorico::class, 'IdOrigen', 'IdOrigen');
     }
 
     /**
@@ -50,25 +35,10 @@ class Impresora extends Model
     /**
      * Attributes
      */
-    public function getColorEstadoAttribute()
-    {
-        switch ($this->estatus)
-        {
-            case 1:
-                return '#00a65a';
-                break;
-            case 0:
-                return '#706e70';
-                break;
-            default:
-                return '#d1cfd1';
-                break;
-        }
-    }
 
     public function getEstadoFormatAttribute()
     {
-        switch ($this->estatus)
+        switch ($this->Estatus)
         {
             case 1:
                 return 'ACTIVO';
@@ -88,22 +58,28 @@ class Impresora extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
-    public function getNombreUsuarioAttribute()
+    public function getNombreDesactivoAttribute()
     {
         try{
-            return $this->usuario->nombre_completo;
+            return $this->usuario_desactivo->nombre_completo;
         }catch (\Exception $e){
             return null;
         }
     }
 
-    public function getNombreUsuarioDesactivoAttribute()
+    public function getNombreRegistroAttribute()
     {
         try{
-            return $this->usuarioDesactivo->nombre_completo;
+            return $this->usuario_registro->nombre_completo;
         }catch (\Exception $e){
             return null;
         }
+    }
+
+    public function getFechaDesactivoFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
     }
 
 

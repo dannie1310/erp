@@ -2341,6 +2341,20 @@ export const routes = [
                                 ]
                             },
                             {
+                                path: 'impresora',
+                                name: 'impresora',
+                                component: require('./components/acarreos/catalogos/impresora/Index').default,
+                                meta: {
+                                    title: 'Impresoras',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'IMPRESORAS'
+                                    },
+                                    middleware: [auth, context],
+                                    // permission: ['consultar_origen']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,
