@@ -18,13 +18,13 @@
                         <ul class="nav nav-treeview" style="height: auto">
                             <li class="nav-item"  v-if="$root.can('consultar_limite_remesa',true)">
                                 <router-link :to="{name: 'limite-remesa'}" class="nav-link" :class="{active: this.$route.name == 'limite-remesa'}">
-                                    <i class="fa fa-calendar-week text-green nav-icon"></i>
+                                    <i class="fa fa-calendar-week nav-icon"></i>
                                     <p>Límite Semanal</p>
                                 </router-link>
                             </li>
                             <li class="nav-item"  v-if="$root.can('consultar_limite_remesa_proyecto',true)">
                                 <router-link :to="{name: 'limite-remesa-proyecto'}" class="nav-link" :class="{active: this.$route.name == 'limite-remesa-proyecto'}">
-                                    <i class="fa fa-warehouse text-green nav-icon"></i>
+                                    <i class="fa fa-warehouse nav-icon"></i>
                                     <p>Límite Por Proyecto</p>
                                 </router-link>
                             </li>
