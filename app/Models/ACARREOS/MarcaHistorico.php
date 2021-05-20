@@ -56,7 +56,7 @@ class MarcaHistorico extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
-    public function getRegistroAttribute()
+    public function getNombreRegistroAttribute()
     {
         try{
             return $this->registro->nombre_completo;
@@ -65,7 +65,7 @@ class MarcaHistorico extends Model
         }
     }
 
-    public function getDesactivoAttribute()
+    public function getNombreDesactivoAttribute()
     {
         try{
             return $this->desactivo->nombre_completo;
