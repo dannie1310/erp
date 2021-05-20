@@ -25,10 +25,10 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Obra SAO', field: 'obra',sortable: false, },
-                    { title: 'Proyecto Remesa', field: 'nombre',sortable: false, },
-                    { title: 'Empresa', field: 'empresa',sortable: false, },
-                    { title: 'Tipo', field: 'tipo',sortable: false, },
-                    { title: 'Cantidad Límite Extraordinarias', field: 'cantidad_limite_extraordinarias',  tdClass: 'money', thClass: 'th_money', sortable: false},
+                    { title: 'Proyecto Remesa', field: 'Nombre',sortable: true, thComp: require('../../../globals/th-Filter').default },
+                    { title: 'Empresa', field: 'empresa',sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Tipo Proyecto', field: 'tipo',sortable: false, thComp: require('../../../globals/th-Filter').default },
+                    { title: 'Cantidad Límite Extraordinarias', field: 'CantidadExtraordinariasPermitidas',  tdClass: 'money', thClass: 'th_money', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -76,11 +76,11 @@
                     self.$data.data = []
                     self.$data.data = proyectos.map((proyecto, i) => ({
                         index: (i + 1) + self.query.offset,
-                        nombre: proyecto.nombre,
+                        Nombre: proyecto.nombre,
                         empresa: (proyecto.empresa)? proyecto.empresa.descripcion :'',
                         obra: proyecto.obra,
                         tipo: (proyecto.tipo)? proyecto.tipo.descripcion :'',
-                        cantidad_limite_extraordinarias : proyecto.cantidad_limite_extraordinarias,
+                        CantidadExtraordinariasPermitidas : proyecto.cantidad_limite_extraordinarias,
                         buttons: $.extend({}, {
                             id_proyecto : proyecto.id,
                             edit: self.$root.can('editar_limite_remesa_proyecto') ? true : true,

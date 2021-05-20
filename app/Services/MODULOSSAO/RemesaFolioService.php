@@ -34,22 +34,22 @@ class RemesaFolioService
 
         if (isset($data['anio']))
         {
-            $this->repository->where([['Anio', 'LIKE', '%'.$data['anio'].'%']]);
+            $this->repository->where([['Anio', '=', $data['anio']]]);
         }
 
         if (isset($data['numeroSemana']))
         {
-            $this->repository->where([['NumeroSemana', 'LIKE', '%'.$data['numeroSemana'].'%']]);
+            $this->repository->where([['NumeroSemana', '=', $data['numeroSemana']]]);
         }
 
         if (isset($data['CantidadExtraordinariasPermitidas']))
         {
-            $this->repository->where([['CantidadExtraordinariasPermitidas', 'LIKE', '%'.$data['CantidadExtraordinariasPermitidas'].'%']]);
+            $this->repository->where([['CantidadExtraordinariasPermitidas', '=', $data['CantidadExtraordinariasPermitidas']]]);
         }
 
         if (isset($data['MontoLimiteExtraordinarias']))
         {
-            $this->repository->where([['MontoLimiteExtraordinarias', 'LIKE', '%'.$data['MontoLimiteExtraordinarias'].'%']]);
+            $this->repository->where([['MontoLimiteExtraordinarias', '=', $data['MontoLimiteExtraordinarias']]]);
         }
 
         return  $this->repository->paginate($data);
