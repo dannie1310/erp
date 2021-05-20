@@ -55,7 +55,8 @@
                 return this.$root.can([
                     'consultar_tiro',
                     'consultar_origen',
-                    'consultar_camion'
+                    'consultar_camion',
+                    'consultar_impresora'
                 ])
             },
         },
