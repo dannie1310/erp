@@ -24,23 +24,23 @@
     import Create from './Create'
     import DescargaLayout from "./DescargaLayout";
     export default {
-        name: "tiro-index",
-        components: {Create,DescargaLayout},
+        name: "empresa-acarreos-index",
+        components: {Create, DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'Clave', field: 'clave',sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Concepto', field: 'concepto', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Estatus', field: 'estado_tiro', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Razón Social', field: 'razonSocial',sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'RFC', field: 'rfc', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha y hora registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
+                    { title: 'Registró', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estatus', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'', include: ['concepto'], sort: 'IdTiro', order: 'asc'},
+                query: {scope:'', sort: 'IdEmpresa', order: 'asc'},
                 estado: "",
                 cargando: false
             }
@@ -56,10 +56,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('acarreos/tiro/paginate', { params: this.query})
+                return this.$store.dispatch('acarreos/empresa/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('acarreos/tiro/SET_TIROS', data.data);
-                        this.$store.commit('acarreos/tiro/SET_META', data.meta);
+                        this.$store.commit('acarreos/empresa/SET_EMPRESAS', data.data);
+                        this.$store.commit('acarreos/empresa/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -73,34 +73,34 @@
             },
         },
         computed: {
-            tiros(){
-                return this.$store.getters['acarreos/tiro/tiros'];
+            empresas(){
+                return this.$store.getters['acarreos/empresa/empresas'];
             },
             meta(){
-                return this.$store.getters['acarreos/tiro/meta'];
+                return this.$store.getters['acarreos/empresa/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            tiros: {
-                handler(tiros) {
+            empresas: {
+                handler(empresas) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = tiros.map((tiro, i) => ({
+                    self.$data.data = empresas.map((empresa, i) => ({
                         index: (i + 1) + self.query.offset,
-                        clave: tiro.clave_format,
-                        descripcion: tiro.descripcion,
-                        created_at: tiro.fecha_registro_format,
-                        estado_tiro: this.getEstado(tiro.estado_format, tiro.estado_color),
-                        concepto: tiro.path__corta_concepto,
+                        razonSocial: empresa.razon_social,
+                        rfc: empresa.rfc,
+                        created_at: empresa.fecha_registro,
+                        usuario_registro :  empresa.nombre_registro,
+                        estatus: this.getEstado(empresa.estado_format, empresa.estado_color),
                         buttons: $.extend({}, {
-                            id: tiro.id,
-                            concepto: self.$root.can('editar_tiro') ? true : false,
-                            activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
-                            desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
-                            show : self.$root.can('consultar_tiro') ? true : false,
+                            id: empresa.id,
+                            edit: self.$root.can('editar_empresa') ? true : false,
+                            activar: (empresa.estado === 0 && self.$root.can('activar_desactivar_empresa')) ? true : false,
+                            desactivar: (empresa.estado === 1 && self.$root.can('activar_desactivar_empresa')) ? true : false,
+                            show : self.$root.can('consultar_empresa') ? true : false,
                         })
                     }));
                 },

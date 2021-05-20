@@ -2355,6 +2355,20 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'empresa-acarreo',
+                                name: 'empresa-acarreo',
+                                component: require('./components/acarreos/catalogos/empresa/Index').default,
+                                meta: {
+                                    title: 'Empresas',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'EMPRESAS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_empresa']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,
