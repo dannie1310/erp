@@ -50,7 +50,6 @@ class Concepto extends Model
         return $this->hasMany(Responsable::class, 'id_concepto', 'id_concepto');
     }
 
-
     public function getAncestrosAttribute($nivel)
     {
         $size = strlen($nivel)/4;
@@ -71,7 +70,6 @@ class Concepto extends Model
         }
 
        return $ancestro;
-
     }
 
     public function getPathAttribute()
@@ -216,7 +214,6 @@ class Concepto extends Model
             ->where('nivel', 'LIKE', $this->nivel . '___.')
             ->orderBy('nivel', 'ASC');
     }
-
 
     /**
      *  Se muestra la ruta desde 3er nivel (000.000.000.)

@@ -59,7 +59,7 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   min-width: 100px;
 }
 
-.th_money, th.money, .th_rfc, th.rfc, .th_c100, th.c100
+.th_rfc, th.rfc, .th_c100, th.c100
 {
   width: 100px;
   max-width: 100px;
@@ -83,11 +83,27 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   text-align: center;
 }
 
-.th_c200, th.c200
+.th_c200, th.c200, .td_c200, td.c200
 {
     width: 200px;
     max-width: 200px;
     min-width: 200px;
+}
+
+.th_c200, th.c200
+{
+    text-align: center;
+}
+
+.th_c180, th.c180, .td_c180, td.c180
+{
+    width: 180px;
+    max-width: 180px;
+    min-width: 180px;
+}
+
+.th_c180, th.c180
+{
     text-align: center;
 }
 
@@ -98,12 +114,27 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
     text-align: center;
 }
 
+.td_c280, td.c280
+{
+    width: 280px;
+    max-width: 280px;
+    text-align: center;
+}
+
 .th_c250, th.c250
 {
   width: 250px;
   max-width: 250px;
   min-width: 250px;
   text-align: center;
+}
+
+.th_c350, th.c350
+{
+    width: 350px;
+    max-width: 350px;
+    min-width: 350px;
+    text-align: center;
 }
 
 .td_index, td.index{
@@ -177,11 +208,26 @@ th.money_input,.th_money_input
   text-align: center;
 }
 
+td.money_input, .td_money_input
+{
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
+    text-align: right;
+}
+
 td.cantidad_input,.td_cantidad_input
 {
   width: 120px;
   max-width: 120px;
   min-width: 120px;
+}
+
+th.cantidad_input,.th_cantidad_input
+{
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
 }
 
 th.cantidad_input,.th_cantidad_input

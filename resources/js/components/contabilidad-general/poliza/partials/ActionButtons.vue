@@ -1,24 +1,22 @@
 <template>
     <div class="btn-group">
-        <Show  v-bind:id="value.id" v-bind:id_empresa="value.id_empresa" />
-        <button @click="edit" type="button" class="btn btn-sm btn-outline-primary  " title="Editar" v-if="value.editar">
-            <i class="fa fa-pencil" aria-hidden="true"></i>
-        </button>
+        <router-link  :to="{ name: 'poliza-contpaq-show', params: {id: value.id}}" v-if="$root.can('consultar_poliza_ctpq',1)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <i class="fa fa-eye"></i>
+        </router-link>
+        <router-link  :to="{ name: 'poliza-contpaq-edit', params: {id: this.value.id, id_empresa: this.value.id_empresa}}" v-if="$root.can('editar_poliza_ctpq',1)" type="button" class="btn btn-sm btn-outline-warning" title="Ver">
+            <i class="fa fa-pencil"></i>
+        </router-link>
         <PDFPoliza v-bind:id="value.id" v-bind:id_empresa="value.id_empresa"></PDFPoliza>
     </div>
 </template>
 
 <script>
     import PDFPoliza from './PDFPoliza';
-    import Show from '../Show'
     export default {
         name: "action-buttons",
-        components:{Show, PDFPoliza},
+        components:{PDFPoliza},
         props: ['value'],
         methods: {
-            edit() {
-                this.$router.push({ name:'poliza-contpaq-edit', params: {id: this.value.id, id_empresa: this.value.id_empresa}});
-            },
         },
     }
 </script>

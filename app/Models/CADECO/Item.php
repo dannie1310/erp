@@ -38,7 +38,9 @@ class Item extends Model
         'cantidad_original1',
         'precio_original1',
         'id_asignacion',
-        'id_sm_partida'
+        'id_sm_partida',
+        'numero',
+        'referencia'
     ];
 
     public function almacen()

@@ -35,4 +35,9 @@ class ProcessBusquedaDiferenciasPolizas implements ShouldQueue
     {
         $this->busqueda->procesarBusquedaDiferencias();
     }
+
+    public function failed($exception)
+    {
+        $exception->getMessage();
+    }
 }

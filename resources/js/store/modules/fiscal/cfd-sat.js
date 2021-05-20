@@ -72,6 +72,33 @@ export default {
                     })
             });
         },
+        cargarXMLProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'cargar-xml-proveedor', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        descargarIndividual(context, payload) {
+
+            var urr = URI + payload.id +  '/descargar?access_token=' + this._vm.$session.get('jwt');
+
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("CFDI descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
 
         descargar(context, payload){
             let filtros = 0;
@@ -151,6 +178,56 @@ export default {
             }
             if (typeof payload.params.tipo_comprobante !== 'undefined') {
                 search = search + 'tipo_comprobante='+ payload.params.tipo_comprobante + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.base_datos !== 'undefined') {
+                search = search + 'base_datos='+ payload.params.obra + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.obra !== 'undefined') {
+                search = search + 'obra='+ payload.params.obra + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.solo_pendientes !== 'undefined') {
+                search = search + 'solo_pendientes='+ payload.params.solo_pendientes + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.solo_asociados !== 'undefined') {
+                search = search + 'solo_asociados='+ payload.params.solo_asociados + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.solo_asociados_contabilidad !== 'undefined') {
+                search = search + 'solo_asociados_contabilidad='+ payload.params.solo_asociados_contabilidad + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.base_datos_ctpq !== 'undefined') {
+                search = search + 'base_datos_ctpq='+ payload.params.base_datos_ctpq + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.ejercicio !== 'undefined') {
+                search = search + 'ejercicio='+ payload.params.ejercicio + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.periodo !== 'undefined') {
+                search = search + 'periodo='+ payload.params.periodo + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.tipo_poliza !== 'undefined') {
+                search = search + 'tipo_poliza='+ payload.params.tipo_poliza + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.folio_poliza !== 'undefined') {
+                search = search + 'folio_poliza='+ payload.params.folio_poliza + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.fecha_poliza !== 'undefined') {
+                search = search + 'folio_poliza='+ payload.params.fecha_poliza + '&';
                 filtros = +filtros + 1;
             }
 

@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 
+use App\Models\CADECO\Factura;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
@@ -65,6 +66,21 @@ class FacturaRepositorio extends Model
         if(key_exists(0,$transacciones))
         {
             return $transacciones[0];
+        } else {
+            return null;
+        }
+
+    }
+
+    public function getTransaccionFacturaAttribute()
+    {
+        $transacciones = DB::connection('cadeco')->select(DB::raw("
+  select id_transaccion from   " . $this->proyecto->base_datos . ".dbo.transacciones where id_transaccion = " . $this->id_transaccion . "
+                           "));
+        if(key_exists(0,$transacciones))
+        {
+            $factura = Factura::find($transacciones[0]->id_transaccion);
+            return $factura;
         } else {
             return null;
         }

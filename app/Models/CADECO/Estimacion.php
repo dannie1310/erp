@@ -83,6 +83,11 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function subcontrato_sgc()
+    {
+        return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function itemsXContratistas()
     {
         return $this->hasMany(ItemContratista::class, 'id_empresa', 'id_empresa');
@@ -333,6 +338,21 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function getReferenciaRevisionAttribute()
+    {
+        return $this->subcontrato_sgc->referencia;
+    }
+
+    public function getMontoRevisionAttribute()
+    {
+        return number_format($this->suma_importes - $this->autorizado, 2, ".", "");
+    }
+
+    public function getFolioRevisionFormatAttribute()
+    {
+        return 'EST ' . $this->numero_folio_format;
+    }
+
     public function getImporteRetencionAttribute()
     {
         return $this->suma_importes * $this->retencion / 100;
@@ -348,6 +368,11 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->suma_importes, 2, ".", ",");
     }
 
+    public function getMontoRevisionFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_revision, 2, ".", ",");
+    }
+
     public function getAmortizacionPendienteAttribute()
     {
         $estimaciones_anteriores = $this->subcontrato->estimaciones()->where('id_transaccion', '<', $this->id_transaccion)->get();
@@ -361,6 +386,22 @@ class Estimacion extends Transaccion
             return $estimacion_anterior->amortizacion_pendiente;
         } else {
             return 0;
+        }
+    }
+
+    public function getTipoCambioAttribute(){
+        switch((int)$this->id_moneda){
+            case 1:
+                return 1;
+                break;
+            case 2:
+                return $this->TcUsd;
+                break;
+            case 3:
+                return $this->TcEuro;
+                break;
+
+
         }
     }
 
@@ -566,7 +607,7 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        if ($this->subcontrato->impuesto != 0)
+        if ($this->subcontrato_sgc->impuesto != 0)
         {
             return $this->subtotal_orden_pago * 0.16;
         } else {

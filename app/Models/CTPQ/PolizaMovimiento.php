@@ -59,6 +59,11 @@ class PolizaMovimiento extends Model
         return $this->hasMany(LogEdicion::class, 'id_movimiento', 'Id');
     }
 
+    public function asociacionCFDI()
+    {
+        return $this->hasOne(AsocCFDI::class, "GuidRef", "Guid");
+    }
+
     public function  getCargoAttribute(){
         if($this->TipoMovto == 0)
         {

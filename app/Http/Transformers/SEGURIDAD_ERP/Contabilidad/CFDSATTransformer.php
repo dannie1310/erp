@@ -9,6 +9,10 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Http\Transformers\CADECO\Finanzas\FacturaTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Documentacion\ArchivoTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccionTransformer;
+use App\Http\Transformers\SEGURIDAD_ERP\Finanzas\FacturaRepositorioTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\CtgEstadosCFDTransformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use League\Fractal\TransformerAbstract;
@@ -21,13 +25,25 @@ class CFDSATTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'estatus'
+        'estatus',
+        'conceptos',
+        'empresa',
+        'proveedor',
+        'archivos',
+        'tipo_transaccion'
     ];
 
     protected $availableIncludes = [
         'empresa',
         'proveedor',
-        'estatus'
+        'estatus',
+        'factura_repositorio',
+        'poliza_cfdi',
+        'conceptos',
+        'cfdi_asociado',
+        'transaccion_factura',
+        'archivos',
+        'tipo_transaccion'
     ];
 
     public function transform(CFDSAT $model) {
@@ -35,6 +51,7 @@ class CFDSATTransformer extends TransformerAbstract
             'id' => (int) $model->id,
             'serie'=>$model->serie,
             'folio'=>$model->folio,
+            'referencia'=>$model->serie." ".$model->folio,
             'fecha'=>$model->fecha,
             'fecha_format' => $model->fecha_format,
             'rfc_emisor' => $model->rfc_emisor,
@@ -55,6 +72,7 @@ class CFDSATTransformer extends TransformerAbstract
             'tipo_comprobante' => $model->tipo_comprobante,
             'moneda' => $model->moneda,
             'tipo_cambio' => $model->tipo_cambio,
+            'tipo_relacion' => $model->tipo_relacion,
             'estado' => $model->estado_txt
         ];
     }
@@ -96,5 +114,80 @@ class CFDSATTransformer extends TransformerAbstract
             return $this->item($estatus, new CtgEstadosCFDTransformer);
         }
         return null;
+    }
+
+    public function includeFacturaRepositorio(CFDSAT $model)
+    {
+        if($item = $model->facturaRepositorio)
+        {
+            return $this->item($item, new FacturaRepositorioTransformer);
+        }
+        return null;
+    }
+
+    public function includePolizaCFDI(CFDSAT $model)
+    {
+        if($item = $model->polizaCFDI)
+        {
+            return $this->item($item, new PolizaCFDITransformer);
+        }
+        return null;
+    }
+
+    public function includeConceptos(CFDSAT $model)
+    {
+        if($items = $model->conceptos)
+        {
+            return $this->collection($items, new CFDSATConceptosTransformer);
+        }
+        return null;
+    }
+
+    public function includeArchivos(CFDSAT $model)
+    {
+        if($items = $model->archivos()->orderBy("obligatorio", "desc")->get())
+        {
+            return $this->collection($items, new ArchivoTransformer);
+        }
+        return null;
+    }
+
+    public function includeCFDIAsociado(CFDSAT $model)
+    {
+        if($item = $model->asociado)
+        {
+            return $this->item($item, new CFDSATTransformer);
+        }
+        return null;
+    }
+
+    public function includeTransaccionFactura(CFDSAT $model)
+    {
+        try{
+            if($item = $model->facturaRepositorio->transaccion_factura)
+            {
+                return $this->item($item, new FacturaTransformer);
+            }
+            return null;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+
+    }
+
+    public function includeTipoTransaccion(CFDSAT $model)
+    {
+        try{
+            if($item = $model->tipoTransaccion)
+            {
+                return $this->item($item, new CtgTipoTransaccionTransformer);
+            }
+            return null;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+
     }
 }

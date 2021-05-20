@@ -15,9 +15,21 @@
                     </p>
                 </a>
                 <ul class="nav nav-treeview">
+                    <li class="nav-item" v-if="$root.can('consultar_camion')">
+                        <router-link :to="{name: 'camion'}" class="nav-link" :class="{active: this.$route.name == 'camion'}">
+                            <i class="fa fa-layer-group nav-icon"></i>
+                            <p> Camiones</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_origen')">
+                        <router-link :to="{name: 'origen'}" class="nav-link" :class="{active: this.$route.name == 'origen'}">
+                            <i class="fa fa-layer-group nav-icon"></i>
+                            <p> Orígenes</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item" v-if="$root.can('consultar_tiro')">
                         <router-link :to="{name: 'tiro'}" class="nav-link" :class="{active: this.$route.name == 'tiro'}">
-                            <i class="fa fa-layer-group"></i>
+                            <i class="fa fa-layer-group nav-icon"></i>
                             <p> Tiros</p>
                         </router-link>
                     </li>
@@ -35,7 +47,9 @@
         computed: {
             catalogos() {
                 return this.$root.can([
-                    'consultar_tiro'
+                    'consultar_tiro',
+                    'consultar_origen',
+                    'consultar_camion'
                 ])
             },
         },

@@ -38,6 +38,11 @@ class ContraRecibo extends Transaccion
         return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function notasCredito()
+    {
+        return $this->hasMany(NotaCredito::class, 'id_antecedente', 'id_transaccion');
+    }
+
     public function disminuyeSaldo(Transaccion $pago){
         $this->saldo = number_format($this->saldo - ($pago->orden_pago->monto * -1),2,".","");
         $this->estado = 1;

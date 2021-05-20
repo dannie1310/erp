@@ -17,6 +17,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Models\SEGURIDAD_ERP\Permiso;
+use App\Models\SEGURIDAD_ERP\RoleUser;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -164,6 +165,14 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             $arreglo_usuarios[] = $suscripcion->id_usuario;
         }
         return $query->whereIn("idusuario",$arreglo_usuarios);
+    }
+
+    public function scopeUsuarioRol($query, $roles_txt, $id_proyecto_obra){
+        $obra = \App\Models\SEGURIDAD_ERP\Obra::find($id_proyecto_obra);
+        $roles = \App\Models\SEGURIDAD_ERP\Rol::whereIn("name", $roles_txt)->pluck("id")->toArray();
+        $usuarios = RoleUser::whereIn("role_id",$roles)->where("id_obra","=", $obra->id_obra)->where("id_proyecto","=",$obra->id_proyecto)->pluck("user_id")->toArray();
+        $usuarios = array_unique($usuarios);
+        return $query->whereIn("idusuario",$usuarios);
     }
 
     public function scopeNotificacionCI($query){
@@ -394,5 +403,16 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function routeNotificationForMail($notification)
     {
         return $this->correo;
+    }
+
+    /**
+     * Cambia la clave del usuario igh
+     * @param $clave_nueva
+     */
+    public function cambiarClave($clave_nueva)
+    {
+        $this->update([
+            'clave' => $clave_nueva
+        ]);
     }
 }

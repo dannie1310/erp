@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-primary pull-right" title="Ver Informe">
+        <button @click="init" type="button" class="btn btn-primary" title="Ver Informe">
             <i class="fa fa-file-pdf-o"></i>Ver PDF
         </button>
 
@@ -15,7 +15,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"/>Cerrar</button>
                     </div>
                 </div>
             </div>

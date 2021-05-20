@@ -63,6 +63,11 @@ class Poliza extends Model
         return $this->hasMany(LogEdicion::class, 'id_poliza', 'Id');
     }
 
+    public function asociacionCFDI()
+    {
+        return $this->hasMany(AsocCFDI::class, "GuidRef", "Guid");
+    }
+
     public function getCargosFormatAttribute()
     {
         return '$ ' . number_format(abs($this->Cargos), 2);
@@ -284,6 +289,11 @@ class Poliza extends Model
             "tipo_busqueda" => $busqueda->id_tipo_busqueda,
             "observaciones" => "",
             "id_busqueda" => $busqueda->id,
+            "ejercicio"=>$this->Ejercicio,
+            "periodo"=>$this->Periodo,
+            "tipo_poliza"=>$this->tipo_poliza->Nombre,
+            "folio_poliza"=>$this->Folio,
+            "fecha_poliza"=>$this->Fecha
         ];
         Diferencia::registrar($datos_diferencia);
     }

@@ -11,4 +11,8 @@ class Marca extends Model
     protected $connection = 'acarreos';
     protected $table = 'marcas';
     public $primaryKey = 'IdMarca';
+    protected $fillable = [
+        'Descripcion',
+        'usuario_registro'
+    ];
 }

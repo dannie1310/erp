@@ -5,6 +5,7 @@
         <MenuAlmacen></MenuAlmacen>
         <MenuAcarreos />
         <MenuContratos></MenuContratos>
+        <MenuEntregaCfdi></MenuEntregaCfdi>
         <MenuFinanzas></MenuFinanzas>
         <MenuContabilidad></MenuContabilidad>
         <MenuPresupuesto></MenuPresupuesto>
@@ -24,9 +25,11 @@ import MenuCatalogos from '../catalogos/partials/Menu';
 import MenuFormatos from '../formato/partials/Menu';
 import MenuAcarreos from '../acarreos/partials/Menu';
 import MenuPresupuesto from "../presupuesto/partials/Menu";
+import MenuEntregaCfdi from "../solicitud-recepcion-cfdi/partials/Menu";
     export default {
         name: "sao-menu",
         components:{
+            MenuEntregaCfdi,
             MenuPresupuesto,
             MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
         computed: {

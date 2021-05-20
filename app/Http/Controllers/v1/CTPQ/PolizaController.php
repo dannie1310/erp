@@ -45,6 +45,8 @@ class PolizaController extends Controller
     public function __construct(Manager $fractal, PolizaService $service, PolizaTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permisoGlobal:consultar_poliza_ctpq')->only(['show','pdf','pdfCaidaB','descargaZip']);
+        $this->middleware('permisoGlobal:editar_poliza_ctpq')->only('update');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -70,7 +72,7 @@ class PolizaController extends Controller
     public function descargaZip(Request $request){
         return $this->service->descargaZip($request->all());
     }
-    
+
     public function busquedaExcel(Request $request)
     {
         return $this->service->busquedaExcel($request->all());
@@ -78,5 +80,11 @@ class PolizaController extends Controller
 
     public function getZip(Request $request){
         return $this->service->getZip($request->all());
+    }
+
+    public function getAsociacionCFDI()
+    {
+        $respuesta =$this->service->asociarCFDI();
+        return response()->json($respuesta, 200);
     }
 }

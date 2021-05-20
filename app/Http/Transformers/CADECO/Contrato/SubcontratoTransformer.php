@@ -12,6 +12,9 @@ namespace App\Http\Transformers\CADECO\Contrato;
 use App\Http\Transformers\CADECO\ObraTransformer;
 use App\Models\CADECO\Subcontrato;
 use League\Fractal\TransformerAbstract;
+use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\CADECO\MonedaTransformer;
+use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 use App\Http\Transformers\CADECO\CostoTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
@@ -55,9 +58,11 @@ class SubcontratoTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'fecha_format' => (string)$model->fecha_format,
+            'tipo_transaccion' => $model->tipo_transaccion,
+            'folio_revision_format' => $model->folio_revision_format,
             'fecha' => (string)$model->fecha,
             'numero_folio_format'=>(string)$model->numero_folio_format,
-            'contrato_folio_format' => (string)$model->contratoProyectado->numero_folio_format,
+            'contrato_folio_format' => (string)$model->contratoProyectado_sgc->numero_folio_format,
             'subtotal'=>(float)$model->subtotal,
             'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
             'subtotal_antes_descuento' =>(string) '$ '.number_format(($model->subtotal_antes_descuento),2,".",","),
@@ -67,6 +72,10 @@ class SubcontratoTransformer extends TransformerAbstract
             'impuesto_retenido' =>(string) '$ '.number_format($model->impuesto_retenido,2,".",","),
             'retencion_iva' => $model->impuesto_retenido,
             'monto'=>(float)$model->monto,
+            'monto_revision' => (float)$model->monto_revision,
+            'monto_revision_format' => $model->monto_revision_format,
+            'tipo_cambio' => $model->tipo_cambio,
+            'referencia_revision' => $model->referencia,
             'costo'=>(string)($model->costo) ? $model->costo->descripcion : '-----',
             'id_costo'=>$model->id_costo,
             'tipo_subcontrato'=>(string)($model->clasificacionSubcontrato) ? $model->clasificacionSubcontrato->tipo->descripcion : '------',
@@ -79,6 +88,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'anticipo'=>(float)$model->anticipo,
             'anticipo_format' => $model->anticipo_format,
             'anticipo_monto_format'=>(string) '$ '.number_format($model->anticipo_monto, 2, ".", ","),
+            'anticipo_monto'=>$model->anticipo_monto,
             'observaciones'=>(string)$model->observaciones,
             'id_moneda' =>(int)$model->id_moneda,
             'destino' =>(string)$model->destino,
@@ -89,6 +99,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'monto_facturado_oc' => (float) $model->montoFacturadoSubcontrato,
             'monto_facturado_ea' => (float) $model->montoFacturadoEstimacion,
             'empresa'=>(string) $model->empresa->razon_social,
+            'seleccionado' => false,
             'id_tipo_contrato' =>($model->clasificacionSubcontrato) ? (int)$model->clasificacionSubcontrato->id_tipo_contrato:'',
             'moneda' => $model->moneda->nombre
         ];

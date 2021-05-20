@@ -71,12 +71,12 @@ class Transaccion extends Model
 
     public function getMontoFormatAttribute()
     {
-        return '$ ' . number_format(($this->monto),2);
+        return '$' . number_format(($this->monto),2);
     }
 
     public function getSaldoFormatAttribute()
     {
-        return '$ ' . number_format($this->saldo,2);
+        return '$' . number_format($this->saldo,2);
     }
 
     public function getFechaFormatAttribute()
@@ -100,7 +100,6 @@ class Transaccion extends Model
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
             $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
-            // dd($antecedente, $this::TIPO_ANTECEDENTE, $this::OPCION_ANTECEDENTE);
             if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opciones != $this::OPCION_ANTECEDENTE)
             {
                 return false;
@@ -265,11 +264,11 @@ class Transaccion extends Model
     }
 
     public function getSubtotalFormatAttribute(){
-        return '$ ' . number_format($this->subtotal, 2, '.', ',');
+        return '$' . number_format($this->subtotal, 2, '.', ',');
     }
 
     public function getImpuestoFormatAttribute(){
-        return '$ ' . number_format($this->impuesto, 2, '.', ',');
+        return '$' . number_format($this->impuesto, 2, '.', ',');
     }
 
     public function moneda()

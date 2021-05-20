@@ -9,10 +9,17 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
+use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
+use App\Models\SEGURIDAD_ERP\Documentacion\Archivo;
+use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
-use Carbon\Carbon;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +53,16 @@ class CFDSAT extends Model
         ,"estado_txt"
         ,"fecha_cancelacion"
         ,"tipo_cambio"
+        ,"id_solicitud_recepcion"
+        ,"ultima_verificacion"
+        ,"no_verificable"
+        ,"cancelado"
+        ,"metodo_pago"
+        ,"tipo_relacion"
+        ,"cfdi_relacionado"
+        ,"forma_pago"
+        ,"fecha_pago"
+        ,"id_tipo_transaccion"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
@@ -54,6 +71,11 @@ class CFDSAT extends Model
     public function carga()
     {
         return $this->belongsTo(CargaCFDSAT::class, 'id_carga_cfd_sat', 'id');
+    }
+
+    public function solicitudRecepcion()
+    {
+        return $this->belongsTo(SolicitudRecepcionCFDI::class, "id_solicitud_recepcion", "id");
     }
 
     public function conceptos()
@@ -81,6 +103,11 @@ class CFDSAT extends Model
         return $this->belongsTo(EFOS::class,"rfc_emisor","rfc");
     }
 
+    public function asociado()
+    {
+        return $this->belongsTo(CFDSAT::class,"cfdi_relacionado","uuid");
+    }
+
     public function autocorreccion()
     {
         return $this->hasOne(CFDAutocorreccion::class, "id_cfd_sat", "id");
@@ -89,6 +116,41 @@ class CFDSAT extends Model
     public function ctgEstado()
     {
         return $this->belongsTo(CtgEstadoCFD::class, 'estado', 'id');
+    }
+
+    public function tipoTransaccion()
+    {
+        return $this->belongsTo(CtgTipoTransaccion::class, "id_tipo_transaccion", "id");
+    }
+
+    public function tipoComprobante()
+    {
+        return $this->belongsTo(TipoComprobante::class, "tipo_comprobante", "tipo_comprobante");
+    }
+
+    public function facturaRepositorio()
+    {
+        return $this->hasOne(FacturaRepositorio::class, "uuid", "uuid");
+    }
+
+    public function polizaCFDI()
+    {
+        return $this->hasOne(PolizaCFDI::class, "uuid", "uuid");
+    }
+
+    public function documentosPagados()
+    {
+        return $this->hasMany(CFDSATDocumentosPagados::class, "id_cfdi_pago", "id");
+    }
+
+    public function pagos()
+    {
+        return $this->hasMany(CFDSATDocumentosPagados::class, "id_cfdi_pagado", "id");
+    }
+
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class, "id_cfdi", "id");
     }
 
     public function scopeDeEFO($query)
@@ -111,46 +173,26 @@ class CFDSAT extends Model
         return $query->where('tipo_comprobante', '!=', $tipo);
     }
 
-    public function registrar($data)
-    {
-        $factura = null;
-        try {
-            DB::connection('seguridad')->beginTransaction();
-
-            $cfd = $this->create($data);
-            if(key_exists("conceptos",$data)){
-                foreach($data["conceptos"] as $concepto){
-                    $cfd->conceptos()->create($concepto);
-                }
-            }
-
-            if(key_exists("traslados",$data)){
-                foreach($data["traslados"] as $traslado){
-                    $cfd->traslados()->create($traslado);
-                }
-            }
-            DB::connection('seguridad')->commit();
-            return $cfd;
-
-        } catch (\Exception $e) {
-            dd($data);
-            DB::connection('seguridad')->rollBack();
-            abort(400, $e->getMessage());
-        }
-    }
-
-    public static function getFechaUltimoCFDTxt()
-    {
-        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
-        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
-        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
-        $fecha = "CFD cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
-        return $fecha;
+    public function scopeParaProyecto($query){
+        $rfc_contexto = Obra::find(Context::getIdObra())->rfc;
+        $proyecto_contexto = Proyecto::where("base_datos","=",Context::getDatabase())->first()->id;
+        return $query->where("cfd_sat.rfc_receptor","=", $rfc_contexto)
+            ->join(Context::getDatabase().".dbo.empresas","rfc_emisor","=","empresas.rfc")
+            ->leftJoin("Finanzas.repositorio_facturas","repositorio_facturas.uuid","=","cfd_sat.uuid")
+            ->whereNull("repositorio_facturas.uuid")
+            ->orWhere("repositorio_facturas.id_proyecto","=", $proyecto_contexto)->where("repositorio_facturas.id_obra","=",Context::getIdObra())
+            ->select("cfd_sat.*")->distinct()
+            ;
     }
 
     public function scopePorProveedor($query, $id_proveedor)
     {
         return $query->where('id_proveedor_sat', '=', $id_proveedor);
+    }
+
+    public function scopeEnSolicitud($query)
+    {
+        return $query->whereHas('solicitudRecepcion');
     }
 
     public function scopeBancoGlobal($query)
@@ -162,6 +204,15 @@ class CFDSAT extends Model
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public static function getFechaUltimoCFDTxt()
+    {
+        $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
+        $meses = array("enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre");
+        $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
+        $fecha = "CFDI cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
+        return $fecha;
     }
 
     public function getTotalFormatAttribute()
@@ -189,6 +240,11 @@ class CFDSAT extends Model
         return '$ ' . number_format(($this->total_impuestos_trasladados),2);
     }
 
+    public function getReferenciaAttribute()
+    {
+        return $this->serie .' '. $this->folio;
+    }
+
     public function getXMLAttribute()
     {
         $xml = DB::table("Contabilidad.cfd_sat")
@@ -196,5 +252,90 @@ class CFDSAT extends Model
             ->where("id",$this->id)
             ->first();
         return $xml->xml;
+    }
+
+    public function registrar($data)
+    {
+        $factura = null;
+        try {
+            DB::connection('seguridad')->beginTransaction();
+
+            $cfd = $this->create($data);
+            if(key_exists("conceptos",$data)){
+                foreach($data["conceptos"] as $concepto){
+                    $conceptoObj = $cfd->conceptos()->create($concepto);
+                    if(key_exists("traslados",$concepto)){
+                        foreach($concepto["traslados"] as $traslado){
+                            $conceptoObj->traslados()->create($traslado);
+                        }
+                    }
+                }
+            }
+
+            if(key_exists("traslados",$data)){
+                foreach($data["traslados"] as $traslado){
+                    $cfd->traslados()->create($traslado);
+                }
+            }
+
+            if(key_exists("documentos_pagados",$data)){
+                foreach($data["documentos_pagados"] as $documento_pagado){
+                    $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
+                    if($cfdi_pagado){
+                        $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
+                    }
+                    $cfd->documentosPagados()->create($documento_pagado);
+                }
+            }
+            DB::connection('seguridad')->commit();
+            return $cfd;
+
+        } catch (\Exception $e) {
+            dd($e->getMessage(),$data);
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function generaDocumentos()
+    {
+        if($this->id_tipo_transaccion>0)
+        {
+            $tiposArchivo = $this->tipoTransaccion->tiposArchivo;
+            foreach($tiposArchivo as $tipoArchivo){
+                $archivo["id_tipo_archivo"] = $tipoArchivo->id_tipo_archivo;
+                $archivo["obligatorio"] = $tipoArchivo->obligatorio;
+                try{
+                    $this->archivos()->create($archivo);
+                }catch (\Exception $e){
+
+                }
+            }
+        }
+    }
+
+    public function actualizaObligatoriedadDocumentos()
+    {
+        if($this->id_tipo_transaccion>0)
+        {
+            $idTiposArchivoObligatorios = $this->tipoTransaccion->tiposArchivo->where("obligatorio","=","1")->pluck("id_tipo_archivo")->toArray();
+            foreach($this->archivos as $archivo){
+                if(!in_array($archivo->id_tipo_archivo, $idTiposArchivoObligatorios)){
+                    $archivo->obligatorio = 0;
+                    $archivo->save();
+                }
+            }
+        }
+    }
+
+    public function eliminaDocumentos()
+    {
+        $archivos = $this->archivos;
+        foreach($archivos as $archivo)
+        {
+            if(!$archivo->hashfile){
+                $archivo->delete();
+            }
+        }
     }
 }

@@ -659,16 +659,16 @@ class OrdenCompraFormato extends FPDI
                 $this->SetRadius([0,0,0,0,0,0,0,0,0]);
             }
 
-            $precio = !empty($p->orden_partida_complemento->descuento) ? $p->precio_material : $p->precio_unitario;
-            $precio_neto = !empty($p->orden_partida_complemento->descuento) ? ($p->precio_material - (($p->orden_partida_complemento->descuento * $p->precio_material) / 100)) : $p->precio_material;
+            $precio_unitario = ($p->descuento>0) ? $p->precio_material : $p->precio_unitario;
+            $precio_neto = $p->precio_unitario;
 
             $this->Row([$ac,
                 number_format($p->cantidad,2, '.', ','),
                 $this->material[0]->unidad,
                 $this->material[0]->numero_parte,
                 utf8_decode($this->material[0]->descripcion),
-                number_format($precio,2, '.', ','),
-                (!empty($p->orden_partida_complemento) ? number_format($p->orden_partida_complemento->descuento,2, '.', ',') : '-'),
+                number_format($precio_unitario,2, '.', ','),
+                (($p->descuento>0) ? number_format($p->descuento,2, '.', ',')."%" : '-'),
                 number_format($precio_neto,2, '.', ','),
                 number_format($precio_neto * $p->cantidad,2, '.', ',')
             ]);

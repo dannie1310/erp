@@ -533,17 +533,17 @@ class FacturaService
             $empresa = $this->repository->getEmpresaPorId($id_empresa);
             if($empresa["rfc"] != $arreglo_cfd["emisor"]["rfc"]){
                 if($arreglo_cfd["tipo_comprobante"] == "E"){
-                    abort(500, "El emisor de los CFD no coincide, favor de verificar");
+                    abort(500, "El emisor de los CFDI no coincide, favor de verificar");
                 }
             }
         }
         if($arreglo_cfd["tipo_comprobante"] == "I" && $tipo == 2)
         {
-            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo egreso (Nota de Crédito)");
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo egreso (Nota de Crédito)");
         }
         elseif($arreglo_cfd["tipo_comprobante"] == "E" && $tipo == 1)
         {
-            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo ingreso (Factura)");
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
         return $arreglo_cfd;
     }
@@ -576,6 +576,23 @@ class FacturaService
         $arreglo_cfd = $cfd->getArregloFactura();
         $pdf = new CFDI($arreglo_cfd);
         return $pdf;
+    }
+
+    public function getDocumentos($id){
+        return $this->repository->show($id)->getDocumentos();
+    }
+
+    public function storeRevision($data){
+        return $this->repository->show($data['factura']['id'])->storeRevision($data);
+    }
+
+    public function storeRevisionVarios($data){
+        return $this->repository->show($data['factura']['id'])->storeRevisionVarios($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
     }
 }
 

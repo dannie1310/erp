@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\ACARREOS\Camion;
+use App\Models\ACARREOS\CamionImagen;
 use App\Models\ACARREOS\InicioCamion;
+use App\Models\ACARREOS\Origen;
+use App\Models\ACARREOS\Tag;
 use App\Models\ACARREOS\Tiro;
 use App\Models\ACARREOS\TiroConcepto;
 use App\Models\ACARREOS\ViajeNeto;
@@ -94,6 +98,7 @@ use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\LiberacionFondoGarantia;
 use App\Models\CADECO\Material;
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\NotaCredito;
 use App\Models\CADECO\NuevoLote;
 use App\Models\CADECO\NuevoLotePartida;
 use App\Models\CADECO\OrdenCompra;
@@ -144,6 +149,8 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
+use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
+use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -158,6 +165,7 @@ use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
@@ -167,7 +175,11 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
+use App\Observers\ACARREOS\CamionImagenObserver;
+use App\Observers\ACARREOS\CamionObserver;
 use App\Observers\ACARREOS\InicioCamionObserver;
+use App\Observers\ACARREOS\OrigenObserver;
+use App\Observers\ACARREOS\TagObserver;
 use App\Observers\ACARREOS\TiroConceptoObserver;
 use App\Observers\ACARREOS\TiroObserver;
 use App\Observers\ACARREOS\ViajeNetoObserver;
@@ -258,6 +270,7 @@ use App\Observers\CADECO\ItemSubcontratoObserver;
 use App\Observers\CADECO\LiberacionFondoGarantiaObserver;
 use App\Observers\CADECO\MaterialObserver;
 use App\Observers\CADECO\MovimientoObserver;
+use App\Observers\CADECO\NotaCreditoObserver;
 use App\Observers\CADECO\NuevoLoteObserver;
 use App\Observers\CADECO\NuevoLotePartidaObserver;
 use App\Observers\CADECO\OrdenCompraObserver;
@@ -308,6 +321,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
@@ -318,6 +332,7 @@ use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDNoDeducidoObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\FechaInhabilSatObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
@@ -349,6 +364,8 @@ use App\Observers\CADECO\SubcontratosEstimaciones\PenalizacionObserver;
 use App\Observers\CADECO\UnidadComplementoObserver;
 use App\Observers\CADECO\UnidadObserver;
 use Illuminate\Support\ServiceProvider;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
+use App\Observers\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIObserver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -363,11 +380,19 @@ class AppServiceProvider extends ServiceProvider
         /**
          * ACARREOS
          */
+        CamionImagen::observe(CamionImagenObserver::class);
+        Camion::observe(CamionObserver::class);
         InicioCamion::observe(InicioCamionObserver::class);
+        Origen::observe(OrigenObserver::class);
+        Tag::observe(TagObserver::class);
         Tiro::observe(TiroObserver::class);
         TiroConcepto::observe(TiroConceptoObserver::class);
         ViajeNeto::observe(ViajeNetoObserver::class);
         VolumenDetalle::observe(VolumenDetalleObserver::class);
+            /**
+             * SCA CONFIGURACION
+             */
+            \App\Models\ACARREOS\SCA_CONFIGURACION\Tag::observe(\App\Observers\ACARREOS\SCA_CONFIGURACION\TagObserver::class);
 
         /**
          * CTPQ
@@ -375,6 +400,17 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
         \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
+
+        /**
+         * MODULOSSAO
+         */
+        Proyecto::observe(ProyectoObserver::class);
+
+        /**
+        *RECEPCIÓN CFDI
+         */
+        SolicitudRecepcionCFDI::observe(SolicitudRecepcionCFDIObserver::class);
+
 
         /**
          * CADECO
@@ -552,6 +588,7 @@ class AppServiceProvider extends ServiceProvider
             ItemEstimacion::observe(EstimacionPartidaObserver::class);
             ItemSolicitudCompra::observe(SolicitudCompraPartidaObserver::class);
             Factura::observe(FacturaObserver::class);
+            NotaCredito::observe(NotaCreditoObserver::class);
             Familia::observe(FamiliaObserver::class);
             Fondo::observe(FondoObserver::class);
             Inventario::observe(InventarioObserver::class);
@@ -621,6 +658,7 @@ class AppServiceProvider extends ServiceProvider
             CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
             CFDNoDeducido::observe(CFDNoDeducidoObserver::class);
             EFOS::observe(EFOSObserver::class);
+            FechaInhabilSat::observe(FechaInhabilSatObserver::class);
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
 

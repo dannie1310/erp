@@ -125,6 +125,76 @@ export const routes = [
                 },
             },
             {
+                path: 'solicitud-recepcion-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'solicitud-recepcion-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Index').default,
+                        meta: {
+                            title: 'Listado de Solicitudes de Revisión de CFDI',
+                            breadcrumb: {parent:'home', name: 'SOLICITUDES DE REVISIÓN DE CFDI'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proyecto'
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'recepcion-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                children: [
+                    {
+                        path: '',
+                        name: 'recepcion-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/BandejaEntrada').default,
+                        meta: {
+                            title: 'Recepción de CFDI a Revisión',
+                            breadcrumb: {parent:'home', name: 'RECEPCIÓN DE CFDI'},
+                            middleware: [auth, context, permission],
+                            permission: 'aprobar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id/aprobar',
+                        name: 'solicitud-recepcion-cfdi-aprobar',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Aprobar').default,
+                        props: true,
+                        meta: {
+                            title: 'Aprobar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'APROBAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'aprobar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id/rechazar',
+                        name: 'solicitud-recepcion-cfdi-rechazar',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Rechazar').default,
+                        props: true,
+                        meta: {
+                            title: 'Rechazar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'RECHAZAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'rechazar_solicitud_recepcion_cfdi'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'solicitud-recepcion-cfdi-show-proyecto',
+                        component: require('./components/solicitud-recepcion-cfdi/recepcion-cfdi/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'recepcion-cfdi', name: 'VER SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proyecto',
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'compras',
                 component: require('./components/compras/partials/Layout.vue').default,
                 children: [
@@ -1316,7 +1386,7 @@ export const routes = [
                                 name: 'factura',
                                 component: require('./components/finanzas/factura/Index').default,
                                 meta:{
-                                    title: 'Facturas',
+                                    title: 'Lista de Facturas',
                                     breadcrumb: {name: 'FACTURAS', parent: 'finanzas'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_factura'
@@ -1347,7 +1417,54 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_factura'
                                 }
+                            },
+                            {
+                                path: ':id/revisar',
+                                name: 'factura-revisar',
+                                component: require('./components/finanzas/factura/Revision').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['revisar_factura'],
+                                }),
+                                meta: {
+                                    title: 'Revisión de Factura',
+                                    breadcrumb: { parent: 'factura', name: 'REVISIÓN FACTURA'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'revisar_factura'
+                                }
+                            },
+                            {
+                                path: ':id/varios',
+                                name: 'factura-varios-revisar',
+                                component: require('./components/finanzas/factura/RevisionVario').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_factura_varios'],
+                                }),
+                                meta: {
+                                    title: 'Factura de Varios',
+                                    breadcrumb: { parent: 'factura', name: 'FACTURA VARIOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_factura_varios'
+                                }
                             }
+                        ]
+                    },
+                    {
+                        path:'cfdi',
+                        component: require('./components/finanzas/factura/Layout').default,
+                        children: [
+                            {
+                                path:'/',
+                                name: 'cfdi',
+                                component: require('./components/finanzas/cfdi/Index').default,
+                                meta:{
+                                    title: 'CFDI',
+                                    breadcrumb: {name: 'CFDI', parent: 'finanzas'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cfdi'
+                                }
+                            },
                         ]
                     },
                     {
@@ -1800,6 +1917,24 @@ export const routes = [
                             middleware: [auth, context, permission],
                             permission: 'consultar_tipo_cuenta_contable'
                         }
+                    },
+                    {
+                        path: 'poliza-cfdi',
+                        component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"poliza-cfdi-proyecto",
+                                component: require('./components/contabilidad/poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Pólizas-CFDI',
+                                    breadcrumb: {parent: 'contabilidad', name: 'PÓLIZAS CFDI'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_poliza'],
+                                    general: true
+                                }
+                            },
+                        ]
                     },
                     {
                         path: 'poliza',
@@ -2282,6 +2417,61 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'camion',
+                                component: require('./components/acarreos/catalogos/camion/Layout').default,
+                                children: [
+                                    {
+                                        path: '/',
+                                        name: 'camion',
+                                        component: require('./components/acarreos/catalogos/camion/Index').default,
+                                        meta: {
+                                            title: 'Camiones',
+                                            breadcrumb: {parent: 'catalogo', name: 'CAMIONES'},
+                                            middleware: [auth, context, permission],
+                                            permission: ['consultar_camion']
+                                        }
+                                    },
+                                    {
+                                        path: ':id',
+                                        name: 'camion-show',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Show').default,
+                                        meta: {
+                                            title: 'Consultar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'CONSULTAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'consultar_camion'
+                                        }
+                                    },
+                                    {
+                                        path: ':id/edit',
+                                        name: 'camion-edit',
+                                        props: true,
+                                        component: require('./components/acarreos/catalogos/camion/Edit').default,
+                                        meta: {
+                                            title: 'Editar Camión',
+                                            breadcrumb: {parent: 'camion', name: 'EDITAR'},
+                                            middleware: [auth, context, permission],
+                                            permission: 'editar_camion'
+                                        }
+                                    },
+                                ]
+                            },
+                            {
+                                path: 'origen',
+                                name: 'origen',
+                                component: require('./components/acarreos/catalogos/origen/Index').default,
+                                meta: {
+                                    title: 'Orígenes',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'ORÍGENES'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_origen']
+                                }
+                            },
+                            {
                                 path: 'tiro',
                                 name: 'tiro',
                                 component: require('./components/acarreos/catalogos/tiro/Index').default,
@@ -2396,16 +2586,30 @@ export const routes = [
                 }
             },
             {
-                path: 'polizas',
+                path:"seleccionar-empresa",
+                name:"seleccionar-empresa",
+                component: require('./components/contabilidad-general/poliza/SeleccionarEmpresa.vue').default,
+                meta: {
+                    title: 'Seleccionar Empresa',
+                    breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
+                    middleware: [auth, permission],
+                    permission: ['editar_poliza','consultar_poliza'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_empresa/polizas',
+                props: true,
                 component: require('./components/contabilidad-general/poliza/Layout.vue').default,
                 children:[
                     {
                         path:"/",
                         name:"poliza-contpaq",
+                        props: true,
                         component: require('./components/contabilidad-general/poliza/Index.vue').default,
                         meta: {
                             title: 'Pólizas',
-                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS'},
+                            breadcrumb: {parent: 'seleccionar-empresa', name: 'PÓLIZAS'},
                             middleware: [auth, permission],
                             permission: ['editar_poliza','consultar_poliza'],
                             general: true
@@ -2413,6 +2617,19 @@ export const routes = [
                     },
                     {
                         path: ':id',
+                        name: 'poliza-contpaq-show',
+                        props: true,
+                        component: require('./components/contabilidad-general/poliza/Show').default,
+                        meta: {
+                            title: 'Consultar Póliza',
+                            breadcrumb: {parent: 'poliza-contpaq', name: 'CONSULTAR'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/edit',
                         name: 'poliza-contpaq-edit',
                         props: true,
                         component: require('./components/contabilidad-general/poliza/Edit').default,
@@ -2421,6 +2638,24 @@ export const routes = [
                             breadcrumb: {parent: 'poliza-contpaq', name: 'EDITAR'},
                             middleware: [auth, permission],
                             permission: 'editar_poliza',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'poliza-cfdi',
+                component: require('./components/contabilidad-general/poliza-cfdi/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"poliza-cfdi",
+                        component: require('./components/contabilidad-general/poliza-cfdi/Index.vue').default,
+                        meta: {
+                            title: 'Pólizas-CFDI',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'PÓLIZAS CFDI'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
                             general: true
                         }
                     },
@@ -2592,6 +2827,52 @@ export const routes = [
                             general: true
                         }
                     }
+                ]
+            },
+            {
+                path: 'cuentas-saldo-negativo',
+                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-saldo-negativo",
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Index.vue').default,
+                        meta: {
+                            title: 'Cuentas contables con saldos negativos',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'CUENTAS CON SALDOS NEGATIVOS'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_poliza'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'cuenta-saldo-negativo-detalle',
+                        props: true,
+                        component: require('./components/contabilidad-general/cuentas-saldos-negativos/Informe').default,
+                        meta: {
+                            title: 'Detalle de Saldo',
+                            breadcrumb: {parent: 'cuentas-saldo-negativo', name: 'DETALLE'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_poliza',
+                            general: true
+                        },
+                        children:[
+                            {
+                                path: 'movimientos/:aniomes',
+                                name: 'cuenta-saldo-negativo-detalle-movimientos',
+                                props: true,
+                                component: require('./components/contabilidad-general/cuentas-saldos-negativos/Movimientos').default,
+                                meta: {
+                                    title: 'Detalle de Movimientos',
+                                    breadcrumb: {parent: 'cuenta-saldo-negativo-detalle', name: 'MOVIMIENTOS'},
+                                    middleware: [auth, permission],
+                                    permission: 'consultar_poliza',
+                                    general: true
+                                },
+                            }
+                        ]
+                    },
                 ]
             },
             {
@@ -2790,6 +3071,77 @@ export const routes = [
         ]
     },
     {
+        path: '/entrega-cfdi',
+        components:  {
+            default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+            menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
+        },
+        children:[
+            {
+                path:'',
+                name: 'entrega-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
+                    meta: {
+                    title: 'Listado de Solicitudes de Revisión de CFDI',
+                    middleware: [auth, permission],
+                    permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'seleccionar-cfdi',
+                name: 'seleccionar-cfdi',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/SeleccionarCFDI.vue').default,
+                meta: {
+                    title: 'Seleccionar CFDI',
+                    breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: ':id_cfdi/create',
+                props : true,
+                name: 'solicitud-recepcion-cfdi-create',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
+                meta: {
+                    title: 'Registrar Solicitud de Revisión de CFDI',
+                    breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_solicitud_recepcion_cfdi'],
+                    general: true
+                }
+            },
+            {
+                path: ':id',
+                name: 'solicitud-recepcion-cfdi-show',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
+                props: true,
+                meta: {
+                    title: 'Consultar Solicitud de Revisión de CFDI',
+                    breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
+                    general: true
+                }
+            },
+            {
+                path: ':id/cancelar',
+                name: 'solicitud-recepcion-cfdi-cancelar',
+                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
+                props: true,
+                meta: {
+                    title: 'Cancelar Solicitud de Revisión de CFDI',
+                    breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
+                    middleware: [auth, permission],
+                    permission: 'cancelar_solicitud_recepcion_cfdi',
+                    general: true
+                }
+            },
+        ]
+    },
+    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,
@@ -2805,6 +3157,36 @@ export const routes = [
                     permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_no_deducido_cfd_efo'],
                     general: true
                 }
+            },
+            {
+                path: 'no-localizados',
+                component: require('./components/fiscal/no-localizados/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"no-localizados",
+                        component: require('./components/fiscal/no-localizados/Index.vue').default,
+                        meta: {
+                            title: 'Lista de contribuyentes no localizados por el SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'NO LOCALIZADOS SAT'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe',
+                        name: 'informe-no-localizados',
+                        component: require('./components/fiscal/no-localizados/InformeNoLocalizados.vue').default,
+                        meta: {
+                            title: 'Informe de Proveedores No Localizados',
+                            breadcrumb: {name: 'INFORME', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
+                ]
             },
             {
                 path: 'efos-empresa',
@@ -2827,7 +3209,7 @@ export const routes = [
                         name: 'informe-efos-vs-cfd',
                         component: require('./components/fiscal/efos/InformeEFOSCFD').default,
                         meta: {
-                            title: 'Informe Listado EFOS vs CFD Recibidos',
+                            title: 'Informe Listado EFOS vs CFDI Recibidos',
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
@@ -2839,7 +3221,7 @@ export const routes = [
                         name: 'informe-efos-vs-cfd-5a',
                         component: require('./components/fiscal/efos/InformeEFOSCFD5A').default,
                         meta: {
-                            title: 'Informe Listado EFOS vs CFD Recibidos (Desglosado)',
+                            title: 'Informe Listado EFOS vs CFDI Recibidos (Desglosado)',
                             breadcrumb: {name: 'INFORME DESGLOSADO', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
@@ -2858,8 +3240,8 @@ export const routes = [
                         name:"cfd-sat",
                         component: require('./components/fiscal/cfd/cfd-sat/Index.vue').default,
                         meta: {
-                            title: 'CFD SAT',
-                            breadcrumb: {parent: 'fiscal', name: 'CFD SAT'},
+                            title: 'CFDI SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'CFDI SAT'},
                             middleware: [auth, permission],
                             permission: ['consultar_poliza','consultar_autocorreccion_cfd_efo', 'consultar_informe_cfd_x_empresa_x_mes','consultar_no_deducido_cfd_efo'],
                             general: true
@@ -2874,8 +3256,8 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'Autocorrección de CFD EFOS',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFD'},
+                                    title: 'Autocorrección de CFDI EFOS',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'AUTOCORRECCIÓN DE CFDI'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_autocorreccion_cfd_efo',
                                     general: true,
@@ -2887,7 +3269,7 @@ export const routes = [
                                 name: 'autocorreccion-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/autocorreccion-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar Autocorrección de CFD EFOS',
+                                    title: 'Registrar Autocorrección de CFDI EFOS',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'autocorreccion-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_autocorreccion_cfd_efo'],
@@ -2905,8 +3287,8 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Index.vue').default,
                                 meta: {
-                                    title: 'CFD No Deducidos de EFOS Definitivos',
-                                    breadcrumb: {parent: 'cfd-sat', name: 'CFD NO DEDUCIDOS'},
+                                    title: 'CFDI No Deducidos de EFOS Definitivos',
+                                    breadcrumb: {parent: 'cfd-sat', name: 'CFDI NO DEDUCIDOS'},
                                     middleware: [auth, permission],
                                     permission: 'consultar_no_deducido_cfd_efo',
                                     general: true,
@@ -2918,7 +3300,7 @@ export const routes = [
                                 name: 'no-deducidos-cfd-efos-create',
                                 component: require('./components/fiscal/cfd/no-deducidos-cfd-efo/Create.vue').default,
                                 meta: {
-                                    title: 'Registrar CFD No Deducidos de EFOS Definitivos',
+                                    title: 'Registrar CFDI No Deducidos de EFOS Definitivos',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'no-deducidos-cfd-efos'},
                                     middleware: [auth, permission],
                                     permission: ['registrar_no_deducido_cfd_efo'],
@@ -2948,6 +3330,24 @@ export const routes = [
                             breadcrumb: {name: 'INFORME', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfdi_x_empresa_desglosado'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'fechas-inhabiles-sat',
+                component: require('./components/fiscal/fechas-inhabiles-sat/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"fechas-inhabiles-sat",
+                        component: require('./components/fiscal/fechas-inhabiles-sat/Index.vue').default,
+                        meta: {
+                            title: 'Fechas Inhábiles SAT',
+                            breadcrumb: {parent: 'fiscal', name: 'FECHAS INHÁBILES'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_fechas_inhabiles_sat'],
                             general: true
                         }
                     },
@@ -3011,6 +3411,67 @@ export const routes = [
                             breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
                             middleware: [auth, permission],
                             permission: ['consultar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/remesas',
+        components:  {
+            default: require('./components/remesas/partials/Layout.vue').default,
+            menu: require('./components/remesas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'remesas',
+                meta: {
+                    title: 'SISTEMA DE REMESAS',
+                    middleware: [auth, permission],
+                    permission: ['consultar_limite_remesa'],
+                    general: true
+                }
+            },
+            {
+                path: 'configuracion',
+                component: require('./components/remesas/configuracion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'configuracion',
+                        component: require('./components/remesas/configuracion/Index').default,
+                        meta: {
+                            title: 'Configuración',
+                            breadcrumb: {parent: 'remesas', name: 'CONFIGURACIÓN'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'limite-remesa',
+                        name: 'limite-remesa',
+                        component: require('./components/remesas/configuracion/limite-remesa/Index').default,
+                        meta: {
+                            title: 'Configuración de Límites de Remesas Extraordinarias',
+                            breadcrumb: {name: 'LÍMITE SEMANAL', parent: 'configuracion'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'limite-remesa-proyecto',
+                        name: 'limite-remesa-proyecto',
+                        component: require('./components/remesas/configuracion/limite-remesa-proyecto/Index').default,
+                        meta: {
+                            title: 'Configuración de Límites de Remesas Extraordinarias por Proyecto',
+                            breadcrumb: {name: 'LÍMITE POR PROYECTO', parent: 'configuracion'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa_proyecto'],
                             general: true
                         }
                     },
