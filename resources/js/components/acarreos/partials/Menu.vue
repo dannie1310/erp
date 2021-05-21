@@ -27,6 +27,12 @@
                             <p> Orígenes</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" v-if="$root.can('consultar_impresora')">
+                        <router-link :to="{name: 'impresora'}" class="nav-link" :class="{active: this.$route.name == 'impresora'}">
+                            <i class="fa fa-layer-group nav-icon"></i>
+                            <p> Impresoras</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item" v-if="$root.can('consultar_tiro')">
                         <router-link :to="{name: 'tiro'}" class="nav-link" :class="{active: this.$route.name == 'tiro'}">
                             <i class="fa fa-layer-group nav-icon"></i>
@@ -49,7 +55,8 @@
                 return this.$root.can([
                     'consultar_tiro',
                     'consultar_origen',
-                    'consultar_camion'
+                    'consultar_camion',
+                    'consultar_impresora'
                 ])
             },
         },
