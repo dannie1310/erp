@@ -16,10 +16,7 @@ use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 use App\Http\Transformers\CADECO\CostoTransformer;
-use App\Http\Transformers\CADECO\MonedaTransformer;
-use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
-use App\Http\Transformers\CADECO\Subcontrato\SubcontratosTransformer;
 use App\Http\Transformers\CADECO\SubcontratosCM\SubcontratoPartidaTransformer as PartidasConvenio;
 
 class SubcontratoTransformer extends TransformerAbstract
