@@ -3338,7 +3338,7 @@ export const routes = [
                 children: [
                     {
                         path: '/',
-                        name: 'configuracion',
+                        name: 'configuracion-remesa',
                         component: require('./components/remesas/configuracion/Index').default,
                         meta: {
                             title: 'Configuración',
