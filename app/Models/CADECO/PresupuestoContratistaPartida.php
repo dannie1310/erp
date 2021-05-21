@@ -179,4 +179,121 @@ class PresupuestoContratistaPartida extends Model
                 break;
         }
     }
+
+    public function getPrecioUnitarioMonedaOriginalAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario / $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario / $this->presupuesto->libra;
+                break;
+        }
+    }
+
+    public function getPorcentajeDescuentoFormatAttribute()
+    {
+        return number_format($this->PorcentajeDescuento, "2",".","")." %";
+    }
+
+    public function getPrecioUnitarioAntesDescuentoAttribute()
+    {
+        return 100 * $this->precio_unitario_moneda_original /(100-$this->PorcentajeDescuento);
+    }
+
+    public function getPrecioUnitarioAntesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->precio_unitario_antes_descuento, 2, '.', ',');
+    }
+
+    public function getTotalAntesDescuentoAttribute()
+    {
+        return $this->precio_unitario_antes_descuento * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getTotalAntesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->total_antes_descuento, 2, '.', ',');
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoAttribute()
+    {
+        return $this->precio_unitario_moneda_original ;
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->precio_unitario_despues_descuento, 2, '.', ',');
+    }
+
+    public function getTotalDespuesDescuentoAttribute()
+    {
+        return $this->precio_unitario_despues_descuento * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getTotalDespuesDescuentoFormatAttribute()
+    {
+        return "$".number_format($this->total_despues_descuento, 2, '.', ',');
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoPartidaMCAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario * $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario * $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario * $this->presupuesto->libra;
+                break;
+        }
+    }
+
+    public function getPrecioUnitarioDespuesDescuentoPartidaMCFormatAttribute()
+    {
+        return "$".number_format($this->precio_unitario_despues_descuento_partida_mc, 2, '.', ',');
+    }
+
+    public function getTotalDespuesDescuentoPartidaMCAttribute()
+    {
+        return $this->precio_unitario_despues_descuento_partida_mc * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getTotalDespuesDescuentoPartidaMCFormatAttribute()
+    {
+        return "$".number_format($this->total_despues_descuento_partida_mc, 2, '.', ',');
+    }
+
+    public function getImporteAttribute()
+    {
+        return $this->precio_unitario * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getImporteMonedaOriginalAttribute()
+    {
+        return $this->precio_unitario_moneda_original * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function getImporteMonedaOriginalDespuesDescuentoGlobalAttribute()
+    {
+        return ($this->precio_unitario_moneda_original -($this->precio_unitario_moneda_original * $this->presupuesto->PorcentajeDescuento / 100)) * $this->concepto->cantidad_presupuestada;
+    }
+
+    public function scopeCotizadas($query)
+    {
+        return $query->where('no_cotizado', '=', 0);
+    }
+
 }

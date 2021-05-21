@@ -24,27 +24,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row justify-content-between">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="id_contrato">Buscar Contrato Proyectado:</label>
-                                                 <model-list-select
-                                                                name="id_contrato"
-                                                                option-value="id"
-                                                                v-model="id_contrato"
-                                                                :custom-text="idFolioObservaciones"
-                                                                :list="contratos"
-                                                                :placeholder="!cargando?'Seleccionar o buscar folio o descripcion':'Cargando...'">
-                                                            </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_contrato')">{{ errors.first('id_contrato') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label for="id_proveedor">Proveedores/Contratistas</label>
                                             <model-list-select
+                                                id="id_proveedor"
                                                 name="id_proveedor"
                                                 option-value="id"
                                                 v-model="id_proveedor"
@@ -91,27 +76,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <label for="concepto" class="col-form-label">Concepto: </label>
-                                    </div>
-                                </div> -->
-                                <!-- <div class="row">
-                                    <div class="col-md-12">
-                                        <div class="form-group row error-content">
-                                            <textarea
-                                                name="concepto"
-                                                id="concepto"
-                                                class="form-control"
-                                                v-model="concepto"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Concepto"
-                                                :class="{'is-invalid': errors.has('concepto')}"
-                                            ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('concepto')">{{ errors.first('concepto') }}</div>
-                                        </div>
-                                    </div>
-                                </div> -->
+
                                 <hr />
 
                                 <div class="row" v-if="id_contrato != '' && !pendiente">
@@ -144,7 +109,7 @@
                                                         <td>{{partida.unidad}}</td>
                                                         <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" checked>
+                                                                <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" >
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>
@@ -211,6 +176,10 @@
                                                 </tbody>
                                             </table>
                                         </div>
+                                    </div>
+                                    <div class=" col-md-12" align="right">
+                                        <label class="col-sm-2 col-form-label">Subtotal Antes de Descuento:</label>
+                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal_antes_descuento)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
                                         <label class="col-sm-2 col-form-label">% Descuento:</label>
@@ -396,12 +365,12 @@
     import {ModelListSelect} from 'vue-search-select';
     export default {
         name: "presupuesto-create",
+        props: ['id_contrato'],
         components: {Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
                 pendiente: false,
-                id_contrato: '',
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
@@ -411,13 +380,16 @@
                 id_sucursal: '',
                 id_proveedor : '',
                 id_tipo : '',
-                contratos : [],
                 concepto : '',
                 monedas: [],
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
                 libras:0,
+                pesos_sd: 0,
+                dolares_sd: 0,
+                euros_sd: 0,
+                libras_sd:0,
                 dolar:0,
                 euro:0,
                 libra:0,
@@ -448,7 +420,8 @@
                     anticipo: '',
                     credito: '',
                     tiempo: '',
-                    vigencia: ''
+                    vigencia: '',
+                    total:''
                 },
                 anticipo: 0,
                 credito: 0,
@@ -459,12 +432,9 @@
             }
         },
         mounted() {
+            this.find();
             this.fecha = new Date();
             this.$validator.reset();
-            this.getProveedores();
-            this.getMonedas();
-            this.getContratos();
-
         },
         methods : {
             idFolioObservaciones (item)
@@ -480,14 +450,15 @@
             },
             getProveedores() {
                 return this.$store.dispatch('cadeco/empresa/index', {
-                    params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:1,3', include: 'sucursales' }
+                    params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:2,3', include: 'sucursales' }
                 })
                     .then(data => {
                         this.proveedores = data.data;
+                    }).finally(()=>{
+                        this.getMonedas();
                     })
             },
             getMonedas(){
-                this.cargando = true;
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
                 return this.$store.dispatch('cadeco/moneda/index', {
                     params: {sort: 'id_moneda', order: 'asc'}
@@ -497,7 +468,7 @@
                     this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
                     this.libra = this.monedas[3] ? parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '') : 0;
                 }).finally(()=>{
-
+                    this.cargando = false;
                 })
             },
             getPrecioUnitarioMC(i, precio) {
@@ -519,26 +490,33 @@
             },
             salir()
             {
-                 this.$router.push({name: 'presupuesto'});
+                 this.$router.push({name: 'presupuesto-selecciona-contrato-proyectado'});
 
             },
             find() {
-                this.enable = [];
-                this.precio = [];
-                this.pendiente = false;
-                this.moneda_input = [];
-                this.observaciones_inputs = [];
-                this.descuento = [];
                 this.cargando = true;
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
-                return this.$store.dispatch('contratos/contrato-proyectado/find', {
-                    id: this.id_contrato,
-                    params:{include: ['conceptos'], scope: 'partida'}
-                }).then(data => {
-                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+                if(this.$store.getters['contratos/contrato-proyectado/currentContrato'] == null){
+                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
+                    return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                        id: this.id_contrato,
+                        params:{include: ['conceptos']}
+                    }).then(data => {
+                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+                        this.asigna();
+                    }).finally(()=>{
+                        this.getProveedores();
+                    });
+                } else {
+                    this.enable = [];
+                    this.precio = [];
+                    this.pendiente = false;
+                    this.moneda_input = [];
+                    this.observaciones_inputs = [];
+                    this.descuento = [];
+                    this.getProveedores();
                     this.asigna();
-                    this.cargando = false;
-                })
+
+                }
             },
             asigna()
             {
@@ -558,76 +536,102 @@
                 this.dolares = 0;
                 this.euros = 0;
                 this.libras = 0;
+
+                this.pesos_sd = 0;
+                this.dolares_sd = 0;
+                this.euros_sd = 0;
+                this.libras_sd = 0;
                 while(this.x < this.contrato.conceptos.data.length)
                 {
                     if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
                     {
                         if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
                         {
+
                             this.pesos = (this.pesos + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                             * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+
+                            this.pesos_sd = (this.pesos_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
                         {
                             this.dolares = (this.dolares + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                             * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+                            this.dolares_sd = (this.dolares_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
                         {
                             this.euros = (this.euros + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+                            this.euros_sd = (this.euros_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                         if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
                         {
                             this.libras = (this.libras + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100))));
+                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
+                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
+                                )/100)  )
+                            ));
+
+                            this.libras_sd = (this.libras_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
+                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
                         }
                     }
                     this.x ++;
                 }
             },
-            getContratos() {
-                this.solicitudes = [];
-                this.cargando = true;
-                return this.$store.dispatch('contratos/contrato-proyectado/index', {
-                    params: {
-                        scope: 'conItems',
-                        order: 'DESC',
-                        sort: 'numero_folio'
-                    }
-                })
-                    .then(data => {
-                        this.contratos = data.data;
-                        this.cargando = false;
-                    })
-            },
             validate() {
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.post.partidas = this.contrato.conceptos.data;
-                        this.post.id_contrato = this.id_contrato;
-                        this.post.id_proveedor = this.id_proveedor;
-                        this.post.sucursal = this.sucursal;
-                        this.post.id_sucursal = this.id_sucursal;
-                        this.post.observaciones = this.observaciones_inputs;
-                        this.post.moneda = this.moneda_input;
-                        this.post.observacion = this.observaciones;
-                        this.post.precio = this.precio;
-                        this.post.enable = this.enable;
-                        this.post.descuento = this.descuento;
-                        this.post.descuento_cot = this.descuento_cot;
-                        this.post.anticipo = this.anticipo;
-                        this.post.credito = this.credito;
-                        this.post.vigencia = this.vigencia;
-                        this.post.fecha = this.fecha;
-                        this.post.subtotal = this.subtotal;
-                        this.post.impuesto = this.iva;
-                        this.post.pendiente = this.pendiente;
-                        this.post.tc_eur = this.euro;
-                        this.post.tc_usd = this.dolar;
-                        this.post.tc_libra = this.libra;
-                        this.store()
+                        if(!this.id_proveedor >0)
+                        {
+                            swal('¡Error!', 'Debe seleccionar un contratista', 'error')
+                        } else
+                        if(!this.id_sucursal >0)
+                        {
+                            swal('¡Error!', 'Debe seleccionar una sucursal', 'error')
+                        } else {
+                            this.post.partidas = this.contrato.conceptos.data;
+                            this.post.id_contrato = this.id_contrato;
+                            this.post.id_proveedor = this.id_proveedor;
+                            this.post.sucursal = this.sucursal;
+                            this.post.id_sucursal = this.id_sucursal;
+                            this.post.observaciones = this.observaciones_inputs;
+                            this.post.moneda = this.moneda_input;
+                            this.post.observacion = this.observaciones;
+                            this.post.precio = this.precio;
+                            this.post.enable = this.enable;
+                            this.post.descuento = this.descuento;
+                            this.post.descuento_cot = this.descuento_cot;
+                            this.post.anticipo = this.anticipo;
+                            this.post.credito = this.credito;
+                            this.post.vigencia = this.vigencia;
+                            this.post.fecha = this.fecha;
+                            this.post.subtotal = this.subtotal;
+                            this.post.total = this.total;
+                            this.post.impuesto = this.iva;
+                            this.post.pendiente = this.pendiente;
+                            this.post.tc_eur = this.euro;
+                            this.post.tc_usd = this.dolar;
+                            this.post.tc_libra = this.libra;
+                            this.store()
+                        }
                     }
                 });
             },
@@ -651,9 +655,11 @@
             },
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) -
-                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
-                        this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) );
+            },
+            subtotal_antes_descuento()
+            {
+                return (this.pesos_sd + (this.dolares_sd * this.dolar) + (this.euros_sd * this.euro) + (this.libras_sd * this.libra) );
             },
             iva()
             {
@@ -665,15 +671,6 @@
             }
         },
         watch: {
-            id_contrato(value)
-            {
-
-                if(value !== '' && value !== null && value !== undefined)
-                {
-                    this.find();
-
-                }
-            },
             id_proveedor(value){
                 this.id_sucursal = '';
                 if(value !== '' && value !== null && value !== undefined){
@@ -702,6 +699,10 @@
                 {
                     this.calcular();
                 }
+            },
+            descuento_cot()
+            {
+                this.calcular();
             },
             enable()
             {

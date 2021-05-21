@@ -833,6 +833,30 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id_contrato/presupuesto/create',
+                                name: 'presupuesto-create',
+                                component: require('./components/contratos/presupuesto/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Presupuesto Contratista',
+                                    breadcrumb: { parent: 'presupuesto-selecciona-contrato-proyectado', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_presupuesto_contratista']
+                                }
+                            },
+                            {
+                                path: ':id_contrato/asignacion-contratista/create',
+                                name: 'asignacion-contratista-create',
+                                component: require('./components/contratos/asignacion-contratista/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Asignación Contratistas',
+                                    breadcrumb: { parent: 'asignacion-contratista-selecciona-contrato-proyectado', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_asignacion_contratista']
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -877,12 +901,24 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create',
-                                name: 'presupuesto-create',
-                                component: require('./components/contratos/presupuesto/Create').default,
+                                path: ':id',
+                                name: 'presupuesto-show',
+                                component: require('./components/contratos/presupuesto/Show').default,
+                                props: true,
                                 meta: {
-                                    title: 'Registrar Presupuesto Contratista',
-                                    breadcrumb: { parent: 'presupuesto', name: 'REGISTRAR'},
+                                    title: 'Consultar Presupuesto Contratista',
+                                    breadcrumb: { parent: 'presupuesto', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto_contratista'
+                                }
+                            },
+                            {
+                                path: 'create/seleccionar_contrato_proyectado',
+                                name: 'presupuesto-selecciona-contrato-proyectado',
+                                component: require('./components/contratos/presupuesto/SeleccionaContratoProyectado').default,
+                                meta: {
+                                    title: 'Seleccionar Contrato Proyectado',
+                                    breadcrumb: { parent: 'presupuesto', name: 'SELECCIONAR CONTRATO'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_presupuesto_contratista']
                                 }
@@ -920,12 +956,12 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create',
-                                name: 'asignacion-contratista-create',
-                                component: require('./components/contratos/asignacion-contratista/Create').default,
+                                path: 'create/seleccionar_contrato_proyectado',
+                                name: 'asignacion-contratista-selecciona-contrato-proyectado',
+                                component: require('./components/contratos/asignacion-contratista/SeleccionaContratoProyectado').default,
                                 meta: {
-                                    title: 'Registrar Asignación Contratistas',
-                                    breadcrumb: { parent: 'asignacion-contratista', name: 'REGISTRAR'},
+                                    title: 'Seleccionar Contrato Proyectado',
+                                    breadcrumb: { parent: 'asignacion-contratista', name: 'SELECCIONAR CONTRATO'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_asignacion_contratista']
                                 }

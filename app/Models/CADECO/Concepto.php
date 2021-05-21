@@ -166,6 +166,11 @@ class Concepto extends Model
         return "";
     }
 
+    public function getDescripcionClaveAttribute()
+    {
+        return $this->clave_concepto_select . $this->descripcion;
+    }
+
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
@@ -221,11 +226,15 @@ class Concepto extends Model
      */
     public function getPathCortaAttribute()
     {
-        if ((strlen($this->nivel_padre)/4) <= 3) {
-            return $this->descripcion;
+        $path_corta = [];
+        for($i=0;$i<3; $i++)
+        {
+            $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(8-($i*4)))+($i*4));
+            if($nivel_buscar != "")
+            {
+                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave;
+            }
         }
-        else if ((strlen($this->nivel_padre)/4) > 3) {
-            return self::find($this->id_padre)->path_corta . ' -> ' . $this->descripcion;
-        }
+        return implode(" -> ",$path_corta);
     }
 }

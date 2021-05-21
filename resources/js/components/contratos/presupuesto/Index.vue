@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_presupuesto_contratista')" class="btn btn-app btn-info pull-right">
+            <button @click="create" v-if="$root.can('registrar_presupuesto_contratista')" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -38,14 +38,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
-                    { title: 'Contrato Proyectado', tdClass: 'folio', field: 'contrato'},
-                    { title: 'Fecha', field: 'fecha', sortable: true },
-                    { title: 'Contratista', field: 'contratista', sortable: false },
-                    { title: 'Referencia Contrato Proyectado ', field: 'observaciones', sortable: false },
-                    { title: 'Importe', field: 'importe', tdClass: ['th_money', 'text-right'], sortable: false },
-                    { title: 'Usuario Registró', tdClass: 'folio', field: 'usuario', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default },
+                    { title: 'Contrato Proyectado', tdClass: 'folio', field: 'numero_folio_cp', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia Contrato Proyectado', field: 'referencia_cp', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Contratista', field: 'contratista', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Monto', field: 'monto', tdClass: ['th_money', 'text-right'], sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -80,7 +79,7 @@
             },
 
             create() {
-                this.$router.push({name: 'presupuesto-create'});
+                this.$router.push({name: 'presupuesto-selecciona-contrato-proyectado'});
             },
             getEstado(estado) {
 
@@ -124,12 +123,12 @@
                         index: (i + 1) + self.query.offset,
                         numero_folio: presupuesto.numero_folio,
                         fecha: presupuesto.fecha_format,
-                        contratista: (presupuesto.empresa) ? presupuesto.empresa.razon_social : '----- Proveedor Desconocido -----',
-                        observaciones: (presupuesto.contrato_proyectado) ? presupuesto.contrato_proyectado.referencia : '----- Sin Contrato Proyectado -----',
-                        importe: '$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',','),
+                        contratista: presupuesto.empresa.razon_social,
+                        referencia_cp: presupuesto.contrato_proyectado.referencia ,
+                        monto: presupuesto.monto_format,
                         usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '-',
                         estado: this.getEstado(presupuesto.estado),
-                        contrato: presupuesto.contrato_proyectado.numero_folio_format,
+                        numero_folio_cp: presupuesto.contrato_proyectado.numero_folio_format,
                         buttons: $.extend({}, {
                             id: presupuesto.id,
                             transaccion: {id:presupuesto.id, tipo:50, opcion:1},

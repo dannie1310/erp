@@ -49,10 +49,9 @@ class SolicitudCambioSubcontratoService
         }
 
         if(isset($data['numero_folio_subcontrato'])){
-            $subcontrato = Subcontrato::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_subcontrato'].'%']])->get();
-            foreach ($subcontrato as $e){
-                $this->repository->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
-            }
+            $subcontratos = Subcontrato::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_subcontrato'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_antecedente', $subcontratos]);
+
         }
 
         if (isset($data['estado'])) {
@@ -65,10 +64,8 @@ class SolicitudCambioSubcontratoService
         }
 
         if(isset($data['referencia_subcontrato'])){
-            $subcontrato = Subcontrato::query()->where([['referencia', 'LIKE', '%'.$data['referencia_subcontrato'].'%']])->get();
-            foreach ($subcontrato as $e){
-                $this->repository->whereOr([['id_antecedente', '=', $e->id_transaccion]]);
-            }
+            $subcontratos = Subcontrato::query()->where([['referencia', 'LIKE', '%'.$data['referencia_subcontrato'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_antecedente', $subcontratos]);
         }
 
         if(isset($data['contratista'])){

@@ -25,7 +25,7 @@ class AsignacionContratistaTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'contrato',
         'asignacionEstimacion',
-        'presupuestoContratista',
+        'presupuestosContratista',
         'partidas'
     ];
 
@@ -45,6 +45,7 @@ class AsignacionContratistaTransformer extends TransformerAbstract
             'usuario_registro' => $model->Usuario_registro_nombre,
             'estado' => $model->estado,
             'estado_format' => $model->estado_format,
+            'contratistas' => $model->contratistas_str
         ];
     }
 
@@ -78,11 +79,11 @@ class AsignacionContratistaTransformer extends TransformerAbstract
      * @param AsignacionContratista $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includePresupuestoContratista(AsignacionContratista $model)
+    public function includePresupuestosContratista(AsignacionContratista $model)
     {
-        if($asignacion_presupuesto = $model->presupuestoContratista)
+        if($items = $model->presupuestosContratista)
         {
-            return $this->item($asignacion_presupuesto, new PresupuestoContratistaTransformer);
+            return $this->collection($items, new PresupuestoContratistaTransformer);
         }
         return null;
     }

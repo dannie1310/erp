@@ -4,10 +4,13 @@
 namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
+use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
+use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\PresupuestoContratista;
+use App\Models\CADECO\Transaccion;
 use League\Fractal\TransformerAbstract;
 
 class PresupuestoContratistaTransformer extends TransformerAbstract
@@ -23,8 +26,13 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'partidas',
         'sucursal',
         'usuario',
-        'relaciones'
+        'relaciones',
+        'contratos',
+        'transaccion',
+        'subtotales_por_moneda'
     ];
+
+    protected $defaultIncludes=["transaccion"];
 
     public function transform(PresupuestoContratista $model)
     {
@@ -34,10 +42,12 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'estado' => $model->estado,
             'numero_folio' => $model->numero_folio_format,
+            'numero_folio_format' => $model->numero_folio_format,
             'subtotal' => $model->monto,
             'impuesto' => $model->impuesto,
             'impuesto_format' => $model->impuesto_format,
-            'subtotal_format' => $model->monto_format,
+            'subtotal_format' => $model->subtotal_format,
+            'monto_format' => $model->monto_format,
             'tc_usd' => $model->TcUSD,
             'tc_usd_format' => $model->usd_format,
             'tc_euro' => $model->TcEuro,
@@ -45,10 +55,20 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'tc_libra' => $model->TcLibra,
             'tc_libra_format' => $model->libra_format,
             'descuento' => $model->PorcentajeDescuento,
+            'porcentaje_descuento_format' => $model->porcentaje_descuento_format,
             'anticipo' => $model->anticipo,
+            'porcentaje_anticipo_format' => $model->porcentaje_anticipo_format,
             'dias_credito' => $model->DiasCredito,
             'dias_vigencia' => $model->DiasVigencia,
-            'observaciones' => $model->observaciones
+            'observaciones' => $model->observaciones,
+            'con_descuento_partidas' =>$model->con_descuento_partidas,
+            'con_moneda_extranjera' => $model->con_moneda_extranjera,
+            'con_observaciones_partidas' => $model->con_observaciones_partidas,
+            'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
+            'usuario_registro' => $model->usuario_registro,
+            'moneda_conversion' => $model->moneda_conversion,
+            'subtotal_mc_antes_descuento_global_format' =>$model->subtotal_mc_antes_descuento_global_format,
+            'colspan'=>$model->colspan
         ];
     }
 
@@ -140,5 +160,29 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
+    }
+
+    public function includeContratos(PresupuestoContratista $model)
+    {
+        if($partidas = $model->contratos)
+        {
+            return $this->collection($partidas, new ContratoTransformer);
+        }
+        return null;
+    }
+
+    public function includeTransaccion(Transaccion $model)
+    {
+        return $this->item($model, new TransaccionRelacionTransformer);
+    }
+
+    public function includeSubtotalesPorMoneda(PresupuestoContratista $model)
+    {
+        if($items = $model->subtotales_por_moneda)
+        {
+            return $this->collection($items, new SubtotalPresupuestoTransformer);
+        }
+        return null;
+
     }
 }

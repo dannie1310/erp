@@ -2,8 +2,10 @@
 
 
 namespace App\Http\Transformers\CADECO;
+use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaPartidaTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoPartidaTransformer;
 use App\Models\CADECO\Contrato;
+use League\Fractal\ParamBag;
 use League\Fractal\TransformerAbstract;
 
 class ContratoTransformer extends TransformerAbstract
@@ -15,7 +17,8 @@ class ContratoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'destino',
-        'partidas_subcontrato'
+        'partidas_subcontrato',
+        'presupuesto'
     ];
 
     /**
@@ -67,6 +70,25 @@ class ContratoTransformer extends TransformerAbstract
         if($partida = $model->itemsSubcontrato)
         {
             return $this->item($partida, new SubcontratoPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includePresupuestos(Contrato $model)
+    {
+        if($partidas = $model->partidasPresupuesto)
+        {
+            return $this->collect($partidas, new PresupuestoContratistaPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includePresupuesto(Contrato $model, ParamBag $params = null)
+    {
+        $id_transaccion_presupuesto = $params["id_transaccion_presupuesto"][0];
+        if($partida = $model->partidasPresupuesto->where("id_transaccion", $id_transaccion_presupuesto)->first())
+        {
+            return $this->item($partida, new PresupuestoContratistaPartidaTransformer);
         }
         return null;
     }

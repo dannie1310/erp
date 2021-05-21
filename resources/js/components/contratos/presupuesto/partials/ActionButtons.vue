@@ -1,21 +1,22 @@
 <template>
     <div class="btn-group">
-        <Show v-bind:id="value.id"></Show>
+        <router-link  :to="{ name: 'presupuesto-show', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <i class="fa fa-eye"></i>
+        </router-link>
         <DescargaLayout v-if="$root.can('descargar_layout_presupuesto_contratista')" v-bind:id="value.id"></DescargaLayout>
         <CargaLayout v-if="$root.can('cargar_layout_presupuesto_contratista')" v-on:back="layout" v-bind:id="value.id"></CargaLayout>
-        <button v-if="$root.can('editar_presupuesto_contratista')" @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
+        <router-link  :to="{ name: 'presupuesto-edit', params: {id: value.id}}" v-if="$root.can('editar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-info" title="Editar">
             <i class="fa fa-pencil"></i>
-        </button>
+        </router-link>
         <PDF v-bind:id="value.id" />
         <Eliminar v-if="$root.can('eliminar_presupuesto_contratista')" v-bind:id="value.id"></Eliminar>
         <Relaciones v-bind:transaccion="value.transaccion"/>
-        <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
+        <router-link  :to="{ name: 'presupuesto-documentos', params: {id: value.id}}" v-if="$root.can('consultar_presupuesto_contratista') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Documentos">
             <i class="fa fa-folder-open"></i>
         </router-link>
     </div>
 </template>
 <script>
-import Show from '../Show';
 import Eliminar from '../Delete';
 import DescargaLayout from '../DescargaLayout';
 import CargaLayout from '../CargaLayout';
@@ -23,7 +24,7 @@ import PDF from '../FormatoTablaComparativa';
 import Relaciones from "../../../globals/ModalRelaciones";
     export default {
         name: "presupuesto-buttons",
-        components: {Show, Eliminar, DescargaLayout, CargaLayout, PDF, Relaciones},
+        components: { Eliminar, DescargaLayout, CargaLayout, PDF, Relaciones},
         props: ['value'],
 
         methods: {

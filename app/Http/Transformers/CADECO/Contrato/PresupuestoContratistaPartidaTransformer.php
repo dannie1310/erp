@@ -20,6 +20,8 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
         'moneda'
     ];
 
+    protected $defaultIncludes = ["moneda"];
+
     public function transform(PresupuestoContratistaPartida $model)
     {
         return [
@@ -29,10 +31,19 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
             'precio_unitario_format' => $model->precio_unitario_format,
             'id_moneda' => (int) $model->IdMoneda,
             'descuento' => $model->PorcentajeDescuento,
+            'descuento_format' => $model->porcentaje_descuento_format,
             'precio_total' => $model->precio_total,
             'precio_total_moneda' => $model->precio_total_moneda,
             'observaciones' => ($model->Observaciones) ? $model->Observaciones : null,
             'presupuesto' => ($model->no_cotizado == 0) ? true :false,
+            'precio_unitario_antes_descuento_format' => $model->precio_unitario_antes_descuento_format,
+            'total_antes_descuento_format' => $model->total_antes_descuento_format,
+            'precio_unitario_despues_descuento_format' => $model->precio_unitario_despues_descuento_format,
+            'total_despues_descuento_format' => $model->total_despues_descuento_format,
+            'precio_unitario_despues_descuento_partida_mc_format' => $model->precio_unitario_despues_descuento_partida_mc_format,
+            'total_despues_descuento_partida_mc_format' => $model->total_despues_descuento_partida_mc_format,
+            'precio_unitario_antes_descuento' => $model->precio_unitario_antes_descuento,
+            'total_antes_descuento' => $model->total_antes_descuento,
         ];
     }
 
