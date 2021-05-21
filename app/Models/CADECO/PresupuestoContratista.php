@@ -420,7 +420,7 @@ class PresupuestoContratista extends Transaccion
 
                 foreach($data['partidas'] as $t => $partida)
                 {
-                    $precio_conversion = ($data['enable'][$t]) ? $this->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null;
+                    $precio_conversion = ($data['enable'][$t]) ? $presupuesto->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null;
                     if($precio_conversion){
                         $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$t]/100);
                     } else {
