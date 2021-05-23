@@ -252,9 +252,14 @@ class PresupuestoContratista extends Transaccion
         return $cantidad>0?true:false;
     }
 
+    public function getMontoCalculadoAttribute()
+    {
+        return $this->subtotal + $this->impuesto_calculado;
+    }
+
     public function getMontoFormatAttribute()
     {
-        return "$ ".number_format($this->monto,2,".",",");
+        return "$ ".number_format($this->monto_calculado,2,".",",");
     }
 
     public function getPorcentajeAnticipoFormatAttribute()
@@ -307,6 +312,25 @@ class PresupuestoContratista extends Transaccion
             }
         }
         return $salida;
+    }
+
+    public function getSubtotalAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            $suma += $partida->total_despues_descuento_partida_mc;
+        }
+        return $suma;
+    }
+
+    public function getImpuestoCalculadoAttribute()
+    {
+        return $this->subtotal * 0.16;
+    }
+
+    public function getImpuestoCalculadoFormatAttribute()
+    {
+        return "$".number_format($this->impuesto_calculado,2,".",",");
     }
 
     public function getColspanAttribute()

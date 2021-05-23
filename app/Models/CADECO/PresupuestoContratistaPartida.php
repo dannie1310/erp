@@ -245,7 +245,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioDespuesDescuentoPartidaMCAttribute()
     {
-        switch ($this->IdMoneda) {
+        /*switch ($this->IdMoneda) {
             case (1):
                 return $this->precio_unitario;
                 break;
@@ -258,7 +258,10 @@ class PresupuestoContratistaPartida extends Model
             case (4):
                 return $this->precio_unitario * $this->presupuesto->libra;
                 break;
-        }
+        }*/
+        /*Se devuelve el precio unitario guardado en la tabla de la base de datos porque ya se guarda en la moneda de
+        conversion con descuento aplicado*/
+        return $this->precio_unitario;
     }
 
     public function getPrecioUnitarioDespuesDescuentoPartidaMCFormatAttribute()
