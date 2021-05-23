@@ -39,6 +39,9 @@ class Documento extends Model
         });
     }
 
+    /**
+     * Relaciones
+     */
     public function moneda(){
         return $this->belongsTo(Moneda::class, 'IDMoneda', 'id_moneda');
     }
@@ -86,6 +89,9 @@ class Documento extends Model
         return $this->hasMany(DistribucionRecursoRemesaPartida::class, 'id_documento', 'IDDocumento');
     }
 
+    /**
+     * Scope
+     */
     public function  scopeDisponiblesParaDistribuir($query, $id_remesa){
 
         $existentes = DistribucionRecursoRemesa::select('id')->where('id_remesa', '=', $id_remesa)->where('estado','>=', 0)->get()->toArray();
@@ -100,6 +106,14 @@ class Documento extends Model
         });
     }
 
+    public function scopeSeleccionado($query)
+    {
+        return $query->where('Seleccionado', 1);
+    }
+
+    /**
+     * Atributos
+     */
     public function getPartidaVigenteAttribute(){
         foreach ($this->partidasDispersion as $partida){
             if($partida->estado >= 0){
@@ -172,4 +186,8 @@ class Documento extends Model
             return null;
         }
     }
+
+    /**
+     * Métodos
+     */
 }

@@ -140,6 +140,8 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
+use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
+use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -154,6 +156,7 @@ use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
@@ -300,6 +303,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
@@ -310,6 +314,7 @@ use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDNoDeducidoObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\FechaInhabilSatObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
@@ -377,6 +382,11 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
         \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
+
+        /**
+         * MODULOSSAO
+         */
+        Proyecto::observe(ProyectoObserver::class);
 
         /**
         *RECEPCIÓN CFDI
@@ -621,6 +631,7 @@ class AppServiceProvider extends ServiceProvider
             CFDAutocorreccion::observe(CFDAutocorreccionObserver::class);
             CFDNoDeducido::observe(CFDNoDeducidoObserver::class);
             EFOS::observe(EFOSObserver::class);
+            FechaInhabilSat::observe(FechaInhabilSatObserver::class);
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
 

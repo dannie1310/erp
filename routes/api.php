@@ -382,6 +382,14 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@show')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'fecha-inhabil-sat'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@paginate');
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@delete')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@store');
+        });
+        $api->group(['prefix' => 'tipo-fecha-sat'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\TipoFechaController@index');
+        });
         $api->group(['prefix' => 'no-localizado'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoLocalizadoController@paginate');
         });
@@ -1308,11 +1316,14 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
+            $api->post('calcular-fechas-limite', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EfosController@calcularFechasLimite');
             $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInforme');
             $api->post('obtener-informe-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosado');
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
             $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
             $api->get('obtener-informe-cfdi-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@descargaInformeCFDIDesglosado');
+            $api->get('obtener-informe-definitivos/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDefinitivoPDF');
+
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
@@ -1407,6 +1418,23 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'modelo'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SCI\ModeloController@index');
+        });
+    });
+
+
+    /**
+     * REMESAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'remesas'], function ($api) {
+        $api->group(['prefix' => 'folio'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@paginate');
+            $api->get('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@show');
+            $api->patch('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@update');
+        });
+        $api->group(['prefix' => 'proyecto'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@update')->where(['id' => '[0-9]+']);
         });
     });
 });

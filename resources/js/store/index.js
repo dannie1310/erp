@@ -178,8 +178,10 @@ import CFDSAT from './modules/fiscal/cfd-sat';
 import ctgNoLocalizado from './modules/fiscal/ctg-no-localizado';
 import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
+import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
 import noLocalizado from './modules/fiscal/no-localizado';
+import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -196,6 +198,9 @@ import aplicacion from "./modules/igh/aplicacion";
 //PRESUPUESTO
 import conceptoPresupuesto from './modules/presupuesto/concepto';
 
+//REMESAS
+import folio from './modules/remesas/remesa-folio';
+import proyectoMSAO from './modules/remesas/proyecto';
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
@@ -364,8 +369,10 @@ export default new Vuex.Store({
         'fiscal/cfd-sat': CFDSAT,
         'fiscal/ctg-no-localizado': ctgNoLocalizado,
         'fiscal/efos' : efos,
+        'fiscal/fecha-inhabil-sat' : fechaInhabilSat,
         'fiscal/no-deducido' : noDeducido,
         'fiscal/no-localizado' : noLocalizado,
+        'fiscal/tipo-fecha-sat' : tipoFechaSat,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,
@@ -381,6 +388,9 @@ export default new Vuex.Store({
         'padronProveedores/giro' : giro,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
+
+        'remesas/remesa-folio' : folio,
+        'remesas/proyecto' : proyectoMSAO,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

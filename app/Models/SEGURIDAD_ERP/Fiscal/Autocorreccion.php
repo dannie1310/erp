@@ -93,7 +93,7 @@ class Autocorreccion extends Model
             {
                if($this->partidas->where('uuid', '=', $partida['uuid'])->count() != 0)
                {
-                   abort(400, "El CFD (".$partida['uuid'].") se encuentra en una autocorrección.");
+                   abort(400, "El CFDI (".$partida['uuid'].") se encuentra en una autocorrección.");
                }
             }
         }

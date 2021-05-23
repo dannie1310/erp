@@ -390,11 +390,12 @@ class CotizacionCompra  extends Transaccion
                         ]);
 
                         #------- Compras.cotizacion_partidas_complemento
+
                         $cotizaciones->partida()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'descuento_partida' => $partida['descuento'],
-                            'observaciones' => $data['observaciones'] ? $data['observaciones'][$key] : '',
+                            'observaciones' => array_key_exists($key,$data['observaciones']) ? $data['observaciones'][$key] : '',
                             'estatus' => 3
                         ]);
                     }

@@ -5,8 +5,9 @@ namespace App\Services\SEGURIDAD_ERP\Finanzas;
 
 use App\Exports\InformeCFDIDesglosado;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
-use App\PDF\Fiscal\InformeEFOSCFD;
+use App\PDF\Fiscal\InformeEFOSDefinitivosCFDI;
 use App\PDF\Fiscal\InformeEFOSCFDDesglosado;
+use App\PDF\Fiscal\InformeEFOSCFD;
 use App\Repositories\SEGURIDAD_ERP\CtgEfos\Repository;
 
 class CtgEfosService
@@ -73,6 +74,12 @@ class CtgEfosService
     public function obtenerInformeDesglosadoPDF(){
         $informe = $this->obtenerInformeDesglosado();
         $pdf = new InformeEFOSCFDDesglosado($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeDefinitivoPDF(){
+        $informe = $this->repository->getInformeDefinitivos();
+        $pdf = new InformeEFOSDefinitivosCFDI($informe);
         return $pdf->create();
     }
 
