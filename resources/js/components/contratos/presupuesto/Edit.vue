@@ -1,6 +1,17 @@
 <template>
     <span>
         <nav>
+            <div class="card" v-if="!presupuesto">
+                <div class="card-body">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row" v-if="presupuesto != ''">
                 <div class="col-12">
                     <div class="invoice p-3 mb-3">
