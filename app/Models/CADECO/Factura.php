@@ -1081,7 +1081,7 @@ class Factura extends Transaccion
                     "item_antecedente" =>  $renta['id_item'],
                     "id_material" => $item_renta->id_material,
                     "cantidad" => $renta['rentas'],
-                    "importe" => $renta['precio_unitario'] * $renta['renta'],
+                    "importe" => $renta['precio_unitario'] * $renta['rentas'],
                     "saldo" => 0,
                     "numero" => 3,
                     "precio_unitario" => $renta['precio_unitario'],

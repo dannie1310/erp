@@ -177,7 +177,6 @@
                                     <td class="money">{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
                                     <td>{{item.id_moneda}}</td>
                                     <td></td>
-                                    <td></td>
                                 </tr>
                                 <tr v-for="item in items.lista" v-if="item.seleccionado">
                                     <td colspan="5">{{decode_utf8(item.referencia)}}</td>
