@@ -52,10 +52,10 @@ export default {
             if(parseInt(this.id_moneda) === parseInt(item.id_moneda)){
                 if(item.tipo_transaccion == 52){
                     item.monto_revision = parseFloat(item.monto_revision).toFixed(2);
-                    return item.monto_revision;
+                    return '$ ' + parseFloat(item.monto_revision).formatMoney(2);
                 }else if (item.tipo_transaccion == 51){
                     item.monto_revision = parseFloat(item.anticipo_monto).toFixed(2);
-                    return item.anticipo_monto_format;
+                    return '$ ' + parseFloat(item.anticipo_monto_format).formatMoney(2);
                 }
                 
             }
