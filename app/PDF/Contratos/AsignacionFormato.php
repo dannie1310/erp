@@ -27,7 +27,7 @@ class AsignacionFormato extends Rotation
 
     public function __construct(AsignacionContratista $asignacion)
     {
-        parent::__construct('L', 'cm', 'Letter');
+        parent::__construct('L', 'cm', array(21.59,32));
         $this->obra = Obra::find(Context::getIdObra());
         $this->asignacion = $asignacion;
         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
@@ -58,20 +58,20 @@ class AsignacionFormato extends Rotation
     {
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'B', 15);
-        $this->Cell(23, 1.5, utf8_decode('TABLA DE ASIGNACIÓN DE PROVEEDORES'), 0, 0, 'C', 0);
+        $this->Cell(17.5, 2.1, utf8_decode('TABLA DE ASIGNACIÓN DE PROVEEDORES'), 0, 0, 'R', 0);
         $this->SetFont('Arial', 'B', 7);
-        $this->SetX(20.4);
+        $this->SetX(24.2);
         $this->Cell(4, .5, 'FOLIO:', 'L T', 0, 'L');
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(3, .5, $this->asignacion->numero_folio_format, 'R T', 0, 'L');
         $this->Ln(.5);
-        $this->Cell(19.7);
+        $this->SetX(24.2);
         $this->SetFont('Arial', 'B', 7);
         $this->Cell(4, .5, 'FECHA:  ', 'L B', 0, 'L');
         $this->Cell(3, .5, $this->asignacion->fecha_registro_format, 'R B', 0, 'L');
         $this->SetFont('Arial', '', 6);
         $this->Ln(.5);
-        $this->Cell(19.7);
+        $this->SetX(24.2);
         $this->Cell(4, .5, 'CONTRATO:', 'LB', 0, 'L');
         $this->Cell(3, .5, $this->asignacion->contratoProyectado->numero_folio_format, 'RB', 0, 'L');
 
@@ -95,7 +95,7 @@ class AsignacionFormato extends Rotation
         $font2 = 4;
         $font_importes = 5;
         $heigth = 0.3;
-        $presupuestosXFila = 2;
+        $presupuestosXFila = 3;
         $anchos["des"] = 4.5;
         $anchos["u"] = $anchos["c"] = $anchos["ca"] = 0.71;
         $anchos["aesp"] = $anchos["des"] + $anchos["u"] + $anchos["c"];
