@@ -6,6 +6,7 @@ use App\CSV\PresupuestoLayout;
 use App\Facades\Context;
 use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
 use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
+use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use App\Models\IGH\Usuario;
@@ -354,6 +355,22 @@ class PresupuestoContratista extends Transaccion
             $colspan = 10;
         }
         return $colspan;
+    }
+    /**
+     * Scopes
+    */
+
+    public function scopeAsignado($query, $id_asignacion)
+    {
+        $ids = AsignacionContratistaPartida::where("id_asignacion","=",$id_asignacion)->pluck("id_transaccion")->unique()->toArray();
+        return $query->whereIn("id_transaccion", $ids);
+    }
+
+    public function scopeNoAsignado($query, $id_asignacion)
+    {
+        $ids_asignados = AsignacionContratistaPartida::where("id_asignacion","=",$id_asignacion)->pluck("id_transaccion")->unique()->toArray();
+        $ids_cp = AsignacionContratista::find($id_asignacion)->contratoProyectado->presupuestos->pluck("id_transaccion")->unique()->toArray();
+        return $query->whereIn("id_transaccion", $ids_cp)->whereNotIn("id_transaccion", $ids_asignados);
     }
 
     /**

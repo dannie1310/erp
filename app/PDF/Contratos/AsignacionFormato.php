@@ -88,9 +88,9 @@ class AsignacionFormato extends Rotation
 
     public function partidas()
     {
-        $no_presupuestos = count($this->asignacion->contratoProyectado->presupuestos);
-        $datos = $this->asignacion->datosComparativos();
 
+        $datos = $this->asignacion->datosComparativos();
+        $no_presupuestos = count($datos["presupuestos"]);
         $font = 5;
         $font2 = 4;
         $font_importes = 5;

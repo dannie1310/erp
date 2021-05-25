@@ -334,7 +334,8 @@ class AsignacionContratista extends Model
         $tcEUR = Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
         $tcLibra = Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
 
-        foreach ($this->contratoProyectado->presupuestos as $p => $presupuesto) {
+        $p = 0;
+        foreach ($this->contratoProyectado->presupuestos()->asignado($this->id_asignacion)->get() as $pi => $presupuesto) {
             $presupuestos[$p]['id_transaccion'] = $presupuesto->id_transaccion;
             $presupuestos[$p]['empresa'] = $presupuesto->empresa->razon_social;
             $presupuestos[$p]['fecha'] = $presupuesto->fecha_guion_format;
@@ -399,6 +400,74 @@ class AsignacionContratista extends Model
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_asignado'] = $partida_asignada ? number_format($partida_asignada->importe_calculado, 2, '.', ',') : '-';
                 }
             }
+            $p++;
+        }
+        foreach ($this->contratoProyectado->presupuestos()->noAsignado($this->id_asignacion)->get() as $po => $presupuesto) {
+            $presupuestos[$p]['id_transaccion'] = $presupuesto->id_transaccion;
+            $presupuestos[$p]['empresa'] = $presupuesto->empresa->razon_social;
+            $presupuestos[$p]['fecha'] = $presupuesto->fecha_guion_format;
+            $presupuestos[$p]['vigencia'] = $presupuesto->DiasVigencia != 0 ? $presupuesto->DiasVigencia :'-';
+            $presupuestos[$p]['anticipo'] = $presupuesto->anticipo != 0 ? $presupuesto->anticipo :'-';
+            $presupuestos[$p]['dias_credito'] = $presupuesto->DiasCredito != 0 ? $presupuesto->DiasCredito : '-';
+            $presupuestos[$p]['descuento_global'] = $presupuesto->PorcentajeDescuento != 0 ? $presupuesto->PorcentajeDescuento : '-';
+            $presupuestos[$p]['descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($presupuesto->descuento) : '-';
+            $presupuestos[$p]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
+            $presupuestos[$p]['suma_con_descuento'] = $presupuesto->subtotal_con_descuento;
+            $presupuestos[$p]['iva_partidas'] = $presupuesto->iva_con_descuento;
+            $presupuestos[$p]['total_partidas'] = $presupuesto->total_con_descuento;
+            $presupuestos[$p]['observaciones'] = $presupuesto->observaciones;
+            $presupuestos[$p]['tc_usd'] = number_format($tcUSD, 2, '.', ',');
+            $presupuestos[$p]['tc_eur'] = number_format($tcEUR, 2, '.', ',');
+            $presupuestos[$p]['tc_libra'] = number_format($tcLibra, 2, '.', ',');
+
+            $partidas_asignadas = $this->partidas->where('id_transaccion', $presupuesto->id_transaccion);
+            if(count($partidas_asignadas)>0) {
+                $suma = 0;
+                $suma_sin_descuento = 0;
+                foreach ($partidas_asignadas as $asignada) {
+                    $suma += $asignada->importe_con_descuento;
+                    $suma_sin_descuento += $asignada->importe_calculado;
+                }
+                $descuento = $suma_sin_descuento - $suma;
+                $presupuestos[$p]['asignacion_subtotal_partidas'] = $suma_sin_descuento;
+                $presupuestos[$p]['asignacion_subtotal_partidas_descuento_global'] = $suma;
+                $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($descuento) : '-';
+                $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
+                $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
+                $presupuestos[$p]['asignacion_total'] = $suma + ($suma * 0.16);
+                $peso = $this->sumaSubtotalPartidas(1, $presupuesto->id_transaccion);
+                $dolar = $this->sumaSubtotalPartidas(2, $presupuesto->id_transaccion);
+                $euro = $this->sumaSubtotalPartidas(3, $presupuesto->id_transaccion);
+                $libra = $this->sumaSubtotalPartidas(4, $presupuesto->id_transaccion);
+                $presupuestos[$p]['subtotal_peso'] = $peso == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($peso));
+                $presupuestos[$p]['subtotal_dolar'] = $dolar == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($dolar));
+                $presupuestos[$p]['subtotal_euro'] = $euro == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($euro));
+                $presupuestos[$p]['subtotal_libra'] = $libra == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($libra));
+                $presupuestos[$p]['dolares'] = $dolar == 0 ? '-' : $this->numeroFormato($dolar/$tcUSD);
+                $presupuestos[$p]['euros'] = $euro == 0 ? '-' : $this->numeroFormato($euro/$tcEUR);
+                $presupuestos[$p]['libras'] = $libra == 0 ? '-' : $this->numeroFormato($libra/$tcLibra);
+            }
+
+
+            foreach ($presupuesto->partidas as $partida) {
+                if (array_key_exists($partida->id_concepto, $partidas)) {
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['id_transaccion'] = $presupuesto->id_transaccion;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario'] = $partida->precio_unitario;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_simple'] = $partida->precio_unitario_simple;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['id_moneda'] = $partida->IdMoneda;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_simple'] = $partida->importe_simple;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_compuesto'] = $partida->importe_compuesto;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['tipo_cambio_descripcion'] = $partida->moneda ? $partida->moneda->abreviatura : '';
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['descuento_partida'] = $partida->PorcentajeDescuento;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['observaciones'] = $partida->Observaciones;
+                    $partida_asignada = $this->partidas->where('id_concepto', $partida->id_concepto)->where('id_transaccion', $presupuesto->id_transaccion)->first();
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['cantidad_asignada'] = $partida_asignada ? number_format($partida_asignada->cantidad_autorizada, 2, '.', ',') : '-';
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_asignado'] = $partida_asignada ? number_format($partida_asignada->importe_calculado, 2, '.', ',') : '-';
+                }
+            }
+            $p++;
         }
 
         return [
