@@ -262,7 +262,7 @@ class AsignacionFormato extends Rotation
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_simple'] ? number_format($partida['presupuestos'][$i]['precio_unitario_simple'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_total_compuesto'] ? number_format($partida['presupuestos'][$i]['importe_simple'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
                         $this->CellFitScale($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['tipo_cambio_descripcion'] ? $partida['presupuestos'][$i]['tipo_cambio_descripcion'] : '', "T B L R", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_unitario_compuesto'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_compuesto'] ? number_format($partida['presupuestos'][$i]['importe_compuesto'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['cantidad_asignada'] : '-', "B L R T", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['importe_asignado'] : '-', "B L R T", 0, "R", 1);
                     }else {
@@ -629,13 +629,13 @@ class AsignacionFormato extends Rotation
 
     public function Footer()
     {
-        if (!App::environment('production')) {
+        /*if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
             $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
-        }
+        }*/
         $this->SetTextColor(0, 0, 0);
         $this->SetY(-5.1);
         $this->SetFont('Arial', '', 6);

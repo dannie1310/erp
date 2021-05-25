@@ -190,6 +190,15 @@ class PresupuestoContratistaPartida extends Model
         return $this->precio_unitario_simple * $this->concepto->cantidad_presupuestada;
     }
 
+    /**
+     * Importe moneda original con descuento de partida aplicado
+     * @return float|int|mixed
+     */
+    public function getImporteCompuestoAttribute()
+    {
+        return $this->precio_unitario_compuesto * $this->concepto->cantidad_presupuestada;
+    }
+
     public function getPrecioUnitarioMonedaOriginalAttribute()
     {
         switch ($this->IdMoneda) {

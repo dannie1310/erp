@@ -388,6 +388,7 @@ class AsignacionContratista extends Model
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['id_moneda'] = $partida->IdMoneda;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_simple'] = $partida->importe_simple;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_compuesto'] = $partida->importe_compuesto;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['tipo_cambio_descripcion'] = $partida->moneda ? $partida->moneda->abreviatura : '';
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['descuento_partida'] = $partida->PorcentajeDescuento;
