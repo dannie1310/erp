@@ -58,6 +58,50 @@ class ImpresoraService
         return  $this->repository->paginate($data);
     }
 
+    public function store($data)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->create($data);
+    }
+
+    public function show($id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id);
+    }
+
+    public function activar($id)
+    {
+        $this->conexionAcarreos();
+        $origen = $this->show($id);
+        if ($origen->Estatus == 1) {
+            abort(400, "La impresora se encuentra " . $origen->estado_format . " previamente.");
+        }
+        return $origen->activar();
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreos();
+        $origen = $this->show($id);
+        if ($origen->Estatus == 0) {
+            abort(400, "La impresora se encuentra " . $origen->estado_format . " previamente.");
+        }
+        return $origen->desactivar($data['motivo']);
+    }
+
+    public function update(array $data, $id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id)->editar($data);
+    }
+
+   /* public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new OrigenLayout(), 'origenes.csv');
+    }*/
+
     private function conexionAcarreos()
     {
         $base_datos = Proyecto::pluck('base_datos')->first();

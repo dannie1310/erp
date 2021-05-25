@@ -13,15 +13,13 @@ class Impresora extends Model
     protected $connection = 'acarreos';
     protected $table = 'impresoras';
     public $primaryKey = 'id';
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('estatus',  1);;
-        });
-    }
+    protected $fillable = [
+        'mac',
+        'marca',
+        'modelo',
+        'estatus',
+        'registro'
+    ];
 
     /**
      * Relaciones Eloquent
@@ -45,7 +43,10 @@ class Impresora extends Model
     /**
      * Scopes
      */
-
+    public function scopeActivo($query)
+    {
+        return $query->where('estatus',  1);
+    }
 
     /**
      * Attributes
@@ -110,4 +111,10 @@ class Impresora extends Model
     /**
      * Métodos
      */
+    public function validarRegistro()
+    {
+        if (self::where('mac', $this->mac)->first()) {
+            abort(400, "La impresora (" . $this->mac . ") ya se encuentra registrado previamente.");
+        }
+    }
 }

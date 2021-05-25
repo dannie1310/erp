@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-           <!-- Espacio para Create y Descarga -->
+            <Create @created="paginate()" />
         </div>
         <div class="col-12">
             <div class="card">
@@ -20,15 +20,16 @@
 </template>
 
 <script>
+    import Create from './Create'
     export default {
         name: "impresora-index",
-        components: {},
+        components: { Create },
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: 'ID', field: 'id',thClass: 'th_index',sortable: true},
-                    { title: 'MAC Address', field: 'mac', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: '#', field: 'index',thClass: 'th_index'},
+                    { title: 'MAC', field: 'mac', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Marca', field: 'marca', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Modelo', field: 'modelo', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
@@ -87,7 +88,7 @@
                     let self = this
                     self.$data.data = []
                     self.$data.data = impresoras.map((impresora, i) => ({
-                        id: impresora.id,
+                        index: impresora.id,
                         mac: impresora.mac,
                         marca: impresora.marca,
                         modelo: impresora.modelo,
@@ -96,6 +97,10 @@
                         estatus: this.getEstado(impresora.estado_format, impresora.estado_color),
                         buttons: $.extend({}, {
                             id: impresora.id,
+                            //activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
+                            //desactivar: (origen.estado === 1 && self.$root.can('activar_desactivar_origen')) ? true : false,
+                            //edit: self.$root.can('editar_origen') ? true : false,
+                            show: self.$root.can('consultar_impresora') ? true : false,
                         })
                     }));
                 },

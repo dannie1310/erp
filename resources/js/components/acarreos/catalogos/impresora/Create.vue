@@ -1,10 +1,10 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_impresora')" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_impresora')" class="btn btn-app pull-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-plus"></i> REGISTRAR IMPRESORA</h5>
@@ -18,36 +18,44 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="form-group col-md-12 error-content">
-                                            <div class="form-group">
-                                                <label for="tipo_origen">Tipo de Origen:</label>
-                                                <select class="form-control"
-                                                        name="tipo_origen"
-                                                        data-vv-as="Tipo de Origen"
-                                                        v-model="tipo_origen"
-                                                        v-validate="{required: true}"
-                                                        :error="errors.has('tipo_origen')"
-                                                        :class="{'is-invalid': errors.has('tipo_origen')}"
-                                                        id="tipo_origen">
-                                                    <option value>-- Seleccionar--</option>
-                                                    <option v-for="tipo in tipos_origenes" :value="tipo.id" >{{ tipo.descripcion}}</option>
-                                                </select>
-                                                <div style="display:block" class="invalid-feedback" v-show="errors.has('tipo_origen')">{{ errors.first('tipo_origen') }}</div>
-                                            </div>
+                                            <label for="mac" class="col-form-label">MAC:</label>
+                                            <input style="text-transform:uppercase;"
+                                                   name="mac"
+                                                   data-vv-as="'MAC'"
+                                                   v-validate="{required: true, min:6}"
+                                                   class="form-control"
+                                                   id="mac"
+                                                   v-model="mac"
+                                                   :class="{'is-invalid': errors.has('mac')}" />
+                                            <div class="invalid-feedback" v-show="errors.has('mac')">{{ errors.first('mac') }}</div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="form-group col-md-12 error-content">
-                                            <label for="descripcion" class="col-form-label">Descripción:</label>
-                                            <input style="text-transform:uppercase;"
-                                                    type="text"
-                                                    name="descripcion"
-                                                    data-vv-as="'Descripción'"
+                                            <label for="marca" class="col-form-label">Marca:</label>
+                                            <input  type="text"
+                                                    name="marca"
+                                                    data-vv-as="'Marca'"
                                                     v-validate="{required: true, min:6}"
                                                     class="form-control"
-                                                    id="descripcion"
-                                                    v-model="descripcion"
-                                                    :class="{'is-invalid': errors.has('descripcion')}" />
-                                            <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
+                                                    id="marca"
+                                                    v-model="marca"
+                                                    :class="{'is-invalid': errors.has('marca')}" />
+                                            <div class="invalid-feedback" v-show="errors.has('marca')">{{ errors.first('marca') }}</div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group col-md-12 error-content">
+                                            <label for="modelo" class="col-form-label">Modelo:</label>
+                                            <input  type="text"
+                                                    name="modelo"
+                                                    data-vv-as="'Modelo'"
+                                                    v-validate="{required: true, min:6}"
+                                                    class="form-control"
+                                                    id="modelo"
+                                                    v-model="modelo"
+                                                    :class="{'is-invalid': errors.has('modelo')}" />
+                                            <div class="invalid-feedback" v-show="errors.has('modelo')">{{ errors.first('modelo') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -87,29 +95,22 @@
             },
             validate() {
                 this.$validator.validate().then(result => {
-                    this.descripcion = this.descripcion.toUpperCase();
                     if (result) {
                         this.store();
                     }
                 });
             },
             store() {
-                return this.$store.dispatch('acarreos/origen/store', {
-                    Descripcion: this.descripcion,
-                    IdTipoOrigen: this.tipo_origen,
-                    interno: this.tipo
+                this.mac = this.mac.toUpperCase()
+                return this.$store.dispatch('acarreos/impresora/store', {
+                    mac: this.mac,
+                    marca: this.marca,
+                    modelo: this.modelo
                 })
                     .then((data) => {
                         $(this.$refs.modal).modal('hide');
                         this.$emit('created', data)
                     });
-            },
-            getTiposOrigen() {
-                return this.$store.dispatch('acarreos/tipo-origen/index', {
-                    params: { scope: 'activo', sort: 'IdTipoOrigen', order: 'asc',}
-                }).then(data => {
-                    this.tipos_origenes = data.data
-                });
             },
         }
     }
