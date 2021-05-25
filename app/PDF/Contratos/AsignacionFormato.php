@@ -391,7 +391,7 @@ class AsignacionFormato extends Rotation
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
                 }
-                $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i]) ? number_format($this->asignacion->suma_total_con_descuento, 2, '.', ',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas_descuento_global', $datos['presupuestos'][$i]) ? number_format($datos['presupuestos'][$i]['asignacion_subtotal_partidas_descuento_global'], 3, ".", ",") : '-', 1, 0, 'R', 1);
             }
 
             $this->Ln();

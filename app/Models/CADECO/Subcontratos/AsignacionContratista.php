@@ -362,6 +362,7 @@ class AsignacionContratista extends Model
                 }
                 $descuento = $suma_sin_descuento - $suma;
                 $presupuestos[$p]['asignacion_subtotal_partidas'] = $suma_sin_descuento;
+                $presupuestos[$p]['asignacion_subtotal_partidas_descuento_global'] = $suma;
                 $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($descuento) : '-';
                 $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
                 $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
