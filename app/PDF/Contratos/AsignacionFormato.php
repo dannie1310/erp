@@ -465,9 +465,9 @@ class AsignacionFormato extends Rotation
             $this->SetY($this->y_fin_og);
             $this->Ln();
             $total_asignado_ic = array();
-            $this->Cell($anchos["espacio_detalles_globales"]);
+            $this->Cell($anchos["aesp"] + $anchos["des"]);
             $this->SetFont('Arial', 'B', 7);
-            $this->Cell($anchos["p"] * 3, .5, utf8_decode("RESUMEN DE ASIGNACIÓN POR MONEDA"), "B", 1, 'C', 0);
+            $this->Cell($anchos["p"]  * ($presupuestosXFila), .5, utf8_decode("RESUMEN DE ASIGNACIÓN POR MONEDA"), "B", 1, 'C', 0);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
             $this->Cell($anchos["espacio_detalles_globales"], $heigth, "", 0, 0, 'C', 0);
@@ -508,7 +508,7 @@ class AsignacionFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if($i%2==0) {
+                if($i==$i_e) {
                     $this->SetFillColor(100, 100, 100);
                     $this->SetTextColor(0, 0, 0);
                     $this->Cell($anchos["espacio_detalles_globales"], $heigth, $datos['presupuestos'][$i]['tc_usd'], 1, 0, 'C', 0);
@@ -524,7 +524,7 @@ class AsignacionFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if($i%2==0) {
+                if($i==$i_e) {
                     $this->SetFillColor(100, 100, 100);
                     $this->SetTextColor(0, 0, 0);
                     $this->Cell($anchos["espacio_detalles_globales"], $heigth, $datos['presupuestos'][$i]['tc_eur'], 1, 0, 'C', 0);
@@ -541,7 +541,7 @@ class AsignacionFormato extends Rotation
             $this->Ln();
             $this->Cell($anchos["espacio_detalles_globales"]);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
-                if($i%2==0) {
+                if($i==$i_e) {
                     $this->SetFillColor(100, 100, 100);
                     $this->SetTextColor(0, 0, 0);
                     $this->Cell($anchos["espacio_detalles_globales"], $heigth, $datos['presupuestos'][$i]['tc_libra'], 1, 0, 'C', 0);
