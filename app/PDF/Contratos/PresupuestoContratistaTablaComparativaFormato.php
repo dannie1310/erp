@@ -385,13 +385,13 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
 
     function Footer()
     {
-        /*if (!App::environment('production')) {
+        if (!App::environment('production')) {
             $this->SetFont('Arial','B',90);
             $this->SetTextColor(155,155,155);
             $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
-        }*/
+        }
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'BI', 5.5);
         $this->SetY(-5.4);
