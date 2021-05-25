@@ -315,16 +315,16 @@ class SubcontratoFormato extends FPDI
 
         $subtotal = 0;
         foreach ($this->subcontrato->partidas as $key => $partida) {
-            $precio_neto = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
-            $importe = $precio_neto * $partida->cantidad;
+
+            $importe = $partida->precio_unitario * $partida->cantidad;
             $this->Row(array($key+1,
                 $partida->cantidad_format,
                 $partida->contrato->unidad,
                 $partida->contrato->destino->concepto->clave_concepto,
                 utf8_decode($partida->contrato->descripcion),
-                number_format($partida->precio_unitario,2, '.', ','),
+                number_format($partida->precio_unitario_mas_descuento,2, '.', ','),
                 number_format($partida->descuento,2, '.', ','),
-                number_format($precio_neto,2, '.', ','),
+                number_format($partida->precio_unitario,2, '.', ','),
                 number_format($importe,2, '.', ','),
                 )
             );

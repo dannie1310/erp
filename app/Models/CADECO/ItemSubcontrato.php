@@ -70,6 +70,11 @@ class ItemSubcontrato extends Item
         return ItemEstimacion::where('item_antecedente', '=', $this->id_concepto)->where("id_antecedente", '=', $this->id_transaccion)->sum('importe');
     }
 
+    public function getPrecioUnitarioMasDescuentoAttribute()
+    {
+        return ($this->precio_unitario * $this->descuento) / 90 + $this->precio_unitario;
+    }
+
     public function getAncestrosAttribute()
     {
         $lista = array();

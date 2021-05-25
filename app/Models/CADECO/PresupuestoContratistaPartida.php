@@ -73,6 +73,24 @@ class PresupuestoContratistaPartida extends Model
         }
     }
 
+    public function getPrecioUnitarioDescuentoMonedaOriginalAttribute()
+    {
+        switch ($this->IdMoneda) {
+            case(1):
+                return $this->precio_unitario;
+                break;
+            case(2):
+                return ($this->precio_unitario / $this->presupuesto->dolar);
+                break;
+            case(3):
+                return ($this->precio_unitario / $this->presupuesto->euro);
+                break;
+            case(4):
+                return ($this->precio_unitario / $this->presupuesto->libra);
+                break;
+        }
+    }
+
     public function getPrecioTotalAttribute()
     {
         switch ($this->IdMoneda) {

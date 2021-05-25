@@ -542,18 +542,17 @@ class AsignacionContratista extends Model
                     ]);
                 }
 
-                $descuento = $partida->presupuestoPartida->porcentajeDescuento / 100 * $partida->presupuestoPartida->precio_unitario;
-                $importe = ($partida->presupuestoPartida->precio_unitario - $descuento) * $partida->cantidad_asignada;
+                $importe = ($partida->presupuestoPartida->precio_unitario_descuento_moneda_original) * $partida->cantidad_asignada;
 
                 $partida_subc = ItemSubcontrato::create([
                     'id_transaccion' => $subcontrato->id_transaccion,
                     'id_antecedente' => $partida->id_transaccion,
                     'id_concepto' => $partida->id_concepto,
                     'cantidad' => $partida->cantidad_asignada,
-                    'precio_unitario' => $partida->presupuestoPartida->precio_unitario - $descuento,
-                    'descuento' => $partida->presupuestoPartida->porcentajeDescuento,
+                    'precio_unitario' => $partida->presupuestoPartida->precio_unitario_descuento_moneda_original, /*con descuento aplicado*/
+                    'descuento' => $partida->presupuestoPartida->PorcentajeDescuento,
                     'cantidad_original1' => $partida->cantidad_asignada,
-                    'precio_original1' => $partida->presupuestoPartida->precio_unitario - $descuento,
+                    'precio_original1' => $partida->presupuestoPartida->precio_unitario_descuento_moneda_original,
                     'id_asignacion' => $partida->id_asignacion,
                 ]);
 
