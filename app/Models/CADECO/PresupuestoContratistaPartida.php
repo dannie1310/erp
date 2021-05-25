@@ -299,4 +299,23 @@ class PresupuestoContratistaPartida extends Model
         return $query->where('no_cotizado', '=', 0);
     }
 
+    public function getTipoCambioAttribute()
+    {
+        switch($this->IdMoneda)
+        {
+            case(1):
+                return 1;
+                break;
+            case(2):
+                return $this->presupuesto->dolar;
+                break;
+            case(3):
+                return $this->presupuesto->euro;
+                break;
+            case(4):
+                return $this->presupuesto->libra;
+                break;
+        }
+    }
+
 }

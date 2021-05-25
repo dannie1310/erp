@@ -1,7 +1,18 @@
 <template>
     <span>
         <DatosContratoProyectado v-if="contrato" :contrato_proyectado="contrato"></DatosContratoProyectado>
-        <div class="row">
+        <div class="card" v-if="cargando">
+                <div class="card-body">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <div class="row" v-else>
             <div class="col-12" v-if="data">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
@@ -160,7 +171,9 @@ export default {
                     self.data.presupuestos[self.id_transaccion].partidas[i]? self.data.presupuestos[self.id_transaccion].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
                     self.data.presupuestos[self.id_transaccion].partidas[i]?item.cantidad_disponible = parseFloat(0).toFixed(4):'';
                 }
+                this.recalcular(i);
             });
+
         },
         borrarVolumenes(){
             let self = this;
@@ -171,6 +184,7 @@ export default {
                         item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
                     }
                 }
+                this.recalcular(i);
             });
         },
         numeroFolioFormatAndObservaciones(item){
@@ -178,22 +192,16 @@ export default {
         },
         find() {
             this.cargando = true;
-            if(this.$store.getters['contratos/contrato-proyectado/currentContrato'] == null){
-                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
-                return this.$store.dispatch('contratos/contrato-proyectado/find', {
-                    id: this.id_contrato,
-                    params:{include: ['conceptos']}
-                }).then(data => {
-                    this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
+            this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
+            return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                id: this.id_contrato,
+                params:{include: ['conceptos']}
+            }).then(data => {
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
 
-                }).finally(()=>{
-                    this.getCotizaciones();
-                });
-            } else {
-
+            }).finally(()=>{
                 this.getCotizaciones();
-
-            }
+            });
         },
         getCotizaciones(){
             this.cargando = true;
@@ -229,11 +237,11 @@ export default {
                 this.data.presupuestos[this.id_transaccion].partidas[i].cantidad_asignada = '';
             }else{
                 let p_unitario = 0;
-                p_unitario = this.data.presupuestos[this.id_transaccion].partidas[i].precio_unitario_con_desc;
+                p_unitario = this.data.presupuestos[this.id_transaccion].partidas[i].precio_unitario_con_desc_sf;
 
                 let c_asignada =this.data.presupuestos[this.id_transaccion].partidas[i].cantidad_asignada !== ''?this.data.presupuestos[this.id_transaccion].partidas[i].cantidad_asignada:0;
-                this.data.presupuestos[this.id_transaccion].partidas[i].precio_total_con_desc = parseFloat(p_unitario * c_asignada).formatMoney(2);
-                this.data.presupuestos[this.id_transaccion].partidas[i].importe_moneda_conversion = parseFloat((p_unitario * c_asignada) * this.data.presupuestos[this.id_transaccion].partidas[i].tipo_cambio).formatMoney(2);
+                this.data.presupuestos[this.id_transaccion].partidas[i].precio_total_con_desc = "$"+parseFloat(p_unitario * c_asignada).formatMoney(2);
+                this.data.presupuestos[this.id_transaccion].partidas[i].importe_moneda_conversion = "$"+parseFloat((p_unitario * c_asignada) * this.data.presupuestos[this.id_transaccion].partidas[i].tipo_cambio).formatMoney(2);
 
             }
             // this.data.items[i].cantidad_disponible = this.data.items[i].cantidad_base;
