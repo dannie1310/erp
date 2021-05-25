@@ -38,7 +38,7 @@ class ImpresoraHistorico extends Model
 
     public function getEstadoFormatAttribute()
     {
-        switch ($this->Estatus)
+        switch ($this->estatus)
         {
             case 1:
                 return 'ACTIVO';

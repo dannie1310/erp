@@ -6,7 +6,7 @@ namespace App\Models\ACARREOS;
 
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ACARREOS\ImpresoraHistorico;
+use Illuminate\Support\Facades\DB;
 
 class Impresora extends Model
 {
@@ -37,7 +37,7 @@ class Impresora extends Model
 
     public function historicos()
     {
-        return $this->hasMany(ImpresoraHistorico::class, 'IdOrigen', 'IdOrigen');
+        return $this->hasMany(ImpresoraHistorico::class,  'id', 'id');
     }
 
     /**
@@ -115,6 +115,40 @@ class Impresora extends Model
     {
         if (self::where('mac', $this->mac)->first()) {
             abort(400, "La impresora (" . $this->mac . ") ya se encuentra registrado previamente.");
+        }
+    }
+
+    public function activar()
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->estatus = 1;
+            $this->elimino = NULL;
+            $this->motivo = NULL;
+            $this->save();
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function desactivar($motivo)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->estatus = 0;
+            $this->elimino = auth()->id();
+            $this->motivo = $motivo;
+            $this->save();
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
     }
 }

@@ -26,12 +26,12 @@ class ImpresoraHistoricoTransformer extends TransformerAbstract
             'marca' => (string) $model->marca,
             'modelo' => (string) $model->modelo,
             'registro' => (string) $model->nombre_registro,
-            'estado' => (int) $model->Estatus,
+            'estado' => (int) $model->estatus,
             'estado_format' => $model->estado_format,
             'fecha_registro_format' => $model->fecha_registro_completa_format,
             'desactivo' => (string) $model->nombre_desactivo,
             'fecha_desactivo_format' => $model->fecha_desactivo_format,
-            'motivo' => $model->Motivo
+            'motivo' => $model->motivo
         ];
     }
 }

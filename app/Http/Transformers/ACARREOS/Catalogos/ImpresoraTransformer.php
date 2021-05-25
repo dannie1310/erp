@@ -34,7 +34,7 @@ class ImpresoraTransformer extends TransformerAbstract
     }
 
     /**
-     * @param Origen $model
+     * @param Impresora $model
      * @return \League\Fractal\Resource\Collection|null
      */
     public function includeHistoricos(Impresora $model)

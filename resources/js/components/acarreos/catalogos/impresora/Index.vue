@@ -97,8 +97,8 @@
                         estatus: this.getEstado(impresora.estado_format, impresora.estado_color),
                         buttons: $.extend({}, {
                             id: impresora.id,
-                            //activar: (origen.estado === 0 && self.$root.can('activar_desactivar_origen')) ? true : false,
-                            //desactivar: (origen.estado === 1 && self.$root.can('activar_desactivar_origen')) ? true : false,
+                            activar: (impresora.estado === 0 && self.$root.can('activar_desactivar_impresora')) ? true : false,
+                            desactivar: (impresora.estado === 1 && self.$root.can('activar_desactivar_impresora')) ? true : false,
                             //edit: self.$root.can('editar_origen') ? true : false,
                             show: self.$root.can('consultar_impresora') ? true : false,
                         })

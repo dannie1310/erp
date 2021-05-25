@@ -35,46 +35,50 @@
                                 <div class="col-md-12">
                                     <div class="form-group row">
                                         <label class="col-md-1 col-form-label">MAC:</label>
-                                        <div class="col-md-3">
+                                        <div class="col-md-5">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="impresora.mac" />
                                         </div>
                                         <label class="col-md-1 col-form-label">Marca:</label>
-                                        <div class="col-md-3">
+                                        <div class="col-md-5">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="impresora.marca" />
                                         </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group row">
                                         <label class="col-md-1 col-form-label">Modelo:</label>
-                                        <div class="col-md-3">
+                                        <div class="col-md-5">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="impresora.modelo" />
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
                                         <label class="col-md-1 col-form-label">Registró:</label>
-                                        <div class="col-md-4">
+                                        <div class="col-md-5">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="impresora.usuario_registro" />
                                         </div>
-                                        <label class="col-md-1 col-form-label">Fecha Registro:</label>
-                                        <div class="col-md-4">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group row">
+                                        <label class="col-md-2 col-form-label">Fecha Registro:</label>
+                                        <div class="col-md-5">
                                             <input disabled="true"
                                                    type="text"
                                                    class="form-control"
                                                    v-model="impresora.fecha_registro_format" />
                                         </div>
-                                        <label class="col-md-1 col-form-label">Estatus:</label>
-                                        <div class="col-md-1">
+                                        <label class="col-md-2 col-form-label">Estatus:</label>
+                                        <div class="col-md-3">
                                             <span class="badge" :style="{'background-color': impresora.estado_color}">{{ impresora.estado_format }}</span>
                                         </div>
                                     </div>

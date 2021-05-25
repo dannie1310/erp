@@ -73,21 +73,21 @@ class ImpresoraService
     public function activar($id)
     {
         $this->conexionAcarreos();
-        $origen = $this->show($id);
-        if ($origen->Estatus == 1) {
-            abort(400, "La impresora se encuentra " . $origen->estado_format . " previamente.");
+        $impresora = $this->show($id);
+        if ($impresora->estatus == 1) {
+            abort(400, "La impresora se encuentra " . $impresora->estado_format . " previamente.");
         }
-        return $origen->activar();
+        return $impresora->activar();
     }
 
     public function desactivar(array  $data, $id)
     {
         $this->conexionAcarreos();
-        $origen = $this->show($id);
-        if ($origen->Estatus == 0) {
-            abort(400, "La impresora se encuentra " . $origen->estado_format . " previamente.");
+        $impresora = $this->show($id);
+        if ($impresora->estatus == 0) {
+            abort(400, "La impresora se encuentra " . $impresora->estado_format . " previamente.");
         }
-        return $origen->desactivar($data['motivo']);
+        return $impresora->desactivar($data['motivo']);
     }
 
     public function update(array $data, $id)
