@@ -367,17 +367,17 @@ class AsignacionContratista extends Model
                 $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
                 $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
                 $presupuestos[$p]['asignacion_total'] = $suma + ($suma * 0.16);
-                $peso = $this->sumaSubtotalPartidas(1);
-                $dolar = $this->sumaSubtotalPartidas(2);
-                $euro = $this->sumaSubtotalPartidas(3);
-                $libra = $this->sumaSubtotalPartidas(4);
-                $presupuestos[$p]['subtotal_peso'] = $peso == 0 ? '-' : $this->numeroFormato($this->sumaSubtotalTotalPorMoneda($peso));
-                $presupuestos[$p]['subtotal_dolar'] = $dolar == 0 ? '-' : $this->numeroFormato($this->sumaSubtotalTotalPorMoneda($dolar));
-                $presupuestos[$p]['subtotal_euro'] = $euro == 0 ? '-' : $this->numeroFormato($this->sumaSubtotalTotalPorMoneda($euro));
-                $presupuestos[$p]['subtotal_libra'] = $libra == 0 ? '-' : $this->numeroFormato($this->sumaSubtotalTotalPorMoneda($libra));
-                $presupuestos[$p]['dolares'] = $dolar == 0 ? '-' : $this->numeroFormato($dolar/$presupuesto->dolar);
-                $presupuestos[$p]['euros'] = $euro == 0 ? '-' : $this->numeroFormato($euro/$presupuesto->euro);
-                $presupuestos[$p]['libras'] = $libra == 0 ? '-' : $this->numeroFormato($libra/$presupuesto->libra);
+                $peso = $this->sumaSubtotalPartidas(1, $presupuesto->id_transaccion);
+                $dolar = $this->sumaSubtotalPartidas(2, $presupuesto->id_transaccion);
+                $euro = $this->sumaSubtotalPartidas(3, $presupuesto->id_transaccion);
+                $libra = $this->sumaSubtotalPartidas(4, $presupuesto->id_transaccion);
+                $presupuestos[$p]['subtotal_peso'] = $peso == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($peso));
+                $presupuestos[$p]['subtotal_dolar'] = $dolar == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($dolar));
+                $presupuestos[$p]['subtotal_euro'] = $euro == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($euro));
+                $presupuestos[$p]['subtotal_libra'] = $libra == 0 ? '-' : $this->monedaFormato($this->sumaSubtotalTotalPorMoneda($libra));
+                $presupuestos[$p]['dolares'] = $dolar == 0 ? '-' : $this->numeroFormato($dolar/$tcUSD);
+                $presupuestos[$p]['euros'] = $euro == 0 ? '-' : $this->numeroFormato($euro/$tcEUR);
+                $presupuestos[$p]['libras'] = $libra == 0 ? '-' : $this->numeroFormato($libra/$tcLibra);
             }
 
 
@@ -510,12 +510,12 @@ class AsignacionContratista extends Model
 
     }
 
-    public function sumaSubtotalPartidas($tipo_moneda)
+    public function sumaSubtotalPartidas($tipo_moneda, $id_presupuesto)
     {
         $suma = 0;
         foreach ($this->partidas as $partida)
         {
-            if($tipo_moneda == $partida->presupuestoPartida->IdMoneda)
+            if($tipo_moneda == $partida->presupuestoPartida->IdMoneda && $partida->presupuestoPartida->presupuesto->id_transaccion == $id_presupuesto)
             {
                 $suma += $partida->importe_con_descuento;
             }
@@ -531,5 +531,10 @@ class AsignacionContratista extends Model
     public function numeroFormato($numero)
     {
         return number_format($numero, 2, '.',',');
+    }
+
+    public function monedaFormato($numero)
+    {
+        return '$'.$this->numeroFormato($numero);
     }
 }
