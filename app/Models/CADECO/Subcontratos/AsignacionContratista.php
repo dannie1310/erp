@@ -326,7 +326,7 @@ class AsignacionContratista extends Model
                 $partidas[$item->id_concepto]['descripcion'] = $item->descripcion;
                 $partidas[$item->id_concepto]['unidad'] = $item->unidad;
                 $partidas[$item->id_concepto]['cantidad'] = $item->cantidad_original;
-                $partidas[$item->id_concepto]['destino'] = $item->destino ? $item->destino->ruta : '';
+                $partidas[$item->id_concepto]['destino'] = $item->destino ? $item->destino->concepto->path_corta : 'no tiene';
             }
         }
 
