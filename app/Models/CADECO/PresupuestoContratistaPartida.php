@@ -115,38 +115,39 @@ class PresupuestoContratistaPartida extends Model
      */
     public function getPrecioUnitarioCompuestoAttribute()
     {
-        switch ($this->IdMoneda) {
-            case (1):
-                return $this->precio_compuesto;
-                break;
-            case (2):
-                return $this->precio_compuesto * $this->presupuesto->dolar;
-                break;
-            case (3):
-                return $this->precio_compuesto * $this->presupuesto->euro;
-                break;
-            case (4):
-                return $this->precio_compuesto * $this->presupuesto->libra;
-                break;
-        }
+        return $this->precio_unitario;
     }
 
     /**
-     * Precio Compuesto contemplando descuentos al precio unitario.
+     * Precio contemplando descuentos al precio unitario en moneda original.
      * @return float|int|mixed
      */
     public function getPrecioCompuestoAttribute()
     {
-        return $this->PorcentajeDescuento != 0 ? $this->precio_unitario_simple - ($this->precio_unitario_simple * $this->PorcentajeDescuento / 100) : $this->precio_unitario_simple;
+        switch ($this->IdMoneda) {
+            case (1):
+                return $this->precio_unitario;
+                break;
+            case (2):
+                return $this->precio_unitario / $this->presupuesto->dolar;
+                break;
+            case (3):
+                return $this->precio_unitario / $this->presupuesto->euro;
+                break;
+            case (4):
+                return $this->precio_unitario / $this->presupuesto->libra;
+                break;
+        }
+        //return $this->PorcentajeDescuento != 0 ? $this->precio_unitario_simple - ($this->precio_unitario_simple * $this->PorcentajeDescuento / 100) : $this->precio_unitario_simple;
     }
 
     /**
-     * Precio compuesto descuentos, precio unitario y la cantidad
+     * Precio compuesto descuentos, precio unitario y la cantidad en moneda de conversión (PESOS)
      * @return float|int
      */
     public function getPrecioCompuestoTotalAttribute()
     {
-        return $this->precio_compuesto * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
+        return $this->precio_unitario_compuesto * ($this->concepto ? $this->concepto->cantidad_presupuestada : 1);
     }
 
     /**
@@ -159,7 +160,7 @@ class PresupuestoContratistaPartida extends Model
     }
 
     /**
-     * Precio unitario simple
+     * Precio unitario simple (moneda original con descuento de partida aplicado)
      * @return float|int|mixed
      */
     public function getPrecioUnitarioSimpleAttribute()
@@ -178,6 +179,15 @@ class PresupuestoContratistaPartida extends Model
                 return $this->precio_unitario / $this->presupuesto->libra;
                 break;
         }
+    }
+
+    /**
+     * Importe moneda original con descuento de partida aplicado
+     * @return float|int|mixed
+     */
+    public function getImporteSimpleAttribute()
+    {
+        return $this->precio_unitario_simple * $this->concepto->cantidad_presupuestada;
     }
 
     public function getPrecioUnitarioMonedaOriginalAttribute()

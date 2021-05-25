@@ -260,7 +260,7 @@ class AsignacionFormato extends Rotation
 
                     if (array_key_exists('presupuestos', $partida)) {
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_simple'] ? number_format($partida['presupuestos'][$i]['precio_unitario_simple'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
-                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_total_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_total_compuesto'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_total_compuesto'] ? number_format($partida['presupuestos'][$i]['importe_simple'], 2, '.', ',') : '', "T B L R", 0, "R", 1);
                         $this->CellFitScale($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['tipo_cambio_descripcion'] ? $partida['presupuestos'][$i]['tipo_cambio_descripcion'] : '', "T B L R", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['precio_unitario_compuesto'] ? number_format($partida['presupuestos'][$i]['precio_unitario_compuesto'], 2, '.', ',') : '', "B L R T", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $partida['presupuestos']) ? $partida['presupuestos'][$i]['cantidad_asignada'] : '-', "B L R T", 0, "R", 1);
@@ -637,19 +637,19 @@ class AsignacionFormato extends Rotation
             $this->SetTextColor('0,0,0');
         }
         $this->SetTextColor(0, 0, 0);
-        $this->SetY(-5.4);
+        $this->SetY(-5.1);
         $this->SetFont('Arial', '', 6);
         $encabezados[0] = utf8_decode("Elaboró");
         $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
         $encabezados[2] = "Gerencia Solicitante";
         $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
         for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
+            $this->Cell(6.2, .4, $encabezados[$i], 1, 0, 'C', 0, '');
             $this->Cell(.4);
         }
-        $this->Ln(.5);
+        $this->Ln(.4);
         for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
+            $this->Cell(6.2, 0.8, '', 1, 0, 'R', 0, '');
             $this->Cell(.4);
         }
 

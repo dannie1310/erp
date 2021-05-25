@@ -330,6 +330,10 @@ class AsignacionContratista extends Model
             }
         }
 
+        $tcUSD = Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio;
+        $tcEUR = Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio;
+        $tcLibra = Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+
         foreach ($this->contratoProyectado->presupuestos as $p => $presupuesto) {
             $presupuestos[$p]['id_transaccion'] = $presupuesto->id_transaccion;
             $presupuestos[$p]['empresa'] = $presupuesto->empresa->razon_social;
@@ -344,9 +348,9 @@ class AsignacionContratista extends Model
             $presupuestos[$p]['iva_partidas'] = $presupuesto->iva_con_descuento;
             $presupuestos[$p]['total_partidas'] = $presupuesto->total_con_descuento;
             $presupuestos[$p]['observaciones'] = $presupuesto->observaciones;
-            $presupuestos[$p]['tc_usd'] = number_format($presupuesto->dolar, 2, '.', ',');
-            $presupuestos[$p]['tc_eur'] = number_format($presupuesto->euro, 2, '.', ',');
-            $presupuestos[$p]['tc_libra'] = number_format($presupuesto->libra, 2, '.', ',');
+            $presupuestos[$p]['tc_usd'] = number_format($tcUSD, 2, '.', ',');
+            $presupuestos[$p]['tc_eur'] = number_format($tcEUR, 2, '.', ',');
+            $presupuestos[$p]['tc_libra'] = number_format($tcLibra, 2, '.', ',');
 
             $partidas_asignadas = $this->partidas->where('id_transaccion', $presupuesto->id_transaccion);
             if(count($partidas_asignadas)>0) {
@@ -383,6 +387,7 @@ class AsignacionContratista extends Model
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_simple'] = $partida->precio_unitario_simple;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['id_moneda'] = $partida->IdMoneda;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_total_compuesto'] = $partida->precio_compuesto_total;
+                    $partidas[$partida->id_concepto]['presupuestos'][$p]['importe_simple'] = $partida->importe_simple;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['precio_unitario_compuesto'] = $partida->precio_unitario_compuesto;
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['tipo_cambio_descripcion'] = $partida->moneda ? $partida->moneda->abreviatura : '';
                     $partidas[$partida->id_concepto]['presupuestos'][$p]['descuento_partida'] = $partida->PorcentajeDescuento;

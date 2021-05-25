@@ -149,7 +149,12 @@ class PresupuestoContratista extends Transaccion
 
     public function getLibraAttribute()
     {
-        return $this->TcLibra ? $this->TcLibra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+        try {
+            return $this->TcLibra ? $this->TcLibra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio;
+        } catch (\Exception $e){
+            return 0;
+        }
+
     }
 
     public function getDatosParaRelacionAttribute()
