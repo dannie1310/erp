@@ -2341,6 +2341,20 @@ export const routes = [
                                 ]
                             },
                             {
+                                path: 'operador',
+                                name: 'operador',
+                                component: require('./components/acarreos/catalogos/operador/Index').default,
+                                meta: {
+                                    title: 'Operadores',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'OPERADORES'
+                                    },
+                                    middleware: [auth, context],
+                                    // permission: ['consultar_operador']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,

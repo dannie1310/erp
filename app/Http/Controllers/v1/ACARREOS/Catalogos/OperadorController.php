@@ -4,11 +4,12 @@
 namespace App\Http\Controllers\v1\ACARREOS\Catalogos;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\ACARREOS\Catalogos\OperadorTransformer;
-use App\Services\ACARREOS\Catalogos\OperadorService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Services\ACARREOS\Catalogos\OperadorService;
+use App\Http\Transformers\ACARREOS\Catalogos\OperadorTransformer;
 
 class OperadorController extends Controller
 {
@@ -43,5 +44,15 @@ class OperadorController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function activar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->activar($id));
+    }
+
+    public function desactivar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->desactivar($request->all(),$id));
     }
 }
