@@ -532,6 +532,7 @@ class AsignacionContratista extends Model
                             'id_empresa' => $partida->presupuesto->id_empresa,
                             'id_sucursal' => $partida->presupuesto->id_sucursal,
                             'id_moneda' =>  $partida->presupuestoPartida->IdMoneda,
+                            'PorcentajeDescuento' =>  $partida->presupuestoPartida->presupuesto->PorcentajeDescuento,
                             'observaciones' => $partida->presupuesto->observaciones,
                         ]);
                     $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion] = $resp;
@@ -541,8 +542,6 @@ class AsignacionContratista extends Model
                         'id_transaccion' => $resp->id_transaccion,
                     ]);
                 }
-
-                $importe = ($partida->presupuestoPartida->precio_unitario_descuento_moneda_original) * $partida->cantidad_asignada;
 
                 $partida_subc = ItemSubcontrato::create([
                     'id_transaccion' => $subcontrato->id_transaccion,
@@ -556,7 +555,10 @@ class AsignacionContratista extends Model
                     'id_asignacion' => $partida->id_asignacion,
                 ]);
 
-                $subtotal = $importe;
+                $importe = ($partida->presupuestoPartida->precio_unitario_descuento_moneda_original) * $partida->cantidad_asignada;
+                $importe_descuento_general = $importe - ($importe * $subcontrato->PorcentajeDescuento/100);
+
+                $subtotal = $importe_descuento_general;
                 $impuesto = $subtotal  * 0.16;
                 $monto = $subtotal + $impuesto;
 
@@ -564,7 +566,6 @@ class AsignacionContratista extends Model
                 $subcontrato->saldo = $subcontrato->saldo + $monto;
                 $subcontrato->impuesto = $subcontrato->impuesto + $impuesto;
                 $subcontrato->save();
-
             }
             $this->estado = 2;
             $this->save();
