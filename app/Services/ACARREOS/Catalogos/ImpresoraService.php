@@ -9,6 +9,8 @@ use App\Repositories\Repository;
 use App\Models\ACARREOS\Impresora;
 use Illuminate\Support\Facades\DB;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
+use App\CSV\Acarreos\Catalogos\ImpresoraLayout;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImpresoraService
 {
@@ -96,11 +98,11 @@ class ImpresoraService
         return $this->repository->show($id)->editar($data);
     }
 
-   /* public function excel()
+    public function excel()
     {
         $this->conexionAcarreos();
-        return Excel::download(new OrigenLayout(), 'origenes.csv');
-    }*/
+        return Excel::download(new ImpresoraLayout(), 'impresoras.csv');
+    }
 
     private function conexionAcarreos()
     {
