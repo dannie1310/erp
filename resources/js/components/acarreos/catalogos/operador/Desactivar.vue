@@ -50,44 +50,44 @@
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6><b>Número de Licencia:</b></h6>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6>{{operador.no_licencia}}</h6>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6><b>Vigencia de Licencia:</b></h6>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6>{{operador.licencia_vigencia_format}}</h6>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6><b>Fecha Registro:</b></h6>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6>{{operador.fecha_registro_format}}</h6>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <h6><b>Estatus:</b></h6>
                                             </div>
                                         </div>
-                                        <div class="col-md-4">
+                                        <div class="col-md-3">
                                             <div class="form-group">
                                                 <span class="badge" :style="{'background-color': operador.estado_color}">{{ operador.estado_format }}</span>
                                             </div>
@@ -131,7 +131,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i>Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir" v-if="operador"><i class="fa fa-close"></i>Cerrar</button>
                         <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0" v-if="operador">
                             <i class="fa fa-save"></i>Guardar
                         </button>

@@ -92,10 +92,26 @@ class Operador extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
+    public function getFechaDesactivoFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
+    }
+
     public function getNombreUsuarioAttribute()
     {
         try{
             return $this->usuario->nombre_completo;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    
+    public function getNombreUsuarioDesactivoAttribute()
+    {
+        try{
+            return $this->usuarioDesactivo->nombre_completo;
         }catch (\Exception $e){
             return null;
         }
@@ -108,6 +124,22 @@ class Operador extends Model
 
     public function getVigenciaLicenciaFormatAttribute(){
         return $this->VigenciaLicencia . " 00:00:00.000";
+    }
+
+    public function getFechaAltaFormatAttribute(){
+        if($this->FechaAlta){
+            $date = date_create($this->FechaAlta);
+            return date_format($date,"d/m/Y");
+        }
+        return null;
+    }
+
+    public function getFechaBajaFormatAttribute(){
+        if($this->FechaBaja){
+            $date = date_create($this->FechaBaja);
+            return date_format($date,"d/m/Y");
+        }
+        return null;
     }
 
 

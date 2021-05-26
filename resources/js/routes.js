@@ -2350,8 +2350,8 @@ export const routes = [
                                         parent: 'catalogo',
                                         name: 'OPERADORES'
                                     },
-                                    middleware: [auth, context],
-                                    // permission: ['consultar_operador']
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_operador']
                                 }
                             },
                             {

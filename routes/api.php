@@ -521,6 +521,8 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@activar')->where(['id' => '[0-9]+']);
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@descargaLayout');
+
         });
 
         //ORIGEN

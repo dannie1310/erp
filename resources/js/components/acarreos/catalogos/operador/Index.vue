@@ -2,7 +2,7 @@
    <div class="row">
         <div class="col-12">
             <Create @created="paginate()" />
-            <!-- <DescargaLayout /> -->
+            <DescargaLayout />
         </div>
         <div class="col-12">
             <div class="card">
@@ -22,10 +22,10 @@
 
 <script>
     import Create from './Create'
-   //  import DescargaLayout from "./DescargaLayout";
+    import DescargaLayout from "./DescargaLayout";
     export default {
         name: "operador-index",
-        components: {Create},
+        components: {Create, DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,
@@ -101,10 +101,8 @@
                         estatus: this.getEstado(operador.estado_format, operador.estado_color),
                         buttons: $.extend({}, {
                             id: operador.id,
-                           //  activar: (operador.estado === 0 && self.$root.can('activar_desactivar_operador'))||true ? true : false,
-                           //  desactivar: (operador.estado === 1 && self.$root.can('activar_desactivar_operador'))||true ? true : false,
-                            activar: (operador.estado === 0 ) ? true : false,
-                            desactivar: (operador.estado === 1) ? true : false,
+                            activar: (operador.estado === 0 && self.$root.can('activar_desactivar_operador')) ? true : false,
+                            desactivar: (operador.estado === 1 && self.$root.can('activar_desactivar_operador')) ? true : false,
                             edit: self.$root.can('editar_operador')||true ? true : false,
                             show: self.$root.can('consultar_operador')||true ? true : false,
                         })

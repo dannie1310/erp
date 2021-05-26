@@ -41,6 +41,11 @@ class OperadorController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
+        $this->middleware('permiso:consultar_operador')->only(['show','paginate','index','find', 'descargaLayout']);
+        $this->middleware('permiso:registrar_operador')->only(['store']);
+        $this->middleware('permiso:editar_operador')->only(['update']);
+        $this->middleware('permiso:activar_desactivar_operador')->only(['activar', 'desactivar']);
+
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
@@ -54,5 +59,10 @@ class OperadorController extends Controller
     public function desactivar(Request $request, $id)
     {
         return $this->respondWithItem($this->service->desactivar($request->all(),$id));
+    }
+
+    public function descargaLayout()
+    {
+        return $this->service->excel();
     }
 }

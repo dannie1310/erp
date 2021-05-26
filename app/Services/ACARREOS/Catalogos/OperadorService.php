@@ -9,6 +9,8 @@ use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
 use App\Models\ACARREOS\Operador;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use App\CSV\Acarreos\Catalogos\OperadorLayout;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 
 class OperadorService
@@ -117,6 +119,12 @@ class OperadorService
             abort(400, "El origen se encuentra " . $operador->estado_format . " previamente.");
         }
         return $operador->desactivar($data['motivo']);
+    }
+
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new OperadorLayout(), 'operadores.csv');
     }
 
     private function conexionAcarreos()
