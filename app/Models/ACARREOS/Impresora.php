@@ -107,6 +107,11 @@ class Impresora extends Model
         }
     }
 
+    public function getFechaDesactivoFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
+    }
 
     /**
      * Métodos
