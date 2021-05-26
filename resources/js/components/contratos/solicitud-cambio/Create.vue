@@ -587,7 +587,7 @@
 				return this.$store.dispatch('contratos/subcontrato/index', {
 					params: {
 						scope: 'estimable',
-						sort: 'id',
+						sort: 'id_transaccion',
 						order: 'desc'
 					}
 				})
