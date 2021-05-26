@@ -73,6 +73,11 @@ class PresupuestoContratistaPartida extends Model
         }
     }
 
+    public function getPrecioUnitarioMasDescuentoPartidaMonedaOriginalAttribute()
+    {
+        return $this->precio_unitario_descuento_moneda_original + ($this->PorcentajeDescuento * $this->precio_unitario_descuento_moneda_original / (100-$this->PorcentajeDescuento));
+    }
+
     public function getPrecioUnitarioDescuentoMonedaOriginalAttribute()
     {
         switch ($this->IdMoneda) {

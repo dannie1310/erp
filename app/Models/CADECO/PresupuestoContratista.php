@@ -627,7 +627,7 @@ class PresupuestoContratista extends Transaccion
                 }
                 if (array_key_exists($p->id_concepto, $partidas)) {
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['id_transaccion'] = $presupuesto->id_transaccion;
-                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario;
+                    $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario'] = $p->precio_unitario_mas_descuento_partida_moneda_original;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_unitario_c'] = $p->precio_unitario_convert;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total_moneda'] = $p->precio_sin_descuento;
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
