@@ -610,6 +610,7 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['anticipo'] = $presupuesto->anticipo && $presupuesto->anticipo > 0 ? $presupuesto->anticipo : '-';
             $presupuestos[$cont]['dias_credito'] = $presupuesto->DiasCredito ? $presupuesto->DiasCredito : '-';
             $presupuestos[$cont]['descuento_global'] = $presupuesto->descuento ? $presupuesto->descuento : '-';
+            $presupuestos[$cont]['porcentaje_descuento_global'] = $presupuesto->PorcentajeDescuento ? $presupuesto->PorcentajeDescuento : '-';
             $presupuestos[$cont]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
             $presupuestos[$cont]['iva_partidas'] = $presupuesto->iva_partidas;
             $presupuestos[$cont]['total_partidas'] = $presupuesto->total_partidas;
