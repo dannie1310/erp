@@ -79,45 +79,49 @@ class InformeNoLocalizados extends Rotation
     public function partidasTitle()
     {
         $this->SetFont('Arial', '', 8);
-
         $this->setXY(1, 3);
-
-        $this->SetFillColor(180,180,180);
-        $this->SetWidths([0.8,2.7,6,1.8,2.8,2.2,1,2.4]);
-        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF']);
-        $this->SetRounds(['','','','','','','','']);
-        $this->SetRadius([0.2,0,0,0,0,0,0,0.2]);
-
-        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
-        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-        $this->SetDrawColor(117,117,117);
-        $this->SetHeights([0.4]);
-        $this->SetAligns(['C','C','C','C','C','C','C','C']);
-        $this->Row(["#","RFC", utf8_decode("Razón Social"), utf8_decode("Fecha Primera Publicación"), "Entidad Federativa", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
+        $this->setEstilos("partidas_titulo");
+        $this->Row(["#","RFC", utf8_decode("Razón Social"), utf8_decode("Fecha Primera Publicación"), "Entidad Federativa",
+            "Inicio Operaciones", "Fin Operaciones",
+             "# CFDI", "Importe Incluyendo IVA"]);
     }
 
     public function partidas()
     {
         foreach($this->informe["informe"] as $tipo){
+            $itipo = 0;
             foreach($tipo as $partida){
                 if(key_exists("tipo", $partida)){
                     $this->en_cola = $partida["tipo"];
                     $this->setEstilos($partida["tipo"]);
                     if($partida["tipo"]== "partida"){
-                        $this->Row([$partida["indice"],$partida["rfc"], utf8_decode($partida["razon_social"])
+                        $this->Row([
+                            $partida["indice"],$partida["rfc"]
+                            , utf8_decode($partida["razon_social"])
                             , $partida["fecha_primera_publicacion"]
-                            , $partida["entidad_federativa"], utf8_decode($partida["empresa"]), $partida["no_CFDI"]
-                            , $partida["importe_format"]]);
+                            , $partida["entidad_federativa"]
+                            , $partida["inicio_operaciones"]
+                            , $partida["fin_operaciones"]
+                            , $partida["no_CFDI"]
+                            , $partida["importe_format"]
+                        ]);
 
                     }    else if($partida["tipo"]== "titulo"){
                         $this->AddPage();
                     } else if($partida["tipo"]== "total"){
                         $this->Row([$partida["contador"],'',utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
 
-                    } else {
+                    } else if($partida["tipo"] == "empresa"){
+                        $this->Row([utf8_decode($partida["etiqueta"])]);
+                    }
+                    else {
                         $this->Row([$partida["contador"],'',utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
+                        if(key_exists($itipo+2,$tipo)){
+                            $this->ln();
+                        }
                     }
                 }
+                $itipo ++;
             }
         }
         $this->Ln();
@@ -132,14 +136,27 @@ class InformeNoLocalizados extends Rotation
             $this->SetDrawColor(213,213,213);
             $this->SetFont('Arial', '', 7);
             $this->SetFillColor(255,255,255);
-            $this->SetWidths([0.8,2.7,6,1.8,2.8,2.2,1,2.4]);
-            $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF']);
-            $this->SetRounds(['','','','','','','','']);
+            $this->SetWidths([0.8,2.7,6,1.8,2.8,1.1,1.1,1,2.4]);
+            $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF','DF']);
+            $this->SetRounds(['','','','','','','','','']);
             $this->SetRadius([0,0,0,0,0,0,0,0]);
-            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+            $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
             $this->SetHeights([0.4]);
-            $this->SetAligns(['C','C','L','C','L','L','R','R']);
+            $this->SetAligns(['C','C','L','C','L','L','L','R','R']);
+        } else if($tipo == "partidas_titulo")
+        {
+            $this->SetFillColor(180,180,180);
+            $this->SetWidths([0.8,2.7,6,1.8,2.8,1.1,1.1,1,2.4]);
+            $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF','DF']);
+            $this->SetRounds(['','','','','','','','','']);
+            $this->SetRadius([0.2,0,0,0,0,0,0,0,0.2]);
+
+            $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
+            $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+            $this->SetDrawColor(117,117,117);
+            $this->SetHeights([0.4]);
+            $this->SetAligns(['C','C','C','C','C','C','C','C','C']);
         } else if($tipo == "subtotal"){
             $this->SetDrawColor(213,213,213);
             $this->SetFont('Arial', '', 7);
@@ -152,7 +169,19 @@ class InformeNoLocalizados extends Rotation
             $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
             $this->SetHeights([0.4]);
             $this->SetAligns(['C','C','L','R','R']);
-        }  else if($tipo == "total"){
+        }  else if($tipo == "empresa"){
+            $this->SetDrawColor(213,213,213);
+            $this->SetFont('Arial', '', 7);
+            $this->SetFillColor(255,255,255);
+            $this->SetWidths([19.7]);
+            $this->SetStyles(['DF']);
+            $this->SetRounds(['']);
+            $this->SetRadius([0]);
+            $this->SetFills(['213,213,213']);
+            $this->SetTextColors(['0,0,0']);
+            $this->SetHeights([0.4]);
+            $this->SetAligns(['L']);
+        } else if($tipo == "total"){
             $this->SetDrawColor(117,117,117);
             $this->SetFont('Arial', '', 7);
             $this->SetFillColor(255,255,255);

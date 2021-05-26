@@ -41,7 +41,7 @@
                                 <template v-for="(partidas, j) in tipo">
                                      <template v-if="partidas.tipo == 'titulo'">
                                          <tr>
-                                            <td colspan="11" style="background-color: #fff" ></td>
+                                            <td colspan="13" style="background-color: #fff" ></td>
                                         </tr>
 
                                         <tr style="background-color: #757575; color:#FFF; text-align:center" >
@@ -51,6 +51,8 @@
                                             <td>Fecha Primera Publicación</td>
                                             <td>Entidad Federativa</td>
                                             <td>Empresa</td>
+                                            <td>Inicio de Operaciones </td>
+                                            <td>Fin de Operaciones </td>
                                             <td># CFDI</td>
                                             <td>Importe incluyendo IVA</td>
                                         </tr>
@@ -59,9 +61,11 @@
                                         <td class="index_corto">{{partidas.indice}}</td>
                                         <td>{{partidas.rfc}}</td>
                                         <td>{{partidas.razon_social}}</td>
-                                        <td>{{partidas.fecha_primera_publicacion}}</td>
+                                        <td style="text-align: center">{{partidas.fecha_primera_publicacion}}</td>
                                         <td>{{partidas.entidad_federativa}}</td>
                                         <td>{{partidas.empresa}}</td>
+                                        <td style="text-align: center">{{partidas.inicio_operaciones}}</td>
+                                        <td style="text-align: center">{{partidas.fin_operaciones}}</td>
                                         <td style="text-align:right">{{partidas.no_CFDI}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
                                     </tr>
@@ -69,7 +73,7 @@
                                     <tr v-else :style="{'background-color': partidas.bg_color_hex, 'color': partidas.color_hex}"  >
                                         <td class="index_corto">{{partidas.contador}}</td>
                                         <td></td>
-                                        <td colspan="4">{{partidas.etiqueta}}</td>
+                                        <td colspan="6">{{partidas.etiqueta}}</td>
 
                                         <td style="text-align:right">{{partidas.contador_cfdi}}</td>
                                         <td style="text-align:right">{{partidas.importe_format}}</td>
