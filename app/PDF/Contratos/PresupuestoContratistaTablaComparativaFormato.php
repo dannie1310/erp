@@ -392,21 +392,52 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
+        $base = Context::getDatabase();
+        $id_obra = Context::getIdObra();
+
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'BI', 5.5);
-        $this->SetY(-5.4);
-        $encabezados[0] = utf8_decode("Elaboró");
-        $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
-        $encabezados[2] = "Gerencia Solicitante";
-        $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
-            $this->Cell(.4);
-        }
-        $this->Ln(.5);
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
-            $this->Cell(.4);
+        $this->SetY(-5.1);
+
+
+        if ($base == "SAO1814" && $id_obra == 41) {
+
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(180, 180, 180);
+            $this->Cell(6.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(12.8, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(6.6, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'Control de Costos', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(6.6, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(6.6, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(6.4, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(6.4, 0.7, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(6.6, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, 'C.P JAVIER MENDEZ JOSE', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
+        } else {
+
+            $encabezados[0] = utf8_decode("Elaboró");
+            $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
+            $encabezados[2] = "Gerencia Solicitante";
+            $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
+                $this->Cell(.4);
+            }
+            $this->Ln(.5);
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, 0.7, '', 1, 0, 'R', 0, '');
+                $this->Cell(.4);
+            }
         }
 
         $this->SetY(-3.8);

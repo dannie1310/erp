@@ -636,43 +636,111 @@ class AsignacionFormato extends Rotation
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
+        $base = Context::getDatabase();
+        $id_obra = Context::getIdObra();
         $this->SetTextColor(0, 0, 0);
         $this->SetY(-5.1);
         $this->SetFont('Arial', '', 6);
-        $encabezados[0] = utf8_decode("Elaboró");
-        $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
-        $encabezados[2] = "Gerencia Solicitante";
-        $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, .4, $encabezados[$i], 1, 0, 'C', 0, '');
-            $this->Cell(.4);
+        $this->SetTextColor(0, 0, 0);
+        if ($base == "SAO1814" && $id_obra == 41) {
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(180, 180, 180);
+            $this->Cell(6.6, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(12.8, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(6.6, .4, 'Jefe Compras', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'Control de Costos', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'Director de proyecto', 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(6.6, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(6.6, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(6.4, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(6.4, 0.7, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(6.6, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.6, .4, 'C.P JAVIER MENDEZ JOSE', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
+            $this->Cell(6.4, .4, 'ING. PEDRO ALFONSO MIRANDA REYES', 'TRLB', 0, 'C', 1);
         }
-        $this->Ln(.4);
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, 0.8, '', 1, 0, 'R', 0, '');
-            $this->Cell(.4);
+        else if ($base == "SAO1814_TUNEL_DRENAJE_PRO"){
+
+            $this->SetFont('Arial', '', 4);
+            $this->SetFillColor(180, 180, 180);
+            $this->Cell(3.35, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(6.7, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(10.05, .4, utf8_decode('Vo. Bo.'), 'TRLB', 0, 'C', 1);
+            $this->Cell(10.05, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->CellFitScale(3.35, .4, 'SUBCONTRATOS TDP', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'GERENCIA ADMINISTRATIVA TDP', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'GERENTE DE ADMINISTRACION DE CONTRATO TDP', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'GERENTE DE CONSTRUCCION TDP', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'GERENTE DE PROCURACION ICA', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'GERENTE DE SUBCONTRATOS LA PENINSULAR', 'TRLB', 0, 'C', 1);
+            $this->Cell(3.35, .4, utf8_decode('COMITÉ TDP'), 'TRLB', 0, 'C', 1);
+            $this->Cell(3.35, .4, utf8_decode('COMITÉ TDP'), 'TRLB', 0, 'C', 1);
+            $this->Cell(3.35, .4, utf8_decode('COMITÉ TDP'), 'TRLB', 0, 'C', 1);
+            $this->Ln();
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+            $this->Cell(3.35, 0.7, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->CellFitScale(3.35, .4, 'ING. GUADALUPE MORENO HERNANDEZ', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'C.P. ANDRES MORENO AYALA', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'LUIS ALFONSO HERNANDEZ REDING', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'ING. FRANCISCO JAVIER BAY ORTUZAR', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'ING. RUBEN LEON T.', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'ING. ALEJANDRO JIMENEZ VAZQUEZ', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'ING. CARLOS R. DE LA MORA RODRIGUEZ', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'ING. JULIO CESAR ROSIQUE ROSIQUE', 'TRLB', 0, 'C', 1);
+            $this->CellFitScale(3.35, .4, 'ING. LUIS HORCASITAS MANJARREZ', 'TRLB', 0, 'C', 1);
+        }
+        else {
+
+            $encabezados[0] = utf8_decode("Elaboró");
+            $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
+            $encabezados[2] = "Gerencia Solicitante";
+            $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
+                $this->Cell(.4);
+            }
+            $this->Ln(.5);
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, 0.7, '', 1, 0, 'R', 0, '');
+                $this->Cell(.4);
+            }
         }
 
         $this->SetY(-3.8);
         $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
         $this->SetY(-3.6);
+
         $this->setX(4.5);
-        $this->SetFont('Arial', '', 4.5);
-        $this->MultiCell(22.5, .3, utf8_decode($this->cadena), 0, 'L');
-        $this->Ln(.2);
+        $this->MultiCell(26.5, 0.4, $this->cadena);
+        $this->SetFont('Arial', '', 6);
         $this->SetY(16.5);
         $this->setX(4.5);
-
-        $this->SetFont('Arial', 'B', 6.5);
+        $this->SetFont('Arial', 'B', 6);
         $this->SetTextColor('100,100,100');
-        $this->SetY(20.5);
-        $this->Cell(26.5, .4, utf8_decode('Sistema de Administración de Obra'), 0, 0, 'R');
-        $this->SetY(-0.9);
-        $this->SetFont('Arial', 'BI', 6.5);
+        $this->SetY(-1.5);
+        $this->Cell(30.2, .4, ( utf8_decode('Sistema de Administración de Obra')), 0, 0, 'R');
+        $this->SetY(-1);
+        $this->SetFont('Arial', 'BI', 6);
         $this->SetTextColor('0,0,0');
-        $this->SetX(4);
+        $this->Cell(3.5);
         $this->Cell(11.5, .4, utf8_decode('Formato generado desde el sistema de contratos. Fecha de registro: ') . $this->asignacion->fecha_registro_format.' Fecha de consulta: '.date("d-m-Y H:i:s"), 0, 0, 'L');
-        $this->Cell(11, .5, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
+        $this->Cell(20.2, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}',0, 0, 'R');
     }
 
     function create()
