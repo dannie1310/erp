@@ -1085,6 +1085,8 @@ $api->version('v1', function ($api) {
             $api->post('/storeRevision', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevision');
             $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
+            $api->get('/leerQR', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@leerQR');
+
 
             /**
              * FORMATO DE CONTRARECIBO

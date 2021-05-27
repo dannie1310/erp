@@ -7,7 +7,8 @@
             </router-link> -->
             <button @click="modalRevision" v-if="value.revisar || value.revisar_varios"  type="button" class="btn btn-sm btn-outline-secondary" title="Revisar"><i class="fa fa-tasks"></i></button>
             <Edit v-if="value.edit" v-bind:id="value.id" />
-            <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_factura')"></PDF>
+            <ModalPDF v-bind:id="value.id" v-bind:opciones="value.opciones" v-if="value.opciones > 0" ></ModalPDF>
+            <PDF v-bind:id="value.id" v-bind:opciones="value.opciones" @click="value.id" v-else-if="$root.can('consultar_factura')"></PDF>
             <CFDI v-bind:id="value.id" @click="value.id" ></CFDI>
             <Eliminar v-if="value.borrar" v-bind:id="value.id" v-bind:pagina="value.pagina" />
             <Revertir v-if="value.revertir" v-bind:id="value.id" />
@@ -48,6 +49,7 @@
 
 <script>
     import PDF from '../FormatoCR';
+    import ModalPDF from '../ShowModalPDF';
     import FacturaShow from "../Show";
     import Eliminar from '../Eliminar';
     import Revertir from "../Revertir";
@@ -56,7 +58,7 @@
     import Edit from "../Edit";
     export default {
         name: "action-buttons",
-        components: {Revertir, PDF,  Eliminar, Relaciones, CFDI, FacturaShow, Edit},
+        components: {Revertir, PDF,  Eliminar, Relaciones, CFDI, FacturaShow, Edit, ModalPDF},
         props: ['value'],
         methods: {
            modalRevision(){

@@ -11,6 +11,7 @@ use App\PDF\Fiscal\CFDI;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
@@ -600,6 +601,19 @@ class FacturaService
     public function update(array $data, $id)
     {
         return $this->repository->show($id)->editar($data);
+    }
+
+    public function leerQR($data)
+    {
+        $verifica = new ValidacionSistema();
+
+        $datos = $verifica->desencripta($data);
+
+        if($datos) {
+            return $datos;
+        }else{
+            return "Error de lectura";
+        }
     }
 }
 

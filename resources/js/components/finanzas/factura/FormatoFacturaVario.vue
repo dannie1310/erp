@@ -1,11 +1,6 @@
 <template>
     <span>
-       <button @click="init" type="button" class="btn btn-primary float-right" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
-      <div class="col-md-12">
-         
-         <!-- <button type="button" @click="prepoliza(factura.poliza.id)" class="btn btn-primary float-right" v-if="factura.poliza && $root.can('consultar_prepolizas_generadas') && factura.estado > 0"> Ver Prepóliza</button> -->
-      </div>
-      
+       <button @click="init" type="button" class="btn btn-primary float-right mr-3" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i>Factura de Varios </button>
       <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
          <div class="modal-dialog modal-lg" id="mdialTamanio">
             <div class="modal-content">
@@ -17,7 +12,7 @@
 
                </div>
                <div class="modal-footer">
-                     <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                     <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cerrar</button>
                </div>
             </div>
          </div>

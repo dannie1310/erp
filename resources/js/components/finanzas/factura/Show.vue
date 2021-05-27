@@ -16,7 +16,6 @@
                     <div class="modal-body" v-if="factura">
                         <div class="row">
                             <div class="col-md-12">
-                                <FormatoFV v-bind:id="id"></FormatoFV>
                                 <button type="button" @click="prepoliza(factura.poliza.id)" class="btn btn-primary float-right" v-if="factura.poliza && $root.can('consultar_prepolizas_generadas') && factura.estado > 0"> Ver Prepóliza</button>
                             </div>
                             <div class="col-md-2">
@@ -254,11 +253,10 @@
 
 <script>
 import Formato from '../../padron-proveedores/gestion-proveedores/Formato.vue';
-import FormatoFV from './FormatoFacturaVario';
     export default {
         name: "Show",
         props: ['id'],
-        components: {FormatoFV},
+        components: {},
         data() {
             return {
                 cargando: false,
