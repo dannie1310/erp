@@ -41,6 +41,7 @@
                                                     data-vv-as="'Marca'"
                                                     v-validate="{required: true}"
                                                     class="form-control"
+                                                    placeholder="Marca"
                                                     id="marca"
                                                     v-model="marca"
                                                     :class="{'is-invalid': errors.has('marca')}" />
@@ -55,6 +56,7 @@
                                                     data-vv-as="'Modelo'"
                                                     v-validate="{required: true}"
                                                     class="form-control"
+                                                    placeholder="Modelo"
                                                     id="modelo"
                                                     v-model="modelo"
                                                     :class="{'is-invalid': errors.has('modelo')}" />
