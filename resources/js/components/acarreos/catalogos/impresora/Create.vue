@@ -19,14 +19,17 @@
                                     <div class="row">
                                         <div class="form-group col-md-12 error-content">
                                             <label for="mac" class="col-form-label">MAC:</label>
-                                            <input style="text-transform:uppercase;"
-                                                   name="mac"
-                                                   data-vv-as="'MAC'"
-                                                   v-validate="{required: true, min:6}"
-                                                   class="form-control"
-                                                   id="mac"
-                                                   v-model="mac"
-                                                   :class="{'is-invalid': errors.has('mac')}" />
+                                             <input
+                                                 type="text"
+                                                 name="mac"
+                                                 data-vv-as="MAC"
+                                                 v-validate="{required: true, regex: '^([0-9A-z]{2}:){5}([0-9A-z]{2})$'}"
+                                                 class="form-control"
+                                                 v-mask="{regex: '^([0-9A-z]{2}:){5}([0-9A-z]{2})$'}"
+                                                 id="mac"
+                                                 placeholder="Mac"
+                                                 v-model="mac"
+                                                 :class="{'is-invalid': errors.has('mac')}">
                                             <div class="invalid-feedback" v-show="errors.has('mac')">{{ errors.first('mac') }}</div>
                                         </div>
                                     </div>
@@ -79,7 +82,7 @@
             return {
                 mac : '',
                 marca : '',
-                modelo : '',
+                modelo : ''
             }
         },
         mounted() {
