@@ -7,6 +7,7 @@ namespace App\Models\ACARREOS;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\ACARREOS\ImpresoraHistorico;
 
 class Impresora extends Model
 {
@@ -37,7 +38,7 @@ class Impresora extends Model
 
     public function historicos()
     {
-        return $this->hasMany(ImpresoraHistorico::class,  'id', 'id');
+        return $this->hasMany(ImpresoraHistorico::class, 'IdOrigen', 'IdOrigen');
     }
 
     /**
