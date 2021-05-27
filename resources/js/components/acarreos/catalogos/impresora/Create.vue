@@ -19,14 +19,17 @@
                                     <div class="row">
                                         <div class="form-group col-md-12 error-content">
                                             <label for="mac" class="col-form-label">MAC:</label>
-                                            <input style="text-transform:uppercase;"
-                                                   name="mac"
-                                                   data-vv-as="'MAC'"
-                                                   v-validate="{required: true, min:6}"
-                                                   class="form-control"
-                                                   id="mac"
-                                                   v-model="mac"
-                                                   :class="{'is-invalid': errors.has('mac')}" />
+                                             <input
+                                                 type="text"
+                                                 name="mac"
+                                                 data-vv-as="MAC"
+                                                 v-validate="{required: true, regex: '^([0-9A-z]{2}:){5}([0-9A-z]{2})$'}"
+                                                 class="form-control"
+                                                 v-mask="{regex: '^([0-9A-z]{2}:){5}([0-9A-z]{2})$'}"
+                                                 id="mac"
+                                                 placeholder="MAC"
+                                                 v-model="mac"
+                                                 :class="{'is-invalid': errors.has('mac')}">
                                             <div class="invalid-feedback" v-show="errors.has('mac')">{{ errors.first('mac') }}</div>
                                         </div>
                                     </div>
@@ -36,8 +39,9 @@
                                             <input  type="text"
                                                     name="marca"
                                                     data-vv-as="'Marca'"
-                                                    v-validate="{required: true, min:6}"
+                                                    v-validate="{required: true}"
                                                     class="form-control"
+                                                    placeholder="Marca"
                                                     id="marca"
                                                     v-model="marca"
                                                     :class="{'is-invalid': errors.has('marca')}" />
@@ -50,8 +54,9 @@
                                             <input  type="text"
                                                     name="modelo"
                                                     data-vv-as="'Modelo'"
-                                                    v-validate="{required: true, min:6}"
+                                                    v-validate="{required: true}"
                                                     class="form-control"
+                                                    placeholder="Modelo"
                                                     id="modelo"
                                                     v-model="modelo"
                                                     :class="{'is-invalid': errors.has('modelo')}" />
@@ -79,7 +84,7 @@
             return {
                 mac : '',
                 marca : '',
-                modelo : '',
+                modelo : ''
             }
         },
         mounted() {
@@ -96,12 +101,19 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store();
+                        var mac = this.mac;
+                        mac = mac.replace(/_/g, "");
+                        if(mac.length < 17)
+                        {
+                            swal('¡Error!', 'La MAC Address debe tener 12 digitos', 'error')
+                        }
+                        else {
+                            this.store()
+                        }
                     }
                 });
             },
             store() {
-                this.mac = this.mac.toUpperCase()
                 return this.$store.dispatch('acarreos/impresora/store', {
                     mac: this.mac,
                     marca: this.marca,
