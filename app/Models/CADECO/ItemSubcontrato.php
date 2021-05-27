@@ -96,7 +96,7 @@ class ItemSubcontrato extends Item
 
     public function getPrecioUnitarioFormatAttribute()
     {
-        return '$ ' . number_format($this->precio_unitario, 2, '.', ',');
+        return '$' . number_format($this->precio_unitario, 2, '.', ',');
     }
 
     public function getCantidadFormatAttribute()
@@ -143,8 +143,8 @@ class ItemSubcontrato extends Item
             'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
-            'destino_path' => $destino->ruta_destino,
-            'destino_path_larga' => $destino->ruta,
+            'destino_path' => $destino->concepto->path_corta,
+            'destino_path_larga' => $destino->concepto->path,
             'id_destino' => $destino->id_concepto,
             'cantidad_addendum' => "",
             'precio_modificado' => 0,
@@ -187,7 +187,7 @@ class ItemSubcontrato extends Item
 
     public function getImporteTotalAttribute()
     {
-        return  '$ ' . number_format($this->cantidad * $this->precio_unitario,2,'.',',');
+        return  '$' . number_format($this->cantidad * $this->precio_unitario,2,'.',',');
     }
 
     public function getAcumuladoAnteriorAttribute()

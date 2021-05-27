@@ -358,8 +358,6 @@ class SolicitudCambioSubcontrato extends Transaccion
 
         try{
             DB::connection('cadeco')->beginTransaction();
-
-
             foreach($this->partidas as $partida){
                 if($partida->id_tipo_modificacion == 1 || $partida->id_tipo_modificacion == 2)
                 {
@@ -464,7 +462,7 @@ class SolicitudCambioSubcontrato extends Transaccion
         $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
         if(!$concepto_agrupador_extraordinario){
 
-            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratos->sortByDesc("nivel")->first();
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden->sortByDesc("nivel")->first();
             $ultimo_nivel = $ultimo_concepto->nivel;
             $ultimo_nivel_exp = explode(".", $ultimo_nivel);
             $nivel_nodo_extraordinario = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
@@ -478,7 +476,7 @@ class SolicitudCambioSubcontrato extends Transaccion
         }
 
         $ultimo_concepto_extraordinario = $this->subcontrato
-            ->contratoProyectado->contratos()
+            ->contratoProyectado->contratosSinOrden()
             ->where("nivel","LIKE",$concepto_agrupador_extraordinario->nivel."%")
             ->orderBy("nivel","desc")
             ->first();
@@ -514,7 +512,7 @@ class SolicitudCambioSubcontrato extends Transaccion
     private function aplicarCambioPrecio($partida){
         $concepto_agrupador_nuevo_precio = $this->subcontrato->contratoProyectado->contratos()->agrupadorNuevoPrecio()->first();
         if(!$concepto_agrupador_nuevo_precio){
-            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratos->sortByDesc("nivel")->first();
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden->sortByDesc("nivel")->first();
             $ultimo_nivel = $ultimo_concepto->nivel;
             $ultimo_nivel_exp = explode(".", $ultimo_nivel);
             $nivel_nodo_nuevo_precio = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
@@ -528,7 +526,7 @@ class SolicitudCambioSubcontrato extends Transaccion
         }
 
         $ultimo_concepto_nuevo_precio = $this->subcontrato
-            ->contratoProyectado->contratos()
+            ->contratoProyectado->contratosSinOrden()
             ->where("nivel","LIKE",$concepto_agrupador_nuevo_precio->nivel."%")
             ->orderBy("nivel","desc")
             ->first();

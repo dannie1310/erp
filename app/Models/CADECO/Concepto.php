@@ -171,6 +171,20 @@ class Concepto extends Model
         return $this->clave_concepto_select . $this->descripcion;
     }
 
+    public function getDescripcionClaveRecortadaAttribute()
+    {
+        $longitud = strlen($this->clave_concepto_select . $this->descripcion);
+        if($longitud>30)
+        {
+            $diferencia = $longitud-30;
+            return $this->clave_concepto_select . substr($this->descripcion,0,strlen($this->descripcion)-$diferencia)."...";
+        } else
+        {
+            return $this->clave_concepto_select . $this->descripcion;
+        }
+
+    }
+
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
@@ -232,7 +246,7 @@ class Concepto extends Model
             $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(8-($i*4)))+($i*4));
             if($nivel_buscar != "")
             {
-                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave;
+                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
             }
         }
         return implode(" -> ",$path_corta);

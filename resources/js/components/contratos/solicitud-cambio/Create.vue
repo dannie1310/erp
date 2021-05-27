@@ -265,7 +265,7 @@
                                 {{ concepto.precio_unitario_subcontrato_format}}
                             </td>
                             <td class="numerico" style="background-color: #ddd">
-                                $ {{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
+                                ${{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
                             </td>
                             <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
                             <td></td>
@@ -291,10 +291,10 @@
                             {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
                         </td>
                         <td class="numerico" style="background-color: #ddd">
-                            $ {{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
+                            ${{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
                         </td>
                         <td class="numerico" style="background-color: #ddd">
-                            $ {{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
+                            ${{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
 
                         </td>
                         <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
@@ -326,10 +326,10 @@
                             {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
                         </td>
                         <td class="editable-cell numerico" style="background-color: #ddd">
-                            $ {{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
+                            ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
                         </td>
                         <td class="numerico" style="background-color: #ddd">
-                            $ {{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
+                            ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
                         </td>
                         <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
                         <td>
