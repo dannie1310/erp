@@ -27,7 +27,7 @@
                                                  class="form-control"
                                                  v-mask="{regex: '^([0-9A-z]{2}:){5}([0-9A-z]{2})$'}"
                                                  id="mac"
-                                                 placeholder="Mac"
+                                                 placeholder="MAC"
                                                  v-model="mac"
                                                  :class="{'is-invalid': errors.has('mac')}">
                                             <div class="invalid-feedback" v-show="errors.has('mac')">{{ errors.first('mac') }}</div>
@@ -39,7 +39,7 @@
                                             <input  type="text"
                                                     name="marca"
                                                     data-vv-as="'Marca'"
-                                                    v-validate="{required: true, min:6}"
+                                                    v-validate="{required: true}"
                                                     class="form-control"
                                                     id="marca"
                                                     v-model="marca"
@@ -53,7 +53,7 @@
                                             <input  type="text"
                                                     name="modelo"
                                                     data-vv-as="'Modelo'"
-                                                    v-validate="{required: true, min:6}"
+                                                    v-validate="{required: true}"
                                                     class="form-control"
                                                     id="modelo"
                                                     v-model="modelo"
@@ -99,12 +99,19 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store();
+                        var mac = this.mac;
+                        mac = mac.replace(/_/g, "");
+                        if(mac.length < 17)
+                        {
+                            swal('¡Error!', 'La MAC Address debe tener 12 digitos', 'error')
+                        }
+                        else {
+                            this.store()
+                        }
                     }
                 });
             },
             store() {
-                this.mac = this.mac.toUpperCase()
                 return this.$store.dispatch('acarreos/impresora/store', {
                     mac: this.mac,
                     marca: this.marca,
