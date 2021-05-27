@@ -42,8 +42,8 @@ class FacturaController extends Controller
      */
     public function __construct(Manager $fractal, FacturaService $service, FacturaTransformer $transformer)
     {
-        $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('auth:api')->except('leerQR');
+        $this->middleware('context')->except('leerQR');
         $this->middleware('permiso:consultar_factura')->only(['paginate']);
         $this->middleware('permiso:eliminar_factura')->only(['destroy']);
         $this->middleware('permiso:revertir_revision_factura')->only(['revertir']);
@@ -101,5 +101,14 @@ class FacturaController extends Controller
 
     public function storeRevisionVarios(Request $request){
         return $this->service->storeRevisionVarios($request->all());
+    }
+
+    public function pdfFV($id){
+        return $this->service->pdfFV($id)->create();
+    }
+
+    public function leerQR(Request $request)
+    {
+        return $this->service->leerQR($request->all()['data']);
     }
 }

@@ -107,6 +107,7 @@
                             observaciones: factura.contra_recibo.observaciones,
                             buttons: $.extend({}, {
                                 id: factura.id,
+                                opciones: factura.opciones,
                                 show: self.$root.can('consultar_factura') ? true : false,
                                 edit: self.$root.can('editar_factura') ? true : false,
                                 factura: factura,

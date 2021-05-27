@@ -82,7 +82,8 @@ class FacturaTransformer extends TransformerAbstract
             'fondo_garantia_format' => $model->fondo_garantia_format,
             'retenciones_format' => $model->retenciones_subcontrato_format,
             'devoluciones_format' => $model->devoluciones_subcontrato_format,
-            'tipo' => $model->tipo->Descripcion
+            'tipo' => $model->tipo->Descripcion,
+            'opciones' => $model->opciones,
 
         ];
     }
