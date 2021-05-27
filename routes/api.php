@@ -1090,6 +1090,11 @@ $api->version('v1', function ($api) {
              * FORMATO DE CONTRARECIBO
              */
             $api->get('{id}/formato-cr', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCR')->where(['id' => '[0-9]+']);
+
+            /**
+             * FORMATO PDF FACTURA DE VARIOS
+             */
+            $api->get('{id}/formato-fv', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfFV')->where(['id' => '[0-9]+']);
         });
 
         /**

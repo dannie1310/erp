@@ -102,4 +102,8 @@ class FacturaController extends Controller
     public function storeRevisionVarios(Request $request){
         return $this->service->storeRevisionVarios($request->all());
     }
+
+    public function pdfFV($id){
+        return $this->service->pdfFV($id)->create();
+    }
 }
