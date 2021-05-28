@@ -252,9 +252,11 @@
 </template>
 
 <script>
+import Formato from '../../padron-proveedores/gestion-proveedores/Formato.vue';
     export default {
         name: "Show",
         props: ['id'],
+        components: {},
         data() {
             return {
                 cargando: false,

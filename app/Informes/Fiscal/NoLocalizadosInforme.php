@@ -6,6 +6,7 @@ namespace App\Informes\Fiscal;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
+use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
 use Illuminate\Support\Facades\DB;
 
 class NoLocalizadosInforme
@@ -38,6 +39,10 @@ class NoLocalizadosInforme
        no_localizados.razon_social,
        ctg_no_localizados.entidad_federativa,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       CONVERT(varchar,min(cfd_sat.fecha),103) as fecha_inicio_operaciones,
+       CONVERT(varchar,max(cfd_sat.fecha),103) as fecha_fin_operaciones,
+       FORMAT(min(cfd_sat.fecha),'MM/yyyy') as inicio_operaciones,
+       FORMAT(max(cfd_sat.fecha),'MM/yyyy') as fin_operaciones,
        CONVERT(varchar,ctg_no_localizados.primera_fecha_publicacion,103) as fecha_primera_publicacion,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -135,6 +140,7 @@ ORDER BY QueryImportes.importe_proyecto desc, ListaEmpresasSAT.nombre_corto, imp
 
     private static function setSubtotalesPartidas($partidas, $tipo){
         $partidas_completas = [];
+        $meses = CatalogoMeses::all()->toArray();
         if(count($partidas)>0){
             $i = 0;
             $contador_partidas_empresa = 1;
@@ -154,8 +160,19 @@ ORDER BY QueryImportes.importe_proyecto desc, ListaEmpresasSAT.nombre_corto, imp
             $i++;
             foreach($partidas as $partida)
             {
+                if($i_p == 0){
+                    $partidas_completas[$i]["etiqueta"] = $partida["empresa"];
+                    $partidas_completas[$i]["tipo"] = "empresa";
+                    $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+                    $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+                    $partidas_completas[$i]["color_hex"] = "#000";
+                    $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                    $i++;
+                }
                 if($i_p>0){
                     if($partida["empresa"]!=$partidas[$i_p-1]["empresa"] ){
+
+
                         //if($acumulador_partidas_empresa>1){
                         $partidas_completas[$i]["contador"] = $contador_partidas_empresa-1;
                         $partidas_completas[$i]["acumulador"] = $acumulador_partidas_empresa;
@@ -169,6 +186,16 @@ ORDER BY QueryImportes.importe_proyecto desc, ListaEmpresasSAT.nombre_corto, imp
                         $partidas_completas[$i]["color_hex"] = "#000";
                         $partidas_completas[$i]["color_rgb"] = [0,0,0];
                         $i++;
+
+                        if(($i_p > 0 && $partida["empresa"]!=$partidas[$i_p-1]["empresa"])){
+                            $partidas_completas[$i]["etiqueta"] = $partida["empresa"];
+                            $partidas_completas[$i]["tipo"] = "empresa";
+                            $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+                            $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+                            $partidas_completas[$i]["color_hex"] = "#000";
+                            $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                            $i++;
+                        }
                         //}
                         $contador_partidas_empresa = 1;
                         $contador_cfdi=0;
@@ -180,6 +207,13 @@ ORDER BY QueryImportes.importe_proyecto desc, ListaEmpresasSAT.nombre_corto, imp
                 $partidas_completas[$i] = $partida;
                 $partidas_completas[$i]["indice"] = $i_bis;
                 $partidas_completas[$i]["tipo"] = "partida";
+
+                $inicio_ex = explode("/",$partida["inicio_operaciones"]);
+                $fin_ex = explode("/",$partida["fin_operaciones"]);
+
+                $partidas_completas[$i]["inicio_operaciones_txt"] = $meses[$inicio_ex[0]-1]["NombreCorto"] .' '.$inicio_ex[1];
+                $partidas_completas[$i]["fin_operaciones_txt"] = $meses[$fin_ex[0]-1]["NombreCorto"] .' '.$fin_ex[1];
+
                 $contador_cfdi+=$partidas_completas[$i]["no_CFDI"];
                 $importe_cfdi+=$partidas_completas[$i]["importe"];
                 $contador_cfdi_global+=$partidas_completas[$i]["no_CFDI"];;
@@ -227,6 +261,10 @@ ORDER BY QueryImportes.importe_proyecto desc, ListaEmpresasSAT.nombre_corto, imp
        no_localizados.razon_social,
        ctg_no_localizados.entidad_federativa,
        ListaEmpresasSAT.nombre_corto AS empresa,
+       CONVERT(varchar,min(cfd_sat.fecha),103) as fecha_inicio_operaciones,
+       CONVERT(varchar,max(cfd_sat.fecha),103) as fecha_fin_operaciones,
+       FORMAT(min(cfd_sat.fecha),'MM/yyyy') as inicio_operaciones,
+       FORMAT(max(cfd_sat.fecha),'MM/yyyy') as fin_operaciones,
        CONVERT(varchar,ctg_no_localizados.primera_fecha_publicacion,103) as fecha_primera_publicacion,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -322,6 +360,7 @@ ORDER BY QueryImportes.importe_empresa desc, no_localizados.razon_social, import
 
     private static function setSubtotalesPartidasEmpresaProyecto($partidas, $tipo){
         $partidas_completas = [];
+        $meses = CatalogoMeses::all()->toArray();
         if(count($partidas)>0){
             $i = 0;
             $contador_partidas_empresa = 1;
@@ -341,6 +380,15 @@ ORDER BY QueryImportes.importe_empresa desc, no_localizados.razon_social, import
             $i++;
             foreach($partidas as $partida)
             {
+                /*if(($i_p > 0 && $partida["razon_social"]!=$partidas[$i_p-1]["razon_social"]) || $i_p == 0){
+                    $partidas_completas[$i]["etiqueta"] = $partidas[count($partidas)-1]["razon_social"];
+                    $partidas_completas[$i]["tipo"] = "empresa";
+                    $partidas_completas[$i]["bg_color_hex"] = "#d5d5d5";
+                    $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
+                    $partidas_completas[$i]["color_hex"] = "#000";
+                    $partidas_completas[$i]["color_rgb"] = [0,0,0];
+                    $i++;
+                }*/
                 if($i_p>0){
                     if($partida["razon_social"]!=$partidas[$i_p-1]["razon_social"] ){
                         //if($acumulador_partidas_empresa>1){
@@ -367,6 +415,13 @@ ORDER BY QueryImportes.importe_empresa desc, no_localizados.razon_social, import
                 $partidas_completas[$i] = $partida;
                 $partidas_completas[$i]["indice"] = $i_bis;
                 $partidas_completas[$i]["tipo"] = "partida";
+
+                $inicio_ex = explode("/",$partida["inicio_operaciones"]);
+                $fin_ex = explode("/",$partida["fin_operaciones"]);
+
+                $partidas_completas[$i]["inicio_operaciones_txt"] = $meses[$inicio_ex[0]-1]["NombreCorto"] .' '.$inicio_ex[1];
+                $partidas_completas[$i]["fin_operaciones_txt"] = $meses[$fin_ex[0]-1]["NombreCorto"] .' '.$fin_ex[1];
+
                 $contador_cfdi+=$partidas_completas[$i]["no_CFDI"];
                 $importe_cfdi+=$partidas_completas[$i]["importe"];
                 $contador_cfdi_global+=$partidas_completas[$i]["no_CFDI"];;

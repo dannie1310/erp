@@ -92,13 +92,29 @@ where MovimientosPoliza.IdCuenta = ".$cuenta->id_cuenta." and MovimientosPoliza.
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $cuenta->base_datos);
         $fecha=$data["anio"].'/'.sprintf("%02d", $data["mes"])."/01";
-        $query = "select sum (
-          CASE MovimientosPoliza.TipoMovto
-             WHEN 1 THEN MovimientosPoliza.Importe * -1
-             WHEN 0 THEN MovimientosPoliza.Importe
-          END) as Saldo
-from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
-where Cuentas.Id = ".$cuenta->id_cuenta." and Fecha < '".$fecha."'";
+        if($data["mes"]<=12){
+            $query = "
+                select sum (
+                          CASE MovimientosPoliza.TipoMovto
+                             WHEN 1 THEN MovimientosPoliza.Importe * -1
+                             WHEN 0 THEN MovimientosPoliza.Importe
+                          END) as Saldo
+                from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+                where Cuentas.Id = ".$cuenta->id_cuenta." and Fecha < '".$fecha."'
+            ";
+        }
+        else {
+            $query = "
+                select sum (
+                          CASE MovimientosPoliza.TipoMovto
+                             WHEN 1 THEN MovimientosPoliza.Importe * -1
+                             WHEN 0 THEN MovimientosPoliza.Importe
+                          END) as Saldo
+                from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+                where Cuentas.Id = ".$cuenta->id_cuenta." and Ejercicio = '".$data["anio"]."' and Periodo<'".$data["mes"]."'
+            ";
+        }
+
 
 
         $informe = DB::connection("cntpq")->select($query);

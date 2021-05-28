@@ -4,16 +4,18 @@
 namespace App\Services\CADECO\Finanzas;
 
 
-use App\PDF\Fiscal\CFDI;
 use DateTime;
 use DateTimeZone;
+use App\Utils\CFD;
+use App\PDF\Fiscal\CFDI;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
-use App\Utils\CFD;
+use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
+use App\PDF\Finanzas\FacturaVarioPDF;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
 
 class FacturaService
@@ -523,6 +525,12 @@ class FacturaService
         return $pdf;
     }
 
+    public function pdfFV($id)
+    {
+        $pdf = new FacturaVarioPDF($id);
+        return $pdf;
+    }
+
     public function cargaXML(array $data)
     {
         $archivo_xml = $data["xml"];
@@ -593,6 +601,19 @@ class FacturaService
     public function update(array $data, $id)
     {
         return $this->repository->show($id)->editar($data);
+    }
+
+    public function leerQR($data)
+    {
+        $verifica = new ValidacionSistema();
+
+        $datos = $verifica->desencripta($data);
+
+        if($datos) {
+            return $datos;
+        }else{
+            return "Error de lectura";
+        }
     }
 }
 

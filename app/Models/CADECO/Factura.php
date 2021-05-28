@@ -10,25 +10,27 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Item;
+use App\Models\CADECO\Costo;
 use App\Models\CADECO\Cambio;
+use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Transaccion;
-use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\FondoGarantia;
 use App\Models\CADECO\ItemOrdenCompra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\CADECO\ItemEntradaAlmacen;
 use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Finanzas\FacturaEliminada;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 use App\Models\CADECO\Finanzas\ComplementoFactura;
 use App\Models\MODULOSSAO\ControlRemesas\Documento;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Http\Transformers\CADECO\Contrato\EstimacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use App\Http\Transformers\CADECO\Finanzas\FondoGarantiaTransformer;
@@ -176,6 +178,14 @@ class Factura extends Transaccion
     public function estimacion(){
         return $this->hasMany(Estimacion::class, 'id_empresa', 'id_empresa')
                 ->whereIn('estado', [-1,1]);
+    }
+
+    public function concepto(){
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function costo(){
+        return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
 
     private function registrarCR($data)
