@@ -17,7 +17,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Nombre" class="col-form-label">Nombre:</label>
-                                 <input style="text-transform:uppercase;"
+                                 <input 
                                           type="text"
                                           name="Nombre"
                                           data-vv-as="'Nombre'"
@@ -34,7 +34,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Direccion" class="col-form-label">Dirección:</label>
-                                 <input style="text-transform:uppercase;"
+                                 <input 
                                           type="text"
                                           name="Direccion"
                                           data-vv-as="'Dirección'"
@@ -51,7 +51,7 @@
                            <div class="col-md-6">
                                <div class="form-group col-md-12 error-content">
                                  <label for="NoLicencia" class="col-form-label">Número de Licencia:</label>
-                                 <input style="text-transform:uppercase;"
+                                 <input 
                                           type="text"
                                           name="NoLicencia"
                                           data-vv-as="'Número de Licencia'"
@@ -121,9 +121,9 @@
             },
             store() {
                return this.$store.dispatch('acarreos/operador/store', {
-                  Nombre: this.Nombre.toUpperCase(),
-                  Direccion: this.Direccion.toUpperCase(),
-                  NoLicencia: this.NoLicencia.toUpperCase(),
+                  Nombre: this.Nombre,
+                  Direccion: this.Direccion,
+                  NoLicencia: this.NoLicencia,
                   VigenciaLicencia: this.VigenciaLicencia
                })
                .then((data) => {

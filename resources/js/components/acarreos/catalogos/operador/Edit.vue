@@ -28,7 +28,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Nombre" class="col-form-label">Nombre:</label>
-                                 <input style="text-transform:uppercase;"
+                                 <input 
                                           type="text"
                                           name="Nombre"
                                           data-vv-as="'Nombre'"
@@ -45,7 +45,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Direccion" class="col-form-label">Dirección:</label>
-                                 <input style="text-transform:uppercase;"
+                                 <input 
                                           type="text"
                                           name="Direccion"
                                           data-vv-as="'Dirección'"
@@ -62,7 +62,7 @@
                            <div class="col-md-6">
                                <div class="form-group col-md-12 error-content">
                                  <label for="NoLicencia" class="col-form-label">Número de Licencia:</label>
-                                 <input style="text-transform:uppercase;"
+                                 <input 
                                           type="text"
                                           name="NoLicencia"
                                           data-vv-as="'Número de Licencia'"
@@ -146,9 +146,9 @@
          },
          update() {
                var datos = {
-                  'Nombre' : this.operador.nombre.toUpperCase(),
-                  'Direccion' : this.operador.direccion.toUpperCase(),
-                  'NoLicencia' : this.operador.no_licencia.toUpperCase(),
+                  'Nombre' : this.operador.nombre,
+                  'Direccion' : this.operador.direccion,
+                  'NoLicencia' : this.operador.no_licencia,
                   'VigenciaLicencia' : this.operador.vigencia_licencia,
                }
                return this.$store.dispatch('acarreos/operador/update', {

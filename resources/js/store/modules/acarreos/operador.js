@@ -189,7 +189,6 @@ export default{
             });
         },
         update(context, payload) {
-            console.log(payload);
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
