@@ -968,11 +968,23 @@ export const routes = [
                             },
                             {
                                 path: ':id',
-                                name: 'asignacion-proveedor-delete',
+                                name: 'asignacion-contratista-show',
+                                component: require('./components/contratos/asignacion-contratista/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Asignación de Contratistas',
+                                    breadcrumb: { parent: 'asignacion-contratista', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_asignacion_contratista'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'asignacion-contratista-delete',
                                 props: true,
                                 component: require('./components/contratos/asignacion-contratista/Delete').default,
                                 meta: {
-                                    title: 'Eliminar Asignación Proveedores',
+                                    title: 'Eliminar Asignación de Contratista',
                                     breadcrumb: {parent: 'asignacion-contratista', name: 'ELIMINAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['eliminar_asignacion_contratista']
