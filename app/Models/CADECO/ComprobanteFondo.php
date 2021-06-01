@@ -96,7 +96,7 @@ class ComprobanteFondo extends Transaccion
                 'id_referente' => $data['id_fondo'],
                 'referencia' => $data['referencia'],
                 'id_concepto' => $data['id_concepto'],
-                'monto' => $data['subtotal'],
+                'monto' => $data['subtotal']+$data['iva'],
                 'impuesto' => $data['iva'],
                 'observaciones' => $data['observaciones'],
                 'cumplimiento' => $data['cumplimiento']
