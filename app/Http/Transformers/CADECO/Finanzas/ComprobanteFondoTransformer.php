@@ -40,7 +40,7 @@ class ComprobanteFondoTransformer extends TransformerAbstract
             'total_format' => $model->total_format,
             'fecha_registro' => $model->fecha_hora_registro_format,
             'usuario_registro' => $model->usuario_registro,
-            'monto_format' => $model->monto_format,
+            'subtotal_format' => $model->subtotal_format,
             'impuesto_format' => $model->impuesto_format
         ];
     }
