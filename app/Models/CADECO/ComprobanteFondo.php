@@ -75,7 +75,7 @@ class ComprobanteFondo extends Transaccion
      */
     public function getTotalAttribute()
     {
-        return $this->monto + $this->impuesto;
+        return $this->monto;
     }
 
     public function getTotalFormatAttribute()

@@ -104,7 +104,7 @@
                                                             <tbody>
                                                                 <tr>
                                                                     <th>Subtotal:</th>
-                                                                    <td align="right">{{fondo.monto_format}}</td>
+                                                                    <td align="right">{{fondo.subtotal_format}}</td>
                                                                 </tr>
                                                                 <tr>
                                                                     <th>IVA:</th>
