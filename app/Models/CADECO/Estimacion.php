@@ -1029,7 +1029,7 @@ class Estimacion extends Transaccion
 
     public function getPorcentajeIvaAttribute()
     {
-        return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
+        return ($this->iva_orden_pago / $this->subtotal_orden_pago) * 100;
     }
 
     public function getRetencionIva4Attribute(){
