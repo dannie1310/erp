@@ -752,7 +752,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getPartidasAsignadas($id_asignacion)
     {
-        $partidas = $this->partidas()->asignadas($id_asignacion)->get();
+        $partidas = $this->partidas()->asignadas($id_asignacion, $this->id_transaccion)->get();
         $salida = [];
         $i = 0;
         foreach($partidas as $partida){

@@ -979,7 +979,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: ':id',
+                                path: ':id/eliminar',
                                 name: 'asignacion-contratista-delete',
                                 props: true,
                                 component: require('./components/contratos/asignacion-contratista/Delete').default,
