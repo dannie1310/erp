@@ -11,6 +11,7 @@ use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\Transaccion;
+use League\Fractal\ParamBag;
 use League\Fractal\TransformerAbstract;
 
 class PresupuestoContratistaTransformer extends TransformerAbstract
@@ -29,7 +30,8 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'relaciones',
         'contratos',
         'transaccion',
-        'subtotales_por_moneda'
+        'subtotales_por_moneda',
+        'partidas_asignadas'
     ];
 
     protected $defaultIncludes=["transaccion"];
@@ -184,5 +186,20 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         }
         return null;
 
+    }
+
+    /**Partidas de presupuesto asociadas a una asignación dada
+     * @param PresupuestoContratista $model
+     * @param ParamBag|null $params
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidasAsignadas(PresupuestoContratista $model, ParamBag $params = null)
+    {
+        $id_asignacion = $params["id_asignacion"][0];
+        if($partidas = $model->getPartidasAsignadas($id_asignacion))
+        {
+            return $this->collection($partidas, new PresupuestoContratistaPartidaAsignadaTransformer);
+        }
+        return null;
     }
 }

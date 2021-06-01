@@ -4,10 +4,10 @@
 namespace App\Models\CADECO\Subcontratos;
 
 use App\Models\CADECO\Contrato;
+use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\PresupuestoContratistaPartida;
-use App\Models\CADECO\Subcontratos\AsignacionContratista;
 
 class AsignacionContratistaPartida extends Model
 {
@@ -90,5 +90,18 @@ class AsignacionContratistaPartida extends Model
         return $this->presupuestoPartida->presupuesto->PorcentajeDescuento;
     }
 
+    public function getImporteAsignadoAttribute()
+    {
+        return $this->cantidad_asignada * $this->presupuestoPartida->precio_unitario_despues_descuento_partida_mc;
+    }
 
+    public function getImporteAsignadoFormatAttribute()
+    {
+        return '$'.number_format($this->importe_asignado, 2,".",",");
+    }
+
+    public function scopeAsignacion($query, $id_asignacion)
+    {
+        return $query->where('id_asignacion', "=", $id_asignacion);
+    }
 }

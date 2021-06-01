@@ -6,6 +6,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Models\CADECO\PresupuestoContratistaPartida;
+use League\Fractal\ParamBag;
 use League\Fractal\TransformerAbstract;
 
 class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
@@ -17,15 +18,17 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'concepto',
-        'moneda'
+        'moneda',
+        'partida_asignacion'
     ];
 
-    protected $defaultIncludes = ["moneda"];
+    protected $defaultIncludes = ["moneda", "concepto"];
 
     public function transform(PresupuestoContratistaPartida $model)
     {
         return [
             'id' => (int) $model->getKey(),
+            'id_concepto' => $model->id_concepto,
             'precio_unitario' => $model->precio_unitario,
             'precio_unitario_convert' => $model->precio_unitario_convert,
             'precio_unitario_format' => $model->precio_unitario_format,
@@ -69,6 +72,16 @@ class PresupuestoContratistaPartidaTransformer extends TransformerAbstract
         if($moneda = $model->moneda)
         {
             return $this->item($moneda, new MonedaTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidaAsignacion(PresupuestoContratistaPartida $model, ParamBag $params = null)
+    {
+        $id_asignacion = $params["id_asignacion"][0];
+        if($item = $model->partidasAsignacion()->asignacion($id_asignacion)->first())
+        {
+            return $this->item($item, new AsignacionContratistaPartidaTransformer);
         }
         return null;
     }

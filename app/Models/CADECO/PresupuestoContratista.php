@@ -749,4 +749,22 @@ class PresupuestoContratista extends Transaccion
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
     }
+
+    public function getPartidasAsignadas($id_asignacion)
+    {
+        $partidas = $this->partidas()->asignadas($id_asignacion)->get();
+        $salida = [];
+        $i = 0;
+        foreach($partidas as $partida){
+            $asignacion_partida = AsignacionContratistaPartida::where("id_transaccion", "=", $partida->id_transaccion)
+                ->where("id_concepto", "=", $partida->id_concepto)
+                ->where("id_asignacion", "=", $id_asignacion)->first();
+            $salida[$i]["id_transaccion"] = $partida->id_transaccion;
+            $salida[$i]["id_concepto"] = $partida->id_concepto;
+            $salida[$i]["cantidad_asignada"] = $asignacion_partida->cantidad_asignada;
+            $salida[$i]["importe_asignado_format"] = $asignacion_partida->importe_asignado_format;
+            $i++;
+        }
+        return $salida;
+    }
 }

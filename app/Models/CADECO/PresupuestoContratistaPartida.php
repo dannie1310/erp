@@ -2,6 +2,8 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use Illuminate\Database\Eloquent\Model;
 
 class PresupuestoContratistaPartida extends Model
@@ -35,6 +37,11 @@ class PresupuestoContratistaPartida extends Model
     public function presupuesto()
     {
         return $this->hasOne(PresupuestoContratista::class, 'id_transaccion');
+    }
+
+    public function partidasAsignacion()
+    {
+        return $this->hasMany(AsignacionContratistaPartida::class, "id_concepto", "id_concepto");
     }
 
     public function getPrecioUnitarioFormatAttribute()
@@ -358,6 +365,12 @@ class PresupuestoContratistaPartida extends Model
                 return $this->presupuesto->libra;
                 break;
         }
+    }
+
+    public function scopeAsignadas($query, $id_asignacion)
+    {
+        $id_conceptos = AsignacionContratista::find($id_asignacion)->partidas()->pluck("id_concepto")->unique()->toArray();
+        return $query->whereIn('id_concepto', $id_conceptos);
     }
 
 }

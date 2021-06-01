@@ -8,6 +8,7 @@
 
 namespace App\Http\Transformers\CADECO\Contrato;
 
+use App\Http\Transformers\CADECO\ContratoTransformer;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
@@ -26,7 +27,8 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         'contrato',
         'asignacionEstimacion',
         'presupuestosContratista',
-        'partidas'
+        'partidas',
+        'conceptosAsignados'
     ];
 
     /**
@@ -97,6 +99,19 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         if($partidas = $model->partidas)
         {
             return $this->collection($partidas, new AsignacionContratistaPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeConceptosAsignados(AsignacionContratista $model)
+    {
+        if($items = $model->conceptosContrato)
+        {
+            return $this->collection($items, new ContratoTransformer);
         }
         return null;
     }

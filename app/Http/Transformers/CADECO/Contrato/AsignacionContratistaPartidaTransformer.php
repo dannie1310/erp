@@ -31,7 +31,11 @@ class AsignacionContratistaPartidaTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'cantidad_asignada' => $model->cantidad_asignada,
-            'cantidad_autorizada' => $model->cantidad_autorizada
+            'cantidad_autorizada' => $model->cantidad_autorizada,
+            'id_transaccion_presupuesto' => $model->id_transaccion,
+            'id_contrato' => $model->id_concepto,
+            'importe_asignado' => $model->importe_asignado,
+            'importe_asignado_format' => $model->importe_asignado_format,
         ];
     }
 

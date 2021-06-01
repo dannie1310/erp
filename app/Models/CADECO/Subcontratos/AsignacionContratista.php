@@ -4,6 +4,7 @@
 namespace App\Models\CADECO\Subcontratos;
 
 use App\Models\CADECO\Cambio;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use App\Models\IGH\Usuario;
@@ -57,6 +58,12 @@ class AsignacionContratista extends Model
     public function presupuestosContratista()
     {
         return $this->hasManyThrough(PresupuestoContratista::class,AsignacionContratistaPartida::class, 'id_asignacion', 'id_transaccion','id_asignacion','id_transaccion')
+            ->distinct();
+    }
+
+    public function conceptosContrato()
+    {
+        return $this->hasManyThrough(Contrato::class,AsignacionContratistaPartida::class, 'id_asignacion', 'id_concepto','id_asignacion','id_concepto')
             ->distinct();
     }
 

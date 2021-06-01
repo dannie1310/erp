@@ -43,176 +43,58 @@
                                     </tr>
                                 </tbody>
                             </table>
-                        </div>
-                    </div>
-                     <div class="card" v-if="!asignacion.asignacionEstimacion && asignacion.partidas">
-                        <div class="card-header">
-                            <h6><b>Detalle de las partidas</b></h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive col-md-12">
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Descripción</th>
-                                            <th>Unidad</th>
-                                            <th>Cantidad</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="(doc, i) in asignacion.partidas.data">
-                                            <td>{{i+1}}</td>
-                                            <td align="center">{{doc.concepto.descripcion}}</td>
-                                            <td>{{doc.concepto.unidad}}</td>
-                                            <td class="td_money">{{doc.cantidad_asignada}}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class="col-12">
-                            <h5>Asignación Subcontrato: </h5>
-                        </div>
-                    </div>
-                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class="table-responsive col-md-12">
-                            <table class="table">
-                                <tbody>
+                            <table class="table table-bordered table-responsive" style="width: 100%">
+                                <template v-for="(presupuesto, ip) in asignacion.presupuestosContratista.data">
                                     <tr>
-                                        <td class="bg-gray-light" align="center" colspan="6"><b>{{asignacion.asignacionEstimacion.subcontrato.empresa}}</b></td>
+                                        <td colspan="3"></td>
+                                        <td  class="encabezado" colspan="7">
+                                            {{presupuesto.empresa.razon_social}}
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-gray-light"><b>Referencia:</b></td>
-                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.referencia}}</td>
-                                        <td class="bg-gray-light"><b>Subcontrato:</b></td>
-                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.numero_folio_format}}</td>
-                                        <td class="bg-gray-light"><b>Fecha:</b></td>
-                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.fecha_format}}</td>
+                                        <td class="encabezado th_index_corto">#</td>
+                                        <td class="encabezado"> Descripcion</td>
+                                        <td class="encabezado c120"> Unidad</td>
+                                        <td class="encabezado c120">Precio Unitario Antes Descto.</td>
+                                        <td class="encabezado c120">% Descuento</td>
+                                        <td class="encabezado c120">Precio Unitario</td>
+                                        <td class="encabezado c120">Moneda</td>
+                                        <td class="encabezado c120">Precio Unitario en Moneda de Conversión</td>
+                                        <td class="encabezado c120">Cantidad Asignada</td>
+                                        <td class="encabezado c120">Total Asignado en Moneda de Conversión</td>
+                                    </tr>
+                                    <tr v-for="(partida, ic) in presupuesto.partidas_asignadas.data">
+                                        <td>{{ic+1}}</td>
+                                        <td>{{partida.concepto.descripcion}}</td>
+                                        <td>{{partida.concepto.unidad}}</td>
+                                        <td style="text-align: right">{{partida.precio_unitario_antes_descuento_format}}</td>
+                                        <td style="text-align: right">{{partida.descuento_format}}</td>
+                                        <td style="text-align: right">{{partida.precio_unitario_despues_descuento_format}}</td>
+                                        <td >{{partida.moneda.nombre}}</td>
+                                        <td style="text-align: right">{{partida.precio_unitario_despues_descuento_partida_mc_format}}</td>
+                                        <td style="text-align: right">{{partida.cantidad_asignada}}</td>
+                                        <td style="text-align: right">{{partida.importe_asignado_format}}</td>
                                     </tr>
                                     <tr>
-                                        <td class="bg-gray-light"><b>Tipo de Gasto:</b></td>
-                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.costo}}</td>
-                                        <td class="bg-gray-light"><b>Tipo de Contrato:</b></td>
-                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.tipo_subcontrato}}</td>
-                                        <td class="bg-gray-light"><b>Personalidad Contratista:</b></td>
-                                        <td class="bg-gray-light">{{asignacion.asignacionEstimacion.subcontrato.personalidad_contratista}}</td>
+                                        <td colspan="3" style="text-align: right" ><b>TC Dolar:</b></td>
+                                        <td style="text-align: right">{{presupuesto.tc_usd_format}}</td>
+                                        <td colspan="6">&nbsp;</td>
                                     </tr>
-                                    <!-- <tr>
-                                        <td class="bg-gray-light"><b>Contrato:</b></td>
-                                        <td class="bg-gray-light">{{subcontratos.contrato_folio_format}}</td>
-                                    </tr> -->
-
-                                </tbody>
+                                    <tr>
+                                        <td colspan="3" style="text-align: right" ><b>TC Euro</b></td>
+                                        <td style="text-align: right">{{presupuesto.tc_euro_format}}</td>
+                                        <td colspan="6">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3" style="text-align: right" ><b>TC Libra</b></td>
+                                        <td style="text-align: right">{{presupuesto.tc_libra_format}}</td>
+                                        <td colspan="6">&nbsp;</td>
+                                    </tr>
+                                    <tr><td colspan="10">&nbsp;</td></tr>
+                                </template>
                             </table>
                         </div>
                     </div>
-                     <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class="col-12">
-                            <h6><b>Detalle de las partidas</b></h6>
-                        </div>
-                    </div>
-                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class="table-responsive col-md-12">
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Clave</th>
-                                        <th>Descripción</th>
-                                        <th>Unidad</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio</th>
-                                        <th>Importe</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="(doc, i) in asignacion.asignacionEstimacion.subcontrato.partidas.data">
-                                        <td>{{i+1}}</td>
-                                        <td class="td_numero_folio"></td>
-                                        <td>{{doc.contratos.descripcion}}</td>
-                                        <td align="center">{{doc.contratos.unidad}}</td>
-                                        <td class="td_money">{{doc.cantidad_format}}</td>
-                                        <td class="td_money">{{doc.precio_unitario_format}}</td>
-                                        <td class="td_money">{{doc.importe_total}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="row" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Subtotal Antes Descuento:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.subtotal_antes_descuento}}</label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Descuento(%):</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.descuento}}</label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Subtotal:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.subtotal_format}}</label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">IVA:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.impuesto_format}}</label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Retención IVA:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.impuesto_retenido}}</label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Total:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right">{{asignacion.asignacionEstimacion.subcontrato.monto_format}}</label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Moneda:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{asignacion.asignacionEstimacion.subcontrato.moneda.nombre}}</i></label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Anticipo({{asignacion.asignacionEstimacion.subcontrato.anticipo_format}}):</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{asignacion.asignacionEstimacion.subcontrato.anticipo_monto_format}}</i></label>
-                         </div>
-                         <div class=" col-md-12" align="right">
-                            <label class="col-sm-2 col-form-label" style="text-align: left">Fondo de Garantia:</label>
-                            <label class="col-sm-2 col-form-label" style="text-align: right"><i>{{asignacion.asignacionEstimacion.subcontrato.retencion}}</i></label>
-                         </div>
-                    </div>
-
-                    <hr>
-                    <div class="row col-md-12" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class="col-md-2"><b>Plazo de Ejecución:</b></div>
-                        <div class="col-md-4" v-if="asignacion.asignacionEstimacion.subcontrato.subcontratos"><b>Del</b>&nbsp; {{asignacion.asignacionEstimacion.subcontrato.subcontratos.fecha_ini_format}} &nbsp;<b>Al</b>&nbsp; {{asignacion.asignacionEstimacion.subcontrato.subcontratos.fecha_fin_format}}</div>
-                        <div class="col-md-4" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</div>
-
-                        <div class="col-md-2" v-if="asignacion.asignacionEstimacion.subcontrato.subcontratos"><b>Descripción:</b></div>
-                        <div class="col-md-4" v-if="asignacion.asignacionEstimacion.subcontrato.subcontratos">{{asignacion.asignacionEstimacion.subcontrato.subcontratos.descripcion}}</div>
-                    </div>
-                    <br>
-                    <div class="row col-md-12" v-if="asignacion.asignacionEstimacion && asignacion.asignacionEstimacion.subcontrato">
-                        <div class="col-md-2"><b>Observaciones:</b></div>
-                        <div class="col-md-10">{{asignacion.asignacionEstimacion.subcontrato.observaciones}}</div>
-                    </div>
-                    <!-- <div class="row">
-                        <div class="table-responsive col-md-12">
-                            <table class="table">
-                                <tbody>
-                                    <tr>
-                                        <td class="bg-dark" align="left" style="width:19%;"><b>Plazo de Ejecución:</b></td>
-                                        <td align="left" v-if="subcontratos.subcontratos"><b>Del</b>&nbsp; {{subcontratos.subcontratos.fecha_ini}} &nbsp;<b>Al</b>&nbsp; {{subcontratos.subcontratos.fecha_fin}}</td>
-                                        <td align="left" v-else><b>Del</b>&nbsp; -------- &nbsp;<b>Al</b>&nbsp; --------</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="bg-dark" align="left"><b>Descripción:</b></td>
-                                        <td align="left" v-if="subcontratos.subcontratos">{{subcontratos.subcontratos.descripcion}}</td>
-                                        <td align="left" v-else></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div> -->
                 </div>
             </div>
         </div>
@@ -220,23 +102,37 @@
 </template>
 
 <script>
+
     export default {
         name: "subcontrato-show",
         props: ['id'],
         mounted(){
             this.find();
         },
+        data() {
+            return {
+                motivo: '',
+                cargando: false
+            }
+        },
         methods: {
             find() {
-
+                this.cargando = true;
                 this.$store.commit('contratos/asignacion-contratista/SET_ASIGNACION', null);
                 return this.$store.dispatch('contratos/asignacion-contratista/find', {
                     id: this.id,
-                    params: {include: ['asignacionEstimacion.subcontrato.partidas.contratos', 'asignacionEstimacion.subcontrato.moneda', 'asignacionEstimacion.subcontrato.subcontratos', 'contrato', 'partidas.concepto']}
+                    params: {
+                        include:
+                            [
+                                , 'contrato'
+                                , 'presupuestosContratista.empresa'
+                                , 'presupuestosContratista.partidas_asignadas:id_asignacion('+this.id+')'
+                            ]
+                    }
                 }).then(data => {
                     this.$store.commit('contratos/asignacion-contratista/SET_ASIGNACION', data);
                 })
-            }
+            },
         },
         computed: {
             asignacion() {
@@ -247,5 +143,8 @@
 </script>
 
 <style scoped>
+td.encabezado{
+    text-align: center; background-color: #f2f4f5
+}
 
 </style>
