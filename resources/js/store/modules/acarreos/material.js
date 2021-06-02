@@ -1,51 +1,40 @@
-const URI = '/api/acarreos/marca/';
+const URI = '/api/acarreos/material/';
 
-export default{
+export default {
     namespaced: true,
     state: {
-        marcas: [],
-        currentMarca: null,
-        meta: {}
+        materiales: [],
+        currentMaterial: '',
+        meta:{}
     },
 
     mutations: {
-        SET_MARCAS(state, data){
-            state.marcas = data
+        SET_MATERIALES(state, data) {
+            state.materiales = data;
+        },
+        SET_MATERIAL(state, data) {
+            state.currentMaterial = data;
+        },
+        SET_META(state, data) {
+            state.meta = data;
         },
 
-        SET_META(state, data){
-            state.meta = data
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentMaterial, data.attribute, data.value);
         },
 
-        SET_MARCA(state, data){
-            state.currentMarca = data
-        },
-
-        UPDATE_MARCA(state, data) {
-            state.marcas = state.marcas.map(marca => {
-                if (marca.id === data.id) {
-                    return Object.assign({}, marca, data)
+        UPDATE_MATERIAL(state, data) {
+            state.materiales = state.materiales.map(material => {
+                if (material.id === data.id) {
+                    return Object.assign({}, material, data)
                 }
-                return marca
+                return material
             })
-            state.currentMarca = data;
+            state.currentMaterial = data;
         },
-    },
+},
 
     actions: {
-        index(context, payload) {
-            return new Promise((resolve, reject) => {
-                axios
-                    .get(URI, { params: payload.params })
-                    .then(r => r.data)
-                    .then(data => {
-                        resolve(data);
-                    })
-                    .catch(error => {
-                        reject(error);
-                    });
-            });
-        },
         paginate(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -62,7 +51,7 @@ export default{
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Marca",
+                    title: "Registrar Material",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -82,7 +71,7 @@ export default{
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Marca registrada correctamente", {
+                                    swal("Material registrado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -113,8 +102,8 @@ export default{
         activar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Activar la Marca",
-                    text: "¿Está seguro de que desea activar la marca?",
+                    title: "Activar el Material",
+                    text: "¿Está seguro de que desea activar el material?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -134,7 +123,7 @@ export default{
                                 .get(URI + payload.id+'/activar', { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Marca activada correctamente", {
+                                    swal("Material activado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -152,8 +141,8 @@ export default{
         desactivar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Desactivar la Marca",
-                    text: "¿Está seguro de que desea desactivar la marca?",
+                    title: "Desactivar el Material",
+                    text: "¿Está seguro de que desea desactivar el material?",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -173,7 +162,7 @@ export default{
                                 .get(URI + payload.id+'/desactivar', { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Marca desactivada correctamente", {
+                                    swal("Material desactivado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -188,45 +177,45 @@ export default{
                     });
             });
         },
-        update(context, payload) {
-            return new Promise((resolve, reject) => {
-                swal({
-                    title: "¿Está seguro?",
-                    text: "Actualizar la Marca",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Actualizar',
-                            closeModal: false,
-                        }
-                    }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .patch(URI + payload.id, payload.data,{ params: payload.params } )
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Marca actualizada correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    })
-                                        .then(() => {
-                                            resolve(data);
-                                        })
-                                })
-                                .catch(error => {
-                                    reject(error);
-                                })
-                        }
-                    });
-            });
-        },
+        // update(context, payload) {
+        //     return new Promise((resolve, reject) => {
+        //         swal({
+        //             title: "¿Está seguro?",
+        //             text: "Actualizar el origen",
+        //             icon: "warning",
+        //             buttons: {
+        //                 cancel: {
+        //                     text: 'Cancelar',
+        //                     visible: true
+        //                 },
+        //                 confirm: {
+        //                     text: 'Si, Actualizar',
+        //                     closeModal: false,
+        //                 }
+        //             }
+        //         })
+        //             .then((value) => {
+        //                 if (value) {
+        //                     axios
+        //                         .patch(URI + payload.id, payload.data,{ params: payload.params } )
+        //                         .then(r => r.data)
+        //                         .then(data => {
+        //                             swal("Origen actualizado correctamente", {
+        //                                 icon: "success",
+        //                                 timer: 1500,
+        //                                 buttons: false
+        //                             })
+        //                                 .then(() => {
+        //                                     resolve(data);
+        //                                 })
+        //                         })
+        //                         .catch(error => {
+        //                             reject(error);
+        //                         })
+        //                 }
+        //             });
+        //     });
+        // },
         descargaLayout(context, payload){
             var urr = URI + 'descargaLayout?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");
@@ -242,16 +231,14 @@ export default{
     },
 
     getters: {
-        marcas(state) {
-            return state.marcas
+        materiales(state) {
+            return state.materiales
         },
-
+        currentMaterial(state) {
+            return state.currentMaterial
+        },
         meta(state) {
-            return state.meta
+            return state.meta;
         },
-
-        currentMarca(state) {
-            return state.currentMarca
-        }
     }
 }

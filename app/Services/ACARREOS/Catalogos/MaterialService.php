@@ -4,15 +4,15 @@
 namespace App\Services\ACARREOS\Catalogos;
 
 
-use App\Models\ACARREOS\Marca;
-use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 use App\Models\IGH\Usuario;
 use App\Repositories\Repository;
+use App\Models\ACARREOS\Material;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
-use App\CSV\Acarreos\Catalogos\MarcaLayout;
+use App\CSV\Acarreos\Catalogos\MaterialLayout;
+use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
 
-class MarcaService
+class MaterialService
 {
     /**
      * @var Repository
@@ -20,18 +20,12 @@ class MarcaService
     protected $repository;
 
     /**
-     * MarcaService constructor.
-     * @param Marca $model
+     * MaterialService constructor.
+     * @param Material $model
      */
-    public function __construct(Marca $model)
+    public function __construct(Material $model)
     {
         $this->repository = new Repository($model);
-    }
-
-    public function index($data)
-    {
-        $this->conexionAcarreos();
-        return $this->repository->all($data);
     }
 
     public function paginate($data)
@@ -56,48 +50,42 @@ class MarcaService
         return  $this->repository->paginate($data);
     }
 
-    public function show($id)
-    {
-        $this->conexionAcarreos();
-        return $this->repository->show($id);
-    }
-
     public function store($data)
     {
         $this->conexionAcarreos();
         return $this->repository->create($data);
     }
 
+    public function show($id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id);
+    }
+
     public function activar($id)
     {
         $this->conexionAcarreos();
-        $marca = $this->show($id);
-        if ($marca->Estatus == 1) {
-            abort(400, "La marca se encuentra " . $marca->estado_format . " previamente.");
+        $origen = $this->show($id);
+        if ($origen->Estatus == 1) {
+            abort(400, "El origen se encuentra " . $origen->estado_format . " previamente.");
         }
-        return $marca->activar();
+        return $origen->activar();
     }
 
     public function desactivar(array  $data, $id)
     {
         $this->conexionAcarreos();
-        $marca = $this->show($id);
-        if ($marca->Estatus == 0) {
-            abort(400, "La marca se encuentra " . $marca->estado_format . " previamente.");
+        $origen = $this->show($id);
+        if ($origen->Estatus == 0) {
+            abort(400, "El origen se encuentra " . $origen->estado_format . " previamente.");
         }
-        return $marca->desactivar($data['motivo']);
-    }
-
-    public function update(array $data, $id)
-    {
-        $this->conexionAcarreos();
-        return $this->repository->show($id)->editar($data);
+        return $origen->desactivar($data['motivo']);
     }
 
     public function excel()
     {
         $this->conexionAcarreos();
-        return Excel::download(new MarcaLayout(), 'marca.csv');
+        return Excel::download(new MaterialLayout(), 'materiales.csv');
     }
 
     private function conexionAcarreos()

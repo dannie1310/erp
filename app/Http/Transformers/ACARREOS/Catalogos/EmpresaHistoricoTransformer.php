@@ -4,22 +4,12 @@
 namespace App\Http\Transformers\ACARREOS\Catalogos;
 
 
-use App\Models\ACARREOS\Empresa;
+use App\Models\ACARREOS\EmpresaHistorico;
 use League\Fractal\TransformerAbstract;
 
-class EmpresaTransformer extends TransformerAbstract
+class EmpresaHistoricoTransformer extends TransformerAbstract
 {
-    /**
-     * List of resources possible to include
-     *
-     * @var array
-     */
-    protected $availableIncludes = [
-        'historicos'
-    ];
-
-
-    public function transform(Empresa $model) {
+    public function transform(EmpresaHistorico $model) {
         return [
             'id' => (int) $model->getKey(),
             'razon_social' => (string) $model->razonSocial,
@@ -33,18 +23,5 @@ class EmpresaTransformer extends TransformerAbstract
             'nombre_desactivo' => (string) $model->nombre_desactivo,
             'motivo' => $model->motivo
         ];
-    }
-
-    /**
-     * @param Empresa $model
-     * @return \League\Fractal\Resource\Collection|null
-     */
-    public function includeHistoricos(Empresa $model)
-    {
-        if($historicos = $model->historicos)
-        {
-            return $this->collection($historicos, new EmpresaHistoricoTransformer);
-        }
-        return null;
     }
 }

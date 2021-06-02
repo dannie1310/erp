@@ -24,23 +24,22 @@
     import Create from './Create'
     import DescargaLayout from "./DescargaLayout";
     export default {
-        name: "tiro-index",
-        components: {Create,DescargaLayout},
+        name: "material-index",
+        components: {Create, DescargaLayout},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'Clave', field: 'clave',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Concepto', field: 'concepto', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Estatus', field: 'estado_tiro', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Fecha Registro', field: 'created_at',thClass: 'fecha_hora', sortable: true, thComp: require('../../../globals/th-Date').default},
+                    { title: 'Registró', field: 'usuario_registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
-                query: {scope:'', include: ['concepto'], sort: 'IdTiro', order: 'asc'},
+                query: {scope:'', sort: 'IdMaterial', order: 'asc'},
                 estado: "",
                 cargando: false
             }
@@ -56,10 +55,10 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('acarreos/tiro/paginate', { params: this.query})
+                return this.$store.dispatch('acarreos/material/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('acarreos/tiro/SET_TIROS', data.data);
-                        this.$store.commit('acarreos/tiro/SET_META', data.meta);
+                        this.$store.commit('acarreos/material/SET_MATERIALES', data.data);
+                        this.$store.commit('acarreos/material/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -73,34 +72,32 @@
             },
         },
         computed: {
-            tiros(){
-                return this.$store.getters['acarreos/tiro/tiros'];
+            materiales(){
+                return this.$store.getters['acarreos/material/materiales'];
             },
             meta(){
-                return this.$store.getters['acarreos/tiro/meta'];
+                return this.$store.getters['acarreos/material/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            tiros: {
-                handler(tiros) {
+            materiales: {
+                handler(materiales) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = tiros.map((tiro, i) => ({
+                    self.$data.data = materiales.map((material, i) => ({
                         index: (i + 1) + self.query.offset,
-                        clave: tiro.clave_format,
-                        descripcion: tiro.descripcion,
-                        created_at: tiro.fecha_registro_format,
-                        estado_tiro: this.getEstado(tiro.estado_format, tiro.estado_color),
-                        concepto: tiro.path__corta_concepto,
+                        descripcion: material.descripcion,
+                        created_at: material.fecha_registro_format,
+                        usuario_registro : material.usuario_registro,
+                        estatus: this.getEstado(material.estado_format, material.estado_color),
                         buttons: $.extend({}, {
-                            id: tiro.id,
-                            concepto: self.$root.can('editar_tiro') ? true : false,
-                            activar: (tiro.estado === 0 && self.$root.can('editar_tiro')) ? true : false,
-                            desactivar: (tiro.estado === 1 && self.$root.can('editar_tiro')) ? true : false,
-                            show : self.$root.can('consultar_tiro') ? true : false,
+                            id: material.id,
+                            activar: (material.estado === 0 && self.$root.can('activar_desactivar_material')) ? true : false,
+                            desactivar: (material.estado === 1 && self.$root.can('activar_desactivar_material')) ? true : false,
+                            show: self.$root.can('consultar_material') || true ? true : false,
                         })
                     }));
                 },
@@ -142,6 +139,6 @@
     }
 </script>
 
-<style scoped>
+<style>
 
 </style>
