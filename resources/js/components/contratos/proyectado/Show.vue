@@ -11,11 +11,14 @@
                 </div>
             </div>
         </div>
+        <div class="card" v-else>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <DatosContratoProyectado v-bind:contrato_proyectado="contrato" v-if="contrato"></DatosContratoProyectado>
+                    </div>
+                </div>
 
-        <DatosContratoProyectado v-bind:contrato_proyectado="contrato" v-if="contrato"></DatosContratoProyectado>
-
-        <div class="card" v-if="contrato">
-            <div class="card-body table-responsive">
                 <div class="row" >
                     <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
@@ -59,6 +62,9 @@
                 </div>
             </div>
         </div>
+
+
+
     </span>
 </template>
 
@@ -109,13 +115,17 @@ table#tabla-conceptos {
     clear: both;
 }
 
+table#tabla-conceptos th, table#tabla-conceptos td {
+    border: 1px solid #dee2e6;
+}
+
 table thead th
 {
     padding: 0.2em;
-    border: 1px solid #666;
-    background-color: #333;
-    color: white;
-    font-weight: normal;
+
+    background-color: #f2f4f5;
+    font-weight: bold;
+    color: black;
     overflow: hidden;
     text-align: center;
 }

@@ -1,6 +1,5 @@
 <template>
     <span>
-        <DatosContratoProyectado v-if="contrato" :contrato_proyectado="contrato"></DatosContratoProyectado>
         <div class="card" v-if="cargando">
                 <div class="card-body">
                     <div class="row" >
@@ -12,107 +11,104 @@
                     </div>
                 </div>
             </div>
-        <div class="row" v-else>
-            <div class="col-12" v-if="data">
-                <div class="invoice p-3 mb-3">
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class=" table-responsive">
-                                    <span style="color: #6c757d" class="pull-right">{{data.cantidad_presupuestos}} Presupuestos registrados</span>
-                                    <table class="table table-striped">
-                                         <thead>
-                                            <tr>
-                                                <th colspan="6" rowspan="2" class="text-left"><h5></h5></th>
-                                            </tr>
-                                            <tr class="bg-gray-light">
-                                                <th colspan="9" >
-                                                    <select
-                                                        type="text"
-                                                        name="id_empresa"
-                                                        data-vv-as="Razón Social"
-                                                        class="form-control"
-                                                        id="id_empresa"
-                                                        v-model="id_transaccion">
-                                                        <option v-for="presupuesto in data.presupuestos" :value="presupuesto.id_transaccion">{{ presupuesto.razon_social }}</option>
-                                                    </select>
-                                                </th>
-                                            </tr>
-                                            <tr>
-                                                <th>#</th>
-                                                <th style="width: 18%;">Descripción</th>
-                                                <th style="width: 18%;">Destino</th>
-                                                <th style="width: 4%;">Unidad</th>
-                                                <th style="width: 6%;">Cantidad Solicitada</th>
-                                                <th style="width: 6%;">Cantidad Pendiente Asignar</th>
+        <div class="card" v-else>
+            <div class="card-body">
+                <DatosContratoProyectado v-if="contrato" :contrato_proyectado="contrato"></DatosContratoProyectado>
+                <div class="row">
+                        <div class="col-md-12">
+                            <div class=" table-responsive">
+                                <span style="color: #6c757d" class="pull-right">{{data.cantidad_presupuestos}} Presupuestos registrados</span>
+                                <table class="table table-striped">
+                                     <thead>
+                                        <tr>
+                                            <th colspan="6" rowspan="2" class="text-left"><h5></h5></th>
+                                        </tr>
+                                        <tr class="bg-gray-light">
+                                            <th colspan="9" >
+                                                <select
+                                                    type="text"
+                                                    name="id_empresa"
+                                                    data-vv-as="Razón Social"
+                                                    class="form-control"
+                                                    id="id_empresa"
+                                                    v-model="id_transaccion">
+                                                    <option v-for="presupuesto in data.presupuestos" :value="presupuesto.id_transaccion">{{ presupuesto.razon_social }}</option>
+                                                </select>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>#</th>
+                                            <th style="width: 18%;">Descripción</th>
+                                            <th style="width: 18%;">Destino</th>
+                                            <th style="width: 4%;">Unidad</th>
+                                            <th style="width: 6%;">Cantidad Solicitada</th>
+                                            <th style="width: 6%;">Cantidad Pendiente Asignar</th>
 
-                                                <th class="bg-gray-light ">Precio Unitario Antes Descto.</th>
-                                                <th class="bg-gray-light ">Precio Total Antes Descto.</th>
-                                                <th class="bg-gray-light">% Descuento</th>
-                                                <th class="bg-gray-light ">Precio Unitario</th>
-                                                <th class="bg-gray-light ">Precio Total</th>
-                                                <th class="bg-gray-light">Moneda</th>
-                                                <th class="bg-gray-light ">Precio Total Moneda Conversión</th>
-                                                <th style="width: 6%;" class="bg-gray-light">Observaciones</th>
-                                                <th class="bg-gray-light th_money_input">Cantidad Asignada</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(item, i) in data.items" v-if="item.item_pendiente">
-                                                <td>{{ i+1}}</td>
-                                                <td :title="item.descripcion">{{item.descripcion_corta}}</td>
-                                                <td :title="item.destino">{{item.destino_corto}}</td>
-                                                <td>{{item.unidad}}</td>
-                                                <td>{{item.cantidad_solicitada}}</td>
-                                                <td>{{item.cantidad_disponible}}</td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_unitario}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_total_antes_desc}}</td><td v-else></td>
-                                                <td v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].descuento}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_unitario_con_desc}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_total_con_desc}}</td><td v-else></td>
-                                                <td v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].moneda}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].observaciones}}</td><td v-else></td>
-                                                <td>
-                                                    <span  v-if="data.presupuestos[id_transaccion].partidas[i]">
-                                                        <input v-on:change="recalcular(i)"
-                                                            type="number"
-                                                            :disabled="item.cantidad_disponible == 0 && data.presupuestos[id_transaccion].partidas[i].cantidad_asignada == ''"
+                                            <th class="bg-gray-light ">Precio Unitario Antes Descto.</th>
+                                            <th class="bg-gray-light ">Precio Total Antes Descto.</th>
+                                            <th class="bg-gray-light">% Descuento</th>
+                                            <th class="bg-gray-light ">Precio Unitario</th>
+                                            <th class="bg-gray-light ">Precio Total</th>
+                                            <th class="bg-gray-light">Moneda</th>
+                                            <th class="bg-gray-light ">Precio Total Moneda Conversión</th>
+                                            <th style="width: 6%;" class="bg-gray-light">Observaciones</th>
+                                            <th class="bg-gray-light th_money_input">Cantidad Asignada</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(item, i) in data.items" v-if="item.item_pendiente">
+                                            <td>{{ i+1}}</td>
+                                            <td :title="item.descripcion">{{item.descripcion_corta}}</td>
+                                            <td :title="item.destino">{{item.destino_corto}}</td>
+                                            <td>{{item.unidad}}</td>
+                                            <td>{{item.cantidad_solicitada}}</td>
+                                            <td>{{item.cantidad_disponible}}</td>
+                                            <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_unitario}}</td><td v-else></td>
+                                            <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].precio_total_antes_desc}}</td><td v-else></td>
+                                            <td v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].descuento}}</td><td v-else></td>
+                                            <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_unitario_con_desc}}</td><td v-else></td>
+                                            <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].precio_total_con_desc}}</td><td v-else></td>
+                                            <td v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].moneda}}</td><td v-else></td>
+                                            <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
+                                            <td style="text-align: right" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].observaciones}}</td><td v-else></td>
+                                            <td>
+                                                <span  v-if="data.presupuestos[id_transaccion].partidas[i]">
+                                                    <input v-on:change="recalcular(i)"
+                                                           type="number"
+                                                           :disabled="item.cantidad_disponible == 0 && data.presupuestos[id_transaccion].partidas[i].cantidad_asignada == ''"
 
-                                                            class="form-control"
-                                                            :name="`cantidad_asignada[${item.id_concepto}]`"
-                                                            data-vv-as="Cantidad Asignada"
-                                                            v-model="data.presupuestos[id_transaccion].partidas[i].cantidad_asignada"
-                                                            v-validate="{max_value:item.cantidad_base, min_value:0}"
-                                                            :class="{'is-invalid': errors.has(`cantidad_asignada[${item.id_concepto}]`)}"
-                                                            id="cantidad_asignada">
-                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_asignada[${item.id_concepto}]`)">{{ errors.first(`cantidad_asignada[${item.id_concepto}]`) }}</div>
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
-                                <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
+                                                           class="form-control"
+                                                           :name="`cantidad_asignada[${item.id_concepto}]`"
+                                                           data-vv-as="Cantidad Asignada"
+                                                           v-model="data.presupuestos[id_transaccion].partidas[i].cantidad_asignada"
+                                                           v-validate="{max_value:item.cantidad_base, min_value:0}"
+                                                           :class="{'is-invalid': errors.has(`cantidad_asignada[${item.id_concepto}]`)}"
+                                                           id="cantidad_asignada">
+                                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_asignada[${item.id_concepto}]`)">{{ errors.first(`cantidad_asignada[${item.id_concepto}]`) }}</div>
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" v-on:click="salir">
-                            <i class="fa fa-angle-left"></i>
-                            Regresar
-                        </button>
-                        <button type="button" @click="validate()" class="btn btn-primary">
-                            <i class="fa fa-save"></i>
-                            Guardar
-                        </button>
+                <div class="row">
+                        <div class="col-md-12">
+                            <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volúmenes del Proveedor</button>
+                            <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volúmenes a Proveedor</button>
+                        </div>
                     </div>
-                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                    <i class="fa fa-angle-left"></i>
+                    Regresar
+                </button>
+                <button type="button" @click="validate()" class="btn btn-primary">
+                    <i class="fa fa-save"></i>
+                    Guardar
+                </button>
             </div>
         </div>
     </span>
