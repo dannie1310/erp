@@ -408,8 +408,9 @@ class SalidaAlmacen extends Transaccion
                     $mensaje = $mensaje . "-No existe movimiento\n";
                 }
                 foreach ($movimientos as $movimiento) {
-                    $inv_antecedente = Inventario::where('id_lote', $movimiento['lote_antecedente'])->get()->toArray();
-                    if (abs(($inv_antecedente[0]['saldo'] + $movimiento['cantidad']) - $inv_antecedente[0]['cantidad']) > 0.01)
+                    $inv_antecedente = Inventario::where('id_lote', $movimiento['lote_antecedente'])->first();
+                    $resultado = ($inv_antecedente->saldo + $movimiento['cantidad']) - $inv_antecedente->cantidad;
+                    if ($resultado > 1)
                     {
                        $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }

@@ -37,7 +37,7 @@
                     { title: 'Nombre de Empresa Contpaq', field: 'nombre_empresa', thClass: 'th_c350', thComp: require('../../globals/th-Filter').default, sortable: false},
                     { title: 'Código de Cuenta', field: 'codigo_cuenta', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Nombre de Cuenta', field: 'nombre_cuenta', thClass: 'th_c350', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Saldo de Cuenta', field: 'saldo_cuenta', tdClass:'td_money_input', sortable: true,  tdComp: require('./partials/RouterSaldo').default},
+                    { title: 'Saldo de Cuenta', field: 'saldo', tdClass:'td_money_input', sortable: true,  tdComp: require('./partials/RouterSaldo').default},
                     { title: 'Tipo de Cuenta', field: 'tipo', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Acciones', field: '', sortable: true},
                 ],
@@ -106,7 +106,7 @@
                             nombre_cuenta:cuenta.nombre_cuenta,
                             tipo:cuenta.tipo,
                             fecha_actualizacion:cuenta.fecha_actualizacion,
-                            saldo_cuenta: $.extend({},{saldo: cuenta.saldo_cuenta, id: cuenta.id}),
+                            saldo: $.extend({},{saldo: cuenta.saldo_cuenta, id: cuenta.id}),
                         })
                     });
                 },

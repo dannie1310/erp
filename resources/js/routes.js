@@ -1374,6 +1374,46 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'comprobante-fondo',
+                        component: require('./components/finanzas/comprobante-fondo/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comprobante-fondo',
+                                component: require('./components/finanzas/comprobante-fondo/Index').default,
+                                meta: {
+                                    title: 'Comprobantes de Fondo',
+                                    breadcrumb: {name: 'COMPROBANTE DE FONDO', parent: 'finanzas'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_comprobante_fondo'
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'comprobante-fondo-create',
+                                component: require('./components/finanzas/comprobante-fondo/Create').default,
+                                meta: {
+                                    title: 'Registrar Comprobantes de Fondo',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'comprobante-fondo'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_comprobante_fondo'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'comprobante-fondo-show',
+                                props: true,
+                                component: require('./components/finanzas/comprobante-fondo/Show').default,
+                                meta: {
+                                    title: 'Consultar Comprobante de Fondo',
+                                    breadcrumb: {name: 'VER', parent: 'comprobante-fondo'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_comprobante_fondo'
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'distribuir-recurso-remesa',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue').default,
                         children: [
@@ -1743,7 +1783,6 @@ export const routes = [
                             }
                         ]
                     },
-
                     {
                         path: 'solicitud',
                         component: require('./components/finanzas/solicitud/Layout').default,
@@ -3489,7 +3528,7 @@ export const routes = [
                 children: [
                     {
                         path: '/',
-                        name: 'configuracion',
+                        name: 'configuracion-remesa',
                         component: require('./components/remesas/configuracion/Index').default,
                         meta: {
                             title: 'Configuración',

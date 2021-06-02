@@ -109,8 +109,8 @@
                                         <td>${{item.precio}}</td>
                                         <td>$({{item.anticipo}})</td>
                                         <td>{{total_pendiente(item)}}</td>
-                                        <td>$ {{item.id_moneda}}</td>
-                                        <td> {{item.remision}}</td>
+                                        <td>{{getTipoCambioPendiente(item)}}</td>
+                                        <td>{{item.remision}}</td>
 
 
                                 </tr>
@@ -176,7 +176,6 @@
                                     <td></td>
                                     <td class="money">{{getTotalRentaFormato(item.importe_total_rentas)}}</td>
                                     <td>{{item.id_moneda}}</td>
-                                    <td></td>
                                     <td></td>
                                 </tr>
                                 <tr v-for="item in items.lista" v-if="item.seleccionado">
@@ -368,7 +367,7 @@
                                 </div>
                                 <div class="col-md-4" style="text-align: right">
                                     <b>
-                                        ${{parseFloat(factura.monto_format).formatMoney(2)}}
+                                        {{factura.monto_format}}
                                     </b>
                                 </div>
                             </div>
@@ -687,7 +686,11 @@ export default {
             if(this.items){
                 this.items.pendientes.forEach(pendiente => {
                     if(pendiente.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo) / this.tipo_cambio[this.factura.id_moneda]);
+                        if(pendiente.id_moneda = this.factura.id_moneda){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo));
+                        }else{
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo) * this.tipo_cambio[pendiente.id_moneda]);
+                        }
                     }
 
                 });
@@ -1061,6 +1064,13 @@ export default {
             }
             return parseFloat(item.tipo_cambio).toFixed(6);
         },
+        getTipoCambioPendiente(item){
+            if(item.id_moneda == this.factura.id_moneda){
+                return 1;
+            }else{
+                return this.tipo_cambio[item.id_moneda];
+            }
+        }
     },
     computed:{
         total(){

@@ -1060,9 +1060,14 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
 
-        // RUBROS
-        $api->group(['prefix' => 'rubro'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
+        /**
+         * COMPROBANTE FONDO
+         */
+        $api->group(['prefix' => 'comprobante-fondo'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1074,7 +1079,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@show')->where(['id' => '[0-9]+']);
         });
 
-        // DATOS ESTIMACIONES
+        /**
+         * DATOS ESTIMACIONES
+         */
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
@@ -1113,11 +1120,18 @@ $api->version('v1', function ($api) {
             $api->post('/storeRevision', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevision');
             $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
+            $api->get('/leerQR', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@leerQR');
+
 
             /**
              * FORMATO DE CONTRARECIBO
              */
             $api->get('{id}/formato-cr', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCR')->where(['id' => '[0-9]+']);
+
+            /**
+             * FORMATO PDF FACTURA DE VARIOS
+             */
+            $api->get('{id}/formato-fv', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfFV')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1187,6 +1201,11 @@ $api->version('v1', function ($api) {
                 $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@autorizar')->where(['id' => '[0-9]+']);
                 $api->get('descarga-layout', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@descargarLayout');
             });
+        });
+
+        // RUBROS
+        $api->group(['prefix' => 'rubro'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
         });
 
         /**

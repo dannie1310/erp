@@ -82,4 +82,24 @@ class Fondo extends Model
         $this->saldo = $this->saldo + ($pago->monto * (1/$pago->tipo_cambio) * -1);
         $this->save();
     }
+
+    /**
+     * Disminuye al saldo la cantidad enviada.
+     * @param $cantidad
+     */
+    public function disminuyeSaldo($cantidad)
+    {
+        $this->saldo = $this->saldo - $cantidad;
+        $this->save();
+    }
+
+    /**
+     * Aumenta al saldo la cantidad enviada.
+     * @param $cantidad
+     */
+    public function agregaSaldo($cantidad)
+    {
+        $this->saldo = $this->saldo + $cantidad;
+        $this->save();
+    }
 }

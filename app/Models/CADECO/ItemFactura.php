@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use mysql_xdevapi\Exception;
+use App\Models\CADECO\Concepto;
 
 class ItemFactura extends Item
 {
@@ -50,6 +51,10 @@ class ItemFactura extends Item
     public function antecedente()
     {
         return $this->belongsTo(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function concepto(){
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
     public function getProporcionItemAttribute()
