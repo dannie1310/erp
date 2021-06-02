@@ -513,6 +513,12 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
         });
+       
+        //IMPRESORA
+        $api->group(['prefix' => 'impresora'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
+        });
 
         //MARCA
         $api->group(['prefix' => 'marca'], function ($api) {
@@ -540,6 +546,14 @@ $api->version('v1', function ($api) {
         //OPERADOR
         $api->group(['prefix' => 'operador'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@descargaLayout');
+
         });
 
         //ORIGEN
@@ -1443,6 +1457,23 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'modelo'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SCI\ModeloController@index');
+        });
+    });
+
+
+    /**
+     * REMESAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'remesas'], function ($api) {
+        $api->group(['prefix' => 'folio'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@paginate');
+            $api->get('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@show');
+            $api->patch('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@update');
+        });
+        $api->group(['prefix' => 'proyecto'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@update')->where(['id' => '[0-9]+']);
         });
     });
 });

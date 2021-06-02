@@ -2383,6 +2383,34 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'impresora',
+                                name: 'impresora',
+                                component: require('./components/acarreos/catalogos/impresora/Index').default,
+                                meta: {
+                                    title: 'Impresoras',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'IMPRESORAS'
+                                    },
+                                    middleware: [auth, context],
+                                    // permission: ['consultar_origen']
+                                }
+                            },
+                            {
+                                path: 'operador',
+                                name: 'operador',
+                                component: require('./components/acarreos/catalogos/operador/Index').default,
+                                meta: {
+                                    title: 'Operadores',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'OPERADORES'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_operador']
+                                }
+                            },
+                            {
                                 path: 'origen',
                                 name: 'origen',
                                 component: require('./components/acarreos/catalogos/origen/Index').default,
@@ -3336,6 +3364,67 @@ export const routes = [
                             breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
                             middleware: [auth, permission],
                             permission: ['consultar_expediente_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/remesas',
+        components:  {
+            default: require('./components/remesas/partials/Layout.vue').default,
+            menu: require('./components/remesas/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'remesas',
+                meta: {
+                    title: 'SISTEMA DE REMESAS',
+                    middleware: [auth, permission],
+                    permission: ['consultar_limite_remesa'],
+                    general: true
+                }
+            },
+            {
+                path: 'configuracion',
+                component: require('./components/remesas/configuracion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'configuracion-remesa',
+                        component: require('./components/remesas/configuracion/Index').default,
+                        meta: {
+                            title: 'Configuración',
+                            breadcrumb: {parent: 'remesas', name: 'CONFIGURACIÓN'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'limite-remesa',
+                        name: 'limite-remesa',
+                        component: require('./components/remesas/configuracion/limite-remesa/Index').default,
+                        meta: {
+                            title: 'Configuración de Límites de Remesas Extraordinarias',
+                            breadcrumb: {name: 'LÍMITE SEMANAL', parent: 'configuracion'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'limite-remesa-proyecto',
+                        name: 'limite-remesa-proyecto',
+                        component: require('./components/remesas/configuracion/limite-remesa-proyecto/Index').default,
+                        meta: {
+                            title: 'Configuración de Límites de Remesas Extraordinarias por Proyecto',
+                            breadcrumb: {name: 'LÍMITE POR PROYECTO', parent: 'configuracion'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa_proyecto'],
                             general: true
                         }
                     },

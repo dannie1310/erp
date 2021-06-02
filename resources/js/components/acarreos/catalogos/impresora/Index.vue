@@ -1,0 +1,142 @@
+<template>
+    <div class="row">
+        <div class="col-12">
+           <!-- Espacio para Create y Descarga -->
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <datatable v-bind="$data" />
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+</template>
+
+<script>
+    export default {
+        name: "impresora-index",
+        components: {},
+        data() {
+            return {
+                HeaderSettings: false,
+                columns: [
+                    { title: 'ID', field: 'id',thClass: 'th_index',sortable: true},
+                    { title: 'MAC Address', field: 'mac', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Marca', field: 'marca', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Modelo', field: 'modelo', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha Registro', field: 'created_at',thClass: 'fecha_hora', sortable: true, thComp: require('../../../globals/th-Date').default},
+                    { title: 'Registró', field: 'registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
+                ],
+                data: [],
+                total: 0,
+                query: {scope:'', sort: 'id', order: 'asc'},
+                estado: "",
+                cargando: false
+            }
+        },
+        mounted() {
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
+        },
+
+        methods: {
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('acarreos/impresora/paginate', { params: this.query})
+                    .then(data => {
+                        this.$store.commit('acarreos/impresora/SET_IMPRESORAS', data.data);
+                        this.$store.commit('acarreos/impresora/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+                    })
+            },
+            getEstado(estado, color) {
+                return {
+                    color: color,
+                    descripcion: estado
+                }
+            },
+        },
+        computed: {
+            impresoras(){
+                return this.$store.getters['acarreos/impresora/impresoras'];
+            },
+            meta(){
+                return this.$store.getters['acarreos/impresora/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+        },
+        watch: {
+            impresoras: {
+                handler(impresoras) {
+                    let self = this
+                    self.$data.data = []
+                    self.$data.data = impresoras.map((impresora, i) => ({
+                        id: impresora.id,
+                        mac: impresora.mac,
+                        marca: impresora.marca,
+                        modelo: impresora.modelo,
+                        created_at: impresora.fecha_registro_format,
+                        registro : impresora.usuario_registro,
+                        estatus: this.getEstado(impresora.estado_format, impresora.estado_color),
+                        buttons: $.extend({}, {
+                            id: impresora.id,
+                        })
+                    }));
+                },
+                deep: true
+            },
+
+            meta: {
+                handler(meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler(query) {
+                    this.paginate(query)
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

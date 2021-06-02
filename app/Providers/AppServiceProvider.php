@@ -7,6 +7,7 @@ use App\Models\ACARREOS\CamionImagen;
 use App\Models\ACARREOS\InicioCamion;
 use App\Models\ACARREOS\Marca;
 use App\Models\ACARREOS\Material as MaterialAcarreo;
+use App\Models\ACARREOS\Operador;
 use App\Models\ACARREOS\Origen;
 use App\Models\ACARREOS\Tag;
 use App\Models\ACARREOS\Tiro;
@@ -142,6 +143,8 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
+use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
+use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -171,6 +174,7 @@ use App\Observers\ACARREOS\CamionObserver;
 use App\Observers\ACARREOS\InicioCamionObserver;
 use App\Observers\ACARREOS\MaterialObserver as MaterialAcarreoObserver;
 use App\Observers\ACARREOS\MarcaObserver;
+use App\Observers\ACARREOS\OperadorObserver;
 use App\Observers\ACARREOS\OrigenObserver;
 use App\Observers\ACARREOS\TagObserver;
 use App\Observers\ACARREOS\TiroConceptoObserver;
@@ -305,6 +309,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
@@ -368,6 +373,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\ACARREOS\Empresa::observe(\App\Observers\ACARREOS\EmpresaObserver::class);
         InicioCamion::observe(InicioCamionObserver::class);
         Marca::observe(MarcaObserver::class);
+        Operador::observe(OperadorObserver::class);
         Origen::observe(OrigenObserver::class);
         MaterialAcarreo::observe(MaterialAcarreoObserver::class);
         Tag::observe(TagObserver::class);
@@ -386,6 +392,11 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
         \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
+
+        /**
+         * MODULOSSAO
+         */
+        Proyecto::observe(ProyectoObserver::class);
 
         /**
         *RECEPCIÓN CFDI

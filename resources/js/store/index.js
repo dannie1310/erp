@@ -5,6 +5,7 @@ import auth from './modules/auth';
 //ACARREOS
 import camion from "./modules/acarreos/camion";
 import empresaAcarreo from "./modules/acarreos/empresa";
+import impresora from "./modules/acarreos/impresora";
 import marcaAcarreo from "./modules/acarreos/marca";
 import materialAcarreo from "./modules/acarreos/material";
 import operador from "./modules/acarreos/operador";
@@ -199,6 +200,9 @@ import aplicacion from "./modules/igh/aplicacion";
 //PRESUPUESTO
 import conceptoPresupuesto from './modules/presupuesto/concepto';
 
+//REMESAS
+import folio from './modules/remesas/remesa-folio';
+import proyectoMSAO from './modules/remesas/proyecto';
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
@@ -216,6 +220,7 @@ export default new Vuex.Store({
         auth,
         'acarreos/camion' : camion,
         'acarreos/empresa' : empresaAcarreo,
+        'acarreos/impresora' : impresora,
         'acarreos/marca' : marcaAcarreo,
         'acarreos/material' : materialAcarreo,
         'acarreos/operador' : operador,
@@ -387,6 +392,9 @@ export default new Vuex.Store({
         'padronProveedores/giro' : giro,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
+
+        'remesas/remesa-folio' : folio,
+        'remesas/proyecto' : proyectoMSAO,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
