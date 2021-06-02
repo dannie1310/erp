@@ -71,7 +71,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                 </div>
                             </div>
                             <div class="card" v-if="material.estado == 1">
@@ -98,7 +98,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>
                         <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0" v-if="material">
                             <i class="fa fa-save"></i>Guardar
                         </button>

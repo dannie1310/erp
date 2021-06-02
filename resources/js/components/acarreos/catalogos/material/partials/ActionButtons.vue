@@ -2,7 +2,7 @@
     <div class="btn-group">
         <Show v-bind:id="value.id" v-if="value.show" />
         <button @click="activar" v-if="value.activar" type="button" class="btn btn-sm btn-outline-success" title="Activar">
-            <i class="fa fa-check-square"></i>
+            <i class="fa fa-check"></i>
         </button>
         <Desactivar v-bind:id="value.id" v-if="value.desactivar" />
     </div>

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_operador')||true" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_operador')||true" class="btn btn-app pull-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -17,7 +17,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Nombre" class="col-form-label">Nombre:</label>
-                                 <input 
+                                 <input
                                           type="text"
                                           name="Nombre"
                                           data-vv-as="'Nombre'"
@@ -34,7 +34,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Direccion" class="col-form-label">Dirección:</label>
-                                 <input 
+                                 <input
                                           type="text"
                                           name="Direccion"
                                           data-vv-as="'Dirección'"
@@ -51,7 +51,7 @@
                            <div class="col-md-6">
                                <div class="form-group col-md-12 error-content">
                                  <label for="NoLicencia" class="col-form-label">Número de Licencia:</label>
-                                 <input 
+                                 <input
                                           type="text"
                                           name="NoLicencia"
                                           data-vv-as="'Número de Licencia'"

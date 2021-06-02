@@ -38,7 +38,7 @@ class Impresora extends Model
 
     public function historicos()
     {
-        return $this->hasMany(ImpresoraHistorico::class, 'IdOrigen', 'IdOrigen');
+        return $this->hasMany(ImpresoraHistorico::class, 'id', 'id');
     }
 
     /**

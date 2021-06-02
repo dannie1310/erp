@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>
                         <button type="submit" class="btn btn-primary" @click="asignar_concepto" :disabled="errors.count() > 0">
                             <i class="fa fa-save"></i>Guardar
                         </button>
