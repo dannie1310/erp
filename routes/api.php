@@ -520,6 +520,18 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
         });
 
+        //IMPRESORA
+        $api->group(['prefix' => 'impresora'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@descargaLayout');
+        });
+
         //MARCA
         $api->group(['prefix' => 'marca'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');

@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_tiro')" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_tiro')" class="btn btn-app pull-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

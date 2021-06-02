@@ -9,6 +9,8 @@ use App\Repositories\Repository;
 use App\Models\ACARREOS\Impresora;
 use Illuminate\Support\Facades\DB;
 use App\Models\ACARREOS\SCA_CONFIGURACION\Proyecto;
+use App\CSV\Acarreos\Catalogos\ImpresoraLayout;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ImpresoraService
 {
@@ -56,6 +58,50 @@ class ImpresoraService
             $this->repository->whereIn(['registro', $usuario]);
         }
         return  $this->repository->paginate($data);
+    }
+
+    public function store($data)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->create($data);
+    }
+
+    public function show($id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id);
+    }
+
+    public function activar($id)
+    {
+        $this->conexionAcarreos();
+        $impresora = $this->show($id);
+        if ($impresora->estatus == 1) {
+            abort(400, "La impresora se encuentra " . $impresora->estado_format . " previamente.");
+        }
+        return $impresora->activar();
+    }
+
+    public function desactivar(array  $data, $id)
+    {
+        $this->conexionAcarreos();
+        $impresora = $this->show($id);
+        if ($impresora->estatus == 0) {
+            abort(400, "La impresora se encuentra " . $impresora->estado_format . " previamente.");
+        }
+        return $impresora->desactivar($data['motivo']);
+    }
+
+    public function update(array $data, $id)
+    {
+        $this->conexionAcarreos();
+        return $this->repository->show($id)->editar($data);
+    }
+
+    public function excel()
+    {
+        $this->conexionAcarreos();
+        return Excel::download(new ImpresoraLayout(), 'impresoras.csv');
     }
 
     private function conexionAcarreos()
