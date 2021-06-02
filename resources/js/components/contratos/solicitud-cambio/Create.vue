@@ -5,7 +5,7 @@
 				<div class="row">
 					<div class="col-md-12">
 						<label>
-							Seleccione el subcontrato al que desea aplicar los cambios:
+							Seleccione el subcontrato al que le desea generar una solicitud de cambio:
 						</label>
 					</div>
 				</div>
@@ -25,9 +25,22 @@
 				</div>
 			</div>
 		</div>
-        <div class="row" v-if="conceptos">
+        <div class="card" v-if="!conceptos && id_subcontrato">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card" v-if="conceptos" >
+			<div class="card-body">
+                <div class="row" >
 
-            <div class="col-md-1">
+            <div class="col-md-2">
                 <label for="fecha" class="col-form-label">Fecha: </label>
                 <datepicker v-model = "fecha"
                             id="fecha"
@@ -56,226 +69,225 @@
             </div>
 
         </div>
-        <br />
-		<div class="row">
-			<div class="col-md-6">
-				<div class="card" v-if="conceptos">
-					<div class="card-header">
-						<h6 class="card-title">Subcontrato</h6>
-					</div>
-					<div class="card-body">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">Fecha:</label>
-                                    <div class="col-md-9">
-                                        {{ subcontrato.fecha_format }}
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">Folio:</label>
-                                    <div class="col-md-9">
-                                         {{subcontrato.numero_folio_format}} ({{ subcontrato.referencia }})
-                                    </div>
-                                </div>
-                                <div class="form-group row" v-if="subcontrato.empresa">
-                                    <label class="col-md-3 col-form-label">Contratista:</label>
-                                    <div class="col-md-9">
-                                        {{ subcontrato.empresa.razon_social }}
-                                    </div>
-                                </div>
+                <br />
+		        <div class="row">
+                    <div class="col-md-6">
+                        <div class="card" v-if="conceptos">
+                            <div class="card-header">
+                                <h6 class="card-title">Subcontrato</h6>
                             </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table style="width: 100%;">
+                                            <tr>
+                                                <td>
+                                                    <b>Fecha:</b>
+                                                </td>
+                                                <td>
+                                                    {{ subcontrato.fecha_format }}
+                                                </td>
+                                                 <td>
+                                                    <b>Folio:</b>
+                                                </td>
+                                                <td>
+                                                   {{subcontrato.numero_folio_format}}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                     <b>Contratista:</b>
+                                                </td>
+                                                <td colspan="3">
+                                                     {{ subcontrato.empresa.razon_social }}
+                                                </td>
+                                            </tr>
+                                            <tr v-if="subcontrato.referencia != ''">
+                                                <td>
+                                                     <b>Referencia:</b>
+                                                </td>
+                                                <td colspan="3">
+                                                     {{ subcontrato.referencia }}
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>
+                                                    <b>Moneda:</b>
+                                                </td>
+                                                <td>
+                                                    {{ subcontrato.moneda }}
 
-                            <div class="col-md-5">
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">Moneda:</label>
-                                    <div class="col-md-9">
-                                        {{ subcontrato.moneda }}
+                                                </td>
+                                                 <td>
+                                                    <b>Total:</b>
+                                                </td>
+                                                <td>
+                                                   {{ subcontrato.monto_format }}
+                                                </td>
+                                            </tr>
+
+                                        </table>
                                     </div>
                                 </div>
-                                <div class="form-group row">
-                                    <label class="col-md-3 col-form-label">IVA:</label>
-                                    <div class="col-md-9">
-                                        {{ subcontrato.impuesto_format }}
-                                    </div>
-                                </div>
-                                <div class="form-group row" v-if="subcontrato.empresa">
-                                    <label class="col-md-3 col-form-label">Monto:</label>
-                                    <div class="col-md-9">
-                                        {{ subcontrato.monto_format }}
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
-					</div>
-				</div>
-			</div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card" v-if="conceptos">
+                            <div class="card-header">
+                                <h6 class="card-title">Valor de los cambios</h6>
+                            </div>
+                            <div class="card-body">
+                                <form>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <table style="width: 100%;">
+                                                <tr>
+                                                    <td>
+                                                        <b>Subtotal:</b>
+                                                    </td>
+                                                    <td>
+                                                        ${{ parseFloat(importe_addendum).formatMoney(2) }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>IVA:</b>
+                                                    </td>
+                                                    <td>
+                                                        ${{ parseFloat(impuesto_addendum).formatMoney(2) }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <b>Total:</b>
+                                                    </td>
+                                                    <td>
+                                                        ${{ parseFloat(monto_addendum).formatMoney(2) }}
+                                                    </td>
+                                                </tr>
 
-			<div class="col-md-6">
-				<div class="card" v-if="conceptos">
-					<div class="card-header">
-						<h6 class="card-title">Valor de los cambios</h6>
-					</div>
-					<div class="card-body">
-						<form>
-                            <div class="form-row">
-                                <label class="col-md-3 col-form-label">Subtotal:</label>
-                                <div class="col-md-9">
-                                    $ {{ parseFloat(importe_addendum).formatMoney(2) }}
-                                </div>
-							</div>
-                            <div class="form-row">
-                                <label class="col-md-3 col-form-label">IVA:</label>
-                                <div class="col-md-9">
-                                    $ {{ parseFloat(impuesto_addendum).formatMoney(2) }}
-                                </div>
-							</div>
-							<div class="form-row">
-                                <label class="col-md-3 col-form-label">Monto:</label>
-                                <div class="col-md-9">
-                                    $ {{ parseFloat(monto_addendum).formatMoney(2) }}
-                                </div>
-							</div>
-                            <div class="form-row">
-                                <label class="col-md-3 col-form-label">Porcentaje:</label>
-                                <div class="col-md-9">
-                                    {{ parseFloat(porcentaje_addendum).formatMoney(4) }} %
-                                </div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
+                                                <tr>
+                                                    <td>
+                                                        <b>Porcentaje:</b>
+                                                    </td>
+                                                    <td>
+                                                        {{ parseFloat(porcentaje_addendum).formatMoney(4) }}%
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-		<div class="card" v-if="conceptos" style="display:none">
-			<div class="card-body">
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado" >
-					<label class="form-check-label" for="contratado">Contratado</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="avance-volumen" value="avance-volumen">
-					<label class="form-check-label" for="avance-volumen">Avance Volumen</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="avance-importe" value="avance-importe">
-					<label class="form-check-label" for="avance-importe">Avance Importe</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="saldo" value="saldo">
-					<label class="form-check-label" for="saldo">Saldo</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
-					<label class="form-check-label" for="destino">Destino</label>
-				</div>
-			</div>
-		</div>
+                <div class="row" >
+                    <div class="col-md-12">
+                        <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
+                    </div>
+                </div>
+                <br />
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table id="tabla-conceptos" >
+                            <thead>
+                                <tr>
+                                    <th rowspan="2">Clave</th>
+                                    <th rowspan="2">Concepto</th>
+                                    <th rowspan="2">UM</th>
+                                    <th colspan="2" class="contratado">Contratado</th>
+                                    <th colspan="2" class="avance-volumen">Avance</th>
 
-        <div class="row" v-if="conceptos">
-            <div class="col-md-12">
-                <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
-            </div>
-        </div>
-        <br />
-		<div class="card" v-if="conceptos">
-			<div class="card-body table-responsive">
-				<table id="tabla-conceptos">
-					<thead>
-						<tr>
-							<th rowspan="2">Clave</th>
-							<th rowspan="2">Concepto</th>
-							<th rowspan="2">UM</th>
-							<th colspan="2" class="contratado">Contratado</th>
-							<th colspan="2" class="avance-volumen">Avance</th>
-
-							<th colspan="2" class="saldo">Saldo</th>
-							<th colspan="3">Addendum</th>
-							<th class="destino">Distribución</th>
-                            <th style="width: 20px"></th>
-						</tr>
-						<tr>
-							<th class="contratado">Volumen</th>
-							<th class="contratado">P.U.</th>
-							<th class="avance-volumen">Volumen</th>
-							<th class="avance-importe">Importe</th>
-							<th class="saldo">Volumen</th>
-							<th class="saldo">Importe</th>
-							<th style="width: 80px">Volumen</th>
-							<th>P.U.</th>
-							<th>Importe</th>
-							<th class="destino">Destino</th>
-                            <th></th>
-						</tr>
-					</thead>
-                    <tbody>
-					<template v-for="(concepto, i) in conceptos">
-                        <tr v-if="!concepto.unidad">
-                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                            <td :title="concepto.descripcion">
-                                <span v-for="n in concepto.nivel">&nbsp;</span>
-                                <b>{{concepto.descripcion}}</b></td>
-                            <td></td>
-                            <td class="numerico contratado"/>
-                            <td class="numerico contratado"/>
-                            <td class="numerico avance-volumen"/>
-                            <td class="numerico avance-importe"/>
-                            <td class="numerico saldo"/>
-                            <td class="numerico saldo"/>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td class="destino"/>
-                            <td></td>
-                        </tr>
-					    <tr v-else>
-						    <td :title="concepto.clave">{{ concepto.clave }}</td>
-                            <td :title="concepto.descripcion_concepto">
-                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                {{concepto.descripcion_concepto}}
-                            </td>
-                            <td class="centrado">{{concepto.unidad}}</td>
-                            <td class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                            <td class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
-                            <td class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                            <td class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
-                            <td class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                            <td class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="editable-cell numerico" style="background-color: #ddd" v-if="concepto.precio_modificado ==0">
-                                <input v-on:keyup="keyupCantidad(concepto)"
-                                       v-on:change="changeCantidad()"
-                                       class="text"
-                                       v-model="concepto.cantidad_addendum"
-                                       :name="`cantidadsolicitud_cambio[${concepto.id}]`"
-                                       v-validate="{min_value: parseFloat((concepto.cantidad_por_estimar*-1)).toFixed(2)}"
-                                       :class="{'is-invalid': errors.has(`cantidadsolicitud_cambio[${concepto.id}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`cantidadsolicitud_cambio[${concepto.id}]`)">{{ errors.first(`cantidadsolicitud_cambio[${concepto.id}]`) }}</div>
-                            </td>
-                            <td class="numerico" style="background-color: #ddd;"
-                                v-else>
-                                {{ parseFloat((concepto.cantidad_addendum)).toFixed(2) }}
-                            </td>
-                            <td class="numerico" style="background-color: #ddd; text-decoration: underline; cursor:pointer"
-                                v-on:dblclick="onCambioPrecio(concepto)" v-if="concepto.precio_modificado ==0">
-                                {{ concepto.precio_unitario_subcontrato_format}}
-                            </td>
-                            <td class="numerico" style="background-color: #ddd;"
-                                 v-else>
-                                {{ concepto.precio_unitario_subcontrato_format}}
-                            </td>
-                            <td class="numerico" style="background-color: #ddd">
-                                ${{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
-                            </td>
-                            <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
-                            <td></td>
-                        </tr>
-                    </template>
-                    <tr v-if="conceptos_extraordinarios.length>0">
-                        <td></td>
-                        <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Extraordinarios</b></td>
-                    </tr>
-                    <tr  v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
+                                    <th colspan="2" class="saldo">Saldo</th>
+                                    <th colspan="3">Addendum</th>
+                                    <th class="destino">Distribución</th>
+                                    <th style="width: 20px"></th>
+                                </tr>
+                                <tr>
+                                    <th class="contratado">Volumen</th>
+                                    <th class="contratado">P.U.</th>
+                                    <th class="avance-volumen">Volumen</th>
+                                    <th class="avance-importe">Importe</th>
+                                    <th class="saldo">Volumen</th>
+                                    <th class="saldo">Importe</th>
+                                    <th style="width: 80px">Volumen</th>
+                                    <th>P.U.</th>
+                                    <th>Importe</th>
+                                    <th class="destino">Destino</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <template v-for="(concepto, i) in conceptos">
+                                    <tr v-if="!concepto.unidad">
+                                        <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
+                                        <td :title="concepto.descripcion">
+                                            <span v-for="n in concepto.nivel">&nbsp;</span>
+                                            <b>{{concepto.descripcion}}</b></td>
+                                        <td></td>
+                                        <td class="numerico contratado"/>
+                                        <td class="numerico contratado"/>
+                                        <td class="numerico avance-volumen"/>
+                                        <td class="numerico avance-importe"/>
+                                        <td class="numerico saldo"/>
+                                        <td class="numerico saldo"/>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td class="destino"/>
+                                        <td></td>
+                                    </tr>
+                                    <tr v-else>
+                                        <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                        <td :title="concepto.descripcion_concepto">
+                                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            {{concepto.descripcion_concepto}}
+                                        </td>
+                                        <td class="centrado">{{concepto.unidad}}</td>
+                                        <td class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
+                                        <td class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                                        <td class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
+                                        <td class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
+                                        <td class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
+                                        <td class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
+                                        <td class="editable-cell numerico" style="background-color: #ddd" v-if="concepto.precio_modificado ==0">
+                                            <input v-on:keyup="keyupCantidad(concepto)"
+                                                   v-on:change="changeCantidad()"
+                                                   class="text"
+                                                   v-model="concepto.cantidad_addendum"
+                                                   :name="`cantidadsolicitud_cambio[${concepto.id}]`"
+                                                   v-validate="{min_value: parseFloat((concepto.cantidad_por_estimar*-1)).toFixed(2)}"
+                                                   :class="{'is-invalid': errors.has(`cantidadsolicitud_cambio[${concepto.id}]`)}" />
+                                             <div class="invalid-feedback" v-show="errors.has(`cantidadsolicitud_cambio[${concepto.id}]`)">{{ errors.first(`cantidadsolicitud_cambio[${concepto.id}]`) }}</div>
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd;"
+                                            v-else>
+                                            {{ parseFloat((concepto.cantidad_addendum)).toFixed(2) }}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd; text-decoration: underline; cursor:pointer"
+                                            v-on:dblclick="onCambioPrecio(concepto)" v-if="concepto.precio_modificado ==0">
+                                            {{ concepto.precio_unitario_subcontrato_format}}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd;"
+                                            v-else>
+                                            {{ concepto.precio_unitario_subcontrato_format}}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd">
+                                            ${{ parseFloat(concepto.importe_addendum).formatMoney(4) }}
+                                        </td>
+                                        <td  class="destino" :title="concepto.destino_path_larga">{{ concepto.destino_path }}</td>
+                                        <td></td>
+                                    </tr>
+                                </template>
+                                <tr v-if="conceptos_extraordinarios.length>0">
+                                    <td></td>
+                                    <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Extraordinarios</b></td>
+                                </tr>
+                                <tr  v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
                         <td >{{ concepto_extraordinario.clave }}</td>
                         <td >
                             {{concepto_extraordinario.descripcion}}
@@ -306,66 +318,72 @@
                         </td>
                     </tr>
 
-                    <tr v-if="conceptos_cambios_precio.length>0">
-                        <td></td>
-                        <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
-                    </tr>
-                    <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
-                        <td >{{ concepto_cambio_precio.clave }}</td>
-                        <td >
-                            {{concepto_cambio_precio.descripcion}}
-                        </td>
-                        <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico avance-volumen"></td>
-                        <td class="numerico avance-importe"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo" style="background-color: #ddd">
-                            {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
-                        </td>
-                        <td class="editable-cell numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
-                        </td>
-                        <td class="numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
-                        </td>
-                        <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
-                        <td>
-                            <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                <i class="fa fa-trash" v-else></i>
-                            </button>
-                        </td>
-                    </tr>
+                                <tr v-if="conceptos_cambios_precio.length>0">
+                                    <td></td>
+                                    <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
+                                </tr>
+                                <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
+                                    <td >{{ concepto_cambio_precio.clave }}</td>
+                                    <td >
+                                        {{concepto_cambio_precio.descripcion}}
+                                    </td>
+                                    <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
+                                    <td class="numerico contratado"></td>
+                                    <td class="numerico contratado"></td>
+                                    <td class="numerico avance-volumen"></td>
+                                    <td class="numerico avance-importe"></td>
+                                    <td class="numerico saldo"></td>
+                                    <td class="numerico saldo"></td>
+                                    <td class="numerico saldo" style="background-color: #ddd">
+                                        {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
+                                    </td>
+                                    <td class="editable-cell numerico" style="background-color: #ddd">
+                                        ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
+                                    </td>
+                                    <td class="numerico" style="background-color: #ddd">
+                                        ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
+                                    </td>
+                                    <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
+                                    <td>
+                                        <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-trash" v-else></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table >
+                    </div>
+                </div>
 
-                    </tbody>
-				</table>
-			</div>
-        </div>
+                <br />
 
-        <div class="form-group row" v-if="conceptos">
-            <label class="col-md-1 col-form-label">Observaciones:</label>
-            <div class="col-md-11">
-                <textarea
-                    name="observaciones"
-                    id="observaciones"
-                    class="form-control"
-                    v-model="observaciones"
-                ></textarea>
+               <div class="row">
+                   <div class="col-md-12"><b>Observaciones:</b> </div>
+               </div>
+               <div class="row">
+                   <div class="col-md-12">
+                       <textarea
+                           name="observaciones"
+                           id="observaciones"
+                           class="form-control"
+                           v-model="observaciones"
+                       ></textarea>
+                   </div>
+               </div>
+                <br />
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <button class="btn btn-primary float-right" type="submit" @click="validate"
+                                :disabled="errors.count() > 0 || !conceptos">
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
+		        </div>
             </div>
         </div>
-
-		 <div class="row">
-			<div class="col-md-12">
-				<button class="btn btn-primary float-right" type="submit" @click="validate"
-						:disabled="errors.count() > 0 || !conceptos">
-                    <i class="fa fa-save"></i>
-					Guardar
-				</button>
-			</div>
-		</div>
 
         <div class="modal fade" ref="modalCambioPrecio" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -685,6 +703,7 @@
             },
             eliminarPartida(index){
                 this.conceptos_extraordinarios.splice(index, 1);
+                this.changeCantidad();
             },
             eliminarPartidaCambioPrecio(index, concepto_cambio_precio){
                 concepto_cambio_precio.concepto.cantidad_addendum = '';
@@ -818,16 +837,20 @@
 		clear: both;
 	}
 
-	table thead th
-	{
-		padding: 0.2em;
-		border: 1px solid #666;
-		background-color: #333;
-		color: white;
-		font-weight: normal;
-		overflow: hidden;
-		text-align: center;
-	}
+    table#tabla-conceptos th, table#tabla-conceptos td {
+        border: 1px solid #dee2e6;
+    }
+
+    table thead th
+    {
+        padding: 0.2em;
+
+        background-color: #f2f4f5;
+        font-weight: bold;
+        color: black;
+        overflow: hidden;
+        text-align: center;
+    }
 
 	table thead th {
 		text-align: center;
