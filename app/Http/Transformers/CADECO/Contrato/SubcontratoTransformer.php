@@ -56,6 +56,7 @@ class SubcontratoTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'fecha_format' => (string)$model->fecha_format,
+            'id_contrato_proyectado' => $model->id_antecedente,
             'tipo_transaccion' => $model->tipo_transaccion,
             'folio_revision_format' => $model->folio_revision_format,
             'fecha' => (string)$model->fecha,

@@ -12,7 +12,8 @@ class SubcontratosTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'descripcion' => $model->observacion,
+            'descripcion' => $model->descripcion,
+            'observacion' => $model->observacion,
             'fecha_ini_format' => $model->fecha_inicio_ejecucion_format,
             'fecha_ini_ejec' => $model->fecha_ini_ejec,
             'fecha_fin_format' => $model->fecha_fin_ejecucion_format,

@@ -629,54 +629,60 @@ class Subcontrato extends Transaccion
     }
 
     public function updateContrato($data){
-        $fecha =New DateTime($data['fecha']);
-        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $fecha_ini_ejec =New DateTime($data['fecha_ini_ejec']);
-        $fecha_ini_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $fecha_fin_ejec =New DateTime($data['fecha_fin_ejec']);
-        $fecha_fin_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
-        if($fecha_ini_ejec->format("Y-m-d ") >$fecha_fin_ejec->format("Y-m-d ")){
-            abort(403, 'La fecha de inicio de ejecución no puede ser posterior a la fecha de fin de ejección.');
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_ini_ejec =New DateTime($data['fecha_ini_ejec']);
+            $fecha_ini_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_fin_ejec =New DateTime($data['fecha_fin_ejec']);
+            $fecha_fin_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if($fecha_ini_ejec > $fecha_fin_ejec){
+                abort(403, 'La fecha de inicio de ejecución no puede ser posterior a la fecha de fin de ejección.');
+            }
+
+            $this->referencia = $data['referencia'];
+            $this->fecha = $fecha->format("Y-m-d");
+            $this->impuesto = $data['impuesto'];
+            $this->impuesto_retenido = $data['retencion_iva'];
+            $this->monto = $data['monto'];
+            $this->saldo = $data['monto'];
+            $this->retencion = $data['retencion_fg'];
+            $data['id_costo']?$this->id_costo = $data['id_costo']:'';
+            $this->save();
+
+            if($this->subcontratos){
+                $this->subcontratos->fecha_ini_ejec = $fecha_ini_ejec->format("Y-m-d "). date('H:i:s');
+                $this->subcontratos->fecha_fin_ejec = $fecha_fin_ejec->format("Y-m-d "). date('H:i:s');
+                $this->subcontratos->observacion = $data['observacion'];
+                $this->subcontratos->save();
+            }else{
+                Subcontratos::create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_clasificador' => 1,
+                    'fecha_ini_ejec' => $fecha_ini_ejec->format("Y-m-d "). date('H:i:s'),
+                    'fecha_fin_ejec' => $fecha_fin_ejec->format("Y-m-d "). date('H:i:s'),
+                    'observacion' => $data['observacion'],
+                ]);
+            }
+
+            if($this->clasificacionSubcontrato){
+                $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
+                $this->clasificacionSubcontrato->actualizarFolio();
+                $this->clasificacionSubcontrato->save();
+            }else{
+                ClasificacionSubcontrato::create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_tipo_contrato' => $data['id_tipo_contrato']
+                ]);
+            }
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
-
-        $this->referencia = $data['referencia'];
-        $this->fecha = $data['fecha'];
-        $this->impuesto = $data['impuesto'];
-        $this->impuesto_retenido = $data['retencion_iva'];
-        $this->monto = $data['monto'];
-        $this->saldo = $data['monto'];
-        $this->retencion = $data['retencion_fg'];
-        $data['id_costo']?$this->id_costo = $data['id_costo']:'';
-        $this->save();
-
-        if($this->subcontratos){
-            $this->subcontratos->fecha_ini_ejec = $fecha_ini_ejec->format("Y-m-d "). date('H:i:s');
-            $this->subcontratos->fecha_fin_ejec = $fecha_fin_ejec->format("Y-m-d "). date('H:i:s');
-            $this->subcontratos->observacion = $data['observacion'];
-            $this->subcontratos->save();
-        }else{
-            Subcontratos::create([
-                'id_transaccion' => $this->id_transaccion,
-                'id_clasificador' => 1,
-                'fecha_ini_ejec' => $fecha_ini_ejec->format("Y-m-d "). date('H:i:s'),
-                'fecha_fin_ejec' => $fecha_fin_ejec->format("Y-m-d "). date('H:i:s'),
-                'observacion' => $data['observacion'],
-            ]);
-        }
-
-        if($this->clasificacionSubcontrato){
-            $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
-            $this->clasificacionSubcontrato->actualizarFolio();
-            $this->clasificacionSubcontrato->save();
-        }else{
-            ClasificacionSubcontrato::create([
-                'id_transaccion' => $this->id_transaccion,
-                'id_tipo_contrato' => $data['id_tipo_contrato']
-            ]);
-        }
-
-
-        return $this;
     }
 
     /**
