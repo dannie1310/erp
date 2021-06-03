@@ -2,100 +2,98 @@
     <span>
         <div class="row">
             <div class="col-12">
-                <div class="invoice p-3 mb-3">
-                    <form role="form" @submit.prevent="validate">
-                        <div class="modal-body">
-                            <!-- Seccion de datos iniciales -->
+                <form role="form" @submit.prevent="validate">
+                    <div class="card">
+                        <div class="card-body">
                             <div class="row">
-                                <div class="col-md-4 offset-md-7 mt-3 text-left" >
-                                    <label class="text-secondary">Fechas Límite </label>
-                                    <hr style="color: #0056b2; margin-top:auto;" width="95%" size="10" />
-                                </div>
-                                <!-- <div class="col-md-12"> -->
-                                    <div class="col-md-2 ">
-                                        <div class="form-group error-content">
-                                            <div class="form-group">
-                                                <label><b>Fecha</b></label>
-                                                <datepicker v-model = "fecha"
-                                                            name = "fecha"
-                                                            data-vv-as="Fecha"
-                                                            :language = "es"
-                                                            :format = "formatoFecha"
-                                                            :bootstrap-styling = "true"
-                                                            v-validate="{required: true}"
-                                                            :class="{'is-invalid': errors.has('fecha')}"
-                                                            class = "form-control">
-                                                            
-                                                </datepicker>
-                                                <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2 offset-md-5">
-                                        <div class="form-group error-content">
-                                            <div class="form-group">
-                                                <label><b>Cotización</b></label>
-                                                <datepicker v-model = "fecha_cotizacion"
-                                                            name = "fecha_cotizacion"
-                                                            data-vv-as="Fecha Cotización"
-                                                            :language = "es"
-                                                            :format = "formatoFecha"
-                                                            :bootstrap-styling = "true"
-                                                            v-validate="{required: true}"
-                                                            :class="{'is-invalid': errors.has('fecha_cotizacion')}"
-                                                            class = "form-control">
-                                                </datepicker>
-                                                <div class="invalid-feedback" v-show="errors.has('fecha_cotizacion')">{{ errors.first('fecha_cotizacion') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                     <div class="col-md-2">
+                                <div class="col-md-2 ">
                                     <div class="form-group error-content">
                                         <div class="form-group">
-                                            <label><b>Contratación</b></label>
-                                            <datepicker v-model = "fecha_contrato"
-                                                        name = "fecha_contrato"
-                                                        data-vv-as="Fecha Contratación"
+                                            <label for="fecha">Fecha</label>
+                                            <datepicker v-model = "fecha"
+                                                        id = "fecha"
+                                                        name = "fecha"
+                                                        data-vv-as="Fecha"
                                                         :language = "es"
                                                         :format = "formatoFecha"
                                                         :bootstrap-styling = "true"
                                                         v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha_contrato')}"
-                                                        :disabled-dates="fechasDeshabilitadas"
+                                                        :class="{'is-invalid': errors.has('fecha')}"
                                                         class = "form-control">
+
                                             </datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha_contrato')">{{ errors.first('fecha_contrato') }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- </div> -->
+                                <div class="col-md-2">
+                                    <div class="form-group error-content">
+                                        <div class="form-group">
+                                            <label for="fecha_cotizacion">Fecha de Cotización</label>
+                                            <datepicker v-model = "fecha_cotizacion"
+                                                        name = "fecha_cotizacion"
+                                                        id="fecha_cotizacion"
+                                                        data-vv-as="Fecha Cotización"
+                                                        :language = "es"
+                                                        :format = "formatoFecha"
+                                                        :bootstrap-styling = "true"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has('fecha_cotizacion')}"
+                                                        class = "form-control">
+                                            </datepicker>
+                                            <div class="invalid-feedback" v-show="errors.has('fecha_cotizacion')">{{ errors.first('fecha_cotizacion') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                     <div class="form-group error-content">
+                                         <div class="form-group">
+                                             <label for="fecha_contrato">Fecha de Contratación</label>
+                                             <datepicker v-model = "fecha_contrato"
+                                                         name = "fecha_contrato"
+                                                         id = "fecha_contrato"
+                                                         data-vv-as="Fecha Contratación"
+                                                         :language = "es"
+                                                         :format = "formatoFecha"
+                                                         :bootstrap-styling = "true"
+                                                         v-validate="{required: true}"
+                                                         :class="{'is-invalid': errors.has('fecha_contrato')}"
+                                                         :disabled-dates="fechasDeshabilitadas"
+                                                         class = "form-control">
+                                             </datepicker>
+                                             <div class="invalid-feedback" v-show="errors.has('fecha_contrato')">{{ errors.first('fecha_contrato') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
                                 <div class="col-md-8">
                                     <div class="form-group error-content">
-                                        <label for="numero">Referencia:</label>
+                                        <label for="referencia">Referencia</label>
                                         <input type="text" class="form-control"
-                                                name="referencia"
-                                                data-vv-as="Referencia"
-                                                v-model="referencia"
-                                                v-validate="{required: true, max:64}"
-                                                :class="{'is-invalid': errors.has('referencia')}"
-                                                id="referencia"
-                                                placeholder="Referencia">
+                                               name="referencia"
+                                               data-vv-as="Referencia"
+                                               v-model="referencia"
+                                               v-validate="{required: true, max:64}"
+                                               :class="{'is-invalid': errors.has('referencia')}"
+                                               id="referencia"
+                                               placeholder="Referencia">
                                         <div class="invalid-feedback" v-show="errors.has('referencia')">{{ errors.first('referencia') }}</div>
                                     </div>
                                 </div>
-                               
+
                                 <div class="col-md-4">
                                      <div class="form-group error-content" v-if="areas_subcontratantes.length > 1">
                                         <label for="id_area">Área Subcontratante</label>
                                         <select
-                                                type="text"
-                                                name="id_area"
-                                                data-vv-as="Área Subcontratante"
-                                                v-validate="{required: true}"
-                                                class="form-control"
-                                                id="id_area"
-                                                v-model="id_area"
-                                                :class="{'is-invalid': errors.has('id_area')}"
+                                            type="text"
+                                            name="id_area"
+                                            data-vv-as="Área Subcontratante"
+                                            v-validate="{required: true}"
+                                            class="form-control"
+                                            id="id_area"
+                                            v-model="id_area"
+                                            :class="{'is-invalid': errors.has('id_area')}"
                                         >
                                         <option  value selected>--- Seleccione Área Subcontratante ---</option>
                                         <option v-for="area in areas_subcontratantes" :value="area.id">{{ `${area.descripcion} ` }}</option>
@@ -104,57 +102,52 @@
                                     </div>
                                 </div>
                             </div>
-                             <div class="col-md-12  text-left" >
-                                <label class="text-secondary"> </label>
-                                <hr style="color: #0056b2; margin-top:auto;" width="95%" size="20" />
-                            </div>
-                            <!-- Seccion de partidas -->
+                            <hr>
                             <div class="row">
-                                <!-- <div class="col-md-12"> -->
-                                    <div class="col-md-1">
-                                        <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar</button>
-                                    </div>
-                                    <div class="col-md-2">
+                                <div class="col-md-12">
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar Partida</button>
                                         <button type="button" class="btn btn-success" @click="modalCarga()"><i class="fa fa-file-excel-o"></i>Cargar Layout</button>
                                     </div>
-                                    <div class="col-md-9"></div>
-                                <!-- </div> -->
-                                 <div  class="col-12">
-                                     <br>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div  class="col-12">
                                     <div class="table-responsive">
                                         <table class="table table-striped">
                                             <thead>
-                                                <tr>
-                                                    <th style="width:3%"></th>
-                                                    <th style="width:10%">Clave</th>
-                                                    <th style="width:38%">Descripción</th>
-                                                    <th style="width:12%">Unidad</th>
-                                                    <th style="width:13%">Cantidad</th>
-                                                    <th style="width:18%">Destinos</th>
-                                                    <th style="width:7%"></th>
-                                                    <th style="width:1%"></th>
-                                                </tr>
+                                            <tr>
+                                                <th class="index_corto"></th>
+                                                <th class="c120">Clave</th>
+                                                <th >Descripción</th>
+                                                <th class="c150">Unidad</th>
+                                                <th class="c150">Cantidad</th>
+                                                <th >Destinos</th>
+                                                <th class="c100"></th>
+                                                <th class="index_corto"></th>
+                                            </tr>
                                             </thead>
                                             <tbody>
-                                                <tr v-for="(partida, i) in partidas">
-                                                    <td class="icono">
-                                                        <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
-                                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                            <i class="fa fa-plus" v-else></i>
-                                                        </button>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control"
-                                                            :name="`clave[${i}]`"
-                                                            data-vv-as="Clave"
-                                                            v-model="partida.clave"
-                                                            v-validate="{max:140}"
-                                                            :class="{'is-invalid': errors.has(`clave[${i}]`)}"
-                                                            :id="`clave[${i}]`">
-                                                        <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
-                                                    </td>
-                                                    <td>
-                                                         <input type="text" class="form-control"
+                                            <tr v-for="(partida, i) in partidas">
+                                                <td class="icono">
+                                                    <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
+                                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                        <i class="fa fa-plus" v-else></i>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control"
+                                                           :name="`clave[${i}]`"
+                                                           data-vv-as="Clave"
+                                                           v-model="partida.clave"
+                                                           v-validate="{max:140}"
+                                                           :class="{'is-invalid': errors.has(`clave[${i}]`)}"
+                                                           :id="`clave[${i}]`">
+                                                    <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
+                                                </td>
+                                                <td>
+                                                     <input type="text" class="form-control"
                                                             readonly="readonly"
                                                             @click="editConcepto(i)"
                                                             :name="`descripcion[${i}]`"
@@ -163,74 +156,76 @@
                                                             v-validate="{required: partida.descripcion ===''}"
                                                             :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
                                                             :id="`descripcion[${i}]`">
-                                                        <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
-                                                        <div class="error-label" v-show="partida.descripcion.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
-                                                    </td>
-                                                    <td>
-                                                        <select
-                                                            :disabled="!partida.es_hoja"
-                                                            type="text"
-                                                            :name="`unidad[${i}]`"
-                                                            data-vv-as="Unidad"
-                                                            v-validate="{required: partida.es_hoja}"
-                                                            class="form-control"
-                                                            :id="`unidad[${i}]`"
-                                                            v-model="partida.unidad"
-                                                            :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
-                                                            <option value>--Unidad--</option>
-                                                            <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
-                                                        </select>
-                                                        <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="number" class="form-control" :disabled="!partida.es_hoja"
-                                                            :name="`cantidad[${i}]`"
-                                                            data-vv-as="Cantidad"
-                                                            step="any"
-                                                            v-model="partida.cantidad"
-                                                            v-validate="{required: partida.es_hoja, decimal:4}"
-                                                            :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                            :id="`cantidad[${i}]`">
-                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
-                                                    </td>
-                                                    <td>
-                                                        <input type="text" class="form-control"
-                                                            readonly="readonly"
-                                                            :title="partida.destino_path"
-                                                            :name="`destino_path[${i}]`"
-                                                            data-vv-as="Destino"
-                                                            v-model="partida.destino_path"
-                                                            v-validate="{required: partida.es_hoja}"
-                                                            :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
-                                                            :id="`destino_path[${i}]`">
-                                                        <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
-                                                    </td>
-                                                    <td class="icono">
-                                                        <small class="badge badge-secondary">
-                                                            <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="partida.es_hoja"></i>
-                                                        </small>
-                                                        <i class="far fa-copy button" v-on:click="copiar_destino(partida)" v-if="partida.es_hoja"></i>
-                                                        <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
-                                                    </td>
-                                                    <td class="icono">
-                                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
-                                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                            <i class="fa fa-trash" v-else></i>
-                                                        </button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                                    <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                                    <div class="error-label" v-show="partida.descripcion.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
+                                                </td>
+                                                <td>
+                                                    <select
+                                                        :disabled="!partida.es_hoja"
+                                                        type="text"
+                                                        :name="`unidad[${i}]`"
+                                                        data-vv-as="Unidad"
+                                                        v-validate="{required: partida.es_hoja}"
+                                                        class="form-control"
+                                                        :id="`unidad[${i}]`"
+                                                        v-model="partida.unidad"
+                                                        :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                        <option value>--Unidad--</option>
+                                                        <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
+                                                    </select>
+                                                    <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+                                                </td>
+                                                <td>
+                                                    <input type="number" class="form-control" :disabled="!partida.es_hoja"
+                                                           :name="`cantidad[${i}]`"
+                                                           data-vv-as="Cantidad"
+                                                           step="any"
+                                                           v-model="partida.cantidad"
+                                                           v-validate="{required: partida.es_hoja, decimal:4}"
+                                                           :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                           :id="`cantidad[${i}]`">
+                                                    <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control"
+                                                           readonly="readonly"
+                                                           :title="partida.destino_path"
+                                                           :name="`destino_path[${i}]`"
+                                                           data-vv-as="Destino"
+                                                           v-model="partida.destino_path"
+                                                           v-validate="{required: partida.es_hoja}"
+                                                           :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                           :id="`destino_path[${i}]`">
+                                                    <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                                </td>
+                                                <td class="icono">
+                                                    <small class="badge badge-secondary">
+                                                        <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="partida.es_hoja"></i>
+                                                    </small>
+                                                    <i class="far fa-copy button" v-on:click="copiar_destino(partida)" v-if="partida.es_hoja"></i>
+                                                    <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
+                                                </td>
+                                                <td class="icono">
+                                                    <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
+                                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                        <i class="fa fa-trash" v-else></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
-                         </div>    
-                    </form>
-                </div>
+                        </div>
+                        <div class="card-footer">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                                <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i>Guardar</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
         <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
@@ -251,7 +246,7 @@
                                     v-model="descrip_temporal"
                                     v-on:keyup.enter="cambiarDesc()"
                                     id="descripcion">
-                                
+
                             </div>
                        </div>
                        <div class="modal-footer">
@@ -341,7 +336,7 @@
                                 <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando">Cerrar</button>
                                 <button type="button" class="btn btn-primary" @click="procesarLayout()" :disabled="errors.has('carga_layout') || file_carga === null">
                                     <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                    <i class="fa fa-upload" v-else ></i> Cargar</button>    
+                                    <i class="fa fa-upload" v-else ></i> Cargar</button>
                              </div>
                         </form>
                     </div>
@@ -420,7 +415,7 @@
                         es_hoja:true,
                         cantidad_hijos:0,
                     });
-                
+
                 this.partidas[index].es_hoja = false;
                 this.partidas[index].es_rama = true;
                 this.partidas[index].unidad = '';
@@ -429,7 +424,7 @@
                 this.partidas[index].destino_path = '';
                 this.partidas[index].cantidad_hijos = this.partidas[index].cantidad_hijos + 1;
                 }
-                
+
             },
             cambiarDesc(){
                 this.partidas[this.edit_concepto_index].descripcion = this.descrip_temporal;
@@ -575,7 +570,7 @@
                     return;
                 this.file_carga_name = files[0].name;
                 this.createImage(files[0]);
-                
+
             },
             pegar_destino(index){
                 this.partidas[index].destino = this.partida_copia.destino;
@@ -672,7 +667,7 @@
                         }else{
                             this.store();
                         }
-                        
+
                     }
                 });
             },
