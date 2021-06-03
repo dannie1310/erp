@@ -1,13 +1,13 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_tiro')" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_tiro')" class="btn btn-app pull-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">REGISTRAR TIRO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-plus"></i> REGISTRAR TIRO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -32,7 +32,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i> Cerrar</button>
                             <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate"><i class="fa fa-save"></i> Guardar</button>
                         </div>
                     </form>
