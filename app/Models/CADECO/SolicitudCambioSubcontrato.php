@@ -27,7 +27,7 @@ class SolicitudCambioSubcontrato extends Transaccion
         'id_usuario',
         'observaciones',
         'id_empresa',
-        'id_moneda'
+        'id_moneda',
     ];
     protected static function boot()
     {
@@ -248,7 +248,7 @@ class SolicitudCambioSubcontrato extends Transaccion
 
     public function getPorcentajeCambioAttribute()
     {
-        return ($this->monto / $this->subcontrato->monto) * 100;
+        return ($this->monto / $this->subcontratoOriginal->monto) * 100;
     }
 
     public function getPorcentajeCambioFormatAttribute()

@@ -1,22 +1,26 @@
 <template>
     <div class="row" v-if="subcontrato">
         <div class="col-md-12">
+            <span><i class="fa fa-file-contract"></i>Datos de Subcontrato</span>
             <table class="table table-bordered table-sm">
                 <tr >
                     <th class="encabezado">
                         Contratista
                     </th>
                     <th class="encabezado">
-                        Folio Subcontrato
+                        Folio de Subcontrato
                     </th>
                     <th class="encabezado">
-                        Folio Contrato
+                        Folio de Contrato
                     </th>
                     <th class="encabezado">
                         Referencia de Subcontrato
                     </th>
                     <th class="encabezado">
                         Fecha de Subcontrato
+                    </th>
+                    <th class="encabezado">
+                        Monto de Subcontrato
                     </th>
                 </tr>
                 <tr>
@@ -36,6 +40,9 @@
                     </td>
                     <td style="text-align: center">
                         {{ subcontrato.fecha_format }}
+                    </td>
+                    <td style="text-align: center">
+                        {{ subcontrato.monto_format }}
                     </td>
                 </tr>
             </table>

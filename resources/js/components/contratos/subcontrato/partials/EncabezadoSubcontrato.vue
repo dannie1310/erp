@@ -8,7 +8,7 @@
                                 <table style="font-size: 1.3em">
                                     <tbody>
                                         <tr>
-                                            <td colspan="2" style="border-bottom: 1px solid #9e9e9e">
+                                            <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
                                                 <b>Subcontrato</b>
                                             </td>
                                         </tr>

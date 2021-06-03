@@ -23,6 +23,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12 table-responsive">
+                        <span>Partidas de Solicitud de Cambio</span>
                         <table id="tabla-conceptos">
 					<thead>
 						<tr>
@@ -90,9 +91,11 @@
                     </tbody>
 				</table>
                         <br />
-                         <div class="form-group row" >
-                            <label class="col-md-1 col-form-label">Observaciones:</label>
-                            <div class="col-md-11">
+                         <div class=" row" >
+                            <label class="col-md-12 col-form-label">Observaciones:</label>
+                        </div>
+                        <div class=" row" >
+                            <div class="col-md-12">
                                {{solicitud_cambio.observaciones}}
                             </div>
                         </div>

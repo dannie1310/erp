@@ -52,12 +52,15 @@ class SolicitudCambioSubcontratoTransformer extends TransformerAbstract
             'impuesto_format' => $model->impuesto_format,
             'monto' => $model->monto,
             'monto_format' => $model->monto_format,
+            'porcentaje_cambio_format' => $model->porcentaje_cambio_format,
+            'porcentaje_cambio' => $model->porcentaje_cambio,
             'usuario_registro' => $model->usuario_registro,
             'numero_folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format,
             'observaciones' => $model->observaciones,
             'estado_descripcion' => $model->estado_descripcion,
             'estado' => $model->estado,
+            'monto_original_subcontrato_format' => $model->subcontratoOriginal->monto_format,
         ];
     }
 
