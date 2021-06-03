@@ -17,19 +17,49 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item" v-if="$root.can('consultar_camion')">
                         <router-link :to="{name: 'camion'}" class="nav-link" :class="{active: this.$route.name == 'camion'}">
-                            <i class="fa fa-layer-group nav-icon"></i>
+                            <i class="fa fa-truck nav-icon"></i>
                             <p> Camiones</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_empresa')">
+                        <router-link :to="{name: 'empresa-acarreo'}" class="nav-link" :class="{active: this.$route.name == 'empresa-acarreo'}">
+                            <i class="fa fa-building nav-icon"></i>
+                            <p> Empresas</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_impresora')">
+                        <router-link :to="{name: 'impresora'}" class="nav-link" :class="{active: this.$route.name == 'impresora'}">
+                            <i class="fa fa-print nav-icon"></i>
+                            <p> Impresoras</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_marca')">
+                        <router-link :to="{name: 'marca'}" class="nav-link" :class="{active: this.$route.name == 'marca'}">
+                            <i class="fa fa-th-list nav-icon"></i>
+                            <p> Marcas</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_material')">
+                        <router-link :to="{name: 'materiales'}" class="nav-link" :class="{active: this.$route.name == 'materiales'}">
+                            <i class="fa fa-cubes nav-icon"></i>
+                            <p> Materiales</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item" v-if="$root.can('consultar_operador')">
+                        <router-link :to="{name: 'operador'}" class="nav-link" :class="{active: this.$route.name == 'operador'}">
+                            <i class="fa fa-users nav-icon"></i>
+                            <p> Operadores</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_origen')">
                         <router-link :to="{name: 'origen'}" class="nav-link" :class="{active: this.$route.name == 'origen'}">
-                            <i class="fa fa-layer-group nav-icon"></i>
+                            <i class="fa fa-sign-out-alt nav-icon"></i>
                             <p> Orígenes</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_tiro')">
                         <router-link :to="{name: 'tiro'}" class="nav-link" :class="{active: this.$route.name == 'tiro'}">
-                            <i class="fa fa-layer-group nav-icon"></i>
+                            <i class="fa fa-sign-in-alt nav-icon"></i>
                             <p> Tiros</p>
                         </router-link>
                     </li>
@@ -48,8 +78,13 @@
             catalogos() {
                 return this.$root.can([
                     'consultar_tiro',
+                    'consultar_operador',
                     'consultar_origen',
-                    'consultar_camion'
+                    'consultar_camion',
+                    'consultar_material',
+                    'consultar_marca',
+                    'consultar_camion',
+                    'consultar_impresora'
                 ])
             },
         },

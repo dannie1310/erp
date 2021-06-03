@@ -69,7 +69,8 @@
 
                                     </div>
                                 </div>
-                                 <div class="col-md-12">
+
+                            </div> <div class="col-md-12">
                                     <div class="form-group row">
                                         <label class="col-md-1 col-form-label">Registró:</label>
                                         <div class="col-md-4">
@@ -91,11 +92,10 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>
                     </div>
                 </div>
             </div>
