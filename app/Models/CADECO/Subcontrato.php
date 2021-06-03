@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\Models\CONTRATOS_LEGALES\Contratista;
 use DateTime;
 use DateTimeZone;
 use App\Facades\Context;
@@ -675,6 +676,19 @@ class Subcontrato extends Transaccion
                     'id_transaccion' => $this->id_transaccion,
                     'id_tipo_contrato' => $data['id_tipo_contrato']
                 ]);
+            }
+            $contratista_legal = Contratista::where("rfc","=", $this->empresa->rfc)->first();
+            if(!$contratista_legal)
+            {
+                Contratista::create([
+                    "razon_social"=>$this->empresa->razon_social,
+                    "idpersonalidad"=>$this->empresa->getIdPersonalidadRFC(),
+                    "rfc" => $this->empresa->rfc,
+                ]);
+            } else {
+                $contratista_legal->razon_social = $this->empresa->razon_social;
+                $contratista_legal->idpersonalidad = $this->empresa->getIdPersonalidadRFC();
+                $contratista_legal->save();
             }
             DB::connection('cadeco')->commit();
             return $this;
