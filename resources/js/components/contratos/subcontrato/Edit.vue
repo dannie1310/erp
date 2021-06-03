@@ -295,7 +295,7 @@
     import CostoSelect from "../../cadeco/costo/Select";
     import {ModelListSelect} from 'vue-search-select';
     import DatosSubcontrato from "./partials/DatosSubcontrato";
-    import EncabezadoSubcontrato from "./EncabezadoSubcontrato";
+    import EncabezadoSubcontrato from "./partials/EncabezadoSubcontrato";
     export default {
         name: "subcontrato-edit",
         components: {EncabezadoSubcontrato, DatosSubcontrato, datepicker, CostoSelect, ModelListSelect},

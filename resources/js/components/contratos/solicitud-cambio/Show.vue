@@ -11,35 +11,19 @@
                 </div>
             </div>
         </div>
-        <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" v-if="!cargando"></DatosSolicitud>
-        <DatosSubcontrato v-bind:subcontrato="solicitud_cambio.subcontrato" v-if="!cargando"></DatosSubcontrato>
-        <div class="card" v-if="!cargando" style="display:none">
-			<div class="card-body">
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
-					<label class="form-check-label" for="contratado">Contratado</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="avance-volumen" value="avance-volumen">
-					<label class="form-check-label" for="avance-volumen">Avance Volumen</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="avance-importe" value="avance-importe">
-					<label class="form-check-label" for="avance-importe">Avance Importe</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="saldo" value="saldo">
-					<label class="form-check-label" for="saldo">Saldo</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
-					<label class="form-check-label" for="destino">Destino</label>
-				</div>
-			</div>
-		</div>
+
+
         <div class="card" v-if="!cargando">
-			<div class="card-body table-responsive">
-				<table id="tabla-conceptos">
+			<div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" v-if="!cargando"></DatosSolicitud>
+                        <tabla-datos-subcontrato  v-bind:subcontrato="solicitud_cambio.subcontrato" v-if="!cargando"></tabla-datos-subcontrato>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table id="tabla-conceptos">
 					<thead>
 						<tr>
                             <th rowspan="2" >Tipo</th>
@@ -105,15 +89,16 @@
                         </tr>
                     </tbody>
 				</table>
-                <br />
-                 <div class="form-group row" >
-                    <label class="col-md-1 col-form-label">Observaciones:</label>
-                    <div class="col-md-11">
-                       {{solicitud_cambio.observaciones}}
+                        <br />
+                         <div class="form-group row" >
+                            <label class="col-md-1 col-form-label">Observaciones:</label>
+                            <div class="col-md-11">
+                               {{solicitud_cambio.observaciones}}
+                            </div>
+                        </div>
                     </div>
                 </div>
 			</div>
-
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
             </div>
@@ -125,9 +110,10 @@
 
     import DatosSolicitud from "./partials/DatosSolicitud";
     import DatosSubcontrato from "../subcontrato/partials/DatosSubcontrato";
+    import TablaDatosSubcontrato from "../subcontrato/partials/TablaDatosSubcontrato";
     export default {
         name: "solicitud-cambio-show",
-        components: {DatosSubcontrato, DatosSolicitud},
+        components: {TablaDatosSubcontrato, DatosSubcontrato, DatosSolicitud},
         props: ["id"],
         data() {
             return {
@@ -182,13 +168,17 @@
         clear: both;
     }
 
+    table#tabla-conceptos th, table#tabla-conceptos td {
+        border: 1px solid #dee2e6;
+    }
+
     table thead th
     {
         padding: 0.2em;
-        border: 1px solid #666;
-        background-color: #333;
-        color: white;
-        font-weight: normal;
+
+        background-color: #f2f4f5;
+        font-weight: bold;
+        color: black;
         overflow: hidden;
         text-align: center;
     }
