@@ -11,140 +11,131 @@
                 </div>
             </div>
         </div>
+        <span v-else>
+            <div class="card">
+                <div class="card-body">
 
-        <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" v-if="!cargando"></DatosSolicitud>
-        <DatosSubcontrato v-bind:subcontrato="solicitud_cambio.subcontrato" v-if="!cargando"></DatosSubcontrato>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" ></DatosSolicitud>
+                            <tabla-datos-subcontrato  v-bind:subcontrato="solicitud_cambio.subcontrato" ></tabla-datos-subcontrato>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 table-responsive">
+                            <span>Partidas de Solicitud de Cambio</span>
+                            <table id="tabla-conceptos">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2" >Tipo</th>
+                                        <th rowspan="2">Clave</th>
+                                        <th rowspan="2">Concepto</th>
+                                        <th rowspan="2">UM</th>
+                                        <th colspan="2" class="contratado">Contratado</th>
+                                        <th colspan="2" class="avance-volumen">Avance</th>
 
-        <div class="card" v-if="!cargando" style="display:none">
-			<div class="card-body">
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
-					<label class="form-check-label" for="contratado">Contratado</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="avance-volumen" value="avance-volumen">
-					<label class="form-check-label" for="avance-volumen">Avance Volumen</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="avance-importe" value="avance-importe">
-					<label class="form-check-label" for="avance-importe">Avance Importe</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="saldo" value="saldo">
-					<label class="form-check-label" for="saldo">Saldo</label>
-				</div>
-				<div class="form-check form-check-inline">
-					<input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
-					<label class="form-check-label" for="destino">Destino</label>
-				</div>
-			</div>
-		</div>
-        <div class="card" v-if="!cargando">
-			<div class="card-body table-responsive">
-				<table id="tabla-conceptos">
-					<thead>
-						<tr>
-                            <th rowspan="2" >Tipo</th>
-							<th rowspan="2">Clave</th>
-							<th rowspan="2">Concepto</th>
-							<th rowspan="2">UM</th>
-							<th colspan="2" class="contratado">Contratado</th>
-							<th colspan="2" class="avance-volumen">Avance</th>
+                                        <th colspan="2" class="saldo">Saldo</th>
+                                        <th colspan="3">Addendum</th>
+                                        <th class="destino">Distribución</th>
+                                        <th style="width: 20px"></th>
+                                    </tr>
+                                    <tr>
+                                        <th class="contratado">Volumen</th>
+                                        <th class="contratado">P.U.</th>
+                                        <th class="avance-volumen">Volumen</th>
+                                        <th class="avance-importe">Importe</th>
+                                        <th class="saldo">Volumen</th>
+                                        <th class="saldo">Importe</th>
+                                        <th style="width: 80px">Volumen</th>
+                                        <th>P.U.</th>
+                                        <th>Importe</th>
+                                        <th class="destino">Destino</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody >
+                                    <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
+                                        <template v-if="partida.item_subcontrato">
+                                            <td ><b>{{partida.tipo.descripcion}}</b></td>
+                                            <td ><b>{{partida.item_subcontrato.contrato.clave}}</b></td>
+                                            <td><b>{{partida.item_subcontrato.contrato.descripcion}}</b></td>
+                                            <td>{{partida.item_subcontrato.contrato.unidad}}</td>
+                                            <td class="numerico contratado">{{partida.item_subcontrato.cantidad_format}}</td>
+                                            <td class="numerico contratado">{{partida.item_subcontrato.precio_unitario_format}}</td>
+                                            <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_estimada_format}}</td>
+                                            <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_estimado_format}}</td>
+                                            <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_saldo_format}}</td>
+                                            <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_saldo_format}}</td>
 
-							<th colspan="2" class="saldo">Saldo</th>
-							<th colspan="3">Addendum</th>
-							<th class="destino">Distribución</th>
-                            <th style="width: 20px"></th>
-						</tr>
-						<tr>
-							<th class="contratado">Volumen</th>
-							<th class="contratado">P.U.</th>
-							<th class="avance-volumen">Volumen</th>
-							<th class="avance-importe">Importe</th>
-							<th class="saldo">Volumen</th>
-							<th class="saldo">Importe</th>
-							<th style="width: 80px">Volumen</th>
-							<th>P.U.</th>
-							<th>Importe</th>
-							<th class="destino">Destino</th>
-                            <th></th>
-						</tr>
-					</thead>
-					<tbody >
-                        <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
-                            <template v-if="partida.item_subcontrato">
-                                <td ><b>{{partida.tipo.descripcion}}</b></td>
-                                <td ><b>{{partida.item_subcontrato.contrato.clave}}</b></td>
-                                <td><b>{{partida.item_subcontrato.contrato.descripcion}}</b></td>
-                                <td>{{partida.item_subcontrato.contrato.unidad}}</td>
-                                <td class="numerico contratado">{{partida.item_subcontrato.cantidad_format}}</td>
-                                <td class="numerico contratado">{{partida.item_subcontrato.precio_unitario_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_estimada_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_estimado_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_saldo_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_saldo_format}}</td>
+                                        </template>
+                                        <template v-else>
+                                            <td ><b>{{partida.tipo.descripcion}}</b></td>
+                                            <td ><b>{{partida.clave}}</b></td>
+                                            <td><b>{{partida.descripcion}}</b></td>
+                                            <td>{{partida.unidad}}</td>
+                                            <td class="numerico">-</td>
+                                            <td class="numerico">-</td>
+                                            <td class="numerico">-</td>
+                                            <td class="numerico">-</td>
+                                            <td class="numerico">-</td>
+                                            <td class="numerico">-</td>
+                                        </template>
 
-                            </template>
-                            <template v-else>
-                                <td ><b>{{partida.tipo.descripcion}}</b></td>
-                                <td ><b>{{partida.clave}}</b></td>
-                                <td><b>{{partida.descripcion}}</b></td>
-                                <td>{{partida.unidad}}</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                            </template>
-
-                            <td class="numerico avance-importe" style="background-color: #ddd">{{partida.cantidad_format}}</td>
-                            <td class="numerico saldo" style="background-color: #ddd">{{partida.precio_format}}</td>
-                            <td class="numerico saldo" style="background-color: #ddd">{{partida.importe_format}}</td>
-                            <td class="destino" v-if="partida.item_subcontrato" :title="partida.item_subcontrato.concepto_path">{{partida.item_subcontrato.concepto_path_corta}}</td>
-                            <td class="destino" v-else :title="partida.concepto_path">{{partida.concepto_path_corta}}</td>
-                            <th></th>
-                        </tr>
-                    </tbody>
-				</table>
-                <br />
-                 <div class="form-group row" >
-                    <label class="col-md-1 col-form-label">Observaciones:</label>
-                    <div class="col-md-11">
-                       {{solicitud_cambio.observaciones}}
+                                        <td class="numerico avance-importe" style="background-color: #ddd">{{partida.cantidad_format}}</td>
+                                        <td class="numerico saldo" style="background-color: #ddd">{{partida.precio_format}}</td>
+                                        <td class="numerico saldo" style="background-color: #ddd">{{partida.importe_format}}</td>
+                                        <td class="destino" v-if="partida.item_subcontrato" :title="partida.item_subcontrato.concepto_path">{{partida.item_subcontrato.concepto_path_corta}}</td>
+                                        <td class="destino" v-else :title="partida.concepto_path">{{partida.concepto_path_corta}}</td>
+                                        <th></th>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <br />
+                            <div class=" row" >
+                                <label class="col-md-12 col-form-label">Observaciones:</label>
+                            </div>
+                            <div class=" row" >
+                                <div class="col-md-12">
+                                    {{solicitud_cambio.observaciones}}
+                                </div>
+                            </div>
+                            <div class=" row" >
+                                <label class="col-md-12 col-form-label">Motivo de Cancelación:</label>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <textarea
+                                        name="motivo"
+                                        id="motivo"
+                                        class="form-control"
+                                        v-model="motivo"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Motivo"
+                                        :class="{'is-invalid': errors.has('motivo')}"
+                                    ></textarea>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <div class="form-group row" >
-                    <label class="col-md-2 col-form-label">Motivo de Cancelación:</label>
-                    <div class="col-md-10">
-                        <textarea
-                            name="motivo"
-                            id="motivo"
-                            class="form-control"
-                            v-model="motivo"
-                            v-validate="{required: true}"
-                            data-vv-as="Motivo"
-                            :class="{'is-invalid': errors.has('motivo')}"
-                        ></textarea>
+                <div class="card-footer">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="button" class="btn btn-danger" v-on:click="cancelar" :disabled="errors.count() > 0 || motivo == ''"><i class="fa fa-ban"></i>Cancelar</button>
                     </div>
                 </div>
-			</div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
-                <button type="button" class="btn btn-danger" v-on:click="cancelar" :disabled="errors.count() > 0 || motivo == ''"><i class="fa fa-ban"></i>Cancelar</button>
             </div>
-        </div>
+        </span>
     </span>
 </template>
 
 <script>
 import DatosSolicitud from "./partials/DatosSolicitud";
 import DatosSubcontrato from "../subcontrato/partials/DatosSubcontrato";
+import TablaDatosSubcontrato from "../subcontrato/partials/TablaDatosSubcontrato";
 export default {
     name: "solicitud-cambio-cancelar",
-    components: {DatosSolicitud, DatosSubcontrato},
+    components: {TablaDatosSubcontrato, DatosSolicitud, DatosSubcontrato},
     props: ["id"],
     data() {
         return {
@@ -217,13 +208,17 @@ table#tabla-conceptos {
     clear: both;
 }
 
+table#tabla-conceptos th, table#tabla-conceptos td {
+    border: 1px solid #dee2e6;
+}
+
 table thead th
 {
     padding: 0.2em;
-    border: 1px solid #666;
-    background-color: #333;
-    color: white;
-    font-weight: normal;
+
+    background-color: #f2f4f5;
+    font-weight: bold;
+    color: black;
     overflow: hidden;
     text-align: center;
 }
