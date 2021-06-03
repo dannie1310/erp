@@ -7,13 +7,13 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-close"></i> DESACTIVAR ORIGEN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-close"></i> DESACTIVAR IMPRESORA</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div v-if="!origen">
+                        <div v-if="!impresora">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="spinner-border text-success" role="status">
@@ -28,34 +28,34 @@
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <h6><b>Clave:</b></h6>
+                                                <h6><b>MAC:</b></h6>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <h6>{{origen.clave_format}}</h6>
+                                                <h6>{{impresora.mac}}</h6>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <h6><b>Descripción:</b></h6>
+                                                <h6><b>Marca:</b></h6>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <h6>{{origen.descripcion}}</h6>
+                                                <h6>{{impresora.marca}}</h6>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <h6><b>Tipo:</b></h6>
+                                                <h6><b>Modelo:</b></h6>
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <h6>{{origen.tipo}}</h6>
+                                                <h6>{{impresora.modelo}}</h6>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
@@ -65,21 +65,12 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <h6>{{origen.fecha_registro_format}}</h6>
+                                                <h6>{{impresora.fecha_registro_format}}</h6>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <h6><b>Tipo Origen:</b></h6>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <h6>{{origen.tipo_origen}}</h6>
-                                            </div>
-                                        </div>
+
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <h6><b>Estado:</b></h6>
@@ -87,7 +78,7 @@
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
-                                                <span class="badge" :style="{'background-color': origen.estado_color}">{{ origen.estado_format }}</span>
+                                                <span class="badge" :style="{'background-color': impresora.estado_color}">{{ impresora.estado_format }}</span>
                                             </div>
                                         </div>
                                     </div>
@@ -99,13 +90,13 @@
                                         </div>
                                         <div class="col-md-8">
                                             <div class="form-group">
-                                                <h6>{{origen.usuario_registro}}</h6>
+                                                <h6>{{impresora.usuario_registro}}</h6>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card" v-if="origen.estado == 1">
+                            <div class="card" v-if="impresora.estado == 1">
                                 <div class="card-body">
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
@@ -130,7 +121,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>
-                        <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0" v-if="origen">
+                        <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0" v-if="impresora">
                             <i class="fa fa-save"></i>Guardar
                         </button>
                     </div>
@@ -142,12 +133,11 @@
 
 <script>
     export default {
-        name: "origen-desactivar",
+        name: "immpresora-desactivar",
         props: ['id'],
         data() {
             return {
                 motivo : '',
-                carga : false
             }
         },
         methods: {
@@ -158,13 +148,12 @@
                 this.motivo = '';
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
-                this.$store.commit('acarreos/origen/SET_ORIGEN', null);
-                return this.$store.dispatch('acarreos/origen/find', {
+                this.$store.commit('acarreos/impresora/SET_IMPRESORA', null);
+                return this.$store.dispatch('acarreos/impresora/find', {
                     id: this.id,
                     params: {}
                 }).then(data => {
-                    this.$store.commit('acarreos/origen/SET_ORIGEN', data);
-                    this.carga = true;
+                    this.$store.commit('acarreos/impresora/SET_IMPRESORA', data);
                 })
             },
             validate() {
@@ -175,18 +164,18 @@
                 });
             },
             desactivar() {
-                return this.$store.dispatch('acarreos/origen/desactivar', {
+                return this.$store.dispatch('acarreos/impresora/desactivar', {
                     id: this.id,
                     params: {motivo: this.motivo}})
                     .then((data) => {
-                        this.$store.commit('acarreos/origen/UPDATE_ORIGEN', data);
+                        this.$store.commit('acarreos/impresora/UPDATE_IMPRESORA', data);
                         $(this.$refs.modal).modal('hide');
                     })
             }
         },
         computed: {
-            origen() {
-                return this.$store.getters['acarreos/origen/currentOrigen']
+            impresora() {
+                return this.$store.getters['acarreos/impresora/currentImpresora']
             }
         }
     }

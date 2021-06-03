@@ -6,6 +6,7 @@ namespace App\Models\ACARREOS;
 
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 use App\Models\ACARREOS\ImpresoraHistorico;
 
 class Impresora extends Model
@@ -13,15 +14,13 @@ class Impresora extends Model
     protected $connection = 'acarreos';
     protected $table = 'impresoras';
     public $primaryKey = 'id';
-
-    protected static function boot()
-    {
-        parent::boot();
-
-        self::addGlobalScope(function ($query) {
-            return $query->where('estatus',  1);;
-        });
-    }
+    protected $fillable = [
+        'mac',
+        'marca',
+        'modelo',
+        'estatus',
+        'registro'
+    ];
 
     /**
      * Relaciones Eloquent
@@ -39,13 +38,16 @@ class Impresora extends Model
 
     public function historicos()
     {
-        return $this->hasMany(ImpresoraHistorico::class, 'IdOrigen', 'IdOrigen');
+        return $this->hasMany(ImpresoraHistorico::class, 'id', 'id');
     }
 
     /**
      * Scopes
      */
-
+    public function scopeActivo($query)
+    {
+        return $query->where('estatus',  1);
+    }
 
     /**
      * Attributes
@@ -106,8 +108,67 @@ class Impresora extends Model
         }
     }
 
+    public function getFechaDesactivoFormatAttribute()
+    {
+        $date = date_create($this->updated_at);
+        return date_format($date,"d/m/Y H:i");
+    }
 
     /**
      * Métodos
      */
+    public function validarRegistro()
+    {
+        if (self::where('mac', $this->mac)->first()) {
+            abort(400, "La impresora (" . $this->mac . ") ya se encuentra registrado previamente.");
+        }
+    }
+
+    public function activar()
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->estatus = 1;
+            $this->elimino = NULL;
+            $this->motivo = NULL;
+            $this->save();
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function desactivar($motivo)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->estatus = 0;
+            $this->elimino = auth()->id();
+            $this->motivo = $motivo;
+            $this->save();
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function editar($datos)
+    {
+        try {
+            DB::connection('acarreos')->beginTransaction();
+            $this->update($datos);
+            DB::connection('acarreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('acarreos')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }

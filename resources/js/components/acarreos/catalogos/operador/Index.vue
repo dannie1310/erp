@@ -30,7 +30,7 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: 'ID', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
+                    { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Nombre', field: 'Nombre',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Dirección', field: 'Direccion',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'No. Licencia', field: 'NoLicencia',sortable: true, thClass:'th_c150', thComp: require('../../../globals/th-Filter').default},
@@ -91,7 +91,7 @@
                     let self = this
                     self.$data.data = []
                     self.$data.data = operadores.map((operador, i) => ({
-                        index:  operador.clave_format,
+                        index: (i + 1) + self.query.offset,
                         Nombre: operador.nombre,
                         Direccion: operador.direccion,
                         NoLicencia: operador.no_licencia,

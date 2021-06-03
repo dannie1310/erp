@@ -33,7 +33,7 @@ class OrigenHistoricoTransformer extends TransformerAbstract
             'tipo' => $model->tipo_origen_descripcion,
             'desactivo' => (string) $model->nombre_desactivo,
             'fecha_desactivo_format' => $model->fecha_desactivo_format,
-            'motivo' => $model->Motivo
+            'motivo' => $model->motivo
         ];
     }
 }

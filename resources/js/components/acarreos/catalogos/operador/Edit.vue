@@ -28,7 +28,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Nombre" class="col-form-label">Nombre:</label>
-                                 <input 
+                                 <input
                                           type="text"
                                           name="Nombre"
                                           data-vv-as="'Nombre'"
@@ -45,7 +45,7 @@
                            <div class="col-md-12">
                               <div class="form-group col-md-12 error-content">
                                  <label for="Direccion" class="col-form-label">Dirección:</label>
-                                 <input 
+                                 <input
                                           type="text"
                                           name="Direccion"
                                           data-vv-as="'Dirección'"
@@ -62,7 +62,7 @@
                            <div class="col-md-6">
                                <div class="form-group col-md-12 error-content">
                                  <label for="NoLicencia" class="col-form-label">Número de Licencia:</label>
-                                 <input 
+                                 <input
                                           type="text"
                                           name="NoLicencia"
                                           data-vv-as="'Número de Licencia'"
@@ -94,7 +94,7 @@
                   </div>
                   <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cerrar</button>
-                        <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="operador"><i class="fa fa-save"></i> Guardar</button>
+                        <button type="submit" class="btn btn-primary" :disabled="errors.count() > 0" @click="validate" v-if="!cargando"><i class="fa fa-save"></i> Guardar</button>
                   </div>
                </form>
             </div>

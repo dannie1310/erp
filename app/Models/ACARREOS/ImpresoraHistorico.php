@@ -11,7 +11,7 @@ class ImpresoraHistorico extends Model
 {
     protected $connection = 'acarreos';
     protected $table = 'impresoras_historicos';
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'id_impresora';
 
     /**
      * Relaciones Eloquent
@@ -38,7 +38,7 @@ class ImpresoraHistorico extends Model
 
     public function getEstadoFormatAttribute()
     {
-        switch ($this->Estatus)
+        switch ($this->estatus)
         {
             case 1:
                 return 'ACTIVO';

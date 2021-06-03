@@ -29,7 +29,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
-                    { title: 'Economico', field: 'economico',sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Económico', field: 'economico',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Propietario', field: 'propietario', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Operador', field: 'IdOperador', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Cubicación Real', field: 'CubicacionReal', sortable: true},

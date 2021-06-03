@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\ACARREOS\Camion;
 use App\Models\ACARREOS\CamionImagen;
+use App\Models\ACARREOS\Impresora;
 use App\Models\ACARREOS\InicioCamion;
 use App\Models\ACARREOS\Marca;
 use App\Models\ACARREOS\Material as MaterialAcarreo;
@@ -171,6 +172,7 @@ use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
 use App\Observers\ACARREOS\CamionImagenObserver;
 use App\Observers\ACARREOS\CamionObserver;
+use App\Observers\ACARREOS\ImpresoraObserver;
 use App\Observers\ACARREOS\InicioCamionObserver;
 use App\Observers\ACARREOS\MaterialObserver as MaterialAcarreoObserver;
 use App\Observers\ACARREOS\MarcaObserver;
@@ -371,6 +373,7 @@ class AppServiceProvider extends ServiceProvider
         CamionImagen::observe(CamionImagenObserver::class);
         Camion::observe(CamionObserver::class);
         \App\Models\ACARREOS\Empresa::observe(\App\Observers\ACARREOS\EmpresaObserver::class);
+        Impresora::observe(ImpresoraObserver::class);
         InicioCamion::observe(InicioCamionObserver::class);
         Marca::observe(MarcaObserver::class);
         Operador::observe(OperadorObserver::class);

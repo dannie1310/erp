@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_empresa')" class="btn btn-app btn-info pull-right">
+        <button @click="init" v-if="$root.can('registrar_empresa')" class="btn btn-app pull-right">
             <i class="fa fa-plus"></i> Registrar
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -51,7 +51,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="salir">
-                            <i class="fa fa-angle-left"></i>Regresar
+                            <i class="fa fa-close"></i> Cerrar
                         </button>
                         <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0">
                           <i class="fa fa-save"></i> Guardar

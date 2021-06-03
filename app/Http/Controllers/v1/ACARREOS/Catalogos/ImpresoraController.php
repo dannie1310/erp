@@ -41,10 +41,28 @@ class ImpresoraController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
 
-        $this->middleware('permiso:consultar_impresora')->only(['paginate','index']);
+        $this->middleware('permiso:consultar_impresora')->only(['paginate','index','index','find', 'descargaLayout']);
+        $this->middleware('permiso:registrar_impresora')->only(['store']);
+        $this->middleware('permiso:editar_impresora')->only(['update']);
+        $this->middleware('permiso:activar_desactivar_impresora')->only(['activar', 'desactivar']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function activar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->activar($id));
+    }
+
+    public function desactivar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->desactivar($request->all(),$id));
+    }
+
+    public function descargaLayout()
+    {
+        return $this->service->excel();
     }
 }
