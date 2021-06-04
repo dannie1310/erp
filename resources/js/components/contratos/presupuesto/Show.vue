@@ -90,44 +90,44 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal antes de descuento:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal antes de descuento:</td>
                                     <td class="numerico">{{presupuesto.subtotal_mc_antes_descuento_global_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">% Descuento:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">% Descuento:</td>
                                     <td class="numerico">{{presupuesto.porcentaje_descuento_format}}</td>
                                 </tr>
 
                                 <tr v-for="(subtotal, i) in presupuesto.subtotales_por_moneda.data">
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal {{subtotal.moneda}}:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal {{subtotal.moneda}}:</td>
                                     <td class="numerico">{{subtotal.subtotal_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">TC USD:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC USD:</td>
                                     <td class="numerico">{{presupuesto.tc_usd_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">TC EURO:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC EURO:</td>
                                     <td class="numerico">{{presupuesto.tc_euro_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">TC Libra:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC Libra:</td>
                                     <td class="numerico">{{presupuesto.tc_libra_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Moneda Conversión:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Moneda Conversión:</td>
                                     <td >{{presupuesto.moneda_conversion}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Subtotal:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal:</td>
                                     <td class="numerico">{{presupuesto.subtotal_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">IVA:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">IVA:</td>
                                     <td class="numerico">{{presupuesto.impuesto_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right">Monto:</td>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Monto:</td>
                                     <td class="numerico">{{presupuesto.monto_format}}</td>
                                 </tr>
                             </tfoot>
@@ -195,15 +195,25 @@ table#tabla-conceptos {
     clear: both;
 }
 
+table#tabla-conceptos th, table#tabla-conceptos td {
+    border: 1px solid #dee2e6;
+}
+
+
+
 table thead th
 {
     padding: 0.2em;
-    border: 1px solid #666;
-    background-color: #333;
-    color: white;
-    font-weight: normal;
+
+    background-color: #f2f4f5;
+    font-weight: bold;
+    color: black;
     overflow: hidden;
     text-align: center;
+}
+
+table#tabla-conceptos td.sin_borde {
+    border: none;
 }
 
 table thead th {
