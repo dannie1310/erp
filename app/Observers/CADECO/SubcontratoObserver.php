@@ -24,6 +24,7 @@ class SubcontratoObserver extends TransaccionObserver
         parent::creating($subcontrato);
         $subcontrato->tipo_transaccion = 51;
         $subcontrato->opciones = 2;
+        $subcontrato->fecha = date('Y-m-d');
     }
 
     public function created(Subcontrato $subcontrato)
@@ -31,5 +32,20 @@ class SubcontratoObserver extends TransaccionObserver
         if ($subcontrato->retencion > 0) {
             $subcontrato->generaFondoGarantia();
         }
+    }
+
+    public function deleting(Subcontrato $subcontrato)
+    {
+        $subcontrato->validarParaEliminar();
+        if($subcontrato->subcontratoEliminado == null)
+        {
+            abort(400, "Error al eliminar, respaldo incorrecto.");
+        }
+        $subcontrato->asignacionSubcontrato->delete();
+    }
+
+    public function deleted(Subcontrato $subcontrato)
+    {
+        $subcontrato->cambiaEstados();
     }
 }

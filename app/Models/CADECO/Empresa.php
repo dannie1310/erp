@@ -226,9 +226,28 @@ class Empresa extends Model
         }
     }
 
+    public function getIdPersonalidadRFC()
+    {
+        $rfc = $this->rfc;
+        if($rfc != ''){
+            $digito = substr($rfc,3,1);
+            if(is_numeric($digito)){
+                return 2;
+            } else {
+                return 1;
+            }
+        }
+    }
+
     public function getPersonalidadDefinicionAttribute()
     {
-        switch ($this->personalidad)
+        if($this->rfc != ''){
+            $id_personalidad = $this->getIdPersonalidadRFC();
+        } else {
+            $id_personalidad = $this->personalidad;
+        }
+
+        switch ($id_personalidad)
         {
             case(1):
                 return 'Persona Física';
@@ -236,9 +255,9 @@ class Empresa extends Model
             case(2):
                 return 'Persona Moral';
                 break;
+            default:
+                return 'Por favor, solicite el registro del RFC';
         }
-
-        return '---------';
     }
 
     public function scopeBeneficiarioCuentaBancaria($query)
@@ -265,7 +284,7 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
-            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
         {
@@ -275,7 +294,7 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
-            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }
     }

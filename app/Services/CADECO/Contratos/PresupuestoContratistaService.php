@@ -4,7 +4,10 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Imports\PresupuestoImport;
+use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Empresa;
 use App\Models\CADECO\PresupuestoContratista;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 use App\Repositories\CADECO\PresupuestoContratista\Repository;
 use App\Utils\ValidacionSistema;
 use Maatwebsite\Excel\Facades\Excel;
@@ -18,17 +21,55 @@ class PresupuestoContratistaService
 
     /**
      * PresupuestoContratistaService constructor
-     * 
+     *
      * @param PresupuestoContratista $model
      */
-    
+
      public function __construct(PresupuestoContratista $model)
      {
-         $this->repository = new Repository($model);         
+         $this->repository = new Repository($model);
      }
 
      public function paginate($data)
      {
+         if (isset($data['fecha'])) {
+             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+         }
+
+         if(isset($data['numero_folio'])){
+             $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+         }
+
+         if(isset($data['monto'])){
+             $this->repository->where([['monto', '=', $data['total']]]);
+         }
+
+         if(isset($data['numero_folio_cp'])){
+             $contrato_proyectado = ContratoProyectado::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_cp'].'%']])->pluck("id_transaccion");
+             $this->repository->whereIn(['id_antecedente',  $contrato_proyectado]);
+         }
+
+         if (isset($data['estado'])) {
+             if (strpos('PRECIOS PENDIENTES', strtoupper($data['estado'])) !== FALSE) {
+                 $this->repository->where([['estado', '=', 0]]);
+             }
+             else if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
+                 $this->repository->where([['estado', '=', 1]]);
+             }else if (strpos('EN ASIGNACION', strtoupper($data['estado'])) !== FALSE) {
+                 $this->repository->where([['estado', '=', 2]]);
+             }
+         }
+
+         if(isset($data['referencia_cp'])){
+             $contrato_proyectado = ContratoProyectado::query()->where([['referencia', 'LIKE', '%'.$data['referencia_cp'].'%']])->pluck("id_transaccion");
+             $this->repository->whereIn(['id_antecedente',  $contrato_proyectado]);
+
+         }
+
+         if(isset($data['contratista'])){
+             $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['contratista'].'%']])->pluck("id_empresa");
+             $this->repository->whereIn(['id_empresa', $empresa]);
+         }
          return $this->repository->paginate($data);
      }
 
@@ -60,17 +101,17 @@ class PresupuestoContratistaService
         $celdas = $this->getDatosPartidas($file_xls);
         $this->verifica = new ValidacionSistema();
         $presupuesto = $this->show($id);
-        
+
         $x = 2;
         $partidas = array();
         if(count($celdas[0]) != 15)
         {
             abort(400,'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($presupuesto->partidas) + 17)
+        if(count($celdas) != count($presupuesto->partidas) + 19)
         {
             abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
-        }    
+        }
         while($x < count($presupuesto->partidas) + 2)
         {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
@@ -83,24 +124,40 @@ class PresupuestoContratistaService
             {
                 abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
             }
+            $id_moneda = 0;
+            switch ($celdas[$x][11]){
+                case 'PESO MXP':
+                    $id_moneda = 1;
+                break;
+                case 'DOLAR USD':
+                    $id_moneda = 2;
+                break;
+                case 'EURO':
+                    $id_moneda = 3;
+                break;
+                case 'LIBRA':
+                    $id_moneda = 4;
+                break;
+            }
             $partidas[] = array(
                 'precio_unitario' => $celdas[$x][6],
                 'descuento' => $celdas[$x][8],
-                'id_moneda' => ($celdas[$x][11] == 'PESO MXP') ? 1 : (($celdas[$x][11] == 'DOLAR USD') ? 2 : 3),
+                'id_moneda' => $id_moneda,
                 'observaciones' => $celdas[$x][14],
                 'id_concepto' => (int) $item->id_concepto
             );
             $x++;
         }
-        
+
         $respuesta = [
             'descuento_cot' => $celdas[$x][6],
-            'tc_usd' => $celdas[$x + 4][6],
-            'tc_euro' => $celdas[$x + 5][6],
-            'anticipo' => $celdas[$x + 11][6],
-            'credito' => $celdas[$x + 12][6],
-            'vigencia' => $celdas[$x + 13][6],
-            'observaciones_generales' => $celdas[$x + 14][6],
+            'tc_usd' => $celdas[$x + 5][6],
+            'tc_euro' => $celdas[$x + 6][6],
+            'tc_libra' => $celdas[$x + 7][6],
+            'anticipo' => $celdas[$x + 13][6],
+            'credito' => $celdas[$x + 14][6],
+            'vigencia' => $celdas[$x + 15][6],
+            'observaciones_generales' => $celdas[$x + 16][6],
             'partidas' => $partidas
         ];
 
@@ -139,5 +196,11 @@ class PresupuestoContratistaService
             'path_xls' => $path_xls,
             'dir_xls' => $dir_xls
         ];
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new PresupuestoContratistaTablaComparativaFormato($this->repository->show($id));
+        return $pdf;
     }
 }

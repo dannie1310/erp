@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'asignacion-contratista-create'}" v-if="$root.can('registrar_asignacion_contratista')" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'asignacion-contratista-selecciona-contrato-proyectado'}" v-if="$root.can('registrar_asignacion_contratista')" class="btn btn-app float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -40,23 +40,24 @@ export default {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio Asignación', field: 'id_asignacion',  sortable: true},
-                    { title: 'Fecha Asignación', field: 'fecha_hora_registro',  sortable: true},
-                    { title: 'Folio Contrato proyectado', field: 'numero_folio'},
-                    { title: 'Fecha Contrato Proyectado', field: 'fecha' },
-                    { title: 'Referencia Contrato Proyectado', field: 'referencia' },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'th_numero_folio',  sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha Registro', field: 'fecha_hora_registro', sortable:true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Contrato proyectado', field: 'numero_folio_cp',tdClass: 'th_c120', sortable: false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia Contrato Proyectado', field: 'referencia_cp', thComp: require('../../globals/th-Filter').default },
+                    { title: 'Contratista(s)', field: 'contratistas', sortable:false, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Estado', field: 'estado', thClass:'th_c120', sortable: false, tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c150', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {},
+                query: {scope:'proyectado'},
                 search: '',
                 cargando: false,
                 busqueda:''
             }
         },
         mounted() {
-            this.query.include = 'contrato';
+            this.query.include = ['contrato', 'presupuestosContratista.empresa'];
             this.query.sort = 'id_asignacion';
             this.query.order = 'DESC';
 
@@ -84,20 +85,15 @@ export default {
             getEstado(estado) {
                 let val = parseInt(estado);
                 switch (val) {
-                    case 0:
+                    case 1:
                         return {
                             color: '#f39c12',
                             descripcion: 'Registrada'
                         }
-                    case 1:
-                        return {
-                            color: '#0073b7',
-                            descripcion: 'Aprobada'
-                        }
                     case 2:
                         return {
-                            color: '#00a65a',
-                            descripcion: 'Revisada'
+                            color: '#0073b7',
+                            descripcion: 'Aplicada'
                         }
                     default:
                         return {
@@ -125,13 +121,16 @@ export default {
                     self.$data.data = []
                     self.$data.data = asignaciones.map((asignacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        id_asignacion: asignacion.numero_folio_asignacion,
+                        numero_folio: asignacion.numero_folio_asignacion,
                         fecha_hora_registro: asignacion.fecha_registro,
-                        numero_folio: asignacion.contrato.numero_folio_format,
+                        contratistas:asignacion.contratistas,
+                        estado: this.getEstado(asignacion.estado),
                         fecha: asignacion.contrato.fecha,
-                        referencia: asignacion.contrato.referencia,
+                        referencia_cp: asignacion.contrato.referencia,
+                        numero_folio_cp: asignacion.contrato.numero_folio_format,
                         buttons: $.extend({}, {
                             id: asignacion.id,
+                            eliminar: (self.$root.can('eliminar_asignacion_contratista') && asignacion.estado == 1) ? true: false
                         })
 
                     }));
