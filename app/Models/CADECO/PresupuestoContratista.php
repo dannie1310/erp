@@ -191,6 +191,25 @@ class PresupuestoContratista extends Transaccion
         return $suma;
     }
 
+    public function getSubtotalAntesDescuentoCalculadoAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida) {
+            $suma += $partida->precio_sin_descuento;
+        }
+        return $suma;
+    }
+
+    public function getSumaSubtotalPartidasConDescuentoAttribute()
+    {
+        return $this->subtotal_antes_descuento_calculado - ($this->subtotal_antes_descuento_calculado * $this->PorcentajeDescuento/100);
+    }
+
+    public function getSubtotalCalculadoAttribute()
+    {
+        return $this->subtotal_antes_descuento_calculado - ($this->subtotal_antes_descuento_calculado * $this->PorcentajeDescuento/100);
+    }
+
     public function getDescuentoAttribute()
     {
         return $this->suma_subtotal_partidas * $this->PorcentajeDescuento/100;
@@ -260,10 +279,10 @@ class PresupuestoContratista extends Transaccion
 
     public function getMontoCalculadoAttribute()
     {
-        return $this->subtotal + $this->impuesto_calculado;
+        return $this->subtotal_calculado + $this->impuesto_calculado;
     }
 
-    public function getMontoFormatAttribute()
+    public function getMontoCalculadoFormatAttribute()
     {
         return "$ ".number_format($this->monto_calculado,2,".",",");
     }
@@ -322,16 +341,17 @@ class PresupuestoContratista extends Transaccion
 
     public function getSubtotalAttribute()
     {
-        $suma = 0;
+        /*$suma = 0;
         foreach ($this->partidas as $partida) {
             $suma += $partida->total_despues_descuento_partida_mc;
         }
-        return $suma;
+        return $suma;*/
+        return $this->monto-$this->impuesto;
     }
 
     public function getImpuestoCalculadoAttribute()
     {
-        return $this->subtotal * 0.16;
+        return $this->subtotal_calculado * 0.16;
     }
 
     public function getImpuestoCalculadoFormatAttribute()
@@ -612,8 +632,9 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['descuento_global'] = $presupuesto->descuento ? $presupuesto->descuento : '-';
             $presupuestos[$cont]['porcentaje_descuento_global'] = $presupuesto->PorcentajeDescuento ? $presupuesto->PorcentajeDescuento : '-';
             $presupuestos[$cont]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
-            $presupuestos[$cont]['iva_partidas'] = $presupuesto->iva_partidas;
-            $presupuestos[$cont]['total_partidas'] = $presupuesto->total_partidas;
+            $presupuestos[$cont]['subtotal'] = $presupuesto->subtotal_calculado;
+            $presupuestos[$cont]['iva'] = $presupuesto->impuesto_calculado;
+            $presupuestos[$cont]['total'] = $presupuesto->monto_calculado;
             $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
             foreach ($presupuesto->partidas as $p) {

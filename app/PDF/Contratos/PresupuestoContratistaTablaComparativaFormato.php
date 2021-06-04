@@ -306,7 +306,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["desc_g"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['porcentaje_descuento_global'] : '-', 1, 0, 'R', 1);
                 $this->Cell($anchos["importe"], $heigth,'%', 1, 0, 'C', 1);
-                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'], 2, '.',',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['descuento_global'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['descuento_global'], 2, '.',',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln(0.4);
             $this->SetFillColor(100, 100, 100);
@@ -320,7 +320,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["desc_g"], $heigth);
                 $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 1, 0, 'R', 1);
-                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['suma_subtotal_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['subtotal'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['subtotal'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -334,7 +334,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["desc_g"], $heigth);
                 $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 1, 0, 'R', 1);
-                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['iva_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['iva_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['iva'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['iva'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -348,7 +348,7 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font);
                 $this->Cell($anchos["desc_g"], $heigth);
                 $this->Cell($anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) ? $datos_partidas['presupuestos'][$i]['tipo_moneda'] : '-', 1, 0, 'R', 1);
-                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['total_partidas'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['total_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["dias"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['total'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['total'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->Ln();
