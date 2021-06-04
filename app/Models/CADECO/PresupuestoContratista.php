@@ -205,9 +205,52 @@ class PresupuestoContratista extends Transaccion
         return $this->subtotal_antes_descuento_calculado - ($this->subtotal_antes_descuento_calculado * $this->PorcentajeDescuento/100);
     }
 
+    #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
+    #PARA LOS PRESUPUESTOS CAPTURADOS DESDE SAOWEB Y DESDE ERP
+
     public function getSubtotalCalculadoAttribute()
     {
         return $this->subtotal_antes_descuento_calculado - ($this->subtotal_antes_descuento_calculado * $this->PorcentajeDescuento/100);
+    }
+
+    #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
+    #PARA LOS PRESUPUESTOS CAPTURADOS DESDE SAOWEB Y DESDE ERP
+
+    public function getSubtotalCalculadoFormatAttribute()
+    {
+        return "$".number_format($this->subtotal_calculado,2,".",",");
+    }
+
+    #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
+    #PARA LOS PRESUPUESTOS CAPTURADOS DESDE SAOWEB Y DESDE ERP
+
+    public function getImpuestoCalculadoAttribute()
+    {
+        return $this->subtotal_calculado * 0.16;
+    }
+
+    #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
+    #PARA LOS PRESUPUESTOS CAPTURADOS DESDE SAOWEB Y DESDE ERP
+
+    public function getImpuestoCalculadoFormatAttribute()
+    {
+        return "$".number_format($this->impuesto_calculado,2,".",",");
+    }
+
+    #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
+    #PARA LOS PRESUPUESTOS CAPTURADOS DESDE SAOWEB Y DESDE ERP
+
+    public function getMontoCalculadoAttribute()
+    {
+        return $this->subtotal_calculado + $this->impuesto_calculado;
+    }
+
+    #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
+    #PARA LOS PRESUPUESTOS CAPTURADOS DESDE SAOWEB Y DESDE ERP
+
+    public function getMontoCalculadoFormatAttribute()
+    {
+        return "$ ".number_format($this->monto_calculado,2,".",",");
     }
 
     public function getDescuentoAttribute()
@@ -277,16 +320,6 @@ class PresupuestoContratista extends Transaccion
         return $cantidad>0?true:false;
     }
 
-    public function getMontoCalculadoAttribute()
-    {
-        return $this->subtotal_calculado + $this->impuesto_calculado;
-    }
-
-    public function getMontoCalculadoFormatAttribute()
-    {
-        return "$ ".number_format($this->monto_calculado,2,".",",");
-    }
-
     public function getPorcentajeAnticipoFormatAttribute()
     {
         return number_format($this->anticipo,2,".",","). " %";
@@ -347,16 +380,6 @@ class PresupuestoContratista extends Transaccion
         }
         return $suma;*/
         return $this->monto-$this->impuesto;
-    }
-
-    public function getImpuestoCalculadoAttribute()
-    {
-        return $this->subtotal_calculado * 0.16;
-    }
-
-    public function getImpuestoCalculadoFormatAttribute()
-    {
-        return "$".number_format($this->impuesto_calculado,2,".",",");
     }
 
     public function getColspanAttribute()
