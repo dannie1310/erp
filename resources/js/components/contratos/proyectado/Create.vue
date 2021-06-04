@@ -115,7 +115,7 @@
                             <div class="row">
                                 <div  class="col-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped">
+                                        <table class="table table-striped table-sm">
                                             <thead>
                                             <tr>
                                                 <th class="index_corto"></th>
@@ -148,16 +148,17 @@
                                                 </td>
                                                 <td>
                                                      <input type="text" class="form-control"
+                                                            v-model="partida.descripcion"
                                                             readonly="readonly"
-                                                            @click="editConcepto(i)"
+                                                            @click="habilitar(i, $event)"
+                                                            @focusout="deshabilitar(i, $event)"
                                                             :name="`descripcion[${i}]`"
                                                             data-vv-as="Descripción"
-                                                            :placeholder="descripcionFormat(i)"
                                                             v-validate="{required: partida.descripcion ===''}"
-                                                            :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
-                                                            :id="`descripcion[${i}]`">
+                                                            :class="{'is-invalid': errors.has(`descripcion[${i}]`) || partida.error ==1 || partida.descripcion_sin_formato.length > 255}"
+                                                            :id="`descripcion_${i}`">
                                                     <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
-                                                    <div class="error-label" v-show="partida.descripcion.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
+                                                    <div class="error-label" v-show="partida.descripcion_sin_formato.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
                                                 </td>
                                                 <td>
                                                     <select
@@ -228,121 +229,92 @@
                 </form>
             </div>
         </div>
-        <div ref="modal" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+
+        <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-list" style="padding-right:3px"></i>Agregar Descripción</h5>
+                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <div class="modal-body" v-if="edit_concepto_index >=0">
-                        <div class="col-md-12">
-                            <div class="form-group error-content">
-                                <input type="text" autofocus class="form-control"
-                                    name="descripcion"
-                                    data-vv-as="Descripción"
-                                    v-model="descrip_temporal"
-                                    v-on:keyup.enter="cambiarDesc()"
-                                    id="descripcion">
-
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
+                                        <div class="col-sm-10">
+                                            <concepto-select
+                                                    name="id_concepto"
+                                                    data-vv-as="Concepto"
+                                                    id="id_concepto"
+                                                    v-model="destino_temp"
+                                                    :error="errors.has('id_concepto')"
+                                                    ref="conceptoSelect"
+                                                    :disableBranchNodes="true"
+                                            ></concepto-select>
+                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                       </div>
-                       <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="button" @click="cambiarDesc()" class="btn btn-primary">Actualizar</button>
-                       </div>
-                    </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino" :disabled="cargando">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-close" v-else ></i> Cerrar</button>
+                         </div>
+                    </form>
                 </div>
             </div>
         </div>
-         <nav>
-            <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" >
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form role="form">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group row error-content">
-                                            <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
-                                            <div class="col-sm-10">
-                                                <concepto-select
-                                                        name="id_concepto"
-                                                        data-vv-as="Concepto"
-                                                        id="id_concepto"
-                                                        v-model="destino_temp"
-                                                        :error="errors.has('id_concepto')"
-                                                        ref="conceptoSelect"
-                                                        :disableBranchNodes="true"
-                                                ></concepto-select>
-                                                <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+
+
+        <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-file-excel-o"></i> Seleccionar Archivo de Layout</h5>
+                        <button type="button" class="close" v-on:click="cerrarModalCarga" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="row justify-content-between">
+                                        <div class="col-md-12">
+                                            <div class="col-lg-12">
+                                                <input type="file" class="form-control" id="carga_layout"
+                                                    @change="onFileChange"
+                                                    row="3"
+                                                    v-validate="{ ext: ['xlsx']}"
+                                                    name="carga_layout"
+                                                    data-vv-as="Layout"
+                                                    ref="carga_layout"
+                                                    :class="{'is-invalid': errors.has('carga_layout')}"
+                                                >
+                                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino" :disabled="cargando">
-                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                    <i class="fa fa-close" v-else ></i> Cerrar</button>
-                             </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </nav>
-         <nav>
-            <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" >
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal-carga"> <i class="fa fa-file-excel-o"></i> Seleccionar Archivo de Layout</h5>
-                            <button type="button" class="close" v-on:click="cerrarModalCarga" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
                         </div>
-                        <form role="form">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="row justify-content-between">
-                                            <div class="col-md-12">
-                                                <div class="col-lg-12">
-                                                    <input type="file" class="form-control" id="carga_layout"
-                                                        @change="onFileChange"
-                                                        row="3"
-                                                        v-validate="{ ext: ['xlsx']}"
-                                                        name="carga_layout"
-                                                        data-vv-as="Layout"
-                                                        ref="carga_layout"
-                                                        :class="{'is-invalid': errors.has('carga_layout')}"
-                                                    >
-                                                    <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando">Cerrar</button>
-                                <button type="button" class="btn btn-primary" @click="procesarLayout()" :disabled="errors.has('carga_layout') || file_carga === null">
-                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                    <i class="fa fa-upload" v-else ></i> Cargar</button>
-                             </div>
-                        </form>
-                    </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando"><i class="fa fa-times"></i>Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="procesarLayout()" :disabled="errors.has('carga_layout') || file_carga === null">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-upload" v-else ></i> Cargar</button>
+                         </div>
+                    </form>
                 </div>
             </div>
-        </nav>
+        </div>
+
     </span>
 </template>
 
@@ -365,6 +337,7 @@
                 areas_subcontratantes:[],
                 id_area:'',
                 partidas:[],
+                partidas_store:[],
                 unidades:[],
                 edit_concepto_index:'',
                 edit_destino_index:'',
@@ -391,6 +364,7 @@
                     this.partidas.push({
                         clave:'',
                         descripcion:'',
+                        descripcion_sin_formato:'',
                         unidad:'',
                         cantidad:'',
                         destino:'',
@@ -407,6 +381,7 @@
                     this.partidas.splice(temp_index, 0, {
                         clave:'',
                         descripcion:'',
+                        descripcion_sin_formato:'',
                         unidad:'',
                         cantidad:'',
                         destino:'',
@@ -425,12 +400,6 @@
                 this.partidas[index].cantidad_hijos = this.partidas[index].cantidad_hijos + 1;
                 }
 
-            },
-            cambiarDesc(){
-                this.partidas[this.edit_concepto_index].descripcion = this.descrip_temporal;
-                this.edit_concepto_index='';
-                this.descrip_temporal='',
-                $(this.$refs.modal).modal('hide')
             },
             cambiarDestino(){
                 this.partidas[this.edit_destino_index].destino = this.destino_temp;
@@ -463,25 +432,37 @@
                     vm.file_carga = e.target.result;
                 };
                 reader.readAsDataURL(file);
-
             },
             descripcionFormat(i){
                 var len = this.partidas[i].descripcion.length + (+this.partidas[i].nivel * 3);
                 return this.partidas[i].descripcion.padStart(len, "_")
             },
-            editConcepto(index){
-                this.edit_concepto_index = index;
-                this.descrip_temporal = this.partidas[index].descripcion;
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show')
-
+            descripcionSinFormat(i){
+                var len = (this.partidas[i].nivel * 3);
+                let lineas = '';
+                lineas = lineas.padStart(len, "_");
+                return this.partidas[i].descripcion.replace(lineas, '');
+            },
+            habilitar : function(i, event){
+                let nuevo_valor = this.descripcionSinFormat(i);
+                this.partidas[i].descripcion = nuevo_valor;
+                this.partidas[i].descripcion_sin_formato = nuevo_valor;
+                $("#" + event.target.id).removeAttr("readonly");
+            },
+            deshabilitar : function(i,event){
+                let isReadOnly = $("#" + event.target.id).attr("readonly");
+                if(isReadOnly !== "readonly"){
+                    this.partidas[i].descripcion_sin_formato = this.descripcionSinFormat(i);
+                    let nuevo_valor = this.descripcionFormat(i);
+                    this.partidas[i].descripcion = nuevo_valor;
+                    $("#" + event.target.id).attr("readonly",true);
+                }
             },
             editDestino(index){
                 this.edit_destino_index = index;
                 this.destino_temp = this.partidas[index].destino;
                 $(this.$refs.modalDestino).appendTo('body')
                 $(this.$refs.modalDestino).modal('show')
-
             },
             eliminarPartida(index){
                 if(this.partidas[index].nivel === 1){
@@ -508,7 +489,6 @@
                         if(data.length === 1){
                             this.id_area = data[0].id
                         }
-
                         this.areas_subcontratantes = data.sort((a, b) => (a.descripcion > b.descripcion) ? 1 : -1);
                     });
             },
@@ -550,9 +530,9 @@
                 return this.$store.dispatch('cadeco/unidad/index', {
                     params: {sort: 'unidad',  order: 'asc'}
                 })
-                    .then(data => {
-                        this.unidades= data.data;
-                    })
+                .then(data => {
+                    this.unidades= data.data;
+                })
             },
             modalDestino(index) {
                 this.partida_index = index;
@@ -652,10 +632,12 @@
                 this.$validator.validate().then(result => {
                     if (result){
                         let tam_desc = false;
+                        let ip = 0;
                         this.partidas.forEach(partida => {
-                            if(partida.descripcion.length > 255){
+                            if(partida.descripcion_sin_formato.length > 255){
                                 tam_desc = true;
                             }
+                            ip++;
                         });
                         if(tam_desc){
                             swal('Atención', 'La longitud de la descripción de una partida es mayor a la permitida de 255 caracteres.', 'warning');

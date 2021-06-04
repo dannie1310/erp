@@ -96,7 +96,7 @@ class ContratoProyectadoService
                 $datos = array();
                 $datos['id_transaccion'] = $contrato_proyectado->id_transaccion;
                 $datos['nivel'] = $nivel;
-                $datos['descripcion'] = $contrato['descripcion'];
+                $datos['descripcion'] = $contrato['descripcion_sin_formato'];
                 $datos['clave'] = $contrato['clave'];
 
                 if($contrato['es_hoja']){
