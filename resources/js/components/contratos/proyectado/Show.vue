@@ -18,7 +18,6 @@
                         <DatosContratoProyectado v-bind:contrato_proyectado="contrato" v-if="contrato"></DatosContratoProyectado>
                     </div>
                 </div>
-
                 <div class="row" >
                     <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
@@ -46,7 +45,7 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
-                                <tr v-else>
+                                <tr v-else-if="concepto.destino">
                                     <td :title="concepto.clave">{{ concepto.clave }}</td>
                                     <td :title="concepto.descripcion">
                                         <span v-for="n in concepto.nivel">-</span>
@@ -54,7 +53,19 @@
                                     </td>
                                     <td >{{concepto.unidad}}</td>
                                     <td class="numerico">{{concepto.cantidad_original_format}}</td>
-                                    <td :title="concepto.destino.concepto.path" style="text-decoration: underline">{{ concepto.destino.concepto.path_corta }}</td>
+                                    <td :title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                        {{concepto.destino.concepto.path_corta}}
+                                    </td>
+                                </tr>
+                                <tr v-else style="background-color: #ff0000">
+                                    <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                    <td :title="concepto.descripcion">
+                                        <span v-for="n in concepto.nivel">-</span>
+                                        {{concepto.descripcion}}
+                                    </td>
+                                    <td >{{concepto.unidad}}</td>
+                                    <td class="numerico">{{concepto.cantidad_original_format}}</td>
+                                    <td >DESTINO FALTANTE</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -62,9 +73,6 @@
                 </div>
             </div>
         </div>
-
-
-
     </span>
 </template>
 

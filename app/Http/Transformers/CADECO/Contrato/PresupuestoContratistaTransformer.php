@@ -50,6 +50,7 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'impuesto_format' => $model->impuesto_format,
             'subtotal_format' => $model->subtotal_format,
             'monto_format' => $model->monto_format,
+            'monto_calculado_format' => $model->monto_calculado_format,
             'tc_usd' => $model->TcUSD,
             'tc_usd_format' => $model->usd_format,
             'tc_euro' => $model->TcEuro,
