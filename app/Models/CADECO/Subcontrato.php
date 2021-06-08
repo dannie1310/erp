@@ -601,6 +601,16 @@ class Subcontrato extends Transaccion
         return $relaciones;
     }
 
+    public function getTieneNodoExtraordinarioAttribute()
+    {
+        $extra = $this->contratoProyectado->contratos()->agrupadorExtraordinario()->get();
+        if(count($extra)>0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     public function recalcula()
     {
 

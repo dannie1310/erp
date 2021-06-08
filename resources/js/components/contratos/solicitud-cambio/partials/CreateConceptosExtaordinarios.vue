@@ -15,7 +15,7 @@
                     </div>
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
-                            <div class="row">
+                            <div class="row" v-if="tiene_nodo_extraordinario">
                                 <div class="col-md-12">
                                     <div class="form-group error-content">
                                         <label class="col-form-label" for="contrato">Seleccione el nodo al que cargará los nuevos conceptos extraordinarios:</label>
@@ -28,7 +28,7 @@
                                             :error="errors.has('contrato')"
                                             :idContratoProyectado = this.id_contrato_proyectado
                                             ref="nodoContratoSelect"
-                                            :disableBranchNodes="true"
+                                            :disableBranchNodes="false"
                                         ></select-contrato>
 
                                         <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span>(.xlsx)</span></div>
@@ -75,7 +75,7 @@
 import SelectContrato from "../../proyectado/partials/SelectContrato";
 export default {
 name: "CreateConceptosExtaordinarios",
-    props: ['id_contrato_proyectado'],
+    props: ['id_contrato_proyectado','tiene_nodo_extraordinario'],
     data(){
         return {
             nodo_carga:'',

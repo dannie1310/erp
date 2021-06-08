@@ -51,7 +51,7 @@
             getRootNodes() {
                 let self = this
                 return self.$store.dispatch('contratos/contrato-concepto/index', {
-                    params: { scope: [this.scp, "contrato:"+this.idContratoProyectado] }
+                    params: { scope: [this.scp, "contrato:"+this.idContratoProyectado, "agrupadorExtraordinario"] }
                 })
                     .then(data => {
                         self.rootNodes = data.map(contrato => ({

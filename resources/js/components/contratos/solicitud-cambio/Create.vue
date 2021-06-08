@@ -186,8 +186,15 @@
                 <div class="row" >
                     <div class="col-md-12">
                         <div class="pull-right">
-                            <CreateConceptosExtaordinarios v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"></CreateConceptosExtaordinarios>
-                            <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
+                            <CreateConceptosExtaordinarios
+                                v-on:agrega-extraordinario="onAgregaExtraordinario"
+                                v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"
+                                v-bind:tiene_nodo_extraordinario="subcontrato.tiene_nodo_extraordinario">
+                            </CreateConceptosExtaordinarios>
+                            <ConceptoExtraordinario
+                                v-on:agrega-extraordinario="onAgregaExtraordinario"
+                                v-bind:concepto="concepto_extraordinario">
+                            </ConceptoExtraordinario>
                         </div>
                     </div>
                 </div>
