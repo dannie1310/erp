@@ -39,36 +39,34 @@
         <div class="card" v-if="conceptos" >
 			<div class="card-body">
                 <div class="row" >
-
-            <div class="col-md-2">
-                <label for="fecha" class="col-form-label">Fecha: </label>
-                <datepicker v-model = "fecha"
-                            id="fecha"
-                            name = "fecha"
-                            :format = "formatoFecha"
-                            :language = "es"
-                            :bootstrap-styling = "true"
-                            class = "form-control"
-                            :disabled-dates="fechasDeshabilitadas"
-                            v-validate="{required: true}"
-                            :class="{'is-invalid': errors.has('fecha')}"
-                ></datepicker>
-                <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-            </div>
-            <div class="col-md-3">
-                <label for="archivo" class="col-form-label">Soporte (PDF): </label>
-                <input type="file" class="form-control" id="archivo"
-                       @change="onFileChange"
-                       row="3"
-                       v-validate="{ ext: ['pdf']}"
-                       name="archivo"
-                       data-vv-as="Soporte"
-                       ref="archivo"
-                       :class="{'is-invalid': errors.has('archivo')}">
-                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
-            </div>
-
-        </div>
+                    <div class="col-md-2">
+                        <label for="fecha" class="col-form-label">Fecha: </label>
+                        <datepicker v-model = "fecha"
+                                    id="fecha"
+                                    name = "fecha"
+                                    :format = "formatoFecha"
+                                    :language = "es"
+                                    :bootstrap-styling = "true"
+                                    class = "form-control"
+                                    :disabled-dates="fechasDeshabilitadas"
+                                    v-validate="{required: true}"
+                                    :class="{'is-invalid': errors.has('fecha')}"
+                        ></datepicker>
+                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="archivo" class="col-form-label">Soporte (PDF): </label>
+                        <input type="file" class="form-control" id="archivo"
+                               @change="onFileChange"
+                               row="3"
+                               v-validate="{ ext: ['pdf']}"
+                               name="archivo"
+                               data-vv-as="Soporte"
+                               ref="archivo"
+                               :class="{'is-invalid': errors.has('archivo')}">
+                        <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
+                    </div>
+                </div>
                 <br />
 		        <div class="row">
                     <div class="col-md-6">
@@ -187,7 +185,10 @@
 
                 <div class="row" >
                     <div class="col-md-12">
-                        <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
+                        <div class="pull-right">
+                            <CreateConceptosExtaordinarios v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"></CreateConceptosExtaordinarios>
+                            <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
+                        </div>
                     </div>
                 </div>
                 <br />
@@ -318,72 +319,72 @@
                         </td>
                     </tr>
 
-                                <tr v-if="conceptos_cambios_precio.length>0">
-                                    <td></td>
-                                    <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
-                                </tr>
-                                <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
-                                    <td >{{ concepto_cambio_precio.clave }}</td>
-                                    <td >
-                                        {{concepto_cambio_precio.descripcion}}
-                                    </td>
-                                    <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
-                                    <td class="numerico contratado"></td>
-                                    <td class="numerico contratado"></td>
-                                    <td class="numerico avance-volumen"></td>
-                                    <td class="numerico avance-importe"></td>
-                                    <td class="numerico saldo"></td>
-                                    <td class="numerico saldo"></td>
-                                    <td class="numerico saldo" style="background-color: #ddd">
-                                        {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
-                                    </td>
-                                    <td class="editable-cell numerico" style="background-color: #ddd">
-                                        ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
-                                    </td>
-                                    <td class="numerico" style="background-color: #ddd">
-                                        ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
-                                    </td>
-                                    <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
-                                    <td>
-                                        <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                            <i class="fa fa-trash" v-else></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table >
-                    </div>
-                </div>
+                    <tr v-if="conceptos_cambios_precio.length>0">
+                        <td></td>
+                        <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
+                    </tr>
+                    <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
+                        <td >{{ concepto_cambio_precio.clave }}</td>
+                        <td >
+                            {{concepto_cambio_precio.descripcion}}
+                        </td>
+                        <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
+                        <td class="numerico contratado"></td>
+                        <td class="numerico contratado"></td>
+                        <td class="numerico avance-volumen"></td>
+                        <td class="numerico avance-importe"></td>
+                        <td class="numerico saldo"></td>
+                        <td class="numerico saldo"></td>
+                        <td class="numerico saldo" style="background-color: #ddd">
+                            {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
+                        </td>
+                        <td class="editable-cell numerico" style="background-color: #ddd">
+                            ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
+                        </td>
+                        <td class="numerico" style="background-color: #ddd">
+                            ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
+                        </td>
+                        <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
+                        <td>
+                            <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-trash" v-else></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table >
+        </div>
+    </div>
 
-                <br />
+    <br />
 
-               <div class="row">
-                   <div class="col-md-12"><b>Observaciones:</b> </div>
-               </div>
-               <div class="row">
-                   <div class="col-md-12">
-                       <textarea
-                           name="observaciones"
-                           id="observaciones"
-                           class="form-control"
-                           v-model="observaciones"
-                       ></textarea>
-                   </div>
-               </div>
-                <br />
+   <div class="row">
+       <div class="col-md-12"><b>Observaciones:</b> </div>
+   </div>
+   <div class="row">
+       <div class="col-md-12">
+           <textarea
+               name="observaciones"
+               id="observaciones"
+               class="form-control"
+               v-model="observaciones"
+           ></textarea>
+       </div>
+   </div>
+    <br />
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-primary float-right" type="submit" @click="validate"
-                                :disabled="errors.count() > 0 || !conceptos">
-                            <i class="fa fa-save"></i>
-                            Guardar
-                        </button>
-                    </div>
-		        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary float-right" type="submit" @click="validate"
+                        :disabled="errors.count() > 0 || !conceptos">
+                    <i class="fa fa-save"></i>
+                    Guardar
+                </button>
             </div>
         </div>
+    </div>
+</div>
 
         <div class="modal fade" ref="modalCambioPrecio" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -458,10 +459,11 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
+    import CreateConceptosExtaordinarios from "./partials/CreateConceptosExtaordinarios";
     let id_cambio_precio  = 0;
     export default {
         name: "solicitud_cambio-create",
-        components: {ModelListSelect, Datepicker, es, ConceptoExtraordinario},
+        components: {CreateConceptosExtaordinarios, ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {
                 archivo:'',

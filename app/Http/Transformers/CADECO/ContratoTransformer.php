@@ -18,7 +18,8 @@ class ContratoTransformer extends TransformerAbstract
     protected $availableIncludes = [
         'destino',
         'partidas_subcontrato',
-        'presupuesto'
+        'presupuesto',
+        'hijos'
     ];
 
     /**
@@ -33,12 +34,15 @@ class ContratoTransformer extends TransformerAbstract
     public function transform(Contrato $model)
     {
         return [
+            'id' => $model->getKey(),
             'id_concepto' => $model->getKey(),
             'id_transaccion' => $model->id_transaccion,
             'clave' => $model->clave,
+            'clave_contrato_select' => $model->clave_contrato_select,
             'nivel' => $model->nivel,
             'descripcion' => $model->descripcion,
             'descripcion_formato' => $model->descripcion_format,
+            'tiene_hijos' => $model->tieneHijos,
             'unidad' => $model->unidad,
             'cantidad_original' => $model->cantidad_original,
             'cantidad_original_format' => $model->cantidad_original_format,
@@ -89,6 +93,14 @@ class ContratoTransformer extends TransformerAbstract
         if($partida = $model->partidasPresupuesto->where("id_transaccion", $id_transaccion_presupuesto)->first())
         {
             return $this->item($partida, new PresupuestoContratistaPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includeHijos(Contrato $model)
+    {
+        if ($hijos = $model->hijos) {
+            return $this->collection($hijos, new ContratoTransformer);
         }
         return null;
     }

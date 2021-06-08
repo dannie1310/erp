@@ -513,7 +513,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
         });
-       
+
         //IMPRESORA
         $api->group(['prefix' => 'impresora'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
@@ -1011,6 +1011,7 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'concepto'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ContratoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ContratoController@show')->where(['id' => '[0-9]+']);
         });
 
         /**
