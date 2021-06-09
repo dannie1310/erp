@@ -15,6 +15,23 @@
             <div class="card">
                 <div class="card-body">
                     <solicitud-cambio-partial-show v-bind:solicitud="solicitud_cambio"></solicitud-cambio-partial-show>
+                    <br />
+                    <div class=" row" >
+                        <label class="col-md-12 col-form-label">Motivo de Cancelación:</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <textarea
+                                name="motivo"
+                                id="motivo"
+                                class="form-control"
+                                v-model="motivo"
+                                v-validate="{required: true}"
+                                data-vv-as="Motivo"
+                                :class="{'is-invalid': errors.has('motivo')}"
+                            ></textarea>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-footer">
                     <div class="pull-right">
