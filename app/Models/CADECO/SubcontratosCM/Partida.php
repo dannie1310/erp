@@ -94,4 +94,9 @@ class Partida extends Model
     {
         return $this->hijos()->count() ? true : false;
     }
+
+    public function scopeExtraordinarias($query)
+    {
+        return $query->where("id_tipo_modificacion", "=",4);
+    }
 }

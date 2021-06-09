@@ -28,7 +28,7 @@ class ItemSubcontrato extends Item
         'cantidad_original1',
         'precio_original1',
         'id_asignacion',
-        'id_cm_item',
+        'id_sm_partida',
     ];
     public function subcontrato()
     {

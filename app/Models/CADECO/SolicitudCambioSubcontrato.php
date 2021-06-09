@@ -402,11 +402,9 @@ class SolicitudCambioSubcontrato extends Transaccion
                 {
                     $this->aplicarCambioPrecio($partida);
                 }
-                if($partida->id_tipo_modificacion == 4)
-                {
-                    $this->aplicarExtraordinario($partida);
-                }
             }
+            $partidas_extraordinarias = $this->partidas()->extraordinarias()->orderBy("nivel_txt")->get();
+            $this->aplicarExtraordinarias($partidas_extraordinarias);
             $this->subcontrato->recalcula();
             $this->estado = 1;
             $this->save();
@@ -484,6 +482,57 @@ class SolicitudCambioSubcontrato extends Transaccion
         $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
         $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
         $partida->itemSubcontrato->contrato->save();
+    }
+
+    private function aplicarExtraordinarias($partidas){
+        $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
+        $sin_extraordinario_previo = false;
+        if(!$concepto_agrupador_extraordinario){
+
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden->sortByDesc("nivel")->first();
+            $ultimo_nivel = $ultimo_concepto->nivel;
+            $ultimo_nivel_exp = explode(".", $ultimo_nivel);
+            $nivel_nodo_extraordinario = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
+            $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->create([
+                'clave'=>'EXT',
+                'descripcion' => "EXTRAORDINARIOS",
+                'nodo_extraordinarios'=>1,
+                'nivel'=>$nivel_nodo_extraordinario
+            ]);
+            $this->subcontrato->contratoProyectado->load("contratos");
+            $sin_extraordinario_previo = true;
+        }
+        $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
+
+        foreach($partidas as $partida){
+            if($sin_extraordinario_previo){
+                $nivel = $nivel_raiz.$partida->nivel_txt;
+            }
+            $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
+            $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
+                'clave'=>$partida->clave,
+                'descripcion' => $descripcion,
+                'unidad' => $partida->unidad,
+                'cantidad_presupuestada' => $partida->cantidad,
+                'cantidad_original' => $partida->cantidad,
+                'id_destino' => $partida->id_concepto,
+                'nivel'=>$nivel
+            ]);
+            $this->subcontrato->contratoProyectado->load("contratos");
+            if($contrato->unidad!=''){
+                $this->subcontrato->partidas()->create([
+                    'id_concepto' => $contrato->id_concepto,
+                    'id_antecedente' => $contrato->id_transaccion,
+                    'cantidad' => $partida->cantidad,
+                    'precio_unitario' => $partida->precio,
+                    'cantidad_original1' => $partida->cantidad,
+                    'precio_unitario' => $partida->precio,
+                    'precio_original1' => $partida->precio,
+                    'id_sm_partida' => $partida->id,
+                ]);
+            }
+        }
+        $this->subcontrato->load("partidas");
     }
 
     private function aplicarExtraordinario($partida){

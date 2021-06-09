@@ -41,6 +41,6 @@ class ClasificacionSubcontrato extends Model
     }
 
     public function getFolioFormatAttribute(){
-        return \str_pad($this->folio, 5, 0, 0);
+        return "#".\str_pad($this->folio, 5, 0, 0);
     }
 }
