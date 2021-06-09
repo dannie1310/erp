@@ -43,7 +43,41 @@
                             </tr>
                         </thead>
                         <tbody >
-                            <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
+                        <template  v-for="(partida, i) in solicitud_cambio.partidas.data">
+                            <tr v-if="partida.tiene_hijos" style="font-weight: bold">
+                                <template v-if="partida.item_subcontrato">
+                                    <td >{{partida.tipo.descripcion}}</td>
+                                    <td >{{partida.item_subcontrato.contrato.clave}}</td>
+                                    <td ><span v-for="n in partida.nivel">&nbsp;</span>{{partida.item_subcontrato.contrato.descripcion}}</td>
+                                    <td >{{partida.item_subcontrato.contrato.unidad}}</td>
+                                    <td class="numerico contratado">{{partida.item_subcontrato.cantidad_format}}</td>
+                                    <td class="numerico contratado">{{partida.item_subcontrato.precio_unitario_format}}</td>
+                                    <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_estimada_format}}</td>
+                                    <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_estimado_format}}</td>
+                                    <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_saldo_format}}</td>
+                                    <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_saldo_format}}</td>
+                                </template>
+                                <template v-else>
+                                    <td >{{partida.tipo.descripcion}}</td>
+                                    <td >{{partida.clave}}</td>
+                                    <td ><span v-for="n in partida.nivel">&nbsp;</span>{{partida.descripcion}}</td>
+                                    <td ></td>
+                                    <td class="numerico"></td>
+                                    <td class="numerico"></td>
+                                    <td class="numerico"></td>
+                                    <td class="numerico"></td>
+                                    <td class="numerico"></td>
+                                    <td class="numerico"></td>
+                                </template>
+
+                                <td class="numerico avance-importe" ></td>
+                                <td class="numerico saldo" ></td>
+                                <td class="numerico saldo" ></td>
+                                <td class="destino" v-if="partida.item_subcontrato" ></td>
+                                <td class="destino" v-else ></td>
+                            </tr>
+
+                            <tr v-else>
                                 <template v-if="partida.item_subcontrato">
                                     <td >{{partida.tipo.descripcion}}</td>
                                     <td >{{partida.item_subcontrato.contrato.clave}}</td>
@@ -75,6 +109,8 @@
                                 <td class="destino" v-if="partida.item_subcontrato" :title="partida.item_subcontrato.concepto_path">{{partida.item_subcontrato.concepto_path_corta}}</td>
                                 <td class="destino" v-else :title="partida.concepto_path">{{partida.concepto_path_corta}}</td>
                             </tr>
+                        </template>
+
                         </tbody>
                     </table>
                      <br />
