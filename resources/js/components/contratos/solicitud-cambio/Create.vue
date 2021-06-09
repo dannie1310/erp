@@ -299,8 +299,9 @@
 
                                 <template v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
 
-                                    <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0 || concepto_extraordinario.unidad == ''?`background-color : #f5c6cb`:``">
-                                        <td :title="concepto_extraordinario.clave">{{concepto_extraordinario.clave}}</td>
+                                    <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0 || concepto_extraordinario.unidad == '' || concepto_extraordinario.clave == ''?`background-color : #f5c6cb`:``">
+                                        <td :title="concepto_extraordinario.clave" v-if="concepto_extraordinario.clave !==''">{{concepto_extraordinario.clave}}</td>
+                                        <td :title="concepto_extraordinario.clave" v-else style="background-color: #e75757">{{concepto_extraordinario.clave_error}}</td>
                                         <td :title="concepto_extraordinario.descripcion">
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
                                             {{concepto_extraordinario.descripcion}}
@@ -332,8 +333,9 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr v-else>
-                                        <td ><b>{{ concepto_extraordinario.clave }}</b></td>
+                                    <tr v-else :style="concepto_extraordinario.clave == ''?`background-color : #f5c6cb`:``">
+                                        <td :title="concepto_extraordinario.clave" v-if="concepto_extraordinario.clave !==''"><b>{{concepto_extraordinario.clave}}</b></td>
+                                        <td :title="concepto_extraordinario.clave" v-else style="background-color: #e75757"><b>{{concepto_extraordinario.clave_error}}</b></td>
                                         <td >
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
                                             <b>{{concepto_extraordinario.descripcion}}</b>
@@ -602,6 +604,7 @@
 				this.$validator.validate().then(result => {
 				    let error_destinos = false;
                     let error_unidades = false;
+                    let error_claves = false;
 					if (result) {
 					    this.conceptos_extraordinarios.forEach(function(concepto_extraordinario, i){
 					        if(!concepto_extraordinario["destino"]>0 && concepto_extraordinario.es_hoja == true)
@@ -613,15 +616,28 @@
                             {
                                 error_unidades = true;
                             }
+
+                            if(concepto_extraordinario["clave"]==='')
+                            {
+                                error_claves = true;
+                            }
                         });
-					    if(error_destinos === false && error_unidades == false){
+					    if(error_destinos === false && error_unidades == false && error_claves == false){
                             this.store();
-                        } else if(error_destinos === true && error_unidades == false){
-					        swal('Error',"Hay partidas extraordinarias con errores en el destino, favor de corregir para poder realizar el registro",'error');
-                        } else if(error_destinos === false && error_unidades == true){
+                        } else if(error_destinos === false && error_unidades == false && error_claves == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === false && error_unidades == true && error_claves == false){
                             swal('Error',"Hay partidas extraordinarias con errores en la unidad, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === false && error_unidades == true && error_claves == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave y unidad, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === true && error_unidades == false && error_claves == false){
+					        swal('Error',"Hay partidas extraordinarias con errores en el destino, favor de corregir para poder realizar el registro",'error');
+                        }  else if(error_destinos === true && error_unidades == false && error_claves == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave y el destino, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === true && error_unidades == true && error_claves == false){
+                            swal('Error',"Hay partidas extraordinarias con errores en la unidad y el destino, favor de corregir para poder realizar el registro",'error');
                         } else {
-                            swal('Error',"Hay partidas extraordinarias con errores en la unidad y destino, favor de corregir para poder realizar el registro",'error');
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave, unidad y destino, favor de corregir para poder realizar el registro",'error');
                         }
 
 					}

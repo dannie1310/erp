@@ -6,6 +6,7 @@ namespace App\Services\CADECO\Contratos;
 use App\Facades\Context;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CADECO\Concepto;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
@@ -223,6 +224,8 @@ class SolicitudCambioSubcontratoService
             $destino_error = '';
             $unidad = '';
             $unidad_error = '';
+            $clave = '';
+            $clave_error = '';
             if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
                 if($concepto->es_agrupador){
                     $destino = $concepto->id_concepto;
@@ -239,8 +242,15 @@ class SolicitudCambioSubcontratoService
             } else if($partida["unidad"]) {
                 $unidad_error = $partida["unidad"];
             }
+            $clave_preexistente = Contrato::where("id_transaccion","=", $data->id_contrato_proyectado)
+                ->where("clave","=",$partida["clave"])->first();
+            if($clave_preexistente){
+                $clave_error = $partida["clave"];
+            } else {
+                $clave = $partida["clave"];
+            }
             $contratos[$key] = [
-                'clave' => $partida['clave'],
+                'clave' => $clave,
                 'descripcion' => $partida['descripcion'],
                 'unidad' => $unidad,
                 'cantidad' => $partida['cantidad'],
@@ -254,6 +264,7 @@ class SolicitudCambioSubcontratoService
                 'cantidad_hijos' => 0,
                 'destino_error' => $destino_error,
                 'unidad_error' => $unidad_error,
+                'clave_error' => $clave_error,
             ];
             if($key == 0){
                 $index_padre = $key;

@@ -59,8 +59,9 @@
                                 <i class="fa fa-close"  ></i>
                                 Cerrar
                             </button>
-                            <button type="submit" class="btn btn-primary">
-                                <i class="fa fa-retweet"></i>
+                            <button type="submit" class="btn btn-primary" :disabled="cargando">
+                                <i class="fa fa-retweet" v-if="!cargando"></i>
+                                <i class="fa fa-spinner fa-spin" v-else></i>
                                 Procesar
                             </button>
                         </div>
@@ -81,7 +82,8 @@ name: "CreateConceptosExtaordinarios",
             nodo_carga:'',
             file_carga : null,
             file_carga_name : '',
-            partidas : ''
+            partidas : '',
+            cargando : false,
         }
     },
     components: {SelectContrato},
@@ -149,6 +151,7 @@ name: "CreateConceptosExtaordinarios",
         procesaLayout(){
             this.cargando = true;
             var formData = new FormData();
+            formData.append('id_contrato_proyectado',  this.id_contrato_proyectado);
             formData.append('extraordinarios',  this.file_carga);
             formData.append('nombre_archivo',  this.file_carga_name);
             return this.$store.dispatch('contratos/solicitud-cambio/procesarLayoutExtraordinarios',{
