@@ -1077,6 +1077,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@revertirAprobacion')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
             $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
+            $api->post('procesar-layout-extraordinarios', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutExtraordinarios');
         });
 
         /**

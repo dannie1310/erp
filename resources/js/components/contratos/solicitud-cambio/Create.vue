@@ -187,7 +187,7 @@
                     <div class="col-md-12">
                         <div class="pull-right">
                             <CreateConceptosExtaordinarios
-                                v-on:agrega-extraordinario="onAgregaExtraordinario"
+                                v-on:agrega-extraordinarios="onAgregaExtraordinarios"
                                 v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"
                                 v-bind:tiene_nodo_extraordinario="subcontrato.tiene_nodo_extraordinario">
                             </CreateConceptosExtaordinarios>
@@ -235,7 +235,8 @@
                                         <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                                         <td :title="concepto.descripcion">
                                             <span v-for="n in concepto.nivel">&nbsp;</span>
-                                            <b>{{concepto.descripcion}}</b></td>
+                                            <b>{{concepto.descripcion}}</b>
+                                        </td>
                                         <td></td>
                                         <td class="numerico contratado"/>
                                         <td class="numerico contratado"/>
@@ -296,73 +297,103 @@
                                     <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Extraordinarios</b></td>
                                 </tr>
                                 <tr  v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
-                        <td >{{ concepto_extraordinario.clave }}</td>
-                        <td >
-                            {{concepto_extraordinario.descripcion}}
-                        </td>
-                        <td class="centrado">{{concepto_extraordinario.unidad}}</td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico avance-volumen"></td>
-                        <td class="numerico avance-importe"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo" style="background-color: #ddd">
-                            {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
-                        </td>
-                        <td class="numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
-                        </td>
-                        <td class="numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
+                                    <template v-if="concepto_extraordinario.cantidad_hijos == 0">
+                                        <td :title="concepto_extraordinario.clave">{{concepto_extraordinario.clave}}</td>
+                                        <td :title="concepto_extraordinario.descripcion">
+                                            <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
+                                            {{concepto_extraordinario.descripcion}}
+                                        </td>
+                                        <td class="centrado">{{concepto_extraordinario.unidad}}</td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico avance-volumen"></td>
+                                        <td class="numerico avance-importe"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo" style="background-color: #ddd">
+                                            {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd">
+                                            ${{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd">
+                                            ${{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
 
-                        </td>
-                        <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
-                        <td>
-                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                <i class="fa fa-trash" v-else></i>
-                            </button>
-                        </td>
-                    </tr>
+                                        </td>
+                                        <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
+                                        <td>
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <i class="fa fa-trash" v-else></i>
+                                            </button>
+                                        </td>
+                                    </template>
+                                    <template v-else>
+                                        <td ><b>{{ concepto_extraordinario.clave }}</b></td>
+                                        <td >
+                                            <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
+                                            <b>{{concepto_extraordinario.descripcion}}</b>
+                                        </td>
+                                        <td class="centrado"></td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico avance-volumen"></td>
+                                        <td class="numerico avance-importe"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo" >
+                                        </td>
+                                        <td class="numerico" ></td>
+                                        <td class="numerico" ></td>
+                                        <td  class="destino" ></td>
+                                        <td>
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <i class="fa fa-trash" v-else></i>
+                                            </button>
+                                        </td>
+                                    </template>
 
-                    <tr v-if="conceptos_cambios_precio.length>0">
-                        <td></td>
-                        <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
-                    </tr>
-                    <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
-                        <td >{{ concepto_cambio_precio.clave }}</td>
-                        <td >
-                            {{concepto_cambio_precio.descripcion}}
-                        </td>
-                        <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico avance-volumen"></td>
-                        <td class="numerico avance-importe"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo" style="background-color: #ddd">
-                            {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
-                        </td>
-                        <td class="editable-cell numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
-                        </td>
-                        <td class="numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
-                        </td>
-                        <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
-                        <td>
-                            <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                <i class="fa fa-trash" v-else></i>
-                            </button>
-                        </td>
-                    </tr>
-                </tbody>
-            </table >
-        </div>
-    </div>
+
+                                </tr>
+
+                                <tr v-if="conceptos_cambios_precio.length>0">
+                                    <td></td>
+                                    <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Con Cambio de Precio</b></td>
+                                </tr>
+                                <tr  v-for="(concepto_cambio_precio, k) in conceptos_cambios_precio" :key="concepto_cambio_precio.id">
+                                    <td >{{ concepto_cambio_precio.clave }}</td>
+                                    <td >
+                                        {{concepto_cambio_precio.descripcion}}
+                                    </td>
+                                    <td class="centrado">{{concepto_cambio_precio.unidad}}</td>
+                                    <td class="numerico contratado"></td>
+                                    <td class="numerico contratado"></td>
+                                    <td class="numerico avance-volumen"></td>
+                                    <td class="numerico avance-importe"></td>
+                                    <td class="numerico saldo"></td>
+                                    <td class="numerico saldo"></td>
+                                    <td class="numerico saldo" style="background-color: #ddd">
+                                        {{ parseFloat(concepto_cambio_precio.cantidad).formatMoney(2) }}
+                                    </td>
+                                    <td class="editable-cell numerico" style="background-color: #ddd">
+                                        ${{ parseFloat(concepto_cambio_precio.precio).formatMoney(2)  }}
+                                    </td>
+                                    <td class="numerico" style="background-color: #ddd">
+                                        ${{ parseFloat(concepto_cambio_precio.importe).formatMoney(2)  }}
+                                    </td>
+                                    <td  class="destino" :title="concepto_cambio_precio.destino_path">{{ concepto_cambio_precio.destino_path_corta }}</td>
+                                    <td>
+                                        <button @click="eliminarPartidaCambioPrecio(k,concepto_cambio_precio)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-trash" v-else></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table >
+                    </div>
+                </div>
 
     <br />
 
@@ -709,6 +740,10 @@
                     };
                     this.changeCantidad();
                 })
+            },
+            onAgregaExtraordinarios(partidas){
+			    this.conceptos_extraordinarios = partidas;
+                this.changeCantidad();
             },
             eliminarPartida(index){
                 this.conceptos_extraordinarios.splice(index, 1);

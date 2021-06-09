@@ -44,12 +44,12 @@
                                                @change="onFileChange"
                                                row="3"
                                                v-validate="{required:true, ext: validarExtensiones(),  size: 102400}"
-                                               name="layout"
+                                               name="file_carga"
                                                data-vv-as="Layout"
-                                               ref="cargar_file"
+                                               ref="file_carga"
                                                :class="{'is-invalid': errors.has('cargar_file')}"
                                         >
-                                        <div class="invalid-feedback" v-show="errors.has('cargar_file')">{{ errors.first('cargar_file') }} <span>(.xlsx)</span></div>
+                                        <div class="invalid-feedback" v-show="errors.has('file_carga')">{{ errors.first('file_carga') }} <span>(.xlsx)</span></div>
                                     </div>
                                 </div>
                             </div>
@@ -79,6 +79,9 @@ name: "CreateConceptosExtaordinarios",
     data(){
         return {
             nodo_carga:'',
+            file_carga : null,
+            file_carga_name : '',
+            partidas : ''
         }
     },
     components: {SelectContrato},
@@ -97,9 +100,7 @@ name: "CreateConceptosExtaordinarios",
         validate() {
             this.$validator.validate().then(result => {
                 if (result) {
-                    this.$emit("agrega-extraordinario",this.concepto);
-                    $(this.$refs.modalExtraordinario).modal('hide');
-                    this.$validator.reset()
+                    this.procesaLayout();
                 }
             });
         },
@@ -107,27 +108,21 @@ name: "CreateConceptosExtaordinarios",
             var reader = new FileReader();
             var vm = this;
             reader.onload = (e) => {
-                vm.files[tipo] = {archivo:e.target.result}
+                vm.file_carga = e.target.result;
             };
             reader.readAsDataURL(file);
         },
         onFileChange(e){
-            var size = 0;
-            this.files = [];
-            this.names = [];
+
+            this.file_carga = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
-            if(e.target.id == 'cargar_file') {
-                for(let i=0; i<files.length; i++) {
-                    this.createImage(files[i]);
-                    size = +size + +files[i].size;
-                    this.names[i] = {
-                        nombre: files[i].name,
-                    };
-                    this.createImage(files[i], i);
-                }
-            }
+            this.file_carga_name = files[0].name;
+            this.createImage(files[0]);
+
+            size = files[0].size;
+
             if(size > 102400000){
                 swal("El tamaño máximo permitido para la carga de archivos es de 100 MB.", {
                     icon: "warning",
@@ -138,11 +133,11 @@ name: "CreateConceptosExtaordinarios",
                         }
                     }
                 }) .then(() => {
-                    if(this.$refs.cargar_file !== undefined){
-                        this.$refs.cargar_file.value = '';
+                    if(this.$refs.file_carga !== undefined){
+                        this.$refs.file_carga.value = '';
                     }
-                    this.names = [];
-                    this.files = [];
+                    this.file_carga_name = null;
+                    this.file_carga = null;
                     $(this.$refs.modal).modal('hide');
                 })
             }
@@ -151,6 +146,23 @@ name: "CreateConceptosExtaordinarios",
         validarExtensiones(){
             return ['xlsx'/*, 'jpg', 'jpeg', 'png'*/];
         },
+        procesaLayout(){
+            this.cargando = true;
+            var formData = new FormData();
+            formData.append('extraordinarios',  this.file_carga);
+            formData.append('nombre_archivo',  this.file_carga_name);
+            return this.$store.dispatch('contratos/solicitud-cambio/procesarLayoutExtraordinarios',{
+                data: formData, config: { params: { _method: 'POST'}}
+            })
+            .then(data => {
+                this.partidas = data;
+            }).finally(() => {
+                this.cargando = false;
+                this.$emit("agrega-extraordinarios",this.partidas);
+                $(this.$refs.modalExtraordinario).modal('hide');
+                this.$validator.reset();
+            });
+        }
     }
 }
 </script>

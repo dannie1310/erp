@@ -4,6 +4,8 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Facades\Context;
+use App\Imports\SolicitudEdicionImport;
+use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
@@ -14,6 +16,7 @@ use App\Repositories\CADECO\SubcontratosCM\SolicitudCambioSubcontratoRepository 
 use App\Services\CADECO\Documentacion\ArchivoService;
 use DateTime;
 use DateTimeZone;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudCambioSubcontratoService
 {
@@ -161,5 +164,98 @@ class SolicitudCambioSubcontratoService
     {
         $pdf = new SolicitudCambioSubcontratoFormato($id);
         return $pdf;
+    }
+
+    private function getFileXLS($nombre_archivo, $archivo_xls)
+    {
+        $paths = $this->generaDirectorios($nombre_archivo);
+        $exp = explode("base64,", $archivo_xls);
+        $data = base64_decode($exp[1]);
+        $file_xls = public_path($paths["path_xls"]);
+        file_put_contents($file_xls, $data);
+        return $file_xls;
+    }
+
+    private function generaDirectorios($nombre_archivo)
+    {
+        $nombre = $nombre_archivo . "_" . date("Ymdhis") . ".xlsx";
+        $dir_xls = "uploads/contratos/solicitud_cambio_subcotrato/extraordinarios";
+        $path_xls = $dir_xls . $nombre;
+
+        if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
+            mkdir($dir_xls, 777, true);
+        }
+        return ["path_xls" => $path_xls, "dir_xls" => $dir_xls];
+    }
+
+    private function getDatosExtraordinarios($file_xls)
+    {
+        $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
+        $partidas = [];
+        foreach ($rows[0] as $key => $row) {
+            $partidas[$key] = [
+                'clave' => $row[0],
+                'descripcion' => $row[1],
+                'nivel' => $row[2],
+                'unidad' => $row[3],
+                'precio' => $row[4],
+                'cantidad' => $row[5],
+                'destino' => array_key_exists(5, $row)?$row[5]:null,
+            ];
+        }
+        return $partidas;
+    }
+
+    public function procesarLayoutExtraordinarios($data){
+        $file_xls = $this->getFileXLS($data->nombre_archivo, $data->extraordinarios);
+        $partidas = $this->getDatosExtraordinarios($file_xls);
+
+        $index_padre = 0;
+        $nivel_anterior = 0;
+        $contratos = array();
+
+        foreach($partidas as $key => $partida){
+            $destino ='';
+            $destino_path = '';
+            $destino_path_corta = '';
+            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                if($concepto->es_agrupador){
+                    $destino = $concepto->id_concepto;
+                    $destino_path = $concepto->path;
+                    $destino_path_corta = $concepto->path_corta;
+                }
+            }
+            $contratos[$key] = [
+                'clave' => $partida['clave'],
+                'descripcion' => $partida['descripcion'],
+                'unidad' => $partida['unidad'],
+                'cantidad' => $partida['cantidad'],
+                'destino' => $destino,
+                'destino_path' => $destino_path,
+                'destino_path_corta' => $destino_path_corta,
+                'precio' => $partida['precio'],
+                'importe' => $partida['precio']*$partida["cantidad"],
+                'nivel' => (int) $partida['nivel'],
+                'es_hoja' => $partida['cantidad']?true:false,
+                'cantidad_hijos' => 0,
+            ];
+            if($key == 0){
+                $index_padre = $key;
+                $nivel_anterior = $partida['nivel'];
+                continue;
+            }
+
+            if($nivel_anterior == $partida['nivel']){
+                $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
+                continue;
+            }
+
+            if($nivel_anterior < $partida['nivel']){
+                $index_base = $key - 1;
+                while($contratos[$index_base]['nivel'] >= $partida['nivel']){$index_base--;}
+                $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
+            }
+        }
+        return $contratos;
     }
 }

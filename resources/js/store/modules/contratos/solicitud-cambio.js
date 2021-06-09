@@ -237,6 +237,19 @@ export default {
                 });
             });
         },
+        procesarLayoutExtraordinarios(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'procesar-layout-extraordinarios', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        }
     },
     getters: {
         solicitudes(state) {
