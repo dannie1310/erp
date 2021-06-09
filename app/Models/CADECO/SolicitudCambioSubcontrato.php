@@ -333,6 +333,7 @@ class SolicitudCambioSubcontrato extends Transaccion
                         'importe' => $partida['importe'],
                         'precio' => $partida['precio'],
                         'id_concepto' => $partida['id_concepto'],
+                        'nivel' => $partida['nivel'],
                     ]);
                 }
             }

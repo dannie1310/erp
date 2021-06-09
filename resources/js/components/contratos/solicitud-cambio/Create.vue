@@ -296,8 +296,10 @@
                                     <td></td>
                                     <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Extraordinarios</b></td>
                                 </tr>
-                                <tr  v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
-                                    <template v-if="concepto_extraordinario.cantidad_hijos == 0">
+
+                                <template v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
+
+                                    <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0?`background-color : #f5c6cb`:``">
                                         <td :title="concepto_extraordinario.clave">{{concepto_extraordinario.clave}}</td>
                                         <td :title="concepto_extraordinario.descripcion">
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
@@ -320,15 +322,16 @@
                                             ${{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
 
                                         </td>
-                                        <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
+                                        <td  class="destino" :title="concepto_extraordinario.destino_path" v-if="concepto_extraordinario.destino>0">{{ concepto_extraordinario.destino_path_corta }}</td>
+                                        <td  class="destino" v-else style="background-color: #e75757">{{ concepto_extraordinario.destino_error }}</td>
                                         <td>
                                             <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                 <i class="fa fa-trash" v-else></i>
                                             </button>
                                         </td>
-                                    </template>
-                                    <template v-else>
+                                    </tr>
+                                    <tr v-else>
                                         <td ><b>{{ concepto_extraordinario.clave }}</b></td>
                                         <td >
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
@@ -352,10 +355,9 @@
                                                 <i class="fa fa-trash" v-else></i>
                                             </button>
                                         </td>
-                                    </template>
+                                    </tr>
 
-
-                                </tr>
+                                </template>
 
                                 <tr v-if="conceptos_cambios_precio.length>0">
                                     <td></td>
@@ -597,8 +599,20 @@
             },
 			validate() {
 				this.$validator.validate().then(result => {
+				    let error_destinos = false;
 					if (result) {
-                        this.store();
+					    this.conceptos_extraordinarios.forEach(function(concepto_extraordinario, i){
+					        if(!concepto_extraordinario["destino"]>0 && concepto_extraordinario.es_hoja == true)
+                            {
+                                error_destinos = true;
+                            }
+                        });
+					    if(error_destinos === false){
+                            this.store();
+                        } else {
+					        swal('Error',"Hay partidas extraordinarias con error en el destino, favor de corregir para poder realizar el registro",'error');
+                        }
+
 					}
 				});
 			},

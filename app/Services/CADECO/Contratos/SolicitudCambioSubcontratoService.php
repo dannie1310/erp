@@ -143,6 +143,7 @@ class SolicitudCambioSubcontratoService
                 "descripcion"=>$concepto_extraordinario["descripcion"],
                 "unidad"=>$concepto_extraordinario["unidad"],
                 "id_concepto"=>$concepto_extraordinario["destino"],
+                "nivel"=>$concepto_extraordinario["nivel"],
             ];
             $i++;
         }
@@ -218,12 +219,15 @@ class SolicitudCambioSubcontratoService
             $destino ='';
             $destino_path = '';
             $destino_path_corta = '';
+            $destino_error = '';
             if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
                 if($concepto->es_agrupador){
                     $destino = $concepto->id_concepto;
                     $destino_path = $concepto->path;
                     $destino_path_corta = $concepto->path_corta;
                 }
+            } else if($partida["destino"]) {
+                $destino_error = $partida["destino"];
             }
             $contratos[$key] = [
                 'clave' => $partida['clave'],
@@ -238,6 +242,7 @@ class SolicitudCambioSubcontratoService
                 'nivel' => (int) $partida['nivel'],
                 'es_hoja' => $partida['cantidad']?true:false,
                 'cantidad_hijos' => 0,
+                'destino_error' => $destino_error,
             ];
             if($key == 0){
                 $index_padre = $key;
