@@ -26,6 +26,8 @@ class Partida extends Model
         'descripcion',
         'unidad',
         'id_concepto',
+        'nivel',
+        'nivel_txt',
     ];
 
     public function solicitud()
@@ -46,6 +48,12 @@ class Partida extends Model
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'id_solicitud', 'id_solicitud')
+            ->where('nivel_txt', 'LIKE', $this->nivel_txt . '___.');
     }
 
     public function getCantidadFormatAttribute()
@@ -80,5 +88,10 @@ class Partida extends Model
             return null;
         }
 
+    }
+
+    public function getTieneHijosAttribute()
+    {
+        return $this->hijos()->count() ? true : false;
     }
 }

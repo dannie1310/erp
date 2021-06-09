@@ -200,7 +200,7 @@ class SolicitudCambioSubcontratoService
                 'unidad' => $row[3],
                 'precio' => $row[4],
                 'cantidad' => $row[5],
-                'destino' => array_key_exists(5, $row)?$row[5]:null,
+                'destino' => array_key_exists(6, $row)?$row[6]:null,
             ];
         }
         return $partidas;
