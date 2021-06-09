@@ -299,13 +299,14 @@
 
                                 <template v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
 
-                                    <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0?`background-color : #f5c6cb`:``">
+                                    <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0 || concepto_extraordinario.unidad == ''?`background-color : #f5c6cb`:``">
                                         <td :title="concepto_extraordinario.clave">{{concepto_extraordinario.clave}}</td>
                                         <td :title="concepto_extraordinario.descripcion">
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
                                             {{concepto_extraordinario.descripcion}}
                                         </td>
-                                        <td class="centrado">{{concepto_extraordinario.unidad}}</td>
+                                        <td class="centrado" v-if="concepto_extraordinario.unidad !==''">{{concepto_extraordinario.unidad}}</td>
+                                        <td class="centrado" v-else style="background-color: #e75757">{{concepto_extraordinario.unidad_error}}</td>
                                         <td class="numerico contratado"></td>
                                         <td class="numerico contratado"></td>
                                         <td class="numerico avance-volumen"></td>
@@ -600,17 +601,27 @@
 			validate() {
 				this.$validator.validate().then(result => {
 				    let error_destinos = false;
+                    let error_unidades = false;
 					if (result) {
 					    this.conceptos_extraordinarios.forEach(function(concepto_extraordinario, i){
 					        if(!concepto_extraordinario["destino"]>0 && concepto_extraordinario.es_hoja == true)
                             {
                                 error_destinos = true;
                             }
+
+                            if(concepto_extraordinario["unidad"]==='' && concepto_extraordinario.es_hoja == true)
+                            {
+                                error_unidades = true;
+                            }
                         });
-					    if(error_destinos === false){
+					    if(error_destinos === false && error_unidades == false){
                             this.store();
+                        } else if(error_destinos === true && error_unidades == false){
+					        swal('Error',"Hay partidas extraordinarias con errores en el destino, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === false && error_unidades == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la unidad, favor de corregir para poder realizar el registro",'error');
                         } else {
-					        swal('Error',"Hay partidas extraordinarias con error en el destino, favor de corregir para poder realizar el registro",'error');
+                            swal('Error',"Hay partidas extraordinarias con errores en la unidad y destino, favor de corregir para poder realizar el registro",'error');
                         }
 
 					}

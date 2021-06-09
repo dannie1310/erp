@@ -11,6 +11,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SolicitudCambioSubcontrato as Model;
+use App\Models\CADECO\Unidad;
 use App\PDF\Contratos\SolicitudCambioSubcontratoFormato;
 use App\Repositories\CADECO\SubcontratosCM\SolicitudCambioSubcontratoRepository as Repository;
 use App\Services\CADECO\Documentacion\ArchivoService;
@@ -220,6 +221,8 @@ class SolicitudCambioSubcontratoService
             $destino_path = '';
             $destino_path_corta = '';
             $destino_error = '';
+            $unidad = '';
+            $unidad_error = '';
             if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
                 if($concepto->es_agrupador){
                     $destino = $concepto->id_concepto;
@@ -229,10 +232,17 @@ class SolicitudCambioSubcontratoService
             } else if($partida["destino"]) {
                 $destino_error = $partida["destino"];
             }
+            if($partida['unidad'] && $unidadCat = Unidad::where('unidad', '=', $partida['unidad'])->first()){
+                if($unidadCat){
+                    $unidad = $unidadCat->unidad;
+                }
+            } else if($partida["unidad"]) {
+                $unidad_error = $partida["unidad"];
+            }
             $contratos[$key] = [
                 'clave' => $partida['clave'],
                 'descripcion' => $partida['descripcion'],
-                'unidad' => $partida['unidad'],
+                'unidad' => $unidad,
                 'cantidad' => $partida['cantidad'],
                 'destino' => $destino,
                 'destino_path' => $destino_path,
@@ -243,6 +253,7 @@ class SolicitudCambioSubcontratoService
                 'es_hoja' => $partida['cantidad']?true:false,
                 'cantidad_hijos' => 0,
                 'destino_error' => $destino_error,
+                'unidad_error' => $unidad_error,
             ];
             if($key == 0){
                 $index_padre = $key;
