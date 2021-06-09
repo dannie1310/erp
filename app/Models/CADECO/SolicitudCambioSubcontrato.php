@@ -277,6 +277,8 @@ class SolicitudCambioSubcontrato extends Transaccion
             $solicitud->id_empresa = $solicitud->subcontrato->id_empresa;
             $solicitud->id_moneda = $solicitud->subcontrato->id_moneda;
             $solicitud->save();
+            $nivel_extraordinario_anterior_num = 0;
+            $nivel_extraordinario_anterior = '';
             foreach($partidas as $partida){
                 if(key_exists("id_item_subcontrato", $partida) && $partida["id_tipo_modificacion"] != 3 ){
                     $itemSubcontrato = ItemSubcontrato::find($partida["id_item_subcontrato"]);
@@ -323,6 +325,30 @@ class SolicitudCambioSubcontrato extends Transaccion
                     ]);
                 }
                 if($partida["id_tipo_modificacion"] == 4) {
+                    $nivel_txt = '';
+                    if($nivel_extraordinario_anterior == ''){
+                        $nivel_txt = '000.';
+                        $nivel_extraordinario_anterior = $nivel_txt;
+                        $nivel_extraordinario_anterior_num = $partida['nivel'];
+                    }else{
+                        if($nivel_extraordinario_anterior_num + 1 == $partida['nivel']){
+                            $cant = Partida::where('nivel_txt', 'LIKE', $nivel_extraordinario_anterior.'___.')
+                                ->where('id_solicitud', '=', $solicitud->id_transaccion)
+                                ->where('id_tipo_modificacion', '=', 4)
+                                ->count();
+                            $nivel_txt = $nivel_extraordinario_anterior . str_pad($cant, 3, 0, 0) . '.';
+                            $nivel_extraordinario_anterior = $nivel_txt;
+                            $nivel_extraordinario_anterior_num = $partida['nivel'];
+                        }else{
+                            $cant = Partida::where('nivel_txt', 'LIKE', substr($nivel_extraordinario_anterior, 0, (($partida['nivel'] - 1) * 4)) . '___.')
+                                ->where('id_solicitud', '=', $solicitud->id_transaccion)
+                                ->where('id_tipo_modificacion', '=', 4)
+                                ->count();
+                            $nivel_txt = substr($nivel_extraordinario_anterior, 0, (($partida['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
+                            $nivel_extraordinario_anterior = $nivel_txt;
+                            $nivel_extraordinario_anterior_num = $partida['nivel'];
+                        }
+                    }
                     $solicitud->partidas()->create([
                         'id_solicitud' => $this->id_transaccion,
                         'id_tipo_modificacion' => $partida['id_tipo_modificacion'],
@@ -334,6 +360,7 @@ class SolicitudCambioSubcontrato extends Transaccion
                         'precio' => $partida['precio'],
                         'id_concepto' => $partida['id_concepto'],
                         'nivel' => $partida['nivel'],
+                        'nivel_txt' => $nivel_txt,
                     ]);
                 }
             }
