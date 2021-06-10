@@ -69,11 +69,11 @@ class Contrato extends Model
     }
 
     public function scopeAgrupadorExtraordinario($query){
-       return $query->where("nodo_extraordinarios",1);
+       return $query->where("nodo_extraordinarios","=",1);
     }
 
     public function scopeAgrupadorNuevoPrecio($query){
-        return $query->where("nodo_cambio_precio",1);
+        return $query->where("nodo_cambio_precio","=",1);
     }
 
     public function getCantidadHijosAttribute()
