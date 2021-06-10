@@ -327,7 +327,7 @@
                                         <td  class="destino" :title="concepto_extraordinario.destino_path" v-if="concepto_extraordinario.destino>0">{{ concepto_extraordinario.destino_path_corta }}</td>
                                         <td  class="destino" v-else style="background-color: #e75757">{{ concepto_extraordinario.destino_error }}</td>
                                         <td>
-                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja && concepto_extraordinario.cantidad_hijos > 0">
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja || concepto_extraordinario.cantidad_hijos > 0">
                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                 <i class="fa fa-trash" v-else></i>
                                             </button>
@@ -353,7 +353,7 @@
                                         <td class="numerico" ></td>
                                         <td  class="destino" ></td>
                                         <td>
-                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja && concepto_extraordinario.cantidad_hijos > 0">
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja || concepto_extraordinario.cantidad_hijos > 0">
                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                 <i class="fa fa-trash" v-else></i>
                                             </button>
@@ -795,7 +795,10 @@
                 })
             },
             onAgregaExtraordinarios(partidas){
-			    this.conceptos_extraordinarios = partidas;
+                let self = this;
+                partidas.forEach(function(partida, i){
+                    self.conceptos_extraordinarios.push(partida);
+                });
                 this.changeCantidad();
             },
             eliminarPartida(index){
