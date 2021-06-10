@@ -327,7 +327,7 @@
                                         <td  class="destino" :title="concepto_extraordinario.destino_path" v-if="concepto_extraordinario.destino>0">{{ concepto_extraordinario.destino_path_corta }}</td>
                                         <td  class="destino" v-else style="background-color: #e75757">{{ concepto_extraordinario.destino_error }}</td>
                                         <td>
-                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja && concepto_extraordinario.cantidad_hijos > 0">
                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                 <i class="fa fa-trash" v-else></i>
                                             </button>
@@ -353,7 +353,7 @@
                                         <td class="numerico" ></td>
                                         <td  class="destino" ></td>
                                         <td>
-                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja && concepto_extraordinario.cantidad_hijos > 0">
                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                 <i class="fa fa-trash" v-else></i>
                                             </button>
@@ -799,7 +799,19 @@
                 this.changeCantidad();
             },
             eliminarPartida(index){
-                this.conceptos_extraordinarios.splice(index, 1);
+                if(this.conceptos_extraordinarios[index].nivel === 1){
+                    this.conceptos_extraordinarios.splice(index, 1);
+                }else{
+                    let temp_index = index - 1;
+                    while(temp_index in this.conceptos_extraordinarios && this.conceptos_extraordinarios[temp_index].nivel == +this.conceptos_extraordinarios[index].nivel){
+                        temp_index= temp_index - 1;
+                    }
+                    this.conceptos_extraordinarios[temp_index].cantidad_hijos = this.conceptos_extraordinarios[temp_index].cantidad_hijos - 1;
+                    this.conceptos_extraordinarios.splice(index, 1);
+                    if(this.conceptos_extraordinarios[temp_index].cantidad_hijos == 0){
+                        this.conceptos_extraordinarios[temp_index].es_hoja = true;
+                    }
+                }
                 this.changeCantidad();
             },
             eliminarPartidaCambioPrecio(index, concepto_cambio_precio){
