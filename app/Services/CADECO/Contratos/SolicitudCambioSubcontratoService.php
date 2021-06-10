@@ -146,6 +146,7 @@ class SolicitudCambioSubcontratoService
                 "unidad"=>$concepto_extraordinario["unidad"],
                 "id_concepto"=>$concepto_extraordinario["destino"],
                 "nivel"=>$concepto_extraordinario["nivel"],
+                "id_nodo_carga"=>$concepto_extraordinario["id_nodo_carga"],
             ];
             $i++;
         }
@@ -265,6 +266,7 @@ class SolicitudCambioSubcontratoService
                 'destino_error' => $destino_error,
                 'unidad_error' => $unidad_error,
                 'clave_error' => $clave_error,
+                'id_nodo_carga' => $data->id_contrato_nodo_carga,
             ];
             if($key == 0){
                 $index_padre = $key;

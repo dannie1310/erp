@@ -58,6 +58,7 @@
                             id: contrato.id,
                             children: contrato.tiene_hijos != 0 ? null : undefined,
                             label: contrato.clave_contrato_select + contrato.descripcion,
+                            isDisabled: contrato.tiene_hijos ==0 ?true :false
                         }));
                         self.disabled = false;
                     })
@@ -73,6 +74,7 @@
                             id: concepto.id,
                             children: concepto.tiene_hijos != 0 ? null : undefined,
                             label: concepto.clave_contrato_select + concepto.descripcion,
+                            isDisabled: concepto.tiene_hijos ==0 ?true :false
                         }))
                     })
                     .then(() => {

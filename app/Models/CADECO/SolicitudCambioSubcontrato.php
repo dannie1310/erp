@@ -361,6 +361,7 @@ class SolicitudCambioSubcontrato extends Transaccion
                         'id_concepto' => $partida['id_concepto'],
                         'nivel' => $partida['nivel'],
                         'nivel_txt' => $nivel_txt,
+                        'id_nodo_carga' => $partida["id_nodo_carga"],
                     ]);
                 }
             }
@@ -404,7 +405,9 @@ class SolicitudCambioSubcontrato extends Transaccion
                 }
             }
             $partidas_extraordinarias = $this->partidas()->extraordinarias()->orderBy("nivel_txt")->get();
-            $this->aplicarExtraordinarias($partidas_extraordinarias);
+            if(count($partidas_extraordinarias)>0){
+                $this->aplicarExtraordinarias($partidas_extraordinarias);
+            }
             $this->subcontrato->recalcula();
             $this->estado = 1;
             $this->save();
@@ -501,13 +504,27 @@ class SolicitudCambioSubcontrato extends Transaccion
             ]);
             $this->subcontrato->contratoProyectado->load("contratos");
             $sin_extraordinario_previo = true;
+            $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
+        } else if($contrato_raiz = Contrato::where("id_concepto","=",$partidas[0]->id_nodo_carga)->first()) {
+
+            $nivel_ultimo_hijo_contrato_raiz = $contrato_raiz->hijosSinOrden()->orderBy("nivel","desc")->pluck("nivel")->first();
+            $nivel_ultimo_hijo_contrato_raiz_exp = explode(".",$nivel_ultimo_hijo_contrato_raiz);
+            $consecutivo_ultimo_hijo = $nivel_ultimo_hijo_contrato_raiz_exp[count($nivel_ultimo_hijo_contrato_raiz_exp)-2];
+            $consecutivo_nuevo_extraordinario = $consecutivo_ultimo_hijo+1;
+            $nivel_raiz = $contrato_raiz->nivel;
+        } else{
+            abort(500, "Hubo un error al calcular el nivel raíz de los conceptos extraordinarios");
         }
-        $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
 
         foreach($partidas as $partida){
             if($sin_extraordinario_previo){
                 $nivel = $nivel_raiz.$partida->nivel_txt;
+            } else{
+                $nivel_partida_explode = explode(".", $partida->nivel_txt);
+                $consecutivo_inicial = ($consecutivo_nuevo_extraordinario+$nivel_partida_explode[0]);
+                $nivel = $nivel_raiz.sprintf("%03d", $consecutivo_inicial).".".substr($partida->nivel_txt,4, strlen($partida->nivel_txt)-4);
             }
+
             $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
             $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
                 'clave'=>$partida->clave,

@@ -18,7 +18,7 @@
                             <div class="row" v-if="tiene_nodo_extraordinario">
                                 <div class="col-md-12">
                                     <div class="form-group error-content">
-                                        <label class="col-form-label" for="contrato">Seleccione el nodo al que cargará los nuevos conceptos extraordinarios:</label>
+                                        <label class="col-form-label" for="contrato">Seleccione el nodo que será padre de los nuevos conceptos extraordinarios:</label>
                                         <select-contrato
                                             name="contrato"
                                             v-validate="{required: true}"
@@ -154,6 +154,7 @@ name: "CreateConceptosExtaordinarios",
             formData.append('id_contrato_proyectado',  this.id_contrato_proyectado);
             formData.append('extraordinarios',  this.file_carga);
             formData.append('nombre_archivo',  this.file_carga_name);
+            formData.append('id_contrato_nodo_carga',  this.nodo_carga);
             return this.$store.dispatch('contratos/solicitud-cambio/procesarLayoutExtraordinarios',{
                 data: formData, config: { params: { _method: 'POST'}}
             })

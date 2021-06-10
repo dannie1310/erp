@@ -61,6 +61,13 @@ class Contrato extends Model
             ->orderBy('nivel', 'ASC');
     }
 
+    public function hijosSinOrden()
+    {
+        return $this->hasMany(self::class, 'id_transaccion', 'id_transaccion')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ;
+    }
+
     public function scopeAgrupadorExtraordinario($query){
        return $query->where("nodo_extraordinarios",1);
     }
