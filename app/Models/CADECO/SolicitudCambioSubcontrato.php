@@ -491,8 +491,7 @@ class SolicitudCambioSubcontrato extends Transaccion
         $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
         $sin_extraordinario_previo = false;
         if(!$concepto_agrupador_extraordinario){
-
-            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden->sortByDesc("nivel")->first();
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden()->orderBy("nivel","desc")->first();
             $ultimo_nivel = $ultimo_concepto->nivel;
             $ultimo_nivel_exp = explode(".", $ultimo_nivel);
             $nivel_nodo_extraordinario = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
@@ -609,7 +608,7 @@ class SolicitudCambioSubcontrato extends Transaccion
     private function aplicarCambioPrecio($partida){
         $concepto_agrupador_nuevo_precio = $this->subcontrato->contratoProyectado->contratos()->agrupadorNuevoPrecio()->first();
         if(!$concepto_agrupador_nuevo_precio){
-            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden->sortByDesc("nivel")->first();
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden()->orderBy("nivel","desc")->first();
             $ultimo_nivel = $ultimo_concepto->nivel;
             $ultimo_nivel_exp = explode(".", $ultimo_nivel);
             $nivel_nodo_nuevo_precio = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
@@ -652,9 +651,11 @@ class SolicitudCambioSubcontrato extends Transaccion
         $this->subcontrato->contratoProyectado->load("contratos");
         $this->subcontrato->partidas()->create([
             'id_concepto' => $contrato->id_concepto,
-            'unidad' => $item_subcontrato_original->contrato->unidad,
+            'id_antecedente' => $contrato->id_transaccion,
             'cantidad' => $partida->cantidad,
+            'cantidad_original1' => $partida->cantidad,
             'precio_unitario' => $partida->precio,
+            'precio_original1' => $partida->precio,
             'id_sm_partida' => $partida->id,
         ]);
         $this->subcontrato->load("partidas");
