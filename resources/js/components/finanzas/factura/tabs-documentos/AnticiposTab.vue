@@ -20,7 +20,7 @@
                             <td>{{item.transaccion}}</td>
                             <td>{{item.fecha}}</td>
                             <td>{{item.descripcion_item}}</td>
-                            <td>$ {{parseFloat(item.anticipo).formatMoney(2)}}</td>
+                            <td>$ {{item.anticipo}}</td>
                             <td>$ {{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado" v-model="item.seleccionado"  ></td>
                         </tr>
