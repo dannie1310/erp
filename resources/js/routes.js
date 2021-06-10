@@ -1209,6 +1209,46 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'comprobante-fondo',
+                        component: require('./components/finanzas/comprobante-fondo/Layout.vue').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comprobante-fondo',
+                                component: require('./components/finanzas/comprobante-fondo/Index').default,
+                                meta: {
+                                    title: 'Comprobantes de Fondo',
+                                    breadcrumb: {name: 'COMPROBANTE DE FONDO', parent: 'finanzas'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_comprobante_fondo'
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'comprobante-fondo-create',
+                                component: require('./components/finanzas/comprobante-fondo/Create').default,
+                                meta: {
+                                    title: 'Registrar Comprobantes de Fondo',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'comprobante-fondo'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_comprobante_fondo'
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'comprobante-fondo-show',
+                                props: true,
+                                component: require('./components/finanzas/comprobante-fondo/Show').default,
+                                meta: {
+                                    title: 'Consultar Comprobante de Fondo',
+                                    breadcrumb: {name: 'VER', parent: 'comprobante-fondo'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_comprobante_fondo'
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'distribuir-recurso-remesa',
                         component: require('./components/finanzas/distribuir-recurso-remesa/Layout.vue').default,
                         children: [
@@ -1578,7 +1618,6 @@ export const routes = [
                             }
                         ]
                     },
-
                     {
                         path: 'solicitud',
                         component: require('./components/finanzas/solicitud/Layout').default,
@@ -2339,6 +2378,76 @@ export const routes = [
                                         }
                                     },
                                 ]
+                            },
+                            {
+                                path: 'marca',
+                                name: 'marca',
+                                component: require('./components/acarreos/catalogos/marca/Index').default,
+                                meta: {
+                                    title: 'Marcas',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'MARCAS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_marca']
+                                }
+                            },
+                            {
+                                path: 'materiales',
+                                name: 'materiales',
+                                component: require('./components/acarreos/catalogos/material/Index').default,
+                                meta: {
+                                    title: 'Materiales',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'MATERIALES'
+                                    },
+                                    middleware: [auth, context],
+                                    //permission: ['consultar_material']
+                                }
+                            },
+                            {
+                                path: 'empresa-acarreo',
+                                name: 'empresa-acarreo',
+                                component: require('./components/acarreos/catalogos/empresa/Index').default,
+                                meta: {
+                                    title: 'Empresas',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'EMPRESAS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_empresa']
+                                }
+                            },
+                            {
+                                path: 'impresora',
+                                name: 'impresora',
+                                component: require('./components/acarreos/catalogos/impresora/Index').default,
+                                meta: {
+                                    title: 'Impresoras',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'IMPRESORAS'
+                                    },
+                                    middleware: [auth, context],
+                                    // permission: ['consultar_origen']
+                                }
+                            },
+                            {
+                                path: 'operador',
+                                name: 'operador',
+                                component: require('./components/acarreos/catalogos/operador/Index').default,
+                                meta: {
+                                    title: 'Operadores',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'OPERADORES'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_operador']
+                                }
                             },
                             {
                                 path: 'origen',

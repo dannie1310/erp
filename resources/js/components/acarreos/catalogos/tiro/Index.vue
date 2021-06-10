@@ -33,7 +33,7 @@
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'Clave', field: 'clave',sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Descripción', field: 'descripcion', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Fecha Registro', field: 'fecha', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Concepto', field: 'concepto', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Estatus', field: 'estado_tiro', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
@@ -92,7 +92,7 @@
                         index: (i + 1) + self.query.offset,
                         clave: tiro.clave_format,
                         descripcion: tiro.descripcion,
-                        fecha: tiro.fecha_registro_format,
+                        created_at: tiro.fecha_registro_format,
                         estado_tiro: this.getEstado(tiro.estado_format, tiro.estado_color),
                         concepto: tiro.path__corta_concepto,
                         buttons: $.extend({}, {

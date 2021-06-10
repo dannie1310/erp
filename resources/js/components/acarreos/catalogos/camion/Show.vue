@@ -230,7 +230,9 @@
                     </div>
                 </div>
                  <div class="modal-footer">
-                     <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                     <button type="button" class="btn btn-secondary" @click="salir">
+                         <i class="fa fa-angle-left"></i>Regresar
+                     </button>
                  </div>
             </div>
             <div class="modal fade" ref="modalImagen" tabindex="-1" role="dialog" aria-labelledby="modal">

@@ -28,7 +28,7 @@
                                     <thead>
                                     <tr>
                                         <th>#</th>
-                                        <th>Economico</th>
+                                        <th>Económico</th>
                                         <th>Sindicato</th>
                                         <th>Empresa</th>
                                         <th>Placas del Camión</th>
@@ -80,7 +80,9 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" @click="salir">
+                            <i class="fa fa-close"></i> Cerrar
+                        </button>
                     </div>
                 </div>
             </div>

@@ -5,7 +5,9 @@ import auth from './modules/auth';
 //ACARREOS
 import camion from "./modules/acarreos/camion";
 import empresaAcarreo from "./modules/acarreos/empresa";
+import impresora from "./modules/acarreos/impresora";
 import marcaAcarreo from "./modules/acarreos/marca";
+import materialAcarreo from "./modules/acarreos/material";
 import operador from "./modules/acarreos/operador";
 import origen from './modules/acarreos/origen';
 import sindicato from "./modules/acarreos/sindicato";
@@ -130,6 +132,7 @@ import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-re
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
 import ctgTipoFondo from './modules/finanzas/ctg-tipo-fondo';
+import comprobanteFondo from './modules/finanzas/comprobante-fondo';
 import cuentaBancariaEmpresa from './modules/finanzas/cuenta-bancaria-empresa';
 import datosEstimaciones from './modules/finanzas/estimacion';
 import distribuirRecursoRemesa from './modules/finanzas/distribuir-recurso-remesa';
@@ -218,7 +221,9 @@ export default new Vuex.Store({
         auth,
         'acarreos/camion' : camion,
         'acarreos/empresa' : empresaAcarreo,
+        'acarreos/impresora' : impresora,
         'acarreos/marca' : marcaAcarreo,
+        'acarreos/material' : materialAcarreo,
         'acarreos/operador' : operador,
         'acarreos/origen' : origen,
         'acarreos/sindicato' : sindicato,
@@ -288,6 +293,7 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
+        'finanzas/comprobante-fondo' : comprobanteFondo,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
         'finanzas/cuenta-bancaria-empresa': cuentaBancariaEmpresa,
         'finanzas/distribuir-recurso-remesa': distribuirRecursoRemesa,

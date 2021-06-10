@@ -505,16 +505,67 @@ $api->version('v1', function ($api) {
         //EMPRESA
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
+        });
+       
+        //IMPRESORA
+        $api->group(['prefix' => 'impresora'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
+        });
+
+        //IMPRESORA
+        $api->group(['prefix' => 'impresora'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@descargaLayout');
         });
 
         //MARCA
         $api->group(['prefix' => 'marca'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@descargaLayout');
+        });
+
+        //MATERIAL
+        $api->group(['prefix' => 'material'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@desactivar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@store');
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@descargaLayout');
         });
 
         //OPERADOR
         $api->group(['prefix' => 'operador'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@descargaLayout');
+
         });
 
         //ORIGEN
@@ -1032,9 +1083,14 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
 
-        // RUBROS
-        $api->group(['prefix' => 'rubro'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
+        /**
+         * COMPROBANTE FONDO
+         */
+        $api->group(['prefix' => 'comprobante-fondo'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1046,7 +1102,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@show')->where(['id' => '[0-9]+']);
         });
 
-        // DATOS ESTIMACIONES
+        /**
+         * DATOS ESTIMACIONES
+         */
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
@@ -1166,6 +1224,11 @@ $api->version('v1', function ($api) {
                 $api->get('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@autorizar')->where(['id' => '[0-9]+']);
                 $api->get('descarga-layout', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@descargarLayout');
             });
+        });
+
+        // RUBROS
+        $api->group(['prefix' => 'rubro'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
         });
 
         /**
