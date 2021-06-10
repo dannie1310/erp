@@ -115,7 +115,7 @@ name: "CreateConceptosExtaordinarios",
             reader.readAsDataURL(file);
         },
         onFileChange(e){
-
+            var size = 0;
             this.file_carga = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
