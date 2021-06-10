@@ -506,14 +506,17 @@ class SolicitudCambioSubcontrato extends Transaccion
             $sin_extraordinario_previo = true;
             $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
         } else if($contrato_raiz = Contrato::where("id_concepto","=",$partidas[0]->id_nodo_carga)->first()) {
-
             $nivel_ultimo_hijo_contrato_raiz = $contrato_raiz->hijosSinOrden()->orderBy("nivel","desc")->pluck("nivel")->first();
             $nivel_ultimo_hijo_contrato_raiz_exp = explode(".",$nivel_ultimo_hijo_contrato_raiz);
             $consecutivo_ultimo_hijo = $nivel_ultimo_hijo_contrato_raiz_exp[count($nivel_ultimo_hijo_contrato_raiz_exp)-2];
             $consecutivo_nuevo_extraordinario = $consecutivo_ultimo_hijo+1;
             $nivel_raiz = $contrato_raiz->nivel;
         } else{
-            abort(500, "Hubo un error al calcular el nivel raíz de los conceptos extraordinarios");
+            $nivel_ultimo_hijo_contrato_raiz = $concepto_agrupador_extraordinario->hijosSinOrden()->orderBy("nivel","desc")->pluck("nivel")->first();
+            $nivel_ultimo_hijo_contrato_raiz_exp = explode(".",$nivel_ultimo_hijo_contrato_raiz);
+            $consecutivo_ultimo_hijo = $nivel_ultimo_hijo_contrato_raiz_exp[count($nivel_ultimo_hijo_contrato_raiz_exp)-2];
+            $consecutivo_nuevo_extraordinario = $consecutivo_ultimo_hijo+1;
+            $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
         }
 
         foreach($partidas as $partida){

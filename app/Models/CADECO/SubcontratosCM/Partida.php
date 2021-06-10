@@ -28,6 +28,7 @@ class Partida extends Model
         'id_concepto',
         'nivel',
         'nivel_txt',
+        "id_nodo_carga",
     ];
 
     public function solicitud()

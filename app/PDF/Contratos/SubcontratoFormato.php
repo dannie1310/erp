@@ -345,7 +345,7 @@ class SubcontratoFormato extends FPDI
         $this->encola="";
         $y_subtotal = $this->GetY();
         $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
+        $this->SetFont('Arial', '', 7);
         $this->Cell(17.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
         $this->Cell(2, .5, number_format($this->subcontrato->subtotal_antes_descuento,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
@@ -364,19 +364,15 @@ class SubcontratoFormato extends FPDI
         $this->Ln(.5);
         $this->Cell(17.5, .5, 'Moneda:', 0, 0,'R');
         $this->Cell(2, .5, $this->subcontrato->moneda->nombre, 1, 0,'R');
-        $this->Ln(.7);
+        $this->Ln(.5);
 
         $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
         $this->Cell(17.5, .5, 'Anticipo ('.$this->subcontrato->anticipo.'%): ', 0, 0,'R');
-        $this->SetFont('Arial', '', 9);
         $this->Cell(2, .5, number_format($this->subcontrato->anticipo_monto,2, '.', ','), 1, 0,'R');
-        $this->Ln(.7);
+        $this->Ln(.5);
 
         $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
         $this->Cell(17.5, .5,  utf8_decode('Fondo de garantía ('.$this->subcontrato->retencion).'%): ', 0, 0,'R');
-        $this->SetFont('Arial', '', 9);
         $this->Cell(2, .5, number_format($fg_monto,2, '.', ','), 1, 0,'R');
         $this->Ln(.7);
 

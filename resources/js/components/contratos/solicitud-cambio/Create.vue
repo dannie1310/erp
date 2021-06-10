@@ -537,6 +537,10 @@
                     unidad:'',
                     destino:'',
                     precio:'',
+                    nivel:1,
+                    es_hoja:0,
+                    cantidad_hijos:0,
+                    id_nodo_carga:'',
                 },
                 conceptos_cambios_precio : [],
                 concepto_cambio_precio :{
@@ -765,6 +769,10 @@
                         destino_path:data.path,
                         destino_path_corta:data.path_corta,
                         precio:concepto.precio,
+                        nivel:1,
+                        es_hoja:0,
+                        cantidad_hijos:0,
+                        id_nodo_carga:'',
                         importe:(concepto.cantidad * concepto.precio).toFixed(2),
                     });
 
@@ -777,7 +785,11 @@
                         destino_path:'',
                         destino_path_corta:'',
                         precio:'',
-                        importe:''
+                        importe:'',
+                        nivel:1,
+                        es_hoja:0,
+                        cantidad_hijos:0,
+                        id_nodo_carga:'',
                     };
                     this.changeCantidad();
                 })
