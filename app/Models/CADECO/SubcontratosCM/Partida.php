@@ -93,6 +93,9 @@ class Partida extends Model
 
     public function getTieneHijosAttribute()
     {
+        if($this->nivel_txt == ""){
+            return false;
+        }
         return $this->hijos()->count() ? true : false;
     }
 
