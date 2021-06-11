@@ -195,6 +195,13 @@
                                 v-on:agrega-extraordinario="onAgregaExtraordinario"
                                 v-bind:concepto="concepto_extraordinario">
                             </ConceptoExtraordinario>
+                            <CreateConceptosNuevoPrecioAditivasDeductivas
+                                v-bind:id_subcontrato="subcontrato.id"
+                                v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"
+                                v-bind:tiene_nodo_cambio_precio="subcontrato.tiene_nodo_cambio_precio"
+                                v-bind:cantidad_conceptos = "conceptos.length"
+                            >
+                            </CreateConceptosNuevoPrecioAditivasDeductivas>
                         </div>
                     </div>
                 </div>
@@ -206,7 +213,7 @@
                                 <tr>
                                     <th rowspan="2">Clave</th>
                                     <th rowspan="2">Concepto</th>
-                                    <th rowspan="2">UM</th>
+                                    <th rowspan="2">Unidad</th>
                                     <th colspan="2" class="contratado">Contratado</th>
                                     <th colspan="2" class="avance-volumen">Avance</th>
 
@@ -503,10 +510,13 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
     import CreateConceptosExtaordinarios from "./partials/CreateConceptosExtaordinarios";
+    import CreateConceptosNuevoPrecioAditivasDeductivas from "./partials/CreateConceptosNuevoPrecioAditivasDeductivas";
     let id_cambio_precio  = 0;
     export default {
         name: "solicitud_cambio-create",
-        components: {CreateConceptosExtaordinarios, ModelListSelect, Datepicker, es, ConceptoExtraordinario},
+        components: {
+            CreateConceptosNuevoPrecioAditivasDeductivas,
+            CreateConceptosExtaordinarios, ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {
                 archivo:'',

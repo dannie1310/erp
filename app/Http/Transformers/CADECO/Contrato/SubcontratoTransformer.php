@@ -102,6 +102,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'id_tipo_contrato' =>($model->clasificacionSubcontrato) ? (int)$model->clasificacionSubcontrato->id_tipo_contrato:'',
             'moneda' => $model->moneda->nombre,
             'tiene_nodo_extraordinario'=>$model->tiene_nodo_extraordinario,
+            'tiene_nodo_cambio_precio'=>$model->tiene_nodo_cambio_precio,
         ];
     }
     /**

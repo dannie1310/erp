@@ -611,6 +611,16 @@ class Subcontrato extends Transaccion
         }
     }
 
+    public function getTieneNodoCambioPrecioAttribute()
+    {
+        $cp = $this->contratoProyectado->contratos()->agrupadorCambioPrecio()->get();
+        if(count($cp)>0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     public function recalcula()
     {
 

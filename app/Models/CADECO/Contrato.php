@@ -72,7 +72,12 @@ class Contrato extends Model
        return $query->where("nodo_extraordinarios","=",1);
     }
 
+    // TODO: Cambiar uso de scope agrupador_nuevo_precio por agrupador_cambio_precio para eliminar este scope
     public function scopeAgrupadorNuevoPrecio($query){
+        return $query->where("nodo_cambio_precio","=",1);
+    }
+
+    public function scopeAgrupadorCambioPrecio($query){
         return $query->where("nodo_cambio_precio","=",1);
     }
 
