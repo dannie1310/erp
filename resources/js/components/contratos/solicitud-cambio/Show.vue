@@ -15,92 +15,7 @@
 
         <div class="card" v-if="!cargando">
 			<div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <DatosSolicitud v-bind:solicitud_cambio="solicitud_cambio" v-if="!cargando"></DatosSolicitud>
-                        <tabla-datos-subcontrato  v-bind:subcontrato="solicitud_cambio.subcontrato" v-if="!cargando"></tabla-datos-subcontrato>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12 table-responsive">
-                        <span>Partidas de Solicitud de Cambio</span>
-                        <table id="tabla-conceptos">
-					<thead>
-						<tr>
-                            <th rowspan="2" >Tipo</th>
-							<th rowspan="2">Clave</th>
-							<th rowspan="2">Concepto</th>
-							<th rowspan="2">UM</th>
-							<th colspan="2" class="contratado">Contratado</th>
-							<th colspan="2" class="avance-volumen">Avance</th>
-
-							<th colspan="2" class="saldo">Saldo</th>
-							<th colspan="3">Addendum</th>
-							<th class="destino">Distribución</th>
-                            <th style="width: 20px"></th>
-						</tr>
-						<tr>
-							<th class="contratado">Volumen</th>
-							<th class="contratado">P.U.</th>
-							<th class="avance-volumen">Volumen</th>
-							<th class="avance-importe">Importe</th>
-							<th class="saldo">Volumen</th>
-							<th class="saldo">Importe</th>
-							<th style="width: 80px">Volumen</th>
-							<th>P.U.</th>
-							<th>Importe</th>
-							<th class="destino">Destino</th>
-                            <th></th>
-						</tr>
-					</thead>
-					<tbody >
-                        <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
-                            <template v-if="partida.item_subcontrato">
-                                <td ><b>{{partida.tipo.descripcion}}</b></td>
-                                <td ><b>{{partida.item_subcontrato.contrato.clave}}</b></td>
-                                <td><b>{{partida.item_subcontrato.contrato.descripcion}}</b></td>
-                                <td>{{partida.item_subcontrato.contrato.unidad}}</td>
-                                <td class="numerico contratado">{{partida.item_subcontrato.cantidad_format}}</td>
-                                <td class="numerico contratado">{{partida.item_subcontrato.precio_unitario_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_estimada_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_estimado_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.cantidad_saldo_format}}</td>
-                                <td class="numerico avance-volumen">{{partida.item_subcontrato.importe_saldo_format}}</td>
-
-                            </template>
-                            <template v-else>
-                                <td ><b>{{partida.tipo.descripcion}}</b></td>
-                                <td ><b>{{partida.clave}}</b></td>
-                                <td><b>{{partida.descripcion}}</b></td>
-                                <td>{{partida.unidad}}</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                                <td class="numerico">-</td>
-                            </template>
-
-                            <td class="numerico avance-importe" style="background-color: #ddd">{{partida.cantidad_format}}</td>
-                            <td class="numerico saldo" style="background-color: #ddd">{{partida.precio_format}}</td>
-                            <td class="numerico saldo" style="background-color: #ddd">{{partida.importe_format}}</td>
-                            <td class="destino" v-if="partida.item_subcontrato" :title="partida.item_subcontrato.concepto_path">{{partida.item_subcontrato.concepto_path_corta}}</td>
-                            <td class="destino" v-else :title="partida.concepto_path">{{partida.concepto_path_corta}}</td>
-                            <th></th>
-                        </tr>
-                    </tbody>
-				</table>
-                        <br />
-                         <div class=" row" >
-                            <label class="col-md-12 col-form-label">Observaciones:</label>
-                        </div>
-                        <div class=" row" >
-                            <div class="col-md-12">
-                               {{solicitud_cambio.observaciones}}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <solicitud-cambio-partial-show v-bind:solicitud="solicitud_cambio"></solicitud-cambio-partial-show>
 			</div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
@@ -114,9 +29,10 @@
     import DatosSolicitud from "./partials/DatosSolicitud";
     import DatosSubcontrato from "../subcontrato/partials/DatosSubcontrato";
     import TablaDatosSubcontrato from "../subcontrato/partials/TablaDatosSubcontrato";
+    import SolicitudCambioPartialShow from "./partials/PartialShow";
     export default {
         name: "solicitud-cambio-show",
-        components: {TablaDatosSubcontrato, DatosSubcontrato, DatosSolicitud},
+        components: {SolicitudCambioPartialShow, TablaDatosSubcontrato, DatosSubcontrato, DatosSolicitud},
         props: ["id"],
         data() {
             return {

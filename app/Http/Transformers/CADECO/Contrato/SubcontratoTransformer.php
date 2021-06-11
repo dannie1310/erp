@@ -100,7 +100,8 @@ class SubcontratoTransformer extends TransformerAbstract
             'empresa'=>(string) $model->empresa->razon_social,
             'seleccionado' => false,
             'id_tipo_contrato' =>($model->clasificacionSubcontrato) ? (int)$model->clasificacionSubcontrato->id_tipo_contrato:'',
-            'moneda' => $model->moneda->nombre
+            'moneda' => $model->moneda->nombre,
+            'tiene_nodo_extraordinario'=>$model->tiene_nodo_extraordinario,
         ];
     }
     /**

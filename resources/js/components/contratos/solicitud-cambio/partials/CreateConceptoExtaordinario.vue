@@ -1,14 +1,9 @@
 <template>
     <span>
-        <div class="row" >
-            <div class="col-md-12">
-                 <button class="btn btn-primary pull-right" title="Agregar concepto extraordinario" @click="init()">
-                     <i class="fa fa-plus-circle"></i> Agregar Concepto
-                 </button>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
+        <button class="btn btn-primary" title="Agregar concepto extraordinario" @click="init()">
+            <i class="fa fa-plus-circle"></i> Agregar Concepto Extraordinario
+        </button>
+
                 <div class="modal fade" ref="modalExtraordinario" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
@@ -117,8 +112,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
     </span>
 
 </template>

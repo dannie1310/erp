@@ -54,12 +54,26 @@ class Contrato extends Model
         return $this->hasMany(PresupuestoContratistaPartida::class, 'id_concepto', 'id_concepto');
     }
 
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'id_transaccion', 'id_transaccion')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->orderBy('nivel', 'ASC');
+    }
+
+    public function hijosSinOrden()
+    {
+        return $this->hasMany(self::class, 'id_transaccion', 'id_transaccion')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ;
+    }
+
     public function scopeAgrupadorExtraordinario($query){
-       return $query->where("nodo_extraordinarios",1);
+       return $query->where("nodo_extraordinarios","=",1);
     }
 
     public function scopeAgrupadorNuevoPrecio($query){
-        return $query->where("nodo_cambio_precio",1);
+        return $query->where("nodo_cambio_precio","=",1);
     }
 
     public function getCantidadHijosAttribute()
@@ -90,6 +104,11 @@ class Contrato extends Model
         return str_repeat('__', substr_count($this->nivel, '.')) . $this->descripcion;
     }
 
+    public function getTieneHijosAttribute()
+    {
+        return $this->hijos()->count() ? true : false;
+    }
+
     public function registrarDestino(){
         if($this->cantidad_original > 0){
             Destino::create([
@@ -102,5 +121,23 @@ class Contrato extends Model
             ]);
         }
 
+    }
+
+    public function getClaveContratoSelectAttribute()
+    {
+        if($this->clave != ''){
+            return "[" . $this->clave ."] ";
+        }
+        return "";
+    }
+
+    public function scopeRoots($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 4');
+    }
+
+    public function scopeContrato($query, $id_contrato)
+    {
+        return $query->where('id_transaccion','=', $id_contrato);
     }
 }

@@ -56,4 +56,9 @@ class SolicitudCambioController extends Controller
         $respuesta = $this->service->show($id)->rechazar($request->motivo);
         return $this->respondWithItem($respuesta);
     }
+
+    public function procesarLayoutExtraordinarios(Request $request){
+        $respuesta = $this->service->procesarLayoutExtraordinarios($request);
+        return response()->json($respuesta, 200);
+    }
 }

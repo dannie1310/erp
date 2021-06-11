@@ -84,6 +84,11 @@ class SolicitudCambioSubcontrato extends Transaccion
      * Scopes
      */
 
+    public function scopeAplicadas($query)
+    {
+        return $query->where("estado","=",1);
+    }
+
     /**
      * Atributos
      */
@@ -261,6 +266,30 @@ class SolicitudCambioSubcontrato extends Transaccion
 
     }
 
+    public function getMontoActualizadoSubcontratoAttribute(){
+        return $this->monto + $this->subcontratoOriginal->monto;
+    }
+
+    public function getMontoActualizadoSubcontratoFormatAttribute(){
+        return '$' .number_format($this->monto_actualizado_subcontrato, 2, '.',",");
+    }
+
+    public function getImpuestoActualizadoSubcontratoAttribute(){
+        return $this->impuesto + $this->subcontratoOriginal->impuesto;
+    }
+
+    public function getImpuestoActualizadoSubcontratoFormatAttribute(){
+        return '$' .number_format($this->impuesto_actualizado_subcontrato, 2, '.',",");
+    }
+
+    public function getSubtotalActualizadoSubcontratoAttribute(){
+        return $this->subtotal + $this->subcontratoOriginal->subtotal;
+    }
+
+    public function getSubtotalActualizadoSubcontratoFormatAttribute(){
+        return '$' .number_format($this->subtotal_actualizado_subcontrato, 2, '.',",");
+    }
+
     /**
      * Métodos
      */
@@ -277,6 +306,8 @@ class SolicitudCambioSubcontrato extends Transaccion
             $solicitud->id_empresa = $solicitud->subcontrato->id_empresa;
             $solicitud->id_moneda = $solicitud->subcontrato->id_moneda;
             $solicitud->save();
+            $nivel_extraordinario_anterior_num = 0;
+            $nivel_extraordinario_anterior = '';
             foreach($partidas as $partida){
                 if(key_exists("id_item_subcontrato", $partida) && $partida["id_tipo_modificacion"] != 3 ){
                     $itemSubcontrato = ItemSubcontrato::find($partida["id_item_subcontrato"]);
@@ -323,6 +354,30 @@ class SolicitudCambioSubcontrato extends Transaccion
                     ]);
                 }
                 if($partida["id_tipo_modificacion"] == 4) {
+                    $nivel_txt = '';
+                    if($nivel_extraordinario_anterior == ''){
+                        $nivel_txt = '000.';
+                        $nivel_extraordinario_anterior = $nivel_txt;
+                        $nivel_extraordinario_anterior_num = $partida['nivel'];
+                    }else{
+                        if($nivel_extraordinario_anterior_num + 1 == $partida['nivel']){
+                            $cant = Partida::where('nivel_txt', 'LIKE', $nivel_extraordinario_anterior.'___.')
+                                ->where('id_solicitud', '=', $solicitud->id_transaccion)
+                                ->where('id_tipo_modificacion', '=', 4)
+                                ->count();
+                            $nivel_txt = $nivel_extraordinario_anterior . str_pad($cant, 3, 0, 0) . '.';
+                            $nivel_extraordinario_anterior = $nivel_txt;
+                            $nivel_extraordinario_anterior_num = $partida['nivel'];
+                        }else{
+                            $cant = Partida::where('nivel_txt', 'LIKE', substr($nivel_extraordinario_anterior, 0, (($partida['nivel'] - 1) * 4)) . '___.')
+                                ->where('id_solicitud', '=', $solicitud->id_transaccion)
+                                ->where('id_tipo_modificacion', '=', 4)
+                                ->count();
+                            $nivel_txt = substr($nivel_extraordinario_anterior, 0, (($partida['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
+                            $nivel_extraordinario_anterior = $nivel_txt;
+                            $nivel_extraordinario_anterior_num = $partida['nivel'];
+                        }
+                    }
                     $solicitud->partidas()->create([
                         'id_solicitud' => $this->id_transaccion,
                         'id_tipo_modificacion' => $partida['id_tipo_modificacion'],
@@ -333,6 +388,9 @@ class SolicitudCambioSubcontrato extends Transaccion
                         'importe' => $partida['importe'],
                         'precio' => $partida['precio'],
                         'id_concepto' => $partida['id_concepto'],
+                        'nivel' => $partida['nivel'],
+                        'nivel_txt' => $nivel_txt,
+                        'id_nodo_carga' => $partida["id_nodo_carga"],
                     ]);
                 }
             }
@@ -374,10 +432,10 @@ class SolicitudCambioSubcontrato extends Transaccion
                 {
                     $this->aplicarCambioPrecio($partida);
                 }
-                if($partida->id_tipo_modificacion == 4)
-                {
-                    $this->aplicarExtraordinario($partida);
-                }
+            }
+            $partidas_extraordinarias = $this->partidas()->extraordinarias()->orderBy("nivel_txt")->get();
+            if(count($partidas_extraordinarias)>0){
+                $this->aplicarExtraordinarias($partidas_extraordinarias);
             }
             $this->subcontrato->recalcula();
             $this->estado = 1;
@@ -458,6 +516,73 @@ class SolicitudCambioSubcontrato extends Transaccion
         $partida->itemSubcontrato->contrato->save();
     }
 
+    private function aplicarExtraordinarias($partidas){
+        $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
+        $sin_extraordinario_previo = false;
+        if(!$concepto_agrupador_extraordinario){
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden()->orderBy("nivel","desc")->first();
+            $ultimo_nivel = $ultimo_concepto->nivel;
+            $ultimo_nivel_exp = explode(".", $ultimo_nivel);
+            $nivel_nodo_extraordinario = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
+            $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->create([
+                'clave'=>'EXT',
+                'descripcion' => "EXTRAORDINARIOS",
+                'nodo_extraordinarios'=>1,
+                'nivel'=>$nivel_nodo_extraordinario
+            ]);
+            $this->subcontrato->contratoProyectado->load("contratos");
+            $sin_extraordinario_previo = true;
+            $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
+        } else if($contrato_raiz = Contrato::where("id_concepto","=",$partidas[0]->id_nodo_carga)->first()) {
+            $nivel_ultimo_hijo_contrato_raiz = $contrato_raiz->hijosSinOrden()->orderBy("nivel","desc")->pluck("nivel")->first();
+            $nivel_ultimo_hijo_contrato_raiz_exp = explode(".",$nivel_ultimo_hijo_contrato_raiz);
+            $consecutivo_ultimo_hijo = $nivel_ultimo_hijo_contrato_raiz_exp[count($nivel_ultimo_hijo_contrato_raiz_exp)-2];
+            $consecutivo_nuevo_extraordinario = $consecutivo_ultimo_hijo+1;
+            $nivel_raiz = $contrato_raiz->nivel;
+        } else{
+            $nivel_ultimo_hijo_contrato_raiz = $concepto_agrupador_extraordinario->hijosSinOrden()->orderBy("nivel","desc")->pluck("nivel")->first();
+            $nivel_ultimo_hijo_contrato_raiz_exp = explode(".",$nivel_ultimo_hijo_contrato_raiz);
+            $consecutivo_ultimo_hijo = $nivel_ultimo_hijo_contrato_raiz_exp[count($nivel_ultimo_hijo_contrato_raiz_exp)-2];
+            $consecutivo_nuevo_extraordinario = $consecutivo_ultimo_hijo+1;
+            $nivel_raiz = $concepto_agrupador_extraordinario->nivel;
+        }
+
+        foreach($partidas as $partida){
+            if($sin_extraordinario_previo){
+                $nivel = $nivel_raiz.$partida->nivel_txt;
+            } else{
+                $nivel_partida_explode = explode(".", $partida->nivel_txt);
+                $consecutivo_inicial = ($consecutivo_nuevo_extraordinario+$nivel_partida_explode[0]);
+                $nivel = $nivel_raiz.sprintf("%03d", $consecutivo_inicial).".".substr($partida->nivel_txt,4, strlen($partida->nivel_txt)-4);
+            }
+
+            $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
+            $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
+                'clave'=>$partida->clave,
+                'descripcion' => $descripcion,
+                'unidad' => $partida->unidad,
+                'cantidad_presupuestada' => $partida->cantidad,
+                'cantidad_original' => $partida->cantidad,
+                'id_destino' => $partida->id_concepto,
+                'nivel'=>$nivel
+            ]);
+            $this->subcontrato->contratoProyectado->load("contratos");
+            if($contrato->unidad!=''){
+                $this->subcontrato->partidas()->create([
+                    'id_concepto' => $contrato->id_concepto,
+                    'id_antecedente' => $contrato->id_transaccion,
+                    'cantidad' => $partida->cantidad,
+                    'precio_unitario' => $partida->precio,
+                    'cantidad_original1' => $partida->cantidad,
+                    'precio_unitario' => $partida->precio,
+                    'precio_original1' => $partida->precio,
+                    'id_sm_partida' => $partida->id,
+                ]);
+            }
+        }
+        $this->subcontrato->load("partidas");
+    }
+
     private function aplicarExtraordinario($partida){
         $concepto_agrupador_extraordinario = $this->subcontrato->contratoProyectado->contratos()->agrupadorExtraordinario()->first();
         if(!$concepto_agrupador_extraordinario){
@@ -512,7 +637,7 @@ class SolicitudCambioSubcontrato extends Transaccion
     private function aplicarCambioPrecio($partida){
         $concepto_agrupador_nuevo_precio = $this->subcontrato->contratoProyectado->contratos()->agrupadorNuevoPrecio()->first();
         if(!$concepto_agrupador_nuevo_precio){
-            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden->sortByDesc("nivel")->first();
+            $ultimo_concepto = $this->subcontrato->contratoProyectado->contratosSinOrden()->orderBy("nivel","desc")->first();
             $ultimo_nivel = $ultimo_concepto->nivel;
             $ultimo_nivel_exp = explode(".", $ultimo_nivel);
             $nivel_nodo_nuevo_precio = sprintf("%03d", $ultimo_nivel_exp[0]+1)."." ;
@@ -555,9 +680,11 @@ class SolicitudCambioSubcontrato extends Transaccion
         $this->subcontrato->contratoProyectado->load("contratos");
         $this->subcontrato->partidas()->create([
             'id_concepto' => $contrato->id_concepto,
-            'unidad' => $item_subcontrato_original->contrato->unidad,
+            'id_antecedente' => $contrato->id_transaccion,
             'cantidad' => $partida->cantidad,
+            'cantidad_original1' => $partida->cantidad,
             'precio_unitario' => $partida->precio,
+            'precio_original1' => $partida->precio,
             'id_sm_partida' => $partida->id,
         ]);
         $this->subcontrato->load("partidas");

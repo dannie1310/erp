@@ -69,30 +69,30 @@ class SubcontratoFormato extends FPDI
 
             $this->Cell(11.5);
             $this->Cell(2.5,.5, 'OBRA','LT',0,'L');
-            $this->Cell(5.5,.5, $this->obra->nombre.' ','RT',0,'L');
+            $this->Cell(5.5,.5, $this->obra->nombre.' ','RT',0,'R');
             $this->Ln(.5);
 
 
             $this->SetFont('Arial', 'B', 10);
             $this->Cell(11.5);
-            $this->Cell(2.5,.5, 'FECHA ','L',0,'L');
-            $this->Cell(5.5,.5, $this->subcontrato->fecha_format.' ','R',0,'L');
+            $this->Cell(2.5,.5, 'FECHA:','L',0,'L');
+            $this->Cell(5.5,.5, $this->subcontrato->fecha_format.' ','R',0,'R');
             $this->Ln(.5);
 
             $this->SetFont('Arial', 'B', 10);
             $this->Cell(11.5);
-            $this->Cell(2.5,.5, 'FOLIO ','L',0,'L');
-            $this->Cell(5.5,.5, $this->subcontrato->clasificacionSubcontrato->folio_format.' ','R',0,'L');
+            $this->Cell(2.5,.5, 'FOLIO:','L',0,'L');
+            $this->Cell(5.5,.5, $this->subcontrato->clasificacionSubcontrato->folio_format.' ','R',0,'R');
             $this->Ln(.5);
 
             $this->SetFont('Arial', 'B', 10);
             $this->Cell(11.5);
-            $this->Cell(2.5,.5, 'CONTRATO ','L',0,'L');
-            $this->Cell(5.5,.5, $this->subcontrato->contratoProyectado->folio_format.' ','R',0,'L');
+            $this->Cell(2.5,.5, 'CONTRATO:','L',0,'L');
+            $this->Cell(5.5,.5, $this->subcontrato->contratoProyectado->folio_format.' ','R',0,'R');
             $this->Ln(.5);
 
             $this->Cell(11.5);
-            $this->Cell(2.5,.5,'TOTAL ','LB',0,'L');
+            $this->Cell(2.5,.5,'TOTAL:','LB',0,'L');
             $this->Cell(5.5,.5, "$ ". number_format($this->subcontrato->monto, 2, ',', '.'),'RB',1,'R');
 
             if($ln > 0){
@@ -124,15 +124,15 @@ class SubcontratoFormato extends FPDI
             $this->SetTextColor('0,0,0');
             $this->SetFont('Arial', 'B', 11);
             $this->Cell(11.5);
-            $this->CellFit(1.5,.7,'No. '.($this->subcontrato->clasificacionSubcontrato?$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta:'').': ','LT',0,'L');
-            $this->CellFit(6.5,.7, $referencia,'RT',0,'L');
+            $this->Cell(1.5,.7,'No. '.($this->subcontrato->clasificacionSubcontrato?$this->subcontrato->clasificacionSubcontrato->tipo->descripcion_corta:'').': ','LT',0,'L');
+            $this->Cell(6.5,.7, $referencia,'RT',0,'R');
             $this->Ln(.7);
 
             $this->SetFont('Arial', 'B', 20);
-            $this->CellFit(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
+            $this->Cell(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
             $this->SetFont('Arial', 'B', 10);
-            $this->Cell(4.5,.7, 'FECHA :','BL',0,'L');
-            $this->Cell(3.5,.7, $this->subcontrato->fecha_format.' ','RB',0,'L');
+            $this->Cell(4.5,.7, 'FECHA:','BL',0,'L');
+            $this->Cell(3.5,.7, $this->subcontrato->fecha_format.' ','RB',0,'R');
             $this->Ln(.7);
 
             $this->Ln(.6);
@@ -345,48 +345,45 @@ class SubcontratoFormato extends FPDI
         $this->encola="";
         $y_subtotal = $this->GetY();
         $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(17.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($this->subcontrato->subtotal_antes_descuento,2, '.', ','), 1, 0,'R');
+        $this->SetFont('Arial', '', 7);
+        $this->Cell(17.5, .5, 'Subtotal Antes Descuento:', 0, 0,'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->subtotal_antes_descuento,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'Descuento Global ('.$this->subcontrato->PorcentajeDescuento.'%):', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($desc_monetario,2, '.', ','), 1, 0,'R');
+        $this->Cell(17.5, .5, 'Descuento Global ('.$this->subcontrato->PorcentajeDescuento.'%):', 0, 0,'R');
+        $this->Cell(2, .5, number_format($desc_monetario,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
 
-        $this->CellFitScale(17.5, .5, 'Subtotal:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($this->subcontrato->subtotal,2, '.', ','), 1, 0,'R');
+        $this->Cell(17.5, .5, 'Subtotal:', 0, 0,'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->subtotal,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'IVA:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($this->subcontrato->impuesto,2, '.', ','), 1, 0,'R');
+        $this->Cell(17.5, .5, 'IVA:', 0, 0,'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->impuesto,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'Total:', 0, 0,'R');
-        $this->CellFitScale(2, .5, number_format($this->subcontrato->monto,2, '.', ','), 1, 0,'R');
+        $this->Cell(17.5, .5, 'Total:', 0, 0,'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->monto,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
-        $this->CellFitScale(17.5, .5, 'Moneda:', 0, 0,'R');
-        $this->CellFitScale(2, .5, $this->subcontrato->moneda->nombre, 1, 0,'R');
+        $this->Cell(17.5, .5, 'Moneda:', 0, 0,'R');
+        $this->Cell(2, .5, $this->subcontrato->moneda->nombre, 1, 0,'R');
+        $this->Ln(.5);
+
+        $this->SetTextColor(0,0,0);
+        $this->Cell(17.5, .5, 'Anticipo ('.$this->subcontrato->anticipo.'%): ', 0, 0,'R');
+        $this->Cell(2, .5, number_format($this->subcontrato->anticipo_monto,2, '.', ','), 1, 0,'R');
+        $this->Ln(.5);
+
+        $this->SetTextColor(0,0,0);
+        $this->Cell(17.5, .5,  utf8_decode('Fondo de garantía ('.$this->subcontrato->retencion).'%): ', 0, 0,'R');
+        $this->Cell(2, .5, number_format($fg_monto,2, '.', ','), 1, 0,'R');
         $this->Ln(.7);
 
         $this->SetTextColor(0,0,0);
         $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(17.5, .5, 'Anticipo ('.$this->subcontrato->anticipo.' %): ', 0, 0,'R');
+        $this->Cell(3, .5, utf8_decode('Plazo de Ejecución:'), 0, 0,'L');
         $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5, number_format($this->subcontrato->anticipo_monto,2, '.', ','), 1, 0,'R');
-        $this->Ln(.7);
-
-        $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(17.5, .5,  utf8_decode('Fondo de garantía ('.$this->subcontrato->retencion).' %): ', 0, 0,'R');
-        $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5, number_format($fg_monto,2, '.', ','), 1, 0,'R');
-        $this->Ln(.7);
-
-        $this->SetTextColor(0,0,0);
-        $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(3, .5, utf8_decode('Plazo de Ejecución: Del'), 0, 0,'L');
-        $this->SetFont('Arial', '', 9);
-        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_inicio_ejecucion_format:''), 1, 0,'L');
-        $this->CellFitScale(.5, .5, utf8_decode(' al'), 0, 0,'L');
-        $this->CellFitScale(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_fin_ejecucion_format:''), 1, 0,'L');
+        $this->Cell(1, .5, utf8_decode(' del'), 0, 0,'L');
+        $this->Cell(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_inicio_ejecucion_format:''), 1, 0,'L');
+        $this->Cell(1, .5, utf8_decode(' al'), 0, 0,'L');
+        $this->Cell(2, .5, ' '.($this->subcontrato->subcontratos?$this->subcontrato->subcontratos->fecha_fin_ejecucion_format:''), 1, 0,'L');
         $this->Ln(.7);
 
         $this->SetWidths(array(19.5));

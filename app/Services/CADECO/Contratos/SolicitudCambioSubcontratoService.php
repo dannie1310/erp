@@ -4,16 +4,21 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Facades\Context;
+use App\Imports\SolicitudEdicionImport;
+use App\Models\CADECO\Concepto;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SolicitudCambioSubcontrato as Model;
+use App\Models\CADECO\Unidad;
 use App\PDF\Contratos\SolicitudCambioSubcontratoFormato;
 use App\Repositories\CADECO\SubcontratosCM\SolicitudCambioSubcontratoRepository as Repository;
 use App\Services\CADECO\Documentacion\ArchivoService;
 use DateTime;
 use DateTimeZone;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudCambioSubcontratoService
 {
@@ -140,6 +145,8 @@ class SolicitudCambioSubcontratoService
                 "descripcion"=>$concepto_extraordinario["descripcion"],
                 "unidad"=>$concepto_extraordinario["unidad"],
                 "id_concepto"=>$concepto_extraordinario["destino"],
+                "nivel"=>$concepto_extraordinario["nivel"],
+                "id_nodo_carga"=>$concepto_extraordinario["id_nodo_carga"],
             ];
             $i++;
         }
@@ -161,5 +168,123 @@ class SolicitudCambioSubcontratoService
     {
         $pdf = new SolicitudCambioSubcontratoFormato($id);
         return $pdf;
+    }
+
+    private function getFileXLS($nombre_archivo, $archivo_xls)
+    {
+        $paths = $this->generaDirectorios($nombre_archivo);
+        $exp = explode("base64,", $archivo_xls);
+        $data = base64_decode($exp[1]);
+        $file_xls = public_path($paths["path_xls"]);
+        file_put_contents($file_xls, $data);
+        return $file_xls;
+    }
+
+    private function generaDirectorios($nombre_archivo)
+    {
+        $nombre = $nombre_archivo . "_" . date("Ymdhis") . ".xlsx";
+        $dir_xls = "uploads/contratos/solicitud_cambio_subcotrato/extraordinarios";
+        $path_xls = $dir_xls . $nombre;
+
+        if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
+            mkdir($dir_xls, 777, true);
+        }
+        return ["path_xls" => $path_xls, "dir_xls" => $dir_xls];
+    }
+
+    private function getDatosExtraordinarios($file_xls)
+    {
+        $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
+        $partidas = [];
+        foreach ($rows[0] as $key => $row) {
+            $partidas[$key] = [
+                'clave' => $row[0],
+                'descripcion' => $row[1],
+                'nivel' => $row[2],
+                'unidad' => $row[3],
+                'precio' => $row[4],
+                'cantidad' => $row[5],
+                'destino' => array_key_exists(6, $row)?$row[6]:null,
+            ];
+        }
+        return $partidas;
+    }
+
+    public function procesarLayoutExtraordinarios($data){
+        $file_xls = $this->getFileXLS($data->nombre_archivo, $data->extraordinarios);
+        $partidas = $this->getDatosExtraordinarios($file_xls);
+
+        $index_padre = 0;
+        $nivel_anterior = 0;
+        $contratos = array();
+
+        foreach($partidas as $key => $partida){
+            $destino ='';
+            $destino_path = '';
+            $destino_path_corta = '';
+            $destino_error = '';
+            $unidad = '';
+            $unidad_error = '';
+            $clave = '';
+            $clave_error = '';
+            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                if($concepto->es_agrupador){
+                    $destino = $concepto->id_concepto;
+                    $destino_path = $concepto->path;
+                    $destino_path_corta = $concepto->path_corta;
+                }
+            } else if($partida["destino"]) {
+                $destino_error = $partida["destino"];
+            }
+            if($partida['unidad'] && $unidadCat = Unidad::where('unidad', '=', $partida['unidad'])->first()){
+                if($unidadCat){
+                    $unidad = $unidadCat->unidad;
+                }
+            } else if($partida["unidad"]) {
+                $unidad_error = $partida["unidad"];
+            }
+            $clave_preexistente = Contrato::where("id_transaccion","=", $data->id_contrato_proyectado)
+                ->where("clave","=",$partida["clave"])->first();
+            if($clave_preexistente){
+                $clave_error = $partida["clave"];
+            } else {
+                $clave = $partida["clave"];
+            }
+            $contratos[$key] = [
+                'clave' => $clave,
+                'descripcion' => $partida['descripcion'],
+                'unidad' => $unidad,
+                'cantidad' => $partida['cantidad'],
+                'destino' => $destino,
+                'destino_path' => $destino_path,
+                'destino_path_corta' => $destino_path_corta,
+                'precio' => $partida['precio'],
+                'importe' => $partida['precio']*$partida["cantidad"],
+                'nivel' => (int) $partida['nivel'],
+                'es_hoja' => $partida['cantidad']?true:false,
+                'cantidad_hijos' => 0,
+                'destino_error' => $destino_error,
+                'unidad_error' => $unidad_error,
+                'clave_error' => $clave_error,
+                'id_nodo_carga' => $data->id_contrato_nodo_carga,
+            ];
+            if($key == 0){
+                $index_padre = $key;
+                $nivel_anterior = $partida['nivel'];
+                continue;
+            }
+
+            if($nivel_anterior == $partida['nivel']){
+                $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
+                continue;
+            }
+
+            if($nivel_anterior < $partida['nivel']){
+                $index_base = $key - 1;
+                while($contratos[$index_base]['nivel'] >= $partida['nivel']){$index_base--;}
+                $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
+            }
+        }
+        return $contratos;
     }
 }

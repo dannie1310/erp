@@ -35,6 +35,8 @@ class PartidaTransformer extends TransformerAbstract
             'importe_format' => $model->importe_format,
             'concepto_path' => $model->concepto_path,
             'concepto_path_corta' => $model->concepto_path_corta,
+            'nivel' => $model->nivel,
+            'tiene_hijos' => $model->tiene_hijos
         ];
     }
 

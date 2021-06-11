@@ -39,36 +39,34 @@
         <div class="card" v-if="conceptos" >
 			<div class="card-body">
                 <div class="row" >
-
-            <div class="col-md-2">
-                <label for="fecha" class="col-form-label">Fecha: </label>
-                <datepicker v-model = "fecha"
-                            id="fecha"
-                            name = "fecha"
-                            :format = "formatoFecha"
-                            :language = "es"
-                            :bootstrap-styling = "true"
-                            class = "form-control"
-                            :disabled-dates="fechasDeshabilitadas"
-                            v-validate="{required: true}"
-                            :class="{'is-invalid': errors.has('fecha')}"
-                ></datepicker>
-                <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-            </div>
-            <div class="col-md-3">
-                <label for="archivo" class="col-form-label">Soporte (PDF): </label>
-                <input type="file" class="form-control" id="archivo"
-                       @change="onFileChange"
-                       row="3"
-                       v-validate="{ ext: ['pdf']}"
-                       name="archivo"
-                       data-vv-as="Soporte"
-                       ref="archivo"
-                       :class="{'is-invalid': errors.has('archivo')}">
-                <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
-            </div>
-
-        </div>
+                    <div class="col-md-2">
+                        <label for="fecha" class="col-form-label">Fecha: </label>
+                        <datepicker v-model = "fecha"
+                                    id="fecha"
+                                    name = "fecha"
+                                    :format = "formatoFecha"
+                                    :language = "es"
+                                    :bootstrap-styling = "true"
+                                    class = "form-control"
+                                    :disabled-dates="fechasDeshabilitadas"
+                                    v-validate="{required: true}"
+                                    :class="{'is-invalid': errors.has('fecha')}"
+                        ></datepicker>
+                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="archivo" class="col-form-label">Soporte (PDF): </label>
+                        <input type="file" class="form-control" id="archivo"
+                               @change="onFileChange"
+                               row="3"
+                               v-validate="{ ext: ['pdf']}"
+                               name="archivo"
+                               data-vv-as="Soporte"
+                               ref="archivo"
+                               :class="{'is-invalid': errors.has('archivo')}">
+                        <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (pdf)</div>
+                    </div>
+                </div>
                 <br />
 		        <div class="row">
                     <div class="col-md-6">
@@ -187,7 +185,17 @@
 
                 <div class="row" >
                     <div class="col-md-12">
-                        <ConceptoExtraordinario v-on:agrega-extraordinario="onAgregaExtraordinario" v-bind:concepto="concepto_extraordinario"></ConceptoExtraordinario>
+                        <div class="pull-right">
+                            <CreateConceptosExtaordinarios
+                                v-on:agrega-extraordinarios="onAgregaExtraordinarios"
+                                v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"
+                                v-bind:tiene_nodo_extraordinario="subcontrato.tiene_nodo_extraordinario">
+                            </CreateConceptosExtaordinarios>
+                            <ConceptoExtraordinario
+                                v-on:agrega-extraordinario="onAgregaExtraordinario"
+                                v-bind:concepto="concepto_extraordinario">
+                            </ConceptoExtraordinario>
+                        </div>
                     </div>
                 </div>
                 <br />
@@ -227,7 +235,8 @@
                                         <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                                         <td :title="concepto.descripcion">
                                             <span v-for="n in concepto.nivel">&nbsp;</span>
-                                            <b>{{concepto.descripcion}}</b></td>
+                                            <b>{{concepto.descripcion}}</b>
+                                        </td>
                                         <td></td>
                                         <td class="numerico contratado"/>
                                         <td class="numerico contratado"/>
@@ -287,36 +296,71 @@
                                     <td></td>
                                     <td colspan="13"><b>&nbsp;&nbsp;Nuevos Conceptos Extraordinarios</b></td>
                                 </tr>
-                                <tr  v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
-                        <td >{{ concepto_extraordinario.clave }}</td>
-                        <td >
-                            {{concepto_extraordinario.descripcion}}
-                        </td>
-                        <td class="centrado">{{concepto_extraordinario.unidad}}</td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico contratado"></td>
-                        <td class="numerico avance-volumen"></td>
-                        <td class="numerico avance-importe"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo"></td>
-                        <td class="numerico saldo" style="background-color: #ddd">
-                            {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
-                        </td>
-                        <td class="numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
-                        </td>
-                        <td class="numerico" style="background-color: #ddd">
-                            ${{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
 
-                        </td>
-                        <td  class="destino" :title="concepto_extraordinario.destino_path">{{ concepto_extraordinario.destino_path_corta }}</td>
-                        <td>
-                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                <i class="fa fa-trash" v-else></i>
-                            </button>
-                        </td>
-                    </tr>
+                                <template v-for="(concepto_extraordinario, j) in conceptos_extraordinarios">
+
+                                    <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0 || concepto_extraordinario.unidad == '' || concepto_extraordinario.clave == ''?`background-color : #f5c6cb`:``">
+                                        <td :title="concepto_extraordinario.clave" v-if="concepto_extraordinario.clave !==''">{{concepto_extraordinario.clave}}</td>
+                                        <td :title="concepto_extraordinario.clave" v-else style="background-color: #e75757">{{concepto_extraordinario.clave_error}}</td>
+                                        <td :title="concepto_extraordinario.descripcion">
+                                            <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
+                                            {{concepto_extraordinario.descripcion}}
+                                        </td>
+                                        <td class="centrado" v-if="concepto_extraordinario.unidad !==''">{{concepto_extraordinario.unidad}}</td>
+                                        <td class="centrado" v-else style="background-color: #e75757">{{concepto_extraordinario.unidad_error}}</td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico avance-volumen"></td>
+                                        <td class="numerico avance-importe"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo" style="background-color: #ddd">
+                                            {{ parseFloat(concepto_extraordinario.cantidad).formatMoney(2) }}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd">
+                                            ${{ parseFloat(concepto_extraordinario.precio).formatMoney(2)  }}
+                                        </td>
+                                        <td class="numerico" style="background-color: #ddd">
+                                            ${{ parseFloat(concepto_extraordinario.importe).formatMoney(2)  }}
+
+                                        </td>
+                                        <td  class="destino" :title="concepto_extraordinario.destino_path" v-if="concepto_extraordinario.destino>0">{{ concepto_extraordinario.destino_path_corta }}</td>
+                                        <td  class="destino" v-else style="background-color: #e75757">{{ concepto_extraordinario.destino_error }}</td>
+                                        <td>
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja || concepto_extraordinario.cantidad_hijos > 0">
+                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <i class="fa fa-trash" v-else></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr v-else :style="concepto_extraordinario.clave == ''?`background-color : #f5c6cb`:``">
+                                        <td :title="concepto_extraordinario.clave" v-if="concepto_extraordinario.clave !==''"><b>{{concepto_extraordinario.clave}}</b></td>
+                                        <td :title="concepto_extraordinario.clave" v-else style="background-color: #e75757"><b>{{concepto_extraordinario.clave_error}}</b></td>
+                                        <td >
+                                            <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
+                                            <b>{{concepto_extraordinario.descripcion}}</b>
+                                        </td>
+                                        <td class="centrado"></td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico contratado"></td>
+                                        <td class="numerico avance-volumen"></td>
+                                        <td class="numerico avance-importe"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo"></td>
+                                        <td class="numerico saldo" >
+                                        </td>
+                                        <td class="numerico" ></td>
+                                        <td class="numerico" ></td>
+                                        <td  class="destino" ></td>
+                                        <td>
+                                            <button @click="eliminarPartida(j)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar" :disabled="!concepto_extraordinario.es_hoja || concepto_extraordinario.cantidad_hijos > 0">
+                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <i class="fa fa-trash" v-else></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+
+                                </template>
 
                                 <tr v-if="conceptos_cambios_precio.length>0">
                                     <td></td>
@@ -356,34 +400,34 @@
                     </div>
                 </div>
 
-                <br />
+    <br />
 
-               <div class="row">
-                   <div class="col-md-12"><b>Observaciones:</b> </div>
-               </div>
-               <div class="row">
-                   <div class="col-md-12">
-                       <textarea
-                           name="observaciones"
-                           id="observaciones"
-                           class="form-control"
-                           v-model="observaciones"
-                       ></textarea>
-                   </div>
-               </div>
-                <br />
+   <div class="row">
+       <div class="col-md-12"><b>Observaciones:</b> </div>
+   </div>
+   <div class="row">
+       <div class="col-md-12">
+           <textarea
+               name="observaciones"
+               id="observaciones"
+               class="form-control"
+               v-model="observaciones"
+           ></textarea>
+       </div>
+   </div>
+    <br />
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <button class="btn btn-primary float-right" type="submit" @click="validate"
-                                :disabled="errors.count() > 0 || !conceptos">
-                            <i class="fa fa-save"></i>
-                            Guardar
-                        </button>
-                    </div>
-		        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <button class="btn btn-primary float-right" type="submit" @click="validate"
+                        :disabled="errors.count() > 0 || !conceptos">
+                    <i class="fa fa-save"></i>
+                    Guardar
+                </button>
             </div>
         </div>
+    </div>
+</div>
 
         <div class="modal fade" ref="modalCambioPrecio" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
@@ -458,10 +502,11 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
+    import CreateConceptosExtaordinarios from "./partials/CreateConceptosExtaordinarios";
     let id_cambio_precio  = 0;
     export default {
         name: "solicitud_cambio-create",
-        components: {ModelListSelect, Datepicker, es, ConceptoExtraordinario},
+        components: {CreateConceptosExtaordinarios, ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {
                 archivo:'',
@@ -492,6 +537,10 @@
                     unidad:'',
                     destino:'',
                     precio:'',
+                    nivel:1,
+                    es_hoja:0,
+                    cantidad_hijos:0,
+                    id_nodo_carga:'',
                 },
                 conceptos_cambios_precio : [],
                 concepto_cambio_precio :{
@@ -557,8 +606,44 @@
             },
 			validate() {
 				this.$validator.validate().then(result => {
+				    let error_destinos = false;
+                    let error_unidades = false;
+                    let error_claves = false;
 					if (result) {
-                        this.store();
+					    this.conceptos_extraordinarios.forEach(function(concepto_extraordinario, i){
+					        if(!concepto_extraordinario["destino"]>0 && concepto_extraordinario.es_hoja == true)
+                            {
+                                error_destinos = true;
+                            }
+
+                            if(concepto_extraordinario["unidad"]==='' && concepto_extraordinario.es_hoja == true)
+                            {
+                                error_unidades = true;
+                            }
+
+                            if(concepto_extraordinario["clave"]==='')
+                            {
+                                error_claves = true;
+                            }
+                        });
+					    if(error_destinos === false && error_unidades == false && error_claves == false){
+                            this.store();
+                        } else if(error_destinos === false && error_unidades == false && error_claves == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === false && error_unidades == true && error_claves == false){
+                            swal('Error',"Hay partidas extraordinarias con errores en la unidad, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === false && error_unidades == true && error_claves == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave y unidad, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === true && error_unidades == false && error_claves == false){
+					        swal('Error',"Hay partidas extraordinarias con errores en el destino, favor de corregir para poder realizar el registro",'error');
+                        }  else if(error_destinos === true && error_unidades == false && error_claves == true){
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave y el destino, favor de corregir para poder realizar el registro",'error');
+                        } else if(error_destinos === true && error_unidades == true && error_claves == false){
+                            swal('Error',"Hay partidas extraordinarias con errores en la unidad y el destino, favor de corregir para poder realizar el registro",'error');
+                        } else {
+                            swal('Error',"Hay partidas extraordinarias con errores en la clave, unidad y destino, favor de corregir para poder realizar el registro",'error');
+                        }
+
 					}
 				});
 			},
@@ -684,6 +769,10 @@
                         destino_path:data.path,
                         destino_path_corta:data.path_corta,
                         precio:concepto.precio,
+                        nivel:1,
+                        es_hoja:0,
+                        cantidad_hijos:0,
+                        id_nodo_carga:'',
                         importe:(concepto.cantidad * concepto.precio).toFixed(2),
                     });
 
@@ -696,13 +785,36 @@
                         destino_path:'',
                         destino_path_corta:'',
                         precio:'',
-                        importe:''
+                        importe:'',
+                        nivel:1,
+                        es_hoja:0,
+                        cantidad_hijos:0,
+                        id_nodo_carga:'',
                     };
                     this.changeCantidad();
                 })
             },
+            onAgregaExtraordinarios(partidas){
+                let self = this;
+                partidas.forEach(function(partida, i){
+                    self.conceptos_extraordinarios.push(partida);
+                });
+                this.changeCantidad();
+            },
             eliminarPartida(index){
-                this.conceptos_extraordinarios.splice(index, 1);
+                if(this.conceptos_extraordinarios[index].nivel === 1){
+                    this.conceptos_extraordinarios.splice(index, 1);
+                }else{
+                    let temp_index = index - 1;
+                    while(temp_index in this.conceptos_extraordinarios && this.conceptos_extraordinarios[temp_index].nivel == +this.conceptos_extraordinarios[index].nivel){
+                        temp_index= temp_index - 1;
+                    }
+                    this.conceptos_extraordinarios[temp_index].cantidad_hijos = this.conceptos_extraordinarios[temp_index].cantidad_hijos - 1;
+                    this.conceptos_extraordinarios.splice(index, 1);
+                    if(this.conceptos_extraordinarios[temp_index].cantidad_hijos == 0){
+                        this.conceptos_extraordinarios[temp_index].es_hoja = true;
+                    }
+                }
                 this.changeCantidad();
             },
             eliminarPartidaCambioPrecio(index, concepto_cambio_precio){

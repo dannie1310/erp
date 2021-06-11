@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
+use App\Models\CADECO\SubcontratosCM\ItemSubcontratoOriginal;
 
 class ItemSubcontrato extends Item
 {
@@ -28,7 +29,7 @@ class ItemSubcontrato extends Item
         'cantidad_original1',
         'precio_original1',
         'id_asignacion',
-        'id_cm_item',
+        'id_sm_partida',
     ];
     public function subcontrato()
     {
@@ -58,6 +59,11 @@ class ItemSubcontrato extends Item
     public function partidaSubcontratoEliminada()
     {
         return $this->belongsTo(SubcontratoPartidaEliminada::class, 'id_item');
+    }
+
+    public function valoresOriginales()
+    {
+        return $this->hasMany(ItemSubcontratoOriginal::class, "id_item", "id_item");
     }
 
     public function getCantidadTotalEstimadaAttribute()
@@ -228,5 +234,30 @@ class ItemSubcontrato extends Item
             return null;
         }
 
+    }
+
+    public function getCantidadOriginal($id_solicitud)
+    {
+        return $this->valoresOriginales()->where("id_solicitud","=",$id_solicitud)->first()->cantidad;
+    }
+
+    public function getCantidadOriginalFormat($id_solicitud)
+    {
+        return number_format($this->getCantidadOriginal($id_solicitud),2,".",",");
+    }
+
+    public function getPrecioUnitarioOriginal($id_solicitud)
+    {
+        return $this->valoresOriginales()->where("id_solicitud","=",$id_solicitud)->first()->precio_unitario;
+    }
+
+    public function getImporteOriginal($id_solicitud)
+    {
+        return $this->getCantidadOriginal($id_solicitud) * $this->getPrecioUnitarioOriginal($id_solicitud);
+    }
+
+    public function getImporteOriginalFormat($id_solicitud)
+    {
+        return "$".number_format($this->getImporteOriginal($id_solicitud),2,".",",");
     }
 }
