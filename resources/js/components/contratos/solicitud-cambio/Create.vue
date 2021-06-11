@@ -901,9 +901,13 @@
 						}
 					})
 							.then(data => {
-                                this.conceptos = data.partidas_convenio.data;
+							    if(data.partidas_convenio){
+                                    this.conceptos = data.partidas_convenio.data;
+                                } else {
+                                    this.conceptos = [];
+                                }
 								this.subcontrato = data;
-								this.observaciones = data.Observaciones;
+								this.observaciones = data.observaciones;
 								this.tasa_iva = data.obra.iva;
 							})
 							.finally(() => {
