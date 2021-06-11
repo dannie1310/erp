@@ -84,6 +84,11 @@ class SolicitudCambioSubcontrato extends Transaccion
      * Scopes
      */
 
+    public function scopeAplicadas($query)
+    {
+        return $query->where("estado","=",1);
+    }
+
     /**
      * Atributos
      */
@@ -259,6 +264,30 @@ class SolicitudCambioSubcontrato extends Transaccion
             return "-". number_format(abs($this->porcentaje_cambio), 4, '.', ",").'%';
         }
 
+    }
+
+    public function getMontoActualizadoSubcontratoAttribute(){
+        return $this->monto + $this->subcontratoOriginal->monto;
+    }
+
+    public function getMontoActualizadoSubcontratoFormatAttribute(){
+        return '$' .number_format($this->monto_actualizado_subcontrato, 2, '.',",");
+    }
+
+    public function getImpuestoActualizadoSubcontratoAttribute(){
+        return $this->impuesto + $this->subcontratoOriginal->impuesto;
+    }
+
+    public function getImpuestoActualizadoSubcontratoFormatAttribute(){
+        return '$' .number_format($this->impuesto_actualizado_subcontrato, 2, '.',",");
+    }
+
+    public function getSubtotalActualizadoSubcontratoAttribute(){
+        return $this->subtotal + $this->subcontratoOriginal->subtotal;
+    }
+
+    public function getSubtotalActualizadoSubcontratoFormatAttribute(){
+        return '$' .number_format($this->subtotal_actualizado_subcontrato, 2, '.',",");
     }
 
     /**

@@ -104,11 +104,11 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         if ($this->encola == 'partidas')
         {
             $this->tableHeader();
-        }
-
-        $currentPage = $this->PageNo();
-        if($currentPage>1){
-            $this->Ln();
+        } else{
+            $currentPage = $this->PageNo();
+            if($currentPage>1){
+                $this->Ln();
+            }
         }
     }
 
@@ -135,6 +135,8 @@ class SolicitudCambioSubcontratoFormato extends Rotation
             "Destino Presupuesto"
         ]);
 
+        $this->setEstilo("partidas");
+
     }
 
     public function partidas()
@@ -153,7 +155,7 @@ class SolicitudCambioSubcontratoFormato extends Rotation
                         $i,
                         $p->tipo->descripcion,
                         $p->clave,
-                        $p->descripcion,
+                        utf8_decode($p->descripcion),
                         $p->unidad,
                         $p->precio_format,
                         '-',
@@ -259,26 +261,68 @@ class SolicitudCambioSubcontratoFormato extends Rotation
     }
 
     function totales() {
-        $this->setXY(21.5, $this->GetY());
-        $this->SetFont('Arial', '', 6);
-        $this->Cell(0.105 * $this->WidthTotal, 0.4, utf8_decode('Subtotal:'), '', 0, 'L');
+        $this->ln(1);
 
-        $this->Cell(0.107 * $this->WidthTotal, 0.4, $this->solicitud->subtotal_format, '', 1, 'R');
+        $this->SetFillColor(180, 180, 180);
 
-        $this->setXY(21.5, $this->GetY());
+        $this->SetFont('Arial', 'B', 8);
+        $this->Cell(0.655 * $this->WidthTotal, 0.5, utf8_decode('Resumen de Cambios al Subcontrato'), '1', 1, 'C',1);
 
-        $this->Cell(0.105 * $this->WidthTotal, 0.4, utf8_decode('IVA:'), '', 0, 'L');
-        $this->Cell(0.107 * $this->WidthTotal, 0.4, $this->solicitud->impuesto_format, '', 1, 'R');
+        $this->SetFont('Arial', '', 8);
+        $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
+        $this->SetWidths([$this->WidthTotal * 0.120, $this->WidthTotal * 0.107, $this->WidthTotal * 0.107, $this->WidthTotal * 0.107, $this->WidthTotal * 0.107, $this->WidthTotal * 0.107 ]);
+        $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
+        $this->SetRounds(['1', '',  '', '','', '2']);
+        $this->SetRadius([0, 0, 0, 0,0, 0]);
+        $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+        $this->SetHeights([0.4]);
+        $this->SetAligns(['C','C','C', 'C', 'C', 'C']);
 
-        $this->setXY(21.5, $this->GetY());
+        $this->Row([
+            ''
+            ,'Valores iniciales de subcontrato**'
+            ,'Valores de cambios aplicados a subcontrato'
+            ,'Valores del subcontrato'
+            ,'Valores de los cambios de esta solicitud'
+            ,'Valores actualizados del subcontrato'
+        ]);
+        $this->SetAligns(['L','R','R', 'R', 'R', 'R']);
+        $this->SetFills(['255,255,55', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+        $this->Row([
+            'Subtotal:'
+            ,$this->solicitud->subcontrato->getSubtotalInicialFormat()
+            ,$this->solicitud->subcontrato->getSubtotalActualizacionesAplicadasFormat($this->solicitud->id_transaccion)
+            ,$this->solicitud->subcontratoOriginal->subtotal_format
+            ,$this->solicitud->subtotal_format
+            ,$this->solicitud->subtotal_actualizado_subcontrato_format
+        ]);
+        $this->Row([
+            'IVA:'
+            ,$this->solicitud->subcontrato->getImpuestoInicialFormat()
+            ,$this->solicitud->subcontrato->getImpuestoActualizacionesAplicadasFormat($this->solicitud->id_transaccion)
+            ,$this->solicitud->subcontratoOriginal->impuesto_format
+            ,$this->solicitud->impuesto_format
+            ,$this->solicitud->impuesto_actualizado_subcontrato_format
+        ]);
+        $this->Row([
+            'Total:'
+            ,$this->solicitud->subcontrato->getMontoInicialFormat()
+            ,$this->solicitud->subcontrato->getMontoActualizacionesAplicadasFormat($this->solicitud->id_transaccion)
+            ,$this->solicitud->subcontratoOriginal->monto_format
+            ,$this->solicitud->monto_format
+            ,$this->solicitud->monto_actualizado_subcontrato_format
+        ]);
+        $this->Row([
+            'Porcentaje Cambio:'
+            ,'-'
+            ,$this->solicitud->subcontrato->getPorcentajeCambioFormat($this->solicitud->id_transaccion)
+            ,'-'
+            ,$this->solicitud->porcentaje_cambio_format
+            ,'-'
+        ]);
 
-        $this->Cell(0.105 * $this->WidthTotal, 0.4, utf8_decode('Monto:'), '', 0, 'L');
-        $this->Cell(0.107 * $this->WidthTotal, 0.4, $this->solicitud->monto_format, '', 1, 'R');
-
-        $this->setXY(21.5, $this->GetY());
-
-        $this->Cell(0.105 * $this->WidthTotal, 0.4, utf8_decode('Porcentaje del Cambio:'), '', 0, 'L');
-        $this->Cell(0.107 * $this->WidthTotal, 0.4, $this->solicitud->porcentaje_cambio_format, '', 1, 'R');
+        $this->SetFont('Arial', 'B', 6);
+        $this->MultiCell(1 * $this->WidthTotal, 0.5, utf8_decode('**Los valores iniciales del subcontrato se obtienen restando los cambios aplicados al valor actual, si se realizó un cambio al subcontrato sin utilizar una solicitud de cambio los valores seran incorrectos'), 0, "L", 0);
     }
 
     function pixelsToCM($val)
@@ -565,7 +609,6 @@ class SolicitudCambioSubcontratoFormato extends Rotation
         $this->AddPage();
         $this->SetAutoPageBreak(true,3.5);
         $this->partidas();
-        $this->Ln(0.3);
         $this->totales();
         try {
             $this->Output('I', "Formato - Solicitud de Cambio a Subcontrato_".$this->solicitud->numero_folio.".pdf", 1);

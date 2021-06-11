@@ -860,4 +860,90 @@ class Subcontrato extends Transaccion
         $pdf = new SubcontratoFormato($this);
         return $pdf->create();
     }
+
+    public function getMontoActualizacionesAplicadas($id_solicitud = null)
+    {
+        if($id_solicitud>0){
+            return $this->solicitudesCambio()->aplicadas()->where("id_transaccion","<",$id_solicitud)->sum("monto");
+
+        } else {
+            return $this->solicitudesCambio()->aplicadas()->sum("monto");
+        }
+
+    }
+
+    public function getMontoActualizacionesAplicadasFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getMontoActualizacionesAplicadas($id_solicitud),2,".",",");
+
+    }
+
+    public function getImpuestoActualizacionesAplicadas($id_solicitud = null)
+    {
+        if($id_solicitud>0){
+            return $this->solicitudesCambio()->aplicadas()->where("id_transaccion","<",$id_solicitud)->sum("impuesto");
+
+        } else {
+            return $this->solicitudesCambio()->aplicadas()->sum("impuesto");
+        }
+
+    }
+
+    public function getImpuestoActualizacionesAplicadasFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getImpuestoActualizacionesAplicadas($id_solicitud),2,".",",");
+
+    }
+
+    public function getSubtotalActualizacionesAplicadas($id_solicitud = null)
+    {
+        return $this->getMontoActualizacionesAplicadas($id_solicitud)-$this->getImpuestoActualizacionesAplicadas($id_solicitud);
+
+    }
+
+    public function getSubtotalActualizacionesAplicadasFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getSubtotalActualizacionesAplicadas($id_solicitud),2,".",",");
+
+    }
+
+    public function getMontoInicial()
+    {
+        return $this->monto-$this->solicitudesCambio()->aplicadas()->sum("monto");
+    }
+
+    public function getMontoInicialFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getMontoInicial(),2,".",",");
+    }
+
+    public function getImpuestoInicial()
+    {
+        return $this->impuesto-$this->solicitudesCambio()->aplicadas()->sum("impuesto");
+    }
+
+    public function getImpuestoInicialFormat()
+    {
+        return "$".number_format($this->getImpuestoInicial(),2,".",",");
+    }
+
+    public function getSubtotalInicial()
+    {
+        return $this->getMontoInicial()-$this->getImpuestoInicial();
+    }
+
+    public function getSubtotalInicialFormat()
+    {
+        return "$".number_format($this->getSubtotalInicial(),2,".",",");
+    }
+
+    public function getPorcentajeCambio($id_solicitud)
+    {
+        return $this->getMontoActualizacionesAplicadas($id_solicitud) *100 /$this->getMontoInicial();
+    }
+
+    public function getPorcentajeCambioFormat($id_solicitud)
+    {
+        return number_format($this->getPorcentajeCambio($id_solicitud),4,"." ,","). "%";
+    }
 }

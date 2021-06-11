@@ -31,7 +31,22 @@ class SubcontratoOriginal extends Model
 
     public function getMontoFormatAttribute()
     {
-        return '$ ' . number_format(($this->monto),2);
+        return '$' . number_format($this->monto,2);
+    }
+
+    public function getImpuestoFormatAttribute()
+    {
+        return '$' . number_format($this->impuesto,2);
+    }
+
+    public function getSubtotalFormatAttribute()
+    {
+        return '$' . number_format($this->subtotal,2);
+    }
+
+    public function getSubtotalAttribute()
+    {
+        return $this->monto-$this->impuesto;
     }
 
 }
