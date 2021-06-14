@@ -1080,7 +1080,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
             $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
             $api->post('procesar-layout-extraordinarios', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutExtraordinarios');
-            $api->get('descargar-layout-cambios-precio-volumen/{id_subcontrato}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@descargarLayoutCambiosPrecioVolumen')->where(['id_subcontrato' => '[0-9]+']);
+            $api->post('procesar-layout-cambio-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutCambioPrecioVolumen');
         });
 
         /**

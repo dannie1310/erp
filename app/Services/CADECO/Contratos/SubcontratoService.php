@@ -10,6 +10,7 @@ namespace App\Services\CADECO\Contratos;
 
 
 use App\Exports\Contratos\LayoutCambioVolumenPrecioSubcontratoExport;
+use App\Facades\Context;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Subcontrato;
@@ -111,7 +112,8 @@ class SubcontratoService
 
     public function descargarLayoutCambiosPrecioVolumen($id)
     {
-        $partidas_convenio = $this->show($id)->partidas_convenio;
+        $subcontrato = $this->show($id);
+        $partidas_convenio = $subcontrato->partidas_convenio;
         $validacionSistema = new ValidacionSistema();
         if(count($partidas_convenio) ==0)
         {
@@ -119,12 +121,12 @@ class SubcontratoService
         }
         $partidas_excel = [];
         $i = 0;
-        $partidas_excel[$i] = [$validacionSistema->encripta($id)];
+        $partidas_excel[$i] = [$validacionSistema->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$id)];
         $i++;
 
         foreach ($partidas_convenio as $partida_convenio){
 
-            if(!key_exists("para_estimar",$partida_convenio)){
+            if(!key_exists("para_estimar",$partida_convenio) && $partida_convenio["cantidad_por_estimar"]>0){
                 $partidas_excel[$i] = [
                     ($i),
                     $validacionSistema->encripta($partida_convenio["id"]),
@@ -142,7 +144,7 @@ class SubcontratoService
                 $i++;
             }
         }
-        return Excel::download(new LayoutCambioVolumenPrecioSubcontratoExport($partidas_excel), 'layout_cambio_precio_volumen_subcontrato'.date("Ymd_his").'.xlsx');
+        return Excel::download(new LayoutCambioVolumenPrecioSubcontratoExport($partidas_excel), 'layout_cambio_precio_volumen_subcontrato'.$subcontrato->numero_folio_format."_".date("Ymd_his").'.xlsx');
     }
 
     public function delete($data, $id)

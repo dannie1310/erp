@@ -1,14 +1,14 @@
 <template>
     <span>
         <button class="btn btn-primary" title="Agregar conceptos extraordinarios por Layout" @click="init()">
-            <i class="fa fa-file-excel"></i> Cambios de Precio y Volúmen
+            <i class="fa fa-file-excel"></i> Cambios de Precio y Volumen
         </button>
 
         <div class="modal fade" ref="modalExtraordinario" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-file-excel"></i> Cambios de Precio y Volúmen por Layout</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-file-excel"></i> Cambios de Precio y Volumen por Layout</h5>
                         <button type="button" class="close" @click="cerrar()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -171,17 +171,18 @@ name: "CreateConceptosNuevoPrecioAditivasDeductivas",
             this.cargando = true;
             var formData = new FormData();
             formData.append('id_contrato_proyectado',  this.id_contrato_proyectado);
-            formData.append('extraordinarios',  this.file_carga);
+            formData.append('id_subcontrato',  this.id_subcontrato);
+            formData.append('cambios_precio_volumen',  this.file_carga);
             formData.append('nombre_archivo',  this.file_carga_name);
             formData.append('id_contrato_nodo_carga',  this.nodo_carga);
-            return this.$store.dispatch('contratos/solicitud-cambio/procesarLayoutExtraordinarios',{
+            return this.$store.dispatch('contratos/solicitud-cambio/procesarLayoutCambioPrecioVolumen',{
                 data: formData, config: { params: { _method: 'POST'}}
             })
             .then(data => {
                 this.partidas = data;
             }).finally(() => {
                 this.cargando = false;
-                this.$emit("agrega-extraordinarios",this.partidas);
+                this.$emit("agrega-cambios-precio_volumen",this.partidas);
                 $(this.$refs.modalExtraordinario).modal('hide');
                 this.$validator.reset();
             });
