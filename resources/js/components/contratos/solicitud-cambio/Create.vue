@@ -823,9 +823,14 @@
                         return concepto.id == partida.id_item
                     });
                     if(partida.nuevo_precio >0){
-                        self.setConceptoCambioPrecio(concepto[0]);
-                        self.concepto_cambio_precio.precio_nuevo = partida.nuevo_precio;
-                        self.onAgregaCambioPrecio();
+                        if(concepto[0].cantidad_por_estimar>0){
+                            self.setConceptoCambioPrecio(concepto[0]);
+                            self.concepto_cambio_precio.precio_nuevo = partida.nuevo_precio;
+                            self.onAgregaCambioPrecio();
+                        }
+                    } else if(partida.aditiva_deductiva != null){
+                        concepto[0].cantidad_addendum = partida.aditiva_deductiva;
+                        self.keyupCantidad(concepto[0]);
                     }
                 });
                 this.changeCantidad();

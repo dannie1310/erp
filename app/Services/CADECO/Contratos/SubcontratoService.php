@@ -126,7 +126,7 @@ class SubcontratoService
 
         foreach ($partidas_convenio as $partida_convenio){
 
-            if(!key_exists("para_estimar",$partida_convenio) && $partida_convenio["cantidad_por_estimar"]>0){
+            if(!key_exists("para_estimar",$partida_convenio)){
                 $partidas_excel[$i] = [
                     ($i),
                     $validacionSistema->encripta($partida_convenio["id"]),
