@@ -201,6 +201,9 @@ class SolicitudCambioSubcontratoService
         $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
         $partidas = [];
         foreach ($rows[0] as $key => $row) {
+            if((!is_numeric($row[2]) || !is_numeric($row[4]) || !is_numeric($row[5])) && $row[3] != null){
+                abort(500, "Las columnas para especificar el nivel (C), precio (E) y cantidad (F) de los conceptos extraordinarios deben tener un valor numérico, favor de verificar.");
+            }
             $partidas[$key] = [
                 'clave' => $row[0],
                 'descripcion' => $row[1],
@@ -343,8 +346,6 @@ class SolicitudCambioSubcontratoService
         $i = 0;
         foreach($partidas as $key => $partida){
             if($key>0){
-                $error_aditiva_deductiva = null;
-                $error_nuevo_precio = null;
                 $id_item_desencriptado = $validacionSistema->desencripta($partida["id_item"]);
                 $itemSubcontrato = ItemSubcontrato::find($id_item_desencriptado);
                 if($itemSubcontrato->id_transaccion == $id_subcontrato)
@@ -356,35 +357,6 @@ class SolicitudCambioSubcontratoService
                     ];
                     $i++;
                 }
-                /*if($partida["aditiva_deductiva"] != "" && $partida["nuevo_precio"] != "")
-                {
-                    $error_aditiva_deductiva = $partida["aditiva_deductiva"];
-                    $error_nuevo_precio = $partida["nuevo_precio"];
-                    if($itemSubcontrato->id_transaccion == $id_subcontrato)
-                    {
-                        $contratos[$i] = [
-                            'id_item' => $id_item_desencriptado,
-                            'aditiva_deductiva' => null,
-                            'nuevo_precio' => null,
-                            'error_aditiva_deductiva' => $error_aditiva_deductiva,
-                            'error_nuevo_precio' => $error_nuevo_precio,
-                        ];
-                        $i++;
-                    }
-                } else if($partida["aditiva_deductiva"] != "" || $partida["nuevo_precio"] != "")
-                {
-                    if($itemSubcontrato->id_transaccion == $id_subcontrato)
-                    {
-                        $contratos[$i] = [
-                            'id_item' => $id_item_desencriptado,
-                            'aditiva_deductiva' => $partida["aditiva_deductiva"],
-                            'nuevo_precio' => $partida["nuevo_precio"],
-                            'error_aditiva_deductiva' => $error_aditiva_deductiva,
-                            'error_nuevo_precio' => $error_nuevo_precio,
-                        ];
-                        $i++;
-                    }
-                }*/
             }
         }
         return $contratos;
