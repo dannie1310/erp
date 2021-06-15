@@ -828,7 +828,7 @@
                             self.concepto_cambio_precio.precio_nuevo = partida.nuevo_precio;
                             self.onAgregaCambioPrecio();
                         }
-                    } else if(partida.aditiva_deductiva != null){
+                    } else if(partida.aditiva_deductiva != null && partida.aditiva_deductiva != 0){
                         concepto[0].cantidad_addendum = partida.aditiva_deductiva;
                         self.keyupCantidad(concepto[0]);
                     }
