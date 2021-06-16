@@ -235,11 +235,9 @@
                                option-value="id"
                                option-text="descripcion"
                                :list="tipos_gasto"
-                               v-validate="{required: true}"
                                :placeholder="!cargando?'Seleccionar o buscar por descripcion':'Cargando...'"
                                :isError="errors.has(`id_costo`)">
                             </model-list-select>
-                            <div class="invalid-feedback" v-show="errors.has('id_costo')">{{ errors.first('id_costo') }}</div>
                         </div>
 
 
