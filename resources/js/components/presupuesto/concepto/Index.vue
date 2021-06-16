@@ -74,9 +74,6 @@
                                                     <router-link  :to="{ name: 'concepto-edit', params: {id: concepto.id}}" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
                                                         <i class="fa fa-pencil"></i>
                                                     </router-link>
-                                                    <router-link  :to="{ name: 'conceptos-documentos', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_compra') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
-                                                        <i class="fa fa-folder-open"></i>
-                                                    </router-link>
                                                 </td>
                                             </tr>
                                         </template>
