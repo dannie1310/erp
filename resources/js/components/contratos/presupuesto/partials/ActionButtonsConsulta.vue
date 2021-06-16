@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <Show v-bind:value="value"></Show>
-        <ModalArchivos v-bind:id="value.id" v-bind:url="'/sao/modal/lista_archivos/{id}'"></ModalArchivos>
+        <ModalArchivos v-bind:id="value.id" v-bind:url="'/sao/modal/lista_archivos/{id}'" v-if="$root.can('consultar_archivos_transaccion')"></ModalArchivos>
     </div>
 </template>
 <script>

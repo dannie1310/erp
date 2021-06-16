@@ -34,6 +34,7 @@
                                         <Polizas  v-bind:value="relacion" v-if="relacion.tipo_numero==666"></Polizas>
                                         <Pagos  v-bind:value="relacion" v-if="relacion.tipo_numero==82"></Pagos>
                                         <SolicitudPagoAnticipado  v-bind:value="relacion" v-if="relacion.tipo_numero==72"></SolicitudPagoAnticipado>
+                                        <SolicitudCambioSubcontrato  v-bind:value="relacion" v-if="relacion.tipo_numero==54"></SolicitudCambioSubcontrato>
                                     </div>
                                 </div>
                             </div>
@@ -59,27 +60,18 @@ import Estimaciones from '../contratos/estimacion/partials/ActionButtonsConsulta
 import Polizas from '../contabilidad/poliza/partials/ActionButtonsConsulta';
 import Pagos from '../finanzas/gestion-pago/pago/partials/ActionButtonsConsulta';
 import SolicitudPagoAnticipado from '../finanzas/solicitud/pago-anticipado/partials/ActionButtonsConsulta';
+import SolicitudCambioSubcontrato from '../contratos/solicitud-cambio/partials/ActionButtonsConsulta';
 export default {
     name: "Timeline",
-    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones,Polizas, Pagos,SolicitudPagoAnticipado},
+    components:{Cotizaciones, Solicitudes, OrdenesCompra, Entradas, Facturas, Salidas, ContratosProyectados, Subcontratos,Presupuestos,Estimaciones,Polizas, Pagos,SolicitudPagoAnticipado, SolicitudCambioSubcontrato},
     props: ['transaccion','relaciones'],
     data(){
         return{
             cargando_relaciones: false,
             configuracion: '',
             fecha:'',
-            //relaciones: null,
         }
     },
-    /*mounted() {
-        this.find();
-    },*/
-    /*methods: {
-        find() {
-            this.cargando_relaciones = true;
-        },
-
-    },*/
 }
 </script>
 

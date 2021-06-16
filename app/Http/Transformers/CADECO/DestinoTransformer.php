@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO;
 
 
 use App\Models\CADECO\Destino;
+use App\Models\CADECO\PresupuestoContratistaPartida;
 use League\Fractal\TransformerAbstract;
 
 class DestinoTransformer extends TransformerAbstract
@@ -15,6 +16,7 @@ class DestinoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
+        'concepto'
     ];
 
     /**
@@ -22,15 +24,21 @@ class DestinoTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $defaultIncludes = [];
+    protected $defaultIncludes = ['concepto'];
 
     public function transform(Destino $model)
     {
         return [
             'id_concepto' => $model->getKey(),
-            'destino_path' => $model->ruta_destino,
-            'path' => $model->ruta,
-            'descripcion' => $model->concepto->descripcion
         ];
+    }
+
+    public function includeConcepto(Destino $model)
+    {
+        if($concepto = $model->concepto)
+        {
+            return $this->item($concepto, new ConceptoTransformer);
+        }
+        return null;
     }
 }

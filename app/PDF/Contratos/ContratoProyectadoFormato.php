@@ -45,17 +45,17 @@ class ContratoProyectadoFormato extends Rotation
         $this->SetTextColor('0,0,0');
         $this->SetFont('Arial', 'B', 12);
 
-        $this->Cell(11.5);
-        $this->Cell(2.5,.7,'Folio ','LT',0,'L');
-        $this->Cell(5.5,.7, $this->contrato->numero_folio_format,'RT',0,'L');
+        $this->Cell(14);
+        $this->Cell(2.5,.7,'Folio:','LT',0,'L');
+        $this->Cell(3,.7, $this->contrato->numero_folio_format,'RT',0,'R');
         $this->Ln(.7);
 
         $this->SetFont('Arial', 'B', 20);
-        $this->CellFitScale(11.5, 0.5, $this->encabezado_pdf, 0, 0, 'C', 0);
+        $this->CellFitScale(14, 0.5, $this->encabezado_pdf, 0, 0, 'C', 0);
 
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(2.5,.7, 'Fecha','BL',0,'L');
-        $this->Cell(5.5,.7, $this->contrato->fecha_format.' ','RB',0,'L');
+        $this->Cell(2.5,.7, 'Fecha:','BL',0,'L');
+        $this->Cell(3,.7, $this->contrato->fecha_format.' ','RB',0,'R');
         $this->Ln(.7);
 
         //Obtener Posiciones despues de los títulos
@@ -83,7 +83,7 @@ class ContratoProyectadoFormato extends Rotation
 
         $this->Ln(.6);
         $this->SetFont('Arial', 'B', 10);
-        $this->CellFit(2.5, 1, utf8_decode('Referencia: ') , 0, 0, 'C', 0);
+        $this->Cell(2.5, 1, utf8_decode('Referencia: ') , 0, 0, 'C', 0);
 
         $this->SetWidths(array(17));
         $this->SetRounds(array('1234'));
@@ -156,7 +156,7 @@ class ContratoProyectadoFormato extends Rotation
                 utf8_decode(mb_strtoupper($c->descripcion_guion_nivel_format)),
                 $c->unidad != null ? $c->unidad : '',
                 $c->cantidad_original != '0' ? number_format($c->cantidad_original, 2, ".", ",") : '-',
-                $c->destino ? utf8_decode($c->destino->ruta_destino) : '']);
+                $c->destino ? utf8_decode($c->destino->concepto->path_corta) : '']);
 
         }
     }

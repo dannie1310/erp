@@ -513,7 +513,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
         });
-       
+
         //IMPRESORA
         $api->group(['prefix' => 'impresora'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
@@ -980,11 +980,13 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'asignacion-contratista'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@paginate');
+            $api->get('getAsignaciones', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@getAsignaciones');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
-
-
 
         /**
          * CONTRATO PROYECTADO
@@ -1009,6 +1011,7 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'concepto'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ContratoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ContratoController@show')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1033,7 +1036,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
-
         /**
          * PRESUPUESTO
          */
@@ -1045,6 +1047,7 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@store');
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayout');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
 
 
@@ -1056,7 +1059,37 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@updateContrato')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id_subcontrato}/descargar-layout-cambios-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@descargarLayoutCambiosPrecioVolumen')->where(['id' => '[0-9]+']);
+
         });
+
+        /**
+         * SOLICITUD DE CAMBIO
+         */
+
+        $api->group(['prefix' => 'solicitud-cambio'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@registrar');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aplicar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@aplicar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@cancelar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@rechazar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@revertirAprobacion')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
+            $api->post('procesar-layout-extraordinarios', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutExtraordinarios');
+            $api->post('procesar-layout-cambio-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutCambioPrecioVolumen');
+        });
+
+        /**
+         * TIPOS CONTRATOS
+         */
+        $api->group(['prefix' => 'tipo-contrato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\TipoContratoController@index');
+        });
+
 
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {

@@ -8,11 +8,13 @@
 
 namespace App\Http\Transformers\CADECO\Contrato;
 
+use App\Http\Transformers\CADECO\ContratoTransformer;
 use Carbon\Carbon;
 use League\Fractal\TransformerAbstract;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 use App\Http\Transformers\CADECO\Contrato\AsignacionSubcontratoTransformer;
+use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
 
 class AsignacionContratistaTransformer extends TransformerAbstract
 {
@@ -23,7 +25,10 @@ class AsignacionContratistaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'contrato',
-        'asignacionEstimacion'
+        'asignacionEstimacion',
+        'presupuestosContratista',
+        'partidas',
+        'conceptosAsignados'
     ];
 
     /**
@@ -40,6 +45,9 @@ class AsignacionContratistaTransformer extends TransformerAbstract
             'numero_folio_asignacion' => $model->numero_folio_format,
             'fecha_registro' => $model->fecha_registro_format,
             'usuario_registro' => $model->Usuario_registro_nombre,
+            'estado' => $model->estado,
+            'estado_format' => $model->estado_format,
+            'contratistas' => $model->contratistas_str
         ];
     }
 
@@ -69,4 +77,42 @@ class AsignacionContratistaTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePresupuestosContratista(AsignacionContratista $model)
+    {
+        if($items = $model->presupuestosContratista)
+        {
+            return $this->collection($items, new PresupuestoContratistaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AsignacionContratista $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new AsignacionContratistaPartidaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AsignacionContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeConceptosAsignados(AsignacionContratista $model)
+    {
+        if($items = $model->conceptosContrato)
+        {
+            return $this->collection($items, new ContratoTransformer);
+        }
+        return null;
+    }
 }
