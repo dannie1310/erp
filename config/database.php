@@ -83,6 +83,17 @@ return [
             'engine' => null,
         ],
 
+        'interfaz' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_INTERFAZ', 'localhost'),
+            'database' => env('DB_DATABASE_INTERFAZ', 'forge'),
+            'username' => env('DB_USERNAME_INTERFAZ', 'forge'),
+            'password' => env('DB_PASSWORD_INTERFAZ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'sci' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_SCI', '127.0.0.1'),

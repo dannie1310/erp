@@ -22,6 +22,8 @@ use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
 use App\Models\CTPQ\Empresa;
+use App\Models\CTPQ\Expediente;
+use App\Models\CTPQ\Parametro;
 use App\Traits\DateFormatTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -103,6 +105,48 @@ class Poliza extends Model
 
     public function valido() {
         return $this->hasOne(PolizaValido::class, 'id_int_poliza');
+    }
+
+    public function polizaInterfaz()
+    {
+        return $this->hasMany(\App\Models\INTERFAZ\Poliza::class, 'id_int_poliza', 'id_int_poliza');
+    }
+
+    /**
+     * Scope
+     */
+    public function scopeGetAsociarCFDI($query)
+    {
+        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->get();
+        $ids_polizas = [];
+        $obra = Obra::find(Context::getIdObra());
+        $guid_poliza = '';
+        $base = Parametro::find(1);
+        $i = 0;
+        foreach ($polizas_interfaz as $key => $poliza)
+        {
+            if($poliza->polizaContpaq) {
+                $guid_poliza = $poliza->polizaContpaq->Guid;
+                if ($poliza->CFDIS) {
+                    foreach ($poliza->CFDIS as $cfdi) {
+                        if ($cfdi->tiene_comprobante) {
+                            DB::purge('cntpq');
+                            Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                            $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
+                            if (is_null($expediente)) {
+                                $i = 1;
+                                break;
+                            }
+                        }
+                    }
+                    if ($i == 1) {
+                        array_push($ids_polizas, $poliza->id_int_poliza);
+                    }
+                    $i = 0;
+                }
+            }
+        }
+        return $query->whereIn('id_int_poliza',$ids_polizas);
     }
 
     /**

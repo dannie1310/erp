@@ -1841,6 +1841,24 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'asociar-poliza-cfdi',
+                        component: require('./components/contabilidad/asociar-poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"asociar-poliza-cfdi",
+                                component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Asociar Pólizas con CFDI',
+                                    breadcrumb: {parent: 'contabilidad', name: 'ASOCIAR PÓLIZAS CON CFDI'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_poliza'],
+                                    general: true
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[

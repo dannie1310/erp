@@ -250,7 +250,7 @@ class PolizaService
         }catch (\Exception $e) {
             abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
             throw $e;
-        } 
+        }
         if($cantidad == 0){abort(500, "No hay pólizas con los datos de búsqueda.");}
         try{
             $zip_name = 'Polizas '.date("Ymdhis") . '.zip';
@@ -381,5 +381,4 @@ class PolizaService
         }
         return $solicitud;
     }
-
 }
