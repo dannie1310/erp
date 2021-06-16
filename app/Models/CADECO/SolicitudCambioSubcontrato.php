@@ -511,9 +511,12 @@ class SolicitudCambioSubcontrato extends Transaccion
             Cantidad Actual: " . $partida->itemSubcontrato->contrato->cantidad_original);
         }
 
-        $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
-        $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
-        $partida->itemSubcontrato->contrato->save();
+        if($partida->cantidad > 0)
+        {
+            $partida->itemSubcontrato->contrato->cantidad_presupuestada = $partida->itemSubcontrato->contrato->cantidad_presupuestada + $partida->cantidad;
+            $partida->itemSubcontrato->contrato->cantidad_original = $partida->itemSubcontrato->contrato->cantidad_original + $partida->cantidad;
+            $partida->itemSubcontrato->contrato->save();
+        }
     }
 
     private function aplicarExtraordinarias($partidas){
