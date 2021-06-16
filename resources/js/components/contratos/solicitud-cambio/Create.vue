@@ -195,6 +195,14 @@
                                 v-on:agrega-extraordinario="onAgregaExtraordinario"
                                 v-bind:concepto="concepto_extraordinario">
                             </ConceptoExtraordinario>
+                            <CreateConceptosNuevoPrecioAditivasDeductivas
+                                v-on:agrega-cambios-precio_volumen="onAgregaCambiosPrecioVolumen"
+                                v-bind:id_subcontrato="subcontrato.id"
+                                v-bind:id_contrato_proyectado="subcontrato.id_contrato_proyectado"
+                                v-bind:tiene_nodo_cambio_precio="subcontrato.tiene_nodo_cambio_precio"
+                                v-bind:cantidad_conceptos = "conceptos.length"
+                            >
+                            </CreateConceptosNuevoPrecioAditivasDeductivas>
                         </div>
                     </div>
                 </div>
@@ -206,7 +214,7 @@
                                 <tr>
                                     <th rowspan="2">Clave</th>
                                     <th rowspan="2">Concepto</th>
-                                    <th rowspan="2">UM</th>
+                                    <th rowspan="2">Unidad</th>
                                     <th colspan="2" class="contratado">Contratado</th>
                                     <th colspan="2" class="avance-volumen">Avance</th>
 
@@ -503,10 +511,13 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import ConceptoExtraordinario from './partials/CreateConceptoExtaordinario';
     import CreateConceptosExtaordinarios from "./partials/CreateConceptosExtaordinarios";
+    import CreateConceptosNuevoPrecioAditivasDeductivas from "./partials/CreateConceptosNuevoPrecioAditivasDeductivas";
     let id_cambio_precio  = 0;
     export default {
         name: "solicitud_cambio-create",
-        components: {CreateConceptosExtaordinarios, ModelListSelect, Datepicker, es, ConceptoExtraordinario},
+        components: {
+            CreateConceptosNuevoPrecioAditivasDeductivas,
+            CreateConceptosExtaordinarios, ModelListSelect, Datepicker, es, ConceptoExtraordinario},
         data() {
             return {
                 archivo:'',
@@ -711,20 +722,23 @@
                     this.seleccionarDestino();
                 })
             },
+            setConceptoCambioPrecio(concepto)
+            {
+                this.concepto_cambio_precio ={
+                    clave:concepto.clave,
+                    descripcion: concepto.descripcion_concepto,
+                    cantidad: concepto.cantidad_por_estimar,
+                    unidad:concepto.unidad,
+                    precio:concepto.precio_unitario_subcontrato,
+                    precio_nuevo:'',
+                    importe:concepto.importe_subcontrato,
+                    concepto:concepto,
+                    id_item_subcontrato:concepto.id
+                };
+            },
             onCambioPrecio(concepto){
 			    if(concepto.cantidad_por_estimar>0){
-                    this.concepto_cambio_precio ={
-                        clave:concepto.clave,
-                        descripcion: concepto.descripcion_concepto,
-                        cantidad: concepto.cantidad_por_estimar,
-                        unidad:concepto.unidad,
-                        precio:concepto.precio_unitario_subcontrato,
-                        precio_nuevo:'',
-                        importe:concepto.importe_subcontrato,
-                        concepto:concepto,
-                        id_item_subcontrato:concepto.id
-                    };
-
+			        this.setConceptoCambioPrecio(concepto);
                     $(this.$refs.modalCambioPrecio).modal('show');
                 } else {
                     swal('Atención','No se puede modificar el precio si la partida se ha estimado completamente','warning');
@@ -798,6 +812,26 @@
                 let self = this;
                 partidas.forEach(function(partida, i){
                     self.conceptos_extraordinarios.push(partida);
+                });
+                this.changeCantidad();
+            },
+            onAgregaCambiosPrecioVolumen(partidas){
+                let self = this;
+                let concepto;
+                partidas.forEach(function(partida, i){
+                    concepto = self.conceptos.filter(concepto => {
+                        return concepto.id == partida.id_item
+                    });
+                    if(partida.nuevo_precio >0){
+                        if(concepto[0].cantidad_por_estimar>0){
+                            self.setConceptoCambioPrecio(concepto[0]);
+                            self.concepto_cambio_precio.precio_nuevo = partida.nuevo_precio;
+                            self.onAgregaCambioPrecio();
+                        }
+                    } else if(partida.aditiva_deductiva != null && partida.aditiva_deductiva != 0){
+                        concepto[0].cantidad_addendum = partida.aditiva_deductiva;
+                        self.keyupCantidad(concepto[0]);
+                    }
                 });
                 this.changeCantidad();
             },
@@ -901,9 +935,13 @@
 						}
 					})
 							.then(data => {
-                                this.conceptos = data.partidas_convenio.data;
+							    if(data.partidas_convenio){
+                                    this.conceptos = data.partidas_convenio.data;
+                                } else {
+                                    this.conceptos = [];
+                                }
 								this.subcontrato = data;
-								this.observaciones = data.Observaciones;
+								this.observaciones = data.observaciones;
 								this.tasa_iva = data.obra.iva;
 							})
 							.finally(() => {

@@ -9,10 +9,14 @@
 namespace App\Services\CADECO\Contratos;
 
 
+use App\Exports\Contratos\LayoutCambioVolumenPrecioSubcontratoExport;
+use App\Facades\Context;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Subcontrato;
 use App\Repositories\CADECO\Subcontratos\Subcontrato\Repository;
+use App\Utils\ValidacionSistema;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SubcontratoService
 {
@@ -104,6 +108,43 @@ class SubcontratoService
 
     public function updateContrato($data, $id){
         return $this->repository->show($id)->updateContrato($data);
+    }
+
+    public function descargarLayoutCambiosPrecioVolumen($id)
+    {
+        $subcontrato = $this->show($id);
+        $partidas_convenio = $subcontrato->partidas_convenio;
+        $validacionSistema = new ValidacionSistema();
+        if(count($partidas_convenio) ==0)
+        {
+            dd("El subcontrato no tiene partidas disponibles para modificar precio o volumen");
+        }
+        $partidas_excel = [];
+        $i = 0;
+        $partidas_excel[$i] = [$validacionSistema->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$id)];
+        $i++;
+
+        foreach ($partidas_convenio as $partida_convenio){
+
+            if(!key_exists("para_estimar",$partida_convenio)){
+                $partidas_excel[$i] = [
+                    ($i),
+                    $validacionSistema->encripta($partida_convenio["id"]),
+                    $partida_convenio["clave"],
+                    $partida_convenio["descripcion_concepto"],
+                    $partida_convenio["unidad"],
+                    $partida_convenio["cantidad_subcontrato"],
+                    $partida_convenio["precio_unitario_subcontrato"],
+                    $partida_convenio["cantidad_por_estimar"],
+                    $partida_convenio["importe_por_estimar"],
+                    '',
+                    '',
+                    $partida_convenio["destino_path"],
+                ];
+                $i++;
+            }
+        }
+        return Excel::download(new LayoutCambioVolumenPrecioSubcontratoExport($partidas_excel), 'layout_cambio_precio_volumen_subcontrato'.$subcontrato->numero_folio_format."_".date("Ymd_his").'.xlsx');
     }
 
     public function delete($data, $id)

@@ -9,13 +9,17 @@ use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\ItemSubcontrato;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SolicitudCambioSubcontrato as Model;
 use App\Models\CADECO\Unidad;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\PDF\Contratos\SolicitudCambioSubcontratoFormato;
 use App\Repositories\CADECO\SubcontratosCM\SolicitudCambioSubcontratoRepository as Repository;
 use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Utils\ValidacionSistema;
 use DateTime;
 use DateTimeZone;
 use Maatwebsite\Excel\Facades\Excel;
@@ -183,7 +187,7 @@ class SolicitudCambioSubcontratoService
     private function generaDirectorios($nombre_archivo)
     {
         $nombre = $nombre_archivo . "_" . date("Ymdhis") . ".xlsx";
-        $dir_xls = "uploads/contratos/solicitud_cambio_subcotrato/extraordinarios";
+        $dir_xls = "uploads/contratos/solicitud_cambio_subcotrato/extraordinarios/";
         $path_xls = $dir_xls . $nombre;
 
         if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
@@ -197,6 +201,9 @@ class SolicitudCambioSubcontratoService
         $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
         $partidas = [];
         foreach ($rows[0] as $key => $row) {
+            if((!is_numeric($row[2]) || !is_numeric($row[4]) || !is_numeric($row[5])) && $row[3] != null){
+                abort(500, "Las columnas para especificar el nivel (C), precio (E) y cantidad (F) de los conceptos extraordinarios deben tener un valor numérico, favor de verificar.");
+            }
             $partidas[$key] = [
                 'clave' => $row[0],
                 'descripcion' => $row[1],
@@ -206,6 +213,28 @@ class SolicitudCambioSubcontratoService
                 'cantidad' => $row[5],
                 'destino' => array_key_exists(6, $row)?$row[6]:null,
             ];
+        }
+        return $partidas;
+    }
+
+    private function getDatosCambioPrecioVolumen($file_xls)
+    {
+        $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
+        $partidas = [];
+        foreach ($rows[0] as $key => $row) {
+            if($key == 1){
+                $partidas[$key-1] = [
+                    'id_subcontrato' => $row[0],
+                ];
+            }
+            if($key>1){
+                $partidas[$key-1] = [
+                    'id_item' => $row[1],
+                    'aditiva_deductiva' => $row[9],
+                    'nuevo_precio' => $row[10],
+                ];
+
+            }
         }
         return $partidas;
     }
@@ -283,6 +312,51 @@ class SolicitudCambioSubcontratoService
                 $index_base = $key - 1;
                 while($contratos[$index_base]['nivel'] >= $partida['nivel']){$index_base--;}
                 $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
+            }
+        }
+        return $contratos;
+    }
+
+    public function procesarLayoutCambioPrecioVolumen($data){
+        $validacionSistema = new ValidacionSistema();
+        $file_xls = $this->getFileXLS($data->nombre_archivo, $data->cambios_precio_volumen);
+        $partidas = $this->getDatosCambioPrecioVolumen($file_xls);
+
+        $cadena_validacion = $validacionSistema->desencripta($partidas[0]["id_subcontrato"]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_subcontrato = $cadena_validacion_exp[2];
+
+        if(Context::getDatabase() !=$base_datos){
+            $id_proyecto = Proyecto::where("base_datos","=", $base_datos)->pluck("id")->first();
+            $obra = ConfiguracionObra::where("id_proyecto", "=",$id_proyecto )->where("id_obra","=", $id_obra)->withoutGlobalScopes()->first();
+            abort(500,"El layout que cargó corresponde la obra ". $obra->nombre ." favor de verificar");
+        }
+
+        $subcontratoLayout = Subcontrato::find($id_subcontrato);
+        $subcontratoFormulario = Subcontrato::find($data->id_subcontrato);
+        if($id_subcontrato != $data->id_subcontrato){
+            abort(500,"El layout que cargó corresponde al subcontrato ".$subcontratoLayout->numero_folio_format ." favor de verificar");
+        }
+
+        $contratos = array();
+
+        $i = 0;
+        foreach($partidas as $key => $partida){
+            if($key>0){
+                $id_item_desencriptado = $validacionSistema->desencripta($partida["id_item"]);
+                $itemSubcontrato = ItemSubcontrato::find($id_item_desencriptado);
+                if($itemSubcontrato->id_transaccion == $id_subcontrato)
+                {
+                    $contratos[$i] = [
+                        'id_item' => $id_item_desencriptado,
+                        'aditiva_deductiva' => $partida["aditiva_deductiva"],
+                        'nuevo_precio' => $partida["nuevo_precio"],
+                    ];
+                    $i++;
+                }
             }
         }
         return $contratos;

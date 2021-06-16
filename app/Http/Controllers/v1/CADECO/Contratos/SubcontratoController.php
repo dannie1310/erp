@@ -69,4 +69,8 @@ class SubcontratoController extends Controller
         $resp = $this->service->updateContrato($request->all(), $id);
         return $this->respondWithItem($resp);
     }
+
+    public function descargarLayoutCambiosPrecioVolumen($id){
+        return $this->service->descargarLayoutCambiosPrecioVolumen($id);
+    }
 }

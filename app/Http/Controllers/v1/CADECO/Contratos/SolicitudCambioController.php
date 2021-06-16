@@ -61,4 +61,9 @@ class SolicitudCambioController extends Controller
         $respuesta = $this->service->procesarLayoutExtraordinarios($request);
         return response()->json($respuesta, 200);
     }
+
+    public function procesarLayoutCambioPrecioVolumen(Request $request){
+        $respuesta = $this->service->procesarLayoutCambioPrecioVolumen($request);
+        return response()->json($respuesta, 200);
+    }
 }
