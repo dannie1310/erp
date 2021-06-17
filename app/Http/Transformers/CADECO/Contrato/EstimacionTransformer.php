@@ -98,7 +98,8 @@ class EstimacionTransformer extends TransformerAbstract
             'suma_penalizaciones_liberadas' => $model->suma_penalizaciones_liberadas_format,
             'suma_penalizaciones_liberadas_sf' => $model->suma_penalizaciones_liberadas,
             'seleccionado' => false,
-            'consecutivo' => $model->subcontratoEstimacion->folio_consecutivo_format
+            'consecutivo' => $model->subcontratoEstimacion->folio_consecutivo_format,
+            'tc_actualizado' => false,
         ];
     }
 
