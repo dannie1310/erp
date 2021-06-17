@@ -310,9 +310,13 @@
                                     <tr v-if="concepto_extraordinario.cantidad_hijos == 0" :style="!concepto_extraordinario.destino > 0 || concepto_extraordinario.unidad == '' || concepto_extraordinario.clave == ''?`background-color : #f5c6cb`:``">
                                         <td :title="concepto_extraordinario.clave" v-if="concepto_extraordinario.clave !==''">{{concepto_extraordinario.clave}}</td>
                                         <td :title="concepto_extraordinario.clave" v-else style="background-color: #e75757">{{concepto_extraordinario.clave_error}}</td>
-                                        <td :title="concepto_extraordinario.descripcion">
+                                        <td :title="concepto_extraordinario.descripcion" v-if="concepto_extraordinario.descripcion != ''">
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
                                             {{concepto_extraordinario.descripcion}}
+                                        </td>
+                                        <td :title="concepto_extraordinario.descripcion_error"
+                                            v-else style="background-color: #e75757">
+                                            {{concepto_extraordinario.descripcion_error}}
                                         </td>
                                         <td class="centrado" v-if="concepto_extraordinario.unidad !==''">{{concepto_extraordinario.unidad}}</td>
                                         <td class="centrado" v-else style="background-color: #e75757">{{concepto_extraordinario.unidad_error}}</td>
@@ -341,12 +345,17 @@
                                             </button>
                                         </td>
                                     </tr>
-                                    <tr v-else :style="concepto_extraordinario.clave == ''?`background-color : #f5c6cb`:``">
+                                    <tr v-else :style="concepto_extraordinario.clave == '' || concepto_extraordinario.descripcion == '' ?`background-color : #f5c6cb`:``">
                                         <td :title="concepto_extraordinario.clave" v-if="concepto_extraordinario.clave !==''"><b>{{concepto_extraordinario.clave}}</b></td>
                                         <td :title="concepto_extraordinario.clave" v-else style="background-color: #e75757"><b>{{concepto_extraordinario.clave_error}}</b></td>
-                                        <td >
+
+                                        <td :title="concepto_extraordinario.descripcion" v-if="concepto_extraordinario.descripcion != ''">
                                             <span v-for="n in concepto_extraordinario.nivel">&nbsp;</span>
                                             <b>{{concepto_extraordinario.descripcion}}</b>
+                                        </td>
+                                        <td :title="concepto_extraordinario.descripcion_error"
+                                            v-else style="background-color: #e75757">
+                                            <b>{{concepto_extraordinario.descripcion_error}}</b>
                                         </td>
                                         <td class="centrado"></td>
                                         <td class="numerico contratado"></td>
@@ -621,6 +630,7 @@
 				    let error_destinos = false;
                     let error_unidades = false;
                     let error_claves = false;
+                    let error_descripcion = false;
 					if (result) {
 					    this.conceptos_extraordinarios.forEach(function(concepto_extraordinario, i){
 					        if(!concepto_extraordinario["destino"]>0 && concepto_extraordinario.es_hoja == true)
@@ -637,8 +647,13 @@
                             {
                                 error_claves = true;
                             }
+
+                            if(concepto_extraordinario["descripcion"] === "")
+                            {
+                                error_descripcion = true;
+                            }
                         });
-					    if(error_destinos === false && error_unidades == false && error_claves == false){
+					    if(error_descripcion === false && error_destinos === false && error_unidades == false && error_claves == false){
                             this.store();
                         } else if(error_destinos === false && error_unidades == false && error_claves == true){
                             swal('Error',"Hay partidas extraordinarias con errores en la clave, favor de corregir para poder realizar el registro",'error');
@@ -652,8 +667,10 @@
                             swal('Error',"Hay partidas extraordinarias con errores en la clave y el destino, favor de corregir para poder realizar el registro",'error');
                         } else if(error_destinos === true && error_unidades == true && error_claves == false){
                             swal('Error',"Hay partidas extraordinarias con errores en la unidad y el destino, favor de corregir para poder realizar el registro",'error');
-                        } else {
+                        } else if(error_destinos === true && error_unidades == true && error_claves == true){
                             swal('Error',"Hay partidas extraordinarias con errores en la clave, unidad y destino, favor de corregir para poder realizar el registro",'error');
+                        } else {
+                            swal('Error',"Hay partidas extraordinarias con error de longitud en la descripcion, favor de corregir para poder realizar el registro",'error');
                         }
 
 					}
