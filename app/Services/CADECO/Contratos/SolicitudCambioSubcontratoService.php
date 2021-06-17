@@ -313,10 +313,10 @@ class SolicitudCambioSubcontratoService
                 continue;
             }
 
-            if($nivel_anterior == $partida['nivel']){
+            /*if($nivel_anterior == $partida['nivel']){
                 $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
                 continue;
-            }
+            }*/
 
             if($nivel_anterior < $partida['nivel']){
                 $index_base = $key - 1;
