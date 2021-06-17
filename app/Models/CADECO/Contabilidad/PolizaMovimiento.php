@@ -38,4 +38,9 @@ class PolizaMovimiento extends Model
     {
         return $this->belongsTo(TipoCuentaContable::class, 'id_tipo_cuenta_contable');
     }
+
+    public function getCuentaContableInterfazAttribute()
+    {
+        return str_replace("-","",str_replace(" ","",$this->cuenta_contable));
+    }
 }

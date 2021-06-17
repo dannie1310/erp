@@ -133,28 +133,12 @@ class PolizaService
      */
     public function validar($id)
     {
-        try {
-            DB::connection('cadeco')->beginTransaction();
-
-            $poliza = $this->repository->show($id);
-            if (!in_array($poliza->estatus, [0, -2])) {
-                throw new \Exception("No se puede validar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}", 400);
-            }
-
-            $data = [
-                'estatus' => 1,
-                'lanzable' => true
-            ];
-
-            $poliza = $this->repository->update($data, $id);
-            $poliza->valido()->create(['valido' => auth()->id()]);
-
-            DB::connection('cadeco')->commit();
-            return $poliza;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort($e->getCode(), $e->getMessage());
+        $poliza = $this->repository->show($id);
+        if (!in_array($poliza->estatus, [0, -2])) {
+            throw new \Exception("No se puede validar la prepóliza ya que su estatus es {$poliza->estatusPrepoliza->descripcion}", 400);
         }
+        $poliza->validar(auth()->id());
+        return $poliza;
     }
 
     public function omitir($id)
