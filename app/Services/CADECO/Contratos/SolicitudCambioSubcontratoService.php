@@ -228,12 +228,15 @@ class SolicitudCambioSubcontratoService
                 ];
             }
             if($key>1){
-                $partidas[$key-1] = [
-                    'id_item' => $row[1],
-                    'aditiva_deductiva' => $row[9],
-                    'nuevo_precio' => $row[10],
-                ];
-
+                if(key_exists(9,$row) && key_exists(10,$row) && key_exists(1,$row)){
+                    $partidas[$key-1] = [
+                        'id_item' => $row[1],
+                        'aditiva_deductiva' => $row[9],
+                        'nuevo_precio' => $row[10],
+                    ];
+                } else {
+                    abort(500,"El layout tiene un formato incorrecto, favor de verificar");
+                }
             }
         }
         return $partidas;
@@ -258,17 +261,32 @@ class SolicitudCambioSubcontratoService
             $clave_error = '';
             $descripcion = '';
             $descripcion_error = '';
-            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
-                if($concepto->es_agrupador){
-                    $destino = $concepto->id_concepto;
-                    $destino_path = $concepto->path;
-                    $destino_path_corta = $concepto->path_corta;
-                }else{
-                    $destino_error = $partida["destino"].': no es un concepto agrupador';
+            if(is_numeric($partida["destino"])){
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $destino = $concepto->id_concepto;
+                        $destino_path = $concepto->path;
+                        $destino_path_corta = $concepto->path_corta;
+                    }else{
+                        $destino_error = $partida["destino"].': no es un concepto agrupador';
+                    }
+                } else if($partida["destino"]) {
+                    $destino_error = $partida["destino"].": concepto no encontrato en presupuesto de obra";
                 }
-            } else if($partida["destino"]) {
-                $destino_error = $partida["destino"].": concepto no encontrato en presupuesto de obra";
+            } else {
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $destino = $concepto->id_concepto;
+                        $destino_path = $concepto->path;
+                        $destino_path_corta = $concepto->path_corta;
+                    }else{
+                        $destino_error = $partida["destino"].': no es un concepto agrupador';
+                    }
+                } else if($partida["destino"]) {
+                    $destino_error = $partida["destino"].": concepto no encontrato en presupuesto de obra";
+                }
             }
+
             if($partida['unidad'] && $unidadCat = Unidad::where('unidad', '=', $partida['unidad'])->first()){
                 if($unidadCat){
                     $unidad = $unidadCat->unidad;

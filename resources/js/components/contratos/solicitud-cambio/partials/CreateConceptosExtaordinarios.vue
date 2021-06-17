@@ -163,6 +163,10 @@ name: "CreateConceptosExtaordinarios",
             }).finally(() => {
                 this.cargando = false;
                 this.$emit("agrega-extraordinarios",this.partidas);
+                if(this.$refs.file_carga.value !== ''){
+                    this.$refs.file_carga.value = '';
+                    this.file_carga = null;
+                }
                 $(this.$refs.modalExtraordinario).modal('hide');
                 this.$validator.reset();
             });

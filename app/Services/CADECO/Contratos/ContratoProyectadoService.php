@@ -165,13 +165,24 @@ class ContratoProyectadoService
 
             $destino = '';
             $destino_path = '';
-            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
-                if($concepto->es_agrupador){
-                    $path = explode('->', $concepto->path);
-                    $destino = $concepto->id_concepto;
-                    $destino_path =  $concepto->path_corta;
+            if(is_numeric($partida["destino"])){
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $path = explode('->', $concepto->path);
+                        $destino = $concepto->id_concepto;
+                        $destino_path =  $concepto->path_corta;
+                    }
+                }
+            } else {
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $path = explode('->', $concepto->path);
+                        $destino = $concepto->id_concepto;
+                        $destino_path =  $concepto->path_corta;
+                    }
                 }
             }
+
             $contratos[$key] = [
                     'clave' => $partida['clave'],
                     'descripcion' => $partida['descripcion'],
