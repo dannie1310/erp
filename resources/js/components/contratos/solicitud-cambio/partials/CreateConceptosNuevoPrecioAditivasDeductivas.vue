@@ -183,6 +183,10 @@ name: "CreateConceptosNuevoPrecioAditivasDeductivas",
             }).finally(() => {
                 this.cargando = false;
                 this.$emit("agrega-cambios-precio_volumen",this.partidas);
+                if(this.$refs.file_carga.value !== ''){
+                    this.$refs.file_carga.value = '';
+                    this.file_carga = null;
+                }
                 $(this.$refs.modalExtraordinario).modal('hide');
                 this.$validator.reset();
             });
