@@ -34,7 +34,7 @@ class Poliza extends Model
      * Relaciones
      */
 
-    public function polizaCFDI()
+    public function polizasCFDI()
     {
         return $this->hasMany(PolizaCFDI::class, "id_poliza_global", "id_poliza_global");
     }

@@ -332,8 +332,15 @@ class Poliza extends Model
     private function generaPolizaCFDI($poliza_interfaz){
         if($this->transaccionAntecedente->tipo_transaccion == 65){
             $factura = Factura::find($this->transaccionAntecedente->id_transaccion);
-            $cfdi = $factura->facturasRepositorio;
-            dd($cfdi);
+            $uuid_cfdis = $factura->facturasRepositorio->pluck("uuid");
+            foreach($uuid_cfdis as $uud_cfdi)
+            {
+                $poliza_interfaz->polizasCFDI()->create(
+                    [
+                        'cfdi_uuid'=>$uud_cfdi
+                    ]
+                );
+            }
         }
     }
 
