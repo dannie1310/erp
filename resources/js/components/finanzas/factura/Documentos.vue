@@ -40,7 +40,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @click="aceptar()" >Cerrar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" >Cerrar</button>
                     <button type="submit" class="btn btn-primary" data-dismiss="modal" @click="aceptar()" >Aceptar</button>
                 </div>
                 </div>

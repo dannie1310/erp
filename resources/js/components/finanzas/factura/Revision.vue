@@ -704,7 +704,15 @@ export default {
                     }
                 });
                 this.items.subcontratos.forEach(subcontrato => {
+                    let t_cambio = 1;
+                    if(subcontrato.id_moneda != this.factura.id_moneda){
+                        t_cambio = this.tipo_cambio[subcontrato.id_moneda];
+                    }
                     if(subcontrato.seleccionado){
+                        if(!subcontrato.tc_actualizado){
+                            subcontrato.monto_revision = parseFloat(subcontrato.monto_revision * t_cambio);
+                            subcontrato.tc_actualizado = true;
+                        }
                         if(parseInt(subcontrato.tipo_transaccion) == 51){
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
                             // this.resumen.iva_subtotal = parseFloat(this.resumen.iva_subtotal) + parseFloat(subcontrato.monto_revision * 0.16);

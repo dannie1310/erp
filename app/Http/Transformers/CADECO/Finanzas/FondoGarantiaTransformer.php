@@ -40,6 +40,7 @@ class FondoGarantiaTransformer extends TransformerAbstract
             'referencia_revision'=>$model->referencia_revision,
             'observaciones'=>$model->observaciones,
             'seleccionado' => false,
+            'tc_actualizado' => false,
 
         ];
     }

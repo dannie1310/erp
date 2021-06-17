@@ -103,6 +103,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'moneda' => $model->moneda->nombre,
             'tiene_nodo_extraordinario'=>$model->tiene_nodo_extraordinario,
             'tiene_nodo_cambio_precio'=>$model->tiene_nodo_cambio_precio,
+            'tc_actualizado' => false,
         ];
     }
     /**

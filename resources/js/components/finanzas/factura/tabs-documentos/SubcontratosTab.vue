@@ -49,26 +49,12 @@ export default {
             });
         },
         getMontoMoneda(item){
-            if(parseInt(this.id_moneda) === parseInt(item.id_moneda)){
-                if(item.tipo_transaccion == 52){
-                    item.monto_revision = parseFloat(item.monto_revision).toFixed(2);
-                    return '$ ' + parseFloat(item.monto_revision).formatMoney(2);
-                }else if (item.tipo_transaccion == 51){
-                    item.monto_revision = parseFloat(item.anticipo_monto).toFixed(2);
-                    return '$ ' + parseFloat(item.anticipo_monto_format).formatMoney(2);
-                }
-                
-            }
-            else{
-                if(item.tipo_transaccion == 52){
-                    item.monto_revision = parseFloat(item.monto_revision / this.cambios[this.id_moneda]).toFixed(2);
-                }else if(item.tipo_transaccion == 51){
-                    item.monto_revision = parseFloat(item.anticipo_monto / this.cambios[this.id_moneda]).toFixed(2);
-                }
-                
-                return '$ ' + parseFloat(item.monto_revision).formatMoney(2);
-            }
-           
+            if(parseInt(item.tipo_transaccion) === 52){
+                let importe = item.monto - item.impuesto;
+                return '$ ' + parseFloat(importe * this.cambios[item.id_moneda]).formatMoney(2);
+            }else if(parseInt(item.tipo_transaccion) === 51){
+                return '$ ' + parseFloat(item.anticipo_monto * this.cambios[item.id_moneda]).toFixed(2);
+            }           
         },
     },
     computed:{
