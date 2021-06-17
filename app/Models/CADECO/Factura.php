@@ -152,6 +152,13 @@ class Factura extends Transaccion
                 ->first()->getKey());
     }
 
+    public function facturasRepositorio()
+    {
+        return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
+    }
+
     public function poliza()
     {
         return $this->belongsTo(Poliza::class, 'id_transaccion', 'id_transaccion_sao');

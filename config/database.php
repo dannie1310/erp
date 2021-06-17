@@ -83,6 +83,17 @@ return [
             'engine' => null,
         ],
 
+        'interfaz' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_INTERFAZ', 'localhost'),
+            'database' => env('DB_DATABASE_INTERFAZ', 'forge'),
+            'username' => env('DB_USERNAME_INTERFAZ', 'forge'),
+            'password' => env('DB_PASSWORD_INTERFAZ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'sci' => [
             'driver' => 'mysql',
             'host' => env('DB_HOST_SCI', '127.0.0.1'),
@@ -147,22 +158,6 @@ return [
             'username' => env('DB_USERNAME_SCACONF', 'forge'),
             'password' => env('DB_PASSWORD_SCACONF', ''),
             'unix_socket' => env('DB_SOCKET_SCACONF', ''),
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_unicode_ci',
-            'prefix' => '',
-            'prefix_indexes' => true,
-            'strict' => true,
-            'engine' => null,
-        ],
-
-        'contratos_legales' => [
-            'driver' => 'mysql',
-            'host' => env('DB_HOST_IGH', '127.0.0.1'),
-            'port' => env('DB_PORT_IGH', '3306'),
-            'database' => env('DB_DATABASE_CONTRATOS_LEGALES', 'forge'),
-            'username' => env('DB_USERNAME_CONTRATOS_LEGALES', 'forge'),
-            'password' => env('DB_PASSWORD_CONTRATOS_LEGALES', ''),
-            'unix_socket' => env('DB_SOCKET_CONTRATOS_LEGALES', ''),
             'charset' => 'utf8mb4',
             'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
