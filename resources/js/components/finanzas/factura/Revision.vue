@@ -686,7 +686,7 @@ export default {
             if(this.items){
                 this.items.pendientes.forEach(pendiente => {
                     if(pendiente.seleccionado){
-                        if(pendiente.id_moneda = this.factura.id_moneda){
+                        if(pendiente.id_moneda == this.factura.id_moneda){
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo));
                         }else{
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(((pendiente.cantidad * pendiente.precio_sf) - pendiente.anticipo) * this.tipo_cambio[pendiente.id_moneda]);
@@ -696,7 +696,11 @@ export default {
                 });
                 this.items.anticipos.forEach(anticipo => {
                     if(anticipo.seleccionado){
-                        this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf / this.tipo_cambio[this.factura.id_moneda]);
+                        if(anticipo.id_moneda == this.factura.id_moneda){
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf);
+                        }else{
+                            this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(anticipo.anticipo_sf / this.tipo_cambio[this.factura.id_moneda]);
+                        }
                     }
                 });
                 this.items.subcontratos.forEach(subcontrato => {
@@ -830,30 +834,6 @@ export default {
                     this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(list.importe_total_sf);
                 }
             });
-            // this.items.descuentos.forEach(descuento => {
-            //     if(descuento.seleccionado){
-            //         descuento.monto_revision = descuento.monto_revision === '' ? 0 : (descuento.monto_revision);
-            //         if(descuento.naturaleza === 'Descuento'){
-            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  parseFloat(descuento.monto_revision);
-            //         }
-            //         if(descuento.naturaleza === 'Recargo'){
-            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(descuento.monto_revision);
-            //         }
-
-            //     }
-            // });
-            // this.items.conceptosEstimacion.forEach(conceptoEst => {
-            //     if(conceptoEst.seleccionado){
-            //         conceptoEst.monto_revision = conceptoEst.monto_revision === '' ? 0 : (conceptoEst.monto_revision);
-            //         if(conceptoEst.mascara === 8192){
-            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) -  (conceptoEst.monto_revision);
-            //         }
-            //         if(conceptoEst.mascara === 12288){
-            //             this.resumen.subtotal = parseFloat(this.resumen.subtotal) +  parseFloat(conceptoEst.monto_revision);
-            //         }
-
-            //     }
-            // });
 
             if(this.configuracion.ret_fon_gar_antes_iva == 1){
                 this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia;

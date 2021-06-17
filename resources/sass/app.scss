@@ -67,12 +67,26 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   text-align: center;
 }
 
+.td_c100, td.c100
+{
+    width: 100px;
+    max-width: 100px;
+    min-width: 100px;
+}
+
 .th_c120, th.c120
 {
     width: 120px;
     max-width: 120px;
     min-width: 120px;
     text-align: center;
+}
+
+.tc_c120, td.c120
+{
+    width: 120px;
+    max-width: 120px;
+    min-width: 120px;
 }
 
 .th_c150, th.c150

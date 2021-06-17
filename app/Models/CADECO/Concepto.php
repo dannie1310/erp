@@ -75,9 +75,9 @@ class Concepto extends Model
     public function getPathAttribute()
     {
         if ($this->nivel_padre == '') {
-            return $this->descripcion;
+            return $this->clave_concepto_select .$this->descripcion;
         } else {
-            return self::find($this->id_padre)->path . ' -> ' . $this->descripcion;
+            return self::find($this->id_padre)->path . ' -> ' . $this->clave_concepto_select . $this->descripcion;
         }
     }
 
@@ -156,14 +156,34 @@ class Concepto extends Model
     public function getClaveConceptoSelectAttribute()
     {
         if($this->clave_concepto != ''){
-            $pos = strpos($this->descripcion, $this->clave_concepto);
+            $pos = strpos($this->descripcion, "[".$this->clave_concepto."]");
             if($pos === false){
                 return "[" . $this->clave_concepto ."] ";
             } else {
                 return "";
             }
+        } else {
+            return "[" . $this->id_concepto ."] ";
         }
-        return "";
+    }
+
+    public function getDescripcionClaveAttribute()
+    {
+        return $this->clave_concepto_select . $this->descripcion;
+    }
+
+    public function getDescripcionClaveRecortadaAttribute()
+    {
+        $longitud = strlen($this->clave_concepto_select . $this->descripcion);
+        if($longitud>30)
+        {
+            $diferencia = $longitud-30;
+            return $this->clave_concepto_select . substr($this->descripcion,0,strlen($this->descripcion)-$diferencia)."...";
+        } else
+        {
+            return $this->clave_concepto_select . $this->descripcion;
+        }
+
     }
 
     public function scopeRoots($query)
@@ -221,11 +241,15 @@ class Concepto extends Model
      */
     public function getPathCortaAttribute()
     {
-        if ((strlen($this->nivel_padre)/4) == 3) {
-            return $this->descripcion;
+        $path_corta = [];
+        for($i=2;$i>=0; $i--)
+        {
+            $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
+            if($nivel_buscar != "")
+            {
+                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+            }
         }
-        if ((strlen($this->nivel_padre)/4) >= 3) {
-            return self::find($this->id_padre)->path_corta . ' -> ' . $this->descripcion;
-        }
+        return implode(" -> ",$path_corta);
     }
 }

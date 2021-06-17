@@ -35,8 +35,8 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="cerrarModal">Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file">Cargar</button>
+                            <button type="button" class="btn btn-secondary" @click="cerrarModal"><i class="fa fa-times-circle"></i>Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file"><i class="fa fa-upload"></i>Cargar</button>
                         </div>
                     </form>
                 </div>

@@ -29,7 +29,9 @@ class Contrato extends Model
         'clave',
         'id_marca',
         'id_modelo',
-        'nivel'
+        'nivel',
+        'nodo_extraordinarios',
+        'nodo_cambio_precio'
     ];
 
     public $timestamps = false;
@@ -48,6 +50,45 @@ class Contrato extends Model
         return $this->hasMany(AsignacionContratistaPartida::class, 'id_concepto', 'id_concepto');
     }
 
+    public function partidasPresupuesto(){
+        return $this->hasMany(PresupuestoContratistaPartida::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function hijos()
+    {
+        return $this->hasMany(self::class, 'id_transaccion', 'id_transaccion')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->orderBy('nivel', 'ASC');
+    }
+
+    public function hijosSinOrden()
+    {
+        return $this->hasMany(self::class, 'id_transaccion', 'id_transaccion')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ;
+    }
+
+    public function scopeAgrupadorExtraordinario($query){
+       return $query->where("nodo_extraordinarios","=",1);
+    }
+
+    // TODO: Cambiar uso de scope agrupador_nuevo_precio por agrupador_cambio_precio para eliminar este scope
+    public function scopeAgrupadorNuevoPrecio($query){
+        return $query->where("nodo_cambio_precio","=",1);
+    }
+
+    public function scopeAgrupadorCambioPrecio($query){
+        return $query->where("nodo_cambio_precio","=",1);
+    }
+
+    public function getCantidadHijosAttribute()
+    {
+        $contratos = $this->contrato->contratos()->where("nivel","LIKE",$this->nivel."%")
+            ->where("nivel","!=",$this->nivel)
+            ->get();
+        return count($contratos);
+    }
+
     public function getDescripcionFormatAttribute()
     {
         return '<span>'.str_repeat('<i class="fas fa-angle-right"></i>&nbsp;&nbsp;', substr_count($this->nivel, '.') - 1) . $this->descripcion .'</span>';
@@ -62,10 +103,15 @@ class Contrato extends Model
     {
         return number_format(abs($this->cantidad_presupuestada), 2);
     }
-    
+
     public function getDescripcionGuionNivelFormatAttribute()
     {
         return str_repeat('__', substr_count($this->nivel, '.')) . $this->descripcion;
+    }
+
+    public function getTieneHijosAttribute()
+    {
+        return $this->hijos()->count() ? true : false;
     }
 
     public function registrarDestino(){
@@ -80,5 +126,23 @@ class Contrato extends Model
             ]);
         }
 
+    }
+
+    public function getClaveContratoSelectAttribute()
+    {
+        if($this->clave != ''){
+            return "[" . $this->clave ."] ";
+        }
+        return "";
+    }
+
+    public function scopeRoots($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 4');
+    }
+
+    public function scopeContrato($query, $id_contrato)
+    {
+        return $query->where('id_transaccion','=', $id_contrato);
     }
 }

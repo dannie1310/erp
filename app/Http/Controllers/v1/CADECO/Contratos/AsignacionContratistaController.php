@@ -45,11 +45,29 @@ class AsignacionContratistaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        $this->middleware('permiso:consultar_subcontrato')->only(['show', 'paginate']);
+        $this->middleware('permiso:consultar_asignacion_contratista')->only(['show', 'paginate', 'pdf']);
         $this->middleware('permiso:registrar_asignacion_contratista')->only(['store']);
+        $this->middleware('permiso:eliminar_asignacion_contratista')->only(['destroy']);
 
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function getAsignaciones(Request $request){
+        $asignaciones = $this->service->getAsignaciones($request->all());
+        return $this->respondWithCollection($asignaciones);
+    }
+
+    public function generarSubcontrato(Request $request){
+        return $this->service->generarSubcontrato($request->all());
+    }
+
+    public function pdf($id)
+    {
+        if(auth()->user()->can('consultar_subcontrato')) {
+            return $this->service->pdf($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
 }
