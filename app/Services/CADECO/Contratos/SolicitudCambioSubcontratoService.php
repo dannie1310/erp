@@ -256,14 +256,18 @@ class SolicitudCambioSubcontratoService
             $unidad_error = '';
             $clave = '';
             $clave_error = '';
-            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+            $descripcion = '';
+            $descripcion_error = '';
+            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
                 if($concepto->es_agrupador){
                     $destino = $concepto->id_concepto;
                     $destino_path = $concepto->path;
                     $destino_path_corta = $concepto->path_corta;
+                }else{
+                    $destino_error = $partida["destino"].': no es un concepto agrupador';
                 }
             } else if($partida["destino"]) {
-                $destino_error = $partida["destino"];
+                $destino_error = $partida["destino"].": concepto no encontrato en presupuesto de obra";
             }
             if($partida['unidad'] && $unidadCat = Unidad::where('unidad', '=', $partida['unidad'])->first()){
                 if($unidadCat){
@@ -279,9 +283,14 @@ class SolicitudCambioSubcontratoService
             } else {
                 $clave = $partida["clave"];
             }
+            if(strlen($partida["descripcion"])>255){
+                $descripcion_error = "LA LONGITUD DEBE SER MENOR O IGUAL A 255 CARACTERES".$partida["descripcion"];
+            } else{
+                $descripcion = $partida["descripcion"];
+            }
             $contratos[$key] = [
                 'clave' => $clave,
-                'descripcion' => $partida['descripcion'],
+                'descripcion' => $descripcion,
                 'unidad' => $unidad,
                 'cantidad' => $partida['cantidad'],
                 'destino' => $destino,
@@ -293,6 +302,7 @@ class SolicitudCambioSubcontratoService
                 'es_hoja' => $partida['cantidad']?true:false,
                 'cantidad_hijos' => 0,
                 'destino_error' => $destino_error,
+                'descripcion_error' => $descripcion_error,
                 'unidad_error' => $unidad_error,
                 'clave_error' => $clave_error,
                 'id_nodo_carga' => $data->id_contrato_nodo_carga,
@@ -303,10 +313,10 @@ class SolicitudCambioSubcontratoService
                 continue;
             }
 
-            if($nivel_anterior == $partida['nivel']){
+            /*if($nivel_anterior == $partida['nivel']){
                 $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
                 continue;
-            }
+            }*/
 
             if($nivel_anterior < $partida['nivel']){
                 $index_base = $key - 1;
