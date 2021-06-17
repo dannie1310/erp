@@ -186,7 +186,46 @@ export default {
                         }
                     });
             });
-        }
+        },
+
+        asociarCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Asociar CFDIs a Polizas",
+                    text: "¿Está seguro de asociar los CFDI a Polizas?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Asociar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI+"asociar", payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("CFDI's asociados a sus correspondientes polizas.", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

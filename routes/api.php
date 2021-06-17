@@ -513,7 +513,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
         });
-       
+
         //IMPRESORA
         $api->group(['prefix' => 'impresora'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
@@ -852,6 +852,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/omitir', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@omitir')->where(['id' => '[0-9]+']);
             $api->patch('{id}/validar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@validar')->where(['id' => '[0-9]+']);
+            $api->post('asociar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@asociarCFDI');
         });
 
         //PÓLIZAS CFDI

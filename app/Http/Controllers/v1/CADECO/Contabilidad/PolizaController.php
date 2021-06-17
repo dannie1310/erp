@@ -83,4 +83,10 @@ class PolizaController extends Controller
         $item = $this->service->omitir($id);
         return $this->respondWithItem($item);
     }
+
+    public function asociarCFDI(Request $request)
+    {
+        $item = $this->service->asociarCFDI($request->all());
+        return response()->json("{}", 200);
+    }
 }

@@ -1,6 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <Asociar @created="paginate()" v-bind:datos_poliza="datos_poliza" v-if="datos_poliza"/>
         </div>
         <div class="col-12">
             <div class="card">
@@ -19,8 +20,10 @@
 </template>
 
 <script>
+    import Asociar from "./Asociar";
     export default {
         name: "asociar-poliza-index",
+        components: {Asociar},
         data() {
             return {
                 HeaderSettings: false,
@@ -32,9 +35,6 @@
                     { title: 'Fecha de Prepóliza', field: 'fecha', sortable: true },
                     { title: 'Total', field: 'total', sortable: true },
                     { title: 'Cuadre', field: 'cuadre'},
-                    //{ title: 'Estatus', field: 'estatus', sortable: true, tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Poliza ContPaq', field: 'poliza_contpaq', sortable: true },
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -43,7 +43,8 @@
                     order: 'desc',
                     scope: 'getAsociarCFDI'
                 },
-                cargando: false
+                cargando: false,
+                datos_poliza: []
             }
         },
 
@@ -92,12 +93,10 @@
                         fecha: poliza.fecha,
                         total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
                         cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
-                        estatus: '',
-                        poliza_contpaq: poliza.poliza_contpaq ? '# ' + poliza.poliza_contpaq : '',
-                        buttons: $.extend({}, {
-                            id: poliza.id,
-                        })
                     }));
+                    self.datos_poliza = polizas.map((poliza, i) => (
+                        poliza.id
+                    ));
                 },
                 deep: true
             },

@@ -12,9 +12,17 @@ class Expediente extends Model
 {
     protected $connection = 'cntpq';
     protected $table = 'dbo.Expedientes';
-    protected $primaryKey = 'Guid_Relacionado';
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'Guid_Relacionado',
+        'Guid_Pertenece',
+        'ApplicationType_Exp',
+        'Type_Exp',
+        'Comment_Exp',
+        'TimeStamp_Exp'
+    ];
 
     /**
      * Relaciones
