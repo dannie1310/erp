@@ -653,8 +653,7 @@ class Factura extends Transaccion
 
     public function validarPrepoliza(){
         if(!$this->polizas && $this->estado > 0 ){
-            DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
-            return $this->find($this->id_transaccion);
+            $this->generaPrepoliza();
         }else if($this->polizas && $this->estado > 0){
             $diferente = false;
             foreach($this->polizas->pluck('estatus') as $estatus){
@@ -663,10 +662,15 @@ class Factura extends Transaccion
                 }
             }
             if(!$diferente){
-                DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
-                return $this->find($this->id_transaccion);
+                $this->generaPrepoliza();
             }
         }
+        return $this;
+    }
+
+    private function generaPrepoliza()
+    {
+        DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
         return $this;
     }
 
@@ -1200,13 +1204,19 @@ class Factura extends Transaccion
             $this->retencionIVA_2_3 = $data['resumen']['ret_iva_23'];
             $this->save();
 
-            DB::connection('cadeco')->commit();
-            return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
+            abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
 
+        try{
+            $this->generaPrepoliza();
+        } catch (\Exception $e) {
+
+        }
+
+        DB::connection('cadeco')->commit();
+        return $this;
     }
 
     public function storeRevisionVarios($data){
@@ -1259,13 +1269,22 @@ class Factura extends Transaccion
 
             }
 
+            $this->generaPrepoliza();
 
-            DB::connection('cadeco')->commit();
-            return $this;
+
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
+
+        try{
+            $this->generaPrepoliza();
+        } catch (\Exception $e) {
+
+        }
+
+        DB::connection('cadeco')->commit();
+        return $this;
     }
 
     public function editar(array $data)
