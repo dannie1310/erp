@@ -182,4 +182,9 @@ class PolizaService
     {
         return $this->repository->asociarCFDI($data['data']);
     }
+
+    public function getPolizasPorAsociar()
+    {
+        return $this->repository->getAsociarCFDI();
+    }
 }

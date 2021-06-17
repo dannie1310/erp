@@ -89,4 +89,10 @@ class PolizaController extends Controller
         $item = $this->service->asociarCFDI($request->all());
         return response()->json("{}", 200);
     }
+
+    public function getPolizasPorAsociar(Request $request)
+    {
+        $collection = $this->service->getPolizasPorAsociar();
+        return $this->respondWithCollection($collection);
+    }
 }

@@ -1849,8 +1849,8 @@ export const routes = [
                                 name:"asociar-poliza-cfdi",
                                 component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
                                 meta: {
-                                    title: 'Asociar Pólizas con CFDI',
-                                    breadcrumb: {parent: 'contabilidad', name: 'ASOCIAR PÓLIZAS CON CFDI'},
+                                    title: 'Asociar Pólizas de Contpaq con CFDI',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR PÓLIZAS DE CONTPAQ CON CFDI'},
                                     middleware: [auth, context, permission],
                                     permission: ['consultar_poliza'],
                                     general: true

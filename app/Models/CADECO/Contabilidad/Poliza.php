@@ -117,11 +117,6 @@ class Poliza extends Model
     /**
      * Scope
      */
-    public function scopeGetAsociarCFDI($query)
-    {
-        $ids_polizas = $this->buscarPolizasSinAsociarCFDI();
-        return $query->whereIn('id_int_poliza',$ids_polizas);
-    }
 
     /**
      * Attribute
@@ -301,8 +296,10 @@ class Poliza extends Model
         $guid_poliza = '';
         $base = Parametro::find(1);
         $i = 0;
+        $datos_polizas = [];
         foreach ($polizas_interfaz as $key => $poliza) {
             if ($poliza->polizaContpaq) {
+                dd($poliza->polizaContpaq);
                 $guid_poliza = $poliza->polizaContpaq->Guid;
                 if ($poliza->CFDIS) {
                     foreach ($poliza->CFDIS as $cfdi) {
@@ -316,7 +313,12 @@ class Poliza extends Model
                             }
                         }
                     }
+
                     if ($i == 1) {
+                        array_push($ids_polizas, $poliza->id_int_poliza);
+                        array_push($ids_polizas, $poliza->id_poliza_global);
+                        array_push($ids_polizas, $poliza->id_poliza_contpaq);
+                        array_push($ids_polizas, $poliza->poliza_contpaq);
                         array_push($ids_polizas, $poliza->id_int_poliza);
                     }
                     $i = 0;

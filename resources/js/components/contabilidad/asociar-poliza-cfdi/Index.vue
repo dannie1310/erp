@@ -1,14 +1,44 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <Asociar @created="paginate()" v-bind:datos_poliza="datos_poliza" v-if="datos_poliza"/>
+            <Asociar @created="getPolizasPorAsociar()" v-bind:datos_poliza="datos_poliza" v-if="datos_poliza"/>
         </div>
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
-                    <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                    <div class="table-responsive col-md-12">
+                        <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th class="no_parte">No. de Parte</th>
+                                    <th>Descripción</th>
+                                    <th class="unidad">Unidad</th>
+                                    <th class="no_parte">Cantidad</th>
+                                    <th class="fecha">Fecha de Entrega</th>
+                                    <th>Destino</th>
+                                    <th>Observaciones</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(poliza, i) in polizas.data">
+                                    <td>{{i+1}}</td>
+                                    <td style="text-align: center"><b>{{poliza}}</b></td>
+                                  <!--  <td style="text-align: center">{{partida.material.descripcion}}</td>
+                                    <td style="text-align: center">{{partida.material.unidad}}</td>
+                                    <td style="text-align: center">{{partida.cantidad}}</td>
+                                    <td style="text-align: center">{{(partida.entrega) ? partida.entrega.fecha_format : '------------'}}</td>
+
+                                    <td v-if="partida.entrega && partida.entrega.destino_path" :title="`${partida.entrega.destino_path}`"><u>{{partida.entrega.destino_descripcion}}</u></td>
+                                    <td v-else-if="partida.entrega" >{{partida.entrega.destino_descripcion}}</td>
+                                    <td v-else></td>
+
+                                    <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
+                                    -->
+                                </tr>
+                                </tbody>
+                            </table>
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -26,43 +56,26 @@
         components: {Asociar},
         data() {
             return {
-                HeaderSettings: false,
-                columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Tipo de Póliza', field: 'id_tipo_poliza_interfaz', sortable: true },
-                    { title: 'Tipo de Transacción', field: 'id_tipo_poliza_contpaq', sortable: true },
-                    { title: 'Concepto', field: 'concepto', thComp: require('../../globals/th-Filter').default, sortable: true },
-                    { title: 'Fecha de Prepóliza', field: 'fecha', sortable: true },
-                    { title: 'Total', field: 'total', sortable: true },
-                    { title: 'Cuadre', field: 'cuadre'},
-                ],
-                data: [],
-                total: 0,
                 query: {
                     sort: 'fecha',
                     order: 'desc',
                     scope: 'getAsociarCFDI'
                 },
                 cargando: false,
-                datos_poliza: []
+                datos_poliza: null
             }
         },
 
         mounted() {
-            this.$Progress.start();
-            this.paginate()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
+            this.getPolizasPorAsociar()
         },
 
         methods: {
-            paginate() {
+            getPolizasPorAsociar() {
                 this.cargando = true;
-                return this.$store.dispatch('contabilidad/poliza/paginate', { params: this.query })
+                return this.$store.dispatch('contabilidad/poliza/getPolizasPorAsociar', { params: this.query })
                     .then(data => {
                         this.$store.commit('contabilidad/poliza/SET_POLIZAS', data.data);
-                        this.$store.commit('contabilidad/poliza/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -73,64 +86,6 @@
             polizas(){
                 return this.$store.getters['contabilidad/poliza/polizas'];
             },
-            meta(){
-                return this.$store.getters['contabilidad/poliza/meta'];
-            },
-            tbodyStyle() {
-                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
-            }
-        },
-        watch: {
-            polizas: {
-                handler(polizas) {
-                    let self = this
-                    self.$data.data = []
-                    self.$data.data = polizas.map((poliza, i) => ({
-                        index: (i + 1) + self.query.offset,
-                        id_tipo_poliza_interfaz: poliza.transaccionInterfaz.descripcion,
-                        id_tipo_poliza_contpaq: poliza.tipoPolizaContpaq.descripcion,
-                        concepto: poliza.concepto,
-                        fecha: poliza.fecha,
-                        total: '$' + parseFloat(poliza.total).formatMoney(2, '.', ','),
-                        cuadre: '$' + parseFloat(poliza.cuadre).formatMoney(2, '.', ','),
-                    }));
-                    self.datos_poliza = polizas.map((poliza, i) => (
-                        poliza.id
-                    ));
-                },
-                deep: true
-            },
-            meta: {
-                handler (meta) {
-                    let total = meta.pagination.total
-                    this.$data.total = total
-                },
-                deep: true
-            },
-            query: {
-                handler () {
-                    this.paginate()
-                },
-                deep: true
-            },
-            search(val) {
-                if (this.timer) {
-                    clearTimeout(this.timer);
-                    this.timer = null;
-                }
-                this.timer = setTimeout(() => {
-                    this.query.search = val;
-                    this.query.offset = 0;
-                    this.paginate();
-
-                }, 500);
-            },
-            cargando(val) {
-                $('tbody').css({
-                    '-webkit-filter': val ? 'blur(2px)' : '',
-                    'pointer-events': val ? 'none' : ''
-                });
-            }
         },
     }
 </script>
