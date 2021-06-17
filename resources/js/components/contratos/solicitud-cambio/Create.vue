@@ -405,6 +405,7 @@
                                 </tr>
                             </tbody>
                         </table >
+                        <br>
                     </div>
                 </div>
 
@@ -549,7 +550,7 @@
                     destino:'',
                     precio:'',
                     nivel:1,
-                    es_hoja:0,
+                    es_hoja:1,
                     cantidad_hijos:0,
                     id_nodo_carga:'',
                 },
@@ -784,7 +785,7 @@
                         destino_path_corta:data.path_corta,
                         precio:concepto.precio,
                         nivel:1,
-                        es_hoja:0,
+                        es_hoja:1,
                         cantidad_hijos:0,
                         id_nodo_carga:'',
                         importe:(concepto.cantidad * concepto.precio).toFixed(2),
@@ -801,7 +802,7 @@
                         precio:'',
                         importe:'',
                         nivel:1,
-                        es_hoja:0,
+                        es_hoja:1,
                         cantidad_hijos:0,
                         id_nodo_carga:'',
                     };
