@@ -401,6 +401,8 @@ class Poliza extends Model
         $polizas = [];
         $obra = Obra::find(Context::getIdObra());
         $guid_poliza = '';
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
         $base = Parametro::find(1);
         $i = 0;
         foreach ($polizas_interfaz as $key => $poliza) {
