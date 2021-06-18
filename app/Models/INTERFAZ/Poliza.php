@@ -42,6 +42,11 @@ class Poliza extends Model
         return $this->hasOne(\App\Models\CTPQ\Poliza::class,"id","id_poliza_contpaq");
     }
 
+    public function polizaSAO()
+    {
+        return $this->belongsTo(\App\Models\CADECO\Contabilidad\Poliza::class, 'id_int_poliza', 'id_int_poliza');
+    }
+
     /**
      * Scopes
      */

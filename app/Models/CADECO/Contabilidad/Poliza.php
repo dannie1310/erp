@@ -285,22 +285,26 @@ class Poliza extends Model
         return $relaciones;
     }
 
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format($this->total,2);
+    }
+
     /**
      * Metodos
      */
     public function buscarPolizasSinAsociarCFDI()
     {
         $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->get();
-        $ids_polizas = [];
+        $polizas = [];
         $obra = Obra::find(Context::getIdObra());
         $guid_poliza = '';
         $base = Parametro::find(1);
         $i = 0;
-        $datos_polizas = [];
         foreach ($polizas_interfaz as $key => $poliza) {
             if ($poliza->polizaContpaq) {
-                dd($poliza->polizaContpaq);
                 $guid_poliza = $poliza->polizaContpaq->Guid;
+                $tipo =  $poliza->polizaContpaq->tipo;
                 if ($poliza->CFDIS) {
                     foreach ($poliza->CFDIS as $cfdi) {
                         if ($cfdi->tiene_comprobante) {
@@ -315,22 +319,30 @@ class Poliza extends Model
                     }
 
                     if ($i == 1) {
-                        array_push($ids_polizas, $poliza->id_int_poliza);
-                        array_push($ids_polizas, $poliza->id_poliza_global);
-                        array_push($ids_polizas, $poliza->id_poliza_contpaq);
-                        array_push($ids_polizas, $poliza->poliza_contpaq);
-                        array_push($ids_polizas, $poliza->id_int_poliza);
+
+                        array_push($polizas, [
+                            'id_int_poliza' =>  $poliza->id_int_poliza,
+                            'id_poliza_global' => $poliza->id_poliza_global,
+                            'id_poliza_contpaq' => $poliza->id_poliza_contpaq,
+                            'folio_contpaq' => $poliza->poliza_contpaq,
+                            'tipo_contpaq' => "Póliza de ".$tipo,
+                            'concepto' => $poliza->polizaSAO->concepto,
+                            'folio_sao' => $poliza->numero_folio_format,
+                            'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
+                            'fecha' =>  $poliza->polizaSAO->fecha_format,
+                            'total' => $poliza->polizaSAO->total_format,
+                        ]);
                     }
                     $i = 0;
                 }
             }
         }
-        return $ids_polizas;
+        return $polizas;
     }
 
     public function asociarCFDI($data)
     {
-        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->whereIn('id_int_poliza', $data)->get();
+        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->whereIn('id_poliza_global', $data)->get();
         $ids_polizas = [];
         $obra = Obra::find(Context::getIdObra());
         $guid_poliza = '';

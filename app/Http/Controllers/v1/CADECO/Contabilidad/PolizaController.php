@@ -92,7 +92,6 @@ class PolizaController extends Controller
 
     public function getPolizasPorAsociar(Request $request)
     {
-        $collection = $this->service->getPolizasPorAsociar();
-        return $this->respondWithCollection($collection);
+        return $this->service->getPolizasPorAsociar();
     }
 }

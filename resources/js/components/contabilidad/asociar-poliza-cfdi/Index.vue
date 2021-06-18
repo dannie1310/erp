@@ -3,47 +3,53 @@
         <div class="col-12">
             <Asociar @created="getPolizasPorAsociar()" v-bind:datos_poliza="datos_poliza" v-if="datos_poliza"/>
         </div>
-        <div class="col-12">
-            <div class="card">
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="table-responsive col-md-12">
-                        <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th class="no_parte">No. de Parte</th>
-                                    <th>Descripción</th>
-                                    <th class="unidad">Unidad</th>
-                                    <th class="no_parte">Cantidad</th>
-                                    <th class="fecha">Fecha de Entrega</th>
-                                    <th>Destino</th>
-                                    <th>Observaciones</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="(poliza, i) in polizas.data">
-                                    <td>{{i+1}}</td>
-                                    <td style="text-align: center"><b>{{poliza}}</b></td>
-                                  <!--  <td style="text-align: center">{{partida.material.descripcion}}</td>
-                                    <td style="text-align: center">{{partida.material.unidad}}</td>
-                                    <td style="text-align: center">{{partida.cantidad}}</td>
-                                    <td style="text-align: center">{{(partida.entrega) ? partida.entrega.fecha_format : '------------'}}</td>
-
-                                    <td v-if="partida.entrega && partida.entrega.destino_path" :title="`${partida.entrega.destino_path}`"><u>{{partida.entrega.destino_descripcion}}</u></td>
-                                    <td v-else-if="partida.entrega" >{{partida.entrega.destino_descripcion}}</td>
-                                    <td v-else></td>
-
-                                    <td style="text-align: left">{{(partida.complemento) ? partida.complemento.observaciones : '------------'}}</td>
-                                    -->
-                                </tr>
-                                </tbody>
-                            </table>
+        <div v-if="cargando">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Cargando...</span>
                     </div>
                 </div>
-                <!-- /.card-body -->
             </div>
-            <!-- /.card -->
+        </div>
+        <div v-else>
+            <div class="col-12">
+                <div class="card">
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive col-md-12">
+                            <table class="table table-striped">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Tipo Póliza</th>
+                                        <th>Tipo Póliza SAO</th>
+                                        <th>Folio Póliza (Contpaq)</th>
+                                        <th>Folio Póliza (SAO)</th>
+                                        <th>Fecha</th>
+                                        <th>Concepto</th>
+                                        <th>Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr v-for="(poliza, i) in polizas">
+                                        <td>{{i+1}}</td>
+                                        <td style="text-align: center">{{poliza.tipo_contpaq}}</td>
+                                        <td style="text-align: center">{{poliza.tipo_sao}}</td>
+                                        <td style="text-align: center">{{poliza.folio_contpaq}}</td>
+                                        <td style="text-align: center">{{poliza.folio_sao}}</td>
+                                        <td style="text-align: center">{{poliza.fecha}}</td>
+                                        <td style="text-align: center">{{poliza.concepto}}</td>
+                                        <td style="text-align: left">{{poliza.total}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
         </div>
         <!-- /.col -->
     </div>
@@ -56,12 +62,7 @@
         components: {Asociar},
         data() {
             return {
-                query: {
-                    sort: 'fecha',
-                    order: 'desc',
-                    scope: 'getAsociarCFDI'
-                },
-                cargando: false,
+                cargando: true,
                 datos_poliza: null
             }
         },
@@ -72,10 +73,12 @@
 
         methods: {
             getPolizasPorAsociar() {
-                this.cargando = true;
                 return this.$store.dispatch('contabilidad/poliza/getPolizasPorAsociar', { params: this.query })
                     .then(data => {
-                        this.$store.commit('contabilidad/poliza/SET_POLIZAS', data.data);
+                        this.$store.commit('contabilidad/poliza/SET_POLIZAS', data);
+                        this.datos_poliza = data.map((poliza, i) => (
+                            poliza.id_poliza_global
+                        ));
                     })
                     .finally(() => {
                         this.cargando = false;
