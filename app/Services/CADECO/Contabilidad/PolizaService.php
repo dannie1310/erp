@@ -5,7 +5,7 @@ namespace App\Services\CADECO\Contabilidad;
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Contabilidad\Poliza\Repository;
 use Illuminate\Support\Facades\DB;
 
 class PolizaService
@@ -160,5 +160,15 @@ class PolizaService
             DB::connection('cadeco')->rollBack();
             abort($e->getCode(), $e->getMessage());
         }
+    }
+
+    public function asociarCFDI($data)
+    {
+        return $this->repository->asociarCFDI($data['data']);
+    }
+
+    public function getPolizasPorAsociar()
+    {
+        return $this->repository->getAsociarCFDI();
     }
 }

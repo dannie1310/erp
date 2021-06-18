@@ -2006,6 +2006,23 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'asociar-poliza-cfdi',
+                        component: require('./components/contabilidad/asociar-poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"asociar-poliza-cfdi",
+                                component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Asociar Pólizas de Contpaq con CFDI',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR PÓLIZAS DE CONTPAQ CON CFDI'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['asociar_poliza_contpaq_cfdi'],
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[

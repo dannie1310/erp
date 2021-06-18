@@ -155,6 +155,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
+use App\Models\CTPQ\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
@@ -333,6 +334,7 @@ use App\Observers\CADECO\TransaccionObserver;
 use App\Observers\CADECO\VentaObserver;
 use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
+use App\Observers\CTPQ\DocumentoObserver;
 use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
@@ -414,9 +416,10 @@ class AppServiceProvider extends ServiceProvider
         /**
          * CTPQ
          * */
+        \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
+        Documento::observe(DocumentoObserver::class);
         \App\Models\CTPQ\Poliza::observe(\App\Observers\CTPQ\PolizaObserver::class);
         \App\Models\CTPQ\PolizaMovimiento::observe(\App\Observers\CTPQ\PolizaMovimientoObserver::class);
-        \App\Models\CTPQ\Cuenta::observe(\App\Observers\CTPQ\CuentaObserver::class);
 
         /**
          * MODULOSSAO

@@ -21,9 +21,13 @@ use App\Models\CADECO\SalidaAlmacenTransferencia;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Tesoreria\TraspasoCuentas;
 use App\Models\CADECO\Transaccion;
+use App\Models\CTPQ\DocApp;
+use App\Models\CTPQ\Documento;
 use App\Models\CTPQ\Empresa;
 use App\Models\INTERFAZ\PolizaCFDI;
 use App\Models\INTERFAZ\Poliza as PolizaInterfaz;
+use App\Models\CTPQ\Expediente;
+use App\Models\CTPQ\Parametro;
 use App\Traits\DateFormatTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -153,6 +157,7 @@ class Poliza extends Model
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
     }
+
     public function getFechaHoraRegistroFormatAttribute()
     {
         $date = date_create($this->timestamp_registro);
@@ -280,6 +285,11 @@ class Poliza extends Model
         return $relaciones;
     }
 
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format($this->total,2);
+    }
+
     /**
      * Métodos
      */
@@ -383,5 +393,147 @@ class Poliza extends Model
             );
         }
         return $poliza_interfaz;
+    }
+
+    public function buscarPolizasSinAsociarCFDI()
+    {
+        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->get();
+        $polizas = [];
+        $obra = Obra::find(Context::getIdObra());
+        $guid_poliza = '';
+        $base = Parametro::find(1);
+        $i = 0;
+        foreach ($polizas_interfaz as $key => $poliza) {
+            if ($poliza->polizaContpaq) {
+                $guid_poliza = $poliza->polizaContpaq->Guid;
+                $tipo =  $poliza->polizaContpaq->tipo;
+                if ($poliza->polizasCFDI) {
+                    foreach ($poliza->polizasCFDI as $cfdi) {
+                        if ($cfdi->tiene_comprobante) {
+                            DB::purge('cntpq');
+                            Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                            $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
+                            if (is_null($expediente)) {
+                                $i = 1;
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($i == 1) {
+
+                        array_push($polizas, [
+                            'id_int_poliza' =>  $poliza->id_int_poliza,
+                            'id_poliza_global' => $poliza->id_poliza_global,
+                            'id_poliza_contpaq' => $poliza->id_poliza_contpaq,
+                            'folio_contpaq' => $poliza->poliza_contpaq,
+                            'tipo_contpaq' => "Póliza de ".$tipo,
+                            'concepto' => $poliza->polizaSAO->concepto,
+                            'folio_sao' => $poliza->polizaSAO->numero_folio_format,
+                            'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
+                            'fecha' =>  $poliza->polizaSAO->fecha_format,
+                            'total' => $poliza->polizaSAO->total_format,
+                        ]);
+                    }
+                    $i = 0;
+                }
+            }
+        }
+        return $polizas;
+    }
+
+    public function asociarCFDI($data)
+    {
+        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->whereIn('id_poliza_global', $data)->get();
+        $ids_polizas = [];
+        $obra = Obra::find(Context::getIdObra());
+        $guid_poliza = '';
+        $guid_document = '';
+        $tipo = '';
+        $base = Parametro::find(1);
+        $i = 0;
+        $fecha = date('Y-m-d').' 00:00:00';
+        try {
+            DB::connection('cntpq')->beginTransaction();
+
+            foreach ($polizas_interfaz as $key => $poliza) {
+                if ($poliza->polizaContpaq) {
+                    $guid_poliza = $poliza->polizaContpaq->Guid;
+                    $tipo = "Poliza de ".$poliza->polizaContpaq->tipo_poliza->Nombre;
+                    if ($poliza->polizasCFDI) {
+                        DB::purge('cntpq');
+                        Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                        $documento = Documento::where('GuidDocument', $guid_poliza)->first();
+                        if (is_null($documento)) {
+                            Documento::create([
+                                'GuidDocument' => $guid_poliza,
+                                'Status' => 'active',
+                                'IdTipoDocumento' => 20,
+                                'Type' => 'Polizas',
+                                'Path' => '',
+                                'Hash' => '',
+                                'MetadataEstatusApp' => '',
+                                'UserResponsibleApp' => '',
+                                'ReferenceApp' => '',
+                                'NotesApp' => '',
+                                'ProcessApp' => '',
+                                'NoPaymentStatusapp' => '',
+                                'ClaveDescripcion' => '',
+                                'SourceFile' => '',
+                                'Type_Otro' => '',
+                                'Type_Ext' => '',
+                                'Period' => 0,
+                                'Year' => 0,
+                                'TotalPayRoll' => 0,
+                                'SalaryType' => '',
+                                'IsAsoContabilidad' => 1
+                            ]);
+                        }
+
+                        $doc_app = DocApp::where('GuidDocument', $guid_poliza)->first();
+                        if (is_null($doc_app)) {
+
+                            DocApp::create([
+                                'GuidDocument' => $guid_poliza,
+                                'Fecha' => $fecha,
+                                'Tipo' => 'Polizas',
+                                'Subtipo' => $tipo,
+                                'Ejercicio' => $poliza->polizaContpaq->Ejercicio,
+                                'Periodo' => $poliza->polizaContpaq->Periodo,
+                                'Numero' => $poliza->polizaContpaq->Folio,
+                                'SubTipoNumero' => '',
+                                'Cuenta' => '',
+                                'Folio' => 0,
+                                'Responsable' =>0
+                            ]);
+                        }
+                        foreach ($poliza->polizasCFDI as $cfdi) {
+                            if ($cfdi->tiene_comprobante) {
+                                $guid_document = $cfdi->comprobante->GuidDocument;
+                                DB::purge('cntpq');
+                                Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                                $expediente = Expediente::buscarExpediente($guid_poliza, $guid_document)->first();
+                                if (is_null($expediente)) {
+                                    $comentario =$tipo . ", ejercicio: " . $poliza->polizaContpaq->Ejercicio . ", periodo: " . $poliza->polizaContpaq->Periodo . ", numero: " . $poliza->polizaContpaq->Folio . ", empresa: " . $obra->datosContables->BDContPaq . ", guid: " . $guid_poliza;
+                                    Expediente::create([
+                                        'Guid_Relacionado' => $guid_poliza,
+                                        'Guid_Pertenece' => $guid_document,
+                                        'ApplicationType_Exp' => 'Contabilidad',
+                                        'Type_Exp' => 'CFDI',
+                                        'Comment_Exp' => $comentario,
+                                        'TimeStamp_Exp' => $fecha
+                                    ]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            DB::connection('cntpq')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cntpq')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
     }
 }

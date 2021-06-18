@@ -43,6 +43,9 @@ class Poliza extends Model
 
     public $timestamps = false;
 
+    /**
+     * Relaciones
+     */
     public function movimientos()
     {
         return $this->hasMany(PolizaMovimiento::class,  'IdPoliza','Id');
@@ -68,6 +71,14 @@ class Poliza extends Model
         return $this->hasMany(AsocCFDI::class, "GuidRef", "Guid");
     }
 
+    public function expedientes()
+    {
+        return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
+    }
+
+    /**
+     * Attributos
+     */
     public function getCargosFormatAttribute()
     {
         return '$ ' . number_format(abs($this->Cargos), 2);
@@ -98,6 +109,9 @@ class Poliza extends Model
         return $fecha;
     }
 
+    /**
+     * Métodos
+     */
     public function actualiza($datos)
     {
         $fecha = Carbon::createFromFormat('d/m/Y', date_format(date_create($datos['fecha_completa']['date']), "d/m/Y"));
