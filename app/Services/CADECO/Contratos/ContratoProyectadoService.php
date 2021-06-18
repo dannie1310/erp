@@ -96,7 +96,7 @@ class ContratoProyectadoService
                 $datos = array();
                 $datos['id_transaccion'] = $contrato_proyectado->id_transaccion;
                 $datos['nivel'] = $nivel;
-                $datos['descripcion'] = $contrato['descripcion'];
+                $datos['descripcion'] = $contrato['descripcion_sin_formato'];
                 $datos['clave'] = $contrato['clave'];
 
                 if($contrato['es_hoja']){
@@ -132,21 +132,22 @@ class ContratoProyectadoService
 
     public function paginate($data)
     {
-        $cp_area = new AreaSubcontratante();
-        $cp = $this->repository;
+       if(isset($data['id_area_subcontratante'])){
+            $areas = TipoAreaSubcontratante::where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->pluck("id");
+            $cp_areas = AreaSubcontratante::whereIn('id_area_subcontratante',  $areas)->pluck("id_transaccion");
+            $this->repository->whereIn(['id_transaccion', $cp_areas]);
 
-        if(isset($data['id_area_subcontratante'])){
-            $area = TipoAreaSubcontratante::where([['descripcion', 'LIKE', '%'.request('id_area_subcontratante').'%']])->get();
+        }
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
 
-            foreach ($area as $e){
-                if(isset($e->id)){
-                    $cp_areas = $cp_area::where([['id_area_subcontratante', '=', $e->id]])->get();
-                    foreach ($cp_areas as $et){
-                        $cp = $cp->whereOr([['id_transaccion', '=', $et->id_transaccion]]);
-                    }
-                }
-            }
+        if(isset($data['numero_folio'])){
+            $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
 
+        if(isset($data['referencia'])){
+            $this->repository->where([['referencia', 'LIKE', '%'.$data['referencia'].'%']]);
         }
         return $this->repository->paginate();
     }
@@ -164,16 +165,28 @@ class ContratoProyectadoService
 
             $destino = '';
             $destino_path = '';
-            if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
-                if($concepto->es_agrupador){
-                    $path = explode('->', $concepto->path);
-                    $destino = $concepto->id_concepto;
-                    $destino_path = $path[count($path) - 2] . ' -> ' . $concepto->descripcion;
+            if(is_numeric($partida["destino"])){
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $path = explode('->', $concepto->path);
+                        $destino = $concepto->id_concepto;
+                        $destino_path =  $concepto->path_corta;
+                    }
+                }
+            } else {
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $path = explode('->', $concepto->path);
+                        $destino = $concepto->id_concepto;
+                        $destino_path =  $concepto->path_corta;
+                    }
                 }
             }
+
             $contratos[$key] = [
                     'clave' => $partida['clave'],
                     'descripcion' => $partida['descripcion'],
+                    'descripcion_sin_formato' => $partida['descripcion'],
                     'unidad' => $partida['unidad'],
                     'cantidad' => $partida['cantidad'],
                     'destino' => $destino,
@@ -353,8 +366,8 @@ class ContratoProyectadoService
                             $presupuestos[$presupuesto->id_transaccion] = [
                                 'id_transaccion' => $presupuesto->id_transaccion,
                                 'razon_social' => $presupuesto->empresa->razon_social,
-                                'sucursal' => $presupuesto->sucursal->descripcion,
-                                'direccion' => $presupuesto->sucursal->direccion,
+                                'sucursal' => $presupuesto->sucursal?$presupuesto->sucursal->descripcion:'',
+                                'direccion' => $presupuesto->sucursal?$presupuesto->sucursal->direccion:'',
                             ];
                             $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
                         }
@@ -365,15 +378,15 @@ class ContratoProyectadoService
                         if($partida_presupuestada && $partida_presupuestada->precio_unitario > 0){
                             $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
                                 'id_concepto' => $contrato->id_concepto,
-                                'precio_unitario' => '$ ' . number_format($partida_presupuestada->precio_unitario, 2, '.', ','),
-                                'precio_total_antes_desc' => '$ ' . number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente, 2, '.', ','),
-                                'precio_unitario_con_desc' =>  number_format($partida_presupuestada->precio_unitario * $desc , 2, '.', ','),
-                                'precio_total_con_desc' =>   number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ','),
-                                'descuento' => $partida_presupuestada->descuento,
+                                'precio_unitario' => $partida_presupuestada->precio_unitario_antes_descuento_format,
+                                'precio_total_antes_desc' => $partida_presupuestada->total_antes_descuento_format,
+                                'precio_unitario_con_desc' =>  $partida_presupuestada->precio_unitario_despues_descuento_format,
+                                'precio_unitario_con_desc_sf' =>  $partida_presupuestada->precio_unitario_despues_descuento,
+                                'precio_total_con_desc' =>   $partida_presupuestada->total_despues_descuento_format,
+                                'descuento' => $partida_presupuestada->porcentaje_descuento_format,
                                 'moneda' => $partida_presupuestada->moneda->abreviatura,
-                                'tipo_cambio' => $partida_presupuestada->moneda->tipo == 1?1: number_format($partida_presupuestada->moneda->cambio->cambio, 4, '.', ','),
-                                'importe_moneda_conversion' => $partida_presupuestada->moneda->tipo == 1? number_format($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc , 2, '.', ',')
-                                                            : number_format($partida_presupuestada->moneda->cambio->cambio * ($partida_presupuestada->precio_unitario * $cantidad_pendiente * $desc), 4, '.', ','),
+                                'tipo_cambio' => number_format($partida_presupuestada->tipo_cambio, 4, '.', ','),
+                                'importe_moneda_conversion' => $partida_presupuestada->total_despues_descuento_partida_mc_format,
                                 'observaciones' => $partida_presupuestada->Observaciones,
                                 'cantidad_asignada' => '',
                             ];
@@ -386,7 +399,7 @@ class ContratoProyectadoService
 
                 }
             }
-            return ['items'=>$items,'presupuestos'=> $presupuestos];
+            return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos)];
 
         } catch (\Exception $e) {
             throw $e;

@@ -85,7 +85,6 @@ class EstimacionTransformer extends TransformerAbstract
             'retencion_iva_porcentaje' => $model->iva_retenido_porcentaje,
             'total_retencion_liberadas' => $model->suma_liberaciones_format,
             'total_deductivas' => $model->suma_deductivas_format,
-            'total_deductivas' => $model->suma_deductivas_format,
             'total_deductivas_sf' => $model->suma_deductivas,
             'subtotal_orden_pago' => $model->subtotal_orden_pago_format,
             'iva_orden_pago' => $model->iva_orden_pago_format,
@@ -99,6 +98,8 @@ class EstimacionTransformer extends TransformerAbstract
             'suma_penalizaciones_liberadas' => $model->suma_penalizaciones_liberadas_format,
             'suma_penalizaciones_liberadas_sf' => $model->suma_penalizaciones_liberadas,
             'seleccionado' => false,
+            'consecutivo' => $model->subcontratoEstimacion->folio_consecutivo_format,
+            'tc_actualizado' => false,
         ];
     }
 

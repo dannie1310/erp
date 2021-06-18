@@ -8,11 +8,18 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Models\CADECO\Empresa;
+use App\Models\CADECO\PresupuestoContratista;
+use Exception;
 use App\Facades\Context;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Contratos\Asignacion\Repository;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\ItemSubcontrato;
+use App\PDF\Contratos\AsignacionFormato;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
 class AsignacionContratistaService
@@ -33,17 +40,39 @@ class AsignacionContratistaService
 
     public function paginate($data)
     {
-        $asignaciones = $this->repository;
+        if (isset($data['fecha_hora_registro'])) {
+            $this->repository->whereBetween( ['fecha_hora_registro', [ request( 'fecha_hora_registro' )." 00:00:00",request( 'fecha_hora_registro' )." 23:59:59"]] );
+        }
 
-        if(isset($data['busqueda'])){
-            $contratos = ContratoProyectado::where('numero_folio', 'LIKE', '%'.$data['busqueda'].'%')->
-                                            orWhere('referencia', 'LIKE','%'.$data['busqueda'].'%' )->get();
-                                            
-            foreach ($contratos as $e){
-                $asignaciones = $asignaciones->whereOr([['id_transaccion', '=', $e->id_transaccion]]);
+        if(isset($data['numero_folio'])){
+            $this->repository->where([['id_asignacion', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if(isset($data['numero_folio_cp'])){
+            $contrato_proyectado = ContratoProyectado::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_cp'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_transaccion',  $contrato_proyectado]);
+        }
+
+        if (isset($data['estado'])) {
+            if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 1]]);
+            }else if (strpos('APLICADA', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['estado', '=', 2]]);
             }
         }
-        return $asignaciones->paginate($data);
+
+        if(isset($data['referencia_cp'])){
+            $contrato_proyectado = ContratoProyectado::query()->where([['referencia', 'LIKE', '%'.$data['referencia_cp'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_transaccion',  $contrato_proyectado]);
+        }
+
+        if(isset($data['contratistas'])){
+            $empresas = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['contratistas'].'%']])->pluck("id_empresa");
+            $presupuestos = PresupuestoContratista::whereIn("id_empresa", $empresas)->pluck("id_transaccion");
+            $asignaciones = AsignacionContratistaPartida::whereIn("id_transaccion",$presupuestos)->pluck("id_asignacion");
+            $this->repository->whereIn(['id_asignacion', $asignaciones]);
+        }
+        return $this->repository->paginate($data);
     }
 
     public function show($id)
@@ -53,39 +82,30 @@ class AsignacionContratistaService
 
     public function store($data)
     {
-        try{
-            DB::connection('cadeco')->beginTransaction();
-            $asignacion = $this->repository->create([
-                'id_transaccion' => $data['id_contrato'],  // contrato proyectado
-                'estado' => 1,
-            ]);
-            $registradas = 0;
+        return $this->repository->registrar($data);
+    }
 
-            foreach($data['presupuestos'] as $presupuesto){
-                foreach($presupuesto['partidas'] as $partida){
-                    if($partida && $partida['cantidad_asignada'] > 0){
-                        AsignacionContratistaPartida::create([
-                            'id_asignacion' => $asignacion->id,
-                            'id_transaccion' => $presupuesto['id_transaccion'],
-                            'id_concepto' => $partida['id_concepto'],
-                            'cantidad_asignada' => $partida['cantidad_asignada'],
-                            'cantidad_autorizada' => $partida['cantidad_asignada'],
-                        ]);
-                        $registradas ++;
-                    }
-                }
-            }
-            
-            if($registradas == 0){
-                abort(403,'La asignación debe tener al menos una partida con cantidad asignada a un proveedor.');
-            }
-            
-            DB::connection('cadeco')->commit();
-            return $asignacion;
-        }catch (\Exception $e){
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
+
+    public function getAsignaciones($data){
+        $asignaciones = $this->repository->all();
+        $filtered = $asignaciones->reject(function ($asignacion, $key) {
+            return $asignacion->contratoProyectado == null || $asignacion->contratoProyectado->id_obra != Context::getIdObra();
+        });
+        return $filtered->all();
+    }
+
+    public function generarSubcontrato($data){
+
+        return $this->show($data["id"])->generarSubcontratos();
+    }
+
+    public function pdf($id)
+    {
+        $pdf = new AsignacionFormato($this->repository->show($id));
+        return $pdf;
     }
 }

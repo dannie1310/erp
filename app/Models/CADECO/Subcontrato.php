@@ -7,8 +7,17 @@
  */
 
 namespace App\Models\CADECO;
+use App\Models\CONTRATOS_LEGALES\Contratista;
+use DateTime;
+use DateTimeZone;
 use App\Facades\Context;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontratoEliminado;
 use App\Models\CADECO\Subcontratos\ClasificacionSubcontrato;
+use App\Models\CADECO\Subcontratos\SubcontratoEliminado;
+use App\Models\CADECO\Subcontratos\SubcontratoPartidaEliminada;
+use App\Models\CADECO\Sucursal;
+use App\PDF\Contratos\SubcontratoFormato;
 use App\Models\CADECO\Subcontratos\Subcontratos;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
@@ -20,6 +29,7 @@ class Subcontrato extends Transaccion
     public const TIPO_ANTECEDENTE = 49;
     public const TIPO = 51;
     public const OPCION = 2;
+    public const OPCION_ANTECEDENTE = 1026;
     public const NOMBRE = "Subcontrato";
     public const ICONO = "fa fa-file-contract";
 
@@ -28,6 +38,7 @@ class Subcontrato extends Transaccion
         'fecha',
         'id_obra',
         'id_empresa',
+        'id_sucursal',
         'id_moneda',
         'anticipo',
         'anticipo_monto',
@@ -134,6 +145,10 @@ class Subcontrato extends Transaccion
         return $this->hasOne(Empresa::class, 'id_empresa', 'id_empresa');
     }
 
+    public function sucursal(){
+        return $this->belongsTo(Sucursal::class, 'id_sucursal', 'id_sucursal');
+    }
+
     public function facturas()
     {
         return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
@@ -154,6 +169,31 @@ class Subcontrato extends Transaccion
     public function partidas_facturadas()
     {
         return $this->hasMany(FacturaPartida::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function subcontratoEliminado()
+    {
+        return $this->belongsTo(SubcontratoEliminado::class, 'id_transaccion');
+    }
+
+    public function asignacionSubcontrato()
+    {
+        return $this->belongsTo(AsignacionSubcontrato::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function transaccionesRelacionadas()
+    {
+        return $this->hasMany(Transaccion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function presupuestosContratista()
+    {
+        return $this->hasMany(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente');
+    }
+
+    public function solicitudesCambio()
+    {
+        return $this->hasMany(SolicitudCambioSubcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
     public function getAnticipoFormatAttribute()
@@ -325,9 +365,34 @@ class Subcontrato extends Transaccion
         $respuesta = array(
             'folio' => $this->numero_folio_format,
             'referencia' => $this->referencia,
+            'fecha_format' => $this->fecha_format,
             'partidas' => $items
         );
         return $respuesta;
+    }
+
+    public function getPartidasConvenioAttribute()
+    {
+        $items = array();
+        $nivel_ancestros = '';
+
+        foreach ($this->partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->ancestros as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            if($contrato == null)
+            {
+                $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
+                $partida = ItemSubcontrato::where('id_transaccion', '=',  $this->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+            }
+            $items [$partida->nivel] = $partida->partidasEstimadas(null, $this->id_antecedente, $contrato);
+        }
+        return $items;
     }
 
     public function partidasPDF($id_estimacion)
@@ -525,8 +590,370 @@ class Subcontrato extends Transaccion
 
         }
 
+        #SOLICITUD DE CAMBIO
+        foreach ($subcontrato->solicitudesCambio as $solicitud_cambio){
+            $relaciones[$i] = $solicitud_cambio->datos_para_relacion;
+            $i++;
+        }
+
         $orden1 = array_column($relaciones, 'orden');
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function getTieneNodoExtraordinarioAttribute()
+    {
+        $extra = $this->contratoProyectado_sgc->contratos()->agrupadorExtraordinario()->get();
+        if(count($extra)>0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    public function getTieneNodoCambioPrecioAttribute()
+    {
+        $cp = $this->contratoProyectado_sgc->contratos()->agrupadorCambioPrecio()->get();
+        if(count($cp)>0){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
+    public function recalcula()
+    {
+
+        $saldo = 0;
+        $anticipo_saldo = 0;
+        $subtotal = 0;
+        foreach($this->partidas as $partida){
+            $subtotal += $partida->cantidad * $partida->precio_unitario  - ($partida->cantidad * $partida->precio_unitario * $this->PorcentajeDescuento /100);
+        }
+        $monto = $subtotal * 1.16;
+        $impuesto = $subtotal * 0.16;
+        $anticipo_monto = $subtotal * ($this->anticipo /100);
+
+        $diferencia_monto = $monto - $this->monto;
+        $diferencia_anticipo_monto = $anticipo_monto - $this->anticipo_monto;
+
+        $saldo = $this->saldo + $diferencia_monto;
+        $anticipo_saldo = $this->anticipo_saldo + $diferencia_anticipo_monto;
+
+        $this->monto = $monto;
+        $this->saldo = $saldo;
+        $this->impuesto = $impuesto;
+        $this->anticipo_monto = $anticipo_monto;
+        $this->anticipo_saldo = $anticipo_saldo;
+        $this->save();
+
+    }
+
+    public function updateContrato($data){
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_ini_ejec =New DateTime($data['fecha_ini_ejec']);
+            $fecha_ini_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_fin_ejec =New DateTime($data['fecha_fin_ejec']);
+            $fecha_fin_ejec->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if($fecha_ini_ejec > $fecha_fin_ejec){
+                abort(403, 'La fecha de inicio de ejecución no puede ser posterior a la fecha de fin de ejección.');
+            }
+
+            $this->referencia = $data['referencia'];
+            $this->fecha = $fecha->format("Y-m-d");
+            $this->impuesto = $data['impuesto'];
+            $this->impuesto_retenido = $data['retencion_iva'];
+            $this->monto = $data['monto'];
+            $this->saldo = $data['monto'];
+            $this->retencion = $data['retencion_fg'];
+            $data['id_costo']?$this->id_costo = $data['id_costo']:'';
+            $this->save();
+
+            if($this->subcontratos){
+                $this->subcontratos->fecha_ini_ejec = $fecha_ini_ejec->format("Y-m-d "). date('H:i:s');
+                $this->subcontratos->fecha_fin_ejec = $fecha_fin_ejec->format("Y-m-d "). date('H:i:s');
+                $this->subcontratos->observacion = $data['observacion'];
+                $this->subcontratos->save();
+            }else{
+                Subcontratos::create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_clasificador' => 1,
+                    'fecha_ini_ejec' => $fecha_ini_ejec->format("Y-m-d "). date('H:i:s'),
+                    'fecha_fin_ejec' => $fecha_fin_ejec->format("Y-m-d "). date('H:i:s'),
+                    'observacion' => $data['observacion'],
+                ]);
+            }
+
+            if($this->clasificacionSubcontrato){
+                $this->clasificacionSubcontrato->id_tipo_contrato = $data['id_tipo_contrato'];
+                $this->clasificacionSubcontrato->actualizarFolio();
+                $this->clasificacionSubcontrato->save();
+            }else{
+                ClasificacionSubcontrato::create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_tipo_contrato' => $data['id_tipo_contrato']
+                ]);
+            }
+            $contratista_legal = Contratista::where("rfc","=", $this->empresa->rfc)->first();
+            if(!$contratista_legal)
+            {
+                Contratista::create([
+                    "razon_social"=>$this->empresa->razon_social,
+                    "idpersonalidad"=>$this->empresa->getIdPersonalidadRFC(),
+                    "rfc" => $this->empresa->rfc,
+                ]);
+            } else {
+                $contratista_legal->razon_social = $this->empresa->razon_social;
+                $contratista_legal->idpersonalidad = $this->empresa->getIdPersonalidadRFC();
+                $contratista_legal->save();
+            }
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Eliminar Subcontrato
+     * @param $motivo
+     * @throws \Exception
+     */
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->respaldar($motivo);
+            foreach ($this->partidas()->get() as $partida) {
+                $partida->delete();
+            }
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function respaldar($motivo)
+    {
+        /**
+         * Respaldar partidas
+         */
+        foreach ($this->partidas as $partida) {
+            SubcontratoPartidaEliminada::create([
+                'id_item' => $partida->id_item,
+                'id_transaccion' => $partida->id_transaccion,
+                'id_antecedente' => $partida->id_antecedente,
+                'item_antecedente' => $partida->item_antecedente,
+                'id_concepto' => $partida->id_concepto,
+                'id_material' => $partida->id_material,
+                'unidad' => $partida->unidad,
+                'cantidad' => $partida->cantidad,
+                'cantidad_material' => $partida->cantidad_material,
+                'cantidad_mano_obra' => $partida->cantidad_mano_obra,
+                'importe' => $partida->importe,
+                'saldo' => $partida->saldo,
+                'anticipo' => $partida->anticipo,
+                'descuento' => $partida->descuento,
+                'precio_unitario' => $partida->precio_unitario,
+                'precio_material' => $partida->precio_material,
+                'precio_mano_obra' => $partida->precio_mano_obra,
+            ]);
+        }
+
+        /**
+         * Respaldar subcontrato
+         */
+        SubcontratoEliminado::create([
+            'id_transaccion' => $this->id_transaccion,
+            'id_antecedente' => $this->id_antecedente,
+            'id_referente' => $this->id_referente,
+            'tipo_transaccion' => $this->tipo_transaccion,
+            'numero_folio' => $this->numero_folio,
+            'fecha' => $this->fecha,
+            'estado' => $this->estado,
+            'id_obra' => $this->id_obra,
+            'id_empresa' => $this->id_empresa,
+            'id_moneda' => $this->id_moneda,
+            'opciones' => $this->opciones,
+            'monto' => $this->monto,
+            'saldo' => $this->saldo,
+            'autorizado' => $this->autorizado,
+            'impuesto' => $this->impuesto,
+            'impuesto_retenido' => $this->impuesto_retenido,
+            'diferencia' => $this->diferencia,
+            'anticipo' => $this->anticipo,
+            'anticipo_monto' => $this->anticipo_monto,
+            'anticipo_saldo' => $this->anticipo_saldo,
+            'PorcentajeDescuento' => $this->PorcentajeDescuento,
+            'impuesto' => $this->impuesto,
+            'impuesto_retenido' => $this->impuesto_retenido,
+            'retencion' => $this->retencion,
+            'observaciones' => $this->observaciones,
+            'tipo_cambio' => $this->tipo_cambio,
+            'comentario' => $this->comentario,
+            'TipoLiberacion' => $this->TipoLiberacion,
+            'FechaHoraRegistro' => $this->FechaHoraRegistro,
+            'TcUSD' => $this->TcUSD,
+            'TcEuro' => $this->TcEuro,
+            'DiasCredito' => $this->DiasCredito,
+            'DiasVigencia' => $this->DiasVigencia,
+            'descuento' => $this->DiasVigencia,
+            'porcentaje_anticipo_pactado' => $this->porcentaje_anticipo_pactado,
+            'fecha_ejecucion' => $this->fecha_ejecucion,
+            'fecha_contable' => $this->fecha_contable,
+            'anticipo_pactado_monto' => $this->anticipo_pactado_monto,
+            'id_usuario' => $this->id_usuario,
+            'retencionIVA_2_3' => $this->retencionIVA_2_3,
+        ]);
+
+        /**
+         * Respaldar Asignación Subcontrato
+         */
+        AsignacionSubcontratoEliminado::create([
+            'id_asignacion' => $this->asignacionSubcontrato->id_asignacion,
+            'id_transaccion' => $this->asignacionSubcontrato->id_transaccion,
+            'motivo_eliminacion' => $motivo,
+        ]);
+    }
+
+    /**
+     * Reglas de negocio que debe cumplir la eliminación
+     */
+    public function validarParaEliminar()
+    {
+        if ($this->estado != 0) {
+            abort(400, "No se puede eliminar este subcontrato porque se encuentra Autorizada.");
+        }
+        $mensaje = "";
+        if($this->transaccionesRelacionadas()->count('id_transaccion') > 0)
+        {
+            foreach ($this->transaccionesRelacionadas()->get() as $antecedente)
+            {
+                $mensaje .= "-".$antecedente->tipo->Descripcion." #".$antecedente->numero_folio."\n";
+            }
+            abort(500, "Este subcontrato tiene la(s) siguiente(s) transaccion(es) relacionada(s): \n".$mensaje);
+        }
+    }
+
+    /**
+     * Cambiar estado de Presupuesto y Contrato Proyectado
+     */
+    public function cambiaEstados()
+    {
+        foreach ($this->presupuestos as $presupuesto)
+        {
+            if($presupuesto->estado == 2)
+            {
+                $presupuesto->update([
+                    'estado' => 1
+                ]);
+            }
+        }
+
+        if($this->contratoProyectado->estado == 1)
+        {
+            $this->contratoProyectado->update([
+                'estado' => 0
+            ]);
+        }
+    }
+
+    public function pdf(){
+        $pdf = new SubcontratoFormato($this);
+        return $pdf->create();
+    }
+
+    public function getMontoActualizacionesAplicadas($id_solicitud = null)
+    {
+        if($id_solicitud>0){
+            return $this->solicitudesCambio()->aplicadas()->where("id_transaccion","<",$id_solicitud)->sum("monto");
+
+        } else {
+            return $this->solicitudesCambio()->aplicadas()->sum("monto");
+        }
+
+    }
+
+    public function getMontoActualizacionesAplicadasFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getMontoActualizacionesAplicadas($id_solicitud),2,".",",");
+
+    }
+
+    public function getImpuestoActualizacionesAplicadas($id_solicitud = null)
+    {
+        if($id_solicitud>0){
+            return $this->solicitudesCambio()->aplicadas()->where("id_transaccion","<",$id_solicitud)->sum("impuesto");
+
+        } else {
+            return $this->solicitudesCambio()->aplicadas()->sum("impuesto");
+        }
+
+    }
+
+    public function getImpuestoActualizacionesAplicadasFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getImpuestoActualizacionesAplicadas($id_solicitud),2,".",",");
+
+    }
+
+    public function getSubtotalActualizacionesAplicadas($id_solicitud = null)
+    {
+        return $this->getMontoActualizacionesAplicadas($id_solicitud)-$this->getImpuestoActualizacionesAplicadas($id_solicitud);
+
+    }
+
+    public function getSubtotalActualizacionesAplicadasFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getSubtotalActualizacionesAplicadas($id_solicitud),2,".",",");
+
+    }
+
+    public function getMontoInicial()
+    {
+        return $this->monto-$this->solicitudesCambio()->aplicadas()->sum("monto");
+    }
+
+    public function getMontoInicialFormat($id_solicitud = null)
+    {
+        return "$".number_format($this->getMontoInicial(),2,".",",");
+    }
+
+    public function getImpuestoInicial()
+    {
+        return $this->impuesto-$this->solicitudesCambio()->aplicadas()->sum("impuesto");
+    }
+
+    public function getImpuestoInicialFormat()
+    {
+        return "$".number_format($this->getImpuestoInicial(),2,".",",");
+    }
+
+    public function getSubtotalInicial()
+    {
+        return $this->getMontoInicial()-$this->getImpuestoInicial();
+    }
+
+    public function getSubtotalInicialFormat()
+    {
+        return "$".number_format($this->getSubtotalInicial(),2,".",",");
+    }
+
+    public function getPorcentajeCambio($id_solicitud)
+    {
+        return $this->getMontoActualizacionesAplicadas($id_solicitud) *100 /$this->getMontoInicial();
+    }
+
+    public function getPorcentajeCambioFormat($id_solicitud)
+    {
+        return number_format($this->getPorcentajeCambio($id_solicitud),4,"." ,","). "%";
     }
 }

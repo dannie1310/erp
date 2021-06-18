@@ -17,7 +17,8 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'partida_estimacion',
-        'contratos'
+        'contratos',
+        'contrato'
     ];
 
     /**
@@ -42,8 +43,14 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
             'precio_unitario' => $model->precio_unitario,
             'estado'=> $model->estado,
             'cantidad_format' => $model->cantidad_format,
+            'cantidad_estimada_format' => $model->cantidad_estimada_format,
+            'importe_estimado_format' => $model->importe_estimado_format,
             'precio_unitario_format' => $model->precio_unitario_format,
-            'importe_total' => $model->importe_total
+            'cantidad_saldo_format' => $model->cantidad_saldo_format,
+            'importe_saldo_format' => $model->importe_saldo_format,
+            'importe_total' => $model->importe_total,
+            'concepto_path' => $model->concepto_path,
+            'concepto_path_corta' => $model->concepto_path_corta,
         ];
     }
 
@@ -61,6 +68,15 @@ class SubcontratoPartidaTransformer extends TransformerAbstract
     }
 
     public function includeContratos(ItemSubcontrato $model)
+    {
+        if($contrato = $model->contrato)
+        {
+            return $this->item($contrato, new ContratoTransformer);
+        }
+        return null;
+    }
+
+    public function includeContrato(ItemSubcontrato $model)
     {
         if($contrato = $model->contrato)
         {

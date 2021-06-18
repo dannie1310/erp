@@ -38,6 +38,8 @@ class ItemTransformer extends TransformerAbstract
           'id_concepto' => $model->id_concepto,
           'cantidad' => $model->cantidad,
           'precio_unitario' => $model->precio_unitario,
+          'cantidad_format' => $model->cantidad_format,
+          'precio_unitario_format' => $model->precio_unitario_format,
           'estado'=> $model->estado
 
         ];

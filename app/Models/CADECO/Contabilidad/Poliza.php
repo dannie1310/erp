@@ -24,6 +24,8 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CTPQ\DocApp;
 use App\Models\CTPQ\Documento;
 use App\Models\CTPQ\Empresa;
+use App\Models\INTERFAZ\PolizaCFDI;
+use App\Models\INTERFAZ\Poliza as PolizaInterfaz;
 use App\Models\CTPQ\Expediente;
 use App\Models\CTPQ\Parametro;
 use App\Traits\DateFormatTrait;
@@ -49,6 +51,7 @@ class Poliza extends Model
     ];
 
     protected $dates = ['fecha'];
+    //public $timestamps = false;
 
     protected static function boot()
     {
@@ -109,14 +112,11 @@ class Poliza extends Model
         return $this->hasOne(PolizaValido::class, 'id_int_poliza');
     }
 
-    public function polizaInterfaz()
+    public function polizasInterfaz()
     {
-        return $this->hasMany(\App\Models\INTERFAZ\Poliza::class, 'id_int_poliza', 'id_int_poliza');
+        return $this->hasMany(PolizaInterfaz::class, "id_int_poliza", "id_int_poliza")
+            ->where("alias_bd_cadeco","=",Context::getDatabase());
     }
-
-    /**
-     * Scope
-     */
 
     /**
      * Attribute
@@ -291,8 +291,110 @@ class Poliza extends Model
     }
 
     /**
-     * Metodos
+     * Métodos
      */
+
+    public function validar($id_usuario_valido)
+    {
+        DB::connection('cadeco')->beginTransaction();
+        DB::connection("interfaz")->beginTransaction();
+
+        try {
+            $data = [
+                'estatus' => 1,
+            ];
+            $this->update($data);
+        } catch (\Exception $e) {
+            DB::connection("interfaz")->rollBack();
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage().$e->getFile().$e->getLine().$e->getTraceAsString());
+        }
+
+        try {
+            $this->valido()->create(['valido' => $id_usuario_valido]);
+        } catch (\Exception $e) {
+            DB::connection("interfaz")->rollBack();
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+
+        try {
+            $poliza_cfdi = $this->generaPolizaInterfaz();
+        } catch (\Exception $e) {
+            DB::connection("interfaz")->rollBack();
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+
+        try {
+            $this->generaPolizaCFDI($poliza_cfdi);
+        } catch (\Exception $e) {
+            DB::connection("interfaz")->rollBack();
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+        }
+
+        DB::connection("interfaz")->commit();
+        DB::connection('cadeco')->commit();
+        return $this;
+    }
+
+    private function generaPolizaCFDI($poliza_interfaz){
+        if($this->transaccionAntecedente->tipo_transaccion == 65){
+            $factura = Factura::find($this->transaccionAntecedente->id_transaccion);
+            $uuid_cfdis = $factura->facturasRepositorio->pluck("uuid");
+            foreach($uuid_cfdis as $uud_cfdi)
+            {
+                $poliza_interfaz->polizasCFDI()->create(
+                    [
+                        'cfdi_uuid'=>$uud_cfdi
+                    ]
+                );
+            }
+        }
+    }
+
+    private function generaPolizaInterfaz()
+    {
+        $poliza_interfaz = $this->polizasInterfaz()->create(
+            [
+                'id_tipo_poliza'=>$this->id_tipo_poliza,
+                'id_tipo_poliza_interfaz'=>$this->id_tipo_poliza_interfaz,
+                'id_tipo_poliza_contpaq'=>$this->id_tipo_poliza_contpaq,
+                'alias_bd_cadeco'=>$this->alias_bd_cadeco,
+                'id_obra_cadeco'=>$this->id_obra_cadeco,
+                'id_obra_contpaq'=>$this->id_obra_contpaq,
+                'alias_bd_contpaq'=>$this->alias_bd_contpaq,
+                'fecha'=>$this->fecha,
+                'concepto'=>substr($this->concepto,0,100),
+                'total'=>$this->total,
+                'cuadre'=>$this->cuadre,
+                'estatus'=>0,
+                'id_transaccion_sao'=>$this->id_transaccion_sao
+            ]
+        );
+
+        foreach($this->movimientos as $movimiento){
+            $poliza_interfaz->movimientos()->create(
+                [
+                    'id_int_poliza_movimiento'=>$movimiento->id_int_poliza_movimiento,
+                    'id_tipo_cuenta_contable'=>$movimiento->id_tipo_cuenta_contable,
+                    'id_cuenta_contable'=>$movimiento->id_cuenta_contable,
+                    'cuenta_contable'=>$movimiento->cuenta_contable_interfaz,
+                    'importe'=>$movimiento->importe,
+                    'id_tipo_movimiento_poliza'=>$movimiento->id_tipo_movimiento_poliza,
+                    'referencia'=>substr($movimiento->referencia,0,20),
+                    'concepto'=>substr($movimiento->concepto,0,100),
+                    'id_empresa_cadeco'=>$movimiento->id_empresa_cadeco,
+                    'razon_social'=>$movimiento->razon_social,
+                    'rfc'=>$movimiento->rfc,
+                    'estatus'=>0,
+                ]
+            );
+        }
+        return $poliza_interfaz;
+    }
+
     public function buscarPolizasSinAsociarCFDI()
     {
         $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->get();
@@ -364,28 +466,28 @@ class Poliza extends Model
                         $documento = Documento::where('GuidDocument', $guid_poliza)->first();
                         if (is_null($documento)) {
                             Documento::create([
-                               'GuidDocument' => $guid_poliza,
-                               'Status' => 'active',
-                               'IdTipoDocumento' => 20,
-                               'Type' => 'Polizas',
-                               'Path' => '',
-                               'Hash' => '',
-                               'MetadataEstatusApp' => '',
-                               'UserResponsibleApp' => '',
-                               'ReferenceApp' => '',
-                               'NotesApp' => '',
-                               'ProcessApp' => '',
-                               'NoPaymentStatusapp' => '',
-                               'ClaveDescripcion' => '',
-                               'SourceFile' => '',
-                               'Type_Otro' => '',
-                               'Type_Ext' => '',
-                               'Period' => 0,
-                               'Year' => 0,
-                               'TotalPayRoll' => 0,
-                               'SalaryType' => '',
-                               'IsAsoContabilidad' => 1
-                           ]);
+                                'GuidDocument' => $guid_poliza,
+                                'Status' => 'active',
+                                'IdTipoDocumento' => 20,
+                                'Type' => 'Polizas',
+                                'Path' => '',
+                                'Hash' => '',
+                                'MetadataEstatusApp' => '',
+                                'UserResponsibleApp' => '',
+                                'ReferenceApp' => '',
+                                'NotesApp' => '',
+                                'ProcessApp' => '',
+                                'NoPaymentStatusapp' => '',
+                                'ClaveDescripcion' => '',
+                                'SourceFile' => '',
+                                'Type_Otro' => '',
+                                'Type_Ext' => '',
+                                'Period' => 0,
+                                'Year' => 0,
+                                'TotalPayRoll' => 0,
+                                'SalaryType' => '',
+                                'IsAsoContabilidad' => 1
+                            ]);
                         }
 
                         $doc_app = DocApp::where('GuidDocument', $guid_poliza)->first();

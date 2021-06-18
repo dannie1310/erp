@@ -71,7 +71,7 @@ class Transaccion extends Model
 
     public function getMontoFormatAttribute()
     {
-        return '$' . number_format(abs($this->monto),2);
+        return '$' . number_format(($this->monto),2);
     }
 
     public function getSaldoFormatAttribute()

@@ -29,6 +29,7 @@ class ArchivoService
     }
 
     public function cargarArchivo($data){
+
         $tipos_imagen = ['jpg', 'jpeg', 'png'];
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $ext_inicio = '';
@@ -190,9 +191,17 @@ class ArchivoService
         $this->validaRepetido($hashfile, $data["id"], $data["descripcion"]);
         $nombre_archivo = explode('.', $archivo);
 
+        if(!key_exists("id_tipo_archivo", $data)){
+            $data["id_tipo_archivo"] = 1;
+        }
+
+        if(!key_exists("id_categoria", $data)){
+            $data["id_categoria"] = 1;
+        }
+
         $data_registro["id_transaccion"] = $data["id"];
-        $data_registro["id_tipo_archivo"] = 1;
-        $data_registro["id_categoria"] = 1;
+        $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
+        $data_registro["id_categoria"] = $data["id_categoria"];
         $data_registro["descripcion"] = $data["descripcion"];
         $data_registro["hashfile"] = $hashfile;
         $data_registro["nombre"] = $archivo;

@@ -5,7 +5,7 @@ namespace App\Models\CADECO\Subcontratos;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TiposSubcontrato extends Model
+class TipoContrato extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Subcontratos.tipos_contratos';

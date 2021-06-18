@@ -17,6 +17,8 @@ class PolizaCFDI extends Model
     protected $connection = 'interfaz';
     protected $table = 'dbo.polizas_cfdi';
     protected $primaryKey = 'id';
+    protected $fillable = ['cfdi_uuid'];
+    public $timestamps = false;
 
     /**
      * Relaciones

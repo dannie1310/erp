@@ -1,11 +1,7 @@
 <template>
     <div class="row">
-        <div class="col-12">
-            <!-- <router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar
-            </router-link> -->
+        <div class="col-md-12">
+            <Registro @created="paginate()"></Registro>
         </div>
         <div class="col-12">
             <div class="card">
@@ -33,25 +29,28 @@
 </template>
 
 <script>
+    import Registro from "./partials/Registrar";
     export default {
         name: "estimacion-index",
+        components:{Registro},
         data() {
             return {
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', sortable: true},
-                    { title: 'Observaciones', field: 'observaciones', sortable: true },
-                    { title: 'Contratista', field: 'id_empresa',  sortable: true  },
-                    { title: 'Subtotal', field: 'subtotal', tdClass: 'money', thClass: 'th_money', sortable: false },
-                    { title: 'IVA', field: 'impuesto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Total', field: 'monto', tdClass: 'money', thClass: 'th_money', sortable: true },
-                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default },
+                    { title: 'Contrato Proyectado', tdClass: 'folio', field: 'numero_folio_cp', thComp: require('../../globals/th-Filter').default},
+                    { title: 'Referencia Contrato Proyectado', field: 'referencia_cp', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Contratista', field: 'contratista', sortable: false, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Monto', field: 'monto', tdClass: ['th_money', 'text-right'], sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {sort: 'numero_folio', order: 'DESC', include:['relaciones']},
+                query: {sort: 'numero_folio', order: 'DESC', include:['contrato_proyectado']},
                 search: '',
                 cargando: false
             }
@@ -125,8 +124,12 @@
                     self.$data.data = subcontratos.map((subcontrato, i) => ({
                         index: (i + 1) + self.query.offset,
                         numero_folio: subcontrato.numero_folio_format,
+                        referencia_cp: subcontrato.contrato_proyectado.referencia ,
+                        numero_folio_cp: subcontrato.contrato_proyectado.numero_folio_format,
                         observaciones: subcontrato.observaciones,
-                        id_empresa: subcontrato.empresa,
+                        referencia: subcontrato.referencia,
+                        fecha: subcontrato.fecha_format,
+                        contratista: subcontrato.empresa,
                         estado: this.getEstado(subcontrato.estado),
                         monto: subcontrato.monto_format,
                         impuesto:subcontrato.impuesto_format,
@@ -135,6 +138,7 @@
                             show: true,
                             id: subcontrato.id,
                             transaccion: {id:subcontrato.id, tipo:51},
+                            eliminar: (self.$root.can('eliminar_subcontrato') && subcontrato.estado == 0) ? true: false
                         })
                     }));
                 },

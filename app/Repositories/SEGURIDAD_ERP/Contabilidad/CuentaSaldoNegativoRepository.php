@@ -30,50 +30,69 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
 
         $values = [];
 
-        foreach ($empresas as $empresa){
+        foreach ($empresas as $empresa) {
             $values = [];
             DB::purge('cntpq');
             Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
-            try{
+            try {
                 $values = DB::connection("cntpq")->select("
-                select IdCuenta as id_cuenta, Cuentas.Nombre as nombre_cuenta, Cuentas.Codigo as codigo_cuenta, Cuentas.Tipo as tipo, sum (
+
+          select IdCuenta as id_cuenta, Cuentas.Nombre as nombre_cuenta, Cuentas.Codigo as codigo_cuenta, Cuentas.Tipo as tipo, sum (
                     CASE MovimientosPoliza.TipoMovto
                         WHEN 1 THEN MovimientosPoliza.Importe * -1
                         WHEN 0 THEN MovimientosPoliza.Importe
                     END) as saldo,
-                       '".$empresa->AliasBDD."' as base_datos,
-                       '".$empresa->Nombre."' as nombre_empresa
+                       '" . $empresa->AliasBDD . "' as base_datos,
+                       '" . $empresa->Nombre . "' as nombre_empresa
                 from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+
+where Cuentas.Codigo like '1%' or  Cuentas.Codigo like '5%' or Cuentas.Codigo like '6%' or  Cuentas.Codigo like '7%'
+
                 group by IdCuenta, Nombre, Codigo, Tipo
                 having sum (
           CASE MovimientosPoliza.TipoMovto
              WHEN 1 THEN MovimientosPoliza.Importe * -1
              WHEN 0 THEN MovimientosPoliza.Importe
           END)<-0.99
+
+union
+
+select IdCuenta as id_cuenta, Cuentas.Nombre as nombre_cuenta, Cuentas.Codigo as codigo_cuenta, Cuentas.Tipo as tipo, sum (
+                    CASE MovimientosPoliza.TipoMovto
+                        WHEN 1 THEN MovimientosPoliza.Importe
+                        WHEN 0 THEN MovimientosPoliza.Importe *-1
+                    END) as saldo,
+                       '" . $empresa->AliasBDD . "' as base_datos,
+                       '" . $empresa->Nombre . "' as nombre_empresa
+                from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+
+where Cuentas.Codigo like '2%' or  Cuentas.Codigo like '3%' or Cuentas.Codigo like '4%'
+
+                group by IdCuenta, Nombre, Codigo, Tipo
+                having sum (
+          CASE MovimientosPoliza.TipoMovto
+             WHEN 1 THEN MovimientosPoliza.Importe
+             WHEN 0 THEN MovimientosPoliza.Importe *-1
+          END)<-0.99
                 ");
                 $values = array_map(function ($value) {
                     return (array)$value;
                 }, $values);
 
-
-            } catch (\Exception $e)
-            {
+            } catch (\Exception $e) {
 
             }
-            if(count($values)>0){
-                try{
-
+            if (count($values) > 0) {
+                try {
                     $cantidad = count($values);
-                    for($i = 0; $i<=$cantidad+100; $i+=100)
-                    {
+                    for ($i = 0; $i <= $cantidad + 100; $i += 100) {
                         $values_new = array_slice($values, $i, 100);
-                        if(count($values_new)>0){
+                        if (count($values_new) > 0) {
                             CuentaSaldoNegativo::insert($values_new);
-                            $insertados+=count($values_new);
+                            $insertados += count($values_new);
                         }
                     }
-                }catch (\Exception $e)
-                {
+                } catch (\Exception $e) {
                     abort(500, $e->getMessage());
                 }
             }
@@ -81,7 +100,7 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
 
         DB::connection('seguridad')->commit();
         return [
-            "insertados"=>$insertados
+            "insertados" => $insertados
         ];
     }
 
@@ -89,13 +108,14 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
     {
         $cuenta = $this->show($id);
         $informe["informe"]["encabezado"] = [
-            "base_datos"=>$cuenta->base_datos
-            , "empresa"=>$cuenta->nombre_empresa
-            , "codigo_cuenta" =>$cuenta->codigo_cuenta
-            , "nombre_cuenta" =>$cuenta->nombre_cuenta
-            , "tipo_cuenta" =>$cuenta->tipo
-            , "saldo_cuenta" =>$cuenta->saldo_real
-            , "saldo_cuenta_format" =>$cuenta->saldo_real_format
+            "base_datos" => $cuenta->base_datos
+            , "empresa" => $cuenta->nombre_empresa
+            , "codigo_cuenta" => $cuenta->codigo_cuenta
+            , "nombre_cuenta" => $cuenta->nombre_cuenta
+            , "tipo_cuenta" => $cuenta->tipo
+            , "naturaleza" => $cuenta->naturaleza
+            , "saldo_cuenta" => $cuenta->saldo_real
+            , "saldo_cuenta_format" => $cuenta->saldo_real_format
         ];
         $informe["informe"]["data"] = SaldosNegativos::get($cuenta);
         return $informe;
