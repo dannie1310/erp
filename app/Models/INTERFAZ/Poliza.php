@@ -9,7 +9,6 @@ use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CTPQ\Expediente;
 use App\Models\CTPQ\Parametro;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -56,11 +55,6 @@ class Poliza extends Model
     public function movimientos()
     {
         return $this->hasMany(PolizaMovimiento::class, "id_poliza_global", "id_poliza_global");
-    }
-
-    public function CFDIS()
-    {
-        return $this->hasMany(PolizaCFDI::class, 'id_poliza_global', 'id_poliza_global');
     }
 
     public function polizaContpaq()

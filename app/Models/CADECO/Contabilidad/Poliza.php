@@ -407,8 +407,8 @@ class Poliza extends Model
             if ($poliza->polizaContpaq) {
                 $guid_poliza = $poliza->polizaContpaq->Guid;
                 $tipo =  $poliza->polizaContpaq->tipo;
-                if ($poliza->CFDIS) {
-                    foreach ($poliza->CFDIS as $cfdi) {
+                if ($poliza->polizasCFDI) {
+                    foreach ($poliza->polizasCFDI as $cfdi) {
                         if ($cfdi->tiene_comprobante) {
                             DB::purge('cntpq');
                             Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
@@ -460,7 +460,7 @@ class Poliza extends Model
                 if ($poliza->polizaContpaq) {
                     $guid_poliza = $poliza->polizaContpaq->Guid;
                     $tipo = "Poliza de ".$poliza->polizaContpaq->tipo_poliza->Nombre;
-                    if ($poliza->CFDIS) {
+                    if ($poliza->polizasCFDI) {
                         DB::purge('cntpq');
                         Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
                         $documento = Documento::where('GuidDocument', $guid_poliza)->first();
@@ -507,7 +507,7 @@ class Poliza extends Model
                                 'Responsable' =>0
                             ]);
                         }
-                        foreach ($poliza->CFDIS as $cfdi) {
+                        foreach ($poliza->polizasCFDI as $cfdi) {
                             if ($cfdi->tiene_comprobante) {
                                 $guid_document = $cfdi->comprobante->GuidDocument;
                                 DB::purge('cntpq');
