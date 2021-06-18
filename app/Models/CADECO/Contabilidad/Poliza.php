@@ -327,7 +327,7 @@ class Poliza extends Model
                             'folio_contpaq' => $poliza->poliza_contpaq,
                             'tipo_contpaq' => "Póliza de ".$tipo,
                             'concepto' => $poliza->polizaSAO->concepto,
-                            'folio_sao' => $poliza->numero_folio_format,
+                            'folio_sao' => $poliza->polizaSAO->numero_folio_format,
                             'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
                             'fecha' =>  $poliza->polizaSAO->fecha_format,
                             'total' => $poliza->polizaSAO->total_format,
