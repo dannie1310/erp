@@ -178,7 +178,7 @@ class Concepto extends Model
         if($longitud>30)
         {
             $diferencia = $longitud-30;
-            return $this->clave_concepto_select . substr($this->descripcion,0,strlen($this->descripcion)-$diferencia)."...";
+            return $this->clave_concepto_select . mb_substr($this->descripcion,0,strlen($this->descripcion)-$diferencia)."...";
         } else
         {
             return $this->clave_concepto_select . $this->descripcion;
