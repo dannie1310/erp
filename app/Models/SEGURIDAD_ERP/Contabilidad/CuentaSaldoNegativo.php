@@ -42,7 +42,18 @@ class CuentaSaldoNegativo extends Model
     {
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $this->base_datos);
-        $query = "select sum (
+        if(in_array($this->digito_inicial,[2,3,4])){
+            $query = "select sum (
+          CASE MovimientosPoliza.TipoMovto
+             WHEN 1 THEN MovimientosPoliza.Importe
+             WHEN 0 THEN MovimientosPoliza.Importe * -1
+          END) as Saldo
+from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+where Cuentas.Id = ".$this->id_cuenta."
+group by IdCuenta";
+        }
+        else{
+            $query = "select sum (
           CASE MovimientosPoliza.TipoMovto
              WHEN 1 THEN MovimientosPoliza.Importe * -1
              WHEN 0 THEN MovimientosPoliza.Importe
@@ -50,6 +61,8 @@ class CuentaSaldoNegativo extends Model
 from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
 where Cuentas.Id = ".$this->id_cuenta."
 group by IdCuenta";
+        }
+
 
 
         $informe = DB::connection("cntpq")->select($query);
@@ -59,6 +72,31 @@ group by IdCuenta";
     public function getSaldoRealFormatAttribute()
     {
         return '$' . number_format($this->saldo_real,2);
+    }
+
+    public function getDigitoInicialAttribute()
+    {
+        return substr($this->codigo_cuenta,0,1);
+    }
+
+    public function getNaturalezaAttribute()
+    {
+        switch ($this->digito_inicial){
+            case 1: return "Acreedora";
+                break;
+            case 5: return "Acreedora";
+                break;
+            case 6: return "Acreedora";
+                break;
+            case 7: return "Acreedora";
+                break;
+            case 2: return "Deudora";
+                break;
+            case 3: return "Deudora";
+                break;
+            case 4: return "Deudora";
+                break;
+        }
     }
 
 }
