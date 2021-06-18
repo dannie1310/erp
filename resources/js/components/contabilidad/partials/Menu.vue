@@ -83,9 +83,9 @@
                     <p>Prepólizas Generadas</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
+            <li class="nav-item"  v-if="$root.can('asociar_poliza_contpaq_cfdi')">
                 <router-link :to="{name: 'asociar-poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'asociar-poliza-cfdi'}">
-                    <i class="fa fa-file-code nav-icon"></i>
+                    <i class="fa fa-share-alt nav-icon"></i>
                     <p>Asociar Pólizas con CFDI</p>
                 </router-link>
             </li>

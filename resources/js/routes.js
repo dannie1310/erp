@@ -2017,8 +2017,7 @@ export const routes = [
                                     title: 'Asociar Pólizas de Contpaq con CFDI',
                                     breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR PÓLIZAS DE CONTPAQ CON CFDI'},
                                     middleware: [auth, context, permission],
-                                    permission: ['consultar_poliza'],
-                                    general: true
+                                    permission: ['asociar_poliza_contpaq_cfdi'],
                                 }
                             },
                         ]

@@ -53,6 +53,7 @@ class PolizaController extends Controller
         $this->middleware('permiso:editar_prepolizas_generadas')->only('update');
         $this->middleware('permiso:validar_prepoliza')->only('validar');
         $this->middleware('permiso:omitir_prepoliza_generada')->only('omitir');
+        $this->middleware('permiso:asociar_poliza_contpaq_cfdi')->only(['asociarCFDI','getPolizasPorAsociar']);
 
         $this->service = $service;
         $this->fractal = $fractal;
