@@ -43,6 +43,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'cntpq' => [
@@ -54,6 +57,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'cntpqg' => [
@@ -65,6 +71,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'igh' => [
@@ -92,6 +101,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'sci' => [
@@ -120,6 +132,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'seguridad' => [
@@ -132,6 +147,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'acarreos' => [
