@@ -48,7 +48,7 @@
                                             type="text"
                                             name="referencia"
                                             data-vv-as="Referencia"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, max:64}"
                                             class="form-control"
                                             id="referencia"
                                             placeholder="Referencia"
@@ -108,7 +108,7 @@
                                                                class="form-control"
                                                                :name="`referencia[${i}]`"
                                                                data-vv-as="Concepto"
-                                                               v-validate="{required: true}"
+                                                               v-validate="{required: true, max:64}"
                                                                :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
                                                                v-model="partida.referencia"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{ errors.first(`referencia[${i}]`) }}</div>
