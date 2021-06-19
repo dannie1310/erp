@@ -38,13 +38,13 @@
                             <tbody>
                             <tr v-for="(poliza, i) in polizas">
                                 <td>{{i+1}}</td>
-                                <td style="text-align: center">{{poliza.tipo_contpaq}}</td>
+                                <td>{{poliza.tipo_contpaq}}</td>
                                 <td style="text-align: center">{{poliza.tipo_sao}}</td>
                                 <td style="text-align: center">{{poliza.folio_contpaq}}</td>
                                 <td style="text-align: center">{{poliza.folio_sao}}</td>
                                 <td style="text-align: center">{{poliza.fecha}}</td>
-                                <td style="text-align: center">{{poliza.concepto}}</td>
-                                <td style="text-align: left">{{poliza.total}}</td>
+                                <td >{{poliza.concepto}}</td>
+                                <td style="text-align: right">{{poliza.total}}</td>
                             </tr>
                             </tbody>
                         </table>
