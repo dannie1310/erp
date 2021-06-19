@@ -43,6 +43,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'cntpq' => [
@@ -54,6 +57,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'cntpqg' => [
@@ -65,6 +71,65 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
+        ],
+
+        'cntpqdc' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_DCCNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_DCCNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_DCCNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_DCCNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
+        ],
+
+        'cntpqdm' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_DMCNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_DMCNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_DMCNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_DMCNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
+        ],
+
+        'cntpqod' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_ODCNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_ODCNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_ODCNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_ODCNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
+        ],
+
+        'cntpqom' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_OMCNTPQ', 'localhost'),
+            'database' => env('DB_DATABASE_OMCNTPQ', 'forge'),
+            'username' => env('DB_USERNAME_OMCNTPQ', 'forge'),
+            'password' => env('DB_PASSWORD_OMCNTPQ', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'igh' => [
@@ -92,6 +157,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'sci' => [
@@ -120,6 +188,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'seguridad' => [
@@ -132,6 +203,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            'options' =>[
+                PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
+            ],
         ],
 
         'acarreos' => [

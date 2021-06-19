@@ -1,14 +1,14 @@
 <?php
 
 
-namespace App\Models\CTPQ;
+namespace App\Models\CTPQ\OtherMetadata;
 
 
 use Illuminate\Database\Eloquent\Model;
 
 class Documento extends Model
 {
-    protected $connection = 'cntpq';
+    protected $connection = 'cntpqom';
     protected $table = 'dbo.Documento';
     public $timestamps = false;
     protected $fillable = [

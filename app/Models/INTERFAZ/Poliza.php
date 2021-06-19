@@ -3,11 +3,11 @@
 
 namespace App\Models\INTERFAZ;
 
-use App\Models\CTPQ\Comprobante;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CTPQ\Expediente;
+use App\Models\CTPQ\OtherMetadata\Expediente;
 use App\Models\CTPQ\Parametro;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -52,6 +52,11 @@ class Poliza extends Model
         return $this->hasMany(PolizaCFDI::class, "id_poliza_global", "id_poliza_global");
     }
 
+    public function polizasCFDINoLanzado()
+    {
+        return $this->hasMany(PolizaCFDI::class, "id_poliza_global", "id_poliza_global")->where("estado","!=","1");
+    }
+
     public function movimientos()
     {
         return $this->hasMany(PolizaMovimiento::class, "id_poliza_global", "id_poliza_global");
@@ -81,6 +86,19 @@ class Poliza extends Model
     public function scopeLanzadas($query)
     {
         return $query->where('estatus', 1);
+    }
+
+    public function scopeObra($query, $bd_cadeco)
+    {
+        return $query->where('alias_bd_cadeco', $bd_cadeco);
+    }
+
+    public function scopeConCFDI($query){
+        return $query->whereHas("polizasCFDI");
+    }
+
+    public function scopeConCFDINoLanzado($query){
+        return $query->whereHas("polizasCFDINoLanzado");
     }
 
     /**

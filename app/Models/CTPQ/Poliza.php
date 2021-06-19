@@ -8,7 +8,9 @@
 
 namespace App\Models\CTPQ;
 
+use App\Facades\Context;
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -611,5 +613,23 @@ class Poliza extends Model
         {
             abort(500,"No se puede realizar el cambio, existe una Póliza en el mismo ejercicio y periodo");
         }
+    }
+
+    public function getReferencia()
+    {
+        $empresa = Config::get('database.connections.cntpq.database');
+        $referencia = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Referencia><Documento cadReferencia="Póliza de '.$this->tipo_poliza->Nombre.', ejercicio: '.$this->Ejercicio.', periodo: '.$this->Periodo.', número: '.$this->Folio.', empresa: '.$empresa.', guid: '.$this->Guid.'." edoPago="0" tipo="Poliza"/></Referencia>';
+        return $referencia;
+    }
+
+    public function generaAsociacionCFDI(Comprobante $comprobante)
+    {
+        return $this->asociacionCFDI()->create([
+            'UUID'=>$comprobante->UUID,
+            'Referencia'=>$this->getReferencia(),
+            'AppType'=>"Contabilidad",
+            'Reconstruir'=>true,
+            "Id"=>AsocCFDI::getUltimoFolio()
+        ]);
     }
 }

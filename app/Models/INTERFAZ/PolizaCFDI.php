@@ -6,7 +6,7 @@ namespace App\Models\INTERFAZ;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CTPQ\Comprobante;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
@@ -17,7 +17,7 @@ class PolizaCFDI extends Model
     protected $connection = 'interfaz';
     protected $table = 'dbo.polizas_cfdi';
     protected $primaryKey = 'id';
-    protected $fillable = ['cfdi_uuid'];
+    protected $fillable = ['cfdi_uuid','id_poliza_global'];
     public $timestamps = false;
 
     /**
@@ -41,7 +41,7 @@ class PolizaCFDI extends Model
     /**
      * Atributos
      */
-    public function getTieneComprobanteAttribute()
+    public function getTieneComprobanteAddAttribute()
     {
         if($this->comprobante)
         {

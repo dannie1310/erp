@@ -155,7 +155,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\CADECO\Venta;
 use App\Models\CADECO\Ventas\VentaCancelacion;
 use App\Models\CADECO\VentaPartida;
-use App\Models\CTPQ\Documento;
+use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
