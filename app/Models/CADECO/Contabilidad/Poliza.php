@@ -397,10 +397,9 @@ class Poliza extends Model
 
     public function buscarPolizasSinAsociarCFDI()
     {
-        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->get();
+        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->conCFDINoLanzado()->get();
         $polizas = [];
         $obra = Obra::find(Context::getIdObra());
-        $guid_poliza = '';
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
         $base = Parametro::find(1);
@@ -409,36 +408,34 @@ class Poliza extends Model
             if ($poliza->polizaContpaq) {
                 $guid_poliza = $poliza->polizaContpaq->Guid;
                 $tipo =  $poliza->polizaContpaq->tipo;
-                if ($poliza->polizasCFDI) {
-                    foreach ($poliza->polizasCFDI as $cfdi) {
-                        if ($cfdi->tiene_comprobante) {
-                            DB::purge('cntpq');
-                            Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
-                            $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
-                            if (is_null($expediente)) {
-                                $i = 1;
-                                break;
-                            }
+
+                foreach ($poliza->polizasCFDI as $cfdi) {
+                    if ($cfdi->tiene_comprobante) {
+                        DB::purge('cntpq');
+                        Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                        $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
+                        if (is_null($expediente)) {
+                            $i = 1;
+                            break;
                         }
                     }
-
-                    if ($i == 1) {
-
-                        array_push($polizas, [
-                            'id_int_poliza' =>  $poliza->id_int_poliza,
-                            'id_poliza_global' => $poliza->id_poliza_global,
-                            'id_poliza_contpaq' => $poliza->id_poliza_contpaq,
-                            'folio_contpaq' => $poliza->poliza_contpaq,
-                            'tipo_contpaq' => "Póliza de ".$tipo,
-                            'concepto' => $poliza->polizaSAO->concepto,
-                            'folio_sao' => $poliza->polizaSAO->numero_folio_format,
-                            'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
-                            'fecha' =>  $poliza->polizaSAO->fecha_format,
-                            'total' => $poliza->polizaSAO->total_format,
-                        ]);
-                    }
-                    $i = 0;
                 }
+
+                if ($i == 1) {
+                    array_push($polizas, [
+                        'id_int_poliza' =>  $poliza->id_int_poliza,
+                        'id_poliza_global' => $poliza->id_poliza_global,
+                        'id_poliza_contpaq' => $poliza->id_poliza_contpaq,
+                        'folio_contpaq' => $poliza->poliza_contpaq,
+                        'tipo_contpaq' => "Póliza de ".$tipo,
+                        'concepto' => $poliza->polizaSAO->concepto,
+                        'folio_sao' => $poliza->polizaSAO->numero_folio_format,
+                        'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
+                        'fecha' =>  $poliza->polizaSAO->fecha_format,
+                        'total' => $poliza->polizaSAO->total_format,
+                    ]);
+                }
+                $i = 0;
             }
         }
         return $polizas;
