@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DocApp extends Model
 {
-    protected $connection = 'cntpq';
+    protected $connection = 'cntpqom';
     protected $table = 'dbo.Doc_App';
 
     public $timestamps = false;

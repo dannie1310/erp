@@ -4,13 +4,16 @@
 namespace App\Models\CTPQ\OtherMetadata;
 
 
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use App\Models\CTPQ\Parametro;
 
 class Expediente extends Model
 {
-    protected $connection = 'cntpq';
+    protected $connection = 'cntpqom';
     protected $table = 'dbo.Expedientes';
 
     public $timestamps = false;
@@ -30,8 +33,8 @@ class Expediente extends Model
     public function comprobante()
     {
         $base =  Parametro::find(1);
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', 'document_'.$base->GuidDSL.'_metadata');
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
         return $this->belongsTo(Comprobante::class, 'GuidDocument', 'Guid_Pertenece');
     }
 

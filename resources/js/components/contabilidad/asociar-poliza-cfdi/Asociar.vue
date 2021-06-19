@@ -1,7 +1,7 @@
 <template>
     <span>
         <button @click="asociar"  class="btn btn-app pull-right">
-            <i class="fa fa-share-alt"></i> Asociar CFDI
+            <i class="fa fa-share-alt"></i> Asociar
         </button>
     </span>
 </template>

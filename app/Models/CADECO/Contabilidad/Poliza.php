@@ -455,20 +455,20 @@ class Poliza extends Model
 
                 foreach ($poliza->polizasCFDI as $cfdi) {
                     $comprobanteADD = null;
-
                     try{
                         $comprobanteADD = $cfdi->tiene_comprobante_add;
                     }catch (\Exception $e){
-                        abort(500,"No tiene acceso de lectura a la base de datos: ".'document_'.$base->GuidDSL.'_metadata para verificar la existencia del CFDI en el ADD de Contpaq');
+                        abort(500,"No tiene acceso de lectura a la base de datos: ".Config::get('database.connections.cntpqdm.database').'_metadata para verificar la existencia del CFDI en el ADD de Contpaq');
                     }
 
                     if ($comprobanteADD) {
-                        DB::purge('cntpq');
-                        Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
                         try{
+                            DB::purge('cntpqom');
+                            Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
                             $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
                         }catch (\Exception $e){
-                            abort(500,"No tiene acceso de lectura a la base de datos: ".'other_' . $base->GuidDSL . '_metadata para verificar la asociación de la póliza con el CFDI en Contpaq');
+                            abort(500, $e->getMessage());
+                            abort(500,"No tiene acceso de lectura a la base de datos: ".Config::get('database.connections.cntpqom.database') . '_metadata para verificar la asociación de la póliza con el CFDI en Contpaq');
                         }
                         if (is_null($expediente)) {
                             $i = 1;
@@ -508,16 +508,17 @@ class Poliza extends Model
         $base = Parametro::find(1);
         $i = 0;
         $fecha = date('Y-m-d').' 00:00:00';
+        DB::connection('cntpq')->beginTransaction();
+        DB::connection('cntpqom')->beginTransaction();
         try {
-            DB::connection('cntpq')->beginTransaction();
 
             foreach ($polizas_interfaz as $key => $poliza) {
                 if ($poliza->polizaContpaq) {
                     $guid_poliza = $poliza->polizaContpaq->Guid;
                     $tipo = "Poliza de ".$poliza->polizaContpaq->tipo_poliza->Nombre;
                     if ($poliza->polizasCFDI) {
-                        DB::purge('cntpq');
-                        Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                        DB::purge('cntpqom');
+                        Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
                         $documento = Documento::where('GuidDocument', $guid_poliza)->first();
                         if (is_null($documento)) {
                             try{
@@ -545,6 +546,7 @@ class Poliza extends Model
                                     'IsAsoContabilidad' => 1
                                 ]);
                             }catch (\Exception $e){
+                                DB::connection('cntpqom')->rollBack();
                                 DB::connection('cntpq')->rollBack();
                                 abort(400, "No tiene acceso de escritura a la base de datos: ".Config::get('database.connections.cntpq.database'));
                             }
@@ -568,6 +570,7 @@ class Poliza extends Model
                                     'Responsable' =>0
                                 ]);
                             }catch (\Exception $e){
+                                DB::connection('cntpqom')->rollBack();
                                 DB::connection('cntpq')->rollBack();
                                 abort(400, "No tiene acceso de escritura a la base de datos: ".Config::get('database.connections.cntpq.database'));
                             }
@@ -578,8 +581,8 @@ class Poliza extends Model
                                 DB::purge('cntpq');
                                 Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
                                 $poliza->polizaContpaq->generaAsociacionCFDI($cfdi->comprobante);
-                                DB::purge('cntpq');
-                                Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
+                                DB::purge('cntpqom');
+                                Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
                                 $expediente = Expediente::buscarExpediente($guid_poliza, $guid_document)->first();
                                 if (is_null($expediente)) {
                                     $comentario =$tipo . ", ejercicio: " . $poliza->polizaContpaq->Ejercicio . ", periodo: " . $poliza->polizaContpaq->Periodo . ", numero: " . $poliza->polizaContpaq->Folio . ", empresa: " . $obra->datosContables->BDContPaq . ", guid: " . $guid_poliza;
@@ -598,11 +601,14 @@ class Poliza extends Model
                     }
                 }
             }
-            DB::connection('cntpq')->commit();
+
         } catch (\Exception $e) {
+            DB::connection('cntpqom')->rollBack();
             DB::connection('cntpq')->rollBack();
             abort(400, $e->getMessage());
-            throw $e;
         }
+
+        DB::connection('cntpqom')->commit();
+        DB::connection('cntpq')->commit();
     }
 }
