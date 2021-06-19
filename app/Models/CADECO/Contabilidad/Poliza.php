@@ -406,6 +406,9 @@ class Poliza extends Model
     }
 
     private function generaPolizasCFDI(){
+        $obra = Obra::find(Context::getIdObra());
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
         $polizas = Poliza::deFactura()->get();
         foreach($polizas as $poliza){
             if(count($poliza->polizasInterfaz()->get())>0){
@@ -437,6 +440,7 @@ class Poliza extends Model
 
     public function buscarPolizasSinAsociarCFDI()
     {
+        //$this->generaPolizasCFDI();
         $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->conCFDINoLanzado()->get();
         $polizas = [];
         $obra = Obra::find(Context::getIdObra());
@@ -450,10 +454,22 @@ class Poliza extends Model
                 $tipo =  $poliza->polizaContpaq->tipo;
 
                 foreach ($poliza->polizasCFDI as $cfdi) {
-                    if ($cfdi->tiene_comprobante_add) {
+                    $comprobanteADD = null;
+
+                    try{
+                        $comprobanteADD = $cfdi->tiene_comprobante_add;
+                    }catch (\Exception $e){
+                        abort(500,"No tiene acceso de lectura a la base de datos: ".'document_'.$base->GuidDSL.'_metadata para verificar la existencia del CFDI en el ADD de Contpaq');
+                    }
+
+                    if ($comprobanteADD) {
                         DB::purge('cntpq');
                         Config::set('database.connections.cntpq.database', 'other_' . $base->GuidDSL . '_metadata');
-                        $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
+                        try{
+                            $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
+                        }catch (\Exception $e){
+                            abort(500,"No tiene acceso de lectura a la base de datos: ".'other_' . $base->GuidDSL . '_metadata para verificar la asociación de la póliza con el CFDI en Contpaq');
+                        }
                         if (is_null($expediente)) {
                             $i = 1;
                             break;
