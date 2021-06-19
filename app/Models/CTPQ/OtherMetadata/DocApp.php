@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Models\CTPQ;
+namespace App\Models\CTPQ\OtherMetadata;
 
 
 use Illuminate\Database\Eloquent\Model;

@@ -4,7 +4,7 @@
 namespace App\Observers\CTPQ;
 
 
-use App\Models\CTPQ\Documento;
+use App\Models\CTPQ\OtherMetadata\Documento;
 
 class DocumentoObserver
 {

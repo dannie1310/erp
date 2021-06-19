@@ -3,11 +3,11 @@
 
 namespace App\Models\INTERFAZ;
 
-use App\Models\CTPQ\Comprobante;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CTPQ\Expediente;
+use App\Models\CTPQ\OtherMetadata\Expediente;
 use App\Models\CTPQ\Parametro;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;

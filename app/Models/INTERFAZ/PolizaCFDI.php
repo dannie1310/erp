@@ -6,7 +6,7 @@ namespace App\Models\INTERFAZ;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CTPQ\Comprobante;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
