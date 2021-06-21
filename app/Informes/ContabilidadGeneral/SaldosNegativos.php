@@ -12,14 +12,27 @@ class SaldosNegativos
     {
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $cuenta->base_datos);
-        $query = "select IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo, sum (
+
+        if(in_array($cuenta->digito_inicial,[2,3,4])){
+            $query = "select IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo, sum (
+              CASE MovimientosPoliza.TipoMovto
+                 WHEN 1 THEN MovimientosPoliza.Importe
+                 WHEN 0 THEN MovimientosPoliza.Importe * -1
+              END) as Saldo
+                from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+                where Cuentas.Id = ".$cuenta->id_cuenta."
+                group by IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo order by Ejercicio, Periodo";
+        } else{
+            $query = "select IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo, sum (
           CASE MovimientosPoliza.TipoMovto
              WHEN 1 THEN MovimientosPoliza.Importe * -1
              WHEN 0 THEN MovimientosPoliza.Importe
           END) as Saldo
-from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
-where Cuentas.Id = ".$cuenta->id_cuenta."
-group by IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo order by Ejercicio, Periodo";
+            from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
+            where Cuentas.Id = ".$cuenta->id_cuenta."
+            group by IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo order by Ejercicio, Periodo";
+        }
+
 
 
         $informe = DB::connection("cntpq")->select($query);
@@ -40,7 +53,27 @@ group by IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo order 
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $cuenta->base_datos);
 
-        $query = "select Polizas.Id as IdPoliza, CONVERT(varchar,Polizas.Fecha,103) as Fecha, TiposPolizas.Nombre as Tipo, Polizas.Folio, MovimientosPoliza.Concepto, MovimientosPoliza.Referencia,
+        if(in_array($cuenta->digito_inicial,[2,3,4]))
+        {
+            $query = "select Polizas.Id as IdPoliza, CONVERT(varchar,Polizas.Fecha,103) as Fecha, TiposPolizas.Nombre as Tipo, Polizas.Folio, MovimientosPoliza.Concepto, MovimientosPoliza.Referencia,
+       CASE MovimientosPoliza.TipoMovto
+             WHEN 0 THEN MovimientosPoliza.Importe
+           ELSE 0
+          END  Cargo,
+CASE MovimientosPoliza.TipoMovto
+             WHEN 1 THEN MovimientosPoliza.Importe
+            ELSE 0
+          END Abono,
+        CASE MovimientosPoliza.TipoMovto
+             WHEN 1 THEN MovimientosPoliza.Importe
+             WHEN 0 THEN MovimientosPoliza.Importe * -1
+          END Importe
+from dbo.MovimientosPoliza
+    join dbo.Polizas on(Polizas.Id = MovimientosPoliza.IdPoliza)
+join dbo.TiposPolizas on(TiposPolizas.Id = MovimientosPoliza.TipoPol)
+where MovimientosPoliza.IdCuenta = ".$cuenta->id_cuenta." and MovimientosPoliza.Ejercicio=".$data["anio"]." and MovimientosPoliza.Periodo = ".$data["mes"];
+        } else {
+            $query = "select Polizas.Id as IdPoliza, CONVERT(varchar,Polizas.Fecha,103) as Fecha, TiposPolizas.Nombre as Tipo, Polizas.Folio, MovimientosPoliza.Concepto, MovimientosPoliza.Referencia,
        CASE MovimientosPoliza.TipoMovto
              WHEN 0 THEN MovimientosPoliza.Importe
            ELSE 0
@@ -57,6 +90,9 @@ from dbo.MovimientosPoliza
     join dbo.Polizas on(Polizas.Id = MovimientosPoliza.IdPoliza)
 join dbo.TiposPolizas on(TiposPolizas.Id = MovimientosPoliza.TipoPol)
 where MovimientosPoliza.IdCuenta = ".$cuenta->id_cuenta." and MovimientosPoliza.Ejercicio=".$data["anio"]." and MovimientosPoliza.Periodo = ".$data["mes"];
+        }
+
+
         $informe_data = DB::connection("cntpq")->select($query);
         $informe_data = array_map(function ($value) {
             return (array)$value;
@@ -115,12 +151,9 @@ where MovimientosPoliza.IdCuenta = ".$cuenta->id_cuenta." and MovimientosPoliza.
             ";
         }
 
-
-
         $informe = DB::connection("cntpq")->select($query);
 
         return $informe[0]->Saldo;
-
     }
 
     private static function reorganizaArreglo($informe)
@@ -219,9 +252,7 @@ union select '14', '14','14') as sub
 order by id
 
 
-        ";/*union select '13', '13','13'
-union select '14', '14','14'*/
-
+        ";
         $meses = DB::select($query);
         $meses = array_map(function ($value) {
             return (array)$value;

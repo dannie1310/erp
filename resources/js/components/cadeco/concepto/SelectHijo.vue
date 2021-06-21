@@ -49,7 +49,7 @@
             if(this.placeholder !== ""){
                 this.placeholder_ = this.placeholder;
             }
-            
+
         },
 
         methods: {
@@ -62,7 +62,7 @@
                         self.rootNodes = data.data.map(concepto => ({
                             id: concepto.id,
                             children: concepto.tiene_hijos != 0 ? null : undefined,
-                            label: concepto.descripcion,
+                            label: concepto.clave_concepto_select + concepto.descripcion,
                         }));
                         self.disabled = false;
                     })
@@ -77,7 +77,7 @@
                         parentNode.children = data.hijos.data.map(concepto => ({
                             id: concepto.id,
                             children: concepto.tiene_hijos != 0 ? null : undefined,
-                            label: concepto.descripcion,
+                            label: concepto.clave_concepto_select + concepto.descripcion,
                         }))
                     })
                     .then(() => {

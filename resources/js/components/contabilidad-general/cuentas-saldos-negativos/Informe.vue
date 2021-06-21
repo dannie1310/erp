@@ -19,16 +19,18 @@
                             <tbody>
                                 <tr>
                                     <td style="text-align: center" rowspan="3">{{informe.encabezado.empresa}}</td>
-                                    <td style="text-align: center" colspan="4">Cuenta</td>
+                                    <td style="text-align: center" colspan="5">Cuenta</td>
                                 </tr>
                                 <tr>
                                     <td style="text-align: center">Tipo</td>
+                                    <td style="text-align: center">Naturaleza</td>
                                     <td style="text-align: center">Código</td>
                                     <td style="text-align: center">Nombre</td>
                                     <td style="text-align: center">Saldo</td>
                                 </tr>
                                 <tr >
                                     <td style="text-align: center">{{informe.encabezado.tipo_cuenta}}</td>
+                                    <td style="text-align: center">{{informe.encabezado.naturaleza}}</td>
                                     <td style="text-align: center"><b>{{informe.encabezado.codigo_cuenta}}</b></td>
                                     <td style="text-align: center"><b>{{informe.encabezado.nombre_cuenta}}</b></td>
                                     <td style="text-align: center" :style="informe.encabezado.saldo_cuenta<0?`color : #F00`:``"><b>{{informe.encabezado.saldo_cuenta_format}}</b></td>

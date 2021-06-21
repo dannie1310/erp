@@ -603,7 +603,7 @@ class Subcontrato extends Transaccion
 
     public function getTieneNodoExtraordinarioAttribute()
     {
-        $extra = $this->contratoProyectado->contratos()->agrupadorExtraordinario()->get();
+        $extra = $this->contratoProyectado_sgc->contratos()->agrupadorExtraordinario()->get();
         if(count($extra)>0){
             return true;
         } else{
@@ -613,7 +613,7 @@ class Subcontrato extends Transaccion
 
     public function getTieneNodoCambioPrecioAttribute()
     {
-        $cp = $this->contratoProyectado->contratos()->agrupadorCambioPrecio()->get();
+        $cp = $this->contratoProyectado_sgc->contratos()->agrupadorCambioPrecio()->get();
         if(count($cp)>0){
             return true;
         } else{
