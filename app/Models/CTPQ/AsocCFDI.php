@@ -15,14 +15,15 @@ class AsocCFDI extends Model
         'UUID',
         'Referencia',
         'AppType',
-        'Reconstruir'
+        'Reconstruir',
+        "Id"
     ];
 
     public $timestamps = false;
 
     public static function getUltimoFolio()
     {
-        $folio = AsocCFDI::orderBy("Id","desc")->first()->pluck("Id");
+        $folio = AsocCFDI::orderBy("Id","desc")->pluck("Id")->first();
         return $folio+1;
     }
 
