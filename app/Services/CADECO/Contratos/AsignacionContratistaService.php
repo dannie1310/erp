@@ -115,10 +115,24 @@ class AsignacionContratistaService
     {
         foreach($presupuestos as $presupuesto)
         {
-            $no_localizado = CtgNoLocalizado::where('rfc', $presupuesto['rfc'])->first();
-            if($no_localizado)
+            $asignada = $this->estaAsociada($presupuesto['partidas']);
+            if($asignada)
             {
-                abort(403, "El proveedor ".$presupuesto['razon_social']." es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+                $no_localizado = CtgNoLocalizado::where('rfc', $presupuesto['rfc'])->first();
+                if ($no_localizado) {
+                    abort(403, "El proveedor " . $presupuesto['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+                }
+            }
+        }
+    }
+
+    private function estaAsociada($partidas)
+    {
+        foreach($partidas as $partida)
+        {
+            if($partida && $partida['cantidad_asignada'] > 0)
+            {
+                return true;
             }
         }
     }
