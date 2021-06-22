@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\OrdenCompra;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
 use App\Models\CADECO\OrdenCompraPartida;
@@ -55,7 +56,7 @@ class AsignacionProveedorService
                 $transf_orden_compra = new OrdenCompraTransformer();
                 $orden_compra_transf = [];
 
-                if(count($partida->ordenCompra) > 0){    
+                if(count($partida->ordenCompra) > 0){
                     foreach($partida->ordenCompra as $key => $orden){
                         if($orden->complemento->id_asignacion_proveedor == $partida->id_asignacion_proveedores){
                             $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
@@ -108,6 +109,7 @@ class AsignacionProveedorService
 
     public function store($data)
     {
+        $this->validarProveedor($data['cotizaciones']);
         try{
             DB::connection('cadeco')->beginTransaction();
             $asignacion = $this->repository->create([
@@ -150,7 +152,7 @@ class AsignacionProveedorService
             $asignacion = $this->repository->show($data['id']);
             $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
             $transaccion_cotizacion = '';
-            
+
             foreach($partidas as $partida){
                 $orden_c = null;
                 $ordenes_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
@@ -158,14 +160,14 @@ class AsignacionProveedorService
                                         ->where('id_empresa', '=', $partida->cotizacionCompra->id_empresa)
                                         ->where('id_sucursal', '=', $partida->cotizacionCompra->id_sucursal)
                                         ->where('id_moneda', '=', $partida->cotizacion->id_moneda)->get();
-                
+
                 foreach ($ordenes_c as $key => $orden) {
                     if($orden->complemento->id_asignacion_proveedor == $asignacion->id){
                         $orden_c = $orden;
                         break;
                     }
                 }
-                
+
                 if(!$orden_c){
                     $orden_c = OrdenCompra::Create([
                         'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
@@ -392,5 +394,31 @@ class AsignacionProveedorService
     {
         $pdf = new AsignacionFormato($this->repository->show($id));
         return $pdf->create();
+    }
+
+    private function validarProveedor($cotizaciones)
+    {
+        foreach($cotizaciones as $cotizacion)
+        {
+           $asignada = $this->estaAsociada($cotizacion['partidas']);
+           if($asignada)
+           {
+               $no_localizado = CtgNoLocalizado::where('rfc', $cotizacion['rfc'])->first();
+               if ($no_localizado) {
+                   abort(403, "El proveedor " . $cotizacion['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+               }
+           }
+        }
+    }
+
+    private function estaAsociada($partidas)
+    {
+        foreach($partidas as $partida)
+        {
+            if($partida && $partida['cantidad_asignada'] > 0)
+            {
+                return true;
+            }
+        }
     }
 }

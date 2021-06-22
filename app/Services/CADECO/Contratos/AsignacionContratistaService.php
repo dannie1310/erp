@@ -111,7 +111,7 @@ class AsignacionContratistaService
         return $pdf;
     }
 
-    public function validarProveedor($presupuestos)
+    private function validarProveedor($presupuestos)
     {
         foreach($presupuestos as $presupuesto)
         {
