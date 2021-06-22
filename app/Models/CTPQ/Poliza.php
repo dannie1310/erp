@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 
 
 class Poliza extends Model
