@@ -451,12 +451,11 @@ class Poliza extends Model
         $i = 0;
 
         foreach ($polizas_interfaz as $key => $poliza) {
-            $uuid = '';
             if ($poliza->polizaContpaq) {
                 $guid_poliza = $poliza->polizaContpaq->Guid;
                 $tipo =  $poliza->polizaContpaq->tipo;
 
-                foreach ($poliza->polizasCFDI as $cfdi) {
+                foreach ($poliza->polizasCFDI()->noAsociados()->get() as $cfdi) {
                     $comprobanteADD = null;
                     try{
                         $comprobanteADD = $cfdi->tiene_comprobante_add;
@@ -486,7 +485,7 @@ class Poliza extends Model
                         'id_poliza_contpaq' => $poliza->id_poliza_contpaq,
                         'folio_contpaq' => $poliza->poliza_contpaq,
                         'tipo_contpaq' => "Póliza de ".$tipo,
-                        'concepto' => $poliza->polizaSAO->concepto,
+                        'concepto' => $poliza->polizaSAO->concepto/*.$uuid.$poliza->id_poliza_global*/,
                         'folio_sao' => $poliza->polizaSAO->numero_folio_format,
                         'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
                         'fecha' =>  $poliza->polizaSAO->fecha_format,
@@ -591,6 +590,8 @@ class Poliza extends Model
                                     }catch (\Exception $e){
                                         DB::connection('cntpqom')->rollBack();
                                         DB::connection('cntpq')->rollBack();
+                                        $cfdi->estado = -4;
+                                        $cfdi->save();
                                         abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpq.database').". \n \n Favor de contactar a soporte a aplicaciones.");
                                     }
                                     try{
@@ -600,6 +601,8 @@ class Poliza extends Model
                                     }catch (\Exception $e){
                                         DB::connection('cntpqom')->rollBack();
                                         DB::connection('cntpq')->rollBack();
+                                        $cfdi->estado = -3;
+                                        $cfdi->save();
                                         abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
                                     }
 
@@ -617,9 +620,16 @@ class Poliza extends Model
                                         }catch (\Exception $e){
                                             DB::connection('cntpqom')->rollBack();
                                             DB::connection('cntpq')->rollBack();
+                                            $cfdi->estado = -3;
+                                            $cfdi->save();
                                             abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
                                         }
                                     }
+                                    $cfdi->estado = 1;
+                                    $cfdi->save();
+                                }else{
+                                    $cfdi->estado = -1;
+                                    $cfdi->save();
                                 }
                             }
                             $i++;

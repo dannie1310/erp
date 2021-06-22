@@ -37,6 +37,10 @@ class PolizaCFDI extends Model
     /**
      * Scopes
      */
+    public function scopeNoAsociados($query)
+    {
+        return $query->where("estado","!=",1);
+    }
 
     /**
      * Atributos

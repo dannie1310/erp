@@ -625,6 +625,11 @@ class Poliza extends Model
 
     public function generaAsociacionCFDI(Comprobante $comprobante)
     {
+        $previa = AsocCFDI::where("UUID","=",$comprobante->UUID)
+            ->where("GuidRef","=",$this->Guid)->first();
+        if($previa){
+            return $previa;
+        }
         return $this->asociacionCFDI()->create([
             'UUID'=>$comprobante->UUID,
             'Referencia'=>$this->getReferencia(),
