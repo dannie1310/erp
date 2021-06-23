@@ -193,7 +193,7 @@
                                                              <tr>
                                                                  <th>IVA:</th>
                                                                  <td>
-                                                                     <input type="number" min="0.01"
+                                                                     <input type="number"
                                                                             step=".01"   class="form-control"
                                                                             :name="iva"  data-vv-as="IVA" style="text-align:right;"
                                                                             v-validate="{required: true}"
