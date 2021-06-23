@@ -351,16 +351,18 @@ class Poliza extends Model
     }
 
     private function generaPolizaCFDI($poliza_interfaz){
-        if($this->transaccionAntecedente->tipo_transaccion == 65){
-            $factura = Factura::find($this->transaccionAntecedente->id_transaccion);
-            $uuid_cfdis = $factura->facturasRepositorio->pluck("uuid");
-            foreach($uuid_cfdis as $uud_cfdi)
-            {
-                $poliza_interfaz->polizasCFDI()->create(
-                    [
-                        'cfdi_uuid'=>$uud_cfdi
-                    ]
-                );
+        if($this->transaccionAntecedente){
+            if($this->transaccionAntecedente->tipo_transaccion == 65){
+                $factura = Factura::find($this->transaccionAntecedente->id_transaccion);
+                $uuid_cfdis = $factura->facturasRepositorio->pluck("uuid");
+                foreach($uuid_cfdis as $uud_cfdi)
+                {
+                    $poliza_interfaz->polizasCFDI()->create(
+                        [
+                            'cfdi_uuid'=>$uud_cfdi
+                        ]
+                    );
+                }
             }
         }
     }
@@ -377,7 +379,7 @@ class Poliza extends Model
                 'id_obra_contpaq'=>$this->id_obra_contpaq,
                 'alias_bd_contpaq'=>$this->alias_bd_contpaq,
                 'fecha'=>$this->fecha,
-                'concepto'=>substr($this->concepto,0,100),
+                'concepto'=>mb_substr($this->concepto,0,100),
                 'total'=>$this->total,
                 'cuadre'=>$this->cuadre,
                 'estatus'=>0,
@@ -394,8 +396,8 @@ class Poliza extends Model
                     'cuenta_contable'=>$movimiento->cuenta_contable_interfaz,
                     'importe'=>$movimiento->importe,
                     'id_tipo_movimiento_poliza'=>$movimiento->id_tipo_movimiento_poliza,
-                    'referencia'=>substr($movimiento->referencia,0,20),
-                    'concepto'=>substr($movimiento->concepto,0,100),
+                    'referencia'=>mb_substr($movimiento->referencia,0,20),
+                    'concepto'=>mb_substr($movimiento->concepto,0,100),
                     'id_empresa_cadeco'=>$movimiento->id_empresa_cadeco,
                     'razon_social'=>$movimiento->razon_social,
                     'rfc'=>$movimiento->rfc,
