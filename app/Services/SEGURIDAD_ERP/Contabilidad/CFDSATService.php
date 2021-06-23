@@ -8,26 +8,27 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
-use App\Events\CambioEFOS;
-use App\Events\CambioNoLocalizados;
-use App\Events\FinalizaCargaCFD;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
-use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use App\Models\SEGURIDAD_ERP\Proyecto;
-use App\PDF\Fiscal\CFDI;
-use App\PDF\Fiscal\InformeCFDICompleto;
-use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
+use DateTime;
 use App\Utils\CFD;
 use App\Utils\Util;
-use Illuminate\Support\Facades\Storage;
-use Chumper\Zipper\Zipper;
-use DateTime;
 use App\Utils\Files;
+use App\PDF\Fiscal\CFDI;
+use Webpatser\Uuid\Uuid;
+use App\Events\CambioEFOS;
+use Chumper\Zipper\Zipper;
+use App\Events\FinalizaCargaCFD;
+use App\Events\CambioNoLocalizados;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\PDF\Fiscal\InformeCFDICompleto;
+use Illuminate\Support\Facades\Storage;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 
 class CFDSATService
 {
@@ -1102,5 +1103,50 @@ class CFDSATService
             return $cfdi;
         }
         return null;
+    }
+
+    public function procesar($data){
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+        <cfdi:Comprobante Version="3.3" xmlns:cfdi="http://www.sat.gob.mx/cfd/3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/cfd/3 http://www.sat.gob.mx/sitio_internet/cfd/3/cfdv33.xsd" Folio="190" Fecha="2021-05-28T11:12:56" NoCertificado="00001000000407130925" Certificado="MIIGRDCCBCygAwIBAgIUMDAwMDEwMDAwMDA0MDcxMzA5MjUwDQYJKoZIhvcNAQELBQAwggGyMTgwNgYDVQQDDC9BLkMuIGRlbCBTZXJ2aWNpbyBkZSBBZG1pbmlzdHJhY2nDs24gVHJpYnV0YXJpYTEvMC0GA1UECgwmU2VydmljaW8gZGUgQWRtaW5pc3RyYWNpw7NuIFRyaWJ1dGFyaWExODA2BgNVBAsML0FkbWluaXN0cmFjacOzbiBkZSBTZWd1cmlkYWQgZGUgbGEgSW5mb3JtYWNpw7NuMR8wHQYJKoZIhvcNAQkBFhBhY29kc0BzYXQuZ29iLm14MSYwJAYDVQQJDB1Bdi4gSGlkYWxnbyA3NywgQ29sLiBHdWVycmVybzEOMAwGA1UEEQwFMDYzMDAxCzAJBgNVBAYTAk1YMRkwFwYDVQQIDBBEaXN0cml0byBGZWRlcmFsMRQwEgYDVQQHDAtDdWF1aHTDqW1vYzEVMBMGA1UELRMMU0FUOTcwNzAxTk4zMV0wWwYJKoZIhvcNAQkCDE5SZXNwb25zYWJsZTogQWRtaW5pc3RyYWNpw7NuIENlbnRyYWwgZGUgU2VydmljaW9zIFRyaWJ1dGFyaW9zIGFsIENvbnRyaWJ1eWVudGUwHhcNMTcwODAzMTc1NDMxWhcNMjEwODAzMTc1NDMxWjCB5DEtMCsGA1UEAxMkVkFMVlVMQVMgWSBDT01QVUVSVEFTIFVSQUdBIFNBIERFIENWMS0wKwYDVQQpEyRWQUxWVUxBUyBZIENPTVBVRVJUQVMgVVJBR0EgU0EgREUgQ1YxLTArBgNVBAoTJFZBTFZVTEFTIFkgQ09NUFVFUlRBUyBVUkFHQSBTQSBERSBDVjElMCMGA1UELRMcVkNVMDUwODAzMVQ0IC8gVUFQQTY5MTAwMTZKOTEeMBwGA1UEBRMVIC8gVUFQQTY5MTAwMUhERlJYTjAyMQ4wDAYDVQQLEwVVTklDQTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAIDi4CWvg5rdrskR+vD+d6pcRqDGaBto9Qnh3geAXx1G7MdMmA36WazLhQVWBTcdCKx6Goma4daC8pb6B3AKH8BrYy3ieZLfn34CSqujMyEdAt0Z9n2QGmSVgaZ9sUEfHBjA55i+my1+Tb389d/+8ht39sSi13vEUzezbq4ZLcC2MhdjHHytYzhdc3FHG4gTK0R5lOmnhuYVnlRKgE+6OOQDCX+TeOPKuHkEfyNU6ENNyFLBMK2wOD9Au4mCzaQTEBEzHi3i16ME7d+pCHzBMIMw3Bk7BdZA7lFqkolsJHoWEoCG7QsznkDkg6SMw8PwIRW07Q3b24qhrOa4lR3i8ccCAwEAAaMdMBswDAYDVR0TAQH/BAIwADALBgNVHQ8EBAMCBsAwDQYJKoZIhvcNAQELBQADggIBAKTK/jemyx+Am4+4mTFoA5TANYbkeLELqbvIMczPbEjNxwnxdaeyXA9d2WhfSfQWew0ru+T9+nBU4e/mxoob0yBcIQKw4KzXNTE68HwYyqa+7tqgcKMAZ0K4uShPoWnK/Gz1UOc1JvmvamomDJ31wQj7S3Xe59jVqNKrXl4Is1bLNGPK0kRmO9fwPdNVyqcnvZRFwXZ5etQS9eeohVMXCOEl4amxAaAzmVEdEvgon1gVJ7TtM7G4brMszHvZc3L9TGxIXes82xHlsPh8H7QhdDMf8d7bq/VOT8F0rtm8ewIxTJXkSf9Fu6p572MaMVqGvQyH4pYNCDA0UVXt72kUUrA9kAyFbZHAFNknl7fE2nA5xj0nt/xuQuUbHKt6GL0+J72sdIQG2V3aceqYzT4yFz+0sUqez1DoIVYwVeyFF2OSzBEMLTDqhxu9erzvN6cwUGtHIPS91SmzY7KeRJbYqjIAo0J1Bs+DnnAxn61jrBqwug1bcdQoZux7Lwy6/fYDuKA5Np/GfJ/Ru/fbHY4crpUSDCcOyT6C7/x2dQe1Z6o1n4w4Z7PJc2LOSjVYktnXQqB/banS3bI8lGcXqvwp+0Gb3BbYiwW/bL9Q2r9uChQ5RvyJD4tZeM3iq+fbATz0oL9L3dAPMZC+8MGD5ny2qaSdHikPNYvubLIjFcDNmwNv" Moneda="MXN" TipoDeComprobante="E" MetodoPago="PPD" FormaPago="99" SubTotal="59240.40" Total="68718.86" LugarExpedicion="56610" Sello="IW6rb53+Uks9EoryDn2ARPa7e1lwEccT1eG0cS0yHLBFIM2Yx5/52XZa5Q0Fiu761kQ+6QFQmyTMLZm80Y1bMVQfK4kv1ik86EiRZ8czmqKZNdfZ5GBvq1RNBhCtBnM9nLeze81ElCDpLUhBqJfACYqb6tfdkHBvb5GAwRFNHCKMlmPxLIEkar844Hx/BV62uwuFsYPr8Ydb9XO3oqg4w9iwZnYi+TTqYsCc+sDH7SiGdXBmabN1rQLJw26jgu2TETSpSFhWiSBSDppr96Q5KZb7N6Qw7mto5/aKjQ1golK1vrkfdyYRI8i8ji0FMv1hC31yzmiBlor/zbz9eVpgEA==">
+            <cfdi:CfdiRelacionados TipoRelacion="01">
+                <cfdi:CfdiRelacionado UUID="647DBEE9-BFCF-11EB-8FBC-00155D014009"/>
+            </cfdi:CfdiRelacionados>
+            <cfdi:Emisor Rfc="VCU0508031T4" Nombre="VALVULAS Y COMPUERTAS URAGA SA DE CV" RegimenFiscal="601"/>
+            <cfdi:Receptor Rfc="PCO811231EI4" Nombre="LA PENINSULAR COMPAÑIA CONSTRUCTORA S.A DE C.V" UsoCFDI="G03"/>
+            <cfdi:Conceptos>
+                <cfdi:Concepto ClaveProdServ="84111506" Cantidad="1.00" ClaveUnidad="ACT" Descripcion="ANTICIPO DEL 30% SOBRE EL MONTO TOTAL, POR EL SUMINISTRO DE 7 BOTONERAS MARCA URAGA, PARA CONTROLAR ACTUADORES ELECTRICOS MARCA AUMA, EN LA PLANTA DE BOMBEO CILA, DE ACUERDO A LA ORDEN DE COMPRA No. 00055" ValorUnitario="59240.40" Importe="59240.40">
+                    <cfdi:Impuestos>
+                        <cfdi:Traslados>
+                            <cfdi:Traslado Base="59240.40" Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="9478.46"/>
+                        </cfdi:Traslados>
+                    </cfdi:Impuestos>
+                </cfdi:Concepto>
+            </cfdi:Conceptos>
+            <cfdi:Impuestos TotalImpuestosTrasladados="9478.46">
+                <cfdi:Traslados>
+                    <cfdi:Traslado Impuesto="002" TipoFactor="Tasa" TasaOCuota="0.160000" Importe="9478.46"/>
+                </cfdi:Traslados>
+            </cfdi:Impuestos>
+            <cfdi:Complemento>
+                <tfd:TimbreFiscalDigital xmlns:tfd="http://www.sat.gob.mx/TimbreFiscalDigital" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sat.gob.mx/TimbreFiscalDigital http://www.sat.gob.mx/sitio_internet/cfd/TimbreFiscalDigital/TimbreFiscalDigitalv11.xsd" Version="1.1" UUID="906EAD88-BFCF-11EB-91AE-00155D012007" FechaTimbrado="2021-05-28T11:12:56" RfcProvCertif="TBN040609RKA" SelloCFD="IW6rb53+Uks9EoryDn2ARPa7e1lwEccT1eG0cS0yHLBFIM2Yx5/52XZa5Q0Fiu761kQ+6QFQmyTMLZm80Y1bMVQfK4kv1ik86EiRZ8czmqKZNdfZ5GBvq1RNBhCtBnM9nLeze81ElCDpLUhBqJfACYqb6tfdkHBvb5GAwRFNHCKMlmPxLIEkar844Hx/BV62uwuFsYPr8Ydb9XO3oqg4w9iwZnYi+TTqYsCc+sDH7SiGdXBmabN1rQLJw26jgu2TETSpSFhWiSBSDppr96Q5KZb7N6Qw7mto5/aKjQ1golK1vrkfdyYRI8i8ji0FMv1hC31yzmiBlor/zbz9eVpgEA==" NoCertificadoSAT="00001000000504587508" SelloSAT="AZKqoAJSEMKfeCDePA+ZRSgkfStitnQqyZd1fUUEHYnXQGx8/YWXxVP00pkEHYzZoLBGCntcyaSiY1LwuJPUu6PBozaQOr2ubgCxkA6sGDmTauEgDbyalTWwxUvVsyRu9YaxUR5f3nq8vOh9M9Gwp1Nl5VOthsoHc1QaGsh/TJ/N3QxrDrDnEacDylYOgtsyb+bdD6GqknXYE0VHIJfujo36+5KgzHNj1om0B6ShwqcR5oR8BSk5t/Q/2XDKVYmsQv9uqqyIUfJAuTf1wyLwn5vHxpZR4nHTQUAd/z/HAh5sQKTiDLWYzaU5MRjakMvKFc0B+eBy12eJxOYX9ybS/g=="/>
+            </cfdi:Complemento>
+        </cfdi:Comprobante>';
+
+        // dd($this->get_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>'), Uuid::generate()->string);
+
+        $carga_xml = new CFD($xml);
+        $array_xml = $carga_xml->getArregloFactura();
+        dd($array_xml['certificado']);
+
+        
+    }
+
+    function get_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
     }
 }

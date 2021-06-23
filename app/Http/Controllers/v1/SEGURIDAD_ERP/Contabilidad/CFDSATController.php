@@ -95,4 +95,10 @@ class CFDSATController extends Controller
         $item = $this->service->cargaXMLProveedor($request->all());
         return $this->respondWithItem($item);
     }
+    
+    public function procesar(Request $request)
+    {
+        $respuesta =$this->service->procesar($request->all());
+        return response()->json($respuesta, 200);
+    }
 }

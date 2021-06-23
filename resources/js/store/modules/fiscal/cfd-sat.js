@@ -312,6 +312,19 @@ export default {
                     })
             });
         },
+        procesa(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'procesar', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         procesaDirZIPCFD(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

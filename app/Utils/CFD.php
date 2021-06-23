@@ -85,6 +85,8 @@ class CFD
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
             $this->arreglo_factura["metodo_pago"] = (string)$factura_xml["MetodoPago"];
+            $this->arreglo_factura["no_certificado"] = (string)$factura_xml["NoCertificado"];
+            $this->arreglo_factura["certificado"] = (string)$factura_xml["Certificado"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];

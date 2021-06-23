@@ -10,6 +10,9 @@
                 <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
                     <i class="fa fa-sync"></i> Actualizar Pólizas
                 </button>
+                <button @click="procesa"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
+                    <i class="fa fa-sync"></i> Procesa
+                </button>
             </div>
         </div>
         <div class="row">
@@ -169,6 +172,18 @@
                         this.$emit('success');
                     }).finally(() => {
                         this.descargando = false;
+                    });
+            },
+            procesa(){
+                return this.$store.dispatch('fiscal/cfd-sat/procesa',
+                    {
+                       
+                    })
+                    .then(data => {
+                        console.log(data);
+                        // this.$emit('success');
+                    }).finally(() => {
+                        
                     });
             }
         },
