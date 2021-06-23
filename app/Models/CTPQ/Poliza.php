@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 
 
 class Poliza extends Model
@@ -624,6 +625,11 @@ class Poliza extends Model
 
     public function generaAsociacionCFDI(Comprobante $comprobante)
     {
+        $previa = AsocCFDI::where("UUID","=",$comprobante->UUID)
+            ->where("GuidRef","=",$this->Guid)->first();
+        if($previa){
+            return $previa;
+        }
         return $this->asociacionCFDI()->create([
             'UUID'=>$comprobante->UUID,
             'Referencia'=>$this->getReferencia(),

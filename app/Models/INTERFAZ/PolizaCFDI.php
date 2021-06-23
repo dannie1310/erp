@@ -29,14 +29,18 @@ class PolizaCFDI extends Model
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
         $base =  Parametro::find(1);
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', 'document_'.$base->GuidDSL.'_metadata');
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
         return $this->hasOne(Comprobante::class,"UUID","cfdi_uuid");
     }
 
     /**
      * Scopes
      */
+    public function scopeNoAsociados($query)
+    {
+        return $query->where("estado","!=",1);
+    }
 
     /**
      * Atributos
