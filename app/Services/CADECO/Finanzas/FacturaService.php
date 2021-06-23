@@ -553,6 +553,7 @@ class FacturaService
         {
             abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
+        $this->guardarXml($archivo_xml, $arreglo_cfd);
         return $arreglo_cfd;
     }
 
@@ -614,6 +615,10 @@ class FacturaService
         }else{
             return "Error de lectura";
         }
+    }
+
+    public function guardarXml($xml, $xml_array){
+        
     }
 }
 
