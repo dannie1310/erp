@@ -488,20 +488,29 @@ class Poliza extends Model
                         }
                     }
                 }
+                $id_empresa_contpaq = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$obra->datosContables->BDContPaq)
+                    ->pluck("Id")
+                    ->first();
 
                 if ($i == 1) {
                     array_push($polizas, [
-                        'id_int_poliza' =>  $poliza->id_int_poliza,
+                        "uuid"=>$cfdi->uuid,
                         'id_poliza_global' => $poliza->id_poliza_global,
-                        'id_poliza_contpaq' => $poliza->id_poliza_contpaq,
-                        'folio_contpaq' => $poliza->poliza_contpaq,
-                        'tipo_contpaq' => "Póliza de ".$tipo,
-                        'concepto' => $poliza->polizaSAO->concepto/*.$uuid.$poliza->id_poliza_global*/,
-                        'folio_sao' => $poliza->polizaSAO->numero_folio_format,
-                        'tipo_sao' => $poliza->polizaSAO->transaccionInterfaz->descripcion,
-                        'fecha' =>  $poliza->polizaSAO->fecha_format,
-                        'total' => $poliza->polizaSAO->total_format,
+                        "fecha_cfdi"=>($cfdi->facturaRepositorio->cfdiSAT)?$cfdi->facturaRepositorio->cfdiSAT->fecha_format:'',
+                        "folio_cfdi"=>($cfdi->facturaRepositorio->cfdiSAT)?$cfdi->facturaRepositorio->cfdiSAT->referencia:'',
+                        "total_cfdi"=>($cfdi->facturaRepositorio->cfdiSAT)?$cfdi->facturaRepositorio->cfdiSAT->total_format:'',
+                        "tipo_cfdi"=>$cfdi->facturaRepositorio->tipo_comprobante,
+                        "proveedor_cfdi"=>($cfdi->facturaRepositorio->proveedor)?$cfdi->facturaRepositorio->proveedor->razon_social:'',
+                        "folio_poliza_contpaq"=>($poliza->polizaSAO->polizaContpaq)?$poliza->polizaSAO->polizaContpaq->Folio:'',
+                        "folio_poliza_sao"=>$poliza->polizaSAO->numero_folio_format,
+                        "fecha_poliza_contpaq"=>($poliza->polizaSAO->polizaContpaq)?$poliza->polizaSAO->polizaContpaq->fecha_format:'',
+                        "fecha_poliza_sao"=>$poliza->polizaSAO->fecha_format,
+                        "id_poliza_contpaq"=>($poliza->polizaSAO->polizaContpaq)?$poliza->polizaSAO->polizaContpaq->Id:'',
+                        "id_poliza_sao"=>$poliza->polizaSAO->id_int_poliza,
+                        "tipo_poliza_contpaq"=>($poliza->polizaSAO->polizaContpaq)?$poliza->polizaSAO->polizaContpaq->tipo_poliza->Nombre:'',
+                        "id_empresa_poliza_contpaq"=>$id_empresa_contpaq,
                     ]);
+
                 }
                 $i = 0;
             }

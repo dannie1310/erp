@@ -27,29 +27,56 @@
                     </div>
                     <div class="row col-md-12">
                         <div class="table-responsive">
-                        <table class="table table-striped">
+                        <table class="table table-striped table-bordered table-sm">
                             <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Tipo Póliza</th>
-                                <th>Tipo Póliza SAO</th>
-                                <th>Folio Póliza (Contpaq)</th>
-                                <th>Folio Póliza (SAO)</th>
-                                <th>Fecha</th>
-                                <th>Concepto</th>
-                                <th>Total</th>
-                            </tr>
+                                <tr>
+                                    <th rowspan="2">#</th>
+                                    <th colspan="5">CFDI</th>
+                                    <th colspan="2">Póliza SAO</th>
+                                    <th colspan="3">Póliza Contpaq</th>
+                                </tr>
+                                <tr>
+                                    <th>Tipo </th>
+                                    <th>Folio </th>
+                                    <th>Fecha </th>
+                                    <th>Emisor </th>
+                                    <th>Total </th>
+                                    <th>Folio</th>
+                                    <th>Fecha </th>
+                                    <th>Tipo </th>
+                                    <th>Fecha </th>
+                                    <th>Folio </th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(poliza, i) in polizas">
+                            <tr v-for="(cfdi, i) in polizas">
                                 <td>{{i+1}}</td>
-                                <td>{{poliza.tipo_contpaq}}</td>
-                                <td style="text-align: center">{{poliza.tipo_sao}}</td>
-                                <td style="text-align: center">{{poliza.folio_contpaq}}</td>
-                                <td style="text-align: center">{{poliza.folio_sao}}</td>
-                                <td style="text-align: center">{{poliza.fecha}}</td>
-                                <td >{{poliza.concepto}}</td>
-                                <td style="text-align: right">{{poliza.total}}</td>
+                                    <td style="text-align: center">{{cfdi.tipo_cfdi}}</td>
+                                    <template v-if="cfdi.fecha_cfdi">
+                                        <td>{{cfdi.folio_cfdi}}</td>
+                                        <td style="text-align: center; min-width: 100px; max-width: 110px">{{cfdi.fecha_cfdi}}</td>
+                                        <td >{{cfdi.proveedor_cfdi}}</td>
+                                        <td style="text-align: right">{{cfdi.total_cfdi}}</td>
+                                    </template>
+                                    <template v-else>
+                                        <td colspan="2">{{cfdi.uuid}}</td>
+                                        <td>{{cfdi.proveedor_cfdi}}</td>
+                                        <td></td>
+                                    </template>
+
+                                    <td >
+                                        <enlace-consulta-poliza v-bind:folio="cfdi.folio_poliza_sao" v-bind:id="cfdi.id_poliza_sao"></enlace-consulta-poliza>
+                                    </td>
+                                    <td style="text-align: center">{{cfdi.fecha_poliza_sao}}</td>
+                                    <td >{{cfdi.tipo_poliza_contpaq}}</td>
+                                    <td style="text-align: center">{{cfdi.fecha_poliza_contpaq}}</td>
+                                    <td >
+                                    <enlace-consulta-poliza-contpaq
+                                        v-bind:folio="cfdi.folio_poliza_contpaq"
+                                        v-bind:id="cfdi.id_poliza_contpaq"
+                                        v-bind:id_empresa="cfdi.id_empresa_poliza_contpaq">
+                                    </enlace-consulta-poliza-contpaq>
+                                    </td>
                             </tr>
                             </tbody>
                         </table>
@@ -63,9 +90,11 @@
 
 <script>
     import Asociar from "./Asociar";
+    import EnlaceConsultaPolizaContpaq from "../../contabilidad-general/poliza/partials/EnlaceConsultaPolizaContpaq";
+    import EnlaceConsultaPoliza from "../poliza/partials/EnlaceConsultaPoliza";
     export default {
         name: "asociar-poliza-index",
-        components: {Asociar},
+        components: {EnlaceConsultaPoliza, EnlaceConsultaPolizaContpaq, Asociar},
         data() {
             return {
                 cargando: true,
