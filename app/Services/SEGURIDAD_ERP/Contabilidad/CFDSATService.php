@@ -231,7 +231,7 @@ class CFDSATService
         $file = public_path($paths["path_zip"]);
         file_put_contents($file, $data);
         $this->extraeZIP($paths["path_zip"], $paths["path_xml"]);
-        $this->procesaCFD($paths["path_xml"]);
+        $this->procesaDirectorio($paths["path_xml"]);
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
         $this->carga->update($this->log);
         $this->repository->actualizaNoLocalizados($this->carga);
