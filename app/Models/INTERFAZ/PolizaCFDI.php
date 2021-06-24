@@ -8,6 +8,7 @@ use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +33,11 @@ class PolizaCFDI extends Model
         DB::purge('cntpqdm');
         Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
         return $this->hasOne(Comprobante::class,"UUID","cfdi_uuid");
+    }
+
+    public function facturaRepositorio()
+    {
+        return $this->belongsTo(FacturaRepositorio::class,"cfdi_uuid", "uuid");
     }
 
     /**
