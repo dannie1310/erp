@@ -4,6 +4,8 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use DateTime;
 use DateTimeZone;
 use App\Utils\CFD;
@@ -12,11 +14,13 @@ use App\Events\IncidenciaCI;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
 use App\Utils\ValidacionSistema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
 use App\PDF\Finanzas\FacturaVarioPDF;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
+use PhpParser\Node\Expr\New_;
 
 class FacturaService
 {
@@ -379,6 +383,10 @@ class FacturaService
         $transaccion = $this->repository->create($datos);
         $this->validaPresuntoEFO($arreglo_cfd);
 
+        foreach ($transaccion->facturasRepositorio as $facturaRepositorio) {
+            $servicio_cfdi = new CFDSATService(new CFDSAT());
+            $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+        }
         return $transaccion;
     }
 

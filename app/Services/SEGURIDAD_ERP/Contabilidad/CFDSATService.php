@@ -351,6 +351,18 @@ class CFDSATService
         return true;
     }
 
+    public function procesaFacturaRepositorio(FacturaRepositorio $facturaRepositorio)
+    {
+        $exp = explode("base64,", $facturaRepositorio->xml_file);
+        $contenido_archivo= base64_decode($exp[1]);
+        $file = public_path("uploads/".$facturaRepositorio->uuid.".xml");
+        file_put_contents($file, $contenido_archivo);
+        $this->procesaArchivoCFDI($file, $facturaRepositorio->uuid.".xml");
+        $cfdi = $this->repository->where([["uuid","=",$facturaRepositorio->uuid]])->first();
+        $cfdi->id_factura_repositorio = $facturaRepositorio->id;
+        $cfdi->save();
+    }
+
     private function procesaArchivoCFDI($ruta_archivo, $current)
     {
         $contenido_archivo_xml = file_get_contents($ruta_archivo);
@@ -521,7 +533,7 @@ class CFDSATService
     private function setArregloFactura($archivo_xml)
     {
         $this->arreglo_factura = [];
-        $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
+        $this->arreglo_factura["id_carga_cfd_sat"] = ($this->carga)?$this->carga->id:null;
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
