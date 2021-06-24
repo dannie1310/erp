@@ -23,6 +23,7 @@
                             <td>{{item.fecha_inicial}}</td>
                             <td>{{item.fecha_final}}</td>
                             <td v-if="item.tipo_transaccion == 52">{{item.monto_revision_format}}</td>
+                            <td v-else-if="item.tipo_transaccion == 53">{{item.monto_revision_format}}</td>
                             <td v-else>{{item.anticipo_monto_format}}</td>
                             <td>{{getMontoMoneda(item)}}</td>
                             <td><input type="checkbox" id="seguir" :value="item.seleccionado"  v-model="item.seleccionado"   ></td>
@@ -54,7 +55,9 @@ export default {
                 return '$ ' + parseFloat(importe * this.cambios[item.id_moneda]).formatMoney(2);
             }else if(parseInt(item.tipo_transaccion) === 51){
                 return '$ ' + parseFloat(item.anticipo_monto * this.cambios[item.id_moneda]).toFixed(2);
-            }           
+            } else if(parseInt(item.tipo_transaccion) === 53){
+                return item.monto_revision_format
+            }       
         },
     },
     computed:{
