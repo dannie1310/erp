@@ -10,6 +10,7 @@ namespace App\Services\CADECO\Contratos;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\PresupuestoContratista;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use Exception;
 use App\Facades\Context;
 use App\Repositories\CADECO\Contratos\Asignacion\Repository;
@@ -82,6 +83,7 @@ class AsignacionContratistaService
 
     public function store($data)
     {
+        $this->validarProveedor($data['presupuestos']);
         return $this->repository->registrar($data);
     }
 
@@ -107,5 +109,31 @@ class AsignacionContratistaService
     {
         $pdf = new AsignacionFormato($this->repository->show($id));
         return $pdf;
+    }
+
+    private function validarProveedor($presupuestos)
+    {
+        foreach($presupuestos as $presupuesto)
+        {
+            $asignada = $this->estaAsociada($presupuesto['partidas']);
+            if($asignada)
+            {
+                $no_localizado = CtgNoLocalizado::where('rfc', $presupuesto['rfc'])->first();
+                if ($no_localizado) {
+                    abort(403, "El proveedor " . $presupuesto['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+                }
+            }
+        }
+    }
+
+    private function estaAsociada($partidas)
+    {
+        foreach($partidas as $partida)
+        {
+            if($partida && $partida['cantidad_asignada'] > 0)
+            {
+                return true;
+            }
+        }
     }
 }
