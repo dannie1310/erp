@@ -19,6 +19,7 @@ use App\PDF\CTPQ\PolizaFormatoT1;
 
 use App\PDF\CTPQ\PolizaFormatoT1A;
 use App\PDF\CTPQ\PolizaFormatoT1B;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\CTPQ\PolizaRepository as Repository;
@@ -119,7 +120,7 @@ class PolizaService
             }
            return $poliza->paginate($data);
         }catch (\Exception $e) {
-            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').". \n \n Favor de contactar a soporte a aplicaciones.");
             throw $e;
         }
     }
@@ -210,7 +211,7 @@ class PolizaService
             }
            return $poliza;
         }catch (\Exception $e) {
-            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').". \n \n Favor de contactar a soporte a aplicaciones.");
             throw $e;
         }
     }
@@ -248,7 +249,7 @@ class PolizaService
                 }
             }
         }catch (\Exception $e) {
-            abort(500, "No tiene permiso de consultar la base de dato: ".$empresa->AliasBDD.".");
+            abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').". \n \n Favor de contactar a soporte a aplicaciones.");
             throw $e;
         } 
         if($cantidad == 0){abort(500, "No hay pólizas con los datos de búsqueda.");}
