@@ -892,6 +892,12 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'transaccion-interfaz'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TransaccionInterfazController@index');
         });
+
+        //CFDI PÓLIZA
+        $api->group(['prefix' => 'cfdi-poliza'], function ($api) {
+            $api->get('/cfdi-por-cargar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@getCFDIPorCargar');
+            $api->get('/descargar-cfdi', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@descargarCFDIPorCargar');
+        });
     });
 
     /**

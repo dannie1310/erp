@@ -20,6 +20,11 @@
         <div v-else>
             <div class="card ">
                 <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span style="margin-right: 5px">Total de CFDI: <b>{{polizas.length}}</b></span>
+                        </div>
+                    </div>
                     <div class="row col-md-12">
                         <div class="table-responsive">
                         <table class="table table-striped">
