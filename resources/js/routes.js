@@ -2023,6 +2023,23 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'cfdi-pendientes-carga-add',
+                        component: require('./components/contabilidad/cfdi-add-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cfdi-pendientes-carga-add",
+                                component: require('./components/contabilidad/cfdi-add-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'CFDI pendientes de cargar a ADD de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'CFDI PENDIENTES DE CARGAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar-cfdi-pendientes-carga-add'],
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[

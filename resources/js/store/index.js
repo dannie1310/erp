@@ -94,6 +94,7 @@ import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
 import polizaCFDIProyecto from './modules/contabilidad/poliza-cfdi';
+import CFDIPolizaProyecto from './modules/contabilidad/cfdi-poliza';
 
 //CONTABILIDAD GRAL
 import cuentaCTPQ from './modules/contabilidadGeneral/cuenta';
@@ -335,6 +336,7 @@ export default new Vuex.Store({
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
         'contabilidad/poliza-cfdi' : polizaCFDIProyecto,
+        'contabilidad/cfdi-poliza' : CFDIPolizaProyecto,
 
         'contabilidadGeneral/cuenta' : cuentaCTPQ,
         'contabilidadGeneral/empresa' :empresaContabilidad,

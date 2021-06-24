@@ -96,7 +96,7 @@ class Poliza extends Model
         $obra = Obra::find(Context::getIdObra());
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
-        return $this->hasOne(\App\Models\CTPQ\Poliza::class,"id_poliza_contpaq","Id");
+        return $this->hasOne(\App\Models\CTPQ\Poliza::class,"Id","id_poliza_contpaq");
     }
 
     public function transaccionAntecedente()
@@ -155,7 +155,7 @@ class Poliza extends Model
 
     public function getNumeroFolioFormatAttribute()
     {
-        return '# ' . sprintf("%05d", $this->id_int_poliza);
+        return '#' . sprintf("%05d", $this->id_int_poliza);
     }
 
     public function getFechaFormatAttribute()
@@ -296,9 +296,18 @@ class Poliza extends Model
         return '$' . number_format($this->total,2);
     }
 
+    /*
+     * Scopes
+     */
+
     public function scopeDeFactura($query)
     {
         return $query->whereHas("transaccionFactura");
+    }
+
+    public function scopeLanzadas($query)
+    {
+        return $query->where('estatus', 2);
     }
 
     /**
@@ -648,5 +657,75 @@ class Poliza extends Model
 
         DB::connection('cntpqom')->commit();
         DB::connection('cntpq')->commit();
+    }
+
+    public function buscarCFDISinCargarAlADD()
+    {
+        $polizas_sao = Poliza::lanzadas()->deFactura()->get();
+        $cfdis_pendientes = [];
+
+        $obra = Obra::find(Context::getIdObra());
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
+        $base = Parametro::find(1);
+        $i = 0;
+        $sin_cfdi_sat = 0;
+        $sin_poliza_contpaq = 0;
+
+        foreach($polizas_sao as $key=>$poliza_sao)
+        {
+            $cfdis = $poliza_sao->transaccionFactura->facturasRepositorio;
+            foreach ($cfdis as $cfdi){
+                $comprobanteADD = null;
+                try{
+                    $comprobanteADD = $cfdi->tiene_comprobante_add;
+                }catch (\Exception $e){
+                    abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqdm.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                }
+
+                if(!$comprobanteADD)
+                {
+                    try{
+                        $id_empresa_contpaq = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$obra->datosContables->BDContPaq)
+                            ->pluck("Id")
+                            ->first();
+                        $cfdis_pendientes [] =[
+                            "uuid"=>$cfdi->uuid,
+                            "fecha_cfdi"=>($cfdi->cfdiSAT)?$cfdi->cfdiSAT->fecha_format:'',
+                            "folio_cfdi"=>($cfdi->cfdiSAT)?$cfdi->cfdiSAT->referencia:'',
+                            "total_cfdi"=>($cfdi->cfdiSAT)?$cfdi->cfdiSAT->total_format:'',
+                            "tipo_cfdi"=>$cfdi->tipo_comprobante,
+                            "proveedor_cfdi"=>($cfdi->proveedor)?$cfdi->proveedor->razon_social:'',
+                            "folio_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->Folio:'',
+                            "folio_poliza_sao"=>$poliza_sao->numero_folio_format,
+                            "fecha_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->fecha_format:'',
+                            "fecha_poliza_sao"=>$poliza_sao->fecha_format,
+                            "id_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->Id:'',
+                            "id_poliza_sao"=>$poliza_sao->id_int_poliza,
+                            "tipo_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->tipo_poliza->Nombre:'',
+                            "id_empresa_poliza_contpaq"=>$id_empresa_contpaq,
+                        ];
+                        if(!$cfdi->cfdiSAT){
+                            $sin_cfdi_sat += 1;
+                        }
+                        if(!$poliza_sao->polizaContpaq){
+                            $sin_poliza_contpaq += 1;
+                        }
+                    }catch (\Exception $e)
+                    {
+                        abort(500,$e->getMessage());
+                        dd($poliza_sao,$poliza_sao->polizaContpaq, $e->getMessage(), Config::get('database.connections.cntpq.database'));
+                    }
+                    $i++;
+                }
+            }
+        }
+        $resultado = [
+            "cfdi_pendientes"=>$cfdis_pendientes,
+            "sin_cfdi_sat"=>$sin_cfdi_sat,
+            "sin_poliza_contpaq"=>$sin_poliza_contpaq,
+            "total"=>$i
+        ];
+        return $resultado;
     }
 }

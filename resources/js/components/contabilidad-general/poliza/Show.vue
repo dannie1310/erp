@@ -95,7 +95,8 @@
                             <td class="money">{{movimiento.cargo_format}}</td>
                             <td class="money">{{movimiento.abono_format}}</td>
                             <td>{{movimiento.referencia}}</td>
-                            <td>{{movimiento.asociacion_cfdi.uuid}}</td>
+                            <td v-if="movimiento.asociacion_cfdi">{{movimiento.asociacion_cfdi.uuid}}</td>
+                            <td v-else></td>
                             <td>{{movimiento.concepto}}</td>
                         </tr>
                     </tbody>

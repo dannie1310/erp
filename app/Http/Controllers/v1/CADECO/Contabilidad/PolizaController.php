@@ -54,6 +54,8 @@ class PolizaController extends Controller
         $this->middleware('permiso:validar_prepoliza')->only('validar');
         $this->middleware('permiso:omitir_prepoliza_generada')->only('omitir');
         $this->middleware('permiso:asociar_poliza_contpaq_cfdi')->only(['asociarCFDI','getPolizasPorAsociar']);
+        $this->middleware("permiso:descargar-cfdi-pendientes-carga-add")->only(["descargarCFDIPorCargar"]);
+        $this->middleware("permiso:consultar-cfdi-pendientes-carga-add")->only(["getCFDIPorCargar"]);
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -94,5 +96,15 @@ class PolizaController extends Controller
     public function getPolizasPorAsociar(Request $request)
     {
         return $this->service->getPolizasPorAsociar();
+    }
+
+    public function getCFDIPorCargar(Request $request)
+    {
+        return $this->service->getCFDIPorCargar();
+    }
+
+    public function descargarCFDIPorCargar(Request $request)
+    {
+        return $this->service->descargarCFDIPorCargar();
     }
 }

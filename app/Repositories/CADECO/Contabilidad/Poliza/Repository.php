@@ -24,4 +24,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         return $this->model->buscarPolizasSinAsociarCFDI();
     }
+
+    public function getCFDIPorCargar()
+    {
+        return $this->model->buscarCFDISinCargarAlADD();
+    }
 }
