@@ -540,6 +540,7 @@ class AsignacionContratista extends Model
                             'id_sucursal' => $partida->presupuesto->id_sucursal,
                             'id_moneda' =>  $partida->presupuestoPartida->IdMoneda,
                             'PorcentajeDescuento' =>  $partida->presupuestoPartida->presupuesto->PorcentajeDescuento,
+                            'anticipo' =>  $partida->presupuestoPartida->presupuesto->anticipo,
                             'observaciones' => $partida->presupuesto->observaciones,
                         ]);
                     $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion] = $resp;
@@ -572,6 +573,10 @@ class AsignacionContratista extends Model
                 $subcontrato->monto = $subcontrato->monto + $monto;
                 $subcontrato->saldo = $subcontrato->saldo + $monto;
                 $subcontrato->impuesto = $subcontrato->impuesto + $impuesto;
+
+                $subcontrato->anticipo_monto =  ($subcontrato->monto * $subcontrato->anticipo / 100) ;
+                $subcontrato->anticipo_saldo =  ($subcontrato->saldo * $subcontrato->anticipo / 100);
+
                 $subcontrato->save();
             }
             $this->estado = 2;
