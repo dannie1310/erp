@@ -120,7 +120,7 @@ class CtgEfos extends Model
 
             DB::connection('seguridad')->commit();
             if(count($procesamiento->cambios)>0){
-                event(new CambioNoLocalizados($procesamiento->cambios));
+                event(new CambioEFOS($procesamiento->cambios));
             }
             return [];
         } catch (\Exception $e) {
