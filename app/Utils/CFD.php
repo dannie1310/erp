@@ -81,6 +81,7 @@ class CFD
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
+            $this->arreglo_factura["fecha_hora"] = $this->getFechaHora((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
             $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
@@ -284,8 +285,11 @@ class CFD
         $this->arreglo_factura["folio"] = (string)$factura_xml["folio"];
 
         $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["fecha"]);
+        $this->arreglo_factura["fecha_hora"] = $this->getFechaHora((string)$factura_xml["Fecha"]);
         $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
         $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
+        $this->arreglo_factura["no_certificado"] = (string)$factura_xml["NoCertificado"];
+        $this->arreglo_factura["certificado"] = (string)$factura_xml["Certificado"];
 
         $ns = $factura_xml->getNamespaces(true);
         $factura_xml->registerXPathNamespace('t', $ns['tfd']);
@@ -422,6 +426,18 @@ class CFD
             }
         }
         return $fecha_xml;
+    }
+    
+    private function getFechaHora(string $fecha)
+    {
+        $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s', $fecha);
+        if (!$fecha_xml) {
+            $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s.u', $fecha);
+            if (!$fecha_xml) {
+                $fecha_xml = substr($fecha, 0, 19);
+            }
+        }
+        return $fecha_xml->format('Y-m-d H:i:s');
     }
 
     private function getValidacionCFDI33($xml)
