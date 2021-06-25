@@ -112,7 +112,7 @@
                     .then(data => {
                         this.$store.commit('contabilidad/poliza/SET_POLIZAS', data);
                         this.datos_poliza = data.map((poliza, i) => (
-                            poliza.id_poliza_global
+                            poliza.id_poliza_sao
                         ));
                     })
                     .finally(() => {

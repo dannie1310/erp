@@ -63,7 +63,7 @@ class FacturaRepositorio extends Model
 
         DB::purge('cntpqdm');
         Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
-        return $this->hasOne(Comprobante::class,"UUID","cfdi_uuid");
+        return $this->hasOne(Comprobante::class,"UUID","uuid");
     }
 
     public function cfdiSAT()
