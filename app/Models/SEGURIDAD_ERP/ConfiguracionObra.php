@@ -41,7 +41,10 @@ class ConfiguracionObra extends Model
 
         // Global Scope para proyecto
         self::addGlobalScope(function ($query) {
-            return $query->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+            $proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first();
+            if($proyecto){
+                return $query->where('id_proyecto', '=', $proyecto->getkey());
+            }
         });
 
         // Global Scope para obra

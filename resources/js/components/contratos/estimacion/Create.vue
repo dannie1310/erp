@@ -212,7 +212,7 @@
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-importe"></td>
                             <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
-                            <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
                             <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
                             <td class="editable-cell numerico">
                                 <input v-on:change="changeCantidad(concepto)"
@@ -302,16 +302,16 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             changeCantidad(concepto) {
-                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
+                concepto.porcentaje_estimado = this.toFix(((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100),2);
+                concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),2);
             },
             changePorcentaje(concepto) {
-                concepto.cantidad_estimacion = ((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(2);
+                concepto.cantidad_estimacion = this.toFix(((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100),2);
+                concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),2);
             },
             changeImporte(concepto) {
-                concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
-                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
+                concepto.cantidad_estimacion = this.toFix((concepto.importe_estimacion / concepto.precio_unitario_subcontrato),2);
+                concepto.porcentaje_estimado = this.toFix(((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100),2);
             },
 			validate() {
 				this.$validator.validate().then(result => {
@@ -358,7 +358,7 @@
 				return this.$store.dispatch('contratos/subcontrato/index', {
 					params: {
 						scope: 'estimable',
-						sort: 'id',
+						sort: 'id_transaccion',
 						order: 'desc'
 					}
 				})
@@ -384,7 +384,12 @@
                     }
                 }
 				return conceptos;
-			}
+			},
+            toFix(num, fixed) {
+                fixed = fixed || 0;
+                fixed = Math.pow(10, fixed);
+                return Math.floor(num * fixed) / fixed;
+            },
 		},
 
         watch: {

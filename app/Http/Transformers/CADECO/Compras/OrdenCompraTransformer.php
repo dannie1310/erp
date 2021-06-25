@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\Compras;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Models\CADECO\OrdenCompra;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
@@ -33,6 +34,7 @@ class OrdenCompraTransformer extends TransformerAbstract
         'usuario',
         'moneda',
         'complemento',
+        'relaciones'
     ];
 
     /**
@@ -50,8 +52,8 @@ class OrdenCompraTransformer extends TransformerAbstract
             'id' => (int)$model->getKey(),
             'fecha_format' => (string)$model->fecha_format,
             'numero_folio_format' => (string)$model->numero_folio_format,
-            'folio_asignacion' => (string)$model->complemento?$model->complemento->asignacion->folio_format:'',
-            'folio_cotizacion' => (string)$model->cotizacion->numero_folio_format,
+            'folio_asignacion' => (string)$model->numero_folio_asignacion_format,
+            'folio_cotizacion' => (string)$model->numero_folio_cotizacion_format,
             'subtotal' => (float)$model->subtotal,
             'subtotal_format' => (string) '$ '.number_format(($model->subtotal),2,".",","),
             'impuesto' => (float)$model->impuesto,
@@ -75,6 +77,7 @@ class OrdenCompraTransformer extends TransformerAbstract
             'monto_solicitado' => (float) $model->monto_pago_anticipado,
             'entradas_almacen' =>  $model->tiene_entrada_almacen,
             'porcentaje_anticipo_pactado' => $model->porcentaje_anticipo_pactado,
+            'usuario_registro' => $model->usuario_registro
         ];
     }
 
@@ -174,4 +177,12 @@ class OrdenCompraTransformer extends TransformerAbstract
     //     }
     //     return null;
     // }
+    public function includeRelaciones(OrdenCompra $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
 }

@@ -71,7 +71,8 @@ class MaterialController extends Controller
     }
 
     public function buscarMateriales(Request $request){
-        return $this->service->buscarMateriales($request->all());
+        $materiales = $this->service->buscarMateriales($request->all());
+        return $this->respondWithCollection($materiales);
     }
 }
 

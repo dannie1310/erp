@@ -3,10 +3,10 @@
 
 namespace App\Http\Transformers\CADECO\Compras;
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\Compras\CotizacionComplementoTransaformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
-use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\CotizacionCompra;
 use League\Fractal\TransformerAbstract;
 
@@ -22,7 +22,8 @@ class CotizacionCompraTransformer extends TransformerAbstract
         'empresa',
         'sucursal',
         'complemento',
-        'partidas'
+        'partidas',
+        'relaciones'
     ];
 
     public function transform(CotizacionCompra $model)
@@ -119,6 +120,15 @@ class CotizacionCompraTransformer extends TransformerAbstract
         if($sucursal = $model->sucursal)
         {
             return $this->item($sucursal, new SucursalTransformer);
+        }
+        return null;
+    }
+
+    public function includeRelaciones(CotizacionCompra $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
         }
         return null;
     }

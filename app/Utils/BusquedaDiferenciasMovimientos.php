@@ -76,6 +76,11 @@ class BusquedaDiferenciasMovimientos
             "base_datos_revisada" => $this->relacion->base_datos_a,
             "base_datos_referencia" => $this->relacion->base_datos_b,
             "tipo_busqueda" => $this->relacion->tipo_relacion,
+            "ejercicio"=>$this->relacion->movimiento_revisado->poliza->Ejercicio,
+            "periodo"=>$this->relacion->movimiento_revisado->poliza->Periodo,
+            "tipo_poliza"=>$this->relacion->movimiento_revisado->poliza->Nombre,
+            "folio_poliza"=>$this->relacion->movimiento_revisado->poliza->Folio,
+            "fecha_poliza"=>$this->relacion->movimiento_revisado->poliza->Fecha,
         ];
         return $datos_diferencia;
     }

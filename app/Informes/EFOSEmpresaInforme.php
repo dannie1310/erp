@@ -24,6 +24,13 @@ class EFOSEmpresaInforme
         return $informe;
     }
 
+    public static function  getInformeDefinitivos()
+    {
+        $informe["informe"][] = EFOSEmpresaInforme::getPartidasInformeDefinitivos();
+        $informe["fechas"] = EFOSEmpresaInforme::getFechasInforme();
+        return $informe;
+    }
+
     private static function getFechasInforme()
     {
         $fechas["lista_efos"]= ProcesamientoListaEfos::getFechaActualizacion();
@@ -80,7 +87,7 @@ class EFOSEmpresaInforme
            ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
- WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and ctg_efos.estado_registro = 1
+ WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and cfd_sat.cancelado != 1 and ctg_efos.estado_registro = 1 and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -141,7 +148,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
- WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -200,7 +207,7 @@ ORDER BY 7 DESC
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
- WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -259,7 +266,7 @@ ORDER BY 7 DESC
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
- WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -285,6 +292,8 @@ ORDER BY 7 DESC
        CONVERT(varchar,ctg_efos.fecha_presunto,103) as fecha_presunto,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103)  as fecha_definitivo,
        CONVERT(varchar,ctg_efos.fecha_definitivo_dof,103)  as fecha_definitivo_dof,
+       CONVERT(varchar,efos.fecha_limite_sat,103)  as fecha_limite_sat,
+       CONVERT(varchar,efos.fecha_limite_dof,103)  as fecha_limite_dof,
        ListaEmpresasSAT.nombre_corto AS empresa,
        COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        format (
@@ -310,7 +319,7 @@ ORDER BY 7 DESC
                         AS fecha_devinitivo_maxima
                 FROM ((SEGURIDAD_ERP.Fiscal.efos efos
                        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-                          ON (efos.razon_social = ctg_efos.razon_social))
+                          ON (efos.rfc = ctg_efos.rfc))
                       INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                          ON (cfd_sat.rfc_emisor = efos.rfc))
                      INNER JOIN
@@ -339,6 +348,8 @@ ORDER BY 7 DESC
        AND (cfd_no_deducidos.id IS NULL)
        AND (efos.estado = 0)
        AND (cfd_sat.estado !=8)
+       AND cfd_sat.cancelado != 1
+       AND cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,
@@ -346,7 +357,9 @@ GROUP BY ctg_estados_efos.descripcion,
          ListaEmpresasSAT.nombre_corto,
          ctg_efos.fecha_presunto,
          ctg_efos.fecha_definitivo_dof,
-         Subquery.fecha_devinitivo_maxima
+         Subquery.fecha_devinitivo_maxima,
+         efos.fecha_limite_dof,
+         efos.fecha_limite_sat
 ORDER BY Subquery.fecha_devinitivo_maxima DESC,
          empresa ASC,
          ctg_efos.fecha_definitivo DESC
@@ -392,7 +405,7 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
                         AS fecha_devinitivo_maxima
                 FROM ((SEGURIDAD_ERP.Fiscal.efos efos
                        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-                          ON (efos.razon_social = ctg_efos.razon_social))
+                          ON (efos.rfc = ctg_efos.rfc))
                       INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                          ON (cfd_sat.rfc_emisor = efos.rfc))
                      INNER JOIN
@@ -421,6 +434,8 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
        AND (cfd_no_deducidos.id IS NULL)
        AND (efos.estado = 0)
        AND (cfd_sat.estado =8)
+       AND cfd_sat.cancelado != 1
+       AND cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
          efos.razon_social,

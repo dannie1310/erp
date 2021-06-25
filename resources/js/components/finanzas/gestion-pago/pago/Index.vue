@@ -12,6 +12,11 @@
                 <i class="fa fa-money" v-else></i>
                 Registrar Pago
             </button>
+            <router-link  :to="{ name: 'carga-masiva'}" v-if="$root.can('consultar_carga_layout_pago')" type="button" class="btn btn-app btn-info float-right" title="Carga masiva">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-file-upload" v-else></i>
+                Carga Masiva
+            </router-link>
         </div>
         <div class="col-12">
             <div class="card">
@@ -49,7 +54,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['moneda','cuenta','empresa'], sort: 'id_transaccion', order: 'desc'},
+                query: {include: ['moneda','cuenta','empresa','relaciones' ], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
                 cargando: false,
             }
@@ -112,6 +117,7 @@
                             buttons: $.extend({}, {
                                 id: pago.id,
                                 delete: self.$root.can('eliminar_pagos') ? true : false,
+                                transaccion: {id:pago.id, tipo:82},
                             })
                         })
                     });

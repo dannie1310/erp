@@ -24,8 +24,13 @@ class Destino extends Model
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
 
-    public function getRutaDestinoAttribute()
+    /*public function getRutaDestinoAttribute()
     {
         return $this->concepto->path_corta;
     }
+
+    public function getRutaAttribute()
+    {
+        return $this->concepto->path;
+    }*/
 }

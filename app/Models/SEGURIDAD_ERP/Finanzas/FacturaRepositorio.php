@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 
+use App\Models\CADECO\Factura;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
@@ -59,8 +60,8 @@ class FacturaRepositorio extends Model
 
     public function getFacturaAttribute()
     {
-        $transacciones = DB::connection('cadeco')->select(DB::raw("  
-  select numero_folio from   " . $this->proyecto->base_datos . ".dbo.transacciones where id_transaccion = " . $this->id_transaccion . "      
+        $transacciones = DB::connection('cadeco')->select(DB::raw("
+  select numero_folio from   " . $this->proyecto->base_datos . ".dbo.transacciones where id_transaccion = " . $this->id_transaccion . "
                            "));
         if(key_exists(0,$transacciones))
         {
@@ -69,5 +70,29 @@ class FacturaRepositorio extends Model
             return null;
         }
 
+    }
+
+    public function getTransaccionFacturaAttribute()
+    {
+        $transacciones = DB::connection('cadeco')->select(DB::raw("
+  select id_transaccion from   " . $this->proyecto->base_datos . ".dbo.transacciones where id_transaccion = " . $this->id_transaccion . "
+                           "));
+        if(key_exists(0,$transacciones))
+        {
+            $factura = Factura::find($transacciones[0]->id_transaccion);
+            return $factura;
+        } else {
+            return null;
+        }
+
+    }
+
+    public function getXMLAttribute()
+    {
+        $xml = DB::table("Finanzas.repositorio_facturas")
+            ->select(DB::raw("CONVERT(varchar(MAX), xml_file ,0) as xml"))
+            ->where("id",$this->id)
+            ->first();
+        return $xml->xml;
     }
 }

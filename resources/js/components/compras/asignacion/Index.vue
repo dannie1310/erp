@@ -32,7 +32,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'id', tdClass: 'th_numero_folio', sortable: true},
-                    { title: 'Folio SAO Solicitud', field: 'solicitud', tdClass: 'th_c120', tdComp: require('../solicitud-compra/partials/ActionButtons').default,sortable: true},
+                    { title: 'Folio SAO Solicitud', field: 'solicitud', tdClass: 'th_c120', tdComp: require('../solicitud-compra/partials/ActionButtonsConsulta').default,sortable: true},
                     { title: 'Concepto de Solicitud', field: 'concepto'},
                     { title: 'Fecha / Hora de Registro', field: 'fecha_format',sortable: true},
                     { title: 'Estado', field: 'estado', thClass:'th_c120', sortable: true},
@@ -95,7 +95,7 @@
                             solicitud: $.extend({}, {
                                 show: (asignacion.solicitud) ? true : false,
                                 id: (asignacion.solicitud) ? asignacion.solicitud.id : null,
-                                solicitud_consulta: (asignacion.solicitud) ? asignacion.solicitud : null
+                                numero_folio: (asignacion.solicitud) ? asignacion.solicitud.numero_folio_format : null
                             }),
                             buttons: $.extend({}, {
                                 id:asignacion.id,

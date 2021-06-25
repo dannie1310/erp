@@ -39,7 +39,7 @@ class TipoCuentaContableTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'descripcion' => $model->descripcion,
-            'fecha' => $model->created_at ? $model->created_at->format('Y-m-d G:i:s a') : "",
+            'fecha' => $model->fecha,
             'id_naturaleza_poliza' => $model->id_naturaleza_poliza
         ];
     }

@@ -37,6 +37,7 @@ class Transaccion extends Model
     public const CREATED_AT = 'FechaHoraRegistro';
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
+    public const SHOW_ROUTE = "";
 
     protected static function boot()
     {
@@ -53,6 +54,16 @@ class Transaccion extends Model
         });
     }
 
+    public function getUsuarioRegistroAttribute()
+    {
+        if($this->usuario)
+        {
+            return $this->usuario->nombre_completo;
+        } else{
+            return $this->comentario;
+        }
+    }
+
     public function getNumeroFolioFormatAttribute()
     {
         return '# ' . sprintf("%05d", $this->numero_folio);
@@ -60,12 +71,12 @@ class Transaccion extends Model
 
     public function getMontoFormatAttribute()
     {
-        return '$ ' . number_format(abs($this->monto),2);
+        return '$' . number_format(($this->monto),2);
     }
 
     public function getSaldoFormatAttribute()
     {
-        return '$ ' . number_format($this->saldo,2);
+        return '$' . number_format($this->saldo,2);
     }
 
     public function getFechaFormatAttribute()
@@ -127,6 +138,18 @@ class Transaccion extends Model
         return date_format($date,"d/m/Y H:i");
     }
 
+    public function getHoraRegistroAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"H:i");
+    }
+
+    public function getFechaRegistroAttribute()
+    {
+        $date = date_create($this->FechaHoraRegistro);
+        return date_format($date,"d/m/Y");
+    }
+
     public function getFechaHoraRegistroOrdenAttribute()
     {
         $date = date_create($this->FechaHoraRegistro);
@@ -160,6 +183,63 @@ class Transaccion extends Model
         return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
     }
 
+    public function getTipoTransaccionStrAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::NOMBRE;
+            case  18: return CotizacionCompra::NOMBRE;
+            case  19: return OrdenCompra::NOMBRE;
+            case  33: return EntradaMaterial::NOMBRE;
+            case  34: return SalidaAlmacen::NOMBRE;
+            case  49: return ContratoProyectado::NOMBRE;
+            case  50: return PresupuestoContratista::NOMBRE;
+            case  51: return Subcontrato::NOMBRE;
+            case  52: return Estimacion::NOMBRE;
+            case  65: return Factura::NOMBRE;
+            case  82: return Pago::NOMBRE;
+            case  72: return SolicitudPagoAnticipado::NOMBRE;
+            default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
+        }
+    }
+
+    public function getIconoAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::ICONO;
+            case  18: return CotizacionCompra::ICONO;
+            case  19: return OrdenCompra::ICONO;
+            case  33: return EntradaMaterial::ICONO;
+            case  34: return SalidaAlmacen::ICONO;
+            case  49: return ContratoProyectado::ICONO;
+            case  50: return PresupuestoContratista::ICONO;
+            case  51: return Subcontrato::ICONO;
+            case  52: return Estimacion::ICONO;
+            case  65: return Factura::ICONO;
+            case  82: return Pago::ICONO;
+            case  72: return SolicitudPagoAnticipado::ICONO;
+            default:  return "";
+        }
+    }
+
+    public function getRelacionesAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::find($this->id_transaccion)->relaciones;
+            case  18: return CotizacionCompra::find($this->id_transaccion)->relaciones;
+            case  19: return OrdenCompra::find($this->id_transaccion)->relaciones;
+            case  33: return EntradaMaterial::find($this->id_transaccion)->relaciones;
+            case  34: return SalidaAlmacen::find($this->id_transaccion)->relaciones;
+            case  49: return ContratoProyectado::find($this->id_transaccion)->relaciones;
+            case  50: return PresupuestoContratista::find($this->id_transaccion)->relaciones;
+            case  51: return Subcontrato::find($this->id_transaccion)->relaciones;
+            case  52: return Estimacion::find($this->id_transaccion)->relaciones;
+            case  65: return Factura::find($this->id_transaccion)->relaciones;
+            case  82: return Pago::find($this->id_transaccion)->relaciones;
+            case  72: return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
+            default:  return "";
+        }
+    }
+
     public  function costo(){
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
@@ -168,17 +248,27 @@ class Transaccion extends Model
         return $this->belongsTo(Usuario::class, 'id_usuario', 'idusuario');
     }
 
+    public function antecedente()
+    {
+        return $this->belongsTo(Transaccion::class,"id_antecedente", "id_transaccion");
+    }
+
+    public function referente()
+    {
+        return $this->belongsTo(Transaccion::class,"id_referente", "id_transaccion");
+    }
+
     public function getSubtotalAttribute()
     {
         return $this->monto - $this->impuesto;
     }
 
     public function getSubtotalFormatAttribute(){
-        return '$ ' . number_format($this->subtotal, 2, '.', ',');
+        return '$' . number_format($this->subtotal, 2, '.', ',');
     }
 
     public function getImpuestoFormatAttribute(){
-        return '$ ' . number_format($this->impuesto, 2, '.', ',');
+        return '$' . number_format($this->impuesto, 2, '.', ',');
     }
 
     public function moneda()
@@ -273,5 +363,20 @@ class Transaccion extends Model
     public function transaccionReferente()
     {
         return $this->belongsTo(self::class, 'id_referente', 'id_transaccion');
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["consulta"] = 0;
+
+        return $datos;
     }
 }

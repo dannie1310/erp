@@ -197,7 +197,7 @@
                                     <input type="file" class="form-control" id="cargar_file" multiple="multiple"
                                            @change="onFileChange"
                                            row="3"
-                                           v-validate="{required:true, ext: validarExtensiones(),  size: 5120}"
+                                           v-validate="{required:true, ext: validarExtensiones(),  size: 102400}"
                                            name="cargar_file"
                                            data-vv-as="Cargar"
                                            ref="cargar_file"
@@ -299,8 +299,8 @@ export default {
                 }
 
             }
-            if(size > 5120000){
-                swal("El tamaño máximo permitido para la carga de archivos es de 5 MB.", {
+            if(size > 102400000){
+                swal("El tamaño máximo permitido para la carga de archivos es de 100 MB.", {
                     icon: "warning",
                     buttons: {
                         confirm: {

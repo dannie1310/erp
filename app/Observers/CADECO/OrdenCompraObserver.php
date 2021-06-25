@@ -75,6 +75,8 @@ class OrdenCompraObserver extends TransaccionObserver
 
         if($ordenCompra->complemento)
         {
+            $ordenCompra->complemento->asignacion->estado = 1;
+            $ordenCompra->complemento->asignacion->save();
             $ordenCompra->complemento->delete();
         }
     }

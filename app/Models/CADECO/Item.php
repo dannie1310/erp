@@ -35,6 +35,12 @@ class Item extends Model
         'precio_unitario',
         'precio_material',
         'precio_mano_obra',
+        'cantidad_original1',
+        'precio_original1',
+        'id_asignacion',
+        'id_sm_partida',
+        'numero',
+        'referencia'
     ];
 
     public function almacen()

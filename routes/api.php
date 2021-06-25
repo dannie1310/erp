@@ -14,6 +14,11 @@
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
+    // $api->group([ 'prefix' => 'movil'], function ($api) {
+    //     $api->post('authorizeMovil', 'App\Http\Controllers\Auth\Passport\AuthorizationController@authorizeMovil');
+    // });
+
+    Route::get('movil', 'Auth\Passport\AuthorizationController@movil');
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
@@ -27,10 +32,24 @@ $api->version('v1', function ($api) {
      * DBO
      */
     $api->group(['middleware' => 'api'], function ($api) {
+        // ARCHIVO
+        $api->group(['prefix' => 'archivo'], function ($api){
+            $api->post('cargarArchivo', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivo');
+            $api->post('cargarArchivoZIP', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivoZIP');
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/transaccion', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccion')->where(['id' => '[0-9]+']);
+            $api->get('{tipo}/{id}/transaccion-relacionados', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccion')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+        });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\AlmacenController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@show')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\AlmacenController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\AlmacenController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\AlmacenController@destroy')->where(['id' => '[0-9]+']);
         });
 
         //BANCOS
@@ -231,6 +250,15 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CTPQ\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CTPQ\PolizaController@pdf')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf-b', 'App\Http\Controllers\v1\CTPQ\PolizaController@pdfCaidaB')->where(['id' => '[0-9]+']);
+            $api->get('descargar-pdf', 'App\Http\Controllers\v1\CTPQ\PolizaController@descargaZip')->where(['id' => '[0-9]+']);
+            $api->post('busquedaExcel', 'App\Http\Controllers\v1\CTPQ\PolizaController@busquedaExcel');
+            $api->get('descargar-zip', 'App\Http\Controllers\v1\CTPQ\PolizaController@getZip');
+            $api->post('actualizar-cfdi', 'App\Http\Controllers\v1\CTPQ\PolizaController@getAsociacionCFDI');
+        });
+        $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@show')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');
@@ -265,15 +293,59 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/consolidar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@consolidar')->where(['id' => '[0-9]+']);
             $api->get('/pdfDiferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@pdfDiferencias');
+            $api->post('sincronizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ListaEmpresasController@sincronizar');
         });
         $api->group(['prefix' => 'empresa-sat'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@paginate');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\EmpresaSATController@update')->where(['id' => '[0-9]+']);
         });
+
+        $api->group(['prefix' => 'cuenta-saldo-negativo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@paginate');
+            $api->post('{id}/obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@obtenerInforme')->where(['id' => '[0-9]+']);
+            $api->post('{id}/obtener-informe-movimientos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@obtenerInformeMovimientos')->where(['id' => '[0-9]+']);
+            $api->post('sincronizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CuentaSaldoNegativoController@sincronizar');
+        });
+
         $api->group(['prefix' => 'tipo-poliza'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\TipoPolizaController@index');
         });
+    });
+
+    /**
+     * ENTREGA DE CFDI
+     */
+
+    $api->group(['middleware' => 'api', 'prefix' => 'entrega-cfdi'], function ($api) {
+        $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@index');
+        $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@paginate');
+        $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@store');
+        $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@show')->where(['id' => '[0-9]+']);
+        $api->post('{id}/cancelar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@cancelar');
+        $api->get('{id}/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@pdfSolicitudRecepcion')->where(['id' => '[0-9]+']);
+
+        $api->group(['prefix' => 'ctg-tipo-archivo'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\CtgTipoArchivoController@index');
+        });
+
+        $api->group(['prefix' => 'ctg-tipo-transaccion'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccionController@index');
+        });
+
+        $api->group(['prefix' => 'archivo'], function ($api){
+            $api->post('cargarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@cargarArchivo');
+            $api->post('reemplazarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@reemplazarArchivo');
+            $api->post('eliminarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@eliminarArchivo');
+            $api->post('agregarArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@agregarArchivo');
+            $api->post('agregarTipoArchivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@agregarTipoArchivo');
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/imagenes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+            $api->get('/cfdi/{id_cfdi}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Documentacion\ArchivoController@getArchivosCFDI')->where(['id_cfdi' => '[0-9]+']);
+        });
+
     });
 
     /**
@@ -285,11 +357,16 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@paginate');
             $api->post('carga-zip', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaZIP');
             $api->post('procesa-dir-zip-cfd', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@procesaDirectorioZIPCFD');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@update')->where(['id' => '[0-9]+']);
             $api->post('obtener-informe-empresa-mes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeEmpresaMes');
             $api->post('obtener-informe-completo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompleto');
             $api->get('obtener-informe-completo/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCompletoPDF');
             $api->post('obtener-contenido-directorio', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@getContenidoDirectorio');
+            $api->get('descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargar');
+            $api->get('{id}/descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarIndividual');
+            $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
+            $api->post('cargar-xml-proveedor', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@cargaXMLProveedor');
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
@@ -304,6 +381,24 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoDeducidoController@show')->where(['id' => '[0-9]+']);
+        });
+        $api->group(['prefix' => 'fecha-inhabil-sat'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@paginate');
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@delete')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\FechaInhabilSatController@store');
+        });
+        $api->group(['prefix' => 'tipo-fecha-sat'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\TipoFechaController@index');
+        });
+        $api->group(['prefix' => 'no-localizado'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NoLocalizadoController@paginate');
+        });
+        $api->group(['prefix' => 'ctg-no-localizado'], function ($api){
+            $api->post('cargarCsv', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@cargarCsv');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@paginate');
+            $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInforme');
+            $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformePDF');
+            $api->get('obtener-informe/empresa-proyecto/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformeEmpresaProyectoPDF');
         });
     });
 
@@ -387,6 +482,157 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Configuracion\NodoProyectoController@show')->where(['id' => '[0-9]+']);
         });
         // NODOS PROYECTO
+    });
+
+    /**
+     * ACARREOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'acarreos'], function ($api) {
+        //CAMIÓN
+        $api->group(['prefix' => 'camion'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@catalogo');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cambiarClave');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@registrar');
+            $api->post('/cargaImagenes', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@cargaImagenes');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@descargaLayout');
+        });
+
+        //EMPRESA
+        $api->group(['prefix' => 'empresa'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@update')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\EmpresaController@descargaLayout');
+        });
+
+        //IMPRESORA
+        $api->group(['prefix' => 'impresora'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
+        });
+
+        //IMPRESORA
+        $api->group(['prefix' => 'impresora'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\ImpresoraController@descargaLayout');
+        });
+
+        //MARCA
+        $api->group(['prefix' => 'marca'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MarcaController@descargaLayout');
+        });
+
+        //MATERIAL
+        $api->group(['prefix' => 'material'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@desactivar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@store');
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\MaterialController@descargaLayout');
+        });
+
+        //OPERADOR
+        $api->group(['prefix' => 'operador'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@store');
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OperadorController@descargaLayout');
+
+        });
+
+        //ORIGEN
+        $api->group(['prefix' => 'origen'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\OrigenController@descargaLayout');
+        });
+
+        //SINDICATO
+        $api->group(['prefix' => 'sindicato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\SindicatoController@index');
+        });
+
+        //TIPOORIGEN
+        $api->group(['prefix' => 'tipo-origen'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TipoOrigenController@index');
+        });
+
+        //TIRO
+        $api->group(['prefix' => 'tiro'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/asignar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@asignarConcepto')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@store');
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaTiros', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TiroController@descargaTiros');
+        });
+
+        //TAG
+        $api->group(['prefix' => 'tag'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\TagController@registrarTag');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\TagController@cambiarClave');
+        });
+
+        //TAG GLOBAL
+        $api->group(['prefix' => 'tag-global'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\Configuracion\TagController@registrarTag');
+        });
+
+        //VIAJE NETO
+        $api->group(['prefix' => 'viaje-neto'], function ($api) {
+            $api->post('/catalogo', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@catalogo');
+            $api->post('/registrar', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@registrarViaje');
+            $api->post('/cargaImagenesViajes', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@cargaImagenesViajes');
+            $api->post('/cambioClave', 'App\Http\Controllers\v1\ACARREOS\ViajeNetoController@cambiarClave');
+        });
+    });
+
+    /**
+     * RECEPCION DE CFDI
+     */
+
+    $api->group(['middleware' => 'api', 'prefix' => 'recepcion-cfdi'], function ($api) {
+        $api->get('/', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@index');
+        $api->get('paginate', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@paginate');
+        $api->post('/', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@store');
+        $api->post('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@aprobar');
+        $api->post('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@rechazar');
+        $api->get('{id}', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@show')->where(['id' => '[0-9]+']);
     });
 
     /**
@@ -495,6 +741,11 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Catalogos\UnificacionProveedoresController@store');
         });
+
+        //PROYECTOS
+        $api->group(['prefix' => 'proyecto'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\ProyectoController@index');
+        });
     });
 
     /**
@@ -601,6 +852,13 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/omitir', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@omitir')->where(['id' => '[0-9]+']);
             $api->patch('{id}/validar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@validar')->where(['id' => '[0-9]+']);
+        });
+
+        //PÓLIZAS CFDI
+        $api->group(['prefix' => 'poliza-cfdi'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaCFDIRequeridoController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaCFDIRequeridoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaCFDIRequeridoController@show')->where(['id' => '[0-9]+']);
         });
 
         //TIPOS CUENTA CONTABLE
@@ -722,11 +980,13 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'asignacion-contratista'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@paginate');
+            $api->get('getAsignaciones', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@getAsignaciones');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@show')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@store');
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('generarSubcontrato', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@generarSubcontrato');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\AsignacionContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
-
-
 
         /**
          * CONTRATO PROYECTADO
@@ -751,6 +1011,7 @@ $api->version('v1', function ($api) {
          */
         $api->group(['prefix' => 'concepto'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ContratoController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ContratoController@show')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -775,7 +1036,6 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-orden-pago', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfOrdenPago')->where(['id' => '[0-9]+']);
         });
 
-
         /**
          * PRESUPUESTO
          */
@@ -787,6 +1047,7 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@store');
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayout');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@pdf')->where(['id' => '[0-9]+']);
         });
 
 
@@ -798,7 +1059,37 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@updateContrato')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id_subcontrato}/descargar-layout-cambios-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@descargarLayoutCambiosPrecioVolumen')->where(['id' => '[0-9]+']);
+
         });
+
+        /**
+         * SOLICITUD DE CAMBIO
+         */
+
+        $api->group(['prefix' => 'solicitud-cambio'], function ($api) {
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@registrar');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aplicar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@aplicar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@cancelar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/rechazar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@rechazar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revertirAprobacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@revertirAprobacion')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@paginate');
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@pdf')->where(['id' => '[0-9]+']);
+            $api->post('procesar-layout-extraordinarios', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutExtraordinarios');
+            $api->post('procesar-layout-cambio-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudCambioController@procesarLayoutCambioPrecioVolumen');
+        });
+
+        /**
+         * TIPOS CONTRATOS
+         */
+        $api->group(['prefix' => 'tipo-contrato'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\TipoContratoController@index');
+        });
+
 
         //FONDO DE GARANTÍA
         $api->group(['prefix' => 'fondo-garantia'], function ($api) {
@@ -862,9 +1153,14 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {
 
-        // RUBROS
-        $api->group(['prefix' => 'rubro'], function ($api) {
-            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
+        /**
+         * COMPROBANTE FONDO
+         */
+        $api->group(['prefix' => 'comprobante-fondo'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\ComprobanteFondoController@destroy')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -876,7 +1172,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CuentaBancariaEmpresaController@show')->where(['id' => '[0-9]+']);
         });
 
-        // DATOS ESTIMACIONES
+        /**
+         * DATOS ESTIMACIONES
+         */
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
@@ -910,10 +1208,23 @@ $api->version('v1', function ($api) {
             $api->get('{id}/revertir', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@revertir')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@paginate');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCFDI')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getDocumentos', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@getDocumentos')->where(['id' => '[0-9]+']);
+            $api->post('/storeRevision', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevision');
+            $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
+            $api->get('/leerQR', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@leerQR');
+
+
             /**
              * FORMATO DE CONTRARECIBO
              */
             $api->get('{id}/formato-cr', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfCR')->where(['id' => '[0-9]+']);
+
+            /**
+             * FORMATO PDF FACTURA DE VARIOS
+             */
+            $api->get('{id}/formato-fv', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@pdfFV')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -985,6 +1296,11 @@ $api->version('v1', function ($api) {
             });
         });
 
+        // RUBROS
+        $api->group(['prefix' => 'rubro'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\RubroController@index');
+        });
+
         /**
          * REMESA
          */
@@ -1028,6 +1344,38 @@ $api->version('v1', function ($api) {
         //TIPOS MOVIMIENTO
         $api->group(['prefix' => 'tipo-movimiento'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\TipoMovimientoController@index');
+        });
+
+        //CFDSAT
+
+        $api->group(['prefix' => 'cfd-sat'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@paginate');
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargar', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargar');
+            $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
+     * PRESUPUESTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'presupuesto'], function ($api) {
+        //CONCEPTO
+        $api->group(['prefix' => 'concepto'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/editar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list');
+            $api->get('/{id}/hijos', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@list')->where(['id' => '[0-9]+']);;
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@desactivar')->where(['id' => '[0-9]+']);
+            $api->patch('actualiza-claves', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizarClaves')->where(['id' => '[0-9]+']);
+            $api->patch('actualiza-clave', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizarClave')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/actualiza-datos-seguimiento', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@actualizaDatosSeguimiento')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/toggle-activo', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@toggleActivo')->where(['id' => '[0-9]+']);
+            $api->delete('/responsable/{id}', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@eliminaResponsable')->where(['id' => '[0-9]+']);
+            $api->post('/responsable', 'App\Http\Controllers\v1\CADECO\Presupuesto\ConceptoController@storeResponsable');
         });
     });
 
@@ -1108,10 +1456,14 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@cargaLayout');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@paginate');
             $api->post('rfc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@rfc');
+            $api->post('calcular-fechas-limite', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\EfosController@calcularFechasLimite');
             $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInforme');
             $api->post('obtener-informe-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosado');
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformePDF');
             $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
+            $api->get('obtener-informe-cfdi-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@descargaInformeCFDIDesglosado');
+            $api->get('obtener-informe-definitivos/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDefinitivoPDF');
+
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
@@ -1197,8 +1549,7 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /*SCI*/
-
+    /**SCI*/
     $api->group(['middleware'=>'api', 'prefix'=> 'SCI'], function ($api){
 
         $api->group(['prefix' => 'marca'], function ($api) {
@@ -1207,6 +1558,23 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'modelo'], function($api) {
             $api->get('/', 'App\Http\Controllers\v1\SCI\ModeloController@index');
+        });
+    });
+
+
+    /**
+     * REMESAS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'remesas'], function ($api) {
+        $api->group(['prefix' => 'folio'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@paginate');
+            $api->get('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@show');
+            $api->patch('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@update');
+        });
+        $api->group(['prefix' => 'proyecto'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@update')->where(['id' => '[0-9]+']);
         });
     });
 });

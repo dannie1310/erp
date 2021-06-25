@@ -44,6 +44,33 @@ export default {
                     });
             });
         },
+        sincronizar (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'sincronizar', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        var span = document.createElement("span");
+                        span.innerHTML = "<table width='100%'><tbody><tr><td style='text-align: left'>Nuevos Registros:</td><td>"+data.registros+"</td></tr>" +
+                            "<tr><td style='text-align: left'>Registros Cancelados:</td><td>"+data.cancelaciones+"</td></tr>" +
+                            "<tr><td style='text-align: left'>Actualizaciones de Nombre:</td><td>"+data.actualizaciones+"</td></tr>" +
+                            "</tbody></table>"
+                            ;
+                        swal( "Sincronización Finalizada",{
+                            icon: "success",
+                            timer: 6000,
+                            buttons: false,
+                            content:span,
+                        })
+                            .then(() => {
+                                resolve(data);
+                            })
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         paginate (context, payload) {
             return new Promise((resolve, reject) => {
                 axios

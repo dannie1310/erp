@@ -54,7 +54,7 @@ class UpdatePolizaRequest extends FormRequest
 
         return [
             'concepto' => ['string', 'max:4000', 'filled'],
-            'fecha' => ['filled', 'date_format:"Y-m-d"'],
+            'fecha.date' => ['filled', 'date_format:"Y-m-d"'],
             'movimientos.data' => ['array'],
             'movimientos.data.*.concepto' => ['string', 'max:4000', 'filled'],
             'movimientos.data.*.cuenta_contable' => ['filled', "regex:'{$regex}'"],

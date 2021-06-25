@@ -32,7 +32,6 @@ class AsignacionFormato extends Rotation
        parent::__construct('L', 'cm', 'Letter');
         $this->obra = Obra::find(Context::getIdObra());
 
-        $this->SetAutoPageBreak(true, 5);
         $this->createQR();
     }
 
@@ -84,8 +83,8 @@ class AsignacionFormato extends Rotation
 
         $this->Ln(.5);
         $this->Cell(19);
-        $this->Cell(4, .5, utf8_decode('REQUISICIÓN SAO: '), 'LB', 0, 'L');
-        $this->Cell(3, .5, $this->asignacion->solicitud->complemento ? $this->asignacion->solicitud->complemento->requisicion_folio_format : '', 'RB', 0, 'L');
+        $this->Cell(4, .5, utf8_decode('FOLIO SAO SOLICITUD: '), 'LB', 0, 'L');
+        $this->Cell(3, .5, $this->asignacion->solicitud->numero_folio_format, 'RB', 0, 'L');
 
         $this->Ln(.7);
         $this->y_para_descripcion = $this->GetY();
@@ -159,6 +158,7 @@ class AsignacionFormato extends Rotation
                 $inc_ie = abs($no_cotizaciones - $i_e);
             }
 
+            $this->SetDrawColor('200', '200', '200');
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(0, 0, 0);
                 $this->SetTextColor(255, 255, 255);
@@ -274,6 +274,7 @@ class AsignacionFormato extends Rotation
             $this->y_para_descripcion = $this->GetY();
             $this->y_para_descripcion_arr[] = $this->GetY();
             $partidas_solicitud = $this->asignacion->solicitud->partidas;
+            $mejor_opcion_partida = $this->asignacion->mejores_opciones_encapsulado_por_material;
             foreach ($partidas_solicitud as $key => $partida_solicitud){
 
                 asort($this->y_para_descripcion_arr);
@@ -292,8 +293,13 @@ class AsignacionFormato extends Rotation
                         ->where('precio_unitario', '!=', 0)
                         ->first();
                     if($partida_cotizacion) {
-                        $this->SetFillColor(255, 255, 255);
-                        $this->SetTextColor(0, 0, 0);
+                        if (array_key_exists($partida_solicitud->id_material, $mejor_opcion_partida) && $mejor_opcion_partida[$partida_solicitud->id_material] == $cotizaciones[$i]->id_transaccion) {
+                            $this->SetFillColor(150, 150, 150);
+                            $this->SetTextColor(0, 0, 0);
+                        } else {
+                            $this->SetFillColor(255, 255, 255);
+                            $this->SetTextColor(0, 0, 0);
+                        }
                         $this->SetFont('Arial', '', $font_importes);
                         $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->precio_compuesto, 4, '.', ',') : '', "T B L R", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->cantidad * $partida_cotizacion->precio_compuesto, 2, '.', ',') : '', "T B L R", 0, "R", 1);
@@ -312,7 +318,8 @@ class AsignacionFormato extends Rotation
                             }
                         }
                     }else {
-                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFillColor(200, 200, 200);
+                        $this->SetTextColor(200, 200, 200);
                         $this->SetFont('Arial', '', $font_importes);
                         $this->Cell($anchos["pu"], $heigth, '', "L T", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, '', "T", 0, "R", 1);
@@ -347,8 +354,13 @@ class AsignacionFormato extends Rotation
                         ->first();
 
                     if ($partida_cotizacion) {
-                        $this->SetFillColor(255, 255, 255);
-                        $this->SetTextColor(0, 0, 0);
+                        if (array_key_exists($partida_solicitud->id_material, $mejor_opcion_partida) && $mejor_opcion_partida[$partida_solicitud->id_material] == $cotizaciones[$i]->id_transaccion) {
+                            $this->SetFillColor(150, 150, 150);
+                            $this->SetTextColor(0, 0, 0);
+                        } else {
+                            $this->SetFillColor(255, 255, 255);
+                            $this->SetTextColor(0, 0, 0);
+                        }
                         $this->SetFont('Arial', '', $font2);
                         $this->setY($yop_ini);
                         $this->setX($xop_ini);
@@ -356,8 +368,8 @@ class AsignacionFormato extends Rotation
                         $this->y_para_descripcion_arr[] = $this->GetY();
                         $xop_ini += $anchos["op"];
                     } else {
-                        $this->SetFillColor(255, 255, 255);
-                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFillColor(200, 200, 200);
+                        $this->SetTextColor(200, 200, 200);
                         $this->SetFont('Arial', '', $font2);
                         $this->setY($yop_ini);
                         $this->setX($xop_ini);
@@ -386,8 +398,10 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["pu"] * 2, $heigth, "", 1, 0, "", 1);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->suma_subtotal_partidas, 2, ".", ","), 1, 0, 'R', 1);
-                $this->SetFillColor(0, 0, 0);
-                $this->SetTextColor(255, 255, 255);
+                if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)){
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
+                }
                 $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal'], 3, ".", ",") : '-', 1, 0, 'R', 1);
             }
 
@@ -405,10 +419,10 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["pu"] * 2, $heigth, $cotizaciones[$i]->complemento ? $cotizaciones[$i]->complemento->descuento : '-', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, "%", 1, 0, "C");
                 $this->Cell($anchos["pu"], $heigth, $cotizaciones[$i]->descuento != 0 ? number_format($cotizaciones[$i]->descuento, 2, ".", ",") : '-', 1, 0, 'R', 1);
-                $this->SetFillColor(0, 0, 0);
-                $this->SetTextColor(255, 255, 255);
                 if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales))
                 {
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
                     $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['descuento'] = ($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal'] * $cotizaciones[$i]->complemento->descuento/100);
                 }
                 $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['descuento'], 3, ".", ",") : '-', 1, 0, 'R', 1);
@@ -429,9 +443,10 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["pu"] * 2, $heigth);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->subtotal_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
-                $this->SetFillColor(0, 0, 0);
-                $this->SetTextColor(255, 255, 255);
+
                 if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
                     $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] = $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal'] - $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['descuento'];
                 }
                 $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'], 3, ".", ",") : '-', 1, 0, 'R', 1);
@@ -451,9 +466,10 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["pu"] * 2, $heigth);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->IVA_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
-
-                $this->SetFillColor(0, 0, 0);
-                $this->SetTextColor(255, 255, 255);
+                if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
+                }
                 $this->Cell($anchos["pu"] * 2, $heigth,array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format(($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] * 0.16), 2, ".", ",") : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
@@ -475,8 +491,10 @@ class AsignacionFormato extends Rotation
                     $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['total']  = $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] + ($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento']  * 0.16);
                 }
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->total_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
-                $this->SetFillColor(0, 0, 0);
-                $this->SetTextColor(255, 255, 255);
+                if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
+                    $this->SetFillColor(0, 0, 0);
+                    $this->SetTextColor(255, 255, 255);
+                }
                 $this->Cell($anchos["pu"] * 2, $heigth, array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['total'], 3, ".", ",") : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
@@ -708,22 +726,8 @@ class AsignacionFormato extends Rotation
             $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
             $this->SetTextColor('0,0,0');
         }
-        $this->SetTextColor(0, 0, 0);
-        $this->SetY(-5.4);
-        $this->SetFont('Arial', '', 6);
-        $encabezados[0] = utf8_decode("Elaboró");
-        $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
-        $encabezados[2] = "Gerencia Solicitante";
-        $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
-            $this->Cell(.4);
-        }
-        $this->Ln(.5);
-        for ($i = 0; $i <= 3; $i++) {
-            $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
-            $this->Cell(.4);
-        }
+
+        $this->firmas();
 
         $this->SetY(-3.8);
         $this->image("data:image/png;base64,".base64_encode(QrCode::format('png')->generate($this->cadena_qr)), $this->GetX(), $this->GetY(), 3.5, 3.5,'PNG');
@@ -747,12 +751,124 @@ class AsignacionFormato extends Rotation
         $this->Cell(15, .4, (utf8_decode('Página ')) . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
+    private function firmas()
+    {
+        $this->SetTextColor(0, 0, 0);
+        $this->SetY(-5.9);
+        $this->SetFont('Arial', '', 6);
+
+        if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora != 4)
+        {
+            $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, 'Control de Proyectos', 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Gerente de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('VoBo Administración'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Aprobó '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(5.2, .4, utf8_decode($this->asignacion->usuario), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. ALEJANDRO PONCE RAMÍREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCIA RAMOS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. FLORENCIO MONTIEL MELO'), 'TRLB', 0, 'C', 0);
+        }
+        else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Aprobó'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(5.2, .4, utf8_decode('BRUNO ELIAS MEDINA RODRIGUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. JOSE MARTÍN ORTIZ VAZQUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('DIR. CORPORATIVO'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode('ING. LUIS HUMBERTO ESPINOSA HERNANDEZ'), 'TRLB', 0, 'C', 0);
+
+        }
+        else if (Context::getDatabase() == "SAO1814_CHIMALHUACAN" && Context::getIdObra() == 3 && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+
+        }
+        else if (Context::getDatabase() == "SAO1814_CUTZAMALA" && Context::getIdObra() == 5 && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('VoBo'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+
+        }
+        else {
+            $encabezados[0] = utf8_decode("Elaboró");
+            $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
+            $encabezados[2] = "Gerencia Solicitante";
+            $encabezados[3] = "Autoriza Dir. Ejec. Admon. y Finanzas";
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, .5, $encabezados[$i], 1, 0, 'C', 0, '');
+                $this->Cell(.4);
+            }
+            $this->Ln(.5);
+            for ($i = 0; $i <= 3; $i++) {
+                $this->Cell(6.2, 1, '', 1, 0, 'R', 0, '');
+                $this->Cell(.4);
+            }
+        }
+    }
+
     function create()
     {
         $this->SetMargins(1, .5, 2);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 5);
+        $this->SetAutoPageBreak(true, 6);
         $this->partidas();
 
         try {

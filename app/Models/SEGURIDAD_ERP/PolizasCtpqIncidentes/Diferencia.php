@@ -38,7 +38,12 @@ class Diferencia extends Model
         "valor_a",
         "valor_b",
         "id_cuenta",
-        "id_relacion_movimiento"
+        "id_relacion_movimiento",
+        "ejercicio",
+        "periodo",
+        "tipo_poliza",
+        "folio_poliza",
+        "fecha_poliza"
     ];
 
     public function partida_solicitud()

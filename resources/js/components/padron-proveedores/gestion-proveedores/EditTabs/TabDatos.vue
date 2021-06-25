@@ -126,7 +126,8 @@
                                     <th class="bg-gray-light">Nombre(s)</th>
                                     <th class="bg-gray-light">Apellido Paterno</th>
                                     <th class="bg-gray-light">Apellido Materno</th>
-                                    <th class="bg-gray-light">CURP</th>
+                                    <th class="bg-gray-light">Nacionalidad</th>
+                                    <th class="bg-gray-light">CURP ó Número de Identificación</th>
                                     <th class="bg-gray-light icono">
                                         <button type="button" class="btn btn-sm btn-outline-success" @click="agregarRepresentanteLegal" :disabled="cargando">
                                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
@@ -171,8 +172,19 @@
                                                :maxlength="50"/>
                                         <div class="invalid-feedback" v-show="errors.has(`apellido_materno[${i}]`)">{{ errors.first(`apellido_materno[${i}]`) }}</div>
                                     </td>
-                                    <td v-if="representante_legal.id">{{representante_legal.curp}}</td>
+                                    <td v-if="representante_legal.id">
+                                        {{representante_legal.es_nacional == 0 ? 'Nacional' : 'Extranjero'}}
+                                    </td>
                                     <td v-else>
+                                        <input type="radio" :id="`nacional[${i}]`" value="0" v-model="representante_legal.es_nacional">
+                                        <label :for="`nacional[${i}]`">Nacional</label>
+                                        <br>
+                                        <input type="radio" :id="`extranjero[${i}]`" value="1" v-model="representante_legal.es_nacional">
+                                        <label :for="`extranjero[${i}]`">Extranjero</label>
+                                        <br>
+                                    </td>
+                                    <td v-if="representante_legal.id">{{representante_legal.curp}}</td>
+                                    <td v-else-if="representante_legal.es_nacional == 0">
                                         <input class="form-control"
                                                :name="`curp[${i}]`"
                                                :data-vv-as="`'CURP ${i + 1}'`"
@@ -182,6 +194,17 @@
                                                :id="`curp[${i}]`"
                                                :maxlength="18"/>
                                         <div class="invalid-feedback" v-show="errors.has(`curp[${i}]`)">{{ errors.first(`curp[${i}]`) }}</div>
+                                    </td>
+                                    <td v-else-if="representante_legal.es_nacional == 1">
+                                        <input class="form-control"
+                                               :name="`identificacion[${i}]`"
+                                               :data-vv-as="`'Número de Identificación ${i + 1}'`"
+                                               v-model="representante_legal.curp"
+                                               :class="{'is-invalid': errors.has(`identificacion[${i}]`)}"
+                                               v-validate="{ required: true}"
+                                               :id="`identificacion[${i}]`"
+                                               :maxlength="18"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`identificacion[${i}]`)">{{ errors.first(`identificacion[${i}]`) }}</div>
                                     </td>
                                     <td>
                                         <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarRepresentanteLegal(i)" :disabled="representantes_legales.data.length == 1" >
@@ -226,7 +249,7 @@
                                                :data-vv-as="`'Nombre ${i + 1}'`"
                                                v-model="contacto.nombre"
                                                :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
-                                               v-validate="{ required: true, min:10 }"
+                                               v-validate="{ required: true, min:4 }"
                                                :id="`nombre[${i}]`"
                                                :maxlength="250"/>
                                         <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
@@ -345,7 +368,9 @@
                     'nombre' : '',
                     'apellido_paterno' : '',
                     'apellido_materno' : '',
-                    'curp' : ''
+                    'curp' : '',
+                    'es_nacional' : 0,
+                    'cambio' : true
                 }
                 this.representantes_legales.data.push(array);
             },
@@ -434,14 +459,16 @@
                                 var BreakException = {};
                                 try{
                                     this.representantes_legales.data.forEach(e => {
-                                        if(!this.validaCurp(e.curp)){
-                                            swal(
-                                                'CURP inválido',
-                                                e.curp,
-                                                'error'
-                                            );
-                                            error_curp = 1;
-                                            throw BreakException;
+                                        if(e.es_nacional == 0) {
+                                            if (!this.validaCurp(e.curp)) {
+                                                swal(
+                                                    'CURP inválido',
+                                                    e.curp,
+                                                    'error'
+                                                );
+                                                error_curp = 1;
+                                                throw BreakException;
+                                            }
                                         }
                                     });
                                 } catch (e){
@@ -493,7 +520,7 @@
                 }).then((data) => {
                     location.reload();
                 })
-            },
+            }
         }
     }
 </script>

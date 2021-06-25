@@ -69,6 +69,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $i=2;
                 foreach ($this->cotizacion->solicitud->partidas as $item){
                     $cot = CotizacionCompraPartida::where('id_transaccion', '=', $this->cotizacion->id_transaccion)->where('id_material', '=', $item->id_material)->first();
+                    if(!$cot){continue;}
                     $id_moneda = '';
                     switch ((int)$cot->id_moneda){
                         case 1:

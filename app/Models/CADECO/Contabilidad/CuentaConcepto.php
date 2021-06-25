@@ -30,6 +30,17 @@ class CuentaConcepto extends Model
         'concepto.clave_concepto',
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        self::addGlobalScope(function ($query) {
+            return $query->whereHas('concepto');
+        });
+    }
+
+    /**
+     * Relaciones
+     */
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');

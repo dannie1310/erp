@@ -16,14 +16,17 @@ class PresupuestoContratistaObserver extends TransaccionObserver
      {
          parent::creating($presupuestoContratista);
 
-         $presupuestoContratista->tipo_transaccion = 50;
          $presupuestoContratista->estado = 1;
+         $presupuestoContratista->tipo_transaccion = 50;
          $presupuestoContratista->id_moneda = 1;
      }
 
      public function updating(PresupuestoContratista $presupuestoContratista)
      {
-         $presupuestoContratista->validarAsignacion('editar');
+        if($presupuestoContratista->getOriginal('estado') == $presupuestoContratista->estado)
+        {
+            $presupuestoContratista->validarAsignacion('editar');
+        }
      }
 
      public function deleting(PresupuestoContratista $presupuestoContratista)

@@ -30,15 +30,15 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', sortable: true },
                     { title: 'Área Subcontratante', field: 'id_area_subcontratante',thComp: require('../../globals/th-Filter').default, sortable: false },
-                    { title: 'Fecha', field: 'fecha', sortable: true },
-                    { title: 'Referencia', field: 'referencia', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Referencia', field: 'referencia', sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default },
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c150',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include:'areasSubcontratantes'},
+                query: {include:['areasSubcontratantes','relaciones']},
                 search: '',
                 cargando: false
             }
@@ -93,7 +93,7 @@
                         fecha: contratoProyectado.fecha,
                         referencia: contratoProyectado.referencia,
                         buttons: $.extend({}, {
-                            cambiaAreaSubcontratante: (this.$root.can('modificar_area_subcontratante_cp')) ? true : undefined,
+                            cambiaAreaSubcontratante: (this.$root.can('modificar_area_subcontratante_cp') || true) ? true : undefined,
                             id: contratoProyectado.id,
                             numero_folio: `# ${contratoProyectado.numeroFolio}`,
                             fecha: contratoProyectado.fecha,
@@ -102,7 +102,8 @@
                             contratoProyectado: contratoProyectado,
                             delete : (this.$root.can('eliminar_contrato_proyectado')) ? true : false,
                             show : this.$root.can('consultar_contrato_proyectado') ? true : false,
-                            edit : this.$root.can('editar_contrato_proyectado') ? true : false
+                            edit : this.$root.can('editar_contrato_proyectado') ? true : false,
+                            transaccion: {id:contratoProyectado.id, tipo:49, opcion:1},
                         })
                     }));
                 },

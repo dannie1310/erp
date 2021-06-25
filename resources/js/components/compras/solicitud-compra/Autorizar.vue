@@ -132,7 +132,7 @@ export default {
             })
                 .then(() => {
                     $(this.$refs.modal).modal('hide');
-                    return this.$store.dispatch('compras/solicitud-compra/paginate', { params: {sort: 'numero_folio', order: 'DESC'}})
+                    return this.$store.dispatch('compras/solicitud-compra/paginate', { params: {scope: 'areasCompradorasAsignadasParaSolicitudes', sort: 'numero_folio', order: 'DESC', include:'complemento'}})
                     .then(data => {
                         this.$store.commit('compras/solicitud-compra/SET_SOLICITUDES', data.data);
                         this.$store.commit('compras/solicitud-compra/SET_META', data.meta);

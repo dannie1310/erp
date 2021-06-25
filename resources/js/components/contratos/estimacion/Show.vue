@@ -1,5 +1,17 @@
 <template>
     <span>
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <span v-if="!cargando">
         <div class="d-flex flex-row-reverse">
             <div class="p-2">
                 <Resumen v-bind:id="id"></Resumen>
@@ -249,6 +261,7 @@
                 <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
             </div>
         </div>
+    </span>
     </span>
 </template>
 

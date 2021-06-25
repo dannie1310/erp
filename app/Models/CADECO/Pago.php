@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
 class Pago extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
+    public const TIPO = 82;
+    public const NOMBRE = "Pago";
+    public const ICONO = "fa fa-hand-holding-usd";
 
     protected $fillable = [
         'id_antecedente',
@@ -54,6 +57,11 @@ class Pago extends Transaccion
     public function cuenta()
     {
         return $this->hasOne(Cuenta::class, 'id_cuenta', 'id_cuenta');
+    }
+
+    public function ordenesPago()
+    {
+        return $this->hasMany(OrdenPago::class, 'numero_folio', 'numero_folio');
     }
 
     public function pagoReposicionFF()
@@ -94,6 +102,83 @@ class Pago extends Transaccion
             $estado='Conciliado';
         }
         return $estado;
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Pago::NOMBRE;
+        $datos["tipo_numero"] = Pago::TIPO;
+        $datos["icono"] = Pago::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        #PAGO
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+        if($this->ordenesPago){
+            foreach ($this->ordenesPago as $ordenPago) {
+                if ($ordenPago->factura) {
+                    $factura = $ordenPago->factura;
+                    foreach ($factura->relaciones as $relacion) {
+                        if ($relacion["tipo_numero"] != 82) {
+                            $relaciones[$i] = $relacion;
+                            $relaciones[$i]["consulta"] = 0;
+                            $i++;
+                        }
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
+    public function getTipoPagoAttribute()
+    {
+        switch ($this->tipo_antecedente)
+        {
+            case 0:
+                if($this->opciones == 0)
+                {
+                    return 'Pago Factura';
+                }
+                return 'Pago';
+                break;
+
+            case 1:
+                return 'Pago Varios';
+                break;
+
+            case 327681:
+                if(is_null($this->id_antecedente) && is_null($this->id_referente))
+                {
+                    return 'Pago a Cuenta por Aplicar';
+                }
+                return 'Pago a Cuenta';
+                break;
+
+            case 131073:
+                return 'Pago Anticipo Destajo';
+                break;
+        }
     }
 
     public function eliminar($motivo)

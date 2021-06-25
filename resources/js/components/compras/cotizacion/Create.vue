@@ -120,13 +120,13 @@
                                                         <td style="text-align:center;">{{(solicitud_editar.estado === 1) ? partida.cantidad : '0.0'}}</td>
                                                         <td>
                                                             <input type="number"
-                                                                   min="0.01"
-                                                                   step=".01"
+                                                                   min="0.1"
+                                                                   step="any"
                                                                    :disabled="enable[i] == false"
                                                                    class="form-control"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
-                                                                   v-validate="{required: true}"
+                                                                   v-validate="{required: true, min_value:0.01, decimal:4}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                    v-model="precio[i]"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
@@ -184,7 +184,7 @@
                                         <input
                                             :disabled="cargando"
                                             type="number"
-                                            step=".01"
+                                            step="1"
                                             max="100"
                                             name="descuento_cot"
                                             v-model="descuento_cot"

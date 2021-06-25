@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\Models\CADECO\Acarreos\ConciliacionEstimacion;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Empresa;
@@ -29,6 +30,10 @@ class Estimacion extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
     public const OPCION_ANTECEDENTE = 2;
+    public const TIPO = 52;
+    public const OPCION = 0;
+    public const NOMBRE = "Estimaciones";
+    public const ICONO = "fa fa-building";
 
     protected $fillable = [
         'id_antecedente',
@@ -76,6 +81,11 @@ class Estimacion extends Transaccion
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function subcontrato_sgc()
+    {
+        return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function itemsXContratistas()
@@ -138,9 +148,15 @@ class Estimacion extends Transaccion
         return $this->hasMany(ItemEstimacion::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function facturas()
+    /*public function facturas()
     {
         return $this->hasMany(Factura::class, 'id_antecedente', 'id_transaccion');
+    }*/
+
+    public function facturas()
+    {
+        return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
+            ->distinct();
     }
 
     public function prepoliza()
@@ -161,6 +177,11 @@ class Estimacion extends Transaccion
     public function itemsReferenciados()
     {
         return $this->hasMany(Item::class, 'id_antecedente','id_transaccion');
+    }
+
+    public function conciliacionAcarreos()
+    {
+        return $this->hasOne(ConciliacionEstimacion::class, "id_estimacion", "id_transaccion");
     }
 
     /**
@@ -317,6 +338,21 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function getReferenciaRevisionAttribute()
+    {
+        return $this->subcontrato_sgc->referencia;
+    }
+
+    public function getMontoRevisionAttribute()
+    {
+        return number_format($this->suma_importes - $this->autorizado, 2, ".", "");
+    }
+
+    public function getFolioRevisionFormatAttribute()
+    {
+        return 'EST ' . $this->numero_folio_format;
+    }
+
     public function getImporteRetencionAttribute()
     {
         return $this->suma_importes * $this->retencion / 100;
@@ -332,6 +368,11 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->suma_importes, 2, ".", ",");
     }
 
+    public function getMontoRevisionFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_revision, 2, ".", ",");
+    }
+
     public function getAmortizacionPendienteAttribute()
     {
         $estimaciones_anteriores = $this->subcontrato->estimaciones()->where('id_transaccion', '<', $this->id_transaccion)->get();
@@ -345,6 +386,22 @@ class Estimacion extends Transaccion
             return $estimacion_anterior->amortizacion_pendiente;
         } else {
             return 0;
+        }
+    }
+
+    public function getTipoCambioAttribute(){
+        switch((int)$this->id_moneda){
+            case 1:
+                return 1;
+                break;
+            case 2:
+                return $this->TcUsd;
+                break;
+            case 3:
+                return $this->TcEuro;
+                break;
+
+
         }
     }
 
@@ -550,7 +607,7 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        if ($this->subcontrato->impuesto != 0)
+        if ($this->subcontrato_sgc->impuesto != 0)
         {
             return $this->subtotal_orden_pago * 0.16;
         } else {
@@ -849,7 +906,7 @@ class Estimacion extends Transaccion
                     /**
                      * Se crea un item nuevo.
                      */
-                    if ($partida['id_item_estimacion'] == 0 && $partida['cantidad_estimacion'] > 0) {
+                    if ($partida['id_item_estimacion'] == 0 && $partida['cantidad_estimacion'] != 0) {
                         $this->items()->create([
                             'id_transaccion' => $this->id_transaccion,
                             'id_antecedente' => $this->id_antecedente,
@@ -972,7 +1029,7 @@ class Estimacion extends Transaccion
 
     public function getPorcentajeIvaAttribute()
     {
-        return ($this->impuesto / ($this->monto - $this->impuesto)) * 100;
+        return ($this->iva_orden_pago / $this->subtotal_orden_pago) * 100;
     }
 
     public function getRetencionIva4Attribute(){
@@ -1130,5 +1187,141 @@ class Estimacion extends Transaccion
         $this->impreso = 0;
         $this->saldo = $this->monto;
         $this->save();
+    }
+
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = Estimacion::NOMBRE;
+        $datos["tipo_numero"] = Estimacion::TIPO;
+        $datos["icono"] = Estimacion::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $i = 0;
+
+        $estimacion = $this;
+
+        #CONTRATOS PROYECTADOS
+        if($this->subcontrato){
+            if($this->subcontrato->contratoProyectado){
+                $relaciones[$i] = $this->subcontrato->contratoProyectado->datos_para_relacion;
+                $i++;
+            }
+        }
+
+        #PRESUPUESTOS
+        if($this->subcontrato){
+            $presupuestos = $this->subcontrato->presupuestos;
+            foreach($presupuestos as $presupuesto)
+            {
+                if($presupuesto){
+                    $relaciones[$i] = $presupuesto->datos_para_relacion;
+                    $i++;
+                }
+            }
+        }
+
+        #SUBCONTRATO
+        $subcontrato = $this->subcontrato;
+        if($this->subcontrato) {
+            $relaciones[$i] = $subcontrato->datos_para_relacion;
+            $i++;
+
+            #POLIZA DE SUBCONTRATO
+            if($subcontrato->poliza){
+                $relaciones[$i] = $subcontrato->poliza->datos_para_relacion;
+                $i++;
+            }
+            #FACTURA DE SUBCONTRATO
+            foreach ($subcontrato->facturas as $factura){
+                $relaciones[$i] = $factura->datos_para_relacion;
+                $i++;
+                #POLIZA DE FACTURA DE SUBCONTRATO
+                if($factura->poliza){
+                    $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                    $i++;
+                }
+                #PAGO DE FACTURA DE SUBCONTRATO
+                foreach ($factura->ordenesPago as $orden_pago){
+                    if($orden_pago->pago){
+                        $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                        $i++;
+                        #POLIZA DE PAGO DE FACTURA DE SUBCONTRATO
+                        if($orden_pago->pago->poliza){
+                            $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                            $i++;
+                        }
+                    }
+                }
+            }
+            #SOLICITUD DE CAMBIO A SUBCONTRATO
+            foreach ($subcontrato->solicitudesCambio as $solicitud_cambio){
+                $relaciones[$i] = $solicitud_cambio->datos_para_relacion;
+                $i++;
+            }
+        }
+
+
+
+
+        #ESTIMACION
+        $relaciones[$i] = $estimacion->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        #FACTURA DE ESTIMACION
+        foreach ($estimacion->facturas as $factura){
+            $relaciones[$i] = $factura->datos_para_relacion;
+            $i++;
+
+            #POLIZA DE FACTURA DE ESTIMACION
+            if($factura->poliza){
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+
+            #PAGO DE FACTURA DE ESTIMACION
+            foreach ($factura->ordenesPago as $orden_pago){
+                if($orden_pago->pago){
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA DE ESTIMACION
+                    if($orden_pago->pago->poliza){
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        $orden1 = array_column($relaciones, 'orden');
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
+    }
+
+    public function getOrigenAcarreosAttribute()
+    {
+        try{
+            if($this->conciliacionAcarreos->id >0)
+                return true;
+            else
+                return false;
+        } catch (\Exception $e){
+            return false;
+        }
+
     }
 }

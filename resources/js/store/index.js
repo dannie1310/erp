@@ -2,6 +2,18 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import auth from './modules/auth';
 
+//ACARREOS
+import camion from "./modules/acarreos/camion";
+import empresaAcarreo from "./modules/acarreos/empresa";
+import impresora from "./modules/acarreos/impresora";
+import marcaAcarreo from "./modules/acarreos/marca";
+import materialAcarreo from "./modules/acarreos/material";
+import operador from "./modules/acarreos/operador";
+import origen from './modules/acarreos/origen';
+import sindicato from "./modules/acarreos/sindicato";
+import tipoOrigen from './modules/acarreos/tipo-origen';
+import tiro from './modules/acarreos/tiro';
+
 //ALMACENES
 import ajusteInventario from './modules/almacenes/ajuste-inventario';
 import ajusteNegativo from './modules/almacenes/ajuste-negativo';
@@ -13,6 +25,10 @@ import marbete from './modules/almacenes/marbete';
 import nuevoLote from  './modules/almacenes/nuevo-lote';
 import tipoConteo from './modules/almacenes/ctg-tipo-conteo';
 import salidaAlmacen from './modules/almacenes/salida-almacen';
+
+//ARCHIVOS
+
+import archivo from './modules/archivos/archivo'
 
 //CADECO
 
@@ -38,7 +54,7 @@ import unidad from './modules/cadeco/unidad'
 
 //CATALOGOS
 import unificacionProveedores from './modules/catalogos/unificacion-proveedores';
-
+import proyecto from './modules/catalogos/proyecto';
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
@@ -77,6 +93,7 @@ import tipoCuentaEmpresa from './modules/contabilidad/tipo-cuenta-empresa';
 import tipoCuentaMaterial from './modules/contabilidad/tipo-cuenta-material';
 import tipoPolizaContpaq from './modules/contabilidad/tipo-poliza-contpaq';
 import transaccionInterfaz from './modules/contabilidad/transaccion-interfaz';
+import polizaCFDIProyecto from './modules/contabilidad/poliza-cfdi';
 
 //CONTABILIDAD GRAL
 import cuentaCTPQ from './modules/contabilidadGeneral/cuenta';
@@ -87,6 +104,8 @@ import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
 import polizaGeneral from './modules/contabilidadGeneral/poliza';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
+import polizaCFDI from './modules/contabilidadGeneral/poliza-cfdi';
+import cuentaSaldoNegativo from './modules/contabilidadGeneral/cuenta-saldo-negativo';
 
 //CONTRATOS
 import asigacionContratista from './modules/contratos/asignacion-contratista'
@@ -97,6 +116,19 @@ import fondoGarantia from './modules/contratos/fondo-garantia';
 import presupuesto from './modules/contratos/presupuesto';
 import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
+import tipoContrato from './modules/contratos/tipo-contrato';
+import solicitudCambio from './modules/contratos/solicitud-cambio';
+
+//ENTREGA CFDI
+
+import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
+import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
+import archivoCFDI from './modules/entregaCFDI/archivo';
+import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
+
+//RECEPCIÓN CFDI
+
+import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
 
 //CONTROL PRESUPUESTO
 import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
@@ -109,6 +141,7 @@ import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
 import ctgTipoFondo from './modules/finanzas/ctg-tipo-fondo';
+import comprobanteFondo from './modules/finanzas/comprobante-fondo';
 import cuentaBancariaEmpresa from './modules/finanzas/cuenta-bancaria-empresa';
 import datosEstimaciones from './modules/finanzas/estimacion';
 import distribuirRecursoRemesa from './modules/finanzas/distribuir-recurso-remesa';
@@ -123,6 +156,7 @@ import solicitudBaja from './modules/finanzas/solicitud-baja-cuenta-bancaria';
 import tipoMovimiento from './modules/finanzas/tipo-movimiento';
 import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
+import CFDSATObra from './modules/finanzas/cfd-sat';
 
 //PADRON PROVEEDORES
 import archivoPrestadoraExpediente from './modules/padronProveedores/archivo-prestadora';
@@ -153,9 +187,13 @@ import tipoProyecto from './modules/seguridad/tipo-proyecto';
 //SEGURIDAD/FISCAL
 import autocorreccion from './modules/fiscal/autocorreccion';
 import CFDSAT from './modules/fiscal/cfd-sat';
+import ctgNoLocalizado from './modules/fiscal/ctg-no-localizado';
 import efos from './modules/fiscal/efos';
 import empresaFacturera from './modules/fiscal/empresa-facturera';
+import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
+import noLocalizado from './modules/fiscal/no-localizado';
+import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -169,6 +207,12 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
 
+//PRESUPUESTO
+import conceptoPresupuesto from './modules/presupuesto/concepto';
+
+//REMESAS
+import folio from './modules/remesas/remesa-folio';
+import proyectoMSAO from './modules/remesas/proyecto';
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
@@ -184,6 +228,17 @@ Vue.use(Vuex);
 export default new Vuex.Store({
     modules: {
         auth,
+        'acarreos/camion' : camion,
+        'acarreos/empresa' : empresaAcarreo,
+        'acarreos/impresora' : impresora,
+        'acarreos/marca' : marcaAcarreo,
+        'acarreos/material' : materialAcarreo,
+        'acarreos/operador' : operador,
+        'acarreos/origen' : origen,
+        'acarreos/sindicato' : sindicato,
+        'acarreos/tipo-origen' : tipoOrigen,
+        'acarreos/tiro' : tiro,
+
         'almacenes/conteo' : conteo,
         'almacenes/ctg-tipo-conteo' : tipoConteo,
         'almacenes/ajuste-inventario' : ajusteInventario,
@@ -215,7 +270,10 @@ export default new Vuex.Store({
         'cadeco/suministrado': suministrado,
         'cadeco/unidad': unidad,
 
+        'documentacion/archivo' : archivo,
+
         'catalogos/unificacion-proveedores' : unificacionProveedores,
+        'catalogos/proyecto' : proyecto,
 
         'compras/asignacion' : asignacion,
         'compras/cotizacion' : cotizacion,
@@ -224,7 +282,7 @@ export default new Vuex.Store({
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/forma-pago-credito' : formaPagoCredito,
-        
+
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
@@ -242,6 +300,8 @@ export default new Vuex.Store({
         'contratos/presupuesto' : presupuesto,
         'contratos/solicitud-movimiento-fg': solicitudMovimientoFG,
         'contratos/subcontrato': subcontrato,
+        'contratos/tipo-contrato': tipoContrato,
+        'contratos/solicitud-cambio': solicitudCambio,
 
         'control-presupuesto/solicitud-cambio': solicitudCambio,
         'control-presupuesto/variacion-volumen': variacionVolumen,
@@ -250,6 +310,7 @@ export default new Vuex.Store({
         'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
+        'finanzas/comprobante-fondo' : comprobanteFondo,
         'finanzas/ctg-tipo-fondo': ctgTipoFondo,
         'finanzas/cuenta-bancaria-empresa': cuentaBancariaEmpresa,
         'finanzas/distribuir-recurso-remesa': distribuirRecursoRemesa,
@@ -265,6 +326,7 @@ export default new Vuex.Store({
         'finanzas/tipo-movimiento': tipoMovimiento,
         'finanzas/traspaso-entre-cuentas': traspaso,
         'finanzas/rubro': rubro,
+        'finanzas/cfdi-sat': CFDSATObra,
 
 
         'contabilidad/cierre-periodo': cierrePeriodo,
@@ -285,6 +347,7 @@ export default new Vuex.Store({
         'contabilidad/tipo-cuenta-material': tipoCuentaMaterial,
         'contabilidad/tipo-poliza-contpaq': tipoPolizaContpaq,
         'contabilidad/transaccion-interfaz': transaccionInterfaz,
+        'contabilidad/poliza-cfdi' : polizaCFDIProyecto,
 
         'contabilidadGeneral/cuenta' : cuentaCTPQ,
         'contabilidadGeneral/empresa' :empresaContabilidad,
@@ -294,6 +357,8 @@ export default new Vuex.Store({
         'contabilidadGeneral/poliza' :polizaGeneral,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/tipo-poliza' : tipoPoliza,
+        'contabilidadGeneral/poliza-cfdi' : polizaCFDI,
+        'contabilidadGeneral/cuenta-saldo-negativo' : cuentaSaldoNegativo,
 
         'reportes/reporte': reporte,
 
@@ -303,6 +368,8 @@ export default new Vuex.Store({
 
         'sci/marca': marca,
         'sci/modelo': modelo,
+
+        'presupuesto/concepto': conceptoPresupuesto,
 
 
         'seguridad/control-interno/incidencia': incidencia,
@@ -323,8 +390,17 @@ export default new Vuex.Store({
         'fiscal/empresa-facturera': empresaFacturera,
         'fiscal/autocorreccion' : autocorreccion,
         'fiscal/cfd-sat': CFDSAT,
+        'fiscal/ctg-no-localizado': ctgNoLocalizado,
         'fiscal/efos' : efos,
+        'fiscal/fecha-inhabil-sat' : fechaInhabilSat,
         'fiscal/no-deducido' : noDeducido,
+        'fiscal/no-localizado' : noLocalizado,
+        'fiscal/tipo-fecha-sat' : tipoFechaSat,
+
+        'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
+        'entrega-cfdi/tipo-archivo' : tipoArchivo,
+        'entrega-cfdi/archivo' : archivoCFDI,
+        'entrega-cfdi/tipo-transaccion' : tipoTransaccion,
 
         'padronProveedores/archivo' : archivoExpediente,
         'padronProveedores/archivo-prestadora' : archivoPrestadoraExpediente,
@@ -333,6 +409,11 @@ export default new Vuex.Store({
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
+
+        'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
+
+        'remesas/remesa-folio' : folio,
+        'remesas/proyecto' : proyectoMSAO,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

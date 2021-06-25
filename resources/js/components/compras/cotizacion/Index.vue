@@ -27,6 +27,7 @@
             <!-- /.card -->
         </div>
         <!-- /.col -->
+        <router-view ></router-view>
     </div>
 </template>
 
@@ -39,7 +40,7 @@
                 columns: [
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
-                    { title: 'Folio SAO Solicitud', tdClass: 'folio', field: 'solicitud',  tdComp: require('../solicitud-compra/partials/ActionButtons').default},
+                    { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
@@ -49,7 +50,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa']},
+                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa', 'relaciones']},
                 search: '',
                 cargando: false
             }
@@ -127,16 +128,13 @@
                         observaciones: cotizacion.observaciones,
                         importe: cotizacion.importe,
                         estado: this.getEstado(cotizacion.estado),
-                        solicitud: $.extend({}, {
-                            show: (cotizacion.solicitud) ? true : false,
-                            id: (cotizacion.solicitud) ? cotizacion.solicitud.id : null,
-                            solicitud_consulta: (cotizacion.solicitud) ? cotizacion.solicitud : null
-                        }),
+                        solicitud: cotizacion.solicitud.numero_folio_format,
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
                             delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
                             edit: (cotizacion.asignada) ? false : true,
+                            transaccion: {id:cotizacion.id, tipo:18},
                         })
                     }));
                 },

@@ -4,6 +4,7 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Models\CADECO\Factura;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\CambioTransformer;
@@ -26,7 +27,7 @@ class FacturaTransformer extends TransformerAbstract
         'complemento',
         'cambio',
         'poliza',
-
+        'relaciones'
     ];
 
     /**
@@ -42,20 +43,23 @@ class FacturaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'fecha_cr' => $model->contra_recibo->fecha_format,
             'numero_folio' => $model->numero_folio,
+            'numero_folio_format' => $model->numero_folio_format,
             'antecedente' => $model->id_antecedente,
             'subtotal'=>(float)$model->subtotal,
-            'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
+            'subtotal_format'=>(string)$model->subtotal_format,
             'impuesto'=>(float)$model->impuesto,
-            'impuesto_format'=>(string) '$ '.number_format($model->impuesto,2,".",","),
+            'impuesto_format'=>(string) $model->impuesto_format,
             'monto'=>(float)$model->monto,
-            'saldo_format'=>(string) '$ '.number_format(($model->saldo),2,".",","),
+            'saldo_format'=>$model->saldo_format,
             'total_format'=>(string)$model->monto_format,
             'monto_format'=>(string)$model->monto_format,
             'referencia'=>(string)$model->referencia,
             'retencion'=>(float)$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'observaciones'=>(string)$model->observaciones,
+            'observaciones_format'=>(string)$model->observaciones_format,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
+            'fecha' => (string)$model->fecha,
             'fecha_format' => (string)$model->fecha_format,
             'estado_format'=>$model->estado_string,
             'estado' => (int)$model->estado,
@@ -64,16 +68,22 @@ class FacturaTransformer extends TransformerAbstract
             'vencimiento' => $model->vencimiento_form,
             'vencimiento_format' => $model->vencimiento_format,
             'tipo_cambio' => $model->tipo_cambio,
+            'tipo_cambio_fecha' => $model->tipoCambioFechaRevision(),
             'a_pagar' => $model->autorizado,
             'a_cuenta' => $model->a_cuenta_format,
             'moneda' => $model->moneda->nombre,
+            'id_moneda' => $model->id_moneda,
+            'id_costo' => $model->id_costo,
             'empresa' => $model->empresa->razon_social,
+            'id_rubro' => (int) $model->id_rubro,
             'rubro' => $model->rubro,
             'datos_registro' => $model->datos_registro,
             'comentario' => $model->comentario,
             'fondo_garantia_format' => $model->fondo_garantia_format,
             'retenciones_format' => $model->retenciones_subcontrato_format,
             'devoluciones_format' => $model->devoluciones_subcontrato_format,
+            'tipo' => $model->tipo->Descripcion,
+            'opciones' => $model->opciones,
 
         ];
     }
@@ -133,4 +143,12 @@ class FacturaTransformer extends TransformerAbstract
         return null;
     }
 
+    public function includeRelaciones(Factura $model)
+    {
+        if($relaciones = $model->relaciones)
+        {
+            return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
 }

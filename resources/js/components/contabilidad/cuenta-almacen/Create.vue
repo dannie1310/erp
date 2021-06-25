@@ -93,7 +93,7 @@
                 this.$store.commit('cadeco/almacen/SET_ALMACENES', []);
                 this.cargando = true;
                 return this.$store.dispatch('cadeco/almacen/index', {
-                    params: { scope: 'sinCuenta' }
+                    params: { scope: ['sinCuenta', 'tipoMaterial'] }
                 })
                     .then(data => {
                         this.almacenes = data.data

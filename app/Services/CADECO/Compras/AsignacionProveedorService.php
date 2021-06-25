@@ -55,10 +55,11 @@ class AsignacionProveedorService
                 $transf_orden_compra = new OrdenCompraTransformer();
                 $orden_compra_transf = [];
 
-
-                if(count($partida->ordenCompra) > 0){
+                if(count($partida->ordenCompra) > 0){    
                     foreach($partida->ordenCompra as $key => $orden){
-                        $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
+                        if($orden->complemento->id_asignacion_proveedor == $partida->id_asignacion_proveedores){
+                            $orden_compra_transf[$key] = $transf_orden_compra->transform($orden);
+                        }
                     }
                 }
 
@@ -149,33 +150,35 @@ class AsignacionProveedorService
             $asignacion = $this->repository->show($data['id']);
             $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
             $transaccion_cotizacion = '';
-            $orden_c = null;
+            
             foreach($partidas as $partida){
-
-                if(!$orden_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
+                $orden_c = null;
+                $ordenes_c = OrdenCompra::where('id_antecedente', '=', $partida->cotizacionCompra->id_antecedente)
                                         ->where('id_referente', '=', $partida->cotizacionCompra->id_transaccion)
                                         ->where('id_empresa', '=', $partida->cotizacionCompra->id_empresa)
                                         ->where('id_sucursal', '=', $partida->cotizacionCompra->id_sucursal)
-                                        ->where('id_moneda', '=', $partida->cotizacion->id_moneda)->first()
-                                        ){
-
-
-                    $orden_c = $partida->ordenCompra()->firstOrCreate([
-                            'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
-                            'id_referente' => $partida->cotizacionCompra->id_transaccion,
-                            'id_empresa' => $partida->cotizacionCompra->id_empresa,
-                            'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
-                            'id_moneda' => $partida->cotizacion->id_moneda,
-                            'observaciones' => $partida->cotizacionCompra->observaciones,
-                            'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
-                        ]);
-
-                        $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion, 'id_asignacion_proveedor'=>$asignacion->id]);
-
+                                        ->where('id_moneda', '=', $partida->cotizacion->id_moneda)->get();
+                
+                foreach ($ordenes_c as $key => $orden) {
+                    if($orden->complemento->id_asignacion_proveedor == $asignacion->id){
+                        $orden_c = $orden;
+                        break;
+                    }
                 }
+                
+                if(!$orden_c){
+                    $orden_c = OrdenCompra::Create([
+                        'id_antecedente' => $partida->cotizacionCompra->id_antecedente,
+                        'id_referente' => $partida->cotizacionCompra->id_transaccion,
+                        'id_empresa' => $partida->cotizacionCompra->id_empresa,
+                        'id_sucursal' => $partida->cotizacionCompra->id_sucursal,
+                        'id_moneda' => $partida->cotizacion->id_moneda,
+                        'observaciones' => $partida->cotizacionCompra->observaciones,
+                        'porcentaje_anticipo_pactado' => $partida->cotizacionCompra->porcentaje_anticipo_pactado,
+                    ]);
 
-
-
+                    $orden_c->complemento()->create(['id_transaccion' => $orden_c->id_transaccion, 'id_asignacion_proveedor'=>$asignacion->id]);
+                }
 
                 $descuento_material = $partida->cotizacion->descuento / 100 * $partida->cotizacion->precio_unitario;
                 $importe = ($partida->cotizacion->precio_unitario - $descuento_material) * $partida->cantidad_asignada;

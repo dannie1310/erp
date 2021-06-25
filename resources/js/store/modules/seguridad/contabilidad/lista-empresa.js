@@ -60,7 +60,7 @@ export default {
         },
 
         consolidar(context, payload) {
-            
+
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Actualizar Empresa Consolidadora",
@@ -164,6 +164,20 @@ export default {
                                 })
                         }
                     });
+            });
+        },
+        updateDirecto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id, payload.data, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+
             });
         },
     },

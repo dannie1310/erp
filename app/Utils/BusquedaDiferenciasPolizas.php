@@ -70,6 +70,11 @@ class BusquedaDiferenciasPolizas
             "base_datos_revisada" => $this->relacion->base_datos_a,
             "base_datos_referencia" => $this->relacion->base_datos_b,
             "tipo_busqueda" => $this->relacion->tipo_relacion,
+            "ejercicio"=>$this->poliza_a->Ejercicio,
+            "periodo"=>$this->poliza_a->Periodo,
+            "tipo_poliza"=>$this->poliza_a->tipo_poliza->Nombre,
+            "folio_poliza"=>$this->poliza_a->Folio,
+            "fecha_poliza"=>$this->poliza_a->Fecha
         ];
         return $datos_diferencia;
     }

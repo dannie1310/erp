@@ -131,6 +131,47 @@ export default {
                     })
             });
         },
+        calcularFechasLimite(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Calcular fechas límite de aclaración ante el SAT",
+                    text: "¿Está seguro de que desea calcular las fechas?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Calcular',
+                            closeModal: false,
+                        }
+                    }
+                })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI + 'calcular-fechas-limite', payload)
+                            .then(r => r.data)
+                            .then((data) => {
+                                swal("Fechas calculadas correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error)
+                            });
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        },
         obtenerInformeCFDDesglosado(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -143,6 +184,18 @@ export default {
                         reject(error)
                     })
             });
+        },
+        descargarInformeCFDIDesglosado(context, payload){
+            var urr = URI +  'obtener-informe-cfdi-desglosado?'+ 'access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Informe descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
         },
     },
 

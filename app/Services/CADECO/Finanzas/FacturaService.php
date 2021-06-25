@@ -4,16 +4,23 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use DateTime;
 use DateTimeZone;
+use App\Utils\CFD;
+use App\PDF\Fiscal\CFDI;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
-use App\Utils\CFD;
+use App\Utils\ValidacionSistema;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
+use App\PDF\Finanzas\FacturaVarioPDF;
 use App\Repositories\CADECO\Finanzas\Facturas\Repository;
+use PhpParser\Node\Expr\New_;
 
 class FacturaService
 {
@@ -215,44 +222,55 @@ class FacturaService
         }
     }
 
-    public function validaCFDI33($xml)
+    public function validaCFDI33($xml, $rfc_emisor,$uuid)
     {
         $respuesta = $this->getValidacionCFDI33($xml);
         $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+
         if ($estructura_correcta !== "OK") {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 13,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                    "mensaje" => $estructura_correcta,
-                    "xml" => $xml
-                ]
-            ));
-            abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+            $omitido = $this->repository->getEsOmitido($respuesta["detail"][0]["detail"][0]["message"],$rfc_emisor, $uuid);
+            if($omitido == 0){
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 13,
+                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                        "mensaje" => $estructura_correcta,
+                        "xml" => $xml
+                    ]
+                ));
+                abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+            }
         }
+
         $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
         if ($validaciones_proveedor_comprobante !== "OK") {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 14,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                    "mensaje" => $validaciones_proveedor_comprobante,
-                    "xml" => $xml
-                ]
-            ));
-            abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+            $omitido = $this->repository->getEsOmitido($respuesta["detail"][1]["detail"][0]["message"],$rfc_emisor, $uuid);
+            if($omitido==0){
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 14,
+                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                        "mensaje" => $validaciones_proveedor_comprobante,
+                        "xml" => $xml
+                    ]
+                ));
+                abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+            }
         }
         $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
         if ($validaciones_proveedor_complemento !== "OK") {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia" => 15,
-                    "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                    "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                    "mensaje" => $validaciones_proveedor_complemento,
-                    "xml" => $xml
-                ]
-            ));
-            abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+            $omitido = $this->repository->getEsOmitido($respuesta["detail"][2]["detail"][0]["message"],$rfc_emisor, $uuid);
+            if($omitido==0) {
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 15,
+                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                        "mensaje" => $validaciones_proveedor_complemento,
+                        "xml" => $xml
+                    ]
+                ));
+                abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+            }
         }
 
         $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
@@ -288,7 +306,7 @@ class FacturaService
 
             $this->validaFolio($data["referencia"], $arreglo_cfd);
             if($arreglo_cfd["version"] == 3.3){
-                $this->validaCFDI33($data["archivo"]);
+                $this->validaCFDI33($data["archivo"], $arreglo_cfd["emisor"]["rfc"], $arreglo_cfd["complemento"]["uuid"]);
             }
 
             $datos_rfactura = [
@@ -365,6 +383,10 @@ class FacturaService
         $transaccion = $this->repository->create($datos);
         $this->validaPresuntoEFO($arreglo_cfd);
 
+        foreach ($transaccion->facturasRepositorio as $facturaRepositorio) {
+            $servicio_cfdi = new CFDSATService(new CFDSAT());
+            $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+        }
         return $transaccion;
     }
 
@@ -438,7 +460,7 @@ class FacturaService
     private function validaFolio($folio, $arreglo_cfd)
     {
         if ($arreglo_cfd["serie"] != null) {
-            $pos = strpos($folio, $arreglo_cfd["folio"]);
+            $pos = strpos($folio, $arreglo_cfd["serie"].$arreglo_cfd["folio"]);
             if ($pos === false) {
                 abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $arreglo_cfd["folio"] . ")");
             }
@@ -447,7 +469,6 @@ class FacturaService
                 abort(500, "El folio capturado (" . $folio . ") no corresponde al folio en el comprobante digital (" . $arreglo_cfd["folio"] . ")");
             }
         }
-
     }
 
     private function validaEFO($arreglo_cfd)
@@ -461,7 +482,7 @@ class FacturaService
                         "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
                         "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
                 ));
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             } else if ($efo->estado == 2) {
                 event(new IncidenciaCI(
@@ -470,7 +491,7 @@ class FacturaService
                         "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
                         "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
                 ));
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. 
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
 
@@ -512,6 +533,12 @@ class FacturaService
         return $pdf;
     }
 
+    public function pdfFV($id)
+    {
+        $pdf = new FacturaVarioPDF($id);
+        return $pdf;
+    }
+
     public function cargaXML(array $data)
     {
         $archivo_xml = $data["xml"];
@@ -522,17 +549,17 @@ class FacturaService
             $empresa = $this->repository->getEmpresaPorId($id_empresa);
             if($empresa["rfc"] != $arreglo_cfd["emisor"]["rfc"]){
                 if($arreglo_cfd["tipo_comprobante"] == "E"){
-                    abort(500, "El emisor de los CFD no coincide, favor de verificar");
+                    abort(500, "El emisor de los CFDI no coincide, favor de verificar");
                 }
             }
         }
         if($arreglo_cfd["tipo_comprobante"] == "I" && $tipo == 2)
         {
-            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo egreso (Nota de Crédito)");
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo egreso (Nota de Crédito)");
         }
         elseif($arreglo_cfd["tipo_comprobante"] == "E" && $tipo == 1)
         {
-            abort(500, "Se ingresó un CFD de tipo erróneo, favor de ingresar un CFD de tipo ingreso (Factura)");
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
         return $arreglo_cfd;
     }
@@ -549,6 +576,51 @@ class FacturaService
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             throw $e;
+        }
+    }
+
+    public function pdfCFDI($id)
+    {
+        $facturaTransaccion = $this->repository->show($id);
+        $facturaRepositorio = $facturaTransaccion->facturaRepositorio;
+        try{
+            $cfd = new CFD($facturaRepositorio->xml);
+        } catch (\Exception $e){
+          dd("No se cargo el CFDI de la factura");
+        }
+
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $pdf = new CFDI($arreglo_cfd);
+        return $pdf;
+    }
+
+    public function getDocumentos($id){
+        return $this->repository->show($id)->getDocumentos();
+    }
+
+    public function storeRevision($data){
+        return $this->repository->show($data['factura']['id'])->storeRevision($data);
+    }
+
+    public function storeRevisionVarios($data){
+        return $this->repository->show($data['factura']['id'])->storeRevisionVarios($data);
+    }
+
+    public function update(array $data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
+    }
+
+    public function leerQR($data)
+    {
+        $verifica = new ValidacionSistema();
+
+        $datos = $verifica->desencripta($data);
+
+        if($datos) {
+            return $datos;
+        }else{
+            return "Error de lectura";
         }
     }
 }

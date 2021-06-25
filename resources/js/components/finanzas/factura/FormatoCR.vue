@@ -1,30 +1,30 @@
 <template>
     <span>
-            <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
+        <button @click="init" v-if="opciones > 0" type="button" class="btn btn-primary float-right" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i>Contrarecibo </button>
+        <button @click="init" v-else type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato PDF"><i class="fa fa-file-pdf-o"></i> </button>
+        <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+            <div class="modal-dialog modal-lg" id="mdialTamanio">
+                <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title"><i class="fa fa-file-pdf-o"></i> Formato de Contrarecibo</h4>
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                </div>
+                <div class="modal-body modal-lg" style="height: 800px" ref="body">
 
-             <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
-                 <div class="modal-dialog modal-lg" id="mdialTamanio">
-                     <div class="modal-content">
-                        <div class="modal-header">
-                            <h4 class="modal-title"><i class="fa fa-file-pdf-o"></i> Formato de Contrarecibo</h4>
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
-                        </div>
-                        <div class="modal-body modal-lg" style="height: 800px" ref="body">
-
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
-                        </div>
-                     </div>
-                 </div>
-             </div>
-        </span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cerrar</button>
+                </div>
+                </div>
+            </div>
+        </div>
+    </span>
 </template>
 
 <script>
     export default {
         name: "FormatoCR",
-        props: ['id'],
+        props: ['id', 'opciones'],
         methods: {
             init() {
                 this.pdf()

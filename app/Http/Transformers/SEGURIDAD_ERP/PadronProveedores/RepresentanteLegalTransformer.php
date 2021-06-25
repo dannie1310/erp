@@ -16,7 +16,8 @@ class RepresentanteLegalTransformer extends TransformerAbstract
             'nombre' => $model->nombre,
             'apellido_paterno' => $model->apellido_paterno,
             'apellido_materno' => $model->apellido_materno,
-            'curp' => $model->curp
+            'curp' => $model->curp,
+            'es_nacional' => $model->es_nacional
         ];
     }
 }

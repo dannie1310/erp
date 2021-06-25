@@ -43,7 +43,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: { include: 'empresa', sort: 'numero_folio', order: 'desc'},
+                query: { include: ['empresa','relaciones'], sort: 'numero_folio', order: 'desc'},
                 estado: "",
                 cargando: false
             }
@@ -104,6 +104,7 @@
                                 estado: entrada.estado,
                                 pagina: self.query.offset,
                                 delete: self.$root.can('eliminar_entrada_almacen') ? true : false,
+                                transaccion: {id:entrada.id, tipo:33, opcion:1},
                             })
                         })
                     });

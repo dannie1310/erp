@@ -41,10 +41,19 @@ class CFD
     public function getArregloFactura()
     {
         $this->arreglo_factura = [];
+        $this->arreglo_factura["xml"] = $this->archivo_xml;
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($this->archivo_xml);
+            if($factura_xml === false)
+            {
+                $factura_xml = simplexml_load_string($this->archivo_xml);
+            }
 
+            if(!$factura_xml){
+                $errors = libxml_get_errors();
+                //dd(var_export($errors, true));
+            }
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
             $this->log["archivos_no_cargados_error_app"] += 1;
@@ -61,17 +70,21 @@ class CFD
         }
         return $this->arreglo_factura;
     }
+
     private function setArreglo33($factura_xml)
     {
         try {
-            $this->arreglo_factura["descuento"] = null;
+            $this->arreglo_factura["descuento"] = (float)$factura_xml["Descuento"];
             $this->arreglo_factura["total"] = (float)$factura_xml["Total"];
+            $this->arreglo_factura["subtotal"] = (float)$factura_xml["SubTotal"];
             $this->arreglo_factura["tipo_comprobante"] = strtoupper(substr((string)$factura_xml["TipoDeComprobante"], 0, 1));
             $this->arreglo_factura["serie"] = (string)$factura_xml["Serie"];
             $this->arreglo_factura["folio"] = (string)$factura_xml["Folio"];
             $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["Fecha"]);
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
+            $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
+            $this->arreglo_factura["metodo_pago"] = (string)$factura_xml["MetodoPago"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
@@ -81,11 +94,26 @@ class CFD
             $receptor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Receptor')[0];
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
+            $this->arreglo_factura["receptor"]["razon_social"] = (string)$receptor["Nombre"][0];
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
+        }
+
+        if($this->arreglo_factura["tipo_comprobante"] == "P"){
+            $this->setDatosPago($factura_xml);
+        }
+
+        $this->arreglo_factura["tipo_relacion"] = '';
+        $this->arreglo_factura["cfdi_relacionado"]  ='';
+
+        $CFDIRelacionado = $factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados');
+        if(count($CFDIRelacionado)>0){
+            $CFDIRelacionado = $factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados')[0];
+            $this->arreglo_factura["tipo_relacion"] = (string)$CFDIRelacionado["TipoRelacion"][0];
+            $this->arreglo_factura["cfdi_relacionado"] = (string)$factura_xml->xpath('//cfdi:Comprobante//cfdi:CfdiRelacionados//cfdi:CfdiRelacionado')[0]["UUID"];
         }
 
         try {
@@ -105,15 +133,39 @@ class CFD
                         $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
                         $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
                     }
-                    $this->arreglo_factura["traslados"][$i]["impuesto"] = (float)$traslado["Impuesto"];
+                    $this->arreglo_factura["traslados"][$i]["impuesto"] = (string)$traslado["Impuesto"];
                     $this->arreglo_factura["traslados"][$i]["tipo_factor"] = (string)$traslado["TipoFactor"];
                     $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (float)$traslado["TasaOCuota"];
                     $this->arreglo_factura["traslados"][$i]["importe"] = (float)$traslado["Importe"];
+                    $this->arreglo_factura["traslados"][$i]["base"] = (float)$traslado["Base"];
                     $i++;
                 }
             }
+
+            if (count($impuestos) >= 1) {
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
+            } else {
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
+            }
+
+            $retenciones = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Retencion');
+
+            $iret = 0;
+            foreach ($retenciones as $retencion) {
+                if (!(float)$retencion["Base"] > 0) {
+                    if ($retencion["Impuesto"] == "002") {
+                        $this->arreglo_factura["importe_iva_retenido"] = (float)$retencion["Importe"];
+                        $this->arreglo_factura["tasa_iva_retenido"] = (float)$retencion["TasaOCuota"];
+                    }
+                    $this->arreglo_factura["retenciones"][$iret]["impuesto"] = (string)$retencion["Impuesto"];
+                    $this->arreglo_factura["retenciones"][$iret]["importe"] = (float)$retencion["Importe"];
+                    $iret++;
+                }
+            }
+
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
+            $ic = 1;
             foreach ($conceptos as $concepto) {
                 $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["NoIdentificacion"];
@@ -123,13 +175,31 @@ class CFD
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["Descripcion"];
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["ValorUnitario"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["Importe"];
-                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[" . $i . "]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+                $this->arreglo_factura["conceptos"][$i]["descuento"] = (float)$concepto["Descuento"];
+                $traslados_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[".$ic."]/cfdi:Impuestos/cfdi:Traslados/cfdi:Traslado");
+
                 $itc = 0;
                 foreach ($traslados_concepto as $traslado_concepto) {
                     $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["base"] = (float)$traslado_concepto["Base"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["impuesto"] = (string)$traslado_concepto["Impuesto"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["importe"] = (float)$traslado_concepto["Importe"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["tasa_o_cuota"] = (float)$traslado_concepto["TasaOCuota"];
+                    $this->arreglo_factura["conceptos"][$i]["traslados"][$itc]["tipo_factor"] = (string)$traslado_concepto["TipoFactor"];
                     $itc++;
                 }
+
+                $retenciones_concepto = $factura_xml->xpath("/cfdi:Comprobante/cfdi:Conceptos/cfdi:Concepto[".$ic."]/cfdi:Impuestos/cfdi:Retenciones/cfdi:Retencion");
+                $irc = 0;
+                foreach ($retenciones_concepto as $retencion_concepto) {
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["base"] = (float)$retencion_concepto["Base"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["impuesto"] = (string)$retencion_concepto["Impuesto"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["importe"] = (float)$retencion_concepto["Importe"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["tasa_o_cuota"] = (float)$retencion_concepto["TasaOCuota"];
+                    $this->arreglo_factura["conceptos"][$i]["retenciones"][$irc]["tipo_factor"] = (string)$retencion_concepto["TipoFactor"];
+                    $irc++;
+                }
                 $i++;
+                $ic++;
             }
 
         } catch (\Exception $e) {
@@ -159,7 +229,7 @@ class CFD
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
-        $this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
+        //$this->arreglo_factura["subtotal"] = $this->arreglo_factura["total"] - $this->arreglo_factura["total_impuestos_trasladados"];
         /*$this->arreglo_factura["id_empresa_sat"] = $this->repository->getIdEmpresa($this->arreglo_factura["receptor"]);
         $proveedor = $this->repository->getProveedorSAT($this->arreglo_factura["emisor"], $this->arreglo_factura["id_empresa_sat"]);
         $this->arreglo_factura["id_proveedor_sat"] = $proveedor["id_proveedor"];
@@ -168,6 +238,38 @@ class CFD
             $this->log["proveedores_nuevos"] += 1;
         }*/
         //return 1;
+    }
+
+    private function setDatosPago($factura_xml)
+    {
+        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
+        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $monto = 0 ;
+        foreach($pagos as $pago)
+        {
+            $monto += (float) $pago["Monto"];
+            $moneda = (string) $pago["MonedaP"];
+            $forma_pago = (string) $pago["FormaDePagoP"];
+            $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
+        }
+
+        $this->arreglo_factura["total"] = $monto;
+        $this->arreglo_factura["moneda"] = $moneda;
+        $this->arreglo_factura["forma_pago"] = $forma_pago;
+        $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+
+        $id = 0;
+        foreach($doctos as $docto)
+        {
+            $this->arreglo_factura["documentos_pagados"][$id]["uuid"] = (string)$docto["IdDocumento"];
+            $this->arreglo_factura["documentos_pagados"][$id]["moneda"] = (string)$docto["MonedaDR"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_insoluto"] = (float)$docto["ImpSaldoInsoluto"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_pagado"] = (float)$docto["ImpPagado"];
+            $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
+            $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
+            $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+            $id++;
+        }
     }
 
     private function setArreglo32($factura_xml)
@@ -229,6 +331,7 @@ class CFD
 
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["rfc"][0];
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
+            $this->arreglo_factura["receptor"]["razon_social"] = (string)$receptor["nombre"][0];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["nombre"][0];
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el receptor del comprobante: ".$uuid." mensaje:" . $e->getMessage());
@@ -252,15 +355,24 @@ class CFD
                 $this->arreglo_factura["traslados"][$i]["importe"] = (string)$traslado["importe"];
                 $i++;
             }
+
+            $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["totalImpuestosRetenidos"][0];
+
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             foreach ($conceptos as $concepto) {
+                $this->arreglo_factura["conceptos"][$i]["clave_prod_serv"] = (string)$concepto["ClaveProdServ"];
                 $this->arreglo_factura["conceptos"][$i]["cantidad"] = (float)$concepto["cantidad"];
                 $this->arreglo_factura["conceptos"][$i]["descripcion"] = (string)$concepto["descripcion"];
                 $this->arreglo_factura["conceptos"][$i]["importe"] = (float)$concepto["importe"];
                 $this->arreglo_factura["conceptos"][$i]["no_identificacion"] = (string)$concepto["noIdentificacion"];
                 $this->arreglo_factura["conceptos"][$i]["unidad"] = (string)$concepto["unidad"];
                 $this->arreglo_factura["conceptos"][$i]["valor_unitario"] = (float)$concepto["valorUnitario"];
+                if(key_exists("descuento", $concepto)){
+                    $this->arreglo_factura["conceptos"][$i]["descuento"] = (float)$concepto["descuento"];
+                } else {
+                    $this->arreglo_factura["conceptos"][$i]["descuento"] = 0;
+                }
                 $i++;
             }
         } catch (\Exception $e) {
@@ -308,5 +420,80 @@ class CFD
             }
         }
         return $fecha_xml;
+    }
+
+    private function getValidacionCFDI33($xml)
+    {
+        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
+        if ($usa_servicio == 1) {
+            $client = new \GuzzleHttp\Client();
+            $url = config('app.env_variables.SERVICIO_CFDI_URL');
+            $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+
+
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept' => 'application/json',
+            ];
+
+            $multipart = [[
+                'name' => 'xml',
+                //'contents' => fopen($xml, 'r'),
+                'contents' => $xml,
+                'filename' => 'custom_filename.xml'
+            ]];
+
+            $response = $client->request('POST', $url, [
+                'headers' => $headers,
+                'multipart' => $multipart,
+            ]);
+            return json_decode($response->getBody()->getContents(), true);
+        }
+    }
+
+    public function validaCFDI33($xml)
+    {
+        $respuesta = $this->getValidacionCFDI33($xml);
+        $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+
+        if ($estructura_correcta !== "OK") {
+            abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+        }
+
+        $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
+        if ($validaciones_proveedor_comprobante !== "OK") {
+            abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+        }
+        $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
+        if ($validaciones_proveedor_complemento !== "OK") {
+            abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+        }
+
+        $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
+
+        if ($env_servicio === "production") {
+            $validacion_status_sat = $respuesta["statusSat"];
+            $validacion_status_code_sat = $respuesta["statusCodeSat"];
+
+            if ($validacion_status_sat !== "Vigente") {
+                abort(500, "Aviso SAT:\n" . $validacion_status_sat . " -" . $validacion_status_code_sat . "");
+            }
+        }
+
+    }
+
+    public function validaVigente($xml)
+    {
+        $respuesta = $this->getValidacionCFDI33($xml);
+        $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
+
+        if ($env_servicio === "production") {
+            $validacion_status_sat = $respuesta["statusSat"];
+
+            if ($validacion_status_sat !== "Vigente") {
+                return false;
+            }
+            return true;
+        }
     }
 }

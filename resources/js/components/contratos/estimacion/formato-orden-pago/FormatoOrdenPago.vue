@@ -1,6 +1,6 @@
 <template>
         <span>
-            <button @click="init"  type="submit" class="btn btn-primary">Ver Formato</button>
+            <button @click="init"  type="submit" class="btn btn-outline-primary">Formato OP</button>
 
              <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
                  <div class="modal-dialog modal-lg" id="mdialTamanio">

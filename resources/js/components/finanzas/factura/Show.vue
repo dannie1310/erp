@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+        <button @click="find(id)" type="button" class="btn btn-sm btn-outline-secondary" title="Ver" :disabled="cargando">
         <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-eye" v-else></i>
         </button>
@@ -24,7 +24,7 @@
                                     {{factura.fecha_cr}}
                                 </div>
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col-md-10">
@@ -242,7 +242,7 @@
                                 <div class="form-group error-content float-right"> {{factura.total_format}} </div>
                             </div>
                             <div class="col-md-5"></div>
-                            
+
                         </div>
                     </div>
                 </div>
@@ -252,9 +252,11 @@
 </template>
 
 <script>
+import Formato from '../../padron-proveedores/gestion-proveedores/Formato.vue';
     export default {
         name: "Show",
         props: ['id'],
+        components: {},
         data() {
             return {
                 cargando: false,

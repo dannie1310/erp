@@ -124,7 +124,29 @@ class SolicitudCompraService
 
     public function update(array $data, $id)
     {
-        return $this->repository->update($data, $id);
+        try {
+            /*Validación de Partidas al Actualizar Solicitud*/
+            foreach ($data['partidas']['data'] as $key => $item){
+                if( $this->validarPartidasActualizacion($data['partidas']['data'], $item, $key)){
+                    abort(400, 'No esta permitido incluir más de una vez un insumo en una solicitud '.strval($item['material']['descripcion']).'.');
+                }
+            }
+            return $this->repository->update($data, $id);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function validarPartidasActualizacion($items, $item, $i)
+    {
+        foreach ($items as $key => $value) {
+            if ($key != $i) {
+                if ($value['material']['id'] === $item['material']['id']) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public function pdfSolicitudCompra($id)
@@ -144,7 +166,7 @@ class SolicitudCompraService
                 'id_item' => $partida->id_item,
                 'id_material' => $partida->id_material,
                 'descripcion' => $partida->material->descripcion,
-                'descripcion_corta' => substr($partida->material->descripcion, 0, 35),
+                'descripcion_corta' => ucfirst((mb_substr($partida->material->descripcion,0,35,'UTF-8'))),
                 'unidad' => $partida->material->unidad,
                 'cantidad_solicitada' => number_format($partida->cantidad, 4, '.', ''),
                 'cantidad_asignada' => number_format($cantidad_asig_previamente, 4, '.', ''),

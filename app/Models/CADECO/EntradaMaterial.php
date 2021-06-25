@@ -25,6 +25,10 @@ class EntradaMaterial extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 19;
     public const OPCION_ANTECEDENTE = 1;
+    public const TIPO = 33;
+    public const OPCION = 1;
+    public const NOMBRE = "Entrada de Almacén";
+    public const ICONO = "fa fa-sign-in";
 
     protected $fillable = [
         'id_antecedente',
@@ -82,6 +86,11 @@ class EntradaMaterial extends Transaccion
         return $this->hasManyThrough(Movimiento::class, ItemEntradaAlmacen::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
     }
 
+    public function inventarios()
+    {
+        return $this->hasManyThrough(Inventario::class, ItemEntradaAlmacen::class, "id_transaccion", "id_item", "id_transaccion", "id_item");
+    }
+
     public function entregasContratista()
     {
         return $this->hasManyThrough(ItemContratista::class,EntradaMaterialPartida::class,"id_transaccion","id_item","id_transaccion","id_item");
@@ -90,6 +99,44 @@ class EntradaMaterial extends Transaccion
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'id_sucursal');
+    }
+
+    public function facturas()
+    {
+        return $this->hasManyThrough(Factura::class,FacturaPartida::class,"id_antecedente","id_transaccion","id_transaccion","id_transaccion")
+            ->distinct();
+    }
+
+    public function getSalidasAttribute()
+    {
+        $salidas_arr = [];
+        foreach ($this->inventarios as $inventario)
+        {
+            if($inventario->movimientos->count()>0){
+                foreach ($inventario->movimientos as $movimiento)
+                {
+                    $salidas_arr[] = $movimiento->salida;
+                }
+            }
+        }
+        $salidas = collect($salidas_arr)->unique();
+        return $salidas;
+    }
+
+    public function getTransferenciasAttribute()
+    {
+        $transferencias_arr = [];
+        foreach ($this->inventarios as $inventario)
+        {
+            if($inventario->inventarios_hijos->count()>0){
+                foreach ($inventario->inventarios_hijos as $inventario_hijo)
+                {
+                    $transferencias_arr[] = $inventario_hijo->transferencia;
+                }
+            }
+        }
+        $transferencias = collect($transferencias_arr)->unique();
+        return $transferencias;
     }
 
     public function eliminar($motivo)
@@ -202,6 +249,24 @@ class EntradaMaterial extends Transaccion
             }
     }
 
+    public function getDatosParaRelacionAttribute()
+    {
+        $datos["numero_folio"] = $this->numero_folio_format;
+        $datos["id"] = $this->id_transaccion;
+        $datos["fecha_hora"] = $this->fecha_hora_registro_format;
+        $datos["orden"] = $this->fecha_hora_registro_orden;
+        $datos["hora"] = $this->hora_registro;
+        $datos["fecha"] = $this->fecha_registro;
+        $datos["usuario"] = $this->usuario_registro;
+        $datos["observaciones"] = $this->observaciones;
+        $datos["tipo"] = EntradaMaterial::NOMBRE;
+        $datos["tipo_numero"] = EntradaMaterial::TIPO;
+        $datos["icono"] = EntradaMaterial::ICONO;
+        $datos["consulta"] = 0;
+
+        return $datos;
+    }
+
     public function ordenar($clave)
     {
         return function ($a, $b) use ($clave)
@@ -238,7 +303,8 @@ class EntradaMaterial extends Transaccion
                 array_push($mensaje_items,  "-No existe un inventario ni movimiento \n". $inventario . $movimiento. $item['id_item'] );
             }
 
-            if($inventario != null && $inventario->cantidad != $inventario->saldo){
+            if($inventario != null && abs($inventario->cantidad - $inventario->saldo) > 0.01)
+            {
                 $movimientos_salidas = Movimiento::query()->where('lote_antecedente', $inventario->id_lote)->get();
                 $inventarios_transferencias =  Inventario::query()->where('lote_antecedente', $inventario->id_lote)->get();
 
@@ -404,5 +470,132 @@ class EntradaMaterial extends Transaccion
             abort(500, $e->getMessage());
             throw $e;
         }
+    }
+
+    public function getRelacionesAttribute()
+    {
+        $relaciones = [];
+        $salidas_arr = [];
+        $transferencias_arr = [];
+        $i = 0;
+
+        #ENTRADA
+        $relaciones[$i] = $this->datos_para_relacion;
+        $relaciones[$i]["consulta"] = 1;
+        $i++;
+
+        #ORDEN COMPRA
+        $relaciones[$i] = $this->ordenCompra->datos_para_relacion;
+        $i++;
+
+        #SOLICITUD
+        $relaciones[$i] = $this->ordenCompra->solicitud->datos_para_relacion;
+        $i++;
+
+        #COTIZACIONES
+        if($this->ordenCompra->cotizacion){
+            $relaciones[$i] = $this->ordenCompra->cotizacion->datos_para_relacion;
+            $i++;
+        }
+
+        #POLIZA DE OC
+        $orden_compra = $this->ordenCompra;
+        if($orden_compra->poliza){
+            $relaciones[$i] = $orden_compra->poliza->datos_para_relacion;
+            $i++;
+        }
+        #FACTURA DE OC
+        foreach ($orden_compra->facturas as $factura){
+            $relaciones[$i] = $factura->datos_para_relacion;
+            $i++;
+            #POLIZA DE FACTURA DE OC
+            if($factura->poliza){
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+            #PAGO DE FACTURA DE OC
+            foreach ($factura->ordenesPago as $orden_pago){
+                if($orden_pago->pago){
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA DE OC
+                    if($orden_pago->pago->poliza){
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+        #ENTRADA DE MATERIAL
+        $entrada_almacen = $this;
+
+        #POLIZA DE ENTRADA
+        if($entrada_almacen->poliza){
+            $relaciones[$i] = $entrada_almacen->poliza->datos_para_relacion;
+            $i++;
+        }
+
+        #SALIDA DE MATERIAL
+        foreach ($entrada_almacen->salidas as $salida){
+            $salidas_arr[] = $salida;
+        }
+        #TRANSFERENCIA DE MATERIAL
+        foreach ($entrada_almacen->transferencias as $transferencia){
+            $transferencias_arr[] = $transferencia;
+        }
+
+        #FACTURA DE ENTRADA
+        foreach ($entrada_almacen->facturas as $factura){
+            $relaciones[$i] = $factura->datos_para_relacion;
+            $i++;
+
+            #POLIZA DE FACTURA DE ENTRADA
+            if($factura->poliza){
+                $relaciones[$i] = $factura->poliza->datos_para_relacion;
+                $i++;
+            }
+
+            #PAGO DE FACTURA DE ENTRADA
+            foreach ($factura->ordenesPago as $orden_pago){
+                if($orden_pago->pago){
+                    $relaciones[$i] = $orden_pago->pago->datos_para_relacion;
+                    $i++;
+                    #POLIZA DE PAGO DE FACTURA DE ENTRADA
+                    if($orden_pago->pago->poliza){
+                        $relaciones[$i] = $orden_pago->pago->poliza->datos_para_relacion;
+                        $i++;
+                    }
+                }
+            }
+        }
+
+        $salidas = collect($salidas_arr)->unique();
+        foreach ($salidas as $salida){
+            if($salida){
+                $relaciones[$i] = $salida->datos_para_relacion;
+                $i++;
+                #POLIZA DE SALIDA
+                if($salida->poliza){
+                    $relaciones[$i] = $salida->poliza->datos_para_relacion;
+                    $i++;
+                }
+            }
+        }
+        $transferencias = collect($transferencias_arr)->unique();
+        foreach ($transferencias as $transferencia){
+            if($transferencia){
+                $relaciones[$i] = $transferencia->datos_para_relacion;
+                $i++;
+                #POLIZA DE TRANSFERENCIA
+                if($transferencia->poliza){
+                    $relaciones[$i] = $transferencia->poliza->datos_para_relacion;
+                    $i++;
+                }
+            }
+        }
+        $orden1 = array_column($relaciones, 'orden');
+
+        array_multisort($orden1, SORT_ASC, $relaciones);
+        return $relaciones;
     }
 }

@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CTPQ;
 
 
+use App\Models\CTPQ\Poliza;
 use App\Models\CTPQ\PolizaMovimiento;
 use League\Fractal\TransformerAbstract;
 
@@ -21,6 +22,7 @@ class PolizaMovimientoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'cuenta',
+        'asociacion_cfdi'
     ];
 
     protected $defaultIncludes = [
@@ -47,6 +49,15 @@ class PolizaMovimientoTransformer extends TransformerAbstract
         if($cuenta = $movimiento->cuenta)
         {
             return $this->item($cuenta, new CuentaTransformer);
+        }
+        return null;
+    }
+
+    public function includeAsociacionCFDI(PolizaMovimiento $movimiento)
+    {
+        if($item = $movimiento->asociacionCFDI)
+        {
+            return $this->item($item, new AsocCFDITransformer);
         }
         return null;
     }
