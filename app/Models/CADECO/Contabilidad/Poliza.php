@@ -51,8 +51,8 @@ class Poliza extends Model
         'poliza_contpaq'
     ];
 
-    protected $dates = ['fecha'];
-    //public $timestamps = false;
+    //protected $dates = ['fecha'];
+    public $timestamps = false;
 
     protected static function boot()
     {
@@ -452,8 +452,9 @@ class Poliza extends Model
 
     public function buscarPolizasSinAsociarCFDI()
     {
+        $polizas_sao = Poliza::lanzadas()->deFactura()->get();
         //$this->generaPolizasCFDI();
-        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->conCFDINoLanzado()->get();
+        //$polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->conCFDINoLanzado()->get();
         $polizas = [];
         $obra = Obra::find(Context::getIdObra());
         DB::purge('cntpq');
@@ -461,7 +462,63 @@ class Poliza extends Model
         $base = Parametro::find(1);
         $i = 0;
 
-        foreach ($polizas_interfaz as $key => $poliza) {
+        foreach($polizas_sao as $poliza_sao){
+            if ($poliza_sao->polizaContpaq) {
+                $guid_poliza = $poliza_sao->polizaContpaq->Guid;
+                $tipo =  $poliza_sao->polizaContpaq->tipo;
+                $cfdis = $poliza_sao->transaccionFactura->facturasRepositorio;
+                foreach ($poliza_sao->transaccionFactura->facturasRepositorio as $cfdi) {
+                    $comprobanteADD = null;
+                    try{
+                        $comprobanteADD = $cfdi->tiene_comprobante_add;
+                    }catch (\Exception $e){
+                        abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqdm.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                    }
+
+                    if ($comprobanteADD) {
+                        try{
+                            DB::purge('cntpqom');
+                            Config::set('database.connections.cntpqom.database', 'other_'.$base->GuidDSL.'_metadata');
+                            $expediente = Expediente::buscarExpediente($guid_poliza, $cfdi->comprobante->GuidDocument)->first();
+                        }catch (\Exception $e){
+                            abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                        }
+                        if (is_null($expediente)) {
+                            $i = 1;
+                            break;
+                        }
+                    }
+                }
+
+                $id_empresa_contpaq = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$obra->datosContables->BDContPaq)
+                    ->pluck("Id")
+                    ->first();
+
+                if ($i == 1) {
+                    array_push($polizas, [
+                        "uuid"=>$cfdi->uuid,
+                        "fecha_cfdi"=>($cfdi->cfdiSAT)?$cfdi->cfdiSAT->fecha_format:'',
+                        "folio_cfdi"=>($cfdi->cfdiSAT)?$cfdi->cfdiSAT->referencia:'',
+                        "total_cfdi"=>($cfdi->cfdiSAT)?$cfdi->cfdiSAT->total_format:'',
+                        "tipo_cfdi"=>$cfdi->tipo_comprobante,
+                        "proveedor_cfdi"=>($cfdi->proveedor)?$cfdi->proveedor->razon_social:'',
+                        "folio_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->Folio:'',
+                        "folio_poliza_sao"=>$poliza_sao->numero_folio_format,
+                        "fecha_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->fecha_format:'',
+                        "fecha_poliza_sao"=>$poliza_sao->fecha_format,
+                        "id_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->Id:'',
+                        "id_poliza_sao"=>$poliza_sao->id_int_poliza,
+                        "tipo_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->tipo_poliza->Nombre:'',
+                        "id_empresa_poliza_contpaq"=>$id_empresa_contpaq,
+                    ]);
+
+                }
+                $i = 0;
+
+            }
+        }
+
+        /*foreach ($polizas_interfaz as $key => $poliza) {
             if ($poliza->polizaContpaq) {
                 $guid_poliza = $poliza->polizaContpaq->Guid;
                 $tipo =  $poliza->polizaContpaq->tipo;
@@ -514,7 +571,7 @@ class Poliza extends Model
                 }
                 $i = 0;
             }
-        }
+        }*/
         return $polizas;
     }
 
