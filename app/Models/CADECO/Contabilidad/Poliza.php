@@ -51,8 +51,8 @@ class Poliza extends Model
         'poliza_contpaq'
     ];
 
-    //protected $dates = ['fecha'];
-    public $timestamps = false;
+    protected $dates = ['fecha'];
+    //public $timestamps = false;
 
     protected static function boot()
     {
@@ -577,7 +577,8 @@ class Poliza extends Model
 
     public function asociarCFDI($data)
     {
-        $polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->whereIn('id_poliza_global', $data)->get();
+        $polizas_sao = Poliza::whereIn("id_int_poliza",$data)->get();
+        //$polizas_interfaz = \App\Models\INTERFAZ\Poliza::lanzadas()->whereIn('id_poliza_global', $data)->get();
 
         $obra = Obra::find(Context::getIdObra());
         DB::purge('cntpq');
@@ -593,7 +594,128 @@ class Poliza extends Model
         DB::connection('cntpqom')->beginTransaction();
         try {
 
-            foreach ($polizas_interfaz as $key => $poliza) {
+            foreach($polizas_sao as $poliza_sao)
+            {
+                if ($poliza_sao->polizaContpaq) {
+                    $guid_poliza = $poliza_sao->polizaContpaq->Guid;
+                    $tipo = "Poliza de ".$poliza_sao->polizaContpaq->tipo_poliza->Nombre;
+                    if ($poliza_sao->transaccionFactura->facturasRepositorio) {
+                        DB::purge('cntpqom');
+                        Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                        $documento = Documento::where('GuidDocument', $guid_poliza)->first();
+                        if (is_null($documento)) {
+                            try{
+                                Documento::create([
+                                    'GuidDocument' => $guid_poliza,
+                                    'Status' => 'active',
+                                    'IdTipoDocumento' => 20,
+                                    'Type' => 'Polizas',
+                                    'Path' => '',
+                                    'Hash' => '',
+                                    'MetadataEstatusApp' => '',
+                                    'UserResponsibleApp' => '',
+                                    'ReferenceApp' => '',
+                                    'NotesApp' => '',
+                                    'ProcessApp' => '',
+                                    'NoPaymentStatusapp' => '',
+                                    'ClaveDescripcion' => '',
+                                    'SourceFile' => '',
+                                    'Type_Otro' => '',
+                                    'Type_Ext' => '',
+                                    'Period' => 0,
+                                    'Year' => 0,
+                                    'TotalPayRoll' => 0,
+                                    'SalaryType' => '',
+                                    'IsAsoContabilidad' => 1
+                                ]);
+                            }catch (\Exception $e){
+                                DB::connection('cntpqom')->rollBack();
+                                DB::connection('cntpq')->rollBack();
+                                abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                            }
+
+                        }
+
+                        $doc_app = DocApp::where('GuidDocument', $guid_poliza)->first();
+                        if (is_null($doc_app)) {
+                            try{
+                                DocApp::create([
+                                    'GuidDocument' => $guid_poliza,
+                                    'Fecha' => $fecha,
+                                    'Tipo' => 'Polizas',
+                                    'Subtipo' => $tipo,
+                                    'Ejercicio' => $poliza_sao->polizaContpaq->Ejercicio,
+                                    'Periodo' => $poliza_sao->polizaContpaq->Periodo,
+                                    'Numero' => $poliza_sao->polizaContpaq->Folio,
+                                    'SubTipoNumero' => '',
+                                    'Cuenta' => '',
+                                    'Folio' => 0,
+                                    'Responsable' =>0
+                                ]);
+                            }catch (\Exception $e){
+                                DB::connection('cntpqom')->rollBack();
+                                DB::connection('cntpq')->rollBack();
+                                abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                            }
+                        }
+                        foreach ($poliza_sao->transaccionFactura->facturasRepositorio as $cfdi) {
+                            if ($cfdi->tiene_comprobante_add) {
+                                $guid_document = $cfdi->comprobante->GuidDocument;
+                                try{
+                                    DB::purge('cntpq');
+                                    Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
+                                    $poliza_sao->polizaContpaq->generaAsociacionCFDI($cfdi->comprobante);
+                                }catch (\Exception $e){
+                                    DB::connection('cntpqom')->rollBack();
+                                    DB::connection('cntpq')->rollBack();
+                                    //$cfdi->estado = -4;
+                                    //$cfdi->save();
+                                    abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpq.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                                }
+                                try{
+                                    DB::purge('cntpqom');
+                                    Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
+                                    $expediente = Expediente::buscarExpediente($guid_poliza, $guid_document)->first();
+                                }catch (\Exception $e){
+                                    DB::connection('cntpqom')->rollBack();
+                                    DB::connection('cntpq')->rollBack();
+                                    //$cfdi->estado = -3;
+                                    //$cfdi->save();
+                                    abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                                }
+
+                                if (is_null($expediente)) {
+                                    try{
+                                        $comentario =$tipo . ", ejercicio: " . $poliza_sao->polizaContpaq->Ejercicio . ", periodo: " . $poliza_sao->polizaContpaq->Periodo . ", numero: " . $poliza_sao->polizaContpaq->Folio . ", empresa: " . $obra->datosContables->BDContPaq . ", guid: " . $guid_poliza;
+                                        Expediente::create([
+                                            'Guid_Relacionado' => $guid_poliza,
+                                            'Guid_Pertenece' => $guid_document,
+                                            'ApplicationType_Exp' => 'Contabilidad',
+                                            'Type_Exp' => 'CFDI',
+                                            'Comment_Exp' => $comentario,
+                                            'TimeStamp_Exp' => $fecha
+                                        ]);
+                                    }catch (\Exception $e){
+                                        DB::connection('cntpqom')->rollBack();
+                                        DB::connection('cntpq')->rollBack();
+                                        //$cfdi->estado = -3;
+                                        //$cfdi->save();
+                                        abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
+                                    }
+                                }
+                                //$cfdi->estado = 1;
+                                //$cfdi->save();
+                            }else{
+                                //$cfdi->estado = -1;
+                                //$cfdi->save();
+                            }
+                        }
+                        $i++;
+                    }
+                }
+            }
+
+            /*foreach ($polizas_interfaz as $key => $poliza) {
                 if(0 ==0){
                     if ($poliza->polizaContpaq) {
                         $guid_poliza = $poliza->polizaContpaq->Guid;
@@ -713,7 +835,7 @@ class Poliza extends Model
                         }
                     }
                 }
-            }
+            }*/
 
         } catch (\Exception $e) {
             DB::connection('cntpqom')->rollBack();
