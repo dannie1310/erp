@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Contabilidad;
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CADECO\Contabilidad\Poliza\Repository;
 use App\Utils\Files;
@@ -186,7 +187,7 @@ class PolizaService
         $uuid = $descargar["cfdi_pendientes"];
 
         $dir_xml = "uploads/contabilidad/XML_SAT/";
-        $dir_descarga = "downloads/fiscal/descarga/".date("Ymdhis")."/";
+        $dir_descarga = "downloads/fiscal/descarga/".date("Ymd")."/";
         if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
             mkdir($dir_descarga, 777, true);
         }
@@ -194,11 +195,19 @@ class PolizaService
             try{
                 copy($dir_xml.$uuid_individual["uuid"].".xml", $dir_descarga.$uuid_individual["uuid"].".xml");
             }catch (\Exception $e){
-                $factura_repositorio = FacturaRepositorio::where("uuid","=",$uuid_individual["uuid"])->first();
-                $exp = explode("base64,", $factura_repositorio->xml_file);
-                $data = base64_decode($exp[1]);
-                $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
-                file_put_contents($file, $data);
+                $cfdi_repositorio_global = CFDSAT::where("uuid","=",$uuid_individual["uuid"])->first();
+                if($cfdi_repositorio_global)
+                {
+                    $data_cfdi =  base64_decode($cfdi_repositorio_global->xml_file);
+                    $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
+                    file_put_contents($file, $data_cfdi);
+                } else {
+                    $factura_repositorio = FacturaRepositorio::where("uuid","=",$uuid_individual["uuid"])->first();
+                    $exp = explode("base64,", $factura_repositorio->xml_file);
+                    $data = base64_decode($exp[1]);
+                    $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
+                    file_put_contents($file, $data);
+                }
             }
         }
         $path = "downloads/fiscal/descarga/";
