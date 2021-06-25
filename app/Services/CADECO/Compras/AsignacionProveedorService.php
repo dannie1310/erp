@@ -403,9 +403,15 @@ class AsignacionProveedorService
            $asignada = $this->estaAsociada($cotizacion['partidas']);
            if($asignada)
            {
-               $no_localizado = CtgNoLocalizado::where('rfc', $cotizacion['rfc'])->first();
-               if ($no_localizado) {
-                   abort(403, "El proveedor " . $cotizacion['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+               if(is_null($cotizacion['rfc']) || $cotizacion['rfc'] == "")
+               {
+                   abort(403, " No se puede realizar la asignación, la empresa " . $cotizacion['razon_social'] . " no tiene RFC registrado, favor de comunicarse con soporte a aplicaciones");
+               }
+               else {
+                   $no_localizado = CtgNoLocalizado::where('rfc', $cotizacion['rfc'])->first();
+                   if ($no_localizado) {
+                       abort(403, "El proveedor " . $cotizacion['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+                   }
                }
            }
         }

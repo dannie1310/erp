@@ -118,9 +118,15 @@ class AsignacionContratistaService
             $asignada = $this->estaAsociada($presupuesto['partidas']);
             if($asignada)
             {
-                $no_localizado = CtgNoLocalizado::where('rfc', $presupuesto['rfc'])->first();
-                if ($no_localizado) {
-                    abort(403, "El proveedor " . $presupuesto['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+                if(is_null($presupuesto['rfc']) || $presupuesto['rfc'] == "")
+                {
+                    abort(403, " No se puede realizar la asignación, la empresa " . $presupuesto['razon_social'] . " no tiene RFC registrado, favor de comunicarse con soporte a aplicaciones");
+                }
+                else {
+                    $no_localizado = CtgNoLocalizado::where('rfc', $presupuesto['rfc'])->first();
+                    if ($no_localizado) {
+                        abort(403, "El proveedor " . $presupuesto['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
+                    }
                 }
             }
         }
