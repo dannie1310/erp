@@ -131,7 +131,7 @@ import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
 import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
 
 //CONTROL PRESUPUESTO
-import solicitudCambio from './modules/controlPresupuesto/solicitud-cambio';
+import solicitudCambioPresupuesto from './modules/controlPresupuesto/solicitud-cambio';
 import variacionVolumen from './modules/controlPresupuesto/variacion-volumen';
 import tipoOrden from './modules/controlPresupuesto/tipo-orden';
 import tarjeta from './modules/controlPresupuesto/tarjeta';
@@ -303,7 +303,7 @@ export default new Vuex.Store({
         'contratos/tipo-contrato': tipoContrato,
         'contratos/solicitud-cambio': solicitudCambio,
 
-        'control-presupuesto/solicitud-cambio': solicitudCambio,
+        'control-presupuesto/solicitud-cambio': solicitudCambioPresupuesto,
         'control-presupuesto/variacion-volumen': variacionVolumen,
         'control-presupuesto/tipo-orden': tipoOrden,
         'control-presupuesto/tarjeta': tarjeta,

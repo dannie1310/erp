@@ -22,10 +22,6 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
-    public $fillable = [
-        'activo',
-        'clave_concepto',
-    ];
     public $searchable = [
         'descripcion',
         'clave_concepto',
@@ -36,6 +32,8 @@ class Concepto extends Model
     protected $fillable = [
         'cantidad_presupuestada',
         'monto_presupuestado',
+        'activo',
+        'clave_concepto',
     ];
 
     protected static function boot()
