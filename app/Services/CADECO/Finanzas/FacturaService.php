@@ -5,13 +5,17 @@ namespace App\Services\CADECO\Finanzas;
 
 
 use DateTime;
+use Exception;
 use DateTimeZone;
 use App\Utils\CFD;
 use App\PDF\Fiscal\CFDI;
+use Webpatser\Uuid\Uuid;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
+use App\Models\CTPQ\Parametro;
 use App\Utils\ValidacionSistema;
+use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\ContraRecibo;
 use App\PDF\Finanzas\ContrareciboPDF;
@@ -159,6 +163,8 @@ class FacturaService
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("Y-m-d");
         $arreglo["version"] = $arreglo_cfd["version"];
         $arreglo["moneda"] = $arreglo_cfd["moneda"];
+        $arreglo["no_certificado"] = $arreglo_cfd["no_certificado"];
+        $arreglo["certificado"] = $arreglo_cfd["certificado"];
 
         $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
         $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
@@ -554,6 +560,7 @@ class FacturaService
             abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
         $this->guardarXml($archivo_xml, $arreglo_cfd);
+        dd('regreso');
         return $arreglo_cfd;
     }
 
@@ -617,8 +624,147 @@ class FacturaService
         }
     }
 
-    public function guardarXml($xml, $xml_array){
+    public function guardarXml($xml_fuente, $xml_array){
+        $xml_split = explode('base64,', $xml_fuente);
+        $xml = base64_decode($xml_split[1]);
+
+        $parametros = Parametro::first();
+        $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
+        if($arreglo_bbdd == false){
+            return;
+        }
+        
+        $val_insercionCertificado = $this->insUpdCertificate( $xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
+        if(!$val_insercionCertificado){
+            dd(9);
+            return;
+        }
+
+        if($this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
+            dd(6);
+            return;
+        }
+        
+        $guid_doc_metadata = Uuid::generate()->string;
+        if($this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'], $guid_doc_metadata)){
+            return;
+        }
+
+        dd(2, $xml, $this->del_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>'));
         
     }
+
+    private function existDb($guidCompany){
+        try{
+            $resp = DB::connection('cntpqg')->select(DB::raw("exec spExistDB @GuidCompany = '$guidCompany'"));
+            $resp_ = json_decode(json_encode($resp), true);
+            return $resp_;
+        }catch(Exception $e){
+
+        }
+        return false;
+    }
+
+    private function insUpdCertificate($llave, $no_serie, $rfc, $r_social){
+        $guidDoc = Uuid::generate()->string;
+        $issuer_name = 'OID.1.2.840.113549.1.9.2=Responsable: Administración Central de Servicios Tributarios al Contribuyente, OID.2.5.4.45=SAT970701NN3, L=Cuauhtémoc, S=Distrito Federal, C=MX, PostalCode=06300, STREET="Av. Hidalgo 77, Col. Guerrero", E=acods@sat.gob.mx, OU=Administración de Seguridad de la Información, O=Servicio de Administración Tributaria, CN=A.C. del Servicio de Administración Tributaria';
+        $subject_name = 'OU=UNICA, SERIALNUMBER=" / ", OID.2.5.4.45='.$rfc.' / , O='.$r_social.', OID.2.5.4.41='.$r_social.', CN='.$r_social;
+        try{
+            $resp = DB::connection('cntpqg')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec spInsUpdCertificate @GuidDocument = 'DD41F3B0-D47A-11EB-82DA-E1114F8D5A0B', @LlavePublica='$llave', @NumeroSerie='$no_serie', @FechaInicial='',
+                @FechaFinal='',@SubjectName='$subject_name', @IssuerName='$issuer_name', @IsTesting=0");
+            
+            $val = DB::connection('cntpqg')->select(DB::raw("SELECT top 1 * FROM [DB_Directory].[dbo].[Certificates] WHERE NumeroSerie='$no_serie'"));
+            return $val != false;
+        }catch(Exception $e){
+            dd('pando', $e);
+            return false;
+        }
+        dd('pandi');
+        return false;
+    }
+
+    private function buscarCfdiDuplicado($base_datos, $uuid){
+        if(!$this->conexionContpaq($base_datos)){
+            return false;
+        }
+        $resp = DB::connection('cntpq')->select(DB::raw("SELECT Documento.GuidDocument GuidDocument FROM  Documento WITH(NOLOCK) 
+        LEFT JOIN Comprobante WITH(NOLOCK) ON Comprobante.GuidDocument = Documento.GuidDocument 
+        WHERE Comprobante.UUID='$uuid' "));
+
+        return count($resp) > 0;
+    }
+
+    private function spInsUpdDocument($xml, $base_datos, $guid){
+        // dd($base_datos);
+        if(!$this->conexionContpaq($base_datos)){
+            return false;
+        }
+        $hash = md5($guid).'=';
+
+        $micro_date = microtime();
+        $date_array = explode(" ",$micro_date);
+        $date = date("Y-m-d",$date_array[1]).'T'. date('H:i:s', $date_array[1]) . $date_array[0].'-05:00';
+
+        $xml_data = $this->del_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>');
+
+        $pXmlFile = '<Metadata xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="1.0" 
+        Hash="'.$hash.'" Status="active" TimeStamp="'.$date.'" FilePermissions="R" GuidDocument="'.$guid.'" Type="CFDI" xmlns="http://www.contpaqi.com">
+        <Document><Document xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Type="XML" xmlns="">' . $xml_data.
+        '</Document></Document><MetadataApp><SourceFile Value="'.$guid.'.xml" xmlns="" /></MetadataApp></Metadata>';
+
+        $pXmlFile = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($pXmlFile));
+// dd( $pXmlFile, );
+        try{
+            $resp = DB::connection('cntpqg')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$base_datos].[dbo].[spInsUpdDocument]  @pXmlFile = '$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0");
+
+                dd($resp);
+            
+            $val = DB::connection('cntpqg')->select(DB::raw("SELECT top 1 * FROM ['$base_datos'].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
+            return $val != false;
+        }catch(Exception $e){
+            dd('pando', $e);
+            return false;
+        }
+
+
+
+        dd($date, $this->del_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>'));
+
+        
+    }
+
+    private function conexionContpaq($base_datos)
+    {
+        try {
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $base_datos);
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
+    private function get_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
+    }
+
+    private function del_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        // $ini += strlen($start);
+        $len = strpos($string, $end, $ini)-$ini;
+        $texto =  substr($string, $ini, $len);
+        // dd($texto);
+        return str_replace($texto.$end, '', $string);
+    }
+
 }
 
