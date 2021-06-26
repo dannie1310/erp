@@ -538,6 +538,18 @@ class CFDSATService
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
+            if($factura_xml === false)
+            {
+                $factura_xml = simplexml_load_string($archivo_xml);
+            }
+
+            if(!$factura_xml){
+                $errors = libxml_get_errors();
+                //dd(var_export($errors, true));
+                $this->log["archivos_no_cargados_error_app"] += 1;
+                $this->log["cfd_no_cargados_error_app"] += 1;
+                return 0;
+            }
 
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());

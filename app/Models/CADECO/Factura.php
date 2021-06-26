@@ -1283,12 +1283,6 @@ class Factura extends Transaccion
             abort(400, $e->getMessage());
         }
 
-        try{
-            $this->generaPrepoliza();
-        } catch (\Exception $e) {
-
-        }
-
         DB::connection('cadeco')->commit();
         return $this;
     }
