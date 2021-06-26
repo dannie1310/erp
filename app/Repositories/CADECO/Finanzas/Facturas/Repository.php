@@ -9,15 +9,19 @@
 namespace App\Repositories\CADECO\Finanzas\Facturas;
 
 
+use Exception;
+use App\Facades\Context;
+use App\Models\CADECO\Obra;
+use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Factura;
-use App\Models\CADECO\Moneda;
+USE Illuminate\Support\Facades\DB;
+use App\Models\CTPQ\Parametro;
+use Illuminate\Support\Facades\Config;
+use App\Repositories\RepositoryInterface;
 use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use App\Repositories\RepositoryInterface;
-USE Illuminate\Support\Facades\DB;
-use App\Models\CADECO\Obra;
-use App\Facades\Context;
+use Webpatser\Uuid\Uuid;
 
 class Repository extends \App\Repositories\Repository implements RepositoryInterface
 {
@@ -138,5 +142,209 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 ->count();
             return $existe;
         }
+    }
+
+    public function guardarXml($xml_fuente, $xml_array){
+        $xml_split = explode('base64,', $xml_fuente);
+        $xml = base64_decode($xml_split[1]);
+
+        $obra = Obra::find(Context::getIdObra());
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
+
+        $parametros = Parametro::first();
+        $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
+        if($arreglo_bbdd == false){
+            return;
+        }
+        
+        $val_insercionCertificado = $this->insUpdCertificate( $xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
+        if(!$val_insercionCertificado){
+            return;
+        }
+
+        if($this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
+            return;
+        }
+        
+        $guid_doc_metadata = Uuid::generate()->string;
+        $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']); 
+        if(!$va_insert_xml){
+            return;
+        }
+        return 1;
+
+    }
+    
+    private function existDb($guidCompany){
+        try{
+            $resp = DB::connection('cntpq')->select(DB::raw("exec [DB_Directory].[dbo].[spExistDB] @GuidCompany = '$guidCompany'"));
+            $resp_ = json_decode(json_encode($resp), true);
+            return $resp_;
+        }catch(Exception $e){
+            return false;
+        }
+        return false;
+    }
+
+    private function insUpdCertificate($llave, $no_serie, $rfc, $r_social){
+        $guidDoc = Uuid::generate()->string;
+        $issuer_name = 'OID.1.2.840.113549.1.9.2=Responsable: Administración Central de Servicios Tributarios al Contribuyente, OID.2.5.4.45=SAT970701NN3, L=Cuauhtémoc, S=Distrito Federal, C=MX, PostalCode=06300, STREET="Av. Hidalgo 77, Col. Guerrero", E=acods@sat.gob.mx, OU=Administración de Seguridad de la Información, O=Servicio de Administración Tributaria, CN=A.C. del Servicio de Administración Tributaria';
+        $subject_name = 'OU=UNICA, SERIALNUMBER=" / ", OID.2.5.4.45='.$rfc.' / , O='.$r_social.', OID.2.5.4.41='.$r_social.', CN='.$r_social;
+        try{
+            $resp = DB::connection('cntpq')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [DB_Directory].[dbo].[spInsUpdCertificate] @GuidDocument = 'DD41F3B0-D47A-11EB-82DA-E1114F8D5A0B', @LlavePublica='$llave', @NumeroSerie='$no_serie', @FechaInicial='',
+                @FechaFinal='',@SubjectName='$subject_name', @IssuerName='$issuer_name', @IsTesting=0");
+            
+            $val = DB::connection('cntpq')->select(DB::raw("SELECT top 1 * FROM [DB_Directory].[dbo].[Certificates] WHERE NumeroSerie='$no_serie'"));
+            return $val != false;
+        }catch(Exception $e){
+            return false;
+        }
+        return false;
+    }
+
+    private function buscarCfdiDuplicado($base_datos, $uuid){
+        if(!$this->conexionContpaq($base_datos)){
+            return true;
+        }
+        $resp = DB::connection('cntpq')->select(DB::raw("SELECT Documento.GuidDocument GuidDocument FROM  Documento WITH(NOLOCK) 
+        LEFT JOIN Comprobante WITH(NOLOCK) ON Comprobante.GuidDocument = Documento.GuidDocument 
+        WHERE Comprobante.UUID='$uuid' "));
+
+        return count($resp) > 0;
+    }
+
+    private function spInsUpdDocument($xml, $db_doc_metadata, $db_doc_content, $guid, $doc_date, $rfc, $folio){        
+        if(!$this->conexionContpaq($db_doc_metadata)){
+            return false;
+        }
+        $hash = md5($guid).'=';
+
+        $micro_date = microtime();
+        $date_array = explode(" ",$micro_date);
+        $date = date("Y-m-d",$date_array[1]).'T'. date('H:i:s', $date_array[1]) . str_replace('0.', '.', $date_array[0]).'-05:00';
+
+        $xml_data = $this->del_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>');
+        $xml_data = $this->del_string_between($xml, '<?', '?>');
+
+        $pXmlFile = '<Metadata xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="1.0" 
+        Hash="'.$hash.'" Status="active" TimeStamp="'.$date.'" FilePermissions="R" GuidDocument="'.$guid.'" Type="CFDI" xmlns="http://www.contpaqi.com">
+        <Document><Document xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Type="XML" xmlns="">' . $xml_data.
+        '</Document></Document><MetadataApp><SourceFile Value="'.$guid.'.xml" xmlns="" /></MetadataApp></Metadata>';
+
+        $pXmlFile = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($pXmlFile));
+
+        try{
+            DB::connection('cntpqg')->beginTransaction();
+            $resp = DB::connection('cntpqg')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = '$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0");
+
+            $val = DB::connection('cntpqg')->select(DB::raw("SELECT top 1 * FROM [$db_doc_metadata].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
+            
+            if(count($val) == 0){
+                return false;
+            }
+
+            $conceptos = $this->get_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>');
+            $conceptos = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($conceptos));
+            $array_concepto = [];
+            do{
+                $array_concepto[] = $this->get_string_between($conceptos, '<cfdi:Concepto', '</cfdi:Concepto>');
+                $conceptos = $this->del_string_between($conceptos, '<cfdi:Concepto', '</cfdi:Concepto>');
+            } while(strlen($conceptos) > 50);
+
+            foreach($array_concepto as $key => $concepto){
+                $filename = $guid . '.xml';
+                $conceptNumber = $key + 1;
+                $pXml_Node = '<cfdi:Concepto xmlns:cfdi="http://www.sat.gob.mx/cfd/3" ' . $concepto . '</cfdi:Concepto>';
+                $resp = DB::connection('cntpqg')
+                        ->update("exec [$db_doc_metadata].[dbo].[spInsConcept]  @pGuidDocument=N'$guid',@pXml_Node=N'$pXml_Node', @fileName=N'$filename', @conceptNumber=$conceptNumber");
+            }
+            
+            $creation_date = date("Y-m-d H:i:s",$date_array[1]);
+            $resp = DB::connection('cntpqg')
+                ->update("exec [$db_doc_content].[dbo].[spSaveDocument]  @GuidDocument=N'$guid',@DocumentType=N'CFDI', @fileName=N'$filename' ,@Content=N'$xml'
+                            ,@SubDirectory=N'',@DocumentDate=N'$doc_date',@CreationDate=N'$creation_date'");
+
+            
+            $guid_vr = Uuid::generate()->string;
+            $val_result = $this->validationResult($guid_vr, $date, $doc_date, $rfc, $folio);
+
+            $resp = DB::connection('cntpqg')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = '$val_result', @pDeleteDocument=0, @pSobreEscribe=0");
+
+            $fecha_sf = date('Y-m-d');
+            $resp = DB::connection('cntpqg')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spCreateReferences]  @GuidRel =N'$guid' , @RelatedGuidDocuments=N'$guid_vr' 
+                        ,@ApplicationType=N'ADD',@TipoDoc=N'ValidationResult',@Fecha=N'$fecha_sf',@Comment=N'Acuse Validación Comprobante $doc_date $rfc $folio '");
+
+            $resp = DB::connection('cntpqg')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spUpdDocumento]  @GuidDocument =N'$guid',@ProcessApp=N'',@UserResponsibleApp=N'',
+                            @ReferenceApp=N'',@NotesApp=N'',@MetadataEstatusApp=N'Timbrado',@ValidationStatus=N'OK' ");
+            
+            DB::connection('cntpqg')->commit();
+            return true;
+        }catch(Exception $e){
+            DB::connection('cntpqg')->rollBack();
+            return 1;
+        }
+
+        return false;
+    }
+
+    private function conexionContpaq($base_datos)
+    {
+        try {
+            DB::purge('cntpq');
+            \Config::set('database.connections.cntpq.database', $base_datos);
+        } catch (\Exception $e) {
+            return false;
+        }
+        return true;
+    }
+
+    private function get_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        return substr($string, $ini, $len);
+    }
+
+    private function del_string_between($string, $start, $end){
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        if ($ini == 0) return '';
+        $len = strpos($string, $end, $ini)-$ini;
+        $texto =  substr($string, $ini, $len);
+        return str_replace($texto.$end, '', $string);
+    }
+
+    private function validationResult($guid, $date, $date_xml, $rfc, $folio){
+        $hash = md5($guid).'=';
+        return '<?xml version="1.0" encoding="utf-8"?><Metadata xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="1.0" 
+        Hash="'.$hash.'" Status="active" TimeStamp="'.$date.'" FilePermissions="R" GuidDocument="'.$guid.'" Type="ValidationResult" 
+        xmlns="http://www.contpaqi.com"><Document><Document xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Type="XML" xmlns="">
+        <ValidationResult documentType="CFDI" IsDuplicated="false" IsValid="true"><RFCIssuer>'.$rfc.'</RFCIssuer><DateIssue>'.$date_xml.'</DateIssue><Serial></Serial><Number>'.$folio.'</Number>
+        <ValidationItemResult validationResult="OK" descriptionValidation="Codificación del CFD/CFDI es UTF-8 . " codeValidation="1.1" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El XML es un comprobante " codeValidation="1.2" /><ValidationItemResult validationResult="OK" descriptionValidation="Estructura  "  codeValidation="1.3" />
+        <ValidationItemResult validationResult="OK" descriptionValidation="La versión del comprobante es correcta a su fecha de generación" codeValidation="1.4" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El número de certificado del comprobante corresponde al certificado reportado " codeValidation="2.1" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El certificado del comprobante en base 64 es correcto" codeValidation="2.2" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El certificado del comprobante fue emitido por el SAT " codeValidation="2.3" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El certificado del comprobante corresponde a un CSD o FIEL " codeValidation="2.4" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El sello del comprobante es válido para el certificado reportado " codeValidation="2.8" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El certificado del comprobante no debe corresponder a un certificado de prueba " codeValidation="2.9" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="El certificado corresponde al RFC del Emisor" codeValidation="3.1" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="CFDI Se encontró el complemento Timbre Fiscal Digital " codeValidation="4.3" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="CFDI Se encontró el certificado  del PAC   (00001000000504587508)" codeValidation="4.4" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="CFDI El sello del Timbre Fiscal Digital es válido " codeValidation="4.7" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="CFDI El certificado con el que se generó el Timbre Fiscal Digital no debe ser un certificado de prueba " codeValidation="4.8" /><ValidationItemResult 
+        validationResult="OK" descriptionValidation="CFDI El certificado con el que se generó el Timbre Fiscal Digital fue emitido para un PAC " codeValidation="4.9" /><ValidationItemResult 
+        validationResult="OK" descriptionValidation="CFDI El sello CFD del timbre corresponde con el sello del comprobante " codeValidation="4.1" /><ValidationItemResult validationResult="OK" 
+        descriptionValidation="En cargar Recibidos: El RFC del comprobante Recibido corresponde con el RFC de la empresa " codeValidation="5.1" /></ValidationResult></Document>
+        </Document><MetadataApp><SourceFile Value="'.$guid.'.xml" xmlns="" /></MetadataApp></Metadata>';
     }
 }
