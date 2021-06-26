@@ -29,11 +29,14 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
         $insertados = 0;
 
         $values = [];
+        $sin_lectura = "";
 
         foreach ($empresas as $empresa) {
+
             $values = [];
             DB::purge('cntpq');
             Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+
             try {
                 $values = DB::connection("cntpq")->select("
 
@@ -46,7 +49,7 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
                        '" . $empresa->Nombre . "' as nombre_empresa
                 from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
 
-where Cuentas.Codigo like '1%' or  Cuentas.Codigo like '5%' or Cuentas.Codigo like '6%' or  Cuentas.Codigo like '7%'
+where Cuentas.Tipo in('A','C','E','G','I')
 
                 group by IdCuenta, Nombre, Codigo, Tipo
                 having sum (
@@ -66,7 +69,7 @@ select IdCuenta as id_cuenta, Cuentas.Nombre as nombre_cuenta, Cuentas.Codigo as
                        '" . $empresa->Nombre . "' as nombre_empresa
                 from dbo.MovimientosPoliza join dbo.Cuentas on(Cuentas.Id = MovimientosPoliza.IdCuenta)
 
-where Cuentas.Codigo like '2%' or  Cuentas.Codigo like '3%' or Cuentas.Codigo like '4%'
+where Cuentas.Tipo in('B','D','F','H','J')
 
                 group by IdCuenta, Nombre, Codigo, Tipo
                 having sum (
@@ -80,7 +83,8 @@ where Cuentas.Codigo like '2%' or  Cuentas.Codigo like '3%' or Cuentas.Codigo li
                 }, $values);
 
             } catch (\Exception $e) {
-
+                //abort(500,$e->getMessage().$empresa->AliasBDD);
+                $sin_lectura .= '-'.$empresa->AliasBDD . "\n";
             }
             if (count($values) > 0) {
                 try {
@@ -98,7 +102,16 @@ where Cuentas.Codigo like '2%' or  Cuentas.Codigo like '3%' or Cuentas.Codigo li
             }
         }
 
+        DB::connection("seguridad")->update("
+            update cuentas_saldos_negativos set tipo_cuenta = tipos_cuentas_contpaq.descripcion
+            from Contabilidad.cuentas_saldos_negativos as cuentas_saldos_negativos
+            join Contabilidad.tipos_cuentas_contpaq as tipos_cuentas_contpaq
+            on(cuentas_saldos_negativos.tipo = tipos_cuentas_contpaq.tipo)
+            where estado = 1
+        ");
+
         DB::connection('seguridad')->commit();
+        //abort(500, "Error de lectura en las bases de datos: \n".$sin_lectura."\n Por favor pongase en contacto con Soporte a Aplicaciones.");
         return [
             "insertados" => $insertados
         ];
@@ -112,7 +125,7 @@ where Cuentas.Codigo like '2%' or  Cuentas.Codigo like '3%' or Cuentas.Codigo li
             , "empresa" => $cuenta->nombre_empresa
             , "codigo_cuenta" => $cuenta->codigo_cuenta
             , "nombre_cuenta" => $cuenta->nombre_cuenta
-            , "tipo_cuenta" => $cuenta->tipo
+            , "tipo_cuenta" => $cuenta->tipo_cuenta
             , "naturaleza" => $cuenta->naturaleza
             , "saldo_cuenta" => $cuenta->saldo_real
             , "saldo_cuenta_format" => $cuenta->saldo_real_format
