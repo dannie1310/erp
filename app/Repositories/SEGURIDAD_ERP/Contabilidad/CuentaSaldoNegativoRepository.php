@@ -25,7 +25,7 @@ class CuentaSaldoNegativoRepository extends Repository implements RepositoryInte
 
         DB::connection("seguridad")->update("update Contabilidad.cuentas_saldos_negativos set estado = 0");
 
-        $empresas = Empresa::all();
+        $empresas = Empresa::produccion()->get();
         $insertados = 0;
 
         $values = [];
