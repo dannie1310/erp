@@ -9,6 +9,7 @@
 namespace App\Models\CTPQ;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
 use Illuminate\Database\Eloquent\Model;
 
 class Cuenta extends Model
@@ -33,6 +34,11 @@ class Cuenta extends Model
     {
         return $this->asociacion->cuenta_superior;
 
+    }
+
+    public function tipo()
+    {
+        return $this->belongsTo(TipoCuenta::class,"Tipo","tipo");
     }
 
     public function logs()
