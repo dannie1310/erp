@@ -102,6 +102,14 @@ where Cuentas.Tipo in('B','D','F','H','J')
             }
         }
 
+        DB::connection("seguridad")->update("
+            update cuentas_saldos_negativos set tipo_cuenta = tipos_cuentas_contpaq.descripcion
+            from Contabilidad.cuentas_saldos_negativos as cuentas_saldos_negativos
+            join Contabilidad.tipos_cuentas_contpaq as tipos_cuentas_contpaq
+            on(cuentas_saldos_negativos.tipo = tipos_cuentas_contpaq.tipo)
+            where estado = 1
+        ");
+
         DB::connection('seguridad')->commit();
         //abort(500, "Error de lectura en las bases de datos: \n".$sin_lectura."\n Por favor pongase en contacto con Soporte a Aplicaciones.");
         return [
@@ -117,7 +125,7 @@ where Cuentas.Tipo in('B','D','F','H','J')
             , "empresa" => $cuenta->nombre_empresa
             , "codigo_cuenta" => $cuenta->codigo_cuenta
             , "nombre_cuenta" => $cuenta->nombre_cuenta
-            , "tipo_cuenta" => $cuenta->tipoCuenta->descripcion
+            , "tipo_cuenta" => $cuenta->tipo_cuenta
             , "naturaleza" => $cuenta->naturaleza
             , "saldo_cuenta" => $cuenta->saldo_real
             , "saldo_cuenta_format" => $cuenta->saldo_real_format
