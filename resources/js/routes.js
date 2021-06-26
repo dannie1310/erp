@@ -2014,10 +2014,27 @@ export const routes = [
                                 name:"asociar-poliza-cfdi",
                                 component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
                                 meta: {
-                                    title: 'Asociar Pólizas de Contpaq con CFDI',
-                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR PÓLIZAS DE CONTPAQ CON CFDI'},
+                                    title: 'Asociar CFDI con Pólizas de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR CFDI CON PÓLIZAS DE CONTPAQ'},
                                     middleware: [auth, context, permission],
                                     permission: ['asociar_poliza_contpaq_cfdi'],
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'cfdi-pendientes-carga-add',
+                        component: require('./components/contabilidad/cfdi-add-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cfdi-pendientes-carga-add",
+                                component: require('./components/contabilidad/cfdi-add-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'CFDI pendientes de cargar a ADD de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'CFDI PENDIENTES DE CARGAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar-cfdi-pendientes-carga-add'],
                                 }
                             },
                         ]

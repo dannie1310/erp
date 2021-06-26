@@ -200,7 +200,6 @@ export default {
             return this.$store.dispatch('compras/solicitud-compra/index', {
                 params: {
                     scope: ['cotizacion', 'conComplemento'],
-                    limit: 200,
                     order: 'DESC',
                     sort: 'numero_folio'
                 }

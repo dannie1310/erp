@@ -5,7 +5,11 @@ namespace App\Services\CADECO\Contabilidad;
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CADECO\Contabilidad\Poliza\Repository;
+use App\Utils\Files;
+use Chumper\Zipper\Zipper;
 use Illuminate\Support\Facades\DB;
 
 class PolizaService
@@ -170,5 +174,56 @@ class PolizaService
     public function getPolizasPorAsociar()
     {
         return $this->repository->getAsociarCFDI();
+    }
+
+    public function getCFDIPorCargar()
+    {
+        return $this->repository->getCFDIPorCargar();
+    }
+
+    public function descargarCFDIPorCargar()
+    {
+        $descargar =  $this->repository->getCFDIPorCargar();
+        $uuid = $descargar["cfdi_pendientes"];
+
+        $dir_xml = "uploads/contabilidad/XML_SAT/";
+        $dir_descarga = "downloads/fiscal/descarga/".date("Ymd")."/";
+        if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
+            mkdir($dir_descarga, 777, true);
+        }
+        foreach ($uuid as $uuid_individual){
+            try{
+                copy($dir_xml.$uuid_individual["uuid"].".xml", $dir_descarga.$uuid_individual["uuid"].".xml");
+            }catch (\Exception $e){
+                $cfdi_repositorio_global = CFDSAT::where("uuid","=",$uuid_individual["uuid"])->first();
+                if($cfdi_repositorio_global)
+                {
+                    $data_cfdi =  base64_decode($cfdi_repositorio_global->xml_file);
+                    $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
+                    file_put_contents($file, $data_cfdi);
+                } else {
+                    $factura_repositorio = FacturaRepositorio::where("uuid","=",$uuid_individual["uuid"])->first();
+                    $exp = explode("base64,", $factura_repositorio->xml_file);
+                    $data = base64_decode($exp[1]);
+                    $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
+                    file_put_contents($file, $data);
+                }
+            }
+        }
+        $path = "downloads/fiscal/descarga/";
+        $nombre_zip = $path.date("Ymd_his").".zip";
+
+        $zipper = new Zipper;
+        $zipper->make(public_path($nombre_zip))
+            ->add(public_path($dir_descarga));
+        $zipper->close();
+
+        Files::eliminaDirectorio($dir_descarga);
+
+        if(file_exists(public_path($nombre_zip))){
+            return response()->download(public_path($nombre_zip));
+        } else {
+            return response()->json(["mensaje"=>"No hay CFDI para la descarga "]);
+        }
     }
 }

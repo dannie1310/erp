@@ -36,6 +36,16 @@ class Repository implements RepositoryInterface
         return $this->model->get();
     }
 
+    public function first()
+    {
+        $this->search();
+        $this->scope();
+        $this->sort();
+        $this->limit();
+
+        return $this->model->first();
+    }
+
     public function paginate()
     {
         $this->search();
