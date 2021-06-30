@@ -5,7 +5,6 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 
 
 use App\Models\IGH\Usuario;
-use App\Models\MODULOSSAO\Seguridad\Usuario as UsuarioModuloSAO;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -26,17 +25,17 @@ class DocumentoDeNoLocalizado extends Model
 
     public function registro()
     {
-        return $this->belongsTo(UsuarioModuloSAO::class,  'IDUsuario','id_usuario_registro');
+        return $this->hasOne(\App\Models\MODULOSSAO\Seguridad\Usuario::class,  'IDUsuario','id_usuario_registro');
     }
 
     public function aprobo()
     {
-        return $this->belongsTo(Usuario::class,  'idusuario','id_usuario_aprobo');
+        return $this->hasOne(Usuario::class,  'idusuario','id_usuario_aprobo');
     }
 
     public function rechazo()
     {
-        return $this->belongsTo(Usuario::class, 'idusuario', 'id_usuario_rechazo');
+        return $this->hasOne(Usuario::class, 'idusuario', 'id_usuario_rechazo');
     }
 
     /**

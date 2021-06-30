@@ -70,6 +70,7 @@
                                        </div>
                                     </div>
                                 </div>
+                                <br>
                                 <div class="col-md-12">
                                     <h5>Datos Proveedor No Localizado:</h5>
                                 </div>
@@ -91,6 +92,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <br>
                                 <div class="col-md-12">
                                     <h5>Estado de Autorización | Rechazo:</h5>
                                 </div>
@@ -120,7 +122,7 @@
                                                   class="form-control"
                                                   v-model="documento.registro" />
                                         </div>
-                                        <label class="col-md-1 col-form-label">Usuario:</label>
+                                        <label class="col-md-1 col-form-label" v-if="documento.estado != 0">Usuario:</label>
                                         <div class="col-md-4" v-if="documento.estado == 1">
                                            <input disabled="true"
                                                   type="text"
