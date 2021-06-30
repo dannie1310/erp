@@ -66,4 +66,9 @@ class DocumentoDeNoLocalizadoService
         }
         return $documento->rechazar($data['motivo']);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
 }

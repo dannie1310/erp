@@ -7,7 +7,6 @@
                     <p>Configuración</p>
                     <i class="right fa fa-angle-left"></i>
                 </a>
-
                 <ul class="nav nav-treeview" >
                     <li class="nav-item">
                         <a href="#" class="nav-link" @click="mostrarMenu($event)">
@@ -31,12 +30,12 @@
                         </ul>
                     </li>
                 </ul>
-
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="nav-icon fa fa fa-circle nav-icon"></i>
-                    <p>Proveedor No Localizado
+                    <p>
+                        Proveedor No Localizado
                         <i class="right fa fa-angle-left"></i>
                     </p>
                 </a>
