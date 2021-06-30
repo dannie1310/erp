@@ -103,9 +103,8 @@
                         estatus: this.getEstado(documento.estado_format, documento.estado_color),
                         buttons: $.extend({}, {
                             id : documento.id,
-                            show: self.$root.can('editar_limite_remesa') ? true : false,
-                            autorizar: self.$root.can('editar_limite_remesa') && documento.estado == 0 ? true : false,
-                            rechazar: self.$root.can('editar_limite_remesa') && documento.estado == 0 ? true : false,
+                            autorizar: self.$root.can('autorizar_rechazar_pago_proveedor_no_localizado', true) && documento.estado == 0 ? true : false,
+                            rechazar: self.$root.can('autorizar_rechazar_pago_proveedor_no_localizado', true) && documento.estado == 0 ? true : false,
                         })
                     }));
                 },

@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="btn-group">
-            <Show v-bind:id="value.id" v-if="value.show"/>
+            <Show v-bind:id="value.id"/>
             <button @click="autorizar" v-if="value.autorizar" type="button" class="btn btn-sm btn-outline-success" title="Autorizar">
                 <i class="fa fa-check"></i>
             </button>

@@ -33,14 +33,12 @@
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="nav-icon fa fa fa-circle nav-icon"></i>
-                    <p>
-                        Proveedor No Localizado
-                        <i class="right fa fa-angle-left"></i>
-                    </p>
+                    <i class="fa fa-stopwatch"></i>
+                    <p>Proveedor No Localizado</p>
+                    <i class="right fa fa-angle-left"></i>
                 </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item" v-if="$root.can('consultar_camion')">
+                <ul class="nav nav-treeview" style="height: auto">
+                    <li class="nav-item" v-if="$root.can('autorizar_rechazar_pago_proveedor_no_localizado',true)">
                         <router-link :to="{name: 'autorizar-pago-factura'}" class="nav-link" :class="{active: this.$route.name == 'autorizar-pago-factura'}">
                             <i class="fa fa-truck nav-icon"></i>
                             <p> Autorización Pago Factura</p>
@@ -61,11 +59,12 @@
                 $(event.target).closest('li').toggleClass('menu-open');
             }
         }
+
     }
 </script>
 
-
-
 <style scoped>
-
+    .sidebar-form, .nav-sidebar > .nav-header {
+        padding: 1rem 0.5rem 0.5rem 1rem;
+    }
 </style>

@@ -3658,7 +3658,7 @@ export const routes = [
                             title: 'Autorización de  Proveedores No Localizados en Remesa',
                             breadcrumb: {name: 'AUTORIZAR PAGOS DE FACTURA', parent: 'proveedor-no-localizado'},
                             middleware: [auth, permission],
-                            permission: ['consultar_limite_remesa'],
+                            permission: ['autorizar_rechazar_pago_proveedor_no_localizado'],
                             general: true
                         }
                     },
