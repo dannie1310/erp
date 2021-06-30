@@ -1209,10 +1209,11 @@ class Factura extends Transaccion
             abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
 
-        try{
-            $this->generaPrepoliza();
-        } catch (\Exception $e) {
-
+        $obra = Obra::query()->find(Context::getIdObra());
+        if ($obra->datosContables) {
+            if ($obra->datosContables->BDContPaq != "") {
+                $this->generaPrepoliza();
+            }
         }
 
         DB::connection('cadeco')->commit();
@@ -1269,18 +1270,17 @@ class Factura extends Transaccion
 
             }
 
-            $this->generaPrepoliza();
+            $obra = Obra::query()->find(Context::getIdObra());
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    $this->generaPrepoliza();
+                }
+            }
 
 
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
-        }
-
-        try{
-            $this->generaPrepoliza();
-        } catch (\Exception $e) {
-
         }
 
         DB::connection('cadeco')->commit();

@@ -231,7 +231,7 @@ class CFDSATService
         $file = public_path($paths["path_zip"]);
         file_put_contents($file, $data);
         $this->extraeZIP($paths["path_zip"], $paths["path_xml"]);
-        $this->procesaCFD($paths["path_xml"]);
+        $this->procesaDirectorio($paths["path_xml"]);
         $this->log["fecha_hora_fin"] = date("Y-m-d H:i:s");
         $this->carga->update($this->log);
         $this->repository->actualizaNoLocalizados($this->carga);
@@ -323,8 +323,8 @@ class CFDSATService
         if(count($this->carga->cambios)>0){
             event(new CambioEFOS($this->carga->cambios));
         }
-        $this->carga->load("usuario");
 
+        $this->carga->load("usuario");
         $this->repository->actualizaNoLocalizados($this->carga);
 
         if(count($this->carga->noLocalizados)>0){
@@ -351,6 +351,59 @@ class CFDSATService
         return true;
     }
 
+    public function procesaFacturaRepositorio(FacturaRepositorio $facturaRepositorio)
+    {
+        $exp = explode("base64,", $facturaRepositorio->xml_file);
+        $contenido_archivo= base64_decode($exp[1]);
+        $file = public_path("uploads/".$facturaRepositorio->uuid.".xml");
+        file_put_contents($file, $contenido_archivo);
+        $this->procesaArchivoCFDI($file, $facturaRepositorio->uuid.".xml");
+        $cfdi = $this->repository->where([["uuid","=",$facturaRepositorio->uuid]])->first();
+        $cfdi->id_factura_repositorio = $facturaRepositorio->id;
+        $cfdi->save();
+    }
+
+    private function procesaArchivoCFDI($ruta_archivo, $current)
+    {
+        $contenido_archivo_xml = file_get_contents($ruta_archivo);
+        $resultado = $this->setArregloFactura($ruta_archivo);
+        if ($resultado == 0) {
+            Storage::disk('xml_errores')->put($this->carga->id . '/error_app/' . $current, fopen($ruta_archivo, "r"));
+            unlink($ruta_archivo);
+        } else {
+            if (key_exists("uuid", $this->arreglo_factura)) {
+                if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"])) {
+                    if ($this->arreglo_factura["id_empresa_sat"] > 0) {
+                        $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
+                        if ($this->store()) {
+                            Storage::disk('xml_sat')->put($this->arreglo_factura["uuid"] . ".xml", fopen($ruta_archivo, "r"));
+                            unlink($ruta_archivo);
+                            $this->log["archivos_cargados"] += 1;
+                            $this->log["cfd_cargados"] += 1;
+                        }
+                    } else {
+                        $this->log["cfd_no_cargados"] += 1;
+                        $this->log["archivos_no_cargados"] += 1;
+                        $this->log["archivos_receptor_no_valido"] += 1;
+                        $this->log["receptores_no_validos"][] = $this->arreglo_factura["receptor"];
+                        unlink($ruta_archivo);
+                    }
+                } else {
+                    $this->log["archivos_preexistentes"] += 1;
+                    $this->log["archivos_no_cargados"] += 1;
+                    $this->log["cfd_no_cargados"] += 1;
+                    unlink($ruta_archivo);
+                }
+            } else {
+                $this->log["cfd_no_cargados"] += 1;
+                $this->log["archivos_no_cargados"] += 1;
+                $this->log["archivos_corruptos"] += 1;
+                Storage::disk('xml_errores')->put($this->carga->id . '/corruptos/' . $current, fopen($ruta_archivo, "r"));
+                unlink($ruta_archivo);
+            }
+        }
+    }
+
     private function procesaDirectorio($path)
     {
         $dir = opendir($path);
@@ -362,43 +415,7 @@ class CFDSATService
                     $this->log["archivos_leidos"] += 1;
                     $ruta_archivo = $path . "/" . $current;
                     if (strpos($current, ".xml")) {
-                        $contenido_archivo_xml = file_get_contents($ruta_archivo);
-                        $resultado = $this->setArregloFactura($ruta_archivo);
-                        if ($resultado == 0) {
-                            Storage::disk('xml_errores')->put($this->carga->id . '/error_app/' . $current, fopen($ruta_archivo, "r"));
-                            unlink($ruta_archivo);
-                        } else {
-                            if (key_exists("uuid", $this->arreglo_factura)) {
-                                if (!$this->repository->validaExistencia($this->arreglo_factura["uuid"])) {
-                                    if ($this->arreglo_factura["id_empresa_sat"] > 0) {
-                                        $this->arreglo_factura["xml_file"] = $this->repository->getArchivoSQL(base64_encode($contenido_archivo_xml));
-                                        if ($this->store()) {
-                                            Storage::disk('xml_sat')->put($this->arreglo_factura["uuid"] . ".xml", fopen($ruta_archivo, "r"));
-                                            unlink($ruta_archivo);
-                                            $this->log["archivos_cargados"] += 1;
-                                            $this->log["cfd_cargados"] += 1;
-                                        }
-                                    } else {
-                                        $this->log["cfd_no_cargados"] += 1;
-                                        $this->log["archivos_no_cargados"] += 1;
-                                        $this->log["archivos_receptor_no_valido"] += 1;
-                                        $this->log["receptores_no_validos"][] = $this->arreglo_factura["receptor"];
-                                        unlink($ruta_archivo);
-                                    }
-                                } else {
-                                    $this->log["archivos_preexistentes"] += 1;
-                                    $this->log["archivos_no_cargados"] += 1;
-                                    $this->log["cfd_no_cargados"] += 1;
-                                    unlink($ruta_archivo);
-                                }
-                            } else {
-                                $this->log["cfd_no_cargados"] += 1;
-                                $this->log["archivos_no_cargados"] += 1;
-                                $this->log["archivos_corruptos"] += 1;
-                                Storage::disk('xml_errores')->put($this->carga->id . '/corruptos/' . $current, fopen($ruta_archivo, "r"));
-                                unlink($ruta_archivo);
-                            }
-                        }
+                        $this->procesaArchivoCFDI($ruta_archivo, $current);
                     } else if (strpos($current, ".txt")) {
                         $contenido_archivo_txt = file_get_contents($ruta_archivo);
                         $resultado = $this->setArreglosFacturas($ruta_archivo);
@@ -516,10 +533,22 @@ class CFDSATService
     private function setArregloFactura($archivo_xml)
     {
         $this->arreglo_factura = [];
-        $this->arreglo_factura["id_carga_cfd_sat"] = $this->carga->id;
+        $this->arreglo_factura["id_carga_cfd_sat"] = ($this->carga)?$this->carga->id:null;
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
+            if($factura_xml === false)
+            {
+                $factura_xml = simplexml_load_string($archivo_xml);
+            }
+
+            if(!$factura_xml){
+                $errors = libxml_get_errors();
+                //dd(var_export($errors, true));
+                $this->log["archivos_no_cargados_error_app"] += 1;
+                $this->log["cfd_no_cargados_error_app"] += 1;
+                return 0;
+            }
 
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());

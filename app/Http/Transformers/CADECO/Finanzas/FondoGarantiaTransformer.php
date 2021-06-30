@@ -41,6 +41,7 @@ class FondoGarantiaTransformer extends TransformerAbstract
             'observaciones'=>$model->observaciones,
             'seleccionado' => false,
             'tc_actualizado' => false,
+            'id_moneda' => $model->id_moneda,
 
         ];
     }
