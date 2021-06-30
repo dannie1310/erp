@@ -12,11 +12,24 @@ export default {
         SET_DOCUMENTOS(state, data) {
             state.documentos = data
         },
-        SET_Documento(state, data) {
+        SET_DOCUMENTO(state, data) {
             state.currentDocumento = data;
         },
         SET_META(state, data) {
             state.meta = data;
+        },
+        UPDATE_ATTRIBUTE(state, data) {
+            _.set(state.currentDocumento, data.attribute, data.value);
+        },
+
+        UPDATE_DOCUMENTO(state, data) {
+            state.documentos = state.documentos.map(e => {
+                if (e.id === data.id) {
+                    return Object.assign({}, e, data)
+                }
+                return e
+            })
+            state.currentDocumento = data;
         },
     },
 
@@ -59,7 +72,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI+ payload.id+'/rechazar',  {id:payload.id, observaciones: value}, { params: payload.params })
+                                .patch(URI+ payload.id+'/rechazar',  {id:payload.id, motivo: value}, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
                                     swal({

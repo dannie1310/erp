@@ -150,7 +150,7 @@ class DocumentoDeNoLocalizado extends Model
             $this->fecha_hora_rechazo =date('Y-m-d H:i:s');
             $this->motivo_rechazo = $motivo;
             $this->save();
-            DB::connection('acarmodulosaoreos')->commit();
+            DB::connection('modulosao')->commit();
             return $this;
         } catch (\Exception $e) {
             DB::connection('modulosao')->rollBack();
