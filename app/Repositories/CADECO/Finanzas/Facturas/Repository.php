@@ -160,18 +160,22 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         
         $val_insercionCertificado = $this->insUpdCertificate( $xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
         if(!$val_insercionCertificado){
+            dd(3);
             return;
         }
 
         if($this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
+            dd(1);
             return;
         }
         
         $guid_doc_metadata = Uuid::generate()->string;
-        $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']); 
+        $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']); 
         if(!$va_insert_xml){
+            dd(2);
             return;
         }
+        dd(4);
         return 1;
 
     }
@@ -182,6 +186,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $resp_ = json_decode(json_encode($resp), true);
             return $resp_;
         }catch(Exception $e){
+            dd($e);
             return false;
         }
         return false;
@@ -215,7 +220,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         return count($resp) > 0;
     }
 
-    private function spInsUpdDocument($xml, $db_doc_metadata, $db_doc_content, $guid, $doc_date, $rfc, $folio){        
+    private function spInsUpdDocument($xml, $db_doc_metadata, $db_doc_content, $db_other_content, $db_other_metadata, $guid, $doc_date, $rfc, $folio){        
         if(!$this->conexionContpaq($db_doc_metadata)){
             return false;
         }
@@ -234,14 +239,18 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         '</Document></Document><MetadataApp><SourceFile Value="'.$guid.'.xml" xmlns="" /></MetadataApp></Metadata>';
 
         $pXmlFile = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($pXmlFile));
+        $pXmlFile = preg_replace('/[ ]{2,}|[\r]/', ' ', trim($pXmlFile));
+        $pXmlFile = preg_replace('/[ ]{2,}|[\n]/', ' ', trim($pXmlFile));
 
         try{
-            DB::connection('cntpqg')->beginTransaction();
-            $resp = DB::connection('cntpqg')
-                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = '$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0");
+            // DB::connection('cntpq')->beginTransaction();
+            $resp = DB::connection('cntpq')
+                ->update(DB::raw("DECLARE @return_value int EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value"));
 
-            $val = DB::connection('cntpqg')->select(DB::raw("SELECT top 1 * FROM [$db_doc_metadata].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
+            $resp_ = json_decode(json_encode($resp), true);
             
+            $val = DB::connection('cntpq')->select(DB::raw("SELECT top 1 * FROM [$db_doc_metadata].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
+            dd($db_doc_metadata, $resp,$resp_, $guid, $val ,$pXmlFile, "DECLARE @return_value int EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value");
             if(count($val) == 0){
                 return false;
             }
@@ -263,7 +272,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             }
             
             $creation_date = date("Y-m-d H:i:s",$date_array[1]);
-            $resp = DB::connection('cntpqg')
+            $resp = DB::connection('cntpq')
                 ->update("exec [$db_doc_content].[dbo].[spSaveDocument]  @GuidDocument=N'$guid',@DocumentType=N'CFDI', @fileName=N'$filename' ,@Content=N'$xml'
                             ,@SubDirectory=N'',@DocumentDate=N'$doc_date',@CreationDate=N'$creation_date'");
 
@@ -271,22 +280,27 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $guid_vr = Uuid::generate()->string;
             $val_result = $this->validationResult($guid_vr, $date, $doc_date, $rfc, $folio);
 
-            $resp = DB::connection('cntpqg')
-                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = '$val_result', @pDeleteDocument=0, @pSobreEscribe=0");
+            $resp = DB::connection('cntpq')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_other_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = '$val_result', @pDeleteDocument=0, @pSobreEscribe=0");
 
             $fecha_sf = date('Y-m-d');
-            $resp = DB::connection('cntpqg')
-                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spCreateReferences]  @GuidRel =N'$guid' , @RelatedGuidDocuments=N'$guid_vr' 
+            $resp = DB::connection('cntpq')
+                ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_other_metadata].[dbo].[spCreateReferences]  @GuidRel =N'$guid' , @RelatedGuidDocuments=N'$guid_vr' 
                         ,@ApplicationType=N'ADD',@TipoDoc=N'ValidationResult',@Fecha=N'$fecha_sf',@Comment=N'Acuse Validación Comprobante $doc_date $rfc $folio '");
 
-            $resp = DB::connection('cntpqg')
+            $resp = DB::connection('cntpq')
+                ->update("INSERT INTO [$db_other_content].[dbo].[DocumentContent]GuidDocument, DocumentType, FileName, Content, SubDirectory, DocumentDate, CreationDate) VALUES 
+                            ('$guid','CFDI','$filename' ,'$xml','','$doc_date','$creation_date')");
+
+            $resp = DB::connection('cntpq')
                 ->update("SET ANSI_NULLS ON; SET ANSI_WARNINGS ON; exec [$db_doc_metadata].[dbo].[spUpdDocumento]  @GuidDocument =N'$guid',@ProcessApp=N'',@UserResponsibleApp=N'',
                             @ReferenceApp=N'',@NotesApp=N'',@MetadataEstatusApp=N'Timbrado',@ValidationStatus=N'OK' ");
             
-            DB::connection('cntpqg')->commit();
+            // DB::connection('cntpq')->commit();
             return true;
         }catch(Exception $e){
-            DB::connection('cntpqg')->rollBack();
+            dd($e);
+            // DB::connection('cntpq')->rollBack();
             return 1;
         }
 
