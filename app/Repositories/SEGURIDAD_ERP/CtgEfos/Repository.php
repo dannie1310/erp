@@ -30,7 +30,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function carga($data)
     {
-       $this->model->reg($data);
+       return $this->model->reg($data);
     }
 
     public function rfc($data)

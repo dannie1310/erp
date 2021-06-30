@@ -28,8 +28,13 @@ class CtgEfosService
     }
 
     public function cargaLayout($file){
-        $efos = $this->repository->carga($file);
-        return [];
+        return $this->repository->carga($file);
+    }
+
+    public function procesaURLCSV()
+    {
+        $url = config('app.env_variables.URL_EFOS');
+        return $this->repository->carga($url);
     }
 
     public function rfcApi($rfc)
@@ -77,7 +82,8 @@ class CtgEfosService
         return $pdf->create();
     }
 
-    public function obtenerInformeDefinitivoPDF(){
+    public function obtenerInformeDefinitivoPDF()
+    {
         $informe = $this->repository->getInformeDefinitivos();
         $pdf = new InformeEFOSDefinitivosCFDI($informe);
         return $pdf->create();
