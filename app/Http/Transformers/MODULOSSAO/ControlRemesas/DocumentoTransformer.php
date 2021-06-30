@@ -29,7 +29,8 @@ class DocumentoTransformer extends TransformerAbstract
         'empresa',
         'moneda',
         'fondo',
-        'montoProcesado'
+        'montoProcesado',
+        'remesaSinScope'
     ];
 
     /**
@@ -64,6 +65,8 @@ class DocumentoTransformer extends TransformerAbstract
             'tipo_documento' => $model->IDTipoDocumento,
             'id_cuenta_abono' => $model->cuenta_abono,
             'id_cuenta_cargo' => $model->cuenta_cargo,
+            'fecha' => $model->Fecha,
+            'proveedor' => $model->proveedor,
         ];
     }
 
@@ -144,4 +147,17 @@ class DocumentoTransformer extends TransformerAbstract
         return null;
    }
 
+    /**
+     * Remesa sin considerar scopes globales
+     * @param Documento $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeRemesaSinScope(Documento $model)
+    {
+        if($remesa = $model->remesaSinScopeGlobal)
+        {
+            return $this->item($remesa, new RemesaTransformer);
+        }
+        return null;
+    }
 }

@@ -22,7 +22,7 @@ use App\Facades\Context;
 class Documento extends Model
 {
     protected $connection = 'modulosao';
-    protected $table = 'ModulosSao.ControlRemesas.Documentos';
+    protected $table = 'ModulosSAO.ControlRemesas.Documentos';
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
 
@@ -48,6 +48,11 @@ class Documento extends Model
 
     public function remesa(){
         return $this->belongsTo(Remesa::class, 'IDRemesa', 'IDRemesa');
+    }
+
+    public function remesaSinScopeGlobal()
+    {
+        return $this->hasOne(Remesa::class, 'IDRemesa', 'IDRemesa')->withoutGlobalScopes();
     }
 
     public function documentoLiberado()
@@ -179,12 +184,21 @@ class Documento extends Model
      * */
     public function getCuentaCargoAttribute(){
         $obra = Obra::find(Context::getIdObra());
-        $cuentas = $obra->cuentasPagadorasObra;
-        if(sizeof($cuentas) === 1){
-            return $cuentas[0]->id_cuenta;
-        }else{
-            return null;
+        if($obra) {
+            $cuentas = $obra->cuentasPagadorasObra;
+            if (sizeof($cuentas) === 1) {
+                return $cuentas[0]->id_cuenta;
+            } else {
+                return null;
+            }
         }
+        return null;
+    }
+
+    public function getProveedorAttribute()
+    {
+        //dd($this->transaccion);
+        return 1;
     }
 
     /**

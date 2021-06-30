@@ -3634,6 +3634,36 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'proveedor-no-localizado',
+                component: require('./components/remesas/proveedor-no-localizado/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedor-no-localizado',
+                        component: require('./components/remesas/proveedor-no-localizado/Index').default,
+                        meta: {
+                            title: 'Proveedor No Localizado',
+                            breadcrumb: {parent: 'remesas', name: 'PROVEEDOR NO LOCALIZADO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'autorizar-pago-factura',
+                        name: 'autorizar-pago-factura',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/Index').default,
+                        meta: {
+                            title: 'Autorización de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR PAGOS DE FACTURA', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_limite_remesa'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

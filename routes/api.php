@@ -1529,11 +1529,16 @@ $api->version('v1', function ($api) {
      * REMESAS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'remesas'], function ($api) {
+        $api->group(['prefix' => 'documento-no-localizado'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@paginate');
+        });
+
         $api->group(['prefix' => 'folio'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@paginate');
             $api->get('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@show');
             $api->patch('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@update');
         });
+
         $api->group(['prefix' => 'proyecto'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);

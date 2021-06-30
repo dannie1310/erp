@@ -97,6 +97,15 @@ class Remesa extends Model
         return $remesas->monto_total;
     }
 
+    public function getNombreProyectoAttribute()
+    {
+        try {
+            return $this->proyecto->Nombre;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
