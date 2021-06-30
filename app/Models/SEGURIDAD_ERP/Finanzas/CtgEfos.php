@@ -68,17 +68,20 @@ class CtgEfos extends Model
             ];
     }
 
-    public function reg($file)
+    public function reg($procesamiento, $file)
     {
         DB::connection('seguridad')->beginTransaction();
         if($file == null) {
             $this->log[] = 'Archivo CSV inválido';
+            DB::connection('seguridad')->rollBack();
             return $this->log;
         }
         $file_fingerprint = hash_file('md5', $file);
-        if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)->first())
+        if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)
+            ->where("id", "!=", $procesamiento->id)->first())
         {
             $this->log[] = 'Archivo CSV registrado previamente';
+            DB::connection('seguridad')->rollBack();
             return $this->log;
         }
 
@@ -88,18 +91,17 @@ class CtgEfos extends Model
         if(!count($efos['data'])>0)
         {
             $this->log[] = 'El procesamiento del archivo no arrojó resultados';
+            DB::connection('seguridad')->rollBack();
             return $this->log;
         }
 
-        $procesamiento = ProcesamientoListaEfos::create([
-            'fecha_actualizacion_sat_txt' => $efos['fecha_informacion'],
-            'hash_file'=>$file_fingerprint,
-            'nombre_archivo'=> 'actualizacion '.date('d-m-Y h:i:s.u').'.csv'
-        ]);
+        $procesamiento->fecha_actualizacion_sat_txt = $efos['fecha_informacion'];
+        $procesamiento->nombre_archivo = 'actualizacion '.date('d-m-Y h:i:s.u').'.csv';
+        $procesamiento->save();
 
         try {
             foreach ($efos['data'] as $key => $efo){
-                //if($key <=15){
+                if($key <=20){
                     $estado = $this->estadoId($efo['estado']);
 
                     $efos_layout = $this->create(
@@ -118,7 +120,7 @@ class CtgEfos extends Model
                             'estado' => $estado
                         ]
                     );
-                //}
+                }
             }
 
             $this->guardarCsv($file, $file_fingerprint);

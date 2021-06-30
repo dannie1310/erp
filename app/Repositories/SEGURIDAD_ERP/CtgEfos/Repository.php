@@ -9,6 +9,7 @@ use App\Informes\EFOSEmpresaInformeCFDIDesglosado;
 use App\Informes\EFOSEmpresaInformeDesglosado;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use Illuminate\Support\Facades\DB;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
@@ -30,7 +31,22 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function carga($data)
     {
-       return $this->model->reg($data);
+        $file_fingerprint = hash_file('md5', $data);
+        $procesamiento = ProcesamientoListaEfos::create([
+            'fecha_actualizacion_sat_txt' => '',
+            'hash_file'=>$file_fingerprint,
+            'nombre_archivo'=> ''
+        ]);
+        $logs = $this->model->reg($procesamiento, $data);
+        foreach($logs as $log)
+        {
+            $procesamiento->logs()->create(
+                [
+                    "log_procesamiento" =>$log
+                ]
+            );
+        }
+        return $logs;
     }
 
     public function rfc($data)
