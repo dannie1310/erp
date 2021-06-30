@@ -59,6 +59,10 @@ use App\Models\CADECO\ContraRecibo;
 use App\Models\CADECO\Contrato;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
+use App\Models\CADECO\ControlPresupuesto\SolicitudCambio;
+use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidas;
+use App\Models\CADECO\ControlPresupuesto\SolicitudCambioRechazada;
+use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\Credito;
@@ -238,6 +242,10 @@ use App\Observers\CADECO\ContrareciboObserver;
 use App\Observers\CADECO\ContratoObserver;
 use App\Observers\CADECO\ContratoProyectadoObserver;
 use App\Observers\CADECO\Contratos\AreaSubcontratanteObserver;
+use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioObserver;
+use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioPartidasObserver;
+use App\Observers\CADECO\ControlPresupuesto\SolicitudCambioRechazadaObserver;
+use App\Observers\CADECO\ControlPresupuesto\VariacionVolumenObserver;
 use App\Observers\CADECO\CotizacionCompraPartidaObserver;
 use App\Observers\CADECO\CreditoObserver;
 use App\Observers\CADECO\CuentaObserver;
@@ -490,6 +498,14 @@ class AppServiceProvider extends ServiceProvider
              * Contratos
              */
             AreaSubcontratante::observe(AreaSubcontratanteObserver::class);
+
+            /**
+             * Control Presupuesto
+             */
+            SolicitudCambio::observe(SolicitudCambioObserver::class);
+            SolicitudCambioPartidas::observe(SolicitudCambioPartidasObserver::class);
+            SolicitudCambioRechazada::observe(SolicitudCambioRechazadaObserver::class);
+            VariacionVolumen::observe(VariacionVolumenObserver::class);
 
 
             /**

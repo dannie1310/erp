@@ -3673,6 +3673,83 @@ export const routes = [
         }
     },
 
+    {
+        path: '/sao/control_presupuesto',
+        components: {
+            default: require('./components/control-presupuesto/partials/Layout.vue').default,
+            menu: require('./components/control-presupuesto/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'control_presupuesto',
+                component: require('./components/control-presupuesto/Index').default,
+                meta: {
+                    title: 'Control Presupuesto',
+                    breadcrumb: {parent:'home', name: 'CONTROL PRESUPUESTO'},
+                    middleware: [auth, context, access]
+                }
+            },
+            {
+                path: 'solicitud-cambio',
+                component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-cambio',
+                        component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
+                        meta: {
+                            title: 'Control de Cambios al Presupuesto',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'CONTROL CAMBIOS'},
+                            middleware: [auth, context],
+                            // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'variacion-volumen',
+                component: require('./components/control-presupuesto/variacion-volumen/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'variacion-volumen',
+                        component: require('./components/control-presupuesto/variacion-volumen/Index').default,
+                        meta: {
+                            title: 'Variación de Volumen (Aditivas o Deductivas)',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN VOLUMEN'},
+                            middleware: [auth, context],
+                            // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'variacion-volumen-create',
+                        component: require('./components/control-presupuesto/variacion-volumen/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Variación de Volumen',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'variacion-volumen'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_variacion_volumen']
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'variacion-volumen-show',
+                        component: require('./components/control-presupuesto/variacion-volumen/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Variación de Volumen',
+                            breadcrumb: {name: 'VER', parent: 'variacion-volumen'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_variacion_volumen']
+                        }
+                    },
+                ]
+            },
+        ]
+    },
 
     {
         path: '*',

@@ -22,16 +22,19 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
-    public $fillable = [
-        'activo',
-        'clave_concepto',
-    ];
     public $searchable = [
         'descripcion',
         'clave_concepto',
     ];
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'cantidad_presupuestada',
+        'monto_presupuestado',
+        'activo',
+        'clave_concepto',
+    ];
 
     protected static function boot()
     {
@@ -74,6 +77,7 @@ class Concepto extends Model
 
     public function getPathAttribute()
     {
+        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
