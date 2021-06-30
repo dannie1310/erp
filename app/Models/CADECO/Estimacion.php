@@ -1324,4 +1324,11 @@ class Estimacion extends Transaccion
         }
 
     }
+
+    public function getEstimacionFolioConsecutivoFormatAttribute(){
+        if($this->subcontratoEstimacion){
+            return $this->subcontratoEstimacion->folio_consecutivo_format;
+        }
+        return '';
+    }
 }
