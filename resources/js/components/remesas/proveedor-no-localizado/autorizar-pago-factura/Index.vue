@@ -35,7 +35,7 @@
                     { title: 'Referencia', tdClass:'center', field: 'refencia', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Moneda', tdClass:'center', field: 'moneda', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Monto', field: 'monto',  tdClass: 'money', thClass: 'th_money', sortable: true},
-                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estado', field: 'estado', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
@@ -100,7 +100,7 @@
                         refencia: documento.documento.referencia,
                         moneda: documento.documento.moneda_nombre,
                         monto: documento.documento.monto_total_format,
-                        estatus: this.getEstado(documento.estado_format, documento.estado_color),
+                        estado: this.getEstado(documento.estado_format, documento.estado_color),
                         buttons: $.extend({}, {
                             id : documento.id,
                             autorizar: self.$root.can('autorizar_rechazar_pago_proveedor_no_localizado', true) && documento.estado == 0 ? true : false,
