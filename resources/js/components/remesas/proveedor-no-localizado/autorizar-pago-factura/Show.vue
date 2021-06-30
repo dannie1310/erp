@@ -144,7 +144,7 @@
                                            <input disabled="true"
                                                   type="text"
                                                   class="form-control"
-                                                  v-model="documento.documento.motivo" />
+                                                  v-model="documento.motivo" />
                                         </div>
                                     </div>
                                 </div>

@@ -33,14 +33,14 @@
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
-                    <i class="fa fa-stopwatch"></i>
+                    <i class="fa fa-circle"></i>
                     <p>Proveedor No Localizado</p>
                     <i class="right fa fa-angle-left"></i>
                 </a>
                 <ul class="nav nav-treeview" style="height: auto">
                     <li class="nav-item" v-if="$root.can('autorizar_rechazar_pago_proveedor_no_localizado',true)">
                         <router-link :to="{name: 'autorizar-pago-factura'}" class="nav-link" :class="{active: this.$route.name == 'autorizar-pago-factura'}">
-                            <i class="fa fa-truck nav-icon"></i>
+                            <i class="fa fa-circle nav-icon"></i>
                             <p> Autorización Pago Factura</p>
                         </router-link>
                     </li>
