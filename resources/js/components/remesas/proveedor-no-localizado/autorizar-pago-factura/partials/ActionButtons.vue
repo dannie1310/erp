@@ -21,7 +21,7 @@
                     id: this.value.id,
                     params: {}})
                     .then((data) => {
-                        this.$store.commit('remesas/documento-no-localizado/UPDATE_DOCUMENTO', data);
+                       this.paginate();
                     })
             },
             rechazar() {
@@ -29,7 +29,18 @@
                     id: this.value.id,
                     params: {}})
                     .then((data) => {
-                        this.$store.commit('remesas/documento-no-localizado/UPDATE_DOCUMENTO', data);
+                        this.paginate();
+                    })
+            },
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('remesas/documento-no-localizado/paginate', { params: {include: 'documento.remesaSinScope'}})
+                    .then(data => {
+                        this.$store.commit('remesas/documento-no-localizado/SET_DOCUMENTOS', data.data);
+                        this.$store.commit('remesas/documento-no-localizado/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             },
         }

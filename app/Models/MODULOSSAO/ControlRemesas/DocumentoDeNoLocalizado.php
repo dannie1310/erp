@@ -108,7 +108,7 @@ class DocumentoDeNoLocalizado extends Model
         switch ($this->estado)
         {
             case 0:
-                return '#706e70';
+                return '#F1C40F';
                 break;
 
             case 1:
@@ -116,7 +116,7 @@ class DocumentoDeNoLocalizado extends Model
                 break;
 
             case 2:
-                return '#d1cfd1';
+                return '#EC7063';
                 break;
         }
     }
