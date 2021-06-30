@@ -1531,6 +1531,8 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'remesas'], function ($api) {
         $api->group(['prefix' => 'documento-no-localizado'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@paginate');
+            $api->patch('{id}/rechazar', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@update')->where(['id' => '[0-9]+']);;
+            $api->get('{id}/autorizar', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@autorizar')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'folio'], function ($api){

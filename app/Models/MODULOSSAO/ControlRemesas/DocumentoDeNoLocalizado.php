@@ -7,6 +7,7 @@ namespace App\Models\MODULOSSAO\ControlRemesas;
 use App\Models\IGH\Usuario;
 use App\Models\MODULOSSAO\Seguridad\Usuario as UsuarioModuloSAO;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class DocumentoDeNoLocalizado extends Model
 {
@@ -123,4 +124,38 @@ class DocumentoDeNoLocalizado extends Model
     /**
      * Métodos
      */
+    public function autorizar()
+    {
+        try {
+            DB::connection('modulosao')->beginTransaction();
+            $this->estado = 1;
+            $this->id_usuario_aprobo = auth()->id();
+            $this->fecha_hora_aprobacion = date('Y-m-d H:i:s');
+            $this->save();
+            DB::connection('modulosao')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('modulosao')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function rechazar($motivo)
+    {
+        try {
+            DB::connection('modulosao')->beginTransaction();
+            $this->estado = 2;
+            $this->id_usuario_rechazo = auth()->id();
+            $this->fecha_hora_rechazo =date('Y-m-d H:i:s');
+            $this->motivo_rechazo = $motivo;
+            $this->save();
+            DB::connection('acarmodulosaoreos')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('modulosao')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
 }

@@ -16,6 +16,7 @@ use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\Context;
 
@@ -197,8 +198,12 @@ class Documento extends Model
 
     public function getProveedorAttribute()
     {
-        //dd($this->transaccion);
-        return 1;
+        return $this->empresa->razon_social;
+    }
+
+    public function getRFCAttribute()
+    {
+        return $this->empresa->rfc;
     }
 
     /**

@@ -67,6 +67,7 @@ class DocumentoTransformer extends TransformerAbstract
             'id_cuenta_cargo' => $model->cuenta_cargo,
             'fecha' => $model->Fecha,
             'proveedor' => $model->proveedor,
+            'rfc' => $model->rfc
         ];
     }
 

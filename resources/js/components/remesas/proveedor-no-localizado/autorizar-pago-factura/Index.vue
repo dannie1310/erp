@@ -35,7 +35,8 @@
                     { title: 'Referencia', tdClass:'center', field: 'refencia', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Moneda', tdClass:'center', field: 'moneda', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Monto', field: 'monto',  tdClass: 'money', thClass: 'th_money', sortable: true},
-                   // { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
+                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
@@ -62,6 +63,12 @@
                     .finally(() => {
                         this.cargando = false;
                     })
+            },
+            getEstado(estado, color) {
+                return {
+                    color: color,
+                    descripcion: estado
+                }
             },
         },
         computed: {
@@ -90,16 +97,15 @@
                         numeroRemesa: documento.documento.remesaSinScope.folio,
                         proveedor: documento.documento.proveedor,
                         rfc: documento.documento.rfc,
-                        refencia: documento.documento.refencia,
-                        moneda: documento.documento.moneda,
-                        monto: documento.documento.monto,
-
-                        /*buttons: $.extend({}, {
-                            anio: folio.anio,
-                            semana: folio.numero_semana,
-                            id_proyecto : folio.id_proyecto,
-                            edit: self.$root.can('editar_limite_remesa') ? true : true,
-                        })*/
+                        refencia: documento.documento.referencia,
+                        moneda: documento.documento.moneda_nombre,
+                        monto: documento.documento.monto_total_format,
+                        estatus: this.getEstado(documento.estado_format, documento.estado_color),
+                        buttons: $.extend({}, {
+                            id : documento.id,
+                            autorizar: self.$root.can('editar_limite_remesa') && documento.estado == 0 ? true : false,
+                            rechazar: self.$root.can('editar_limite_remesa') && documento.estado == 0 ? true : false,
+                        })
                     }));
                 },
                 deep: true

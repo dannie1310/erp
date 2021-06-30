@@ -1,0 +1,41 @@
+<template>
+    <span>
+        <div class="btn-group">
+            <button @click="autorizar" v-if="value.autorizar" type="button" class="btn btn-sm btn-outline-success" title="Autorizar">
+                <i class="fa fa-check"></i>
+            </button>
+            <button @click="rechazar" v-if="value.rechazar" type="button" class="btn btn-sm btn-outline-danger" title="Rechazar">
+                <i class="fa fa-close"></i>
+            </button>
+        </div>
+    </span>
+</template>
+
+<script>
+    export default {
+        name: "ActionButtons",
+        props: ['value'],
+        methods: {
+            autorizar() {
+                return this.$store.dispatch('remesas/documento-no-localizado/autorizar', {
+                    id: this.value.id,
+                    params: {}})
+                    .then((data) => {
+                        this.$store.commit('remesas/documento-no-localizado/UPDATE_DOCUMENTO', data);
+                    })
+            },
+            rechazar() {
+                return this.$store.dispatch('remesas/documento-no-localizado/rechazar', {
+                    id: this.value.id,
+                    params: {}})
+                    .then((data) => {
+                        this.$store.commit('remesas/documento-no-localizado/UPDATE_DOCUMENTO', data);
+                    })
+            },
+        }
+    }
+</script>
+
+<style scoped>
+
+</style>

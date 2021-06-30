@@ -48,4 +48,22 @@ class DocumentoDeNoLocalizadoService
         }*/
        return  $this->repository->paginate($data);
     }
+
+    public function autorizar($id)
+    {
+        $documento = $this->repository->show($id);
+        if ($documento->estado != 0) {
+            abort(400, "El pago de la factura se encuentra con un estado " . $documento->estado_format . " previamente.");
+        }
+        return $documento->autorizar();
+    }
+
+    public function rechazar(array  $data, $id)
+    {
+        $documento = $this->repository->show($id);
+        if ($documento->estado != 0) {
+            abort(400, "El pago de la factura se encuentra con un estado " . $documento->estado_format . " previamente.");
+        }
+        return $documento->rechazar($data['motivo']);
+    }
 }

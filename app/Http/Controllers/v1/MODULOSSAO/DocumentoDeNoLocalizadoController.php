@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoDeNoLocalizadoTransformer;
 use App\Services\MODULOSSAO\DocumentoDeNoLocalizadoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class DocumentoDeNoLocalizadoController extends Controller
@@ -42,5 +43,15 @@ class DocumentoDeNoLocalizadoController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
+    }
+
+    public function autorizar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->autorizar($id));
+    }
+
+    public function rechazar(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->rechazar($request->all(),$id));
     }
 }
