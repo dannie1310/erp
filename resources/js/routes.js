@@ -3634,6 +3634,48 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'proveedor-no-localizado',
+                component: require('./components/remesas/proveedor-no-localizado/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedor-no-localizado',
+                        component: require('./components/remesas/proveedor-no-localizado/Index').default,
+                        meta: {
+                            title: 'Proveedor No Localizado',
+                            breadcrumb: {parent: 'remesas', name: 'PROVEEDOR NO LOCALIZADO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'transacciones',
+                        name: 'enlistar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/Index').default,
+                        meta: {
+                            title: 'Lista de Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIÓN', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_transaccion_proveedor_no_localizado'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/IndexAutorizacion').default,
+                        meta: {
+                            title: 'Autorizar Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIONES', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_rechazar_transaccion_proveedor_no_localizado'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
