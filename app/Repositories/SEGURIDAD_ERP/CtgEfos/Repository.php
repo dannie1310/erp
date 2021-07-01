@@ -38,11 +38,21 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             'nombre_archivo'=> ''
         ]);
         $logs = $this->model->reg($procesamiento, $data);
-        foreach($logs as $log)
+
+        if(count($logs) > 0)
         {
+            foreach($logs as $log)
+            {
+                $procesamiento->logs()->create(
+                    [
+                        "log_procesamiento" =>$log
+                    ]
+                );
+            }
+        } else {
             $procesamiento->logs()->create(
                 [
-                    "log_procesamiento" =>$log
+                    "log_procesamiento" =>"Procesamiento Correcto"
                 ]
             );
         }
