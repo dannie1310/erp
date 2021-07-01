@@ -4,7 +4,7 @@
             <i class="fa fa-eye"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-eye"></i> CONSULTAR DETALLE DE AUTORIZACIÓN O RECHAZO DEL PAGO PARA PROVEEDOR NO LOCALIZADO</h5>
@@ -23,130 +23,36 @@
                             </div>
                         </div>
                         <div v-else>
-                            <div class="row" v-if="documento">
-                                <div class="col-md-12">
-                                    <h5>Datos Remesa:</h5>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label">Proyecto:</label>
-                                        <div class="col-md-10">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.remesaSinScope.proyecto_descripcion" />
-                                       </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                        <label class="col-md-1 col-form-label">Año:</label>
-                                        <div class="col-md-2">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.remesaSinScope.año" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">Semana:</label>
-                                        <div class="col-md-2">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.remesaSinScope.semana" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">Folio:</label>
-                                        <div class="col-md-2">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.remesaSinScope.folio" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">Tipo:</label>
-                                        <div class="col-md-2">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.remesaSinScope.tipo" />
-                                       </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="col-md-12">
-                                    <h5>Datos Proveedor No Localizado:</h5>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                        <label class="col-md-2 col-form-label">Proveedor:</label>
-                                        <div class="col-md-6">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.proveedor" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">RFC:</label>
-                                        <div class="col-md-3">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.documento.rfc" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <br>
-                                <div class="col-md-12">
-                                    <h5>Estado de Autorización | Rechazo:</h5>
-                                </div>
-                                <div class="col-md-12">
-                                    <div class="form-group row">
-                                        <label class="col-md-1 col-form-label">Estado:</label>
-                                        <div class="col-md-2">
-                                            <span class="badge" :style="{'background-color': documento.estado_color}">{{ documento.estado_format }}</span>
-                                        </div>
-                                        <label class="col-md-1 col-form-label" v-if="documento.estado != 0">Fecha:</label>
-                                        <div class="col-md-3" v-if="documento.estado == 1">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.fecha" />
-                                        </div>
-                                        <div class="col-md-3" v-if="documento.estado == 2">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.fecha_rechazo" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label">Usuario Registro:</label>
-                                        <div class="col-md-4">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.registro" />
-                                        </div>
-                                        <label class="col-md-1 col-form-label" v-if="documento.estado != 0">Usuario:</label>
-                                        <div class="col-md-4" v-if="documento.estado == 1">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.aprobo" />
-                                        </div>
-                                        <div class="col-md-4" v-if="documento.estado == 2">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.rechazo" />
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-12" v-if="documento.estado == 2">
-                                    <div class="form-group row">
-                                        <label class="col-md-1 col-form-label">Motivo:</label>
-                                        <div class="col-md-3">
-                                           <input disabled="true"
-                                                  type="text"
-                                                  class="form-control"
-                                                  v-model="documento.motivo" />
-                                        </div>
-                                    </div>
+                            <div class="card">
+                                <div class="card-body">
+                                    <dl class="row">
+                                        <dt class="col-sm-4">Proyecto: </dt>
+                                        <dd class="col-sm-8">{{documento.documento.remesaSinScope.proyecto_descripcion}}</dd>
+                                        <dt class="col-sm-4">Año:</dt>
+                                        <dd class="col-sm-8">{{documento.documento.remesaSinScope.año}}</dd>
+                                        <dt class="col-sm-4">Semana: </dt>
+                                        <dd class="col-sm-8">{{documento.documento.remesaSinScope.semana}}</dd>
+                                        <dt class="col-sm-4">Folio de Remesa: </dt>
+                                        <dd class="col-sm-8">{{documento.documento.remesaSinScope.folio}}</dd>
+                                        <dt class="col-sm-4">Tipo de Remesa: </dt>
+                                        <dd class="col-sm-8">{{documento.documento.remesaSinScope.tipo}}</dd>
+                                        <dt class="col-sm-4">Proveedor: </dt>
+                                        <dd class="col-sm-8">{{documento.documento.proveedor}} ({{documento.documento.rfc}})</dd>
+                                        <dt class="col-sm-4">Estado: </dt>
+                                        <dd class="col-sm-8"><span class="badge" :style="{'background-color': documento.estado_color}">{{ documento.estado_format }}</span></dd>
+                                        <dt class="col-sm-4" v-if="documento.estado == 1 ">Fecha de Autorización: </dt>
+                                        <dd class="col-sm-8" v-if="documento.estado == 1">{{documento.fecha}}</dd>
+                                        <dt class="col-sm-4" v-if="documento.estado == 2 ">Fecha de Rechazado: </dt>
+                                        <dd class="col-sm-8" v-if="documento.estado == 2">{{documento.fecha_rechazo}}</dd>
+                                        <dt class="col-sm-4">Usuario Registro: </dt>
+                                        <dd class="col-sm-8">{{documento.registro}}</dd>
+                                        <dt class="col-sm-4" v-if="documento.estado == 1 ">Usuario Autorizó: </dt>
+                                        <dd class="col-sm-8" v-if="documento.estado == 1">{{documento.aprobo}}</dd>
+                                        <dt class="col-sm-4" v-if="documento.estado == 2 ">Usuario Rechazó: </dt>
+                                        <dd class="col-sm-8" v-if="documento.estado == 2">{{documento.rechazo}}</dd>
+                                        <dt class="col-sm-4" v-if="documento.estado == 2 ">Motivo de Rechazó: </dt>
+                                        <dd class="col-sm-8" v-if="documento.estado == 2">{{documento.motivo}}</dd>
+                                    </dl>
                                 </div>
                             </div>
                         </div>
