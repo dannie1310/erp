@@ -3,6 +3,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
+use App\Events\CambioEFOS;
 use App\Events\CambioNoLocalizados;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
@@ -72,7 +73,7 @@ class CtgEfos extends Model
     {
         DB::connection('seguridad')->beginTransaction();
         if($file == null) {
-            $this->log[] = 'Archivo CSV inválido';
+            $this->log[] = ["descripcion"=>'Archivo CSV inválido', "tipo"=>"1"];
             DB::connection('seguridad')->rollBack();
             return $this->log;
         }
@@ -80,7 +81,7 @@ class CtgEfos extends Model
         if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)
             ->where("id", "!=", $procesamiento->id)->where("nombre_archivo","!=","")->first())
         {
-            $this->log[] = 'Archivo CSV registrado previamente';
+            $this->log[] = ["descripcion"=>'Archivo CSV registrado previamente',"tipo"=>0];
             DB::connection('seguridad')->rollBack();
             return $this->log;
         }
@@ -88,7 +89,7 @@ class CtgEfos extends Model
         $efos=$this->getCsvData($file);
         if(!count($efos['data'])>0)
         {
-            $this->log[] = 'El procesamiento del archivo no arrojó resultados';
+            $this->log[] = ["descripcion"=>'El procesamiento del archivo no arrojó resultados',"tipo"=>1];
             DB::connection('seguridad')->rollBack();
             return $this->log;
         }
@@ -100,7 +101,10 @@ class CtgEfos extends Model
         $posiciones_validas = $this->validaPosicionesArchivo($efos);
         if(!$posiciones_validas)
         {
-            $this->log[] = 'Las posiciones del archivo actual no son consistentes con las posiciones del archivo anterior';
+            $this->log[] = [
+                "descripcion"=>'Las posiciones del archivo actual no son consistentes con las posiciones del archivo anterior',
+                "tipo"=>1
+            ];
             DB::connection('seguridad')->rollBack();
             return $this->log;
         }
@@ -136,12 +140,13 @@ class CtgEfos extends Model
 
             DB::connection('seguridad')->commit();
             if(count($procesamiento->cambios)>0){
+                $this->log[] = ["descripcion"=>'Cambio en EFOS',"tipo"=>1];
                 event(new CambioEFOS($procesamiento->cambios));
             }
             return $this->log;
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
-            $this->log[] = $e->getMessage();
+            $this->log[] = ["descripcion"=>$e->getMessage(),"tipo"=>1];
             return $this->log;
         }
     }
@@ -165,7 +170,7 @@ class CtgEfos extends Model
             {
                 if($renglon[1] == '')
                 {
-                    $this->log[] = '---Verificar RFC vacio No'.$renglon[0];
+                    $this->log[] = ["descripcion"=>'---Verificar RFC vacio No'.$renglon[0],"tipo"=>1];
                 }
 
                 if(substr($renglon[count($renglon)-1], -2) != "" && substr($renglon[count($renglon)-1], -2) != "\r\n"){
@@ -199,8 +204,8 @@ class CtgEfos extends Model
 
                     if($renglon[$t + 2] == '' || strlen($razon) === 0)
                     {
-                        $this->log[] = $this->log[] = (($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
-                            .((strlen($razon) === 0)? "--Verificar Razón Social\n":"").'------- Registro '. $renglon[0].' -------';
+                        $this->log[] = ["descripcion"=> (($renglon[$t + 2] =='')? "--Verificar Fecha de Publicación de la página del  SAT \n":"")
+                            .((strlen($razon) === 0)? "--Verificar Razón Social\n":"").'------- Registro '. $renglon[0].' -------', "tipo"=>1];
                     }
                     if (!mb_check_encoding($renglon[1],'UTF-8'))
                     {
@@ -315,7 +320,7 @@ class CtgEfos extends Model
                         );
                     }
                     catch (Error $e){
-                        $this->log[] = $e->getMessage();
+                        $this->log[] = ["descripcion"=>$e->getMessage(), "tipo"=>1];
                     }
 
                     $linea++;
@@ -347,9 +352,10 @@ class CtgEfos extends Model
         $inconsistencias = 0;
         foreach ($efos["data"] as $efo){
             if($i>0 && $i<50){
-                $efo_previo = CtgEfos::where("rfc","=",$efo["rfc"])->where("estado_registro","=","1")->first();
-                if($efo_previo)
+                $efos_previos = CtgEfos::where("rfc","=",$efo["rfc"])->where("estado_registro","=","1")->get();
+                if(count($efos_previos)==1)
                 {
+                    $efo_previo = $efos_previos[0];
                     if($efo_previo->estado == 0)
                     {
                         if(substr($efo_previo->fecha_presunto,0,10) != $efo["fecha_presunto"]){
@@ -419,7 +425,8 @@ class CtgEfos extends Model
     {
         if (config('filesystems.disks.lista_efos.root') == storage_path())
         {
-            $this->log[] = 'No existe el directorio destino: STORAGE_LISTA_EFOS. Favor de comunicarse con el área de Soporte a Aplicaciones.';
+            $this->log[] = ["descripcion"=>'No existe el directorio destino: STORAGE_LISTA_EFOS. Favor de comunicarse con el área de Soporte a Aplicaciones.',
+                "tipo"=>1];
         }
 
         Storage::disk('lista_efos')->put( $file_fingerprint.".csv", fopen($file,'r'));

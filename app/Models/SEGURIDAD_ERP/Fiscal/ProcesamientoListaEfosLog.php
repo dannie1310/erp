@@ -15,6 +15,7 @@ class ProcesamientoListaEfosLog extends Model
     protected $fillable = [
         'id_procesamiento_lista_efos',
         'log_procesamiento',
+        'tipo'
     ];
 
 

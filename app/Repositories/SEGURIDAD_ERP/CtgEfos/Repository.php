@@ -45,7 +45,8 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             {
                 $procesamiento->logs()->create(
                     [
-                        "log_procesamiento" =>$log
+                        "log_procesamiento" =>$log["descripcion"],
+                        "tipo" =>$log["tipo"]
                     ]
                 );
             }
