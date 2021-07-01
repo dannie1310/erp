@@ -19,6 +19,8 @@ use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\Context;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Documento extends Model
 {
@@ -26,6 +28,9 @@ class Documento extends Model
     protected $table = 'ModulosSAO.ControlRemesas.Documentos';
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
+
+    protected $dates =["Fecha"];
+    /*protected $dateFormat = 'M d Y h:i:s A';*/
 
     protected $hidden = ['disponible'];
 
@@ -69,9 +74,9 @@ class Documento extends Model
         return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'IDDocumento', 'id_documento');
     }
 
-    public function empresa()
+    public function destinatario()
     {
-        return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
+        return $this->belongsTo(DocumentoDestinatario::class, 'IDDestinatario', 'IDDestinatario');
     }
 
     public function fondo()
@@ -88,7 +93,9 @@ class Documento extends Model
     }
 
     public function transaccion(){
-        return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion');
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',  $this->remesaSinScopeGlobal->proyecto->unificacionProyectoObra->baseDatosObraSinScopeGlobal->BaseDatos);
+        return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function partidasDispersion(){
@@ -120,6 +127,13 @@ class Documento extends Model
     /**
      * Atributos
      */
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"d/m/Y");
+    }
+
     public function getPartidaVigenteAttribute(){
         foreach ($this->partidasDispersion as $partida){
             if($partida->estado >= 0){
@@ -198,12 +212,12 @@ class Documento extends Model
 
     public function getProveedorAttribute()
     {
-        return $this->empresa->razon_social;
+        return $this->transaccion->empresa->razon_social;
     }
 
     public function getRFCAttribute()
     {
-        return $this->empresa->rfc;
+        return $this->transaccion->empresa->rfc;
     }
 
     /**

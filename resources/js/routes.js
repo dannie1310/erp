@@ -3651,14 +3651,26 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'autorizar-pago-factura',
-                        name: 'autorizar-pago-factura',
+                        path: 'transacciones',
+                        name: 'enlistar-transacciones-no-localizados',
                         component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/Index').default,
                         meta: {
-                            title: 'Autorización de  Proveedores No Localizados en Remesa',
-                            breadcrumb: {name: 'AUTORIZAR PAGOS DE FACTURA', parent: 'proveedor-no-localizado'},
+                            title: 'Lista de Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIÓN', parent: 'proveedor-no-localizado'},
                             middleware: [auth, permission],
-                            permission: ['autorizar_rechazar_pago_proveedor_no_localizado'],
+                            permission: ['consultar_transaccion_proveedor_no_localizado'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/IndexAutorizacion').default,
+                        meta: {
+                            title: 'Autorizar Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIONES', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_rechazar_transaccion_proveedor_no_localizado'],
                             general: true
                         }
                     },

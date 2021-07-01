@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-eye"></i> CONSULTAR DETALLE DE AUTORIZACIÓN O RECHAZO DEL PAGO PARA PROVEEDOR NO LOCALIZADO</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-eye"></i> Transacción de proveedor No Localizado</h5>
                         <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>

@@ -37,7 +37,8 @@
             },
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('remesas/documento-no-localizado/paginate', { params: {include: 'documento.remesaSinScope'}})
+                return this.$store.dispatch('remesas/documento-no-localizado/paginate', { params: {include: 'documento.remesaSinScope'
+                ,scope:'autorizacionPendiente'}})
                     .then(data => {
                         this.$store.commit('remesas/documento-no-localizado/SET_DOCUMENTOS', data.data);
                         this.$store.commit('remesas/documento-no-localizado/SET_META', data.meta);

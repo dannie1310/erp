@@ -65,7 +65,7 @@ class DocumentoTransformer extends TransformerAbstract
             'tipo_documento' => $model->IDTipoDocumento,
             'id_cuenta_abono' => $model->cuenta_abono,
             'id_cuenta_cargo' => $model->cuenta_cargo,
-            'fecha' => $model->Fecha,
+            'fecha' => $model->fecha_format,
             'proveedor' => $model->proveedor,
             'rfc' => $model->rfc
         ];

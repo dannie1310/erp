@@ -26,6 +26,11 @@ class DocumentoDeNoLocalizadoService
         $this->repository = new Repository($model);
     }
 
+    public function index($data)
+    {
+        return $this->repository->all($data);
+    }
+
     public function paginate($data)
     {
         if (isset($data['anio']))

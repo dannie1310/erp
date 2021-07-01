@@ -42,6 +42,11 @@ class DocumentoDeNoLocalizado extends Model
      * Scopes
      */
 
+    public function scopeAutorizacionPendiente($query)
+    {
+        return $query->where('estado', 0);
+    }
+
     /**
      * Atributos
      */

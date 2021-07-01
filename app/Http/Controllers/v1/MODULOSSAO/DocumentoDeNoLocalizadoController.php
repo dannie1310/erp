@@ -39,14 +39,14 @@ class DocumentoDeNoLocalizadoController extends Controller
     public function __construct(DocumentoDeNoLocalizadoService $service, DocumentoDeNoLocalizadoTransformer $transformer, Manager $fractal)
     {
         $this->middleware('auth:api');
-        $this->middleware('permisoGlobal:autorizar_rechazar_pago_proveedor_no_localizado')->only(['autorizar','rechazar']);
+        $this->middleware('permisoGlobal:autorizar_rechazar_transaccion_proveedor_no_localizado')->only(['autorizar','rechazar']);
 
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
     }
 
-    public function autorizar(Request $request, $id)
+    public function autorizar($id)
     {
         return $this->respondWithItem($this->service->autorizar($id));
     }
