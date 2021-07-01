@@ -62,7 +62,8 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     if(data.length > 0){
-                                        swal("No se pudo actualizar lista de EFOS por: "+data, {
+                                        swal(data[0]["log_procesamiento"], {
+                                            icon: "warning",
                                             buttons: {
                                                 confirm: {
                                                     text: 'Aceptar',
