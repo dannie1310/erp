@@ -78,14 +78,12 @@ class CtgEfos extends Model
         }
         $file_fingerprint = hash_file('md5', $file);
         if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)
-            ->where("id", "!=", $procesamiento->id)->first())
+            ->where("id", "!=", $procesamiento->id)->where("nombre_archivo","!=","")->first())
         {
             $this->log[] = 'Archivo CSV registrado previamente';
             DB::connection('seguridad')->rollBack();
             return $this->log;
         }
-
-        CtgEfos::where("estado_registro","=",1)->update(["estado_registro"=>0]);
 
         $efos=$this->getCsvData($file);
         if(!count($efos['data'])>0)
@@ -99,9 +97,19 @@ class CtgEfos extends Model
         $procesamiento->nombre_archivo = 'actualizacion '.date('d-m-Y h:i:s.u').'.csv';
         $procesamiento->save();
 
+        $posiciones_validas = $this->validaPosicionesArchivo($efos);
+        if(!$posiciones_validas)
+        {
+            $this->log[] = 'Las posiciones del archivo actual no son consistentes con las posiciones del archivo anterior';
+            DB::connection('seguridad')->rollBack();
+            return $this->log;
+        }
+
+        CtgEfos::where("estado_registro","=",1)->update(["estado_registro"=>0]);
+
         try {
             foreach ($efos['data'] as $key => $efo){
-                if($key <=20){
+                //if($key <=20){
                     $estado = $this->estadoId($efo['estado']);
 
                     $efos_layout = $this->create(
@@ -120,7 +128,7 @@ class CtgEfos extends Model
                             'estado' => $estado
                         ]
                     );
-                }
+                //}
             }
 
             $this->guardarCsv($file, $file_fingerprint);
@@ -331,6 +339,66 @@ class CtgEfos extends Model
             'data' => $content,
             'fecha_informacion' => $fecha_informacion,
         ];
+    }
+
+    private function validaPosicionesArchivo($efos)
+    {
+        $i = 0;
+        $inconsistencias = 0;
+        foreach ($efos["data"] as $efo){
+            if($i>0 && $i<50){
+                $efo_previo = CtgEfos::where("rfc","=",$efo["rfc"])->where("estado_registro","=","1")->first();
+                if($efo_previo)
+                {
+                    if($efo_previo->estado == 0)
+                    {
+                        if(substr($efo_previo->fecha_presunto,0,10) != $efo["fecha_presunto"]){
+                            //dd(1, $efo_previo->fecha_presunto ,$efo["fecha_presunto"]);
+                            $inconsistencias++;
+                        }
+                        if($efo_previo->fecha_presunto_dof != ''){
+                            if(substr($efo_previo->fecha_presunto_dof,0,10) != $efo["fecha_presunto_dof"])
+                            {
+                                //dd(2, $efo_previo->fecha_presunto_dof ,$efo["fecha_presunto_dof"]);
+                                $inconsistencias++;
+                            }
+                        }
+                        if(substr($efo_previo->fecha_definitivo,0,10) != $efo["fecha_definitivo"]){
+                            //dd(3, $efo_previo->fecha_definitivo ,$efo["fecha_definitivo"]);
+                            $inconsistencias++;
+                        }
+                        if($efo_previo->fecha_definitivo_dof != ''){
+                            if(substr($efo_previo->fecha_definitivo_dof,0,10) != $efo["fecha_definitivo_dof"])
+                            {
+                                //dd(4, $efo_previo->fecha_definitivo_dof ,$efo["fecha_definitivo_dof"]);
+                                $inconsistencias++;
+                            }
+                        }
+                    }
+
+                    if($efo_previo->estado == 2)
+                    {
+                        if(substr($efo_previo->fecha_presunto,0,10) != $efo["fecha_presunto"]){
+                            //dd(5, $efo_previo->fecha_presunto ,$efo["fecha_presunto"]);
+                            $inconsistencias++;
+                        }
+                        if($efo_previo->fecha_presunto_dof != ''){
+                            if(substr($efo_previo->fecha_presunto_dof,0,10) != $efo["fecha_presunto_dof"])
+                            {
+                                //dd(6, $efo_previo->fecha_presunto_dof ,$efo["fecha_presunto_dof"]);
+                                $inconsistencias++;
+                            }
+                        }
+                    }
+                }
+            }
+            $i++;
+        }
+        if($inconsistencias>0)
+        {
+            return false;
+        }
+        return true;
     }
 
     private function validarFormatoFecha($fecha){
