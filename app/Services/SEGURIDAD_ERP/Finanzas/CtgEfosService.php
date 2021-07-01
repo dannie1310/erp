@@ -28,7 +28,8 @@ class CtgEfosService
     }
 
     public function cargaLayout($file){
-        return $this->repository->carga($file);
+        $procesamiento = $this->repository->carga($file);
+        return $procesamiento->logs()->whereIn("tipo",[0,1])->get()->toArray();
     }
 
     public function procesaURLCSV()

@@ -53,11 +53,12 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         } else {
             $procesamiento->logs()->create(
                 [
-                    "log_procesamiento" =>"Procesamiento Correcto"
+                    "log_procesamiento" =>"Procesamiento Correcto",
+                    "tipo" =>"2"
                 ]
             );
         }
-        return $logs;
+        return $procesamiento;
     }
 
     public function rfc($data)

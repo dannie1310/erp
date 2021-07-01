@@ -40,6 +40,6 @@ class ProcesaListadoEFOS extends Command
     public function handle()
     {
         $servicio = new CtgEfosService(new CtgEfos());
-        $resultado = $servicio->procesaURLCSV();
+        $servicio->procesaURLCSV();
     }
 }

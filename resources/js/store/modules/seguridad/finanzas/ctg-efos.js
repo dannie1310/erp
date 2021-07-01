@@ -62,7 +62,7 @@ export default {
                                 .then(r => r.data)
                                 .then(data => {
                                     if(data.length > 0){
-                                        swal(data[0]["descripcion"], {
+                                        swal(data[0]["log_procesamiento"], {
                                             icon: "warning",
                                             buttons: {
                                                 confirm: {
