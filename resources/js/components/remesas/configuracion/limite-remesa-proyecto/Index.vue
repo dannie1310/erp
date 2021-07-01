@@ -83,7 +83,7 @@
                         CantidadExtraordinariasPermitidas : proyecto.cantidad_limite_extraordinarias,
                         buttons: $.extend({}, {
                             id_proyecto : proyecto.id,
-                            edit: self.$root.can('editar_limite_remesa_proyecto') ? true : false,
+                            edit: self.$root.can('editar_limite_remesa_proyecto',true) ? true : false,
                         })
                     }));
                 },
