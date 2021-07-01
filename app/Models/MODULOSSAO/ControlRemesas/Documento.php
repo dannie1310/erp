@@ -16,15 +16,21 @@ use App\Models\CADECO\Fondo;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\Context;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Documento extends Model
 {
     protected $connection = 'modulosao';
-    protected $table = 'ModulosSao.ControlRemesas.Documentos';
+    protected $table = 'ModulosSAO.ControlRemesas.Documentos';
     protected $primaryKey = 'IDDocumento';
     public $timestamps = false;
+
+    protected $dates =["Fecha"];
+    /*protected $dateFormat = 'M d Y h:i:s A';*/
 
     protected $hidden = ['disponible'];
 
@@ -50,6 +56,11 @@ class Documento extends Model
         return $this->belongsTo(Remesa::class, 'IDRemesa', 'IDRemesa');
     }
 
+    public function remesaSinScopeGlobal()
+    {
+        return $this->hasOne(Remesa::class, 'IDRemesa', 'IDRemesa')->withoutGlobalScopes();
+    }
+
     public function documentoLiberado()
     {
         return $this->belongsTo(DocumentoLiberado::class, 'IDDocumento', 'IDDocumento');
@@ -63,9 +74,9 @@ class Documento extends Model
         return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'IDDocumento', 'id_documento');
     }
 
-    public function empresa()
+    public function destinatario()
     {
-        return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
+        return $this->belongsTo(DocumentoDestinatario::class, 'IDDestinatario', 'IDDestinatario');
     }
 
     public function fondo()
@@ -82,7 +93,9 @@ class Documento extends Model
     }
 
     public function transaccion(){
-        return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion');
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',  $this->remesaSinScopeGlobal->proyecto->unificacionProyectoObra->baseDatosObraSinScopeGlobal->BaseDatos);
+        return $this->belongsTo(Transaccion::class, 'IDTransaccionCDC', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function partidasDispersion(){
@@ -114,6 +127,13 @@ class Documento extends Model
     /**
      * Atributos
      */
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->Fecha);
+        return date_format($date,"d/m/Y");
+    }
+
     public function getPartidaVigenteAttribute(){
         foreach ($this->partidasDispersion as $partida){
             if($partida->estado >= 0){
@@ -179,12 +199,25 @@ class Documento extends Model
      * */
     public function getCuentaCargoAttribute(){
         $obra = Obra::find(Context::getIdObra());
-        $cuentas = $obra->cuentasPagadorasObra;
-        if(sizeof($cuentas) === 1){
-            return $cuentas[0]->id_cuenta;
-        }else{
-            return null;
+        if($obra) {
+            $cuentas = $obra->cuentasPagadorasObra;
+            if (sizeof($cuentas) === 1) {
+                return $cuentas[0]->id_cuenta;
+            } else {
+                return null;
+            }
         }
+        return null;
+    }
+
+    public function getProveedorAttribute()
+    {
+        return $this->transaccion->empresa->razon_social;
+    }
+
+    public function getRFCAttribute()
+    {
+        return $this->transaccion->empresa->rfc;
     }
 
     /**

@@ -85,7 +85,7 @@
                             anio: folio.anio,
                             semana: folio.numero_semana,
                             id_proyecto : folio.id_proyecto,
-                            edit: self.$root.can('editar_limite_remesa') ? true : true,
+                            edit: self.$root.can('editar_limite_remesa',true) ? true : false,
                         })
                     }));
                 },

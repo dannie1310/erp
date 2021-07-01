@@ -131,7 +131,6 @@ import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
 
 import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
 
-
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
 import ctgTipoFondo from './modules/finanzas/ctg-tipo-fondo';
@@ -205,8 +204,10 @@ import aplicacion from "./modules/igh/aplicacion";
 import conceptoPresupuesto from './modules/presupuesto/concepto';
 
 //REMESAS
+import documentoNoLocalizado from './modules/remesas/documento-no-localizado';
 import folio from './modules/remesas/remesa-folio';
 import proyectoMSAO from './modules/remesas/proyecto';
+
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
@@ -401,6 +402,7 @@ export default new Vuex.Store({
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 
+        'remesas/documento-no-localizado' : documentoNoLocalizado,
         'remesas/remesa-folio' : folio,
         'remesas/proyecto' : proyectoMSAO,
 

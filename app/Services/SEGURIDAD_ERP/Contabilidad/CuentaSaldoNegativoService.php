@@ -38,8 +38,8 @@ class CuentaSaldoNegativoService
         if (isset($data['codigo_cuenta'])) {
             $this->repository->where([['codigo_cuenta', 'LIKE', '%' . $data['codigo_cuenta'] . '%']]);
         }
-        if (isset($data['tipo'])) {
-            $this->repository->where([['tipo', '=', $data['tipo']]]);
+        if (isset($data['tipo_cuenta'])) {
+            $this->repository->where([['tipo_cuenta', 'like', '%' . $data['tipo_cuenta'] . "%"]]);
         }
         if (isset($data['nombre_cuenta'])) {
             $this->repository->where([['nombre_cuenta', 'LIKE', '%' . $data['nombre_cuenta'] . '%']]);

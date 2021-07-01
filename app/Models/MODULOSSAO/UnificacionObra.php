@@ -28,6 +28,11 @@ class UnificacionObra extends Model
         return $this->belongsTo(BaseDatosObra::class, "IDBaseDatos", "IDBaseDatos");
     }
 
+    public function baseDatosObraSinScopeGlobal()
+    {
+        return $this->belongsTo(BaseDatosObra::class, "IDBaseDatos", "IDBaseDatos")->withoutGlobalScopes();
+    }
+
     public function proyecto()
     {
         return $this->hasMany(Proyecto::class, "IDProyecto", "IDProyecto");
