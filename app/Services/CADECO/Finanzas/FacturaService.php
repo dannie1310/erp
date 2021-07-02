@@ -405,8 +405,6 @@ class FacturaService
                 }
             }
         }
-        dd($logs);
-
         return $transaccion;
     }
 
