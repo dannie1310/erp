@@ -281,7 +281,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
         $val = DB::connection('cntpqdm')->select(DB::raw("SELECT top 1 * FROM [$db_doc_metadata].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
         if(count($val) == 0){
-            throw new Exception("respuesta spInsUpdDocument: ".$resp." No se encontro el comprobante con el GUID: ".$guid);
+            throw new Exception("respuesta spInsUpdDocument: ".$resp." No se encontro el comprobante con el GUID: ".$guid." en la base de datos: ".Config::get('database.connections.cntpqdm.database'));
         }
 
         $conceptos = $this->get_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>');
