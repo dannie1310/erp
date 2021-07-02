@@ -180,7 +180,7 @@
                         .then(data => {
                             this.$emit('success');
                         }).finally(() => {
-                            this.descargar();
+                            this.getCFDIPorCargar();
                         });
                 }
             },
