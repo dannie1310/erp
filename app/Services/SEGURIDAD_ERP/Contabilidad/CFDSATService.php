@@ -8,26 +8,27 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
-use App\Events\CambioEFOS;
-use App\Events\CambioNoLocalizados;
-use App\Events\FinalizaCargaCFD;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
-use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use App\Models\SEGURIDAD_ERP\Proyecto;
-use App\PDF\Fiscal\CFDI;
-use App\PDF\Fiscal\InformeCFDICompleto;
-use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
+use DateTime;
 use App\Utils\CFD;
 use App\Utils\Util;
-use Illuminate\Support\Facades\Storage;
-use Chumper\Zipper\Zipper;
-use DateTime;
 use App\Utils\Files;
+use App\PDF\Fiscal\CFDI;
+use Webpatser\Uuid\Uuid;
+use App\Events\CambioEFOS;
+use Chumper\Zipper\Zipper;
+use App\Events\FinalizaCargaCFD;
+use App\Events\CambioNoLocalizados;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\PDF\Fiscal\InformeCFDICompleto;
+use Illuminate\Support\Facades\Storage;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 
 class CFDSATService
 {
@@ -537,6 +538,18 @@ class CFDSATService
         try {
             libxml_use_internal_errors(true);
             $factura_xml = simplexml_load_file($archivo_xml);
+            if($factura_xml === false)
+            {
+                $factura_xml = simplexml_load_string($archivo_xml);
+            }
+
+            if(!$factura_xml){
+                $errors = libxml_get_errors();
+                //dd(var_export($errors, true));
+                $this->log["archivos_no_cargados_error_app"] += 1;
+                $this->log["cfd_no_cargados_error_app"] += 1;
+                return 0;
+            }
 
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());

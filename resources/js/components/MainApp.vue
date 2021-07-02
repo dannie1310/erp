@@ -12,7 +12,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>{{ this.$route.meta.title }}</h1>
+                            <h5>{{ this.$route.meta.title }}</h5>
                         </div>
                         <div class="col-sm-6">
                             <AppBreadcrumb v-if="$router.currentRoute.name != 'portal'"/>

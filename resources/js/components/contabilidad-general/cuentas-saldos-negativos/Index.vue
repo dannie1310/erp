@@ -38,7 +38,7 @@
                     { title: 'Código de Cuenta', field: 'codigo_cuenta', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Nombre de Cuenta', field: 'nombre_cuenta', thClass: 'th_c350', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Saldo de Cuenta', field: 'saldo', tdClass:'td_money_input', sortable: true,  tdComp: require('./partials/RouterSaldo').default},
-                    { title: 'Tipo de Cuenta', field: 'tipo', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: 'Tipo de Cuenta', field: 'tipo_cuenta', thClass: 'fecha_hora', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Acciones', field: '', sortable: true},
                 ],
                 data: [],
@@ -104,7 +104,7 @@
                             nombre_empresa:cuenta.nombre_empresa,
                             codigo_cuenta:cuenta.codigo_cuenta,
                             nombre_cuenta:cuenta.nombre_cuenta,
-                            tipo:cuenta.tipo,
+                            tipo_cuenta:cuenta.tipo_cuenta,
                             fecha_actualizacion:cuenta.fecha_actualizacion,
                             saldo: $.extend({},{saldo: cuenta.saldo_cuenta, id: cuenta.id}),
                         })

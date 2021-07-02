@@ -13,7 +13,7 @@ class SaldosNegativos
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $cuenta->base_datos);
 
-        if(in_array($cuenta->digito_inicial,[2,3,4])){
+        if(in_array($cuenta->Tipo,["B", "D", "F", "H", "J"])){
             $query = "select IdCuenta, MovimientosPoliza.Ejercicio, MovimientosPoliza.Periodo, sum (
               CASE MovimientosPoliza.TipoMovto
                  WHEN 1 THEN MovimientosPoliza.Importe
@@ -53,7 +53,7 @@ class SaldosNegativos
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $cuenta->base_datos);
 
-        if(in_array($cuenta->digito_inicial,[2,3,4]))
+        if(in_array($cuenta->digito_inicial,["B", "D", "F", "H", "J"]))
         {
             $query = "select Polizas.Id as IdPoliza, CONVERT(varchar,Polizas.Fecha,103) as Fecha, TiposPolizas.Nombre as Tipo, Polizas.Folio, MovimientosPoliza.Concepto, MovimientosPoliza.Referencia,
        CASE MovimientosPoliza.TipoMovto

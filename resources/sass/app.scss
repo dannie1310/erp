@@ -67,6 +67,34 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   text-align: center;
 }
 
+.td_c30, td.c30, .th_c30, th.c30
+{
+    width: 30px;
+    max-width: 30px;
+    min-width: 30px;
+}
+
+.td_c40, td.c40, .th_c40, th.c40
+{
+    width: 40px;
+    max-width: 40px;
+    min-width: 40px;
+}
+
+.td_c50, td.c50, .th_c50, th.c50
+{
+    width: 50px;
+    max-width: 50px;
+    min-width: 50px;
+}
+
+.td_c80, td.c80, .th_c80, th.c80
+{
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
+}
+
 .td_c100, td.c100
 {
     width: 100px;
@@ -107,6 +135,20 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
 .th_c200, th.c200
 {
     text-align: center;
+}
+
+.th_c250, th.c250, .td_c250, td.c250
+{
+    width: 250px;
+    max-width: 250px;
+    min-width: 250px;
+}
+
+.th_c300, th.c300, .td_c300, td.c300
+{
+    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
 }
 
 .th_c180, th.c180, .td_c180, td.c180

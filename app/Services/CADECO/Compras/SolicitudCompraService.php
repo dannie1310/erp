@@ -179,6 +179,7 @@ class SolicitudCompraService
                 if(!array_key_exists($cotizacion->id_transaccion, $cotizaciones)){
                     $cotizaciones[$cotizacion->id_transaccion] = [
                         'id_transaccion' => $cotizacion->id_transaccion,
+                        'rfc' => $cotizacion->empresa->rfc,
                         'razon_social' => $cotizacion->empresa->razon_social,
                         'sucursal' => $cotizacion->sucursal->descripcion,
                         'direccion' => $cotizacion->sucursal->direccion,

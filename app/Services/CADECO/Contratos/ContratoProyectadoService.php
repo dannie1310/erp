@@ -365,6 +365,7 @@ class ContratoProyectadoService
                         if(!array_key_exists($presupuesto->id_transaccion, $presupuestos)){
                             $presupuestos[$presupuesto->id_transaccion] = [
                                 'id_transaccion' => $presupuesto->id_transaccion,
+                                'rfc' => $presupuesto->empresa->rfc,
                                 'razon_social' => $presupuesto->empresa->razon_social,
                                 'sucursal' => $presupuesto->sucursal?$presupuesto->sucursal->descripcion:'',
                                 'direccion' => $presupuesto->sucursal?$presupuesto->sucursal->direccion:'',
