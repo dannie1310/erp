@@ -397,7 +397,7 @@ class FacturaService
                 $logs = $this->guardarXmlEnADD($xml);
                 foreach($logs as $log)
                 {
-                    if(key_exists("tipo",$log)){
+                    if(is_array($log)){
                         $facturaRepositorio->logsADD()->create(
                             [
                                 "log_add"=>$log["descripcion"],
