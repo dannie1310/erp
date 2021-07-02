@@ -86,6 +86,11 @@ class FacturaRepositorio extends Model
         return $this->belongsTo(ProveedorSAT::class, 'rfc_emisor', 'rfc');
     }
 
+    public function logsADD()
+    {
+        return $this->hasMany(FacturasRepositorioLogADD::class, "id_factura_repositorio", "id");
+    }
+
     /**
      * Atributos
      */

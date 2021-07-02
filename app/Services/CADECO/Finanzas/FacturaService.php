@@ -390,6 +390,23 @@ class FacturaService
             $servicio_cfdi = new CFDSATService(new CFDSAT());
             $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
         }
+
+        foreach($transaccion->facturasRepositorio as $facturaRepositorio){
+            if($facturaRepositorio->cfdiSAT){
+                $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
+                $logs = $this->guardarXmlEnADD($xml);
+                foreach($logs as $log)
+                {
+                    $facturaRepositorio->logsADD()->create(
+                        [
+                            "log_add"=>$log
+                        ]
+                    );
+                }
+            }
+        }
+        dd($logs);
+
         return $transaccion;
     }
 
@@ -564,8 +581,6 @@ class FacturaService
         {
             abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
-        $val_xml = $this->guardarXml($archivo_xml);
-        
         return $arreglo_cfd;
     }
 
@@ -629,12 +644,11 @@ class FacturaService
         }
     }
 
-    public function guardarXml($xml){
+    public function guardarXmlEnADD($xml){
         $xml_arreglo = $this->getArregloCFD($xml);
         if(in_array($xml_arreglo['tipo_comprobante'], ["I", "E"])){
             return $this->repository->guardarXml($xml, $xml_arreglo);
         }
-        return;
     }
 
 }
