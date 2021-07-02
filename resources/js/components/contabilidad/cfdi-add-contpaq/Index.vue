@@ -135,7 +135,7 @@
 
         methods: {
             getCFDIPorCargar() {
-                this.cargando = false;
+                this.cargando = true;
                 return this.$store.dispatch('contabilidad/cfdi-poliza/getCFDIPorCargar', { params: this.query })
                     .then(data => {
 
