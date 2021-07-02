@@ -24,7 +24,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-12">
-                            <span style="margin-right: 5px">Total de CFDI: <b>{{polizas.length}}</b></span>
+                            <span style="margin-right: 5px">Total de CFDI: <b>{{cfdis_pendientes.length}}</b></span>
                         </div>
                     </div>
                     <div class="row col-md-12">
