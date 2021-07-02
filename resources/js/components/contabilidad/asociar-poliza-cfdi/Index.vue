@@ -121,6 +121,7 @@
 
         methods: {
             getPolizasPorAsociar() {
+                this.cargando = true;
                 return this.$store.dispatch('contabilidad/poliza/getPolizasPorAsociar', { params: this.query })
                     .then(data => {
                         this.cfdis_pendientes = data;
