@@ -198,6 +198,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
                 if(!$va_insert_xml){
                     $this->logs[] = "Error spInsUpdDocument";
+                }else{
+                    $this->logs[] = "Envío éxitoso, comprobante con GUID: ".$guid_doc_metadata. " en base de datos: ".Config::get('database.connections.cntpqdm.database');
                 }
             }catch (Exception $e){
                 $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
@@ -273,7 +275,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
         try{
             $resp = DB::connection('cntpqdm')
-                    ->update(DB::raw("DECLARE @return_value int SET ANSI_PADDING ON; EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value"));
+                    ->update(DB::raw("DECLARE @return_value int  EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value"));
 
         }catch(Exception $e){
             throw new Exception("-Error de ejecución de sp spInsUpdDocument en la base de datos: ".Config::get('database.connections.cntpqdm.database')." respuesta: ".$e->getMessage().$e->getLine(),500);
@@ -359,10 +361,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             throw new Exception("Error de ejecución de sp spUpdDocumento  en la base de datos: ".Config::get('database.connections.cntpqdm.database').$e->getMessage(),500);
         }
 
-            return true;
+        return true;
 
-
-        return false;
     }
 
     private function get_string_between($string, $start, $end){
