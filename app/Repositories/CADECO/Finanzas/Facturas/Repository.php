@@ -199,7 +199,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
                 if(!$va_insert_xml){
                     $this->logs[] = "Error spInsUpdDocument";
                 }else{
-                    $this->logs[] = "Envío éxitoso, comprobante con GUID: ".$guid_doc_metadata. " en base de datos: ".Config::get('database.connections.cntpqdm.database');
+                    $this->logs[] = ["tipo"=>1,"descripcion"=>"Envío éxitoso, comprobante con GUID: ".$guid_doc_metadata. " en base de datos: ".Config::get('database.connections.cntpqdm.database')];
                 }
             }catch (Exception $e){
                 $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
