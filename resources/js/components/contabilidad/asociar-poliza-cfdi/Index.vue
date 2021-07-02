@@ -3,7 +3,9 @@
         <div class="row">
             <div class="col-md-9"></div>
             <div class="col-md-3">
-                <Asociar @created="getPolizasPorAsociar()" v-bind:datos_poliza="datos_poliza" v-if="datos_poliza"/>
+                <button @click="asociar"  class="btn btn-app pull-right">
+                    <i class="fa fa-share-alt"></i> Asociar
+                </button>
             </div>
         </div>
         <div v-if="cargando">
@@ -34,6 +36,7 @@
                                     <th colspan="5">CFDI</th>
                                     <th colspan="2">Póliza SAO</th>
                                     <th colspan="3">Póliza Contpaq</th>
+                                    <th rowspan="2" style="width: 10px"></th>
                                 </tr>
                                 <tr>
                                     <th>Tipo </th>
@@ -49,7 +52,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(cfdi, i) in polizas">
+                            <tr v-for="(cfdi, i) in cfdis_pendientes">
                                 <td>{{i+1}}</td>
                                     <td style="text-align: center">{{cfdi.tipo_cfdi}}</td>
                                     <template v-if="cfdi.fecha_cfdi">
@@ -77,6 +80,13 @@
                                         v-bind:id_empresa="cfdi.id_empresa_poliza_contpaq">
                                     </enlace-consulta-poliza-contpaq>
                                     </td>
+                                    <td>
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label" style="cursor:pointer" >
+                                                <input class="form-check-input" type="checkbox" name="enviar" v-model="cfdi.seleccionado" value="1" >
+                                            </label>
+                                        </div>
+                                    </td>
                             </tr>
                             </tbody>
                         </table>
@@ -98,7 +108,10 @@
         data() {
             return {
                 cargando: true,
-                datos_poliza: null
+                datos_poliza: null,
+                cfdis_pendientes : [],
+                cfdi_store : [],
+                datos_store : {}
             }
         },
 
@@ -110,20 +123,53 @@
             getPolizasPorAsociar() {
                 return this.$store.dispatch('contabilidad/poliza/getPolizasPorAsociar', { params: this.query })
                     .then(data => {
-                        this.$store.commit('contabilidad/poliza/SET_POLIZAS', data);
-                        this.datos_poliza = data.map((poliza, i) => (
+                        this.cfdis_pendientes = data;
+                        //this.$store.commit('contabilidad/poliza/SET_POLIZAS', data);
+                        /*this.datos_poliza = data.map((poliza, i) => (
                             poliza.id_poliza_sao
-                        ));
+                        ));*/
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
+            asociar()
+            {
+                var item_a_guardar = 0;
+
+                let _self = this;
+                this.cfdis_pendientes.forEach(function(element) {
+                    if(element.seleccionado == 1)
+                    {
+                        item_a_guardar = item_a_guardar + 1;
+                        _self.cfdi_store.push(element.id_poliza_sao);
+                    }
+                });
+                if(item_a_guardar > 0)
+                {
+                    this.datos_store["cfdi"] = _self.cfdi_store;
+                    /*return this.$store.dispatch('contabilidad/cfdi-poliza/cargar',
+                        this.datos_store)
+                        .then(data => {
+                            this.$emit('success');
+                        }).finally(() => {
+                            this.getCFDIPorCargar();
+                        });*/
+
+                    return this.$store.dispatch('contabilidad/poliza/asociarCFDI',
+                        this.datos_store
+                    ).then((data) => {
+                        this.$emit('success')
+                    }).finally(() => {
+                        this.getPolizasPorAsociar();
+                    });
+                }
+            }
         },
         computed: {
-            polizas(){
+            /*polizas(){
                 return this.$store.getters['contabilidad/poliza/polizas'];
-            },
+            },*/
         },
     }
 </script>

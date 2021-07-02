@@ -172,7 +172,7 @@ class PolizaService
 
     public function asociarCFDI($data)
     {
-        return $this->repository->asociarCFDI($data['data']);
+        return $this->repository->asociarCFDI($data['cfdi']);
     }
 
     public function getPolizasPorAsociar()
