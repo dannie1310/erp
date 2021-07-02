@@ -5,11 +5,15 @@ namespace App\Services\CADECO\Contabilidad;
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\CADECO\Factura;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CADECO\Contabilidad\Poliza\Repository;
+use App\Repositories\CADECO\Finanzas\FacturaRepositorioRepository;
+use App\Services\CADECO\Finanzas\FacturaService;
 use App\Utils\Files;
 use Chumper\Zipper\Zipper;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class PolizaService
@@ -179,6 +183,40 @@ class PolizaService
     public function getCFDIPorCargar()
     {
         return $this->repository->getCFDIPorCargar();
+    }
+
+    public function cargaCFDIADD($cfdis)
+    {
+        foreach($cfdis as $cfdi){
+
+            $facturaRepositorioRepository = new FacturaRepositorioRepository(new FacturaRepositorio());
+            $facturaRepositorio = $facturaRepositorioRepository->where([["uuid","=",$cfdi["uuid"]]])->first();
+            if($facturaRepositorio){
+                if($facturaRepositorio->cfdiSAT){
+                    $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
+                    $facturaService = new FacturaService(new Factura());
+                    $logs = $facturaService->guardarXmlEnADD($xml);
+                    foreach($logs as $log)
+                    {
+                        if(is_array($log)){
+                            $facturaRepositorio->logsADD()->create(
+                                [
+                                    "log_add"=>$log["descripcion"],
+                                    "tipo"=>$log["tipo"]
+                                ]
+                            );
+                        }else {
+                            $facturaRepositorio->logsADD()->create(
+                                [
+                                    "log_add"=>$log
+                                ]
+                            );
+                        }
+
+                    }
+                }
+            }
+        }
     }
 
     public function descargarCFDIPorCargar()

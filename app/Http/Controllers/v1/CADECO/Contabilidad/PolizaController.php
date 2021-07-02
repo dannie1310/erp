@@ -107,4 +107,9 @@ class PolizaController extends Controller
     {
         return $this->service->descargarCFDIPorCargar();
     }
+
+    public function cargarCFDIADD(Request $request)
+    {
+        $this->service->cargaCFDIADD($request->cfdi);
+    }
 }

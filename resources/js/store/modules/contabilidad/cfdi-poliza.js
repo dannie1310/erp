@@ -84,6 +84,44 @@ export default {
                 })
             }
         },
+        cargar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar CFDI a ADD",
+                    text: "¿Está seguro de cargar los CFDI al ADD de Contpaq?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cargar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI+'cargar-cfdi-add', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("CFDI Cargados Correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

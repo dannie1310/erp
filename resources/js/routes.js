@@ -2031,8 +2031,8 @@ export const routes = [
                                 name:"cfdi-pendientes-carga-add",
                                 component: require('./components/contabilidad/cfdi-add-contpaq/Index.vue').default,
                                 meta: {
-                                    title: 'CFDI pendientes de cargar a ADD de Contpaq',
-                                    breadcrumb: {parent: 'sistema_contable', name: 'CFDI PENDIENTES DE CARGAR'},
+                                    title: 'Cargar CFDI a ADD de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'CARGAR CFDI A ADD'},
                                     middleware: [auth, context, permission],
                                     permission: ['consultar-cfdi-pendientes-carga-add'],
                                 }
