@@ -14,7 +14,8 @@ class FacturasRepositorioLogADD extends Model
 
     protected $fillable =[
         "id_factura_repositorio",
-        "log_add"
+        "log_add",
+        "tipo"
     ];
 
 }
