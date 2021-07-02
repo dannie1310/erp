@@ -34,15 +34,15 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         $file_fingerprint = hash_file('md5', $data);
         $ultimo_procesamiento = ProcesamientoListaEfos::orderBy("id","desc")
             ->first();
-        $fecha_informacion = '';
+        $fecha_actualizacion_sat_txt = '';
         if($ultimo_procesamiento){
-            $fecha_informacion = $ultimo_procesamiento->fecha_informacion;
+            $fecha_actualizacion_sat_txt = $ultimo_procesamiento->fecha_actualizacion_sat_txt;
         }
         $procesamiento = ProcesamientoListaEfos::create([
-            'fecha_actualizacion_sat_txt' => '',
+            'fecha_actualizacion_sat_txt' => $fecha_actualizacion_sat_txt,
             'hash_file'=>$file_fingerprint,
             'nombre_archivo'=> '',
-            'fecha_informacion' => $fecha_informacion
+            'fecha_informacion' => ''
         ]);
         $logs = $this->model->reg($procesamiento, $data);
 
