@@ -176,29 +176,32 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         }catch (Exception $e){
             $this->logs[] = "Error insUpdCertificate catch: ". $e->getMessage();
         }
+        $duplicado = false;
         try{
-            if($this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
+            if($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
                 $this->logs[] = "CFDI ya existente en ADD";
             }
         }catch (Exception $e){
             $this->logs[] = "Error buscarCfdiDuplicado catch: ". $e->getMessage();
         }
 
-        $guid_doc_metadata = Uuid::generate()->string;
+        if(!$duplicado){
+            $guid_doc_metadata = Uuid::generate()->string;
 
-        /*
-        $arreglo_bbdd[0]['NameDB'],->dm
-        $arreglo_bbdd[1]['NameDB'],->dc
-        $arreglo_bbdd[3]['NameDB'],->oc
-        $arreglo_bbdd[2]['NameDB']->om
-         * */
-        try{
-            $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
-            if(!$va_insert_xml){
-                $this->logs[] = "Error spInsUpdDocument";
+            /*
+            $arreglo_bbdd[0]['NameDB'],->dm
+            $arreglo_bbdd[1]['NameDB'],->dc
+            $arreglo_bbdd[3]['NameDB'],->oc
+            $arreglo_bbdd[2]['NameDB']->om
+             * */
+            try{
+                $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
+                if(!$va_insert_xml){
+                    $this->logs[] = "Error spInsUpdDocument";
+                }
+            }catch (Exception $e){
+                $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
             }
-        }catch (Exception $e){
-            $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
         }
 
         $this->logs[] = "Finaliza";
@@ -272,21 +275,22 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $resp = DB::connection('cntpqdm')
                     ->update(DB::raw("DECLARE @return_value int SET ANSI_PADDING ON; EXEC [$db_doc_metadata].[dbo].[spInsUpdDocument]  @pXmlFile = N'$pXmlFile', @pDeleteDocument=0, @pSobreEscribe=0, @filename=NULL SELECT 'Return Value' = @return_value"));
 
-            $val = DB::connection('cntpqdm')->select(DB::raw("SELECT top 1 * FROM [$db_doc_metadata].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
-            if(count($val) == 0){
-                throw new Exception("respuesta: ".$resp." No se encontro el comprobante con el GUID: ".$guid);
-            }
         }catch(Exception $e){
-            throw new Exception("-Error de ejecución de sp spInsUpdDocument en la base de datos: ".Config::get('database.connections.cntpqdm.database')." ".$e->getMessage().$e->getLine(),500);
+            throw new Exception("-Error de ejecución de sp spInsUpdDocument en la base de datos: ".Config::get('database.connections.cntpqdm.database')." respuesta: ".$e->getMessage().$e->getLine(),500);
         }
 
-            $conceptos = $this->get_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>');
-            $conceptos = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($conceptos));
-            $array_concepto = [];
-            do{
-                $array_concepto[] = $this->get_string_between($conceptos, '<cfdi:Concepto', '</cfdi:Concepto>');
-                $conceptos = $this->del_string_between($conceptos, '<cfdi:Concepto', '</cfdi:Concepto>');
-            } while(strlen($conceptos) > 50);
+        $val = DB::connection('cntpqdm')->select(DB::raw("SELECT top 1 * FROM [$db_doc_metadata].[dbo].[Comprobante] WHERE [GuidDocument]='$guid'"));
+        if(count($val) == 0){
+            throw new Exception("respuesta spInsUpdDocument: ".$resp." No se encontro el comprobante con el GUID: ".$guid);
+        }
+
+        $conceptos = $this->get_string_between($xml, '<cfdi:Conceptos>', '</cfdi:Conceptos>');
+        $conceptos = preg_replace('/[ ]{2,}|[\t]/', ' ', trim($conceptos));
+        $array_concepto = [];
+        do{
+            $array_concepto[] = $this->get_string_between($conceptos, '<cfdi:Concepto', '</cfdi:Concepto>');
+            $conceptos = $this->del_string_between($conceptos, '<cfdi:Concepto', '</cfdi:Concepto>');
+        } while(strlen($conceptos) > 50);
 
         try{
             foreach($array_concepto as $key => $concepto){
