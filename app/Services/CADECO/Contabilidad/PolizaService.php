@@ -11,6 +11,7 @@ use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Repositories\CADECO\Contabilidad\PolizaRepository as Repository;
 use App\Repositories\CADECO\Finanzas\FacturaRepositorioRepository;
 use App\Services\CADECO\Finanzas\FacturaService;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\Files;
 use Chumper\Zipper\Zipper;
 use Illuminate\Database\Eloquent\Model;
@@ -190,10 +191,15 @@ class PolizaService
     public function cargaCFDIADD($cfdis)
     {
         foreach($cfdis as $cfdi){
-
             $facturaRepositorioRepository = new FacturaRepositorioRepository(new FacturaRepositorio());
             $facturaRepositorio = $facturaRepositorioRepository->where([["uuid","=",$cfdi["uuid"]]])->first();
             if($facturaRepositorio){
+                if(!$facturaRepositorio->cfdiSAT)
+                {
+                    $servicio_cfdi = new CFDSATService(new CFDSAT());
+                    $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+                }
+                $facturaRepositorio->load("cfdiSAT");
                 if($facturaRepositorio->cfdiSAT){
                     $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
                     $facturaService = new FacturaService(new Factura());
@@ -214,7 +220,6 @@ class PolizaService
                                 ]
                             );
                         }
-
                     }
                 }
             }
