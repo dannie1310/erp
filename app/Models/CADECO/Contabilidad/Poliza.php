@@ -510,6 +510,7 @@ class Poliza extends Model
                         "id_poliza_sao"=>$poliza_sao->id_int_poliza,
                         "tipo_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->tipo_poliza->Nombre:'',
                         "id_empresa_poliza_contpaq"=>$id_empresa_contpaq,
+                        "seleccionado"=>1,
                     ]);
 
                 }
@@ -892,6 +893,7 @@ class Poliza extends Model
                             "id_poliza_sao"=>$poliza_sao->id_int_poliza,
                             "tipo_poliza_contpaq"=>($poliza_sao->polizaContpaq)?$poliza_sao->polizaContpaq->tipo_poliza->Nombre:'',
                             "id_empresa_poliza_contpaq"=>$id_empresa_contpaq,
+                            "seleccionado"=>1,
                         ];
                         if(!$cfdi->cfdiSAT){
                             $sin_cfdi_sat += 1;

@@ -21,7 +21,10 @@
             <div class="row">
                 <div class="col-12">
                     <button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar" v-if="$root.can('descargar-cfdi-pendientes-carga-add')">
-                        <i class="fa fa-download"></i> Descargar
+                        <i class="fa fa-download"></i> Descargar ZIP
+                    </button>
+                    <button @click="cargar" class="btn btn-app btn-secondary float-right" title="Descargar" v-if="$root.can('descargar-cfdi-pendientes-carga-add')">
+                        <i class="fa fa-upload"></i> Cargar a ADD
                     </button>
                 </div>
             </div>
@@ -43,6 +46,13 @@
                                     <th colspan="5">CFDI</th>
                                     <th colspan="2">Póliza SAO</th>
                                     <th colspan="3">Póliza Contpaq</th>
+                                    <th rowspan="2" style="width: 10px; text-align: center">
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label" style="cursor:pointer" >
+                                                <input class="form-check-input" type="checkbox" name="selccionar_datos" v-model="checkbox_toggle" value="1" >
+                                            </label>
+                                        </div>
+                                    </th>
                                 </tr>
                                 <tr>
                                     <th>Tipo </th>
@@ -58,7 +68,7 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr v-for="(cfdi, i) in cfdis">
+                                <tr v-for="(cfdi, i) in cfdis_pendientes">
                                     <td>{{i+1}}</td>
                                     <td style="text-align: center">{{cfdi.tipo_cfdi}}</td>
                                     <template v-if="cfdi.fecha_cfdi">
@@ -86,6 +96,13 @@
                                         v-bind:id_empresa="cfdi.id_empresa_poliza_contpaq">
                                     </enlace-consulta-poliza-contpaq>
                                     </td>
+                                    <td style="text-align: center">
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label" style="cursor:pointer" >
+                                                <input class="form-check-input" type="checkbox" name="enviar" v-model="cfdi.seleccionado" value="1" >
+                                            </label>
+                                        </div>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -112,6 +129,10 @@
                 sin_cfdi_sat : 0,
                 sin_poliza_contpaq : 0,
                 total : 0,
+                cfdis_pendientes : [],
+                cfdi_store : [],
+                datos_store : {},
+                checkbox_toggle : 1,
             }
         },
 
@@ -121,12 +142,14 @@
 
         methods: {
             getCFDIPorCargar() {
+                this.cargando = true;
                 return this.$store.dispatch('contabilidad/cfdi-poliza/getCFDIPorCargar', { params: this.query })
                     .then(data => {
-                        this.$store.commit('contabilidad/cfdi-poliza/SET_CFDIS', data.cfdi_pendientes);
+
                         this.sin_cfdi_sat = data.sin_cfdi_sat;
                         this.sin_poliza_contpaq = data.sin_poliza_contpaq;
                         this.total = data.total;
+                        this.cfdis_pendientes = data.cfdi_pendientes;
                         this.datos_cfdi = data.cfdi_pendientes.map((cfdi, i) => (
                             cfdi.uuid
                         ));
@@ -146,11 +169,43 @@
                         this.descargando = false;
                     });
             },
-        },
-        computed: {
-            cfdis(){
-                return this.$store.getters['contabilidad/cfdi-poliza/cfdis'];
+            cargar(){
+                var item_a_guardar = 0;
+
+                let _self = this;
+                this.cfdis_pendientes.forEach(function(element) {
+                    if(element.seleccionado == 1)
+                    {
+                        item_a_guardar = item_a_guardar + 1;
+                        _self.cfdi_store.push(element);
+                    }
+                });
+                if(item_a_guardar > 0)
+                {
+                    this.datos_store["cfdi"] = _self.cfdi_store;
+                    return this.$store.dispatch('contabilidad/cfdi-poliza/cargar',
+                        this.datos_store)
+                        .then(data => {
+                            this.$emit('success');
+                        }).finally(() => {
+                            this.getCFDIPorCargar();
+                        });
+                }
+            },
+            watch: {
+                checkbox_toggle(value){
+                    if(value == 1){
+                        this.cfdis_pendientes.forEach(function(element) {
+                            element = 1;
+                        });
+                    } else {
+                        this.cfdis_pendientes.forEach(function(element) {
+                            element = 0;
+                        });
+                    }
+                },
             },
         },
+
     }
 </script>

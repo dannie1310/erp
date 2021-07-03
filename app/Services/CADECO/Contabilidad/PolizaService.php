@@ -5,12 +5,19 @@ namespace App\Services\CADECO\Contabilidad;
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\CADECO\Factura;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use App\Repositories\CADECO\Contabilidad\Poliza\Repository;
+use App\Repositories\CADECO\Contabilidad\PolizaRepository as Repository;
+use App\Repositories\CADECO\Finanzas\FacturaRepositorioRepository;
+use App\Services\CADECO\Finanzas\FacturaService;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
 use App\Utils\Files;
 use Chumper\Zipper\Zipper;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\Repository as RepositoryMovimiento;
+
 
 class PolizaService
 {
@@ -91,7 +98,7 @@ class PolizaService
                 foreach ($data['movimientos']['data'] as $movimiento) {
                     $movimiento = auth()->user()->can('editar_importe_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'importe');
 
-                    $movimientoRepository = new Repository(new PolizaMovimiento);
+                    $movimientoRepository = new RepositoryMovimiento(new PolizaMovimiento);
                     if (isset($movimiento['id'])) {
                         $movimiento = auth()->user()->can(['ingresar_cuenta_faltante_movimiento_prepoliza', 'editar_cuenta_contable_movimiento_prepoliza']) ? $movimiento : array_except($movimiento, 'cuenta_contable');
                         $movimientoRepository->update($movimiento, $movimiento['id']);
@@ -168,7 +175,7 @@ class PolizaService
 
     public function asociarCFDI($data)
     {
-        return $this->repository->asociarCFDI($data['data']);
+        return $this->repository->asociarCFDI($data['cfdi']);
     }
 
     public function getPolizasPorAsociar()
@@ -179,6 +186,44 @@ class PolizaService
     public function getCFDIPorCargar()
     {
         return $this->repository->getCFDIPorCargar();
+    }
+
+    public function cargaCFDIADD($cfdis)
+    {
+        foreach($cfdis as $cfdi){
+            $facturaRepositorioRepository = new FacturaRepositorioRepository(new FacturaRepositorio());
+            $facturaRepositorio = $facturaRepositorioRepository->where([["uuid","=",$cfdi["uuid"]]])->first();
+            if($facturaRepositorio){
+                if(!$facturaRepositorio->cfdiSAT)
+                {
+                    $servicio_cfdi = new CFDSATService(new CFDSAT());
+                    $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+                }
+                $facturaRepositorio->load("cfdiSAT");
+                if($facturaRepositorio->cfdiSAT){
+                    $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
+                    $facturaService = new FacturaService(new Factura());
+                    $logs = $facturaService->guardarXmlEnADD($xml);
+                    foreach($logs as $log)
+                    {
+                        if(is_array($log)){
+                            $facturaRepositorio->logsADD()->create(
+                                [
+                                    "log_add"=>$log["descripcion"],
+                                    "tipo"=>$log["tipo"]
+                                ]
+                            );
+                        }else {
+                            $facturaRepositorio->logsADD()->create(
+                                [
+                                    "log_add"=>$log
+                                ]
+                            );
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function descargarCFDIPorCargar()
