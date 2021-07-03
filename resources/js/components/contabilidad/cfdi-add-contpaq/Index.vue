@@ -46,7 +46,13 @@
                                     <th colspan="5">CFDI</th>
                                     <th colspan="2">Póliza SAO</th>
                                     <th colspan="3">Póliza Contpaq</th>
-                                    <th rowspan="2" style="width: 10px"></th>
+                                    <th rowspan="2" style="width: 10px; text-align: center">
+                                        <div class="form-check form-check-inline">
+                                            <label class="form-check-label" style="cursor:pointer" >
+                                                <input class="form-check-input" type="checkbox" name="selccionar_datos" v-model="checkbox_toggle" value="1" >
+                                            </label>
+                                        </div>
+                                    </th>
                                 </tr>
                                 <tr>
                                     <th>Tipo </th>
@@ -90,7 +96,7 @@
                                         v-bind:id_empresa="cfdi.id_empresa_poliza_contpaq">
                                     </enlace-consulta-poliza-contpaq>
                                     </td>
-                                    <td>
+                                    <td style="text-align: center">
                                         <div class="form-check form-check-inline">
                                             <label class="form-check-label" style="cursor:pointer" >
                                                 <input class="form-check-input" type="checkbox" name="enviar" v-model="cfdi.seleccionado" value="1" >
@@ -125,7 +131,8 @@
                 total : 0,
                 cfdis_pendientes : [],
                 cfdi_store : [],
-                datos_store : {}
+                datos_store : {},
+                checkbox_toggle : 1,
             }
         },
 
@@ -184,6 +191,19 @@
                             this.getCFDIPorCargar();
                         });
                 }
+            },
+            watch: {
+                checkbox_toggle(value){
+                    if(value == 1){
+                        this.cfdis_pendientes.forEach(function(element) {
+                            element = 1;
+                        });
+                    } else {
+                        this.cfdis_pendientes.forEach(function(element) {
+                            element = 0;
+                        });
+                    }
+                },
             },
         },
 
