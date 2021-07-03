@@ -2006,6 +2006,40 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'asociar-poliza-cfdi',
+                        component: require('./components/contabilidad/asociar-poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"asociar-poliza-cfdi",
+                                component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Asociar CFDI con Pólizas de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR CFDI CON PÓLIZAS DE CONTPAQ'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['asociar_poliza_contpaq_cfdi'],
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'cfdi-pendientes-carga-add',
+                        component: require('./components/contabilidad/cfdi-add-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cfdi-pendientes-carga-add",
+                                component: require('./components/contabilidad/cfdi-add-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'Cargar CFDI a ADD de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'CARGAR CFDI A ADD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar-cfdi-pendientes-carga-add'],
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[

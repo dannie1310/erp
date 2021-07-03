@@ -9,11 +9,19 @@
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Factura;
+use App\Models\CADECO\Obra;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
+use App\Models\CTPQ\Parametro;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Proyecto;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class FacturaRepositorio extends Model
@@ -38,18 +46,71 @@ class FacturaRepositorio extends Model
         return $this->belongsTo(Proyecto::class, 'id_proyecto', 'id');
     }
 
+    public function comprobante()
+    {
+        $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()
+            ->where("id_proyecto", "=", $this->id_proyecto)
+            ->where("id_obra", "=", $this->id_obra)->first();
+        $proyecto = Proyecto::find($configuracion_obra->id_proyecto);
+
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $proyecto->base_datos);
+        $obra = Obra::find($configuracion_obra->id_obra);
+
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
+        $base =  Parametro::find(1);
+
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
+        return $this->hasOne(Comprobante::class,"UUID","uuid");
+    }
+
+    public function cfdiSAT()
+    {
+        return $this->belongsTo(CFDSAT::class, "uuid", "uuid");
+    }
+
+    public function usuario()
+    {
+        return $this->hasOne(Usuario::class, 'idusuario', 'usuario_registro');
+    }
+
+    public function empresa()
+    {
+        return $this->belongsTo(EmpresaSAT::class, 'rfc_receptor', 'rfc');
+    }
+
+    public function proveedor()
+    {
+        return $this->belongsTo(ProveedorSAT::class, 'rfc_emisor', 'rfc');
+    }
+
+    public function logsADD()
+    {
+        return $this->hasMany(FacturasRepositorioLogADD::class, "id_factura_repositorio", "id");
+    }
+
+    /**
+     * Atributos
+     */
+
     public function getObraAttribute()
     {
-
         $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()
             ->where("id_proyecto", "=", $this->id_proyecto)
             ->where("id_obra", "=", $this->id_obra)->first();
         return $configuracion_obra->nombre;
     }
 
-    public function usuario()
+    public function getTieneComprobanteAddAttribute()
     {
-        return $this->hasOne(Usuario::class, 'idusuario', 'usuario_registro');
+        if($this->comprobante)
+        {
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public function getFechaHoraRegistroFormatAttribute()
@@ -94,5 +155,10 @@ class FacturaRepositorio extends Model
             ->where("id",$this->id)
             ->first();
         return $xml->xml;
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format(($this->total),2);
     }
 }

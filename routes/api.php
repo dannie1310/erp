@@ -852,6 +852,8 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/omitir', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@omitir')->where(['id' => '[0-9]+']);
             $api->patch('{id}/validar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@validar')->where(['id' => '[0-9]+']);
+            $api->get('/polizasCFDI', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@getPolizasPorAsociar');
+            $api->post('asociar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@asociarCFDI');
         });
 
         //PÓLIZAS CFDI
@@ -889,6 +891,13 @@ $api->version('v1', function ($api) {
         //TRANSACCIÓN INTERFÁZ
         $api->group(['prefix' => 'transaccion-interfaz'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TransaccionInterfazController@index');
+        });
+
+        //CFDI PÓLIZA
+        $api->group(['prefix' => 'cfdi-poliza'], function ($api) {
+            $api->get('/cfdi-por-cargar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@getCFDIPorCargar');
+            $api->get('/descargar-cfdi', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@descargarCFDIPorCargar');
+            $api->post('/cargar-cfdi-add', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@cargarCFDIADD');
         });
     });
 

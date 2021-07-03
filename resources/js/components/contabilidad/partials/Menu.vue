@@ -83,6 +83,18 @@
                     <p>Prepólizas Generadas</p>
                 </router-link>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar-cfdi-pendientes-carga-add')">
+                <router-link :to="{name: 'cfdi-pendientes-carga-add'}" class="nav-link" :class="{active: this.$route.name == 'cfdi-pendientes-carga-add'}">
+                    <i class="fa fa-upload nav-icon"></i>
+                    <p>Enviar CFDI a ADD Contpaq</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('asociar_poliza_contpaq_cfdi')">
+                <router-link :to="{name: 'asociar-poliza-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'asociar-poliza-cfdi'}">
+                    <i class="fa fa-share-alt nav-icon"></i>
+                    <p>Asociar CFDI con Pólizas Contpaq</p>
+                </router-link>
+            </li>
             <li class="nav-item"  v-if="$root.can('consultar_poliza',true)">
                 <router-link :to="{name: 'poliza-cfdi-proyecto'}" class="nav-link" :class="{active: this.$route.name == 'poliza-cfdi-proyecto'}">
                     <i class="fa fa-file-code nav-icon"></i>

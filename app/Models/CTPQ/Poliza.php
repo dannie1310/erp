@@ -8,7 +8,9 @@
 
 namespace App\Models\CTPQ;
 
+use App\Facades\Context;
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionMovimientos;
@@ -20,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Facades\DB;
 use App\Models\SEGURIDAD_ERP\PolizasCtpq\RelacionPolizas;
 use Illuminate\Support\Facades\Config;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 
 
 class Poliza extends Model
@@ -43,6 +46,9 @@ class Poliza extends Model
 
     public $timestamps = false;
 
+    /**
+     * Relaciones
+     */
     public function movimientos()
     {
         return $this->hasMany(PolizaMovimiento::class,  'IdPoliza','Id');
@@ -68,6 +74,14 @@ class Poliza extends Model
         return $this->hasMany(AsocCFDI::class, "GuidRef", "Guid");
     }
 
+    public function expedientes()
+    {
+        return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
+    }
+
+    /**
+     * Attributos
+     */
     public function getCargosFormatAttribute()
     {
         return '$ ' . number_format(abs($this->Cargos), 2);
@@ -98,6 +112,9 @@ class Poliza extends Model
         return $fecha;
     }
 
+    /**
+     * Métodos
+     */
     public function actualiza($datos)
     {
         $fecha = Carbon::createFromFormat('d/m/Y', date_format(date_create($datos['fecha_completa']['date']), "d/m/Y"));
@@ -597,5 +614,28 @@ class Poliza extends Model
         {
             abort(500,"No se puede realizar el cambio, existe una Póliza en el mismo ejercicio y periodo");
         }
+    }
+
+    public function getReferencia()
+    {
+        $empresa = Config::get('database.connections.cntpq.database');
+        $referencia = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Referencia><Documento cadReferencia="Póliza de '.$this->tipo_poliza->Nombre.', ejercicio: '.$this->Ejercicio.', periodo: '.$this->Periodo.', número: '.$this->Folio.', empresa: '.$empresa.', guid: '.$this->Guid.'." edoPago="0" tipo="Poliza"/></Referencia>';
+        return $referencia;
+    }
+
+    public function generaAsociacionCFDI(Comprobante $comprobante)
+    {
+        $previa = AsocCFDI::where("UUID","=",$comprobante->UUID)
+            ->where("GuidRef","=",$this->Guid)->first();
+        if($previa){
+            return $previa;
+        }
+        return $this->asociacionCFDI()->create([
+            'UUID'=>$comprobante->UUID,
+            'Referencia'=>$this->getReferencia(),
+            'AppType'=>"Contabilidad",
+            'Reconstruir'=>true,
+            "Id"=>AsocCFDI::getUltimoFolio()
+        ]);
     }
 }
