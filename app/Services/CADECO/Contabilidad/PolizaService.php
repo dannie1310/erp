@@ -8,13 +8,15 @@ use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 use App\Models\CADECO\Factura;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use App\Repositories\CADECO\Contabilidad\Poliza\Repository;
+use App\Repositories\CADECO\Contabilidad\PolizaRepository as Repository;
 use App\Repositories\CADECO\Finanzas\FacturaRepositorioRepository;
 use App\Services\CADECO\Finanzas\FacturaService;
 use App\Utils\Files;
 use Chumper\Zipper\Zipper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\Repository as RepositoryMovimiento;
+
 
 class PolizaService
 {
@@ -95,7 +97,7 @@ class PolizaService
                 foreach ($data['movimientos']['data'] as $movimiento) {
                     $movimiento = auth()->user()->can('editar_importe_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'importe');
 
-                    $movimientoRepository = new Repository(new PolizaMovimiento);
+                    $movimientoRepository = new RepositoryMovimiento(new PolizaMovimiento);
                     if (isset($movimiento['id'])) {
                         $movimiento = auth()->user()->can(['ingresar_cuenta_faltante_movimiento_prepoliza', 'editar_cuenta_contable_movimiento_prepoliza']) ? $movimiento : array_except($movimiento, 'cuenta_contable');
                         $movimientoRepository->update($movimiento, $movimiento['id']);

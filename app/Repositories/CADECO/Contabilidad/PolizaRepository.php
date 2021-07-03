@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Repositories\CADECO\Contabilidad\Poliza;
+namespace App\Repositories\CADECO\Contabilidad;
 
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Repositories\RepositoryInterface;
 
-class Repository extends \App\Repositories\Repository implements RepositoryInterface
+class PolizaRepository extends \App\Repositories\Repository implements RepositoryInterface
 {
     public function __construct(Poliza $model)
     {
