@@ -6,8 +6,9 @@ namespace App\Models\INTERFAZ;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CTPQ\Comprobante;
+use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +18,7 @@ class PolizaCFDI extends Model
     protected $connection = 'interfaz';
     protected $table = 'dbo.polizas_cfdi';
     protected $primaryKey = 'id';
-    protected $fillable = ['cfdi_uuid'];
+    protected $fillable = ['cfdi_uuid','id_poliza_global'];
     public $timestamps = false;
 
     /**
@@ -29,19 +30,28 @@ class PolizaCFDI extends Model
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
         $base =  Parametro::find(1);
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', 'document_'.$base->GuidDSL.'_metadata');
+        DB::purge('cntpqdm');
+        Config::set('database.connections.cntpqdm.database', 'document_'.$base->GuidDSL.'_metadata');
         return $this->hasOne(Comprobante::class,"UUID","cfdi_uuid");
+    }
+
+    public function facturaRepositorio()
+    {
+        return $this->belongsTo(FacturaRepositorio::class,"cfdi_uuid", "uuid");
     }
 
     /**
      * Scopes
      */
+    public function scopeNoAsociados($query)
+    {
+        return $query->where("estado","!=",1);
+    }
 
     /**
      * Atributos
      */
-    public function getTieneComprobanteAttribute()
+    public function getTieneComprobanteAddAttribute()
     {
         if($this->comprobante)
         {

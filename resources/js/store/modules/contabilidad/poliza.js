@@ -186,7 +186,60 @@ export default {
                         }
                     });
             });
-        }
+        },
+
+        asociarCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Asociar CFDI a Pólizas",
+                    text: "¿Está seguro de asociar los CFDI a Pólizas?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Asociar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI+"asociar", payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("CFDI asociados a sus correspondientes polizas.", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
+
+        getPolizasPorAsociar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI+'polizasCFDI', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
     },
 
     getters: {

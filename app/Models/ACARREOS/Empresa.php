@@ -119,19 +119,19 @@ class Empresa extends Model
     public function editar($data)
     {
         try {
-            DB::connection('acarreos')->beginTransaction();
-            $this->update([
-                'razonSocial' => $data['razon_social'],
-                'RFC' => $data['rfc'],
-                'Estatus' => $data['estado']
-            ]);
-            DB::connection('acarreos')->commit();
-            return $this;
-        } catch (\Exception $e) {
-            DB::connection('acarreos')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
+        DB::connection('acarreos')->beginTransaction();
+        $this->update([
+            'razonSocial' => $data['razon_social'],
+            'RFC' => $data['rfc'],
+            'Estatus' => $data['estado']
+        ]);
+        DB::connection('acarreos')->commit();
+        return $this;
+    } catch (\Exception $e) {
+        DB::connection('acarreos')->rollBack();
+        abort(400, $e->getMessage());
+        throw $e;
+    }
     }
 
     public function validarRegistro()

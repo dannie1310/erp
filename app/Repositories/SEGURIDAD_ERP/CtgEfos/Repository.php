@@ -9,6 +9,7 @@ use App\Informes\EFOSEmpresaInformeCFDIDesglosado;
 use App\Informes\EFOSEmpresaInformeDesglosado;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use Illuminate\Support\Facades\DB;
 
 class Repository extends \App\Repositories\Repository  implements RepositoryInterface
@@ -30,7 +31,41 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function carga($data)
     {
-       $this->model->reg($data);
+        $file_fingerprint = hash_file('md5', $data);
+        $ultimo_procesamiento = ProcesamientoListaEfos::orderBy("id","desc")
+            ->first();
+        $fecha_actualizacion_sat_txt = '';
+        if($ultimo_procesamiento){
+            $fecha_actualizacion_sat_txt = $ultimo_procesamiento->fecha_actualizacion_sat_txt;
+        }
+        $procesamiento = ProcesamientoListaEfos::create([
+            'fecha_actualizacion_sat_txt' => $fecha_actualizacion_sat_txt,
+            'hash_file'=>$file_fingerprint,
+            'nombre_archivo'=> '',
+            'fecha_informacion' => ''
+        ]);
+        $logs = $this->model->reg($procesamiento, $data);
+
+        if(count($logs) > 0)
+        {
+            foreach($logs as $log)
+            {
+                $procesamiento->logs()->create(
+                    [
+                        "log_procesamiento" =>$log["descripcion"],
+                        "tipo" =>$log["tipo"]
+                    ]
+                );
+            }
+        } else {
+            $procesamiento->logs()->create(
+                [
+                    "log_procesamiento" =>"Procesamiento Correcto",
+                    "tipo" =>"2"
+                ]
+            );
+        }
+        return $procesamiento;
     }
 
     public function rfc($data)

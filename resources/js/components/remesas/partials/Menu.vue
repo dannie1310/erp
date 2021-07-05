@@ -1,13 +1,35 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-item" v-if="$root.can('consultar_transaccion_proveedor_no_localizado',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-user-ninja"></i>
+                    <p>Proveedores No Localizados</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview" style="height: auto">
+                    <li class="nav-item" v-if="$root.can('autorizar_rechazar_transaccion_proveedor_no_localizado',true)">
+                        <router-link :to="{name: 'autorizar-transacciones-no-localizados'}" class="nav-link" :class="{active: this.$route.name == 'autorizar-transacciones-no-localizados'}">
+                            <i class="fa fa-thumbs-o-up nav-icon"></i>
+                            <p> Autorización de Transacciones</p>
+                        </router-link>
+                    </li>
+                </ul>
+                <ul class="nav nav-treeview" style="height: auto">
+                    <li class="nav-item" v-if="$root.can('consultar_transaccion_proveedor_no_localizado',true)">
+                        <router-link :to="{name: 'enlistar-transacciones-no-localizados'}" class="nav-link" :class="{active: this.$route.name == 'enlistar-transacciones-no-localizados'}">
+                            <i class="fa fa-list-alt nav-icon"></i>
+                            <p> Listado de Transacciones</p>
+                        </router-link>
+                    </li>
+                </ul>
+            </li>
             <li class="nav-item"  v-if="$root.can('consultar_limite_remesa',true)">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">
                     <i class="fa fa-cog"></i>
                     <p>Configuración</p>
                     <i class="right fa fa-angle-left"></i>
                 </a>
-
                 <ul class="nav nav-treeview" >
                     <li class="nav-item">
                         <a href="#" class="nav-link" @click="mostrarMenu($event)">
@@ -31,7 +53,6 @@
                         </ul>
                     </li>
                 </ul>
-
             </li>
         </ul>
     </nav>
@@ -46,11 +67,12 @@
                 $(event.target).closest('li').toggleClass('menu-open');
             }
         }
+
     }
 </script>
 
-
-
 <style scoped>
-
+    .sidebar-form, .nav-sidebar > .nav-header {
+        padding: 1rem 0.5rem 0.5rem 1rem;
+    }
 </style>

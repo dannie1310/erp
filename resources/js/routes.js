@@ -2006,6 +2006,40 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'asociar-poliza-cfdi',
+                        component: require('./components/contabilidad/asociar-poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"asociar-poliza-cfdi",
+                                component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Asociar CFDI con Pólizas de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR CFDI CON PÓLIZAS DE CONTPAQ'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['asociar_poliza_contpaq_cfdi'],
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'cfdi-pendientes-carga-add',
+                        component: require('./components/contabilidad/cfdi-add-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cfdi-pendientes-carga-add",
+                                component: require('./components/contabilidad/cfdi-add-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'Cargar CFDI a ADD de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'CARGAR CFDI A ADD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar-cfdi-pendientes-carga-add'],
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[
@@ -3629,6 +3663,48 @@ export const routes = [
                             breadcrumb: {name: 'LÍMITE POR PROYECTO', parent: 'configuracion'},
                             middleware: [auth, permission],
                             permission: ['consultar_limite_remesa_proyecto'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'proveedor-no-localizado',
+                component: require('./components/remesas/proveedor-no-localizado/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedor-no-localizado',
+                        component: require('./components/remesas/proveedor-no-localizado/Index').default,
+                        meta: {
+                            title: 'Proveedor No Localizado',
+                            breadcrumb: {parent: 'remesas', name: 'PROVEEDOR NO LOCALIZADO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'transacciones',
+                        name: 'enlistar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/Index').default,
+                        meta: {
+                            title: 'Lista de Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIÓN', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_transaccion_proveedor_no_localizado'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/IndexAutorizacion').default,
+                        meta: {
+                            title: 'Autorizar Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIONES', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_rechazar_transaccion_proveedor_no_localizado'],
                             general: true
                         }
                     },

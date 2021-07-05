@@ -852,6 +852,8 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/omitir', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@omitir')->where(['id' => '[0-9]+']);
             $api->patch('{id}/validar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@validar')->where(['id' => '[0-9]+']);
+            $api->get('/polizasCFDI', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@getPolizasPorAsociar');
+            $api->post('asociar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@asociarCFDI');
         });
 
         //PÓLIZAS CFDI
@@ -889,6 +891,13 @@ $api->version('v1', function ($api) {
         //TRANSACCIÓN INTERFÁZ
         $api->group(['prefix' => 'transaccion-interfaz'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contabilidad\TransaccionInterfazController@index');
+        });
+
+        //CFDI PÓLIZA
+        $api->group(['prefix' => 'cfdi-poliza'], function ($api) {
+            $api->get('/cfdi-por-cargar', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@getCFDIPorCargar');
+            $api->get('/descargar-cfdi', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@descargarCFDIPorCargar');
+            $api->post('/cargar-cfdi-add', 'App\Http\Controllers\v1\CADECO\Contabilidad\PolizaController@cargarCFDIADD');
         });
     });
 
@@ -1529,11 +1538,20 @@ $api->version('v1', function ($api) {
      * REMESAS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'remesas'], function ($api) {
+        $api->group(['prefix' => 'documento-no-localizado'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@paginate');
+            $api->get('/', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@index');
+            $api->patch('{id}/rechazar', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@rechazar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/autorizar', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@autorizar')->where(['id' => '[0-9]+']);
+            $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\DocumentoDeNoLocalizadoController@show')->where(['id' => '[0-9]+']);
+        });
+
         $api->group(['prefix' => 'folio'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@paginate');
             $api->get('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@show');
             $api->patch('', 'App\Http\Controllers\v1\MODULOSSAO\RemesaFolioController@update');
         });
+
         $api->group(['prefix' => 'proyecto'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);
