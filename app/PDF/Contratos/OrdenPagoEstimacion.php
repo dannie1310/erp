@@ -607,7 +607,7 @@ class OrdenPagoEstimacion extends Rotation
 
             $this->Ln();
             $this->Cell(1);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode("Ing. Victor Hugo López Briones"), 'RLB', 0, 'C', 0);
+            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode("Ing. Anayeli Marcial Basurto"), 'RLB', 0, 'C', 0);
             $this->Cell(0.9);
             $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Ing. Jonathan Vergara Sánchez'), 'RLB', 0, 'C', 0);
             $this->Cell(0.9);

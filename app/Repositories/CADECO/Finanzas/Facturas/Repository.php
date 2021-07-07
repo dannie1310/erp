@@ -146,69 +146,72 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function guardarXml($xml_fuente, $xml_array){
         $this->logs = [];
-        $this->logs[] = "Inicia";
         $xml_split = explode('base64,', $xml_fuente);
         $xml = base64_decode($xml_split[1]);
 
         $obra = Obra::find(Context::getIdObra());
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
-        try{
-            $parametros = Parametro::first();
-        } catch (Exception $e){
-            $this->logs[] = "Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').".";
-        }
-
-        try{
-            $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
-            if($arreglo_bbdd == false){
-                $this->logs[] = "Error existDb";
-            }
-        } catch (Exception $e){
-            $this->logs[] = "Error existDb catch: ". $e->getMessage();
-        }
-
-        try{
-            $val_insercionCertificado = $this->insUpdCertificate( $xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
-            if(!$val_insercionCertificado){
-                $this->logs[] = "Error insUpdCertificate";
-            }
-        }catch (Exception $e){
-            $this->logs[] = "Error insUpdCertificate catch: ". $e->getMessage();
-        }
-        $duplicado = false;
-        try{
-            if($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
-                $this->logs[] = "CFDI ya existente en ADD";
-            }
-        }catch (Exception $e){
-            $this->logs[] = "Error buscarCfdiDuplicado catch: ". $e->getMessage();
-        }
-
-        if(!$duplicado){
-            $guid_doc_metadata = Uuid::generate()->string;
-
-            /*
-            $arreglo_bbdd[0]['NameDB'],->dm
-            $arreglo_bbdd[1]['NameDB'],->dc
-            $arreglo_bbdd[3]['NameDB'],->oc
-            $arreglo_bbdd[2]['NameDB']->om
-             * */
+        if($obra->datosContables->BDContPaq != "")
+        {
+            $this->logs[] = "Inicia";
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
             try{
-                $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
-                if(!$va_insert_xml){
-                    $this->logs[] = "Error spInsUpdDocument";
-                }else{
-                    $this->logs[] = ["tipo"=>1,"descripcion"=>"Envío éxitoso, comprobante con GUID: ".$guid_doc_metadata. " en base de datos: ".Config::get('database.connections.cntpqdm.database')];
+                $parametros = Parametro::first();
+            } catch (Exception $e){
+                $this->logs[] = "Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').".";
+            }
+
+            try{
+                $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
+                if($arreglo_bbdd == false){
+                    $this->logs[] = "Error existDb";
+                }
+            } catch (Exception $e){
+                $this->logs[] = "Error existDb catch: ". $e->getMessage();
+            }
+
+            try{
+                $val_insercionCertificado = $this->insUpdCertificate( $xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
+                if(!$val_insercionCertificado){
+                    $this->logs[] = "Error insUpdCertificate";
                 }
             }catch (Exception $e){
-                $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
+                $this->logs[] = "Error insUpdCertificate catch: ". $e->getMessage();
             }
+            $duplicado = false;
+            try{
+                if($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
+                    $this->logs[] = "CFDI ya existente en ADD";
+                }
+            }catch (Exception $e){
+                $this->logs[] = "Error buscarCfdiDuplicado catch: ". $e->getMessage();
+            }
+
+            if(!$duplicado){
+                $guid_doc_metadata = Uuid::generate()->string;
+
+                /*
+                $arreglo_bbdd[0]['NameDB'],->dm
+                $arreglo_bbdd[1]['NameDB'],->dc
+                $arreglo_bbdd[3]['NameDB'],->oc
+                $arreglo_bbdd[2]['NameDB']->om
+                 * */
+                try{
+                    $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
+                    if(!$va_insert_xml){
+                        $this->logs[] = "Error spInsUpdDocument";
+                    }else{
+                        $this->logs[] = ["tipo"=>1,"descripcion"=>"Envío éxitoso, comprobante con GUID: ".$guid_doc_metadata. " en base de datos: ".Config::get('database.connections.cntpqdm.database')];
+                    }
+                }catch (Exception $e){
+                    $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
+                }
+            }
+
+            $this->logs[] = "Finaliza";
+
         }
-
-        $this->logs[] = "Finaliza";
         return $this->logs;
-
     }
 
     private function existDb($guidCompany){
