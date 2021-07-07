@@ -183,7 +183,7 @@ export default {
                     }
                 })
             }else{
-                var urr = URI +  'descargar'+ search+'access_token=' + this._vm.$session.get('jwt');
+                var urr = URI +  'descargar'+ search+'db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') +'&access_token=' + this._vm.$session.get('jwt');
 
                 var win = window.open(urr, "_blank");
 
