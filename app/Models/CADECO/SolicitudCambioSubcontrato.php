@@ -559,7 +559,7 @@ class SolicitudCambioSubcontrato extends Transaccion
                 $nivel = $nivel_raiz.sprintf("%03d", $consecutivo_inicial).".".substr($partida->nivel_txt,4, strlen($partida->nivel_txt)-4);
             }
 
-            $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
+            $descripcion = mb_substr('EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion,0,255);
             $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
                 'clave'=>$partida->clave,
                 'descripcion' => $descripcion,
@@ -616,7 +616,7 @@ class SolicitudCambioSubcontrato extends Transaccion
             $ultimo_nivel_ext_exp = explode(".", $ultimo_nivel_ext);
             $nivel = substr($ultimo_nivel_ext,0,strlen($ultimo_nivel_ext)-4). sprintf("%03d", $ultimo_nivel_ext_exp[count($ultimo_nivel_ext_exp)-2]+1)."." ;
         }
-        $descripcion = 'EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion;
+        $descripcion = mb_substr('EXT-'.($concepto_agrupador_extraordinario->cantidad_hijos+1)." ".$partida->descripcion,0,255);
         $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
             'clave'=>$partida->clave,
             'descripcion' => $descripcion,
@@ -668,7 +668,7 @@ class SolicitudCambioSubcontrato extends Transaccion
         }
 
         $item_subcontrato_original = ItemSubcontrato::find($partida->id_item_subcontrato);
-        $descripcion = 'NP-'.($concepto_agrupador_nuevo_precio->cantidad_hijos+1)." ".$item_subcontrato_original->contrato->descripcion;
+        $descripcion = mb_substr('NP-'.($concepto_agrupador_nuevo_precio->cantidad_hijos+1)." ".$item_subcontrato_original->contrato->descripcion,0,255);
         $clave = 'NP-'.($concepto_agrupador_nuevo_precio->cantidad_hijos+1)." ".$item_subcontrato_original->contrato->clave;
 
         $contrato = $this->subcontrato->contratoProyectado->conceptos()->create([
