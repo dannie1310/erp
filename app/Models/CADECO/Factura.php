@@ -670,7 +670,7 @@ class Factura extends Transaccion
 
     private function generaPrepoliza()
     {
-        DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+        DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
         return $this;
     }
 
@@ -1017,6 +1017,7 @@ class Factura extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             if(abs($data['factura']['monto'] - $data['resumen']['total_documentos']) > 0.99){
+                DB::connection('cadeco')->rollBack();
                 abort(403, 'Para proceder con la revisión, la diferencia debe ser menor a 0.99');
             }
             foreach($data['items']['pendientes'] as $pendiente){
@@ -1208,15 +1209,20 @@ class Factura extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
+        DB::connection('cadeco')->commit();
 
         $obra = Obra::query()->find(Context::getIdObra());
-        if ($obra->datosContables) {
-            if ($obra->datosContables->BDContPaq != "") {
-                $this->generaPrepoliza();
+        try{
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    $this->generaPrepoliza();
+                }
             }
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
 
-        DB::connection('cadeco')->commit();
         return $this;
     }
 
