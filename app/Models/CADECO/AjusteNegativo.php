@@ -75,8 +75,7 @@ class AjusteNegativo extends Ajuste
                 ->where('id_almacen', '=', $id_almacen)
                 ->orderBy('id_lote', 'asc')->get();
             $disponible_total = $inventarios->sum("saldo");
-
-            if ($cantidad_total > ($disponible_total + 0.01)) {
+            if ($disponible_total == 0.0 || ($cantidad_total > ($disponible_total + 0.01))) {
                 $mensaje .= "-La cantidad disponible para realizar el ajuste negativo de la partida # " . ($i+1) . " es: " . number_format($disponible_total, 2, ".", ",") . "\n";
             }
         }
