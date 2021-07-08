@@ -193,20 +193,19 @@
                         });
                 }
             },
-            watch: {
-                checkbox_toggle(value){
-                    if(value == 1){
-                        this.cfdis_pendientes.forEach(function(element) {
-                            element.seleccionado = 1;
-                        });
-                    } else {
-                        this.cfdis_pendientes.forEach(function(element) {
-                            element.seleccionado = 0;
-                        });
-                    }
-                },
+        },
+        watch: {
+            checkbox_toggle(value){
+                if(value == 1){
+                    this.cfdis_pendientes.forEach(function(element) {
+                        element.seleccionado = 1;
+                    });
+                } else {
+                    this.cfdis_pendientes.forEach(function(element) {
+                        element.seleccionado = 0;
+                    });
+                }
             },
         },
-
     }
 </script>
