@@ -213,7 +213,7 @@ class Documento extends Model
     public function getProveedorAttribute()
     {
         if($this->transaccion->id_referente != null){
-            return $this->transaccion->fondo_fijo->empresa->razon_social;
+            return $this->transaccion->fondoFijo->empresa->razon_social;
         }
         return $this->transaccion->empresa->razon_social;
     }
@@ -221,7 +221,7 @@ class Documento extends Model
     public function getRFCAttribute()
     {
         if($this->transaccion->id_referente != null){
-            return $this->transaccion->fondo_fijo->empresa->rfc;
+            return $this->transaccion->fondoFijo->empresa->rfc;
         }
         return $this->transaccion->empresa->rfc;
     }

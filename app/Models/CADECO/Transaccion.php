@@ -259,7 +259,7 @@ class Transaccion extends Model
         return $this->belongsTo(Transaccion::class,"id_referente", "id_transaccion");
     }
 
-    public function fondo_fijo()
+    public function fondoFijo()
     {
         return $this->belongsTo(Fondo::class,"id_referente", "id_fondo");
     }
