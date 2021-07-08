@@ -143,6 +143,7 @@
         methods: {
             getCFDIPorCargar() {
                 this.cargando = true;
+                this.checkbox_toggle = 1;
                 return this.$store.dispatch('contabilidad/cfdi-poliza/getCFDIPorCargar', { params: this.query })
                     .then(data => {
 
@@ -196,11 +197,11 @@
                 checkbox_toggle(value){
                     if(value == 1){
                         this.cfdis_pendientes.forEach(function(element) {
-                            element = 1;
+                            element.seleccionado = 1;
                         });
                     } else {
                         this.cfdis_pendientes.forEach(function(element) {
-                            element = 0;
+                            element.seleccionado = 0;
                         });
                     }
                 },
