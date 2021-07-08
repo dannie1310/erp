@@ -9,14 +9,15 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
-use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use App\Facades\Context;
 use App\Models\IGH\Usuario;
+use App\Models\CADECO\Fondo;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contabilidad\Poliza;
-use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\CtgContratista;
 use App\Models\CADECO\Contabilidad\HistPoliza;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 
 class Transaccion extends Model
 {
@@ -256,6 +257,11 @@ class Transaccion extends Model
     public function referente()
     {
         return $this->belongsTo(Transaccion::class,"id_referente", "id_transaccion");
+    }
+
+    public function fondo_fijo()
+    {
+        return $this->belongsTo(Fondo::class,"id_referente", "id_fondo");
     }
 
     public function getSubtotalAttribute()
