@@ -80,7 +80,7 @@ class Documento extends Model
         return $this->belongsTo(DocumentoDestinatario::class, 'IDDestinatario', 'IDDestinatario');
     }
 
-    public function empresa()
+    public function empresaDocumentoManual()
     {
         return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
     }
@@ -219,7 +219,7 @@ class Documento extends Model
     public function getProveedorAttribute()
     {
         if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
-            return $this->empresa->razon_social;
+            return $this->empresaDocumentoManual->razon_social;
         }else if($this->transaccion->id_referente != null){
             if($this->transaccion->fondoFijo->empresa){
                 return $this->transaccion->fondoFijo->empresa->razon_social;
@@ -232,7 +232,7 @@ class Documento extends Model
     public function getRFCAttribute()
     {
         if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
-            return $this->empresa->rfc;
+            return $this->empresaDocumentoManual->rfc;
         }
         if($this->transaccion->id_referente != null){
             if($this->transaccion->fondoFijo->empresa){
@@ -245,7 +245,7 @@ class Documento extends Model
 
     public function getEmpresaCadecoAttribute(){
         if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
-            return $this->empresa;
+            return $this->empresaDocumentoManual;
         }
         return $this->transaccion->empresa;  
     }
