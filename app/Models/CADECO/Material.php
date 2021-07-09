@@ -396,6 +396,11 @@ class Material extends Model
         return number_format($this->saldo_almacen,2,".","");
     }
 
+    public function getNumeroParteDescripcionAttribute()
+    {
+        return "[".$this->numero_parte."] " . $this->descripcion;
+    }
+
     public function scopeDisponiblesParaVenta($query)
     {
         return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')

@@ -38,7 +38,8 @@ class MaterialTransformer extends TransformerAbstract
             'tipo_material_descripcion' => $model->tipo_material_descripcion,
             'descripcion_familia' => $model->descripcion_familia,
             'saldo_inventario' => $model->saldo_inventario_format,
-            'nivel_padre' => $model->nivel_padre
+            'nivel_padre' => $model->nivel_padre,
+            'numero_parte_descripcion' => $model->numero_parte_descripcion
         ];
     }
 
