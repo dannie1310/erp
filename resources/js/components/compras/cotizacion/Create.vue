@@ -98,9 +98,9 @@
                                                     <th >Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="cantidad_input">% Descuento</th>
-                                                    <th class="money">Precio Total</th>
-                                                    <th class="money">Moneda</th>
-                                                    <th style="text-align: center">Precio Total Moneda Conversión</th>
+                                                    <th >Precio Total</th>
+                                                    <th >Moneda</th>
+                                                    <th >Precio Total Moneda Conversión</th>
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
