@@ -156,25 +156,25 @@
                                                                 <table class="table">
                                                                     <tbody>
                                                                         <tr>
-                                                                            <th style="width:25%" class="bg-gray-light">Remesa Autorizada (MXP):</th>
+                                                                            <th style="width:25%" class="bg-gray-light">Remesa Autorizada (MXN):</th>
                                                                             <td style="width:15%" class="bg-gray-light" align="right"><b>$&nbsp; {{(parseFloat(monto_total_remesa)).formatMoney(2,'.',',')}}</b></td>
 
                                                                             <th style="width:10%"></th>
                                                                             <td style="width:10%"></td>
 
-                                                                            <th>Documentos Seleccionados a Pagar (MXP):</th>
+                                                                            <th>Documentos Seleccionados a Pagar (MXN):</th>
                                                                             <td style="width:15%" align="right"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th style="width:20%">Dispersiones Anteriores (MXP):</th>
+                                                                            <th style="width:20%">Dispersiones Anteriores (MXN):</th>
                                                                             <td style="width:15%" align="right"><b>$&nbsp; {{(parseFloat(monto_distribuido_anteriormente)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th class="bg-gray-light">Dispersión Actual (MXP):</th>
+                                                                            <th class="bg-gray-light">Dispersión Actual (MXN):</th>
                                                                             <td align="right" class="bg-gray-light"> <b>$&nbsp;{{(parseFloat(sumaSeleccionImportes)).formatMoney(2,'.',',')}}</b></td>
                                                                         </tr>
                                                                         <tr>
-                                                                            <th>Restante por Dispersar (MXP):</th>
+                                                                            <th>Restante por Dispersar (MXN):</th>
                                                                             <td align="right"> <b>$&nbsp;{{(parseFloat(monto_total_remesa-(sumaSeleccionImportes + monto_distribuido_anteriormente)).formatMoney(2,'.',','))}}</b></td>
                                                                         </tr>
                                                                     </tbody>

@@ -47,7 +47,7 @@
                     { title: 'Monto', field: 'monto', sortable: false},
                     { title: 'Moneda', field: 'moneda', sortable: false},
                     { title: 'T.C.', field: 'tipo_cambio', sortable: false},
-                    { title: 'Monto MXP', field: 'monto_mxp', sortable: false},
+                    { title: 'Monto MXN', field: 'monto_mxp', sortable: false},
                     { title: 'Grado de Alerta', field: 'grado_alerta', sortable: true}
                 ],
                 data: [],

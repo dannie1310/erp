@@ -593,7 +593,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(($anchos["espacio_detalles_globales"]/2)-1, $heigth, "SUBTOTAL", 1, 0, 'C', 1);
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
-            $this->Cell(($anchos["espacio_detalles_globales"]/2)-1.5, $heigth, "PESO MXP", 1, 0, 'C', 1);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2)-1.5, $heigth, "PESO MXN", 1, 0, 'C', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->suma_total_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->mejor_asignado, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->diferencia, 2, ".", ","), 1, 0, 'R', 1);
@@ -606,7 +606,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(($anchos["espacio_detalles_globales"]/2)-1, $heigth, "IVA", 1, 0, 'C', 1);
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
-            $this->Cell(($anchos["espacio_detalles_globales"]/2)-1.5, $heigth, "PESO MXP", 1, 0, 'C', 1);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2)-1.5, $heigth, "PESO MXN", 1, 0, 'C', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->suma_subtotal_partidas_iva, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->mejor_asignado_iva, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->diferencia_iva, 2, ".", ","), 1, 0, 'R', 1);
@@ -618,7 +618,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(($anchos["espacio_detalles_globales"]/2)-1, $heigth, "TOTAL", 1, 0, 'C', 1);
             $this->SetFillColor(255, 255, 255);
             $this->SetTextColor(0, 0, 0);
-            $this->Cell(($anchos["espacio_detalles_globales"]/2)-1.5, $heigth, "PESO MXP", 1, 0, 'C', 1);
+            $this->Cell(($anchos["espacio_detalles_globales"]/2)-1.5, $heigth, "PESO MXN", 1, 0, 'C', 1);
             $this->Cell(($anchos["espacio_detalles_globales"]-2.5), $heigth, number_format($this->asignacion->suma_subtotal_partidas_total, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->mejor_asignado_total, 2, ".", ","), 1, 0, 'R', 1);
             $this->Cell($anchos["espacio_detalles_globales"]-2.5, $heigth,  number_format($this->asignacion->diferencia_total, 2, ".", ","), 1, 0, 'R', 1);

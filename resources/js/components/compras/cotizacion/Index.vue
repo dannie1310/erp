@@ -100,8 +100,11 @@
                         }
                 }
             },
-            create() {
+            create1() {
                 this.$router.push({name: 'cotizacion-create'});
+            },
+            create() {
+                this.$router.push({name: 'cotizacion-selecciona-solicitud-compra'});
             },
         },
         computed: {
