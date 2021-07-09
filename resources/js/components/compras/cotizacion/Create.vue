@@ -6,11 +6,18 @@
                     <div class="invoice p-3 mb-3">
                         <form role="form" @submit.prevent="validate">
                             <div class="modal-body">
+                                <div class="row" v-if="solicitud_editar">
+
+                                    <div class="col-md-12">
+                                        <tabla-datos-solicitud-compra v-bind:solicitud_compra="solicitud_editar"></tabla-datos-solicitud-compra>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-2">
-                                        <div class="form-group error-content">
-                                            <label for="fecha" class="col-form-label">Fecha:</label>
+                                         <div class="form-group error-content">
+                                            <label for="fecha">Fecha:</label>
                                             <datepicker v-model = "fecha"
+                                                        id="fecha"
                                                         name = "fecha"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -23,25 +30,6 @@
                                             <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row justify-content-between">
-                                    <div class="col-md-12">
-                                        <div class="form-group">
-                                            <label for="id_solicitud">Seleccionar Solicitud a Cotizar:</label>
-                                                 <model-list-select
-                                                     id="id_solicitud"
-                                                     name="id_solicitud"
-                                                     option-value="id"
-                                                     v-model="id_solicitud"
-                                                     :custom-text="idFolioObservaciones"
-                                                     :list="solicitudes"
-                                                     :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio, concepto u observaciones':'Cargando...'">
-                                                 </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row">
                                     <div class="col-md-5">
                                         <div class="form-group">
                                             <label for="id_proveedor">Proveedor:</label>
@@ -58,7 +46,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_proveedor')">{{ errors.first('id_proveedor') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-2 offset-1" v-if="id_proveedor">
+                                    <div class="col-md-2" v-if="id_proveedor">
                                         <div class="form-group">
                                             <label for="id_sucursal">Sucursal:</label>
                                             <select class="form-control"
@@ -74,7 +62,7 @@
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-3 offset-1">
+                                    <div class="col-md-3">
                                         <div class="custom-control custom-switch" style="top:40%">
                                             <input type="checkbox" class="custom-control-input button" id="cotizacion" v-model="pendiente" >
                                             <label class="custom-control-label" for="cotizacion">Dejar pendiente la captura de precios</label>
@@ -379,14 +367,22 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
+    import EncabezadoSolicitudCompra from "../solicitud-compra/partials/Encabezado";
+    import DatosSolicitudCompra from "../solicitud-compra/partials/DatosSolicitudCompra";
+    import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSolicitudCompra";
+    import TablaDatosSolicitudCambioSubcontrato
+        from "../../contratos/solicitud-cambio/partials/TablaDatosSolicitudCambioSubcontrato";
     export default {
         name: "cotizacion-create",
-        components: {Datepicker, ModelListSelect},
+        props: ['id_solicitud'],
+        components: {
+            TablaDatosSolicitudCambioSubcontrato,
+            TablaDatosSolicitudCompra,
+            DatosSolicitudCompra, EncabezadoSolicitudCompra, Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
                 pendiente: false,
-                id_solicitud: '',
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
@@ -446,7 +442,7 @@
         mounted() {
             this.fecha = new Date();
             this.$validator.reset();
-            this.getProveedores();
+            this.find();
         },
         methods : {
             idFolioObservaciones (item)
@@ -483,7 +479,7 @@
                     this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
                     this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
                 }).finally(()=>{
-                    this.getSolicitudes();
+                    this.cargando = false;
                 })
             },
             salir()
@@ -504,7 +500,6 @@
                 this.observaciones_inputs = [];
                 this.cargando = true;
                 this.solicitud_editar = [];
-                // this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
                 return this.$store.dispatch('compras/solicitud-compra/find', {
                     id: this.id_solicitud,
                     params:{include: [
@@ -512,14 +507,15 @@
                             'partidas.complemento',
                             'partidas.entrega',
                             'cotizaciones'],
-                            order:'ASC',
-                            sort:'id_item'}
+                        order:'ASC',
+                        sort:'id_item'}
                 }).then(data => {
                     this.solicitud_editar = data;
-                    // this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
                     this.fillMonedaInput();
                     this.cargando = false;
-                })
+                }).finally(()=>{
+                    this.getProveedores();
+                });
             },
             calcular()
             {
@@ -576,23 +572,7 @@
                     this.x ++;
                 }
             },
-            getSolicitudes() {
-                this.solicitudes = [];
-                this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/index', {
-                    params: {
-                        scope: ['conItems','areasCompradorasAsignadas','conAutorizacion'],
-                        order: 'DESC',
-                        sort: 'numero_folio'
-                    }
-                })
-                .then(data => {
-                    this.solicitudes = data.data;
-                })
-                .finally(()=>{
-                    this.cargando = false;
-                })
-            },
+
             validate() {
 
                 this.$validator.validate().then(result => {

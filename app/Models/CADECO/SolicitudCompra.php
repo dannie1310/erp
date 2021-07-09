@@ -185,6 +185,28 @@ class SolicitudCompra extends Transaccion
             return null;
         }
     }
+    public function getAreaCompradoraAttribute()
+    {
+        try{
+            return $this->complemento->area_compradora->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getAreaSolicitanteAttribute()
+    {
+        try{
+            if($this->complemento->area_solicitante)
+            {
+                return $this->complemento->area_solicitante->descripcion;
+
+            }
+            return "N/A";
+        }catch (\Exception $e){
+            return "null";
+        }
+    }
 
     /**
      * Métodos
