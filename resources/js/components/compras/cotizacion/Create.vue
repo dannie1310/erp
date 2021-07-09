@@ -27,7 +27,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_solicitud">Buscar Solicitud:</label>
+                                            <label for="id_solicitud">Seleccionar Solicitud a Cotizar:</label>
                                                  <model-list-select
                                                      id="id_solicitud"
                                                      name="id_solicitud"
@@ -86,7 +86,7 @@
                                 <div class="row" v-if="id_solicitud != '' && !pendiente">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered">
+                                            <table class="table table-bordered table-sm">
                                                 <thead>
                                                 <tr>
                                                     <th class="index_corto">#</th>
@@ -94,13 +94,13 @@
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
                                                     <th class="index_corto"></th>
-                                                    <th class="cantidad_input">Cantidad Solicitada</th>
-                                                    <th class="cantidad_input">Cantidad Aprobada</th>
+                                                    <th >Cantidad Solicitada</th>
+                                                    <th >Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="cantidad_input">% Descuento</th>
                                                     <th class="money">Precio Total</th>
                                                     <th class="money">Moneda</th>
-                                                    <th class="money">Precio Total Moneda Conversión</th>
+                                                    <th style="text-align: center">Precio Total Moneda Conversión</th>
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
@@ -117,32 +117,31 @@
                                                             </div>
                                                         </td>
                                                         <td style="text-align:center;">{{partida.cantidad_original_num}}</td>
-                                                        <td style="text-align:center;">{{(solicitud_editar.estado === 1) ? partida.cantidad : '0.0'}}</td>
+                                                        <td style="text-align:center;">{{partida.cantidad_original_num}}</td>
                                                         <td>
-                                                            <input type="number"
-                                                                   min="0.1"
-                                                                   step="any"
+                                                            <input type="text"
                                                                    :disabled="enable[i] == false"
                                                                    class="form-control"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
-                                                                   v-validate="{required: true, min_value:0.01, decimal:4}"
+                                                                   v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                                   v-model="precio[i]"/>
+                                                                   v-model="precio[i]"
+                                                                   style="text-align: right"
+                                                            />
                                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                         </td>
                                                         <td>
-                                                            <input type="number" @change="calcular()"
-                                                                   min="0.00"
-                                                                   max="100"
-                                                                   step=".01"
+                                                            <input type="text" @change="calcular()"
                                                                    :disabled="enable[i] == false"
                                                                    class="form-control"
                                                                    :name="`descuento[${i}]`"
                                                                    data-vv-as="Descuento(%)"
-                                                                   v-validate="{required: true}"
+                                                                   v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                                    :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
-                                                                   v-model="partida.descuento"/>
+                                                                   v-model="partida.descuento"
+                                                                   style="text-align: right"
+                                                            />
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
                                                         <td style="text-align:right;">{{getPrecio(partida, i)}}</td>
@@ -161,7 +160,7 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{'$ '+parseFloat(getPrecioTotal(i,partida.calculo_precio_total)).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{'$'+parseFloat(getPrecioTotal(i,partida.calculo_precio_total)).formatMoney(2,'.',',')}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -178,51 +177,49 @@
                                         </div>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Descuento:</label>
+                                        <label class="col-sm-2 col-form-label">Descuento(%):</label>
                                     </div>
                                     <div class=" col-md-2" align="right">
                                         <input
                                             :disabled="cargando"
-                                            type="number"
-                                            step="1"
-                                            max="100"
+                                            type="text"
                                             name="descuento_cot"
                                             v-model="descuento_cot"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="descuento_cot"
+                                            style="text-align: right"
                                             :class="{'is-invalid': errors.has('descuento_cot')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXP)</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-md-4 col-form-label">Subtotal Precios Peso (MXN)</label>
+                                        <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-md-4 col-form-label">Subtotal Precios Dolar (USD):</label>
+                                        <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-md-4 col-form-label">Subtotal Precios EURO:</label>
+                                        <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Subtotal Precios Libra:</label>
-                                        <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
+                                        <label class="col-md-4 col-form-label">Subtotal Precios Libra:</label>
+                                        <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">TC USD:</label>
+                                        <label class="col-md-2 col-form-label">TC USD:</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                                 :disabled="cargando"
-                                                type="number"
-                                                step="any"
-                                                max="100"
+                                                type="text"
                                                 name="tc_usd"
                                                 v-model="dolar"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                 class="col-sm-6 form-control"
                                                 id="tc_usd"
+                                                style="text-align: right"
                                                 :class="{'is-invalid': errors.has('tc_usd')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
@@ -231,14 +228,13 @@
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                                 :disabled="cargando"
-                                                type="number"
-                                                step="any"
-                                                max="100"
+                                                type="text"
                                                 name="tc_eur"
                                                 v-model="euro"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                 class="col-sm-6 form-control"
                                                 id="tc_eur"
+                                                style="text-align: right"
                                                 :class="{'is-invalid': errors.has('tc_eur')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
@@ -247,58 +243,55 @@
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                                 :disabled="cargando"
-                                                type="number"
-                                                step="any"
-                                                max="100"
+                                                type="text"
                                                 name="tc_libra"
                                                 v-model="libra"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                 class="col-sm-6 form-control"
                                                 id="tc_libra"
+                                                style="text-align: right"
                                                 :class="{'is-invalid': errors.has('tc_libra')}">
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXP):</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-md-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
+                                        <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">IVA:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-md-2-4 col-form-label">IVA:</label>
+                                        <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-2 col-form-label">Total:</label>
-                                        <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
+                                        <label class="col-md-2 col-form-label">Total:</label>
+                                        <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Pago en Parcialidades (%):</label>
+                                        <label class="col-md-4 col-form-label">Pago en Parcialidades(%):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                             :disabled="cargando"
-                                            type="number"
-                                            step="1"
-                                            max="100"
+                                            type="text"
                                             name="pago"
                                             v-model="pago"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="pago"
+                                            style="text-align: right"
                                             :class="{'is-invalid': errors.has('pago')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">% Anticipo:</label>
+                                        <label class="col-sm-2 col-form-label">Anticipo(%):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                             :disabled="cargando"
-                                            type="number"
-                                            step=".01"
-                                            max="100"
+                                            type="text"
                                             name="anticipo"
                                             v-model="anticipo"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="anticipo"
+                                            style="text-align: right"
                                             :class="{'is-invalid': errors.has('anticipo')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
@@ -307,26 +300,24 @@
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                             :disabled="cargando"
-                                            type="number"
-                                            step="1"
+                                            type="text"
                                             name="credito"
                                             v-model="credito"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="credito"
                                             :class="{'is-invalid': errors.has('credito')}">
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>
+                                        <label class="col-md-4 col-form-label">Tiempo de Entrega (días):</label>
                                     </div>
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                             :disabled="cargando"
-                                            type="number"
-                                            step="1"
+                                            type="text"
                                             name="tiempo"
                                             v-model="tiempo"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="tiempo"
                                             :class="{'is-invalid': errors.has('tiempo')}">
@@ -337,11 +328,10 @@
                                     <div class=" col-md-2 p-1" align="right">
                                         <input
                                             :disabled="cargando"
-                                            type="number"
-                                            step="1"
+                                            type="text"
                                             name="vigencia"
                                             v-model="vigencia"
-                                            v-validate="{required: true}"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="vigencia"
                                             :class="{'is-invalid': errors.has('vigencia')}">
