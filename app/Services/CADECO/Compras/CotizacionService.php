@@ -83,7 +83,7 @@ class CotizacionService
             }
             $idMoneda = 0;
             switch ($celdas[$x][9]) {
-                case 'PESO MXP':
+                case 'PESO MXN':
                     $idMoneda = 1;
                 break;
                 case 'DOLAR USD':

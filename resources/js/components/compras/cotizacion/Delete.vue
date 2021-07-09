@@ -93,7 +93,7 @@
                                             <label class="col-md-2 col-form-label" style="text-align: right">{{(cotizacion.complemento) ? cotizacion.complemento.descuento_format : '-----'}}</label>
                                         </div>
                                         <div class=" col-md-12" align="right">
-                                            <label class="col-md-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
+                                            <label class="col-md-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
                                             <label class="col-md-2 col-form-label" style="text-align: right">{{cotizacion.subtotal}}</label>
                                         </div>
                                         <div class=" col-md-12" align="right">

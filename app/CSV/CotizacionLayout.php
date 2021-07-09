@@ -73,7 +73,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $id_moneda = '';
                     switch ((int)$cot->id_moneda){
                         case 1:
-                            $id_moneda = 'PESO MXP';
+                            $id_moneda = 'PESO MXN';
                         break;
                         case 2:
                             $id_moneda = 'DOLAR USD';
@@ -115,8 +115,8 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $objValidation->setError('Value is not in list.');
                     $objValidation->setPromptTitle('Choose from list');
                     $objValidation->setPrompt('Please pick a value from the drop-down list.');
-                    $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXP"');
-                    $event->sheet->setCellValue('K'.$i,'=IF(J'.$i.'="LIBRA",I'.$i.'*'.$this->tc_partida_libra.'/1,IF(J'.$i.'="EURO",I'.$i.'*'.$this->tc_partida_euro.'/1,IF(J'.$i.'="DOLAR USD",I'.$i.'*'.$this->tc_partida_dlls.'/1, IF(J'.$i.'="PESO MXP",I'.$i.',0))))');
+                    $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXN"');
+                    $event->sheet->setCellValue('K'.$i,'=IF(J'.$i.'="LIBRA",I'.$i.'*'.$this->tc_partida_libra.'/1,IF(J'.$i.'="EURO",I'.$i.'*'.$this->tc_partida_euro.'/1,IF(J'.$i.'="DOLAR USD",I'.$i.'*'.$this->tc_partida_dlls.'/1, IF(J'.$i.'="PESO MXN",I'.$i.',0))))');
                     $event->sheet->setCellValue("I".$i, '=G'.$i.'*E'.$i.'-((G'.$i.'*E'.$i.'*H'.$i.')/100)');
 
                     $event->sheet->getStyle('G'.$i.':H'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
@@ -135,7 +135,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getStyle('G'.($i+17))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+18))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
 
-                $event->sheet->setCellValue("G".($i+2), '=SUMIF(J3:J'.$i.',"PESO MXP",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"PESO MXP",I3:I'.$i.')*G'.($i+1).'/100)');
+                $event->sheet->setCellValue("G".($i+2), '=SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+3), '=SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+4), '=SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+5), '=SUMIF(J3:J'.$i.',"LIBRA",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"LIBRA",I3:I'.$i.')*G'.($i+1).'/100)');
@@ -144,7 +144,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'+G'.($i+11));
                 $event->sheet->setCellValue("F".($i+1), '%Descuento');
                 $event->sheet->setCellValue("G".($i+1), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->descuento : 0);
-                $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXP)');
+                $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXN)');
                 $event->sheet->setCellValue("F".($i+3), '%Subtotal Precios Dolar (USD)');
                 $event->sheet->setCellValue("F".($i+4), 'Subtotal Precios EURO');
                 $event->sheet->setCellValue("F".($i+5), 'Subtotal Precios LIBRA');
