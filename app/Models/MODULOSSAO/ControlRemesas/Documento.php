@@ -19,6 +19,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use Illuminate\Database\Eloquent\Model;
 use App\Facades\Context;
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -77,6 +78,11 @@ class Documento extends Model
     public function destinatario()
     {
         return $this->belongsTo(DocumentoDestinatario::class, 'IDDestinatario', 'IDDestinatario');
+    }
+
+    public function empresaDocumentoManual()
+    {
+        return $this->belongsTo(Empresa::class, 'IDDestinatario', 'id_empresa');
     }
 
     public function fondo()
@@ -212,18 +218,36 @@ class Documento extends Model
 
     public function getProveedorAttribute()
     {
-        if($this->transaccion->id_referente != null){
-            return $this->transaccion->fondoFijo->empresa->razon_social;
+        if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
+            return $this->empresaDocumentoManual->razon_social;
+        }else if($this->transaccion->id_referente != null){
+            if($this->transaccion->fondoFijo->empresa){
+                return $this->transaccion->fondoFijo->empresa->razon_social;
+            }
+            return null;
         }
         return $this->transaccion->empresa->razon_social;
     }
 
     public function getRFCAttribute()
     {
+        if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
+            return $this->empresaDocumentoManual->rfc;
+        }
         if($this->transaccion->id_referente != null){
-            return $this->transaccion->fondoFijo->empresa->rfc;
+            if($this->transaccion->fondoFijo->empresa){
+                return $this->transaccion->fondoFijo->empresa->rfc;
+            }
+            return null;
         }
         return $this->transaccion->empresa->rfc;
+    }
+
+    public function getEmpresaCadecoAttribute(){
+        if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
+            return $this->empresaDocumentoManual;
+        }
+        return $this->transaccion->empresa;  
     }
 
     /**
