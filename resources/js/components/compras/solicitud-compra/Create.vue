@@ -162,6 +162,7 @@
                                                         <MaterialSelect
                                                             :name="`material[${i}]`"
                                                             :scope="scope"
+                                                            sort = "descripcion"
                                                             v-model="partida.material"
                                                             data-vv-as="Material"
                                                             v-validate="{required: true}"
@@ -186,19 +187,19 @@
                                                     </td>
                                                     <td style="width:120px;" v-if="partida.material">{{partida.material.unidad}}</td>
                                                     <td style="width:120px;" v-else></td>
-                                                    <td class="fecha" v-if="materiales.length != 0">
+                                                    <td class="fecha">
                                                         <datepicker v-model="partida.fecha"
                                                                     :name="`fecha[${i}]`"
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
                                                                     :bootstrap-styling = "true"
+                                                                    :disabled-dates="fechasEntregaDeshabilitadas"
                                                                     class = "form-control"
                                                                     v-validate="{required: true}"
                                                                     :class="{'is-invalid': errors.has(`fecha[${i}]`)}"
                                                         ></datepicker>
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                     </td>
-                                                    <td class="fecha" v-else></td>
                                                     <td  v-if="partida.destino ===  ''" >
                                                          <small class="badge badge-secondary">
                                                             <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" ></i>
@@ -357,6 +358,7 @@
                 es:es,
                 configuracion : '',
                 fechasDeshabilitadas:{},
+                fechasEntregaDeshabilitadas:{},
                 fecha : '',
                 fecha_requisicion : '',
                 fecha_hoy : '',
@@ -406,7 +408,7 @@
             this.fecha_hoy = new Date();
             this.fecha_requisicion = new Date();
             this.fecha = new Date();
-            this.fechasDeshabilitadas.from= new Date();
+            this.fechasEntregaDeshabilitadas.to = new Date();
             this.getAreasCompradoras();
             this.getConfiguracion();
             this.getTipos();
