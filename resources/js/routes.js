@@ -335,17 +335,6 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create',
-                                name: 'cotizacion-create',
-                                component: require('./components/compras/cotizacion/Create').default,
-                                meta: {
-                                    title: 'Registrar Cotización',
-                                    breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['registrar_cotizacion_compra']
-                                }
-                            },
-                            {
                                 path: ':id/editar',
                                 name: 'cotizacion-edit',
                                 props: true,
@@ -367,6 +356,17 @@ export const routes = [
                                     breadcrumb: { parent: 'cotizacion', name: 'VER'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_cotizacion_compra'
+                                }
+                            },
+                            {
+                                path: 'create/seleccionar_solicitud_compra',
+                                name: 'cotizacion-selecciona-solicitud-compra',
+                                component: require('./components/compras/cotizacion/SeleccionaSolicitud').default,
+                                meta: {
+                                    title: 'Seleccionar Solicitud de Compra',
+                                    breadcrumb: { parent: 'cotizacion', name: 'SELECCIONAR SOLICITUD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_solicitud_compra']
                                 }
                             },
                             {
@@ -535,7 +535,19 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_solicitud_compra'
                                 }
-                            }
+                            },
+                            {
+                                path: ':id_solicitud/cotizacion/create',
+                                name: 'cotizacion-create',
+                                component: require('./components/compras/cotizacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
+                                }
+                            },
                         ]
                     }
                 ]
