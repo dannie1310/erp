@@ -3730,6 +3730,95 @@ export const routes = [
         }
     },
     {
+        path: '/proveedor',
+        components:  {
+            default: require('./components/portal-proveedor/partials/Layout.vue').default,
+            menu: require('./components/portal-proveedor/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'proveedor',
+                component: require('./components/portal-proveedor/Index').default,
+                meta: {
+                    title: 'Portal de Proveedores',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'PORTAL DE PROVEEDORES'},
+                    permission: ['consultar_cotizacion_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'cotizacion-proveedor',
+                component: require('./components/portal-proveedor/cotizacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'cotizacion-proveedor',
+                        component: require('./components/portal-proveedor/cotizacion/Index').default,
+                        meta: {
+                            title: 'Cotizaciones de Compra',
+                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES DE COMPRA'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                   /* {
+                        path: 'create',
+                        name: 'solicitud-compra-create',
+                        component: require('./components/compras/solicitud-compra/Create').default,
+                        meta: {
+                            title: 'Registrar Solicitud',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'registrar_solicitud_compra'
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'solicitud-show',
+                        component: require('./components/compras/solicitud-compra/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Solicitud',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'solicitud-compra-edit',
+                        component: require('./components/compras/solicitud-compra/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Editar Solicitud',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: 'editar_solicitud_compra'
+                        }
+                    },
+                    {
+                        path: ':id/documentos',
+                        name: 'solicitud-compra-documentos',
+                        component: require('./components/globals/archivos/Files').default,
+                        props: route => ({
+                            id: route.params.id,
+                            permiso: ['registrar_solicitud_compra'],
+                        }),
+                        meta: {
+                            title: 'Documentos de Solicitud',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_solicitud_compra'
+                        }
+                    }*/
+                ]
+            }
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,

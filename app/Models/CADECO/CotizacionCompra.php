@@ -140,6 +140,13 @@ class CotizacionCompra  extends Transaccion
         });
     }
 
+    public function scopeSolicitudesAsignadasProveedores($query)
+    {
+        return $query->whereHas('solicitud', function ($q) {
+            $q->areasCompradorasAsignadas();
+        });
+    }
+
     /**
      * Attributes
      */
