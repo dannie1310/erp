@@ -101,7 +101,7 @@
                 }
             },
             create() {
-                this.$router.push({name: 'cotizacion-create'});
+                this.$router.push({name: 'cotizacion-proveedor-seleccionar-solicitud'});
             },
         },
         computed: {

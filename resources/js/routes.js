@@ -3769,11 +3769,34 @@ export const routes = [
                         name: 'cotizacion-proveedor',
                         component: require('./components/portal-proveedor/cotizacion/Index').default,
                         meta: {
-                            title: 'Cotizaciones de Compra',
-                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES DE COMPRA'},
+                            title: 'Cotizaciones de Proveedor',
+                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES'},
                             middleware: [auth, permission],
                             permission: 'consultar_cotizacion_proveedor',
                             general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'cotizacion-proveedor-seleccionar-solicitud',
+                        component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,
+                        meta: {
+                            title: 'Seleccionar Solicitud de Compra',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_solicitud_compra']
+                        }
+                    },
+                    {
+                        path: ':id_solicitud/create',
+                        name: 'cotizacion-proveedor-create',
+                        component: require('./components/portal-proveedor/cotizacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_cotizacion_compra']
                         }
                     },
                    /* {
