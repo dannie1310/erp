@@ -100,6 +100,11 @@ class Subcontrato extends Transaccion
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function contratoProyectadoSinGlobalScope()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function contratoProyectado_sgc()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
@@ -113,6 +118,11 @@ class Subcontrato extends Transaccion
     public function estimaciones()
     {
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function estimacionesSinGlobalScope()
+    {
+        return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function subcontratos()
@@ -489,7 +499,7 @@ class Subcontrato extends Transaccion
         $i = 0;
 
         #CONTRATOS PROYECTADOS
-        $relaciones[$i] = $this->contratoProyectado->datos_para_relacion;
+        $relaciones[$i] = $this->contratoProyectadoSinGlobalScope->datos_para_relacion;
         $i++;
         #PRESUPUESTOS
         $presupuestos = $this->presupuestos;
@@ -535,7 +545,7 @@ class Subcontrato extends Transaccion
             }
         }
         #ESTIMACION
-        foreach ($subcontrato->estimaciones as $estimacion){
+        foreach ($subcontrato->estimacionesSinGlobalScope as $estimacion){
             $relaciones[$i] = $estimacion->datos_para_relacion;
             $i++;
 
