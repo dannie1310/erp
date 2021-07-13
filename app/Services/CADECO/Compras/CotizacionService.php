@@ -114,7 +114,7 @@ class CotizacionService
             'tc_usd' => $celdas[$x + 5][6],
             'tc_eur' => $celdas[$x + 6][6],
             'tc_libra' => $celdas[$x + 7][6],
-            'fecha_cotizacion' => $celdas[$x + 12][6],
+            'fecha_cotizacion' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($celdas[$x + 12][6])->format("Y/m/d"),
             'pago_parcialidades' => $celdas[$x + 13][6],
             'anticipo' => $celdas[$x + 14][6],
             'credito' => $celdas[$x + 15][6],
