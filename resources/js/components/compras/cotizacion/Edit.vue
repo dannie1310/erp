@@ -1,7 +1,20 @@
 <template>
     <span>
         <nav>
-            <div class="row" v-if="cotizacion != ''">
+            <div  v-if="cotizacion == ''">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row" >
+                            <div class="col-md-12">
+                                <div class="spinner-border text-success" role="status">
+                                   <span class="sr-only">Cargando...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" v-else>
                 <div class="col-12">
                     <div class="card">
                         <div class="card-body">

@@ -1,10 +1,14 @@
 <template>
     <span>
         <div  v-if="!cotizacion">
-            <div class="row" >
-                <div class="col-md-12">
-                    <div class="spinner-border text-success" role="status">
-                       <span class="sr-only">Cargando...</span>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -12,12 +16,17 @@
         <div v-else>
             <div class="row">
                 <div class="col-12">
-                    <div class="invoice p-3 mb-3">
-                        <div class="row col-md-12">
-                            <div class="col-md-6">
-                                <h5>Folio: &nbsp; <b>{{cotizacion.folio_format}}</b></h5>
+                     <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <datos-cotizacion-compra v-bind:cotizacion_compra="cotizacion"></datos-cotizacion-compra>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                     <div >
+
                         <div class="table-responsive col-md-12">
                             <table class="table">
                                 <tbody>
@@ -121,6 +130,10 @@
                             <div class="col-md-10">{{cotizacion.observaciones}}</div>
                         </div>
                     </div>
+                                </div>
+                            </div>
+                        </div>
+                     </div>
                 </div>
             </div>
         </div>
@@ -128,8 +141,10 @@
 </template>
 
 <script>
+    import DatosCotizacionCompra from "./partials/DatosCotizacionCompra";
     export default {
         name: "cotizacion-show",
+        components: {DatosCotizacionCompra},
         props: ['id', 'show'],
         data(){
             return{
