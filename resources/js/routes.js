@@ -366,7 +366,7 @@ export const routes = [
                                     title: 'Seleccionar Solicitud de Compra',
                                     breadcrumb: { parent: 'cotizacion', name: 'SELECCIONAR SOLICITUD'},
                                     middleware: [auth, context, permission],
-                                    permission: ['registrar_solicitud_compra']
+                                    permission: ['registrar_cotizacion_compra']
                                 }
                             },
                             {

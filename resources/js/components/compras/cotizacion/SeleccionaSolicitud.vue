@@ -72,7 +72,7 @@
             },
             salir()
             {
-                 this.$router.push({name: 'presupuesto'});
+                 this.$router.push({name: 'cotizacion'});
             },
             find() {
                 this.cargando = true;
