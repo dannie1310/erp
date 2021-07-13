@@ -15,6 +15,7 @@
 Route::get('/', function () {
     return view('welcome');
 })->middleware('auth');
+// Route::post('temporal', 'App\Http\Controllers\v1\AuthController@cambioContrasenaGenerica'); /////
 
 Auth::routes(['register' => false]);
 Route::post('auth/setContext', 'v1\AuthController@setContext')->middleware('auth');

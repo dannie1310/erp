@@ -29,8 +29,8 @@ class AuthController extends Controller
      */
     public function __construct(AuthService $auth)
     {
-        $this->middleware('auth:api', ['except' => ['login', 'setContext', 'movil']]);
-        $this->middleware('context', ['except' => ['login', 'logout', 'setContext', 'refresh', 'obras', 'movil']]);
+        $this->middleware('auth:api', ['except' => ['login', 'setContext', 'movil', 'cambioContrasenaGenerica']]);
+        $this->middleware('context', ['except' => ['login', 'logout', 'setContext', 'refresh', 'obras', 'movil', 'cambioContrasenaGenerica']]);
 
         $this->auth = $auth;
     }
@@ -49,7 +49,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Unauthorized'], 401);
         }
-
+dd(6636);
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
@@ -155,5 +155,10 @@ class AuthController extends Controller
 
         return response()->json($obras, 200);
 
+    }
+
+    public function cambioContrasenaGenerica(){
+        dd('si');
+        return view('auth.cambio_contrasena_temporal');
     }
 }
