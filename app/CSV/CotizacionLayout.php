@@ -156,16 +156,16 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+11), 'IVA');
                 $event->sheet->setCellValue("F".($i+12), 'TOTAL');
                 $event->sheet->setCellValue("F".($i+13), 'Fecha de Cotizacion');
-                $event->sheet->setCellValue("G".($i+13), date("d/m/Y"));
+                $event->sheet->setCellValue("G".($i+13), $this->cotizacion->fecha_format);
                 $event->sheet->setCellValue("F".($i+14), 'Pago en Parcialdades (%)');
                 $event->sheet->setCellValue("G".($i+14), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->parcialidades : 0);
-                $event->sheet->setCellValue("F".($i+15), '% Anticipo');
+                $event->sheet->setCellValue("F".($i+15), 'Anticipo (%)');
                 $event->sheet->setCellValue("G".($i+15), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->anticipo : 0);
-                $event->sheet->setCellValue("F".($i+16), 'Credito (dias)');
+                $event->sheet->setCellValue("F".($i+16), 'Credito (días)');
                 $event->sheet->setCellValue("G".($i+16), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->dias_credito : 0);
-                $event->sheet->setCellValue("F".($i+17), 'Tiempo de Entraga (dias)');
+                $event->sheet->setCellValue("F".($i+17), 'Tiempo de Entraga (días)');
                 $event->sheet->setCellValue("G".($i+17), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->plazo_entrega : 0);
-                $event->sheet->setCellValue("F".($i+18), 'Vigencia (dias)');
+                $event->sheet->setCellValue("F".($i+18), 'Vigencia (días)');
                 $event->sheet->setCellValue("G".($i+18), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->vigencia : 0);
                 $event->sheet->setCellValue("F".($i+19), 'Observaciones Generales');
                 $event->sheet->setCellValue("G".($i+19), $this->cotizacion->observaciones);
@@ -190,7 +190,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
     public function headings(): array
     {
         return array([' ',' ',' ',' ',' ',' ',($this->cotizacion->empresa) ? $this->cotizacion->empresa->razon_social : '----- Proveedor Desconocido ----- '],
-        ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','Precio Unitario','% Descuento','Precio Total','Moneda',
-            'Precio Total Moneda Conversión','Observaciones']);
+        ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','PRECIO_UNITARIO','%_DESCUENTO','PRECIO_TOTAL','MONEDA',
+            'PRECIO_TOTAL_MONEDA_CONVERSION','OBSERVACIONES']);
     }
 }

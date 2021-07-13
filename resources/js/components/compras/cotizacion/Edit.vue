@@ -563,6 +563,7 @@
                     this.vigencia = this.carga.vigencia;
                     this.descuento_cot = this.carga.descuento_cot;
                     this.cotizacion.observaciones = this.carga.observaciones_generales;
+                    this.cotizacion.fecha = this.carga.fecha_cotizacion;
                 }
                         this.tipo_cambio[1] = 1;
                         this.tipo_cambio[2] = (this.cotizacion.complemento) ? this.cotizacion.complemento.tc_usd : this.monedas[1].tipo_cambio_cadeco.cambio_formato;
