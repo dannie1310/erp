@@ -111,10 +111,10 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $objValidation->setShowInputMessage(true);
                     $objValidation->setShowErrorMessage(true);
                     $objValidation->setShowDropDown(true);
-                    $objValidation->setErrorTitle('Input error');
-                    $objValidation->setError('Value is not in list.');
-                    $objValidation->setPromptTitle('Choose from list');
-                    $objValidation->setPrompt('Please pick a value from the drop-down list.');
+                    $objValidation->setErrorTitle('Error de entrada');
+                    $objValidation->setError('El valor no esta en la lista');
+                    $objValidation->setPromptTitle('Seleccione de la lista');
+                    $objValidation->setPrompt('Por favor seleccione un valor de la lista');
                     $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXN"');
                     $event->sheet->setCellValue('K'.$i,'=IF(J'.$i.'="LIBRA",I'.$i.'*'.$this->tc_partida_libra.'/1,IF(J'.$i.'="EURO",I'.$i.'*'.$this->tc_partida_euro.'/1,IF(J'.$i.'="DOLAR USD",I'.$i.'*'.$this->tc_partida_dlls.'/1, IF(J'.$i.'="PESO MXN",I'.$i.',0))))');
                     $event->sheet->setCellValue("I".$i, '=G'.$i.'*E'.$i.'-((G'.$i.'*E'.$i.'*H'.$i.')/100)');
@@ -156,7 +156,12 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+11), 'IVA');
                 $event->sheet->setCellValue("F".($i+12), 'TOTAL');
                 $event->sheet->setCellValue("F".($i+13), 'Fecha de Cotizacion');
-                $event->sheet->setCellValue("G".($i+13), $this->cotizacion->fecha_format);
+                $event->sheet
+                    ->getStyle('G'.($i+13).":G".($i+13))
+                    ->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+                $fechaCotizacion = date_create($this->cotizacion->fecha);
+                $event->sheet->setCellValue("G".($i+13), \PhpOffice\PhpSpreadsheet\Shared\Date::dateTimeToExcel($fechaCotizacion));
                 $event->sheet->setCellValue("F".($i+14), 'Pago en Parcialdades (%)');
                 $event->sheet->setCellValue("G".($i+14), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->parcialidades : 0);
                 $event->sheet->setCellValue("F".($i+15), 'Anticipo (%)');
