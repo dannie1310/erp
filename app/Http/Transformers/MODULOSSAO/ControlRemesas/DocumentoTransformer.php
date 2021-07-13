@@ -106,7 +106,7 @@ class DocumentoTransformer extends TransformerAbstract
      */
     public function includeEmpresa(Documento $model)
     {
-        if($empresa = $model->empresa)
+        if($empresa = $model->empresa_cadeco)
         {
             return $this->item($empresa, new EmpresaTransformer);
         }

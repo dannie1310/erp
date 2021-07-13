@@ -160,7 +160,7 @@
                                     :class="{'is-invalid': errors.has('descuento_cot')}">
                             </div>
                              <div class=" col-md-12" align="right">
-                                <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXP)</label>
+                                <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXN)</label>
                                 <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
                             </div>
                             <div class=" col-md-12" align="right">
