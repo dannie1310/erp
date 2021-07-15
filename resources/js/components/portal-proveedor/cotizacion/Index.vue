@@ -7,16 +7,6 @@
         </div>
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
@@ -50,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa', 'relaciones']},
+                query: {include: 'transaccion', sort: '', order: ''},
                 search: '',
                 cargando: false
             }
@@ -66,12 +56,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/cotizacion/paginate', {
+                return this.$store.dispatch('padronProveedores/invitacion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
-                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
+                        this.$store.commit('padronProveedores/invitacion/SET_INVITACIONES', data.data);
+                        this.$store.commit('padronProveedores/invitacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -105,37 +95,23 @@
             },
         },
         computed: {
-            cotizaciones(){
-                return this.$store.getters['compras/cotizacion/cotizaciones'];
+            invitaciones(){
+                return this.$store.getters['padronProveedores/invitacion/invitaciones'];
             },
             meta(){
-                return this.$store.getters['compras/cotizacion/meta'];
+                return this.$store.getters['padronProveedores/invitacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            cotizaciones: {
-                handler(cotizaciones) {
+            invitaciones: {
+                handler(invitaciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = cotizaciones.map((cotizacion, i) => ({
+                    self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: cotizacion.folio_format,
-                        fecha: cotizacion.fecha_format,
-                        empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
-                        observaciones: cotizacion.observaciones,
-                        importe: cotizacion.importe,
-                       // estado: this.getEstado(cotizacion.estado),
-                        solicitud: cotizacion.solicitud.numero_folio_format,
-                        buttons: $.extend({}, {
-                            show: true,
-                            id: cotizacion.id,
-                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
-                            edit: (cotizacion.asignada) ? false : true,
-                            transaccion: {id:cotizacion.id, tipo:18},
-                        })
                     }));
                 },
                 deep: true

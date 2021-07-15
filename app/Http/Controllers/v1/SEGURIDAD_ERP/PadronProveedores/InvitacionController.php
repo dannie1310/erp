@@ -22,51 +22,27 @@ class InvitacionController extends Controller
     protected $fractal;
 
     /**
-     * @var EmpresaService
+     * @var InvitacionService
      */
     protected $service;
 
     /**
-     * @var EmpresaTransformer
+     * @var InvitacionTransformer
      */
     protected $transformer;
 
     /**
-     * EmpresaController constructor.
+     * InvitacionController constructor.
      * @param Manager $fractal
-     * @param EmpresaService $service
-     * @param EmpresaTransformer $transformer
+     * @param InvitacionService $service
+     * @param InvitacionTransformer $transformer
      */
-    public function __construct(Manager $fractal, EmpresaService $service, EmpresaTransformer $transformer)
+    public function __construct(Manager $fractal, InvitacionService $service, InvitacionTransformer $transformer)
     {
         $this->middleware('auth:api');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function registrarPrestadora(Request $request){
-        return $this->service->registrarPrestadora($request->all());
-    }
-
-    public function revisarRFC(Request $request, $id)
-    {
-        return $this->service->revisarRFC($request->all()['rfc'], $id);
-    }
-
-    public function revisarRfcPrestadora(Request $request)
-    {
-        return $this->service->revisarRfcPrestadora($request->all());
-    }
-
-    public function revisarRFCPreexistente(Request $request)
-    {
-        return $this->service->revisarRFCPreexistente($request->all()['rfc']);
-    }
-
-    public function descargaExpediente(Request $request, $id)
-    {
-        return $this->service->descargaExpediente($id);
     }
 }

@@ -159,6 +159,7 @@ import ctgArea from './modules/padronProveedores/ctg-area';
 import empresaProveedor from './modules/padronProveedores/empresa';
 import especialidad from './modules/padronProveedores/especialidad';
 import giro from './modules/padronProveedores/giro';
+import invitacion  from "./modules/padronProveedores/invitacion";
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -399,6 +400,7 @@ export default new Vuex.Store({
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
+        'padronProveedores/invitacion' : invitacion,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 

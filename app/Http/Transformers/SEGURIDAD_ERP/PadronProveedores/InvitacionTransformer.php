@@ -19,19 +19,20 @@ class InvitacionTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
-            'nombre_contacto' => $model->no_imss,
-            'email' => $model->estado_expediente->descripcion,
-            'obra' => $model->avance_expediente,
-            'nombre_usuario_invito' => $model->usuarioInvito->nombre_completo,
-            'fecha_hora_invitacion_format' => $model->fecha_hora_invitacion_format
+            'email' => $model->email,
+            'obra' => $model->nombre_obra,
+            'nombre_usuario_invito' => $model->nombre_usuario,
         ];
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeTransaccion(Invitacion $model) {
-        if ($item = $model->transaccionAntecedente) {
-            return $this->item($item, new TransaccionTransformer);
+        if ($transaccion = $model->transaccionAntecedente) {
+            return $this->item($transaccion, new TransaccionTransformer);
         }
         return null;
     }
-
 }
