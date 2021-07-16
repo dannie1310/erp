@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
 
-use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionTransformer;
-use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
+use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionTransformer as Transformer;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService as Service;
 
 class InvitacionController extends Controller
 {
@@ -32,41 +32,23 @@ class InvitacionController extends Controller
     protected $transformer;
 
     /**
-     * EmpresaController constructor.
+     * InvitacionController constructor.
      * @param Manager $fractal
-     * @param EmpresaService $service
-     * @param EmpresaTransformer $transformer
+     * @param Service $service
+     * @param Transformer $transformer
      */
-    public function __construct(Manager $fractal, EmpresaService $service, EmpresaTransformer $transformer)
+    public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('context')->only("store");
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
     }
 
-    public function registrarPrestadora(Request $request){
-        return $this->service->registrarPrestadora($request->all());
-    }
-
-    public function revisarRFC(Request $request, $id)
-    {
-        return $this->service->revisarRFC($request->all()['rfc'], $id);
-    }
-
-    public function revisarRfcPrestadora(Request $request)
-    {
-        return $this->service->revisarRfcPrestadora($request->all());
-    }
-
-    public function revisarRFCPreexistente(Request $request)
-    {
-        return $this->service->revisarRFCPreexistente($request->all()['rfc']);
-    }
-
-    public function descargaExpediente(Request $request, $id)
-    {
-        return $this->service->descargaExpediente($id);
+    public function store(Request $request){
+        $sucursal = $this->service->store($request->all());
+        return $this->respondWithItem($sucursal);
     }
 }

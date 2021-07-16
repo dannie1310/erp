@@ -13,17 +13,25 @@ class InvitacionTransformer extends TransformerAbstract
         'transaccion',
     ];
 
+    protected $availableIncludes = [
+        'transaccion',
+    ];
+
     public function transform(Invitacion $model)
     {
         return [
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
-            'nombre_contacto' => $model->no_imss,
-            'email' => $model->estado_expediente->descripcion,
-            'obra' => $model->avance_expediente,
+            'nombre_contacto' => $model->nombre_contacto,
+            'numero_folio_format' => $model->numero_folio_format,
+            'email' => $model->email,
+            'obra' => $model->obra->nombre,
+            'observaciones' => $model->observaciones,
+            'base_datos' => $model->base_datos,
             'nombre_usuario_invito' => $model->usuarioInvito->nombre_completo,
-            'fecha_hora_invitacion_format' => $model->fecha_hora_invitacion_format
+            'nombre_usuario_invitado' => $model->usuarioInvitado->nombre_completo_sin_espacios,
+            'fecha_hora_format' => $model->fecha_hora_format
         ];
     }
 

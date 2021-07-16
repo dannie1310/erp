@@ -58,6 +58,7 @@ import proyecto from './modules/catalogos/proyecto';
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
+import invitacionCotizarCompra from "./modules/compras/invitacion-cotizar";
 import cotizacion from './modules/compras/cotizacion';
 import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
@@ -277,6 +278,7 @@ export default new Vuex.Store({
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/forma-pago-credito' : formaPagoCredito,
+        'compras/invitacion' : invitacionCotizarCompra,
 
 
         'configuracion/area-compradora' : areaCompradora,

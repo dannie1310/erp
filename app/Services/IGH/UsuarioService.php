@@ -37,4 +37,14 @@ class UsuarioService
     {
         return $this->repository->show($id);
     }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function existe($usuario)
+    {
+        return $this->repository->where([["usuario","=",$usuario]])->first();
+    }
 }
