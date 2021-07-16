@@ -69,7 +69,7 @@ export default {
 
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Invitación a cotizar",
+                    title: "Enviar Invitación a cotizar",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -78,7 +78,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Registrar',
+                            text: 'Si, Enviar',
                             closeModal: false,
                         }
                     }                })

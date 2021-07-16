@@ -66,7 +66,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      * @var array
      */
     protected $fillable = [
-        'usuario', 'nombre', 'correo', 'clave',
+        'usuario', 'nombre', 'apaterno', 'amaterno', 'usuario_estado', 'correo', 'clave', 'id_empresa', 'pide_cambio_contrasenia'
     ];
 
     /**
@@ -393,6 +393,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     public function getNombreCompletoAttribute()
     {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
+    }
+
+    public function getNombreCompletoSinEspaciosAttribute()
+    {
+        return $this->nombre.$this->apaterno.$this->amaterno;
     }
 
     public function google2faSecret()

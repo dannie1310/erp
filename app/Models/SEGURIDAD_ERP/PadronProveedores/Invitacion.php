@@ -22,6 +22,7 @@ class Invitacion extends Model
         'id_proveedor_sat',
         'base_datos',
         'id_proveedor_sao',
+        'id_sucursal_sao',
         'id_transaccion_antecedente',
         'id_cotizacion_generada',
         'id_obra',
@@ -32,8 +33,10 @@ class Invitacion extends Model
         'domicilio_fiscal',
         'email',
         'nombre_contacto',
+        'observaciones',
         'usuario_invito',
-        'estado'
+        'usuario_invitado',
+        'estado',
     ];
     /*
      * Relaciones*/
@@ -42,7 +45,7 @@ class Invitacion extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(Transaccion::class, "id_transaccion_antecedente", "id_transaccion");
+        return $this->belongsTo(Transaccion::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
     }
 
     public function cotizacionGenerada()
@@ -55,6 +58,18 @@ class Invitacion extends Model
     public function usuarioInvito()
     {
         return $this->belongsTo(Usuario::class, "usuario_invito", "idusuario");
+    }
+
+    public function usuarioInvitado()
+    {
+        return $this->belongsTo(Usuario::class, "usuario_invitado", "idusuario");
+    }
+
+    public function obra()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(Obra::class, "id_obra", "id_obra");
     }
 
     /*
@@ -72,6 +87,17 @@ class Invitacion extends Model
 
     /*
      * Atributos*/
+
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->id);
+    }
+
+    public function getFechaHoraFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_invitacion);
+        return date_format($date,"d/m/Y");
+    }
 
     /*
      * Métodos*/
