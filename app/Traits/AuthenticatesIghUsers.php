@@ -72,6 +72,15 @@ trait AuthenticatesIghUsers
         ]);
     }
 
+    public function validatePasswordChange(Request $request){
+        // dd($request['clave_nueva']);
+        $request->validate([
+            'clave_nueva' => 'required|string|same:'.$request['clave_confirmacion'],
+            'clave_confirmacion' => 'required|string|same:'.$request['clave_nueva'],
+        ]);
+       
+    }
+
     /**
      * Attempt to log the user into the application.
      *
@@ -104,8 +113,6 @@ trait AuthenticatesIghUsers
      */
     protected function sendLoginResponse(Request $request)
     {
-        // dd(4, $request);
-        //$request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
         
@@ -137,6 +144,13 @@ trait AuthenticatesIghUsers
     {
         throw ValidationException::withMessages([
             $this->username() => [trans('auth.failed')],
+        ]);
+    }
+
+    protected function sendFailedPasswordResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            'clave_confirmacion' => [trans('auth.failed')],
         ]);
     }
 

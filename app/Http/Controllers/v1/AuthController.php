@@ -49,7 +49,6 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Unauthorized'], 401);
         }
-dd(6636);
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
@@ -155,10 +154,5 @@ dd(6636);
 
         return response()->json($obras, 200);
 
-    }
-
-    public function cambioContrasenaGenerica(){
-        dd('si');
-        return view('auth.cambio_contrasena_temporal');
     }
 }

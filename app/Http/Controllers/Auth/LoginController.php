@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
-use App\Models\SEGURIDAD_ERP\Google2faSecret;
-use App\Traits\AuthenticatesIghUsers;
+use App\Models\IGH\Usuario;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Traits\AuthenticatesIghUsers;
+use Illuminate\Support\Facades\Session;
+use App\Models\SEGURIDAD_ERP\Google2faSecret;
 use Sonata\GoogleAuthenticator\GoogleAuthenticator;
 
 class LoginController extends Controller
@@ -35,7 +37,17 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        $this->validateLogin($request);
+        
+        if(array_key_exists('clave_confirmacion', $request->all())){
+            if($request['clave_nueva'] != $request['clave_confirmacion']){
+                return $this->sendFailedPasswordResponse($request);
+            }else{
+                $this->actualizarPassword($request);
+            }
+        }else{
+            $this->validateLogin($request);
+        }
+        
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -45,9 +57,16 @@ class LoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-
+        if($this->validaPasswordGenerico($request)){
+            return view('auth.cambio_contrasena_temporal');
+        }
+        // dd('stop', auth() );
         if ($this->attemptLogin($request)) {
-            if (! auth()->user()->google2faSecret) {
+            dd('stop', auth() );
+            if(auth()->user()->usuario_estado != 2){
+                return $this->sendFailedLoginResponse($request);
+            }
+            else if (! auth()->user()->google2faSecret) {
                 $g = new GoogleAuthenticator();
                 $secret = $g->generateSecret();
                 Google2faSecret::query()->create([
@@ -64,5 +83,22 @@ class LoginController extends Controller
         $this->incrementLoginAttempts($request);
 
         return $this->sendFailedLoginResponse($request);
+    }
+
+    public function actualizarPassword($request){
+        $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
+        $usuario->clave = md5($request['clave_nueva']);
+        $usuario->save();
+        header("Location:");
+
+    }
+    
+    private function validaPasswordGenerico($request){
+        // dd($request['usuario'], Session::get('path'));
+        $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
+        if($usuario && $usuario->idgenero == 0){
+            return true;
+        }
+        return false;
     }
 }
