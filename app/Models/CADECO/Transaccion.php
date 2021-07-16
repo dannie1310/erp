@@ -342,7 +342,7 @@ class Transaccion extends Model
             if($this->poliza->estatus == -3){
                 $this->poliza->id_transaccion_sao = null;
                 $this->poliza->save();
-                $movimientos = $this->poliza_movimientos;
+                $movimientos = $this->poliza_movimientos()->withTrashed()->get();
                 if($movimientos){
                     foreach ($movimientos as $movimiento) {
                         $movimiento->id_transaccion_sao = null;

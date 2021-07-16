@@ -245,7 +245,7 @@
                                         <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-md-2-4 col-form-label">IVA:</label>
+                                        <label class="col-md-2 col-form-label">IVA:</label>
                                         <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">

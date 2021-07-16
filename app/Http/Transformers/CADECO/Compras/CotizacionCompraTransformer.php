@@ -41,6 +41,7 @@ class CotizacionCompraTransformer extends TransformerAbstract
             'operacion' => $model->operacion,
             'opciones' => $model->opciones,
             'folio_format' => $model->numero_folio_format,
+            'numero_folio_format' => $model->numero_folio_format,
             'usuario_registro' => ($model->id_usuario) ? $model->id_usuario : '--------------',
             'importe' => $model->monto_format,
             'subtotal' => $model->subtotal_format,

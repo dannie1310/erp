@@ -111,10 +111,10 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $objValidation->setShowInputMessage(true);
                     $objValidation->setShowErrorMessage(true);
                     $objValidation->setShowDropDown(true);
-                    $objValidation->setErrorTitle('Input error');
-                    $objValidation->setError('Value is not in list.');
-                    $objValidation->setPromptTitle('Choose from list');
-                    $objValidation->setPrompt('Please pick a value from the drop-down list.');
+                    $objValidation->setErrorTitle('Error de entrada');
+                    $objValidation->setError('El valor no esta en la lista');
+                    $objValidation->setPromptTitle('Seleccione de la lista');
+                    $objValidation->setPrompt('Por favor seleccione un valor de la lista');
                     $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXN"');
                     $event->sheet->setCellValue('K'.$i,'=IF(J'.$i.'="LIBRA",I'.$i.'*'.$this->tc_partida_libra.'/1,IF(J'.$i.'="EURO",I'.$i.'*'.$this->tc_partida_euro.'/1,IF(J'.$i.'="DOLAR USD",I'.$i.'*'.$this->tc_partida_dlls.'/1, IF(J'.$i.'="PESO MXN",I'.$i.',0))))');
                     $event->sheet->setCellValue("I".$i, '=G'.$i.'*E'.$i.'-((G'.$i.'*E'.$i.'*H'.$i.')/100)');
@@ -156,16 +156,21 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+11), 'IVA');
                 $event->sheet->setCellValue("F".($i+12), 'TOTAL');
                 $event->sheet->setCellValue("F".($i+13), 'Fecha de Cotizacion');
-                $event->sheet->setCellValue("G".($i+13), date("d/m/Y"));
+                $event->sheet
+                    ->getStyle('G'.($i+13).":G".($i+13))
+                    ->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+                $fechaCotizacion = date_create($this->cotizacion->fecha);
+                $event->sheet->setCellValue("G".($i+13), \PhpOffice\PhpSpreadsheet\Shared\Date::dateTimeToExcel($fechaCotizacion));
                 $event->sheet->setCellValue("F".($i+14), 'Pago en Parcialdades (%)');
                 $event->sheet->setCellValue("G".($i+14), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->parcialidades : 0);
-                $event->sheet->setCellValue("F".($i+15), '% Anticipo');
+                $event->sheet->setCellValue("F".($i+15), 'Anticipo (%)');
                 $event->sheet->setCellValue("G".($i+15), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->anticipo : 0);
-                $event->sheet->setCellValue("F".($i+16), 'Credito (dias)');
+                $event->sheet->setCellValue("F".($i+16), 'Credito (días)');
                 $event->sheet->setCellValue("G".($i+16), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->dias_credito : 0);
-                $event->sheet->setCellValue("F".($i+17), 'Tiempo de Entraga (dias)');
+                $event->sheet->setCellValue("F".($i+17), 'Tiempo de Entraga (días)');
                 $event->sheet->setCellValue("G".($i+17), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->plazo_entrega : 0);
-                $event->sheet->setCellValue("F".($i+18), 'Vigencia (dias)');
+                $event->sheet->setCellValue("F".($i+18), 'Vigencia (días)');
                 $event->sheet->setCellValue("G".($i+18), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->vigencia : 0);
                 $event->sheet->setCellValue("F".($i+19), 'Observaciones Generales');
                 $event->sheet->setCellValue("G".($i+19), $this->cotizacion->observaciones);
@@ -190,7 +195,7 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
     public function headings(): array
     {
         return array([' ',' ',' ',' ',' ',' ',($this->cotizacion->empresa) ? $this->cotizacion->empresa->razon_social : '----- Proveedor Desconocido ----- '],
-        ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','Precio Unitario','% Descuento','Precio Total','Moneda',
-            'Precio Total Moneda Conversión','Observaciones']);
+        ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','PRECIO_UNITARIO','%_DESCUENTO','PRECIO_TOTAL','MONEDA',
+            'PRECIO_TOTAL_MONEDA_CONVERSION','OBSERVACIONES']);
     }
 }
