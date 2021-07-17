@@ -15,5 +15,7 @@
     <div>Usuario: {{$usuario}}</div>
     <div>Contraseña: {{$clave}}</div>
     <div>Dirección: <a href="http://portal-aplicaciones.grupohi.mx/">http://portal-aplicaciones.grupohi.mx/</a></div>
+    <br>
+    <small><b>Por favor no responda a este correo, se envió automáticamente.</b></small>
 </div>
 </html>

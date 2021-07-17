@@ -13,6 +13,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
 use App\Services\CADECO\TransaccionService;
 use App\Services\IGH\UsuarioService;
+use App\Utils\Util;
 
 class InvitacionService
 {
@@ -70,7 +71,9 @@ class InvitacionService
         {
             $empresaService = new EmpresaService(new Empresa());
             $empresa = $empresaService->show($data["id_proveedor"]);
-            $empresaService->validaRFC($empresa->rfc);
+            if($empresa->emite_factura){
+                $empresaService->validaRFC($empresa->rfc);
+            }
             $data_empresa = [
                 'razon_social'=>$empresa->razon_social,
                 'rfc'=>$empresa->rfc,
@@ -105,8 +108,14 @@ class InvitacionService
         $clave = str_replace(" ","",substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His'));
         $claveMD5 = md5($clave);
         $id_empresa = ($empresa->empresaSAT) ? $empresa->empresaSAT->id : null;
+        if($empresa->emite_factura == 0){
+            $usuario = Util::eliminaCaracteresEspeciales(substr($nombre,0,1).$apaterno.date('s'));
+        }else {
+            $usuario = $empresa->rfc;
+        }
+
         $datos_usuario = [
-            'usuario'=>$empresa->rfc,
+            'usuario'=>$usuario,
             'nombre'=>$nombre,
             'apaterno'=>$apaterno,
             'amaterno'=>$amaterno,
