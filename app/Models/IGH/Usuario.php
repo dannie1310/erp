@@ -18,6 +18,7 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\RoleUser;
+use App\Models\SEGURIDAD_ERP\RoleUserGlobal;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -37,6 +38,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notification;
+use App\Models\SEGURIDAD_ERP\Rol as RolSeguridadERP;
 
 class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     AuthorizableContract,
@@ -390,6 +392,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
     }
 
+    public function rolesUsuarioGlobal()
+    {
+        return $this->hasMany(RoleUserGlobal::class, "user_id", "idusuario");
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
@@ -419,5 +426,20 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         $this->update([
             'clave' => $clave_nueva
         ]);
+    }
+
+    public function asignaRol($rol)
+    {
+        $rolObj = RolSeguridadERP::where('name',"=",$rol)->first();
+        if($rolObj){
+            $preexistente = RoleUserGlobal::where("user_id","=",$this->idusuario)
+            ->where("role_id","=",$rolObj->id)
+            ->first();
+            if(!$preexistente){
+                $this->rolesUsuarioGlobal()->create([
+                    'role_id'=>$rolObj->id
+                ]);
+            }
+        }
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
+use App\Events\FinalizaProcesamientoAsociacion;
+use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Transaccion;
@@ -88,6 +90,7 @@ class InvitacionService
                 $usuario = $this->generaUsuarioCorreo($usuarioServicio, $data["correo"]);
             }
         }
+        $usuario->asignaRol("proveedor");
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
         return $invitacion;
@@ -99,7 +102,7 @@ class InvitacionService
         $nombre = $nombreArr[0];
         $apaterno = (key_exists(1,$nombreArr))?$nombreArr[1]:'';
         $amaterno = (key_exists(2,$nombreArr))?$nombreArr[2]:'';
-        $clave = substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His');
+        $clave = str_replace(" ","",substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His'));
         $claveMD5 = md5($clave);
         $id_empresa = ($empresa->empresaSAT) ? $empresa->empresaSAT->id : null;
         $datos_usuario = [
@@ -109,11 +112,15 @@ class InvitacionService
             'amaterno'=>$amaterno,
             'usuario_estado'=>1,
             'correo'=>$correo,
-            'clave'=>$claveMD5,
+            'clave'=>$clave,
             'id_empresa'=>$id_empresa,
             'pide_cambio_contrasenia'=>1
         ];
-        return $usuarioServicio->store($datos_usuario);
+        $usuario = $usuarioServicio->store($datos_usuario);
+        if($usuario){
+            event(new RegistroUsuarioProveedor($usuario, $clave));
+        }
+        return $usuario;
     }
 
     private function generaNombre($razon_social)
@@ -146,7 +153,7 @@ class InvitacionService
         $nombre = $nombreArr[0];
         $apaterno = "@";
         $amaterno = $nombreArr[1];
-        $clave = substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His');
+        $clave = str_replace(" ","",substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His'));
         $claveMD5 = md5($clave);
         $id_empresa =  null;
         $datos_usuario = [
@@ -156,10 +163,14 @@ class InvitacionService
             'amaterno'=>$amaterno,
             'usuario_estado'=>1,
             'correo'=>$correo,
-            'clave'=>$claveMD5,
+            'clave'=>$clave,
             'id_empresa'=>$id_empresa,
             'pide_cambio_contrasenia'=>1
         ];
-        return $usuarioServicio->store($datos_usuario);
+        $usuario = $usuarioServicio->store($datos_usuario);
+        if($usuario){
+            event(new RegistroUsuarioProveedor($usuario, $clave));
+        }
+        return $usuario;
     }
 }
