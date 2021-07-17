@@ -27,6 +27,7 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\RolGeneral;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
+use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -441,5 +442,36 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
                 ]);
             }
         }
+    }
+
+    public static function calculaNombre($nombre)
+    {
+        $arregloNombre = Util::generaArregloNombre($nombre);
+        $nombre = substr($arregloNombre[1],0,1).substr($arregloNombre[2],0,1).substr($arregloNombre[0],0,1);
+        return $nombre;
+    }
+
+    public static function generaArregloNombre($razon_social)
+    {
+        $rs_ex = explode(" ",Util::eliminaCaracteresEspeciales($razon_social));
+        $longitud = count($rs_ex);
+        $cantidadPorCampo = floor($longitud/3);
+        $nombreArr = [];
+        $icc = 0;
+        for($i = 0;$i<$longitud;$i++)
+        {
+            if(key_exists($icc,$nombreArr)){
+                $nombreArr[$icc] .= " ".$rs_ex[$i];
+            } else {
+                $nombreArr[] = $rs_ex[$i];
+            }
+
+            if($i==$cantidadPorCampo)
+            {
+                $icc++;
+                $cantidadPorCampo+=$cantidadPorCampo;
+            }
+        }
+        return $nombreArr;
     }
 }

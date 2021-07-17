@@ -80,11 +80,20 @@ class InvitacionService
             ];
             $datos_registro = array_merge($datos_registro, $data_empresa);
 
-            $usuario = $usuarioServicio->existe($empresa->rfc);
-
-            if(!$usuario)
+            if($empresa->emite_factura)
             {
-                $usuario = $this->generaUsuarioEmpresa($usuarioServicio, $empresa, $data["correo"]);
+                $usuario = $usuarioServicio->existe($empresa->rfc);
+                if(!$usuario)
+                {
+                    $usuario = $this->generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $data["correo"]);
+                }
+            }else {
+                $nombre = Usuario::calculaNombre($empresa->razon_social);
+                $usuario = $usuarioServicio->existe($nombre);
+                if(!$usuario)
+                {
+                    $usuario = $this->generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $data["correo"]);
+                }
             }
         }else{
             $usuario = $usuarioServicio->existe($data["correo"]);
@@ -99,20 +108,15 @@ class InvitacionService
         return $invitacion;
     }
 
-    private function generaUsuarioEmpresa($usuarioServicio, $empresa, $correo)
+    private function generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $correo)
     {
-        $nombreArr = $this->generaNombre($empresa->razon_social);
+        $nombreArr = Usuario::generaArregloNombre($empresa->razon_social);
         $nombre = $nombreArr[0];
         $apaterno = (key_exists(1,$nombreArr))?$nombreArr[1]:'';
         $amaterno = (key_exists(2,$nombreArr))?$nombreArr[2]:'';
         $clave = str_replace(" ","",substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His'));
-        $claveMD5 = md5($clave);
         $id_empresa = ($empresa->empresaSAT) ? $empresa->empresaSAT->id : null;
-        if($empresa->emite_factura == 0){
-            $usuario = Util::eliminaCaracteresEspeciales(substr($nombre,0,1).$apaterno.date('s'));
-        }else {
-            $usuario = $empresa->rfc;
-        }
+        $usuario = $empresa->rfc;
 
         $datos_usuario = [
             'usuario'=>$usuario,
@@ -132,28 +136,32 @@ class InvitacionService
         return $usuario;
     }
 
-    private function generaNombre($razon_social)
+    private function generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $correo)
     {
-        $rs_ex = explode(" ",$razon_social);
-        $longitud = count($rs_ex);
-        $cantidadPorCampo = floor($longitud/3);
-        $nombreArr = [];
-        $icc = 0;
-        for($i = 0;$i<$longitud;$i++)
-        {
-            if(key_exists($icc,$nombreArr)){
-                $nombreArr[$icc] .= " ".$rs_ex[$i];
-            } else {
-                $nombreArr[] = $rs_ex[$i];
-            }
+        $nombreArr = Usuario::generaArregloNombre($empresa->razon_social);
+        $nombre = $nombreArr[0];
+        $apaterno = (key_exists(1,$nombreArr))?$nombreArr[1]:'';
+        $amaterno = (key_exists(2,$nombreArr))?$nombreArr[2]:'';
+        $clave = str_replace(" ","",substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His'));
+        $id_empresa = ($empresa->empresaSAT) ? $empresa->empresaSAT->id : null;
+        $usuario = Usuario::calculaNombre($empresa->razon_social);
 
-            if($i==$cantidadPorCampo)
-            {
-                $icc++;
-                $cantidadPorCampo+=$cantidadPorCampo;
-            }
+        $datos_usuario = [
+            'usuario'=>$usuario,
+            'nombre'=>$nombre,
+            'apaterno'=>$apaterno,
+            'amaterno'=>$amaterno,
+            'usuario_estado'=>1,
+            'correo'=>$correo,
+            'clave'=>$clave,
+            'id_empresa'=>$id_empresa,
+            'pide_cambio_contrasenia'=>1
+        ];
+        $usuario = $usuarioServicio->store($datos_usuario);
+        if($usuario){
+            event(new RegistroUsuarioProveedor($usuario, $clave));
         }
-        return $nombreArr;
+        return $usuario;
     }
 
     private function generaUsuarioCorreo($usuarioServicio, $correo)
@@ -163,7 +171,6 @@ class InvitacionService
         $apaterno = "@";
         $amaterno = $nombreArr[1];
         $clave = str_replace(" ","",substr($nombre,0,2).substr($apaterno,0,2).substr($amaterno,0,2).date('His'));
-        $claveMD5 = md5($clave);
         $id_empresa =  null;
         $datos_usuario = [
             'usuario'=>$correo,
