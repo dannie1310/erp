@@ -174,7 +174,8 @@ class InvitacionService
             'correo'=>$correo,
             'clave'=>$clave,
             'id_empresa'=>$id_empresa,
-            'pide_cambio_contrasenia'=>1
+            'pide_cambio_contrasenia'=>1,
+            'pide_datos_empresa'=>1
         ];
         $usuario = $usuarioServicio->store($datos_usuario);
         if($usuario){
