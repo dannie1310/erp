@@ -96,6 +96,11 @@ class Invitacion extends Model
         return $query->whereNull("id_cotizacion_generada");
     }
 
+    public function scopeInvitadoAutenticado($query)
+    {
+        return $query->where('usuario_invitado',  auth()->id());
+    }
+
     /**
      * Atributos
      */
@@ -140,12 +145,24 @@ class Invitacion extends Model
     public function getSolicitudes()
     {
         $transacciones = [];
-        $solicitudes = self::disponibleCotizar()->get();
+        $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->get();
         foreach ($solicitudes as $key =>  $solicitud) {
-            $transacciones[$key] = $solicitud->transaccionAntecedente;
+            $transacciones[$key]['id'] = $solicitud->id;
+            $transacciones[$key]['numero_folio_format'] = $solicitud->transaccionAntecedente->numero_folio_format;
+            $transacciones[$key]['observaciones'] = $solicitud->transaccionAntecedente->observaciones;
         }
-        dd($transacciones);
+        return $transacciones;
+    }
 
-        dd($transacciones);
+    public function getSolicitud()
+    {
+        dd($this);
+       /* $solicitudes = self::find->get();
+        foreach ($solicitudes as $key =>  $solicitud) {
+            $transacciones[$key]['id'] = $solicitud->id;
+            $transacciones[$key]['numero_folio_format'] = $solicitud->transaccionAntecedente->numero_folio_format;
+            $transacciones[$key]['observaciones'] = $solicitud->transaccionAntecedente->observaciones;
+        }
+        return $transacciones;*/
     }
 }

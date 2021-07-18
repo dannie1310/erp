@@ -37,7 +37,6 @@ class IncidenciaController extends Controller
      */
     public function __construct(Manager $fractal, IncidenciaService $service, IncidenciaTransformer $transformer)
     {
-        // dd('IncidenciaController');
         $this->middleware( 'auth:api');
 
         $this->fractal = $fractal;

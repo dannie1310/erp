@@ -32,7 +32,8 @@ class InvitacionTransformer extends TransformerAbstract
             'base_datos' => $model->base_datos,
             'nombre_usuario_invito' => $model->nombre_usuario,
             'nombre_usuario_invitado' => $model->usuarioInvitado->nombre_completo_sin_espacios,
-            'fecha_hora_format' => $model->fecha_hora_format
+            'fecha_hora_format' => $model->fecha_hora_format,
+            'tipo_antecedente' => $model->tipo_transaccion_antecedente
         ];
     }
 

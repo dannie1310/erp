@@ -167,4 +167,9 @@ class InvitacionService
     {
         return $this->repository->getPorCotizar($data);
     }
+
+    public function getSolicitud($id)
+    {
+        return $this->repository->show($id)->getSolicitud();
+    }
 }

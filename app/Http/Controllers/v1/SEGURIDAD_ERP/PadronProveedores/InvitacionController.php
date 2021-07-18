@@ -54,7 +54,11 @@ class InvitacionController extends Controller
 
     public function getPorCotizar(Request $request)
     {
-        $collection = $this->service->getPorCotizar($request->all());
-        return $this->respondWithCollection($collection);
+        return $this->service->getPorCotizar($request->all());
+    }
+
+    public function getSolicitud(Request $request, $id)
+    {
+        return $this->service->getSolicitud($id);
     }
 }
