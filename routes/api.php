@@ -977,6 +977,14 @@ $api->version('v1', function ($api) {
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCotizaciones')->where(['id' => '[0-9]+']);
         });
 
+        $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@paginate');
+            $api->post('/','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
+        });
+
         // CATALOGOS
         $api->group(['prefix' => 'forma-pago-credito'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\FormaPagoCreditoController@index');

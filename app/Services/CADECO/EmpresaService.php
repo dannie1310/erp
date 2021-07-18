@@ -14,10 +14,12 @@ use App\Models\CADECO\Empresa;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 use App\Repositories\CADECO\Empresa\Repository;
 use App\Models\CADECO\Obra;
+use App\Traits\EmpresaTrait;
 use Illuminate\Support\Facades\DB;
 
 class EmpresaService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */

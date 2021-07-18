@@ -548,6 +548,97 @@ export const routes = [
                                     permission: ['registrar_cotizacion_compra']
                                 }
                             },
+                            {
+                                path: ':id_solicitud/invitacion-compra/create',
+                                name: 'invitacion-compra-create',
+                                component: require('./components/compras/invitacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Invitación a Cotizar',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_solicitud_compra'
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'invitacion-compra',
+                        component: require('./components/compras/invitacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'invitacion-compra',
+                                component: require('./components/compras/invitacion/Index').default,
+                                meta: {
+                                    title: 'Invitaciones a Cotizar',
+                                    breadcrumb: {parent: 'compras', name: 'INVITACIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: 'create/seleccionar_solicitud_compra',
+                                name: 'invitacion-compra-selecciona-solicitud',
+                                component: require('./components/compras/invitacion/SeleccionaSolicitud').default,
+                                meta: {
+                                    title: 'Seleccionar Solicitud de Compra',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'SELECCIONAR SOLICITUD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'invitacion-compra-show',
+                                component: require('./components/compras/solicitud-compra/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'invitacion-compra-edit',
+                                component: require('./components/compras/solicitud-compra/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'invitacion-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_solicitud_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Solicitud',
+                                    breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_solicitud_compra'
+                                }
+                            },
+                            {
+                                path: ':id_solicitud/cotizacion/create',
+                                name: 'invitacion-create',
+                                component: require('./components/compras/invitacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Invitación',
+                                    breadcrumb: { parent: 'invitacion', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
+                                }
+                            },
                         ]
                     }
                 ]

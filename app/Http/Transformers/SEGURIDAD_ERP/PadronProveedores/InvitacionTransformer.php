@@ -14,15 +14,25 @@ class InvitacionTransformer extends TransformerAbstract
         'cotizacion'
     ];
 
+    protected $availableIncludes = [
+        'transaccion',
+    ];
+
     public function transform(Invitacion $model)
     {
         return [
             'id' => $model->getKey(),
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
+            'nombre_contacto' => $model->nombre_contacto,
+            'numero_folio_format' => $model->numero_folio_format,
             'email' => $model->email,
             'obra' => $model->nombre_obra,
+            'observaciones' => $model->observaciones,
+            'base_datos' => $model->base_datos,
             'nombre_usuario_invito' => $model->nombre_usuario,
+            'nombre_usuario_invitado' => $model->usuarioInvitado->nombre_completo_sin_espacios,
+            'fecha_hora_format' => $model->fecha_hora_format
         ];
     }
 
