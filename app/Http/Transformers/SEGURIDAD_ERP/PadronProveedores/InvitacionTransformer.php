@@ -11,6 +11,7 @@ class InvitacionTransformer extends TransformerAbstract
 {
     protected $defaultIncludes = [
         'transaccion',
+        'cotizacion'
     ];
 
     public function transform(Invitacion $model)
@@ -29,9 +30,24 @@ class InvitacionTransformer extends TransformerAbstract
      * @param Invitacion $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeTransaccion(Invitacion $model) {
-        if ($transaccion = $model->transaccionAntecedente) {
+    public function includeTransaccion(Invitacion $model)
+    {
+        if ($transaccion = $model->transaccionAntecedente)
+        {
             return $this->item($transaccion, new TransaccionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCotizacion(Invitacion $model)
+    {
+        if($cotizacion = $model->cotizacionGenerada)
+        {
+            return $this->item($cotizacion, new TransaccionTransformer);
         }
         return null;
     }

@@ -78,6 +78,16 @@ class Invitacion extends Model
         return $query->where("tipo_transaccion_antecedente","=",49);
     }
 
+    public function scopeCotizacionRealizada($query)
+    {
+        return $query->whereNotNull("id_cotizacion_generada");
+    }
+
+    public function scopeDisponibleCotizar($query)
+    {
+        return $query->whereNull("id_cotizacion_generada");
+    }
+
     /**
      * Atributos
      */
@@ -108,4 +118,15 @@ class Invitacion extends Model
         return $invitacion;
     }
 
+    public function getSolicitudes()
+    {
+        $transacciones = [];
+        $solicitudes = self::disponibleCotizar()->get();
+        foreach ($solicitudes as $key =>  $solicitud) {
+            $transacciones[$key] = $solicitud->transaccionAntecedente;
+        }
+        dd($transacciones);
+
+        dd($transacciones);
+    }
 }

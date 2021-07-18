@@ -45,4 +45,11 @@ class InvitacionController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function getPorCotizar(Request $request)
+    {
+        $collection = $this->service->getPorCotizar($request->all());
+        return $this->respondWithCollection($collection);
+    }
+
 }

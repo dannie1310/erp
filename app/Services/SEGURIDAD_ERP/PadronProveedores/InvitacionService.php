@@ -40,4 +40,9 @@ class InvitacionService
     {
         return $this->repository->store($data);
     }
+
+    public function getPorCotizar($data)
+    {
+        return $this->repository->getPorCotizar($data);
+    }
 }

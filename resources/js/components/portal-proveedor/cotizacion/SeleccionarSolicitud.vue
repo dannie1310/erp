@@ -87,11 +87,9 @@
             getSolicitudes() {
                 this.solicitudes = [];
                 this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/index', {
+                return this.$store.dispatch('padronProveedores/invitacion/getSolicitudes', {
                     params: {
-                        scope: ['conItems','areasCompradorasAsignadas','conAutorizacion'],
-                        order: 'DESC',
-                        sort: 'numero_folio'
+                        scope: ['DisponibleCotizar'],
                     }
                 })
                     .then(data => {
