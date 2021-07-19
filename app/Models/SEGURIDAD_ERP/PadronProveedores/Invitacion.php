@@ -99,6 +99,12 @@ class Invitacion extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getFechaCierreFormatAttribute()
+    {
+        $date = date_create($this->fecha_cierre_invitacion);
+        return date_format($date,"d/m/Y");
+    }
+
     /*
      * Métodos*/
 

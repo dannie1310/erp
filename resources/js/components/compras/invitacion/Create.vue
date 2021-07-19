@@ -21,11 +21,12 @@
                 <hr>
                 <div class="form-group row" v-if="solicitud">
                     <div class="col-md-12">
-                        <div class="form-check form-check-inline">
+                        <!--<div class="form-check form-check-inline">
                             <label class="form-check-label" style="cursor:pointer" >
                                 <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="proveedor_en_catalogo" value="1" >
                             </label>
-                        </div>
+                        </div>-->
+                        <i class="fa fa-check-square"></i>
                         <label>Enviar la invitación a un proveedor existente en el catálogo</label>
                     </div>
                 </div>

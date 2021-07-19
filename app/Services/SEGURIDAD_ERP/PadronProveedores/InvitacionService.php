@@ -3,6 +3,7 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Events\FinalizaProcesamientoAsociacion;
+use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
@@ -105,6 +106,9 @@ class InvitacionService
         $usuario->asignaRol("proveedor");
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
+        if($invitacion){
+            event(new RegistroInvitacion($invitacion));
+        }
         return $invitacion;
     }
 

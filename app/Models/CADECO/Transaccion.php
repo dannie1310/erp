@@ -39,6 +39,7 @@ class Transaccion extends Model
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
     public const SHOW_ROUTE = "";
+    public const ARTICULO = "La";
 
     protected static function boot()
     {
@@ -199,6 +200,25 @@ class Transaccion extends Model
             case  65: return Factura::NOMBRE;
             case  82: return Pago::NOMBRE;
             case  72: return SolicitudPagoAnticipado::NOMBRE;
+            default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
+        }
+    }
+
+    public function getArticuloTipoTransaccionStrAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::ARTICULO;
+            case  18: return CotizacionCompra::ARTICULO;
+            case  19: return OrdenCompra::ARTICULO;
+            case  33: return EntradaMaterial::ARTICULO;
+            case  34: return SalidaAlmacen::ARTICULO;
+            case  49: return ContratoProyectado::ARTICULO;
+            case  50: return PresupuestoContratista::ARTICULO;
+            case  51: return Subcontrato::ARTICULO;
+            case  52: return Estimacion::ARTICULO;
+            case  65: return Factura::ARTICULO;
+            case  82: return Pago::ARTICULO;
+            case  72: return SolicitudPagoAnticipado::ARTICULO;
             default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
         }
     }
