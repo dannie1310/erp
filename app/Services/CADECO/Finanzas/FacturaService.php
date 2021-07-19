@@ -339,6 +339,7 @@ class FacturaService
             } else {
                 $this->validaTotal($data["total"],$arreglo_cfd["total"],0);
             }
+            $this->validaPresuntoEFO($arreglo_cfd);
         }
 
 
@@ -384,7 +385,6 @@ class FacturaService
         $datos["factura_repositorio"] = $datos_rfactura;
         $datos["nc_repositorio"] = $datos_rnc;
         $transaccion = $this->repository->create($datos);
-        $this->validaPresuntoEFO($arreglo_cfd);
 
         foreach ($transaccion->facturasRepositorio as $facturaRepositorio) {
             $servicio_cfdi = new CFDSATService(new CFDSAT());
