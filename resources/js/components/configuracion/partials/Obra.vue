@@ -288,7 +288,7 @@
                 <label for="direccion_plataforma_digital" class="col-lg-2 col-form-label">Ubicación en plataforma digital:</label>
                 <div class="col-lg-10">
                     <input id="direccion_plataforma_digital" class="form-control" v-model="form.direccion_plataforma_digital"
-                              v-validate="{required:true, max: 255}"
+                              v-validate="{required:true, regex:/^http[s]?:\/\/[\w]+([\.]+[\w]+)\/maps\/[a-zA-Z]/}"
                               placeholder="https://goo.gl/maps/yrVG5u7RwdUJFgU47"
                               name="direccion_plataforma_digital"
                               data-vv-as="Dirección del Proyecto"
