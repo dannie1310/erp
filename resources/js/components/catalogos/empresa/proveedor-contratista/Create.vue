@@ -279,9 +279,11 @@ export default {
             });
         },
         validar_emite(){
-            console.log('pando')
-            if(this.emite_factura === 0){
+            if(this.emite_factura === 0 && this.es_nacional === 1){
                 this.rfc = 'XXXXXXXXXXXX';
+                this.emite_factura = 0;
+            } else if(this.emite_factura === 0 && this.es_nacional === 0){
+                this.rfc = 'XEXX010101000';
                 this.emite_factura = 0;
             }
             else{
@@ -289,9 +291,8 @@ export default {
             }
         },
         validar_nacional(){
-            console.log('koala');
             if(this.es_nacional === 0){
-                this.rfc = 'XXXXXXXXXXXX';
+                this.rfc = 'XEXX010101000';
                 this.emite_factura = 0;
             }
             else{
@@ -300,7 +301,6 @@ export default {
         }
     },
     watch:{
-
         es_nacional(value){
             if(value === 0){
                 this.emite_factura = 0;
@@ -309,9 +309,11 @@ export default {
             }
         },
         emite_factura(value){
-            if(value === 0 || this.es_nacional === 0){
+            if(value === 0 && this.es_nacional === 1){
                 this.rfc = 'XXXXXXXXXXXX';
-            }else{
+            }else if(value === 0 && this.es_nacional === 0){
+                this.rfc = 'XEXX010101000';
+            } else{
                 this.rfc = '';
             }
         },

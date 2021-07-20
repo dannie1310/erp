@@ -29,6 +29,9 @@ class Invitacion extends Model
         'id_transaccion_antecedente',
         'id_cotizacion_generada',
         'id_obra',
+        'fecha_cierre_invitacion',
+        'direccion_entrega',
+        'ubicacion_entrega_plataforma_digital',
         'tipo_transaccion_antecedente',
         'opcion_transaccion_antecedente',
         'razon_social',
@@ -129,6 +132,12 @@ class Invitacion extends Model
     public function getFechaHoraFormatAttribute()
     {
         $date = date_create($this->fecha_hora_invitacion);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaCierreFormatAttribute()
+    {
+        $date = date_create($this->fecha_cierre_invitacion);
         return date_format($date,"d/m/Y");
     }
 

@@ -63,6 +63,11 @@ class SolicitudPagoAnticipado extends Solicitud
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
     }
 
+    public function subcontratoSinGlobalScope()
+    {
+        return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
+    }
+
     public function pago()
     {
         return $this->HasOne(PagoACuenta::class,'id_antecedente','id_transaccion');
@@ -106,7 +111,7 @@ class SolicitudPagoAnticipado extends Solicitud
             }
         }catch (\Exception $e){
             try {
-                foreach ($this->subcontrato->relaciones as $relacion) {
+                foreach ($this->subcontratoSinGlobalScope->relaciones as $relacion) {
                     if ($relacion["tipo_numero"] != 72) {
                         $relaciones[$i] = $relacion;
                         $relaciones[$i]["consulta"] = 0;

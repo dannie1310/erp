@@ -766,13 +766,13 @@ export default {
                 this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
 
                 if(this.configuracion.ret_fon_gar_antes_iva == 0 && this.configuracion.ret_fon_gar_con_iva == 0){
-                    this.resumen.total_documentos = this.resumen.total_documentos -  this.resumen.fondo_garantia;
+                    this.resumen.subtotal = this.resumen.subtotal -  this.resumen.fondo_garantia;
                 }
                 if(this.configuracion.penalizacion_antes_iva == 0){
-                    this.resumen.total_documentos = this.resumen.total_documentos - this.resumen.ret_subcontratos + this.resumen.dev_ret_subcontratos;
+                    this.resumen.subtotal = this.resumen.subtotal - this.resumen.ret_subcontratos + this.resumen.dev_ret_subcontratos;
                 }
                 if(this.configuracion.desc_pres_mat_antes_iva == 0){
-                    this.resumen.total_documentos = this.resumen.total_documentos - this.resumen.total_deductivas_estimacion;
+                    this.resumen.subtotal = this.resumen.subtotal - this.resumen.total_deductivas_estimacion;
                 }
 
                 this.resumen.total_documentos = this.resumen.subtotal + this.resumen.iva_pagar - otros_impuestos - retenciones;

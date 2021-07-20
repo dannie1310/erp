@@ -42,6 +42,7 @@ class ObraTransformer extends TransformerAbstract
         return [
             'administrador' => $model->administrador,
             'id_obra' => $model->getKey(),
+            'clave' => $model->clave,
             'nombre' => $model->nombre,
             'tipo_obra' => $model->tipo_obra,
             'constructora' => $model->constructora,
@@ -49,6 +50,8 @@ class ObraTransformer extends TransformerAbstract
             'facturar' => $model->facturar,
             'descripcion' => $model->descripcion,
             'direccion' => $model->direccion,
+            'direccion_proyecto' => $model->direccion_proyecto,
+            'direccion_plataforma_digital' => $model->direccion_plataforma_digital,
             'ciudad' => $model->ciudad,
             'estado' => $model->estado,
             'codigo_postal' => $model->codigo_postal,
