@@ -50,7 +50,10 @@ class Obra extends Model
         'ciudad',
         'codigo_postal',
         'valor_contrato',
-        'id_administrador'
+        'id_administrador',
+        'clave',
+        'direccion_proyecto',
+        'direccion_plataforma_digital'
     ];
 
     protected $dates = [

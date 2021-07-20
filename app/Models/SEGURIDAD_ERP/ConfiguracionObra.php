@@ -28,7 +28,10 @@ class ConfiguracionObra extends Model
         'logotipo_original',
         'logotipo_reportes',
         'tipo_obra',
-        'consulta'
+        'consulta',
+        'clave',
+        'direccion_proyecto',
+        'direccion_plataforma_digital'
     ];
 
     protected $hidden = [
