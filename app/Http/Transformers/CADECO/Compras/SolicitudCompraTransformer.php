@@ -52,7 +52,8 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'area_solciitante' =>$model->area_solciitante,
             'numero_folio_format'=>(string) $model->numero_folio_format,
             'cotizaciones' => $model->cotizaciones ? $model->cotizaciones->count() : null,
-            'autorizacion_requerida' => $model->obra->configuracionCompras ? $model->obra->configuracionCompras->con_autorizacion:"0"
+            'autorizacion_requerida' => $model->obra->configuracionCompras ? $model->obra->configuracionCompras->con_autorizacion:"0",
+            'direccion_entrega' => $model->obra->direccion_proyecto
         ];
     }
 

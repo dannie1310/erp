@@ -94,7 +94,24 @@
                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label for="fecha_cierre">Fecha de Cierre:</label>
+                                <datepicker v-model = "fecha_cierre"
+                                            name = "Fecha de Cierre"
+                                            id = "fecha_cierre"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :disabled-dates="fechasDeshabilitadas"
+                                            :class="{'is-invalid': errors.has('fecha')}"
+                                />
+                                <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
                         <div class="form-group">
                         <label for="observaciones">Observaciones:</label>
                             <textarea
@@ -154,6 +171,21 @@
                         </div>
                     </div>
                 </div>
+                <div class="row" v-if="solicitud && id_sucursal>0">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                        <label for="direccion_entrega">Dirección de Entrega:</label>
+                            <textarea
+                                name="direccion_entrega"
+                                id="direccion_entrega"
+                                v-model="direccion_entrega"
+                                type="text"
+                                class="form-control"
+                            />
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('direccion_entrega')">{{ errors.first('direccion_entrega') }}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="card-footer">
                 <div class="row" v-if="solicitud">
@@ -184,15 +216,18 @@
 <script>
 import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSolicitudCompra";
 import {ModelListSelect} from 'vue-search-select';
+import Datepicker from 'vuejs-datepicker';
+import {es} from 'vuejs-datepicker/dist/locale';
 export default {
     name: "CreateInvitacionCompra.vue",
-    components: {TablaDatosSolicitudCompra, ModelListSelect},
+    components: {Datepicker,es,TablaDatosSolicitudCompra, ModelListSelect},
     props: ['id_solicitud'],
     data(){
         return {
             cargando : false,
             proveedores : [],
             sucursales: [],
+            es:es,
             post: {},
             id_proveedor : null,
             id_sucursal : null,
@@ -201,6 +236,9 @@ export default {
             contacto : '',
             observaciones:'',
             mas_invitaciones:1,
+            fecha_cierre : new Date(),
+            direccion_entrega : '',
+            fechasDeshabilitadas: {}
         }
     },
     mounted() {
@@ -208,8 +246,12 @@ export default {
         {
             this.find();
         }else{
+            this.direccion_entrega = solicitud.direccion_entrega;
             this.getProveedores();
         }
+
+        this.fecha_cierre = new Date();
+        this.fechasDeshabilitadas.to = new Date();
     },
     methods:{
         find() {
@@ -220,6 +262,7 @@ export default {
                     }
             }).then(data => {
                 this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                this.direccion_entrega = data.direccion_entrega;
             }).finally(()=>{
                 this.getProveedores();
             });
@@ -256,6 +299,8 @@ export default {
                     _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
                     _self.post.correo = _self.correo;
                     _self.post.contacto = _self.contacto;
+                    _self.post.fecha_cierre = _self.fecha_cierre;
+                    _self.post.direccion_entrega = _self.direccion_entrega;
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             if(_self.mas_invitaciones == true){
@@ -266,7 +311,10 @@ export default {
                         });
                 }
             });
-        }
+        },
+        formatoFecha(date){
+            return moment(date).format('DD/MM/YYYY');
+        },
     },
     computed: {
         solicitud(){

@@ -26,6 +26,8 @@ class Invitacion extends Model
         'id_transaccion_antecedente',
         'id_cotizacion_generada',
         'id_obra',
+        'fecha_cierre_invitacion',
+        'direccion_entrega',
         'tipo_transaccion_antecedente',
         'opcion_transaccion_antecedente',
         'razon_social',

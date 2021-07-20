@@ -2,19 +2,21 @@
 
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
-use App\Events\FinalizaProcesamientoAsociacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
+use App\Services\CADECO\SucursalService;
 use App\Services\CADECO\TransaccionService;
 use App\Services\IGH\UsuarioService;
-use App\Utils\Util;
+use DateTime;
+use DateTimeZone;
 
 class InvitacionService
 {
@@ -51,6 +53,9 @@ class InvitacionService
     {
         $transaccionService = new TransaccionService(new Transaccion());
         $transaccion = $transaccionService->show($data["id_transaccion"]);
+        $fecha_cierre = New DateTime($data['fecha_cierre']);
+        $fecha_cierre->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $datos["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
 
         $datos_registro = [
             'base_datos'=>Context::getDatabase(),
@@ -60,11 +65,16 @@ class InvitacionService
             'id_obra'=>Context::getIdObra(),
             'tipo_transaccion_antecedente'=>$transaccion->tipo_transaccion,
             'opcion_transaccion_antecedente'=>$transaccion->opciones,
+            'fecha_cierre_invitacion'=>$data["fecha_cierre"],
             'email'=>$data["correo"],
             'nombre_contacto'=>$data["contacto"],
             'observaciones'=>$data["observaciones"],
             'usuario_invito'=>auth()->id(),
+            'direccion_entrega'=>$data["direccion_entrega"]
         ];
+
+        $sucursalServicio = new SucursalService(new Sucursal());
+        $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
 
         $usuarioServicio = new UsuarioService(new Usuario());
 

@@ -2,12 +2,14 @@
 
 namespace App\Notifications;
 
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\LoteBusqueda;
+use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\SolicitudRecepcionCFDI\SolicitudRecepcionCFDIPDF;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -49,11 +51,16 @@ class NotificacionInvitacionCotizar extends Notification
     public function toMail($notifiable)
     {
         //$path0 = "uploads/contabilidad/XML_SAT/".$this->solicitud->cfdi->uuid.".xml";
-        //$pdf = new SolicitudRecepcionCFDIPDF($this->solicitud);
+        if($this->invitacion->transaccionAntecedente->tipo_transaccion == 17){
+            $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+            $pdf = new SolicitudCompraFormato($solicitud);
+            return (new MailMessage)
+                ->subject("Solicitud de Cotización")
+                ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
+                ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+        }
 
-        return (new MailMessage)
-            ->subject("Invitación a cotizar de Grupo Hermes Infraestructura")
-            ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion]);
+
 
         /*if(file_exists($path0)){
             return (new MailMessage)
