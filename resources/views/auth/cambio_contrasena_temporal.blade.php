@@ -42,7 +42,7 @@
         <div class="login-box offset-4 centered">
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg">Actualización de Contraseña</p>
+                    <p class="login-box-msg"><b>Actualización de Contraseña</b></p>
                     <div class="input-group mb-3">
                         <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" v-model="clave_nueva" placeholder="Contraseña Nueva" value="{{ old('clave_nueva') }}" required autofocus>
                         <div class="input-group-append">
@@ -55,10 +55,10 @@
                             <span class="fa fa-lock input-group-text"></span>
                         </div>
                     </div>
-                    
+
                     <div class="row">
                         <div class="col-12">
-                            <button type="submit" class="btn btn-primary btn-block btn-flat">Actualizar</button>
+                            <button type="submit" class="btn btn-warning btn-block btn-flat">Actualizar Contraseña</button>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
         <div class="login-box offset-4 centered" v-if="cant_errores > 0">
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg">La Contraseña debe cumplir con los siguientes criterios:</p>
+                    <p class="login-box-msg">La contraseña debe cumplir con los siguientes criterios:</p>
                     <div class="input-group mb-3" v-for="error in errors">
                         <i v-if="error.valido" class="fa fa-check" style="color:green"></i>
                         <i v-else class="fa fa-times" style="color:red"></i>
@@ -86,10 +86,10 @@
             clave_nueva:'',
             clave_confirmacion:'',
             rules: [
-				{ message:'Un Caracter Especial (->@#)', valido:true, regex:/[->@#]+/ },
-				{ message:"Al Menos una Letra Mayúscula", valido:true,  regex:/[A-Z]+/ },
-				{ message:"Longitud Mínima de 8 Caracteres", valido:true, regex:/.{8,}/ },
-				{ message:"Al Menos un Número", valido:true, regex:/[0-9]+/ }
+				{ message:'Un caracter especial (->@#)', valido:true, regex:/[->@#]+/ },
+				{ message:"Al menos una letra mayúscula", valido:true,  regex:/[A-Z]+/ },
+				{ message:"Longitud mínima de 8 caracteres", valido:true, regex:/.{8,}/ },
+				{ message:"Al menos un número", valido:true, regex:/[0-9]+/ }
 			],
             errors:[],
             cant_errores:0
