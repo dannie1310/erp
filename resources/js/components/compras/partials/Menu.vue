@@ -18,7 +18,7 @@
                     <p>Solicitudes</p>
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">
+            <li class="nav-item" v-if="$root.can('consultar_invitacion_cotizar_compra')">
                 <router-link :to="{name: 'invitacion-compra'}" class="nav-link" :class="{active: this.$route.name == 'invitacion-compra'}">
                     <i class="fa fa-envelope-open-text nav-icon"></i>
                     <p>Invitaciones a Cotizar</p>

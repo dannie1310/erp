@@ -264,8 +264,8 @@ export default {
         {
             this.find();
         }else{
-            this.direccion_entrega = solicitud.direccion_entrega;
-            this.ubicacion_entrega_plataforma_digital = solicitud.ubicacion_entrega_plataforma_digital;
+            this.direccion_entrega = this.solicitud.direccion_entrega;
+            this.ubicacion_entrega_plataforma_digital = this.solicitud.ubicacion_entrega_plataforma_digital;
             this.getProveedores();
         }
 
@@ -274,6 +274,7 @@ export default {
     },
     methods:{
         find() {
+            this.cargando = true;
             return this.$store.dispatch('compras/solicitud-compra/find', {
                 id: this.id_solicitud,
                 params:{include: [
