@@ -93,8 +93,8 @@
                                                             <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                         </div>
                                                     </td>
-                                                    <td style="text-align:center;">{{partida.cantidad_original_num}}</td>
-                                                    <td style="text-align:center;">{{partida.cantidad_original_num}}</td>
+                                                    <td style="text-align:center;">{{partida.cantidad_original}}</td>
+                                                    <td style="text-align:center;">{{partida.cantidad_original}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
                                                                :disabled="partida.enable == false"
@@ -124,6 +124,7 @@
                                                     <td style="text-align:right;">{{getPrecio(partida)}}</td>
                                                     <td style="width:120px;" >
                                                         <select
+                                                            v-on:change="calcular"
                                                             type="text"
                                                             :name="`moneda[${i}]`"
                                                             data-vv-as="Moneda"
@@ -378,10 +379,7 @@
                 dolar:0,
                 euro:0,
                 libra:0,
-                sucursal: true,
                 observaciones : '',
-                precio: [],
-                x: 0,
                 pago: 0,
                 anticipo: 0,
                 credito: 0,
@@ -429,43 +427,24 @@
             {
                 this.$router.push({name: 'cotizacion-proveedor'});
             },
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        this.store()
-                    }
-                });
-            },
-            store() {
-                if(this.total == 0 && this.pendiente === false)
-                {
-                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
-                }
-                else
-                {   return this.$store.dispatch('compras/cotizacion/store', this.post)
-                    .then((data) => {
-                        this.$router.push({name: 'cotizacion'});
-                    });
-                }
-            },
             getPrecioTotal(precio, moneda) {
-                if(moneda != undefined)
+                if(moneda == undefined)
                 {
                     return '$1.00'
                 }
-                if(moneda == 1)
+                if(moneda === 1)
                 {
                     return '$'+parseFloat(precio != undefined ? precio : 1).formatMoney(2,'.',',')
                 }
-                if(moneda == 2)
+                if(moneda === 2)
                 {
                     return '$'+parseFloat(precio != undefined ? precio * this.dolar : this.dolar).formatMoney(2,'.',',')
                 }
-                if(moneda == 3)
+                if(moneda === 3)
                 {
                     return '$'+parseFloat(precio != undefined ? precio * this.euro : this.euro).formatMoney(2,'.',',')
                 }
-                if(moneda == 4)
+                if(moneda === 4)
                 {
                     return '$'+parseFloat(precio != undefined ? precio * this.libra : this.libra).formatMoney(2,'.',',')
                 }
@@ -479,35 +458,61 @@
                 return '$ 0.00';
             },
             calcular(){
-                this.pesos = 0;
-                this.dolares = 0;
-                this.euros = 0;
-                this.libras = 0;
+                var pesos = 0;
+                var dolares = 0;
+                var euros = 0;
+                var libras = 0;
+                var estado = (this.solicitud.estado == 0)
                 this.solicitud.partidas.forEach(function (partida, i) {
                     if(partida.enable === true) {
                         if(partida.moneda_seleccionada != undefined && partida.precio_cotizacion != undefined)
                         {
-                            partida.calculo_precio_total = (this.solicitud.estado == 0 ? partida.cantidad_original_num : partida.cantidad)
+                            partida.calculo_precio_total = (estado ? partida.cantidad_original_num : partida.cantidad)
                                 * (partida.precio_cotizacion - (partida.precio_cotizacion * (partida.descuento ? partida.descuento : 0))/100);
+                            console.log(partida.calculo_precio_total);
                             if(partida.moneda_seleccionada == 1)
                             {
-                                this.pesos = this.pesos + partida.calculo_precio_total;
+                                pesos += partida.calculo_precio_total;
                             }
                             if(partida.moneda_seleccionada == 2)
                             {
-                                this.dolares = this.dolares + partida.calculo_precio_total;
+                                dolares += partida.calculo_precio_total;
                             }
                             if(partida.moneda_seleccionada == 3)
                             {
-                                this.euros = this.euros + partida.calculo_precio_total;
+                                euros += partida.calculo_precio_total;
                             }
                             if(partida.moneda_seleccionada == 4)
                             {
-                                this.libras = this.libras + partida.calculo_precio_total;
+                                libras += partida.calculo_precio_total;
                             }
                         }
                     }
                 })
+                this.pesos = pesos;
+                this.dolares = dolares;
+                this.euros = euros;
+                this.libras = libras;
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
+            store() {
+                if(this.total == 0 && this.pendiente === false)
+                {
+                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
+                }
+                else
+                {
+                    return this.$store.dispatch('compras/cotizacion/registrarCotizacionProveedor', this.$data)
+                    .then((data) => {
+                        this.salir();
+                    });
+                }
             },
         },
         computed: {

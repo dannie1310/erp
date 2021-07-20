@@ -227,7 +227,6 @@ export default {
             });
         },
         registrarCotizacionProveedor(context,payload){
-
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Cotización de Compra",
