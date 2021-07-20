@@ -19,6 +19,10 @@
     <script src="{{ mix('js/app.js') }}"></script>
     <script src="https://kit.fontawesome.com/4a7d805650.js" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         function validate(){
             if(!document.getElementById("clave_nueva").value==document.getElementById("clave_confirmacion").value)alert("Passwords do no match");
@@ -34,39 +38,117 @@
             <img src="{{URL::asset('/img/logo_hc.png')}}" class="img-responsive img-rounded" width="70%">
         </div>
     </div>
-    <diV class="login-box offset-4 centered">
-
-        <div class="card">
-            <div class="card-body login-card-body">
-                <p class="login-box-msg">Actualización de Contraseña</p>
-                <form method="POST" onsubmit="return validate()" action="{{ route('login') }}">
-                {{ csrf_field() }}
+    <form method="POST" @submit.prevent="enviar">
+        <div class="login-box offset-4 centered">
+            <div class="card">
+                <div class="card-body login-card-body">
+                    <p class="login-box-msg">Actualización de Contraseña</p>
                     <div class="input-group mb-3">
-                        <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" placeholder="Contraseña Nueva" value="{{ old('clave_nueva') }}" required autofocus>
+                        <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" v-model="clave_nueva" placeholder="Contraseña Nueva" value="{{ old('clave_nueva') }}" required autofocus>
                         <div class="input-group-append">
                             <span class="fas fa-lock input-group-text"></span>
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" name="clave_confirmacion" class="form-control{{ $errors->has('clave_confirmacion') ? ' is-invalid' : '' }}" placeholder="Confirmar Contraseña" required>
+                        <input type="password" name="clave_confirmacion" v-model="clave_confirmacion" class="form-control{{ $errors->has('clave_confirmacion') ? ' is-invalid' : '' }}" placeholder="Confirmar Contraseña" required>
                         <div class="input-group-append">
                             <span class="fa fa-lock input-group-text"></span>
                         </div>
-                        @if ($errors->has('clave_confirmacion'))
-                            <span class="invalid-feedback" role="alert">panda
-                                {{ $errors->first('clave_confirmacion') }}
-                            </span>
-                        @endif
                     </div>
+                    
                     <div class="row">
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary btn-block btn-flat">Actualizar</button>
                         </div>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
-    </div>
+        <div class="login-box offset-4 centered" v-if="cant_errores > 0">
+            <div class="card">
+                <div class="card-body login-card-body">
+                    <p class="login-box-msg">La Contraseña debe cumplir con los siguientes criterios:</p>
+                    <div class="input-group mb-3" v-for="error in errors">
+                        <i v-if="error.valido" class="fa fa-check" style="color:green"></i>
+                        <i v-else class="fa fa-times" style="color:red"></i>
+                        <b>@{{error.message}}</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 </body>
+<script>
+    new Vue({
+        el:'#content',
+        data:{
+            clave_nueva:'',
+            clave_confirmacion:'',
+            rules: [
+				{ message:'Un Caracter Especial (->@#)', valido:true, regex:/[->@#]+/ },
+				{ message:"Al Menos una Letra Mayúscula", valido:true,  regex:/[A-Z]+/ },
+				{ message:"Longitud Mínima de 8 Caracteres", valido:true, regex:/.{8,}/ },
+				{ message:"Al Menos un Número", valido:true, regex:/[0-9]+/ }
+			],
+            errors:[],
+            cant_errores:0
+        },
+        methods:{
+            enviar: function(event){
+                event.preventDefault();
+                if(this.clave_nueva != this.clave_confirmacion){
+                    swal({
+                        title: "Actualización de Contraseña",
+                        text: 'La contraseña nueva debe conincidir con la confirmación.',
+                        icon: "warning",
+                        confirmButtonText: "Ok",
+                    });
+                }else if(this.validacion_contrasenia()){
+                    return new Promise((resolve, reject) => {
+                        axios
+                            .post('login', { clave_confirmacion:this.clave_confirmacion, clave_nueva:this.clave_nueva})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal({
+                                    title: "Actualizar Contraseña",
+                                    text: "Contraseña Actualizada Correctamente.",
+                                    icon: "success",
+                                    confirmButtonText: "Ok",
+                                    closeOnConfirm: true,
+                                }).then((value) => {
+                                    window.location.href = data;
+                                });
+                            })
+                            .catch(error => {
+                                console.log(error);
+                            })
+                        })
+                }
+            },
+            validacion_contrasenia(){
+                let self = this;
+                self.errors = [];
+                self.cant_errores = 0;
+                let errors = [];
+                let cant = 0;
+                self.rules.forEach(function(condition){
+                    if (!condition.regex.test(self.clave_nueva)) {
+                        cant = cant + 1;
+                        errors.push({ message:condition.message, valido:false})
+				    }else{
+                        errors.push({ message:condition.message, valido:true})
+                    }
+                })
+                self.errors = errors;
+                self.cant_errores = cant;
+                if (cant === 0) {
+				    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+    });
+</script>
 </html>

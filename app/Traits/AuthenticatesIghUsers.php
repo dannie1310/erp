@@ -71,16 +71,7 @@ trait AuthenticatesIghUsers
             'clave' => 'required|string',
         ]);
     }
-
-    public function validatePasswordChange(Request $request){
-        // dd($request['clave_nueva']);
-        $request->validate([
-            'clave_nueva' => 'required|string|same:'.$request['clave_confirmacion'],
-            'clave_confirmacion' => 'required|string|same:'.$request['clave_nueva'],
-        ]);
-       
-    }
-
+    
     /**
      * Attempt to log the user into the application.
      *

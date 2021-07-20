@@ -16,12 +16,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
-        $uri = $request->path();
-        $credentials = $request->all();
-        if(array_key_exists('usuario', $credentials)){
-            Session::put('path', $uri);
-            Session::put('credenciales', $credentials);
-        }
         if (! $request->expectsJson()) {
             return route('login');
         }

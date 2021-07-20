@@ -19,10 +19,8 @@ $api->version('v1', function ($api) {
     // });
 
     Route::get('movil', 'Auth\Passport\AuthorizationController@movil');
-    // Route::post('temporal', 'App\Http\Controllers\v1\AuthController@cambioContrasenaGenerica'); ////
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
-        $api->post('temporal', 'App\Http\Controllers\v1\AuthController@cambioContrasenaGenerica'); //////
         $api->post('logout', 'App\Http\Controllers\v1\AuthController@logout');
         $api->post('setContext', 'App\Http\Controllers\v1\AuthController@setContext');
       /*  $api->get('obras', 'App\Http\Controllers\v1\AuthController@obras');*/

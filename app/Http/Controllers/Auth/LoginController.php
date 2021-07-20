@@ -39,10 +39,8 @@ class LoginController extends Controller
     {
         
         if(array_key_exists('clave_confirmacion', $request->all())){
-            if($request['clave_nueva'] != $request['clave_confirmacion']){
-                return $this->sendFailedPasswordResponse($request);
-            }else{
-                $this->actualizarPassword($request);
+            if($this->actualizarPassword($request)){
+                return route('login');
             }
         }else{
             $this->validateLogin($request);
@@ -60,21 +58,16 @@ class LoginController extends Controller
         if($this->validaPasswordGenerico($request)){
             return view('auth.cambio_contrasena_temporal');
         }
-        // dd('stop', auth() );
         if ($this->attemptLogin($request)) {
-            dd('stop', auth() );
-            if(auth()->user()->usuario_estado != 2){
-                return $this->sendFailedLoginResponse($request);
-            }
-            else if (! auth()->user()->google2faSecret) {
+            if (! auth()->user()->google2faSecret) {
                 $g = new GoogleAuthenticator();
                 $secret = $g->generateSecret();
                 Google2faSecret::query()->create([
                     'secret' => $secret,
                     'id_user' => auth()->id()
                 ]);
-            }
             return $this->sendLoginResponse($request);
+            }
         }
 
         // If the login attempt was unsuccessful we will increment the number of attempts
@@ -86,17 +79,18 @@ class LoginController extends Controller
     }
 
     public function actualizarPassword($request){
-        $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
-        $usuario->clave = md5($request['clave_nueva']);
+        $credenciales = Session::get('credenciales');
+        $usuario = Usuario::where('usuario', '=', $credenciales['usuario'])->where('clave', '=', md5($credenciales['clave']))->first();
+        $usuario->clave = $request['clave_nueva'];
+        $usuario->pide_cambio_contrasenia = 0;
         $usuario->save();
-        header("Location:");
-
+        return true;
     }
     
     private function validaPasswordGenerico($request){
-        // dd($request['usuario'], Session::get('path'));
+        Session::put('credenciales', $request->all());
         $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
-        if($usuario && $usuario->idgenero == 0){
+        if($usuario && $usuario->pide_cambio_contrasenia == 1){
             return true;
         }
         return false;
