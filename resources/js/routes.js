@@ -557,7 +557,7 @@ export const routes = [
                                     title: 'Registrar Invitación a Cotizar',
                                     breadcrumb: { parent: 'invitacion-compra', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
-                                    permission: 'registrar_solicitud_compra'
+                                    permission: 'registrar_invitacion_cotizar_compra'
                                 }
                             },
                         ]
@@ -574,7 +574,7 @@ export const routes = [
                                     title: 'Invitaciones a Cotizar',
                                     breadcrumb: {parent: 'compras', name: 'INVITACIONES'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_solicitud_compra'
+                                    permission: 'consultar_invitacion_cotizar_compra'
                                 }
                             },
                             {
@@ -585,7 +585,7 @@ export const routes = [
                                     title: 'Seleccionar Solicitud de Compra',
                                     breadcrumb: { parent: 'invitacion-compra', name: 'SELECCIONAR SOLICITUD'},
                                     middleware: [auth, context, permission],
-                                    permission: ['registrar_cotizacion_compra']
+                                    permission: ['registrar_invitacion_cotizar_compra']
                                 }
                             },
                             {
@@ -594,10 +594,10 @@ export const routes = [
                                 component: require('./components/compras/solicitud-compra/Show').default,
                                 props: true,
                                 meta: {
-                                    title: 'Consultar Solicitud',
+                                    title: 'Consultar Invitación de Compra',
                                     breadcrumb: { parent: 'solicitud-compra', name: 'VER'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_solicitud_compra'
+                                    permission: 'registrar_invitacion_cotizar_compra'
                                 }
                             },
                             {

@@ -1,13 +1,13 @@
 <template>
     <div class="btn-group">
-
+<!--
         <router-link  :to="{ name: 'orden-compra-edit', params: {id: value.id}}" v-if="$root.can('modificar_orden_compra') && !value.tiene_entradas" type="button" class="btn btn-sm btn-outline-success" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
         <Relaciones v-bind:transaccion="value.transaccion"/>
         <router-link  :to="{ name: 'orden-compra-documentos', params: {id: value.id}}" v-if="$root.can('consultar_orden_compra') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
             <i class="fa fa-folder-open"></i>
-        </router-link>
+        </router-link>-->
     </div>
 </template>
 
