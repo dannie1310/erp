@@ -508,7 +508,25 @@
                 }
                 else
                 {
-                    return this.$store.dispatch('compras/cotizacion/registrarCotizacionProveedor', this.$data)
+                    this.solicitud.pendiente = this.pendiente;
+                    this.solicitud.fecha_cot = this.fecha;
+                    this.solicitud.descuento_cot = this.descuento_cot;
+                    this.solicitud.pesos = this.pesos;
+                    this.solicitud.dolares = this.dolares;
+                    this.solicitud.euros = this.euros;
+                    this.solicitud.libras = this.libras;
+                    this.solicitud.observaciones_cot = this.observaciones;
+                    this.solicitud.pago = this.pago;
+                    this.solicitud.anticipo = this.anticipo;
+                    this.solicitud.credito = this.credito;
+                    this.solicitud.tiempo = this.tiempo;
+                    this.solicitud.vigencia = this.vigencia;
+                    this.solicitud.importe = this.total;
+                    this.solicitud.impuesto = this.iva;
+                    this.solicitud.tc_eur = this.euro;
+                    this.solicitud.tc_usd = this.dolar;
+                    this.solicitud.tc_libra = this.libra;
+                    return this.$store.dispatch('compras/cotizacion/registrarCotizacionProveedor', this.solicitud)
                     .then((data) => {
                         this.salir();
                     });

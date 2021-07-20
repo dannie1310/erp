@@ -11,9 +11,11 @@ use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 use App\Models\CADECO\Compras\CotizacionEliminada;
 use App\Models\CADECO\Compras\CotizacionPartidaEliminada;
 use App\Models\CADECO\Compras\SolicitudComplemento;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
 use DateTimeZone;
 use Dingo\Blueprint\Annotation\Attributes;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -796,23 +798,24 @@ class CotizacionCompra  extends Transaccion
         return $relaciones;
     }
 
-    public function registrarPortalProveedor($data)
+    public function registrarPortalProveedor($data, $invitacion)
     {
-        dd($data);
         try
         {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
-            $moneda = Moneda::get();
-            $solicitud = SolicitudCompra::find($data['id_solicitud']);
+            $solicitud = SolicitudCompra::find($data['id']);
             $fecha =New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
             {
                 $cotizacion = $this->create([
-                    'id_antecedente' => $data['id_solicitud'],
-                    'id_empresa' => $data['id_proveedor'],
-                    'id_sucursal' => ($data['sucursal']) ? $data['id_sucursal'] : null,
-                    'observaciones' => $data['observacion'],
+                    'id_antecedente' => $data['id'],
+                    'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_obra' => $invitacion->id_obra,
+                    'id_sucursal' => $invitacion->id_sucursal_sao,
+                    'observaciones' => $data['observaciones_cot'],
                     'estado' => 1,
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => $data['importe'],
@@ -838,7 +841,7 @@ class CotizacionCompra  extends Transaccion
                 ]);
 
                 foreach($data['partidas'] as $key => $partida) {
-                    if($data['enable'] == [] || !array_key_exists($key,$data['enable']) || (is_null($data['enable'][$key]) || $data['enable'][$key] == true)) {
+                    if($partida['enable'] == true) {
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],

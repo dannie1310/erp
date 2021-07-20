@@ -230,6 +230,7 @@ class Invitacion extends Model
         {
             array_push($partidas,[
                 'id' => $partida->getKey(),
+                'id_material' => $partida->material->getKey(),
                 'numero_parte' => $partida->material->numero_parte,
                 'material' => $partida->material->descripcion,
                 'unidad' => $partida->unidad,
