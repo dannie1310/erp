@@ -163,4 +163,9 @@ class CotizacionService
         $pdf = new CotizacionTablaComparativaFormato($this->repository->show($id));
         return $pdf;
     }
+
+    public function storePortalProveedor($data)
+    {
+        return $this->repository->registrar($data);
+    }
 }

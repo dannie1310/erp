@@ -23,7 +23,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <DatosSolicitud :solicitud="invitacion"></DatosSolicitud>
+                                <DatosSolicitud :solicitud="solicitud"></DatosSolicitud>
                             </div>
 
                              <div class="modal-footer">
@@ -55,13 +55,13 @@
                 cargando: false,
                 id_solicitud: '',
                 solicitudes : [],
+                solicitud : null
             }
         },
         mounted() {
             this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
             this.$validator.reset();
             this.getSolicitudes();
-
         },
         methods : {
             idFolioObservaciones (item)
@@ -79,8 +79,7 @@
                     id: this.id_solicitud,
                     params:{}
                 }).then(data => {
-                    this.$store.commit('padronProveedores/invitacion/SET_INVITACION', data);
-
+                    this.solicitud = data
                     this.cargando = false;
                 })
             },
@@ -98,19 +97,11 @@
                     })
             },
             validate() {
-
                 this.$validator.validate().then(result => {
                     if (result) {
-
-                        this.$router.push({name: 'cotizacion-proveedor-seleccionar-solicitud', params: {id_solicitud: this.solicitud.id}});
+                        this.$router.push({name: 'cotizacion-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
                     }
-
                 });
-            },
-        },
-        computed: {
-            invitacion(){
-                return this.$store.getters['padronProveedores/invitacion/currentInvitacion'];
             },
         },
         watch: {

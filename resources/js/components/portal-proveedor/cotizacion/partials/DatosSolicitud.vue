@@ -6,8 +6,8 @@
 </template>
 
 <script>
-    import EncabezadoSolicitud from "../partials/TablaDatosSolicitud";
-    import TablaDatosSolicitud from "../partials/TablaDatosSolicitud";
+    import EncabezadoSolicitud from "./Encabezado";
+    import TablaDatosSolicitud from "./TablaDatosSolicitud";
     export default {
         name: "DatosSolicitud",
         components: {

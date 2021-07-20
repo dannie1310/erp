@@ -42,7 +42,7 @@ class CotizacionController extends Controller
     public function __construct(Manager $fractal, CotizacionService $service, CotizacionCompraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except('storePortalProveedor');
         $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
         $this->middleware('permiso:cargar_layout_cotizacion_compra')->only(['cargaLayout']);
         $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
@@ -72,5 +72,11 @@ class CotizacionController extends Controller
             return $this->service->pdf($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+    }
+
+    public function storePortalProveedor(Request $request)
+    {
+        $item = $this->service->storePortalProveedor($request->all());
+        return $this->respondWithItem($item);
     }
 }

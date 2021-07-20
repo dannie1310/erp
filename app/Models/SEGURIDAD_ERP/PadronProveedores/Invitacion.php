@@ -4,7 +4,10 @@
 namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\SolicitudCompra;
+use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +52,13 @@ class Invitacion extends Model
         return $this->belongsTo(Transaccion::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
     }
 
+    public function solicitud()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+    }
+
     public function cotizacionGenerada()
     {
         DB::purge('cadeco');
@@ -73,6 +83,13 @@ class Invitacion extends Model
         return $this->belongsTo(Obra::class, "id_obra", "id_obra");
     }
 
+    public function sucursal()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(Sucursal::class, "id_sucursal_sao", "id_sucursal");
+    }
+
     /**
      * Scopes
      */
@@ -81,7 +98,7 @@ class Invitacion extends Model
         return $query->where("tipo_transaccion_antecedente","=",17);
     }
 
-    public function scopeParaCotizacionContraro($query)
+    public function scopeParaCotizacionContrato($query)
     {
         return $query->where("tipo_transaccion_antecedente","=",49);
     }
@@ -133,6 +150,26 @@ class Invitacion extends Model
         }
     }
 
+    public function getAutorizacionRequeridaComprasAttribute()
+    {
+        try{
+            return $this->obra->configuracionCompras->con_autorizacion;
+        }catch (\Exception $e)
+        {
+            return "0";
+        }
+    }
+
+    public function getDescripcionSucursalAttribute()
+    {
+        try{
+            return $this->sucursal->descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     /**
      * Métodos
      */
@@ -156,13 +193,59 @@ class Invitacion extends Model
 
     public function getSolicitud()
     {
-        dd($this);
-       /* $solicitudes = self::find->get();
-        foreach ($solicitudes as $key =>  $solicitud) {
-            $transacciones[$key]['id'] = $solicitud->id;
-            $transacciones[$key]['numero_folio_format'] = $solicitud->transaccionAntecedente->numero_folio_format;
-            $transacciones[$key]['observaciones'] = $solicitud->transaccionAntecedente->observaciones;
+        if($this->tipo_transaccion_antecedente == 17) {
+            return [
+                'id' => $this->solicitud->getKey(),
+                'numero_folio' => $this->solicitud->numero_folio,
+                'fecha' => $this->solicitud->fecha,
+                'estado' => (int)$this->solicitud->estado,
+                'estado_solicitud' => $this->solicitud->complemento ? $this->solicitud->complemento->estadoSolicitud->descripcion : '',
+                'fecha_format' => $this->solicitud->fecha_format,
+                'fecha_registro' => $this->solicitud->fecha_hora_registro_format,
+                'observaciones' => $this->solicitud->observaciones,
+                'concepto' => $this->solicitud->complemento ? $this->solicitud->complemento->concepto : '',
+                'numero_folio_compuesto' => $this->solicitud->complemento ? $this->solicitud->complemento->folio_compuesto : '',
+                'area_compradora' => $this->solicitud->area_compradora,
+                'area_solcitante' => $this->solicitud->area_solicitante,
+                'numero_folio_format' => (string)$this->solicitud->numero_folio_format,
+                'cotizaciones' => $this->solicitud->cotizaciones ? $this->solicitud->cotizaciones->count() : null,
+                'autorizacion_requerida' => $this->autorizacion_requerida_compras,
+                'tipo_transaccion' => $this->tipo_transaccion_antecedente,
+                'observaciones' => $this->solicitud->observaciones,
+                'id_invitacion' => $this->getKey(),
+                'razon_social' => $this->razon_social,
+                'rfc' => $this->rfc,
+                'nombre_usuario_invitado' => $this->usuarioInvitado->nombre_completo_sin_espacios,
+                'sucursal' => $this->descripcion_sucursal,
+                'partidas' => $this->partidasSolicitud()
+            ];
         }
-        return $transacciones;*/
+        // colocar el array para contrato proyectado
+    }
+
+    public function partidasSolicitud()
+    {
+        $partidas = [];
+        foreach ($this->solicitud->partidas as $key => $partida)
+        {
+            array_push($partidas,[
+                'id' => $partida->getKey(),
+                'numero_parte' => $partida->material->numero_parte,
+                'material' => $partida->material->descripcion,
+                'unidad' => $partida->unidad,
+                'cantidad' => $partida->cantidad,
+                'cantidad_format' => $partida->cantidad_format,
+                'solicitado_cantidad' => $partida->solicitado_cantidad_format,
+                'orden_compra_cantidad' => $partida->cantidad_orden_compra ? $partida->cantidad_orden_compra_format : '0.0',
+                'surtido_cantidad' => $partida->cantidad_entrada_material ? $partida->cantidad_entrada_material_format : '0.0',
+                'existencia_cantidad' => $partida->suma_inventario_format,
+                'cantidad_original' => ($partida->cantidad_original1 > 0) ? $partida->cantidad_original_format : $partida->solicitado_cantidad_format,
+                'cantidad_original_num' => ($partida->cantidad_original1 > 0) ? $partida->cantidad_original1 : $partida->cantidad,
+                'descuento' => $partida->descuento,
+                'observaciones' => $partida->complemento ? $partida->complemento->observaciones : '',
+                'enable' => true
+            ]);
+        }
+       return $partidas;
     }
 }

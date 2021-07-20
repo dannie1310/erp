@@ -49,7 +49,7 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'concepto' => $model->complemento ? $model->complemento->concepto : '',
             'numero_folio_compuesto' =>$model->complemento ? $model->complemento->folio_compuesto:'',
             'area_compradora' =>$model->area_compradora,
-            'area_solciitante' =>$model->area_solciitante,
+            'area_solicitante' =>$model->area_solicitante,
             'numero_folio_format'=>(string) $model->numero_folio_format,
             'cotizaciones' => $model->cotizaciones ? $model->cotizaciones->count() : null,
             'autorizacion_requerida' => $model->obra->configuracionCompras ? $model->obra->configuracionCompras->con_autorizacion:"0"

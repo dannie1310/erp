@@ -1,10 +1,10 @@
 <template>
     <div class="row" v-if="solicitud_compra">
         <div class="col-md-12">
-            <span v-if="solicitud_compra.tipo_antecedente == 17"><i class="fa fa-comment-dots"></i>Datos de Solicitud de Compra</span>
-            <span v-if="solicitud_compra.tipo_antecedente == 50"><i class="fa fa-comment-dots"></i>Datos de Contrato Proyectado</span>
+            <span v-if="solicitud_compra.tipo_transaccion == 17"><i class="fa fa-comment-dots"></i>Datos de Solicitud de Compra</span>
+            <span v-if="solicitud_compra.tipo_transaccion == 50"><i class="fa fa-comment-dots"></i>Datos de Contrato Proyectado</span>
             <table class="table table-bordered table-sm">
-                <tr v-if="solicitud_compra.tipo_antecedente == 17">
+                <tr v-if="solicitud_compra.tipo_transaccion == 17">
                     <th class="encabezado">
                         Área Responsable de Compra
                     </th>
@@ -15,13 +15,13 @@
                         Fecha de Solicitud
                     </th>
                     <th class="encabezado">
-                        Usuario Registró
+                        Concepto
                     </th>
                     <th class="encabezado">
                         Fecha de Registro
                     </th>
                 </tr>
-                <tr v-if="solicitud_compra.tipo_antecedente == 50">
+                <tr v-if="solicitud_compra.tipo_transaccion == 50">
                     <th class="encabezado">
                         Contratista
                     </th>
@@ -44,51 +44,47 @@
                         Moneda
                     </th>
                 </tr>
-                <tr v-if="solicitud_compra.tipo_antecedente == 17">
+                <tr v-if="solicitud_compra.tipo_transaccion == 17">
                     <td>
-                        {{solicitud_compra.transaccion.area_compradora}}
+                        {{solicitud_compra.area_compradora}}
                     </td>
                     <td style="text-align: center">
-                        <router-link :to="{name: 'solicitud-show', params:{id : solicitud_compra.id }}" target="_blank">
-                            <span style="color:black; text-decoration: underline">{{solicitud_compra.transaccion.numero_folio_format}}</span>
-                        </router-link>
+                        {{solicitud_compra.numero_folio_format}}
                     </td>
                     <td style="text-align: center">
-                        {{solicitud_compra.transaccion.fecha_format}}
+                        {{solicitud_compra.fecha_format}}
                     </td>
                     <td >
-                        {{solicitud_compra.transaccion.usuario.nombre}}
+                        {{solicitud_compra.concepto}}
                     </td>
                      <td style="text-align: center">
-                        {{solicitud_compra.transaccion.fecha_registro}}
+                        {{solicitud_compra.fecha_registro}}
                     </td>
                 </tr>
-                <tr v-if="solicitud_compra.tipo_antecedente == 50">
+                <tr v-if="solicitud_compra.tipo_transaccion == 49">
                     <td>
                         {{solicitud_compra.razon_social}}
                     </td>
                     <td style="text-align: center">
-                        {{solicitud_compra.transaccion.numero_folio_format}}
+                        {{solicitud_compra.numero_folio_format}}
                     </td>
                     <td style="text-align: center">
-                        <router-link :to="{name: 'proyectado-show', params:{id : solicitud_compra.transaccion.id }}" target="_blank">
-                            <b><span style="color:black; text-decoration: underline">{{solicitud_compra.transaccion.numero_folio_format}}</span></b>
-                        </router-link>
+                        <b><span style="color:black; text-decoration: underline">{{solicitud_compra.numero_folio_format}}</span></b>
                     </td>
                     <td>
-                        {{solicitud_compra.transaccion.referencia }}
+                        {{solicitud_compra.referencia }}
                     </td>
                     <td style="text-align: center">
-                        {{ solicitud_compra.transaccion.fecha_format }}
+                        {{ solicitud_compra.fecha_format }}
                     </td>
                     <td style="text-align: center">
-                        {{solicitud_compra.transaccion.monto_format}}
+                        {{solicitud_compra.monto_format}}
                     </td>
                     <td style="text-align: center">
-                        {{solicitud_compra.transaccion.moneda_conversion}}
+                        {{solicitud_compra.moneda_conversion}}
                     </td>
                 </tr>
-                <template v-if="solicitud_compra.transaccion.observaciones!='...'">
+                <template v-if="solicitud_compra.observaciones!='...'">
                     <tr>
                         <th colspan="5" class="encabezado">
                             Observaciones
@@ -96,7 +92,7 @@
                     </tr>
                     <tr>
                         <td colspan="5">
-                            {{solicitud_compra.transaccion.observaciones}}
+                            {{solicitud_compra.observaciones}}
                         </td>
                     </tr>
                 </template>

@@ -795,4 +795,135 @@ class CotizacionCompra  extends Transaccion
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
     }
+
+    public function registrarPortalProveedor($data)
+    {
+        dd($data);
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+            $moneda = Moneda::get();
+            $solicitud = SolicitudCompra::find($data['id_solicitud']);
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if(!$data['pendiente'])
+            {
+                $cotizacion = $this->create([
+                    'id_antecedente' => $data['id_solicitud'],
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => ($data['sucursal']) ? $data['id_sucursal'] : null,
+                    'observaciones' => $data['observacion'],
+                    'estado' => 1,
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'monto' => $data['importe'],
+                    'impuesto' => $data['impuesto'],
+                    'cumplimiento' => $fecha->format("Y-m-d"),
+                    'vencimiento' => $fecha->format("Y-m-d"),
+                    'porcentaje_anticipo_pactado' => $data['pago']
+                ]);
+
+                $cotizacion->complemento()->create([
+                    'id_transaccion' => $cotizacion->id_transaccion,
+                    'parcialidades' => $data['pago'],
+                    'dias_credito' => $data['credito'],
+                    'vigencia' => $data['vigencia'],
+                    'plazo_entrega' => $data['tiempo'],
+                    'descuento' => $data['descuento_cot'],
+                    'tc_usd' => $data['tc_usd'],
+                    'tc_eur' => $data['tc_eur'],
+                    'tc_libra' => $data['tc_libra'],
+                    'anticipo' => $data['anticipo'],
+                    'importe' => $data['importe'],
+                    'timestamp_registro' => $fecha->format("Y-m-d")
+                ]);
+
+                foreach($data['partidas'] as $key => $partida) {
+                    if($data['enable'] == [] || !array_key_exists($key,$data['enable']) || (is_null($data['enable'][$key]) || $data['enable'][$key] == true)) {
+                        $cotizaciones = $cotizacion->partidas()->create([
+                            'id_transaccion' => $cotizacion->id_transaccion,
+                            'id_material' => $partida['material']['id'],
+                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'precio_unitario' => $data['precio'][$key],
+                            'descuento' => ($data['descuento_cot'] + $partida['descuento'] - (($data['descuento_cot'] * $partida['descuento']) / 100)),
+                            'anticipo' => $data['anticipo'],
+                            'dias_credito' => $data['credito'],
+                            'dias_entrega' => $data['tiempo'],
+                            'no_cotizado' => 0,
+                            'disponibles' => 1,
+                            'id_moneda' => $data['moneda'][$key]
+                        ]);
+
+                        #------- Compras.cotizacion_partidas_complemento
+
+                        $cotizaciones->partida()->create([
+                            'id_transaccion' => $cotizacion->id_transaccion,
+                            'id_material' => $partida['material']['id'],
+                            'descuento_partida' => $partida['descuento'],
+                            'observaciones' => array_key_exists($key,$data['observaciones']) ? $data['observaciones'][$key] : '',
+                            'estatus' => 3
+                        ]);
+                    }
+                }
+                if($solicitud->validarCotizada())
+                {
+                    /**
+                     * Cambiar estado de la solicitud a: Cotizada
+                     */
+                    $solicitud->complemento->setCambiarEstado(2, 3);
+                }
+            }
+            else{
+                $cotizacion = $this->create([
+                    'id_antecedente' => $data['id_solicitud'],
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => ($data['sucursal']) ? $data['id_sucursal'] : null,
+                    'observaciones' => $data['observacion'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'monto' => 0,
+                    'estado' => 0,
+                    'impuesto' => 0,
+                    'cumplimiento' => $fecha->format("Y-m-d"),
+                    'vencimiento' => $fecha->format("Y-m-d"),
+                    'porcentaje_anticipo_pactado' => null
+                ]);
+                $cotizacion->complemento()->create([
+                    'id_transaccion' => $cotizacion->id_transaccion,
+                    'parcialidades' => 0,
+                    'dias_credito' => 0,
+                    'vigencia' => 0,
+                    'plazo_entrega' => 0,
+                    'descuento' => 0,
+                    'tc_usd' => $moneda[1]->cambio->cambio,
+                    'tc_eur' => $moneda[2]->cambio->cambio,
+                    'tc_libra' => $moneda[3]->cambio->cambio,
+                    'anticipo' => 0,
+                    'importe' => 0,
+                    'timestamp_registro' => $fecha->format("Y-m-d")
+                ]);
+
+                foreach($data['partidas'] as $partida) {
+                    $cotizaciones = $cotizacion->partidas()->create([
+                        'id_transaccion' => $cotizacion->id_transaccion,
+                        'id_material' => $partida['material']['id'],
+                        'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                    ]);
+
+                    #------- Compras.cotizacion_partidas_complemento
+
+                    $cotizaciones->partida()->create([
+                        'id_transaccion' => $cotizacion->id_transaccion,
+                        'id_material' => $partida['material']['id'],
+                        'descuento_partida' => 0,
+                        'observaciones' => '',
+                        'estatus' => 3
+                    ]);
+                }
+            }
+            DB::connection('cadeco')->commit();
+            return $cotizacion;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+    }
 }

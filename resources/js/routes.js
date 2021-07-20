@@ -3890,56 +3890,6 @@ export const routes = [
                             permission: ['registrar_cotizacion_compra']
                         }
                     },
-                   /* {
-                        path: 'create',
-                        name: 'solicitud-compra-create',
-                        component: require('./components/compras/solicitud-compra/Create').default,
-                        meta: {
-                            title: 'Registrar Solicitud',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'REGISTRAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'registrar_solicitud_compra'
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'solicitud-show',
-                        component: require('./components/compras/solicitud-compra/Show').default,
-                        props: true,
-                        meta: {
-                            title: 'Consultar Solicitud',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'VER'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_compra'
-                        }
-                    },
-                    {
-                        path: ':id/editar',
-                        name: 'solicitud-compra-edit',
-                        component: require('./components/compras/solicitud-compra/Edit').default,
-                        props: true,
-                        meta: {
-                            title: 'Editar Solicitud',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
-                            middleware: [auth, context, permission],
-                            permission: 'editar_solicitud_compra'
-                        }
-                    },
-                    {
-                        path: ':id/documentos',
-                        name: 'solicitud-compra-documentos',
-                        component: require('./components/globals/archivos/Files').default,
-                        props: route => ({
-                            id: route.params.id,
-                            permiso: ['registrar_solicitud_compra'],
-                        }),
-                        meta: {
-                            title: 'Documentos de Solicitud',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
-                            middleware: [auth, context, permission],
-                            permission: 'consultar_solicitud_compra'
-                        }
-                    }*/
                 ]
             }
         ]
