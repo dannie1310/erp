@@ -53,7 +53,7 @@ class NotificacionCredenciales extends Notification
         //$pdf = new SolicitudRecepcionCFDIPDF($this->solicitud);
 
         return (new MailMessage)
-            ->subject("Datos de acceso a portal de proveedores de Grupo Hermes Infraestructura")
+            ->subject("Datos de acceso al portal de proveedores de Hermes Infraestructura")
             ->view('emails.datos_acceso',["usuario"=>$this->usuario->usuario,"clave"=>$this->clave]);
 
         /*if(file_exists($path0)){

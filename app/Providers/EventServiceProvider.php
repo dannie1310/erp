@@ -62,6 +62,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendInvitacionCotizarNotification',
         ],
 
+        'App\Events\ActualizacionClaveUsuarioProveedor' => [
+            'App\Listeners\SendCredencialesAccesoNotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],

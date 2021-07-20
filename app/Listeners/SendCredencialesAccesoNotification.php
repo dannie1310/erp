@@ -37,7 +37,7 @@ class SendCredencialesAccesoNotification
     /**
      * @param RegistroSolicitudRecepcionCFDI $event
      */
-    public function handle(RegistroUsuarioProveedor $event)
+    public function handle($event)
     {
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
 

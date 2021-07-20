@@ -2,6 +2,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
+use App\Events\ActualizacionClaveUsuarioProveedor;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
@@ -97,6 +98,17 @@ class InvitacionService
                 if(!$usuario)
                 {
                     $usuario = $this->generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $data["correo"]);
+                }else{
+                    if($usuario->correo != $data["correo"])
+                    {
+                        $clave = str_replace(" ","",substr($usuario->nombre,0,2).date('s').substr($usuario->apaterno,0,2).date('m').substr($usuario->amaterno,0,2).date('His'));
+                        $usuario->correo =  $data["correo"];
+                        $usuario->clave = $clave;
+                        $usuario->pide_cambio_contrasenia = 1;
+                        $usuario->save();
+                        $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
+                        event(new ActualizacionClaveUsuarioProveedor($usuario,$clave));
+                    }
                 }
             }else {
                 $nombre = Usuario::calculaNombre($empresa->razon_social);

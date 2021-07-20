@@ -10,8 +10,6 @@
 
 </head>
 <div id="app">
-    <h3>Datos de acceso al portal de proveedores de Grupo Hermes Infraestructura</h3>
-    <hr />
     <div>Usuario: {{$usuario}}</div>
     <div>Contraseña: {{$clave}}</div>
     <div>Dirección: <a href="http://portal-aplicaciones.grupohi.mx/">http://portal-aplicaciones.grupohi.mx/</a></div>
