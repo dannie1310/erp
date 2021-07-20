@@ -3833,7 +3833,7 @@ export const routes = [
         }
     },
     {
-        path: '/proveedor',
+        path: '/portal-proveedor',
         components:  {
             default: require('./components/portal-proveedor/partials/Layout.vue').default,
             menu: require('./components/portal-proveedor/partials/Menu.vue').default
@@ -3852,7 +3852,7 @@ export const routes = [
                 }
             },
             {
-                path: 'cotizacion-proveedor',
+                path: 'cotizacion',
                 component: require('./components/portal-proveedor/cotizacion/Layout').default,
                 children: [
                     {
@@ -3874,8 +3874,9 @@ export const routes = [
                         meta: {
                             title: 'Seleccionar Solicitud o Contrato',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
-                            middleware: [auth, context, permission],
-                            permission: ['registrar_solicitud_compra']
+                            middleware: [auth, permission],
+                            permission: ['consultar_cotizacion_proveedor'],
+                            general: true
                         }
                     },
                     {
@@ -3886,8 +3887,9 @@ export const routes = [
                         meta: {
                             title: 'Registrar Cotización',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
-                            middleware: [auth, context, permission],
-                            permission: ['registrar_cotizacion_compra']
+                            middleware: [auth, permission],
+                            permission: ['consultar_cotizacion_proveedor'],
+                            general: true
                         }
                     },
                 ]
