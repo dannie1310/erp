@@ -417,10 +417,13 @@
 
                 formData.append('constructora', this.form.constructora);
                 formData.append('clave', this.form.clave)
+                formData.append('configuracion[clave]', this.form.clave);
                 formData.append('descripcion', this.form.descripcion);
                 formData.append('direccion', this.form.direccion);
                 formData.append('direccion_proyecto', this.form.direccion_proyecto);
+                formData.append('configuracion[direccion_proyecto]', this.form.direccion_proyecto);
                 formData.append('direccion_plataforma_digital', this.form.direccion_plataforma_digital);
+                formData.append('configuracion[direccion_plataforma_digital]', this.form.direccion_plataforma_digital);
                 formData.append('estado', this.form.estado);
                 formData.append('facturar', this.form.facturar)
                 formData.append('fecha_final', this.form.fecha_final)
