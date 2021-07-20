@@ -574,8 +574,8 @@ class AsignacionContratista extends Model
                 $subcontrato->saldo = $subcontrato->saldo + $monto;
                 $subcontrato->impuesto = $subcontrato->impuesto + $impuesto;
 
-                $subcontrato->anticipo_monto =  ($subcontrato->monto * $subcontrato->anticipo / 100) ;
-                $subcontrato->anticipo_saldo =  ($subcontrato->saldo * $subcontrato->anticipo / 100);
+                $subcontrato->anticipo_monto =  (($subcontrato->monto - $subcontrato->impuesto) * $subcontrato->anticipo / 100) ;
+                $subcontrato->anticipo_saldo =  (($subcontrato->saldo - $subcontrato->impuesto) * $subcontrato->anticipo / 100);
 
                 $subcontrato->save();
             }

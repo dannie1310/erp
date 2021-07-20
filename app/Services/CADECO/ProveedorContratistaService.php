@@ -81,8 +81,15 @@ class ProveedorContratistaService
 
     public function store(array $data)
     {
+        if($data["es_nacional"]==0){
+            $data['rfc'] = 'XEXX010101000';
+            $data["emite_factura"]=0;
+        }
+        if($data["emite_factura"]==0 && $data["es_nacional"] ==1){
+            $data['rfc_nuevo'] = 'XXXXXXXXXXXX';
+        }
         if($data["emite_factura"] == 1){
-            if($data['rfc'] == 'XXXXXXXXXXXX') abort(403, 'El R.F.C. tiene formato inválido.');
+            if($data['rfc'] == 'XXXXXXXXXXXX' || $data['rfc'] == 'XEXX010101000') abort(403, 'El RFC tiene formato inválido.');
             $this->getValidacionLRFC($data["rfc"], $data["razon_social"],7);
         }
         return $this->repository->create($data);
@@ -94,13 +101,21 @@ class ProveedorContratistaService
     }
 
     public function update(array $data, $id){
+        if($data["es_nacional"]==0){
+            $data['rfc_nuevo'] = 'XEXX010101000';
+            $data["emite_factura"]=0;
+        }
+        if($data["emite_factura"]==0 && $data["es_nacional"] ==1){
+            $data['rfc_nuevo'] = 'XXXXXXXXXXXX';
+        }
         $actual_rfc = $this->repository->getRFC($id);
         if($data["rfc_nuevo"] != $actual_rfc){
             $this->repository->validarRegistroXml($id);
         }
-        if($data["emite_factura"] == 1 && $data["rfc_nuevo"] != $actual_rfc)
+
+        if($data["emite_factura"] == 1)
         {
-            if($data['rfc_nuevo'] == 'XXXXXXXXXXXX') abort(403, 'El R.F.C. tiene formato inválido.');
+            if($data['rfc_nuevo'] == 'XXXXXXXXXXXX'||$data['rfc_nuevo'] == 'XEXX010101000') abort(403, 'El RFC tiene formato inválido.');
             $this->getValidacionLRFC($data["rfc_nuevo"], $data["razon_social"],17);
         }
         return $this->repository->update($data, $id);

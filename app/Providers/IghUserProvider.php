@@ -114,7 +114,7 @@ class IghUserProvider implements UserProvider {
     {
         $plain = $credentials['clave'];
 
-        return  md5($plain) == $user->getAuthPassword();
+        return  md5($plain) == $user->getAuthPassword() && $user->usuario_estado != 0;
     }
 
     /**

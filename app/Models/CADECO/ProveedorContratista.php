@@ -60,8 +60,8 @@ class ProveedorContratista extends Empresa
     }
 
     public function actualizar($data, $id){
-        if($data['rfc'] != $data['rfc_nuevo'] && $data['rfc_nuevo'] != 'XXXXXXXXXXXX'){
-            $this->where('rfc', '=', str_replace(" ","", $data['rfc_nuevo']))->count() > 0 ? abort(403, 'El Proveedor / Contratisa ya esta registrado.'):'';
+        if($data['rfc'] != $data['rfc_nuevo'] && $data['rfc_nuevo'] != 'XXXXXXXXXXXX' && $data['rfc_nuevo'] != 'XEXX010101000'){
+            $this->where('rfc', '=', str_replace(" ","", $data['rfc_nuevo']))->count() > 0 ? abort(403, 'El proveedor / contratisa ya esta registrado.'):'';
         }
         $data['rfc'] = $data['rfc_nuevo'];
         unset($data['rfc_nuevo']);
@@ -92,7 +92,7 @@ class ProveedorContratista extends Empresa
     }
 
     public function validarProveedorContratistaDuplicado(){
-        if($this->rfc != "XXXXXXXXXXXX"){
+        if($this->rfc != "XXXXXXXXXXXX" && $this->rfc != 'XEXX010101000'){
             $this->where('rfc', '=', str_replace(" ","", $this->rfc))->count() > 0 ? abort(403, 'El Proveedor / Contratisa ya esta registrado.'):'';
         }
     }
@@ -108,7 +108,7 @@ class ProveedorContratista extends Empresa
         $cantidad = $this->facturaRepositorio->count();
 
         if($cantidad > 0){
-            abort(403, 'El R.F.C. del Proveedor / Contratisa '. $this->razon_social.' no puede ser editado porque tiene ' . $cantidad . ' comprobante(s) digital(es) (XML) asociado(s).');
+            abort(403, 'El RFC del Proveedor / Contratisa '. $this->razon_social.' no puede ser editado porque tiene ' . $cantidad . ' comprobante(s) digital(es) (XML) asociado(s).');
         }
 
     }

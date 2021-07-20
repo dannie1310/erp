@@ -374,8 +374,10 @@ export default {
         },
         emite_factura(value){
             this.edit.emite_factura = value;
-            if(value === 0 || this.es_nacional === 0){
+            if(value === 0 && this.es_nacional === 1){
                 this.edit.rfc_nuevo = 'XXXXXXXXXXXX';
+            }else if(value === 0 && this.es_nacional === 0){
+                this.edit.rfc_nuevo = 'XEXX010101000';
             }else{
                 this.edit.rfc_nuevo = this.edit.rfc;
             }

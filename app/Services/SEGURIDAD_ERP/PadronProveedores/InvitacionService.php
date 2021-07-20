@@ -71,7 +71,8 @@ class InvitacionService
             'nombre_contacto'=>$data["contacto"],
             'observaciones'=>$data["observaciones"],
             'usuario_invito'=>auth()->id(),
-            'direccion_entrega'=>$data["direccion_entrega"]
+            'direccion_entrega'=>$data["direccion_entrega"],
+            'ubicacion_entrega_plataforma_digital'=>$data["ubicacion_entrega_plataforma_digital"],
         ];
 
         $sucursalServicio = new SucursalService(new Sucursal());
