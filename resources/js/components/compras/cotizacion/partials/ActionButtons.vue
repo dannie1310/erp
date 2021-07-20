@@ -34,6 +34,10 @@ import Relaciones from "../../../globals/ModalRelaciones";
         },
 
         methods: {
+            edit()
+            {
+                this.$router.push({ name: 'cotizacion-edit', params: {id: this.value.id, xls: this.xls}});
+            },
             layout(dat)
             {
                 this.xls = (dat) ? dat : null;

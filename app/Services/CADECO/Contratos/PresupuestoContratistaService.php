@@ -126,7 +126,7 @@ class PresupuestoContratistaService
             }
             $id_moneda = 0;
             switch ($celdas[$x][11]){
-                case 'PESO MXP':
+                case 'PESO MXN':
                     $id_moneda = 1;
                 break;
                 case 'DOLAR USD':

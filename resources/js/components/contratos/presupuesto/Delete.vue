@@ -93,7 +93,7 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.descuento}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
+                                        <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
                                         <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.subtotal_format}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
@@ -122,7 +122,7 @@
                                         <div class="col-md-12">
                                             <label for="motivo" class="col-form-label">Motivo de eliminación </label>
                                             </div>
-                                        </div>  
+                                        </div>
                                   <div class="row">
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
@@ -167,7 +167,7 @@ export default {
         }
     },
     methods: {
-        destroy() {            
+        destroy() {
             return this.$store.dispatch('contratos/presupuesto/delete', {
                 id: this.id,
                 params: {data: this.motivo}
@@ -190,7 +190,7 @@ export default {
                 return this.$store.dispatch('contratos/presupuesto/find', {
                     id: this.id,
                     params:{include: [
-                        'contrato_proyectado',                        
+                        'contrato_proyectado',
                         'partidas.concepto',
                         'partidas.moneda',
                         'sucursal',

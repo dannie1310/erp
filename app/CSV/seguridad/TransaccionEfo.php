@@ -76,7 +76,7 @@ class TransaccionEfo implements FromCollection, WithHeadings
             'Monto',
             'Moneda',
             'T.C.',
-            'Monto MXP',
+            'Monto MXN',
             'Grado de Alerta'
         ]);
     }

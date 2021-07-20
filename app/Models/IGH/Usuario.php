@@ -18,6 +18,7 @@ use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\RoleUser;
+use App\Models\SEGURIDAD_ERP\RoleUserGlobal;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -26,6 +27,7 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\RolGeneral;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
+use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -37,6 +39,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notification;
+use App\Models\SEGURIDAD_ERP\Rol as RolSeguridadERP;
 
 class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     AuthorizableContract,
@@ -66,7 +69,7 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      * @var array
      */
     protected $fillable = [
-        'usuario', 'nombre', 'correo', 'clave',
+        'usuario', 'nombre', 'apaterno', 'amaterno', 'usuario_estado', 'correo', 'clave', 'id_empresa', 'pide_cambio_contrasenia', 'pide_datos_empresa'
     ];
 
     /**
@@ -390,9 +393,19 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
     }
 
+    public function rolesUsuarioGlobal()
+    {
+        return $this->hasMany(RoleUserGlobal::class, "user_id", "idusuario");
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
+    }
+
+    public function getNombreCompletoSinEspaciosAttribute()
+    {
+        return $this->nombre.$this->apaterno.$this->amaterno;
     }
 
     public function google2faSecret()
@@ -414,5 +427,51 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         $this->update([
             'clave' => $clave_nueva
         ]);
+    }
+
+    public function asignaRol($rol)
+    {
+        $rolObj = RolSeguridadERP::where('name',"=",$rol)->first();
+        if($rolObj){
+            $preexistente = RoleUserGlobal::where("user_id","=",$this->idusuario)
+            ->where("role_id","=",$rolObj->id)
+            ->first();
+            if(!$preexistente){
+                $this->rolesUsuarioGlobal()->create([
+                    'role_id'=>$rolObj->id
+                ]);
+            }
+        }
+    }
+
+    public static function calculaNombre($nombre)
+    {
+        $arregloNombre = Util::generaArregloNombre($nombre);
+        $nombre = substr($arregloNombre[1],0,1).substr($arregloNombre[2],0,1).substr($arregloNombre[0],0,1);
+        return $nombre;
+    }
+
+    public static function generaArregloNombre($razon_social)
+    {
+        $rs_ex = explode(" ",Util::eliminaCaracteresEspeciales($razon_social));
+        $longitud = count($rs_ex);
+        $cantidadPorCampo = floor($longitud/3);
+        $nombreArr = [];
+        $icc = 0;
+        for($i = 0;$i<$longitud;$i++)
+        {
+            if(key_exists($icc,$nombreArr)){
+                $nombreArr[$icc] .= " ".$rs_ex[$i];
+            } else {
+                $nombreArr[] = $rs_ex[$i];
+            }
+
+            if($i==$cantidadPorCampo)
+            {
+                $icc++;
+                $cantidadPorCampo+=$cantidadPorCampo;
+            }
+        }
+        return $nombreArr;
     }
 }

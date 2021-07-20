@@ -9,14 +9,15 @@
 namespace App\Models\CADECO;
 
 
-use App\Facades\Context;
-use App\Models\SEGURIDAD_ERP\CtgContratista;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use App\Facades\Context;
 use App\Models\IGH\Usuario;
+use App\Models\CADECO\Fondo;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contabilidad\Poliza;
-use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use App\Models\SEGURIDAD_ERP\CtgContratista;
 use App\Models\CADECO\Contabilidad\HistPoliza;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 
 class Transaccion extends Model
 {
@@ -38,6 +39,7 @@ class Transaccion extends Model
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
     public const SHOW_ROUTE = "";
+    public const ARTICULO = "La";
 
     protected static function boot()
     {
@@ -202,6 +204,25 @@ class Transaccion extends Model
         }
     }
 
+    public function getArticuloTipoTransaccionStrAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::ARTICULO;
+            case  18: return CotizacionCompra::ARTICULO;
+            case  19: return OrdenCompra::ARTICULO;
+            case  33: return EntradaMaterial::ARTICULO;
+            case  34: return SalidaAlmacen::ARTICULO;
+            case  49: return ContratoProyectado::ARTICULO;
+            case  50: return PresupuestoContratista::ARTICULO;
+            case  51: return Subcontrato::ARTICULO;
+            case  52: return Estimacion::ARTICULO;
+            case  65: return Factura::ARTICULO;
+            case  82: return Pago::ARTICULO;
+            case  72: return SolicitudPagoAnticipado::ARTICULO;
+            default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
+        }
+    }
+
     public function getIconoAttribute()
     {
         switch ($this->tipo_transaccion){
@@ -256,6 +277,11 @@ class Transaccion extends Model
     public function referente()
     {
         return $this->belongsTo(Transaccion::class,"id_referente", "id_transaccion");
+    }
+
+    public function fondoFijo()
+    {
+        return $this->belongsTo(Fondo::class,"id_referente", "id_fondo");
     }
 
     public function getSubtotalAttribute()
@@ -336,7 +362,7 @@ class Transaccion extends Model
             if($this->poliza->estatus == -3){
                 $this->poliza->id_transaccion_sao = null;
                 $this->poliza->save();
-                $movimientos = $this->poliza_movimientos;
+                $movimientos = $this->poliza_movimientos()->withTrashed()->get();
                 if($movimientos){
                     foreach ($movimientos as $movimiento) {
                         $movimiento->id_transaccion_sao = null;

@@ -13,7 +13,7 @@
 <script>
     export default {
         name: "SelectAutocomplete",
-        props: ['scope', 'value', 'error', 'placeholder'],
+        props: ['scope', 'sort', 'value', 'error', 'placeholder'],
         data(){
             return {
                 val: null,
@@ -27,15 +27,16 @@
                 return this.$store.dispatch('cadeco/material/index',{
                     params: {
                         search: searchQuery,
+                        sort: this.sort,
                         scope: this.scope,
-                        limit: 15
+                        limit: 100
                     }
                 })
                     .then(data => {
                         this.disabled = false;
                         this.options = data.data.map(i => ({
                             id: i.id,
-                            label: i.descripcion,
+                            label: i.numero_parte_descripcion,
                             descripcion: i.descripcion,
                             numero_parte: i.numero_parte,
                             unidad: i.unidad
