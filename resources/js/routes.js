@@ -3872,7 +3872,7 @@ export const routes = [
                         name: 'cotizacion-proveedor-seleccionar-solicitud',
                         component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,
                         meta: {
-                            title: 'Seleccionar Solicitud de Compra',
+                            title: 'Seleccionar Solicitud o Contrato',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
                             middleware: [auth, context, permission],
                             permission: ['registrar_solicitud_compra']

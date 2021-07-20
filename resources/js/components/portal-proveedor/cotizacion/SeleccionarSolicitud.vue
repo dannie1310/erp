@@ -9,7 +9,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_solicitud">Buscar Solicitud de Compra:</label>
+                                            <label for="id_solicitud">Buscar Solicitud o Contrato:</label>
                                                  <model-list-select
                                                      id="id_solicitud"
                                                      name="id_solicitud"
