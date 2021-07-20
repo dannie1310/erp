@@ -35,6 +35,13 @@
         <li>
             Localización del Proyecto:  {{$invitacion->direccion_entrega}}
         </li>
+
+        @if($invitacion->ubicacion_entrega_plataforma_digital != "")
+        <li>
+            Localización del Proyecto (Plataforma Digital):  <a href="{{$invitacion->ubicacion_entrega_plataforma_digital}}">{{$invitacion->ubicacion_entrega_plataforma_digital}}</a>
+        </li>
+        @endif
+
         <li>
             Descripción:  {{$invitacion->transaccionAntecedente->observaciones}}
         </li>

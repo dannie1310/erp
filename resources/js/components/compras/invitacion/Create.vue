@@ -172,7 +172,7 @@
                     </div>
                 </div>
                 <div class="row" v-if="solicitud && id_sucursal>0">
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <div class="form-group">
                         <label for="direccion_entrega">Dirección de Entrega:</label>
                             <textarea
@@ -181,8 +181,25 @@
                                 v-model="direccion_entrega"
                                 type="text"
                                 class="form-control"
+                                v-validate="{required:true}"
                             />
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('direccion_entrega')">{{ errors.first('direccion_entrega') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                        <label for="ubicacion_entrega_plataforma_digital">Ubicación de Entrega en Plataforma Digital:</label>
+                            <input
+                                name="ubicacion_entrega_plataforma_digital"
+                                id="ubicacion_entrega_plataforma_digital"
+                                v-model="ubicacion_entrega_plataforma_digital"
+                                type="text"
+                                class="form-control"
+                                placeholder="https://goo.gl/maps/yrVG5u7RwdUJFgU47"
+                                data-vv-as="Ubicación de Entrega en Plataforma Digital"
+                                v-validate="{required:true, regex:/^http[s]?:\/\/[\w]+([\.]+[\w]+)\/maps\/[a-zA-Z]/}"
+                            >
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('ubicacion_entrega_plataforma_digital')">{{ errors.first('ubicacion_entrega_plataforma_digital') }}</div>
                         </div>
                     </div>
                 </div>
@@ -238,6 +255,7 @@ export default {
             mas_invitaciones:1,
             fecha_cierre : new Date(),
             direccion_entrega : '',
+            ubicacion_entrega_plataforma_digital : '',
             fechasDeshabilitadas: {}
         }
     },
@@ -247,6 +265,7 @@ export default {
             this.find();
         }else{
             this.direccion_entrega = solicitud.direccion_entrega;
+            this.ubicacion_entrega_plataforma_digital = solicitud.ubicacion_entrega_plataforma_digital;
             this.getProveedores();
         }
 
@@ -263,6 +282,7 @@ export default {
             }).then(data => {
                 this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
                 this.direccion_entrega = data.direccion_entrega;
+                this.ubicacion_entrega_plataforma_digital = data.ubicacion_entrega_plataforma_digital;
             }).finally(()=>{
                 this.getProveedores();
             });
@@ -301,6 +321,7 @@ export default {
                     _self.post.contacto = _self.contacto;
                     _self.post.fecha_cierre = _self.fecha_cierre;
                     _self.post.direccion_entrega = _self.direccion_entrega;
+                    _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             if(_self.mas_invitaciones == true){

@@ -28,6 +28,7 @@ class Invitacion extends Model
         'id_obra',
         'fecha_cierre_invitacion',
         'direccion_entrega',
+        'ubicacion_entrega_plataforma_digital',
         'tipo_transaccion_antecedente',
         'opcion_transaccion_antecedente',
         'razon_social',
