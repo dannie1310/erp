@@ -36,7 +36,7 @@
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                   // { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -118,6 +118,10 @@
                         observaciones: invitacion.cotizacion.observaciones,
                         importe: invitacion.cotizacion.monto,
                         estado: this.getEstado(invitacion.cotizacion.estado),
+                        buttons: $.extend({}, {
+                            show: self.$root.can('consultar_cotizacion_proveedor') ? true : false,
+                            id: invitacion.id,
+                        })
                     }));
                 },
                 deep: true

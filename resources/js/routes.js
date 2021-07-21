@@ -3892,6 +3892,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'cotizacion-proveedor-show',
+                        component: require('./components/portal-proveedor/cotizacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
                 ]
             }
         ]
