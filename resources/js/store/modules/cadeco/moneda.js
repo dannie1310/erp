@@ -38,6 +38,19 @@ export default {
                         reject(error)
                     })
             });
+        },
+        monedasBase(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI+'monedasBase', payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
         }
     },
 

@@ -224,6 +224,7 @@ class Invitacion extends Model
                 'id_invitacion' => $this->getKey(),
                 'razon_social' => $this->razon_social,
                 'rfc' => $this->rfc,
+                'base_datos' => $this->base_datos,
                 'nombre_usuario_invitado' => $this->usuarioInvitado->nombre_completo_sin_espacios,
                 'sucursal' => $this->descripcion_sucursal,
                 'partidas' => $this->partidasSolicitud()

@@ -392,7 +392,6 @@
             this.find();
             this.fecha = new Date();
             this.$validator.reset();
-            this.getMonedas();
         },
         methods : {
             formatoFecha(date){
@@ -407,13 +406,15 @@
                 }).then(data => {
                     this.solicitud = data
                     this.cargando = false;
+                    this.getMonedas(data.base_datos);
                 })
             },
-            getMonedas(){
+            getMonedas(base){
                 this.cargando = true;
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
-                return this.$store.dispatch('cadeco/moneda/index', {
-                    params: {sort: 'id_moneda', order: 'asc',}
+                return this.$store.dispatch('cadeco/moneda/monedasBase', {
+                    params: {sort: 'id_moneda', order: 'asc'},
+                    base : base
                 }).then(data => {
                     this.monedas = data.data;
                     this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
