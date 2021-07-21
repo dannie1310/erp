@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('consultar_cotizacion_proveedor',true)" class="btn btn-app btn-info pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app btn-info pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -35,7 +35,7 @@
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                   // { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                    // { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
@@ -70,7 +70,6 @@
             },
 
             getEstado(estado) {
-
                 let val = parseInt(estado);
                 switch (val) {
                     case 0:
@@ -112,6 +111,13 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
+                        numero_folio: invitacion.cotizacion.numero_folio_format,
+                        solicitud: invitacion.transaccion.numero_folio_format,
+                        fecha: invitacion.cotizacion.fecha_format,
+                        empresa: invitacion.razon_social,
+                        observaciones: invitacion.cotizacion.observaciones,
+                        importe: invitacion.cotizacion.monto,
+                        estado: this.getEstado(invitacion.cotizacion.estado),
                     }));
                 },
                 deep: true

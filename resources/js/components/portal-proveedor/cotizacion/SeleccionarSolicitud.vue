@@ -30,7 +30,7 @@
                                  <button type="button" class="btn btn-secondary" v-on:click="salir">
                                         <i class="fa fa-angle-left"></i>
                                         Regresar</button>
-                                    <button type="submit" :disabled="id_solicitud == ''" class="btn btn-primary">
+                                    <button type="submit" :disabled="solicitud == null" class="btn btn-primary">
                                         Continuar
                                         <i class="fa fa-angle-right"></i>
                                     </button>

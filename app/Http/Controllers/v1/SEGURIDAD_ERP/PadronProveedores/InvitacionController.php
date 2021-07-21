@@ -41,6 +41,7 @@ class InvitacionController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context')->only("store");
+        $this->middleware('permisoGlobal:consultar_cotizacion_proveedor')->only(['getPorCotizar','getSolicitud']);
 
         $this->fractal = $fractal;
         $this->service = $service;

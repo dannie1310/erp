@@ -3875,7 +3875,7 @@ export const routes = [
                             title: 'Seleccionar Solicitud o Contrato',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
                             middleware: [auth, permission],
-                            permission: ['consultar_cotizacion_proveedor'],
+                            permission: ['registrar_cotizacion_proveedor'],
                             general: true
                         }
                     },
@@ -3888,7 +3888,7 @@ export const routes = [
                             title: 'Registrar Cotización',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
                             middleware: [auth, permission],
-                            permission: ['consultar_cotizacion_proveedor'],
+                            permission: ['registrar_cotizacion_proveedor'],
                             general: true
                         }
                     },
