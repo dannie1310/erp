@@ -10,6 +10,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -225,6 +226,11 @@ class InvitacionService
 
     public function getSolicitud($id)
     {
+        $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
         return $this->repository->show($id)->getSolicitud();
     }
 }

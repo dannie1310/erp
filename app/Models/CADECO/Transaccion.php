@@ -101,7 +101,12 @@ class Transaccion extends Model
     {
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
-            $antecedente = Transaccion::withoutGlobalScopes()->find($this->id_antecedente);
+            if(!is_null(Context::getIdObra()))
+            {
+                $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
+            }else{
+                $antecedente = Transaccion::withoutGlobalScopes()->where('id_transaccion', $this->id_antecedente)->where('id_obra', $this->id_obra)->first();
+            }
             if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opciones != $this::OPCION_ANTECEDENTE)
             {
                 return false;
