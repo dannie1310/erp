@@ -191,7 +191,7 @@ class Invitacion extends Model
     public function getSolicitudes()
     {
         $transacciones = [];
-        $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->get();
+        $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->orderBy('id_transaccion_antecedente','desc')->get();
         foreach ($solicitudes as $key =>  $solicitud) {
             $transacciones[$key]['id'] = $solicitud->id;
             $transacciones[$key]['numero_folio_format'] = $solicitud->transaccionAntecedente->numero_folio_format;
