@@ -342,6 +342,37 @@ export default {
         {
             this.$router.push({name: 'invitacion-compra-selecciona-solicitud'});
         },
+        limpiar()
+        {
+            this.post.id_transaccion = null;
+            this.post.id_proveedor = null;
+            this.post.id_sucursal = null;
+            this.post.observaciones = null;
+            this.post.proveedor_en_catalogo = null;
+            this.post.correo = null;
+            this.post.contacto = null;
+            this.post.fecha_cierre = null;
+            this.post.direccion_entrega = null;
+            this.post.ubicacion_entrega_plataforma_digital = null;
+            this.post.archivo_carta_terminos_condiciones = null;
+            this.post.nombre_archivo_carta_terminos_condiciones = null;
+            this.post.archivo_formato_cotizacion = null;
+            this.post.nombre_archivo_formato_cotizacion = null;
+
+
+            //this.id_solicitud;
+            this.id_proveedor = null;
+            this.id_sucursal = null;
+            this.observaciones = null;
+
+            this.correo = null;
+            this.contacto = null;
+
+            this.archivo_carta_terminos_condiciones = null;
+            this.nombre_archivo_carta_terminos_condiciones = null;
+            this.archivo_formato_cotizacion = null;
+            this.nombre_archivo_formato_cotizacion = null;
+        },
         enviar()
         {
             let _self = this;
@@ -365,7 +396,7 @@ export default {
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             if(_self.mas_invitaciones == true){
-                                //this.$router.go();
+                                this.limpiar();
                             } else {
                                 this.$router.push({name: 'invitacion-compra'});
                             }
