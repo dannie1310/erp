@@ -66,6 +66,9 @@
         <li>
             Se requiere anexe fichas técnicas de material, donde indique que cumple con cada uno de los requerimientos.
         </li>
+        <li>
+            Se requiere anexe firmada la carta de términos y condiciones adjunta a esta invitación.
+        </li>
     </ol>
 
     <br>

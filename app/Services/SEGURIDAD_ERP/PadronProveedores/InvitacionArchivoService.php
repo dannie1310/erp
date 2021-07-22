@@ -73,7 +73,7 @@ class InvitacionArchivoService
 
         $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
         $data_registro["id_invitacion"] = $data["id_invitacion"];
-        $data_registro["tamanio"] = filesize($paths["dir_tempo"].$files[0])/1024;
+        $data_registro["tamanio_kb"] = filesize($paths["dir_tempo"].$files[0])/1024;
         $data_registro["hashfile"] = $hashfile;
         $data_registro["nombre"] = $files[0];
         $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
