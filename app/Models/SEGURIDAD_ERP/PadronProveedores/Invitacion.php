@@ -40,6 +40,7 @@ class Invitacion extends Model
         'usuario_invito',
         'usuario_invitado',
         'estado',
+        'enviada'
     ];
     /*
      * Relaciones*/

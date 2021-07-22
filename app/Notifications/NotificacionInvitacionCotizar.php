@@ -68,7 +68,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0001
-            else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -96,7 +96,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0100
-            else if(!file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -105,7 +105,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0101
-            else if(!file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -114,7 +114,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0110
-            else if(!file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -124,7 +124,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0111
-            else if(!file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -134,7 +134,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1000
-            else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -143,7 +143,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1001
-            else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -171,7 +171,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1100
-            else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
@@ -181,7 +181,7 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1101
-            else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+            else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new SolicitudCompraFormato($solicitud);
                 return (new MailMessage)
