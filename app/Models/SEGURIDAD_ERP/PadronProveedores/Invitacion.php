@@ -68,6 +68,11 @@ class Invitacion extends Model
         return $this->belongsTo(Usuario::class, "usuario_invitado", "idusuario");
     }
 
+    public function archivos()
+    {
+        return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id");
+    }
+
     public function obra()
     {
         DB::purge('cadeco');

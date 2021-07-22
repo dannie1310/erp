@@ -203,6 +203,36 @@
                         </div>
                     </div>
                 </div>
+                 <div class="row" v-if="solicitud && id_sucursal>0">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="carta_terminos">Carta de Términos y Condiciones:</label>
+                            <input type="file" class="form-control" id="carta_terminos"
+                               @change="onFileChange"
+                               v-validate="{required:true, ext: ['pdf'],  size: 102400}"
+                               name="carta_terminos"
+                               data-vv-as="Carta de Términos y Condiciones"
+                               ref="carta_terminos"
+                               :class="{'is-invalid': errors.has('carta_terminos')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
+                        </div>
+                    </div>
+                     <div class="col-md-6">
+                         <div class="form-group">
+                            <label for="carta_terminos">Formato de Cotización:</label>
+                            <input type="file" class="form-control" id="formato_cotizacion"
+                                   @change="onFileChange"
+                                   v-validate="{ext: ['docx'],  size: 102400}"
+                                   name="formato_cotizacion"
+                                   data-vv-as="Formato de Cotización"
+                                   ref="formato_cotizacion"
+                                   :class="{'is-invalid': errors.has('formato_cotizacion')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('formato_cotizacion')">{{ errors.first('formato_cotizacion') }} (docx)</div>
+                         </div>
+                    </div>
+                 </div>
             </div>
             <div class="card-footer">
                 <div class="row" v-if="solicitud">
@@ -256,7 +286,11 @@ export default {
             fecha_cierre : new Date(),
             direccion_entrega : '',
             ubicacion_entrega_plataforma_digital : '',
-            fechasDeshabilitadas: {}
+            fechasDeshabilitadas: {},
+            archivo_carta_terminos_condiciones:'',
+            nombre_archivo_carta_terminos_condiciones:'',
+            archivo_formato_cotizacion:'',
+            nombre_archivo_formato_cotizacion:'',
         }
     },
     mounted() {
@@ -323,10 +357,15 @@ export default {
                     _self.post.fecha_cierre = _self.fecha_cierre;
                     _self.post.direccion_entrega = _self.direccion_entrega;
                     _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;
+                    _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;
+                    _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
+                    _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
+                    _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
+
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             if(_self.mas_invitaciones == true){
-                                this.$router.go();
+                                //this.$router.go();
                             } else {
                                 this.$router.push({name: 'invitacion-compra'});
                             }
@@ -336,6 +375,37 @@ export default {
         },
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
+        },
+        createImage(file, tipo) {
+            var reader = new FileReader();
+            var vm = this;
+
+            reader.onload = (e) => {
+                if(tipo == "carta_terminos")
+                {
+                    vm.archivo_carta_terminos_condiciones = e.target.result;
+                }
+                if(tipo== 'formato_cotizacion')
+                {
+                    vm.archivo_formato_cotizacion = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+        },
+        onFileChange(e){
+            this.file = null;
+            var files = e.target.files || e.dataTransfer.files;
+            if (!files.length)
+                return;
+
+            if(e.target.id == 'carta_terminos') {
+                this.nombre_archivo_carta_terminos_condiciones = files[0].name;
+            }
+            if(e.target.id == 'formato_cotizacion')
+            {
+                this.nombre_archivo_formato_cotizacion = files[0].name;
+            }
+            this.createImage(files[0], e.target.id);
         },
     },
     computed: {
