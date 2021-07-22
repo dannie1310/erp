@@ -986,6 +986,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
+            $api->get('abierto/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@abrir')->where(['id' => '[0-9]+']);
         });
 
         // CATALOGOS
