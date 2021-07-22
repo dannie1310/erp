@@ -67,15 +67,18 @@ class InvitacionArchivoService
         $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
         $nombre_archivo_exp = explode('.', $files[0]);
 
-        $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
+
         //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
 
 
         $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
         $data_registro["id_invitacion"] = $data["id_invitacion"];
+        $data_registro["tamanio"] = filesize($paths["dir_tempo"].$files[0])/1024;
         $data_registro["hashfile"] = $hashfile;
         $data_registro["nombre"] = $files[0];
         $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
+
+        $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
 
         $archivoObj = $this->store($data_registro);
 
