@@ -10,6 +10,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -129,10 +130,33 @@ class InvitacionService
         $usuario->asignaRol("proveedor");
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
+
+        $carta_terminos_condiciones['archivo_nombre'] = $data["nombre_archivo_carta_terminos_condiciones"];
+        $carta_terminos_condiciones['archivo'] = $data["archivo_carta_terminos_condiciones"];
+        $carta_terminos_condiciones['id_tipo_archivo'] = 43;
+        $carta_terminos_condiciones['id_invitacion'] = $invitacion->id;
+        $this->registraArchivo($carta_terminos_condiciones);
+
+        if(key_exists("archivo_formato_cotizacion",$data)){
+            if($data["nombre_archivo_formato_cotizacion"] != ""){
+                $formato_cotizacion['archivo_nombre'] = $data["nombre_archivo_formato_cotizacion"];
+                $formato_cotizacion['archivo'] = $data["archivo_formato_cotizacion"];
+                $formato_cotizacion['id_tipo_archivo'] = 44;
+                $formato_cotizacion['id_invitacion'] = $invitacion->id;
+                $this->registraArchivo($formato_cotizacion);
+            }
+        }
+
         if($invitacion){
             event(new RegistroInvitacion($invitacion));
         }
         return $invitacion;
+    }
+
+    private function registraArchivo($data)
+    {
+        $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
+        $archivoService->agregarArchivo($data);
     }
 
     private function generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $correo)

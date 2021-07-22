@@ -40,6 +40,7 @@ class Invitacion extends Model
         'usuario_invito',
         'usuario_invitado',
         'estado',
+        'enviada'
     ];
     /*
      * Relaciones*/
@@ -66,6 +67,11 @@ class Invitacion extends Model
     public function usuarioInvitado()
     {
         return $this->belongsTo(Usuario::class, "usuario_invitado", "idusuario");
+    }
+
+    public function archivos()
+    {
+        return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id");
     }
 
     public function obra()

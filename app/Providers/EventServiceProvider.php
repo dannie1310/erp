@@ -66,6 +66,14 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendCredencialesAccesoNotification',
         ],
 
+        'Illuminate\Mail\Events\MessageSent' => [
+            'App\Listeners\LogSentMessage',
+        ],
+
+        'Illuminate\Notifications\Events\NotificationSent' => [
+            'App\Listeners\LogNotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],
