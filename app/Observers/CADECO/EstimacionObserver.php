@@ -57,6 +57,7 @@ class EstimacionObserver extends TransaccionObserver
 
     public function deleting(Estimacion $estimacion)
     {
+        $estimacion->desvincularPolizas();
         $estimacion->validarParaEliminar();
         if($estimacion->estimacionEliminada == null)
         {

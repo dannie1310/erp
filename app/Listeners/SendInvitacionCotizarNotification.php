@@ -29,9 +29,9 @@ class SendInvitacionCotizarNotification
     public function handle(RegistroInvitacion $event)
     {
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        $usuario = Usuario::suscripcion($suscripciones)->get();
+        //$usuario = Usuario::suscripcion($suscripciones)->get();
 
-        Notification::send($usuario, new NotificacionInvitacionCotizar($event->invitacion));
+        //Notification::send($usuario, new NotificacionInvitacionCotizar($event->invitacion));
         Notification::send($event->invitacion->usuarioInvitado, new NotificacionInvitacionCotizar($event->invitacion));
     }
 }

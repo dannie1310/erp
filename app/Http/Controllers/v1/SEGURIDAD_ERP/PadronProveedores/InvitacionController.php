@@ -49,8 +49,16 @@ class InvitacionController extends Controller
     }
 
     public function store(Request $request){
-        $sucursal = $this->service->store($request->all());
-        return $this->respondWithItem($sucursal);
+        $invitacion = $this->service->store($request->all());
+        return $this->respondWithItem($invitacion);
+    }
+
+    public function abrir($id)
+    {
+        $obj = $this->service->show($id);
+        $obj->abierta = 1;
+        $obj->save();
+        return response()->json("Gracias por confirmar la recepción de la invitación", 200);
     }
 
     public function getPorCotizar(Request $request)
