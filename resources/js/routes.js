@@ -3893,6 +3893,24 @@ export const routes = [
                         }
                     },
                 ]
+            },{
+                path: 'presupuesto',
+                component: require('./components/portal-proveedor/presupuesto/Layout').default,
+                children: [
+                    {
+                        path: ':id_solicitud/create',
+                        name: 'presupuesto-proveedor-create',
+                        component: require('./components/portal-proveedor/presupuesto/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
             }
         ]
     },

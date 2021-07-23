@@ -1,5 +1,5 @@
 <template>
-    <span>
+    <span v-if="solicitud && solicitud.tipo_transaccion == 17">
         <encabezado-solicitud v-bind:solicitud_compra="solicitud"></encabezado-solicitud>
         <tabla-datos-solicitud v-bind:solicitud_compra="solicitud"></tabla-datos-solicitud>
     </span>

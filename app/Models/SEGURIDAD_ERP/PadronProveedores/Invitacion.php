@@ -6,13 +6,17 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\SolicitudCompra;
+use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
-use App\Models\IGH\Usuario;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\SolicitudCompra;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\ContratoProyectado;
+use App\Http\Transformers\CADECO\ContratoTransformer;
+use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
+use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 
 class Invitacion extends Model
 {
@@ -60,6 +64,12 @@ class Invitacion extends Model
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
         return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+    }
+
+    public function contratoProyectado(){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(ContratoProyectado::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
     }
 
     public function cotizacionGenerada()
@@ -192,10 +202,18 @@ class Invitacion extends Model
     {
         $transacciones = [];
         $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->orderBy('id_transaccion_antecedente','desc')->get();
+        
         foreach ($solicitudes as $key =>  $solicitud) {
+            $observaciones = '';
+            if($solicitud->tipo_transaccion_antecedente == 17){
+                $observaciones = $solicitud->transaccionAntecedente->observaciones;
+            }else{
+                $observaciones = $solicitud->transaccionAntecedente->referencia;
+            }
             $transacciones[$key]['id'] = $solicitud->id;
             $transacciones[$key]['numero_folio_format'] = $solicitud->transaccionAntecedente->numero_folio_format;
-            $transacciones[$key]['observaciones'] = $solicitud->transaccionAntecedente->observaciones;
+            $transacciones[$key]['tipo_transaccion'] = $solicitud->tipo_transaccion_antecedente;
+            $transacciones[$key]['observaciones'] = $observaciones;
         }
         return $transacciones;
     }
@@ -229,8 +247,30 @@ class Invitacion extends Model
                 'sucursal' => $this->descripcion_sucursal,
                 'partidas' => $this->partidasSolicitud()
             ];
+        }else if($this->tipo_transaccion_antecedente == 49){
+            $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
+            $contratosTransformer = new ContratoTransformer; 
+            $transaccionRelacionTransformer = new TransaccionRelacionTransformer;
+
+            $resp = $contratoProyectadoTransformer->transform($this->contratoProyectado);
+            $transaccion = $contratoProyectadoTransformer->includeTransaccion($this->contratoProyectado);
+
+            $conceptos = [];
+            foreach($this->contratoProyectado->conceptos as $key => $concepto){
+                $conceptos[$key] = $contratosTransformer->transform($concepto);
+            }
+
+            $resp['id_invitacion'] = $this->getKey();
+            $resp['razon_social'] = $this->razon_social;
+            $resp['rfc'] = $this->rfc;
+            $resp['base_datos'] = $this->base_datos;
+            $resp['nombre_usuario_invitado'] = $this->usuarioInvitado->nombre_completo_sin_espacios;
+            $resp['sucursal'] = $this->descripcion_sucursal;
+            $resp['transaccion'] = $transaccion;
+            $resp['conceptos']['data'] = $conceptos;
+            return $resp;
         }
-        // colocar el array para contrato proyectado
+
     }
 
     public function partidasSolicitud()

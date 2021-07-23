@@ -24,6 +24,7 @@
                                     </div>
                                 </div>
                                 <DatosSolicitud :solicitud="solicitud"></DatosSolicitud>
+                                <DatosContratoProyectado :contrato_proyectado="solicitud"></DatosContratoProyectado>
                             </div>
 
                              <div class="modal-footer">
@@ -46,10 +47,11 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     import DatosSolicitud from './partials/DatosSolicitud';
+    import DatosContratoProyectado from '../presupuesto/partials/DatosContratoProyectado.vue';
     export default {
         name: "cotizacion-proveedor-seleccionar-solicitud",
         components: {
-            DatosSolicitud, ModelListSelect},
+            DatosSolicitud, ModelListSelect,DatosContratoProyectado},
         data() {
             return {
                 cargando: false,
@@ -99,7 +101,12 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$router.push({name: 'cotizacion-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
+                        if(this.solicitud.tipo_transaccion == 17){
+                            this.$router.push({name: 'cotizacion-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
+                        }else if(this.solicitud.tipo_transaccion == 49){
+                            this.$router.push({name: 'presupuesto-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
+                        }
+                        
                     }
                 });
             },
