@@ -555,7 +555,7 @@ export const routes = [
                                 props: true,
                                 meta: {
                                     title: 'Registrar Invitación a Cotizar',
-                                    breadcrumb: { parent: 'invitacion-compra', name: 'REGISTRAR'},
+                                    breadcrumb: { parent: 'invitacion-compra-selecciona-solicitud', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_invitacion_cotizar_compra'
                                 }
@@ -591,13 +591,13 @@ export const routes = [
                             {
                                 path: ':id',
                                 name: 'invitacion-compra-show',
-                                component: require('./components/compras/solicitud-compra/Show').default,
+                                component: require('./components/compras/invitacion/Show').default,
                                 props: true,
                                 meta: {
-                                    title: 'Consultar Invitación de Compra',
-                                    breadcrumb: { parent: 'solicitud-compra', name: 'VER'},
+                                    title: 'Consultar Invitación a Cotizar',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'VER'},
                                     middleware: [auth, context, permission],
-                                    permission: 'registrar_invitacion_cotizar_compra'
+                                    permission: 'consultar_invitacion_cotizar_compra'
                                 }
                             },
                             {

@@ -46,8 +46,12 @@ class Invitacion extends Model
         'usuario_invito',
         'usuario_invitado',
         'estado',
-        'enviada'
+        'enviada',
+        'cuerpo_correo'
     ];
+
+    protected $dates = ["fecha_cierre_invitacion"];
+    protected $dateFormat = 'M d Y h:i:s A';
     /*
      * Relaciones*/
 
@@ -82,6 +86,20 @@ class Invitacion extends Model
         return $this->belongsTo(Usuario::class, "usuario_invitado", "idusuario");
     }
 
+    public function empresa()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(\App\Models\CADECO\Empresa::class, "id_proveedor_sao", "id_empresa")->withoutGlobalScopes();
+    }
+
+    public function sucursal()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(\App\Models\CADECO\Sucursal::class, "id_sucursal_sao", "id_sucursal")->withoutGlobalScopes();
+    }
+
     public function archivos()
     {
         return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id");
@@ -97,6 +115,18 @@ class Invitacion extends Model
     public function areaCompradora()
     {
         return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora','id');
+    }
+
+    public function cartaTerminos()
+    {
+        return $this->hasOne(InvitacionArchivo::class, "id_invitacion", "id")
+            ->where("id_tipo_archivo","=",43);
+    }
+
+    public function formatoCotizacion()
+    {
+        return $this->hasOne(InvitacionArchivo::class, "id_invitacion", "id")
+            ->where("id_tipo_archivo","=",44);
     }
 
     /*

@@ -15,10 +15,9 @@
             <div class="card-body">
                 <div class="row" v-if="solicitud">
                     <div class="col-md-12">
-                        <tabla-datos-solicitud-compra v-bind:solicitud_compra="solicitud"></tabla-datos-solicitud-compra>
+                        <encabezado-solicitud-compra v-bind:solicitud_compra="solicitud"></encabezado-solicitud-compra>
                     </div>
                 </div>
-                <hr>
                 <div class="form-group row" v-if="solicitud">
                     <div class="col-md-12">
                         <!--<div class="form-check form-check-inline">
@@ -265,9 +264,10 @@ import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSo
 import {ModelListSelect} from 'vue-search-select';
 import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
+import EncabezadoSolicitudCompra from "../solicitud-compra/partials/Encabezado";
 export default {
     name: "CreateInvitacionCompra.vue",
-    components: {Datepicker,es,TablaDatosSolicitudCompra, ModelListSelect},
+    components: {EncabezadoSolicitudCompra, Datepicker,es,TablaDatosSolicitudCompra, ModelListSelect},
     props: ['id_solicitud'],
     data(){
         return {

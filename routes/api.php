@@ -414,6 +414,10 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'archivo-invitacion'], function ($api){
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/documento/descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@descargar')->where(['id' => '[0-9]+']);
+        });
         $api->group(['prefix' => 'ctg-area'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgAreaController@index');
         });

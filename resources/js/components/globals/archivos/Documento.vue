@@ -1,7 +1,11 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver">
+        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver" v-if="!texto">
             <i class="fa fa-file-pdf-o"></i>
+        </button>
+
+        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver" v-else>
+            <i class="fa fa-file-pdf-o"></i>{{texto}}
         </button>
 
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
@@ -26,7 +30,7 @@
 
 <script>
     export default {
-        props: ['id', 'url', 'descripcion'],
+        props: ['id', 'url', 'descripcion','texto'],
         methods: {
             init() {
                 this.pdf()
