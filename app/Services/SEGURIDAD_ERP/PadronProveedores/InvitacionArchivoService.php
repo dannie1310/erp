@@ -70,7 +70,6 @@ class InvitacionArchivoService
 
         //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
 
-
         $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
         $data_registro["id_invitacion"] = $data["id_invitacion"];
         $data_registro["tamanio_kb"] = filesize($paths["dir_tempo"].$files[0])/1024;
@@ -129,22 +128,6 @@ class InvitacionArchivoService
         } else {
             return response()->json(["mensaje"=>"No existe el archivo para la descarga".$archivo->uuid]);
         }
-
-        /*$dir_xml = "uploads/contabilidad/XML_SAT/";
-        $dir_descarga = "downloads/fiscal/descarga/".date("Ymdhis")."/";
-        if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
-            mkdir($dir_descarga, 777, true);
-        }
-        try{
-            copy($dir_xml.$archivo->uuid.".xml", $dir_descarga.$archivo->uuid.".xml");
-        }catch (\Exception $e){
-        }
-
-        if(file_exists(public_path($dir_descarga.$uuid->uuid.".xml"))){
-            return response()->download(public_path($dir_descarga.$uuid->uuid.".xml"));
-        } else {
-            return response()->json(["mensaje"=>"No existe el archivo para la descarga".$archivo->uuid]);
-        }*/
     }
 
 }

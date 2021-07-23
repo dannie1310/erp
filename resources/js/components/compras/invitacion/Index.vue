@@ -30,11 +30,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass:"t", sortable: false },
-                    { title: 'Folio Invitación', field: 'numero_folio', tdClass: 'td_c80', thComp: require('../../globals/th-Filter').default, sortable: true },
-                    { title: 'Fecha Invitación', field: 'fecha', tdClass: 'td_c80', thComp: require('../../globals/th-Date').default, sortable: true },
-                    { title: 'Folio Solicitud', field: 'numero_folio_solicitud', tdClass: 'td_c100', sortable: true },
-                    { title: 'Fecha Solicitud', field: 'fecha_solicitud', tdClass: 'td_c100', sortable: true },
-                    { title: 'Proveedor Invitado', field: 'usuario_invitado', sortable: true },
+                    { title: 'Folio de Invitación', field: 'id', tdClass: 'td_c80', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Fecha de Invitación', field: 'fecha_hora_invitacion', tdClass: 'td_c80', thComp: require('../../globals/th-Date').default, sortable: true },
+                    { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c90', sortable: true, thComp: require('../../globals/th-Date').default },
+                    { title: 'Folio de Solicitud', field: 'numero_folio_solicitud', tdClass: 'td_c100' },
+                    { title: 'Fecha de Solicitud', field: 'fecha_solicitud', tdClass: 'td_c100' },
+                    { title: 'Proveedor Invitado', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default, },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
 
@@ -94,11 +95,12 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        usuario_invitado:invitacion.nombre_usuario_invitado,
-                        numero_folio: invitacion.numero_folio_format,
+                        razon_social:invitacion.nombre_usuario_invitado,
+                        id: invitacion.numero_folio_format,
                         numero_folio_solicitud: invitacion.transaccion.numero_folio_format,
-                        fecha: invitacion.fecha_hora_format,
+                        fecha_hora_invitacion: invitacion.fecha_hora_format,
                         fecha_solicitud: invitacion.transaccion.fecha_format,
+                        fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         usuario_invito: invitacion.nombre_usuario_invito,
                         buttons: $.extend({}, {
                             id: invitacion.id,

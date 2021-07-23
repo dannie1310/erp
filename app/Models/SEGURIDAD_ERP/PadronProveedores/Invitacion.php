@@ -50,8 +50,8 @@ class Invitacion extends Model
         'cuerpo_correo'
     ];
 
-    protected $dates = ["fecha_cierre_invitacion"];
-    protected $dateFormat = 'M d Y h:i:s A';
+    //protected $dates = ["fecha_cierre_invitacion"];
+    //protected $dateFormat = 'M d Y h:i:s A';
     /*
      * Relaciones*/
 

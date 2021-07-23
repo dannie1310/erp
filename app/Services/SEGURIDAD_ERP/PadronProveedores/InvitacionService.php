@@ -50,6 +50,42 @@ class InvitacionService
 
     public function paginate($data)
     {
+        if(isset($data['id']))
+        {
+            $this->repository->where([['id','=', request( 'id' ) ]]);
+        }
+
+        if(isset($data['fecha_hora_invitacion']))
+        {
+            $this->repository->whereBetween( ['fecha_hora_invitacion', [ request( 'fecha_hora_invitacion' )." 00:00:00",request( 'fecha_hora_invitacion' )." 23:59:59"]] );
+        }
+
+        if(isset($data['fecha_cierre_invitacion']))
+        {
+            $this->repository->whereBetween( ['fecha_cierre_invitacion', [ request( 'fecha_cierre_invitacion' )." 00:00:00",request( 'fecha_cierre_invitacion' )." 23:59:59"]] );
+        }
+
+        if(isset($data['razon_social']))
+        {
+            $this->repository->where([['razon_social','LIKE', '%' . request( 'razon_social' ). '%' ]]);
+        }
+
+        if(isset($data['id_referente']))
+        {
+            $fondos = $this->repository->findFondo(request('id_referente'));
+            $this->repository->whereIn(['id_referente',$fondos]);
+        }
+
+        if(isset($data['id_referente']))
+        {
+            $fondos = $this->repository->findFondo(request('id_referente'));
+            $this->repository->whereIn(['id_referente',$fondos]);
+        }
+
+        if(isset($data['referencia']))
+        {
+            $this->repository->where([['referencia','LIKE', '%' . request( 'referencia') . '%' ]]);
+        }
         return $this->repository->paginate($data);
     }
 
