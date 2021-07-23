@@ -104,8 +104,8 @@
                                                                 <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                             </div>
                                                         </td>
-                                                        <td style="text-align:right;">{{partida.cantidad_original_num}}</td>
-                                                        <td style="text-align:right;">{{partida.cantidad_original_num}}</td>
+                                                        <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
                                                         <td>
                                                             <input type="text"
                                                                    :disabled="enable[i] == false"
