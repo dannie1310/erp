@@ -6,8 +6,11 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Facades\Context;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -25,6 +28,8 @@ class Invitacion extends Model
         'id_proveedor_sao',
         'id_sucursal_sao',
         'id_transaccion_antecedente',
+        'id_area_compradora',
+        'id_area_subcontratante',
         'id_cotizacion_generada',
         'id_obra',
         'fecha_cierre_invitacion',
@@ -51,6 +56,13 @@ class Invitacion extends Model
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
         return $this->belongsTo(Transaccion::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+    }
+
+    public function solicitudAntecedente()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion");
     }
 
     public function cotizacionGenerada()
@@ -82,6 +94,11 @@ class Invitacion extends Model
         return $this->belongsTo(Obra::class, "id_obra", "id_obra");
     }
 
+    public function areaCompradora()
+    {
+        return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora','id');
+    }
+
     /*
      * Scope*/
 
@@ -104,6 +121,13 @@ class Invitacion extends Model
         {
             return $query->where("id","=","0");
         }
+    }
+
+    public function scopeAreasCompradorasPorUsuario($query)
+    {
+        return $query->whereHas('areaCompradora', function ($q1) {
+            return $q1->areasPorUsuario();
+        });
     }
 
     /*

@@ -7,10 +7,12 @@ use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
+use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -75,6 +77,14 @@ class InvitacionService
             'direccion_entrega'=>$data["direccion_entrega"],
             'ubicacion_entrega_plataforma_digital'=>$data["ubicacion_entrega_plataforma_digital"],
         ];
+
+        if($transaccion->tipo_transaccion == 17){
+            $solicitudService = new SolicitudCompraService(new SolicitudCompra());
+            $solicitud = $solicitudService->show($transaccion->id_transaccion);
+            if($solicitud->complemento){
+                $datos_registro["id_area_compradora"] = $solicitud->id_area_compradora;
+            }
+        }
 
         $sucursalServicio = new SucursalService(new Sucursal());
         $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);

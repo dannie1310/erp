@@ -42,7 +42,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'id',  order: 'desc', scope:['porObra']},
+                query: {include: [], sort: 'id',  order: 'desc', scope:['porObra','areasCompradorasPorUsuario']},
                 search: '',
                 cargando: false
             }
