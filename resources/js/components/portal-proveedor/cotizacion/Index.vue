@@ -116,7 +116,7 @@
                         fecha: invitacion.cotizacion.fecha_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
-                        importe: invitacion.cotizacion.monto,
+                        importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
                     }));
                 },
