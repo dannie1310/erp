@@ -4,6 +4,7 @@
 namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
@@ -92,6 +93,17 @@ class Invitacion extends Model
     public function scopeParaCotizacionContraro($query)
     {
         return $query->where("tipo_transaccion_antecedente","=",49);
+    }
+
+    public function scopePorObra($query)
+    {
+        if (Context::isEstablished()) {
+            return $query->where("base_datos","=", Context::getDatabase())
+                ->where("id_obra","=",Context::getIdObra());
+        } else
+        {
+            return $query->where("id","=","0");
+        }
     }
 
     /*

@@ -974,12 +974,12 @@ $api->version('v1', function ($api) {
         });
 
         $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {
-            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@paginate');
-            $api->post('/','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@store');
-            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
-            $api->delete('{id}','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@destroy')->where(['id' => '[0-9]+']);
-            $api->get('pdf/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
-            $api->get('abierto/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@abrir')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
+            $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@abrir')->where(['id' => '[0-9]+']);
         });
 
         // CATALOGOS
