@@ -93,8 +93,8 @@
                                                             <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                         </div>
                                                     </td>
-                                                    <td style="text-align:center;">{{partida.cantidad_original}}</td>
-                                                    <td style="text-align:center;">{{partida.cantidad_original}}</td>
+                                                    <td style="text-align:right;">{{partida.cantidad_original}}</td>
+                                                    <td style="text-align:right;">{{partida.cantidad_original}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
                                                                :disabled="partida.enable == false"
