@@ -29,9 +29,9 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: false},
                     { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
-                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Fecha', field: 'fecha', sortable: false },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },

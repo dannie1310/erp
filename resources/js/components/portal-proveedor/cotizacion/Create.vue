@@ -101,7 +101,7 @@
                                                                class="form-control"
                                                                :name="`precio[${i}]`"
                                                                data-vv-as="Precio"
-                                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                                                :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                v-model="partida.precio_cotizacion"
                                                                style="text-align: right"
