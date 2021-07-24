@@ -245,6 +245,21 @@ class InvitacionService
         return $usuario;
     }
 
+    public function getPorCotizar($data)
+    {
+        return $this->repository->getPorCotizar($data);
+    }
+
+    public function getSolicitud($id)
+    {
+        $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->show($id)->getSolicitud();
+    }
+
     public function generaCuerpoCorreo($cuerpo, Invitacion $invitacion)
     {
 

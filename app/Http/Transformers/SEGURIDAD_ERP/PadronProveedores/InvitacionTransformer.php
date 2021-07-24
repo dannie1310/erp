@@ -11,6 +11,7 @@ class InvitacionTransformer extends TransformerAbstract
 {
     protected $defaultIncludes = [
         'transaccion',
+        'cotizacion'
     ];
 
     protected $availableIncludes = [
@@ -26,21 +27,41 @@ class InvitacionTransformer extends TransformerAbstract
             'nombre_contacto' => $model->nombre_contacto,
             'numero_folio_format' => $model->numero_folio_format,
             'email' => $model->email,
-            'obra' => $model->obra->nombre,
+            'obra' => $model->nombre_obra,
             'observaciones' => $model->observaciones,
             'base_datos' => $model->base_datos,
-            'nombre_usuario_invito' => $model->usuarioInvito->nombre_completo,
+            'nombre_usuario_invito' => $model->nombre_usuario,
             'nombre_usuario_invitado' => ($model->usuarioInvitado->apaterno =="@")?$model->usuarioInvitado->nombre_completo_sin_espacios:$model->usuarioInvitado->nombre_completo,
             'fecha_hora_format' => $model->fecha_hora_format,
-            'fecha_cierre_format' => $model->fecha_cierre_invitacion_format
+            'fecha_cierre_format' => $model->fecha_cierre_invitacion_format,
+            'tipo_antecedente' => $model->tipo_transaccion_antecedente,
+            'importe_cotizacion' => $model->importe_cotizacion_format
         ];
     }
 
-    public function includeTransaccion(Invitacion $model) {
-        if ($item = $model->transaccionAntecedente) {
-            return $this->item($item, new TransaccionTransformer);
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeTransaccion(Invitacion $model)
+    {
+        if ($transaccion = $model->transaccionAntecedente)
+        {
+            return $this->item($transaccion, new TransaccionTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCotizacion(Invitacion $model)
+    {
+        if($cotizacion = $model->cotizacionGenerada)
+        {
+            return $this->item($cotizacion, new TransaccionTransformer);
+        }
+        return null;
+    }
 }

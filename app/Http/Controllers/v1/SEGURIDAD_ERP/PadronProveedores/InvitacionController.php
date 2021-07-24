@@ -22,12 +22,12 @@ class InvitacionController extends Controller
     protected $fractal;
 
     /**
-     * @var EmpresaService
+     * @var InvitacionService
      */
     protected $service;
 
     /**
-     * @var EmpresaTransformer
+     * @var InvitacionTransformer
      */
     protected $transformer;
 
@@ -41,6 +41,7 @@ class InvitacionController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context')->only("store");
+        $this->middleware('permisoGlobal:consultar_cotizacion_proveedor')->only(['getPorCotizar','getSolicitud']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -58,5 +59,15 @@ class InvitacionController extends Controller
         $obj->abierta = 1;
         $obj->save();
         return response()->json("Gracias por confirmar la recepción de la invitación", 200);
+    }
+
+    public function getPorCotizar(Request $request)
+    {
+        return $this->service->getPorCotizar($request->all());
+    }
+
+    public function getSolicitud(Request $request, $id)
+    {
+        return $this->service->getSolicitud($id);
     }
 }

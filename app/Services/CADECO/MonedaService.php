@@ -10,12 +10,12 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Moneda;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\MonedaRepository;
 
 class MonedaService
 {
     /**
-     * @var Repository
+     * @var MonedaRepository
      */
     protected $repository;
 
@@ -25,11 +25,16 @@ class MonedaService
      */
     public function __construct(Moneda $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new MonedaRepository($model);
     }
 
     public function index($data)
     {
         return $this->repository->all($data);
+    }
+
+    public function monedasBase($data)
+    {
+        return $this->repository->buscarPorBase($data['base']);
     }
 }

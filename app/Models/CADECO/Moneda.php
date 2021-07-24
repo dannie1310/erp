@@ -10,6 +10,8 @@ namespace App\Models\CADECO;
 
 use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Moneda extends Model
 {
@@ -23,6 +25,9 @@ class Moneda extends Model
         'abreviatura',
     ];
 
+    /**
+     * Relaciones
+     */
     public function cambio()
     {
         return $this->hasOne(Cambio::class, 'id_moneda', 'id_moneda')->orderByDesc('fecha');
@@ -33,11 +38,17 @@ class Moneda extends Model
         return $this->hasOne(TipoCambio::class, 'moneda', 'id_moneda')->orderByDesc('fecha');
     }
 
+    /**
+     * Scopes
+     */
     public function scopeMonedaExtranjera($query)
     {
         return $query->where('tipo', '=', 0);
     }
 
+    /**
+     * Atributos
+     */
     public function getTipoCambioAttribute()
     {
         return $this->cambio ? $this->cambio->cambio : $this->tipo == 1 ? 1: null;
@@ -51,5 +62,15 @@ class Moneda extends Model
             return TipoCambio::where('moneda', '=', $moneda)->orderBy('fecha', 'DESC')->first()->tipo_cambio;
         }
         return 1;
+    }
+
+    /**
+     * Métodos
+     */
+    public function buscarPorBase($base)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        return $this->get();
     }
 }
