@@ -39,6 +39,7 @@ class Invitacion extends Model
         'observaciones',
         'usuario_invito',
         'usuario_invitado',
+        'cuerpo_correo',
         'estado',
         'enviada'
     ];
