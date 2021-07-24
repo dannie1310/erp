@@ -16,6 +16,7 @@ use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
@@ -691,5 +692,20 @@ class SolicitudCompra extends Transaccion
 
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function getCuerpoCorreoInvitacion()
+    {
+        if($this->complemento){
+            $cuerpo_correo = CuerpoCorreo::where("id_tipo_antecedente", "=", $this->tipo_transaccion)
+                ->where("id_area_compradora","=",$this->complemento->id_area_compradora)
+            ->where("estado", "=",1)
+            ->first();
+        }else{
+            $cuerpo_correo = CuerpoCorreo::where("id_tipo_antecedente", "=", $this->tipo_transaccion)
+                ->where("estado", "=",1)
+                ->first();
+        }
+        return $cuerpo_correo->cuerpo;
     }
 }
