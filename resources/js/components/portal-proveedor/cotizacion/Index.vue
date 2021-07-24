@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app btn-info pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -116,7 +116,7 @@
                         fecha: invitacion.cotizacion.fecha_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
-                        importe: invitacion.cotizacion.monto,
+                        importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
                         buttons: $.extend({}, {
                             show: self.$root.can('consultar_cotizacion_proveedor') ? true : false,
