@@ -154,6 +154,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'moneda'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\MonedaController@index');
             $api->get('/monedasGlobales', 'App\Http\Controllers\v1\CADECO\MonedaController@monedasGlobales');
+            $api->post('/monedasBase', 'App\Http\Controllers\v1\CADECO\MonedaController@monedasBase');
         });
 
         // OBRA
@@ -445,6 +446,11 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@store');
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@paginate');
+        });
+        $api->group(['prefix' => 'invitacion'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@paginate');
+            $api->get('/getSolicitudes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPorCotizar');
+            $api->get('{id}/getSolicitud', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getSolicitud')->where(['id' => '[0-9]+']);
         });
     });
 
@@ -939,6 +945,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@destroy')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@cargaLayout');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@pdf')->where(['id' => '[0-9]+']);
+            $api->post('/portal-proveedor','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@storePortalProveedor');
         });
 
          // ORDEN DE COMPRA
@@ -975,6 +982,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCotizaciones')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {

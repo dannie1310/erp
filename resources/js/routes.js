@@ -3833,6 +3833,70 @@ export const routes = [
         }
     },
     {
+        path: '/portal-proveedor',
+        components:  {
+            default: require('./components/portal-proveedor/partials/Layout.vue').default,
+            menu: require('./components/portal-proveedor/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'proveedor',
+                component: require('./components/portal-proveedor/Index').default,
+                meta: {
+                    title: 'Portal de Proveedores',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'PORTAL DE PROVEEDORES'},
+                    permission: ['consultar_cotizacion_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'cotizacion',
+                component: require('./components/portal-proveedor/cotizacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'cotizacion-proveedor',
+                        component: require('./components/portal-proveedor/cotizacion/Index').default,
+                        meta: {
+                            title: 'Cotizaciones de Proveedor',
+                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'cotizacion-proveedor-seleccionar-solicitud',
+                        component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,
+                        meta: {
+                            title: 'Seleccionar Solicitud o Contrato',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_solicitud/create',
+                        name: 'cotizacion-proveedor-create',
+                        component: require('./components/portal-proveedor/cotizacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            }
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,

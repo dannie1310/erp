@@ -1,22 +1,12 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" />
@@ -39,18 +29,18 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'td_c80', sortable: true},
-                    { title: 'Solicitud', tdClass: 'td_c80', field: 'solicitud'},
-                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: false},
+                    { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
+                    { title: 'Fecha', field: 'fecha', sortable: false },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c100', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                   // { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope: 'areasCompradorasAsignadas', sort: 'numero_folio', order: 'DESC', include: ['solicitud', 'empresa', 'relaciones']},
+                query: {include: 'transaccion', scope: ['cotizacionRealizada','invitadoAutenticado'], sort: '', order: ''},
                 search: '',
                 cargando: false
             }
@@ -66,12 +56,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/cotizacion/paginate', {
+                return this.$store.dispatch('padronProveedores/invitacion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/cotizacion/SET_COTIZACIONES', data.data);
-                        this.$store.commit('compras/cotizacion/SET_META', data.meta);
+                        this.$store.commit('padronProveedores/invitacion/SET_INVITACIONES', data.data);
+                        this.$store.commit('padronProveedores/invitacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -80,7 +70,6 @@
             },
 
             getEstado(estado) {
-
                 let val = parseInt(estado);
                 switch (val) {
                     case 0:
@@ -100,45 +89,35 @@
                         }
                 }
             },
-            create1() {
-                this.$router.push({name: 'cotizacion-create'});
-            },
             create() {
-                this.$router.push({name: 'cotizacion-selecciona-solicitud-compra'});
+                this.$router.push({name: 'cotizacion-proveedor-seleccionar-solicitud'});
             },
         },
         computed: {
-            cotizaciones(){
-                return this.$store.getters['compras/cotizacion/cotizaciones'];
+            invitaciones(){
+                return this.$store.getters['padronProveedores/invitacion/invitaciones'];
             },
             meta(){
-                return this.$store.getters['compras/cotizacion/meta'];
+                return this.$store.getters['padronProveedores/invitacion/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            cotizaciones: {
-                handler(cotizaciones) {
+            invitaciones: {
+                handler(invitaciones) {
                     let self = this
                     self.$data.data = []
-                    self.$data.data = cotizaciones.map((cotizacion, i) => ({
+                    self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: cotizacion.folio_format,
-                        fecha: cotizacion.fecha_format,
-                        empresa: (cotizacion.empresa) ? cotizacion.empresa.razon_social : '----- Proveedor Desconocido -----',
-                        observaciones: cotizacion.observaciones,
-                        importe: cotizacion.importe,
-                        estado: this.getEstado(cotizacion.estado),
-                        solicitud: cotizacion.solicitud.numero_folio_format,
-                        buttons: $.extend({}, {
-                            show: true,
-                            id: cotizacion.id,
-                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
-                            edit: (cotizacion.asignada) ? false : true,
-                            transaccion: {id:cotizacion.id, tipo:18},
-                        })
+                        numero_folio: invitacion.cotizacion.numero_folio_format,
+                        solicitud: invitacion.transaccion.numero_folio_format,
+                        fecha: invitacion.cotizacion.fecha_format,
+                        empresa: invitacion.razon_social,
+                        observaciones: invitacion.cotizacion.observaciones,
+                        importe: invitacion.importe_cotizacion,
+                        estado: this.getEstado(invitacion.cotizacion.estado),
                     }));
                 },
                 deep: true

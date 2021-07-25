@@ -11,6 +11,7 @@ use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\EmpresaService;
@@ -95,7 +96,8 @@ class InvitacionService
         $transaccion = $transaccionService->show($data["id_transaccion"]);
         $fecha_cierre = New DateTime($data['fecha_cierre']);
         $fecha_cierre->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $datos["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
+        $data["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
+        $data["fecha_cierre_obj"] = $fecha_cierre;
 
         $datos_registro = [
             'base_datos'=>Context::getDatabase(),
@@ -176,6 +178,7 @@ class InvitacionService
         $usuario->asignaRol("proveedor");
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
+        $invitacion->cuerpo_correo = $this->generaCuerpoCorreo($data["cuerpo_correo"],$invitacion);
 
         $carta_terminos_condiciones['archivo_nombre'] = $data["nombre_archivo_carta_terminos_condiciones"];
         $carta_terminos_condiciones['archivo'] = $data["archivo_carta_terminos_condiciones"];
@@ -286,5 +289,35 @@ class InvitacionService
             event(new RegistroUsuarioProveedor($usuario, $clave));
         }
         return $usuario;
+    }
+
+    public function getPorCotizar($data)
+    {
+        return $this->repository->getPorCotizar($data);
+    }
+
+    public function getSolicitud($id)
+    {
+        $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->show($id)->getSolicitud();
+    }
+
+    public function generaCuerpoCorreo($cuerpo, Invitacion $invitacion)
+    {
+
+        $cuerpo = str_replace("[%contacto%]",$invitacion->nombre_contacto,$cuerpo);
+        $cuerpo = str_replace("[%fecha_cierre%]",$invitacion->fecha_cierre_format,$cuerpo);
+        $cuerpo = str_replace("[%razon_social%]",$invitacion->obra->facturar,$cuerpo);
+        $cuerpo = str_replace("[%rfc%]",$invitacion->obra->rfc,$cuerpo);
+        $cuerpo = str_replace("[%proyecto%]",$invitacion->obra->descripcion,$cuerpo);
+        $cuerpo = str_replace("[%descripcion%]",$invitacion->transaccionAntecedente->observaciones,$cuerpo);
+        $cuerpo = str_replace("[%direccion_entrega%]",$invitacion->direccion_entrega,$cuerpo);
+        $cuerpo = str_replace("[%enlace_ubicacion%]",$invitacion->ubicacion_entrega_plataforma_digital,$cuerpo);
+        $cuerpo = str_replace("[%email_comprador%]",$invitacion->usuarioInvito->correo,$cuerpo);
+        return $cuerpo;
     }
 }

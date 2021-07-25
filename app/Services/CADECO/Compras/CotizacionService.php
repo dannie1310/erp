@@ -5,6 +5,7 @@ namespace App\Services\CADECO\Compras;
 
 use App\Imports\CotizacionImport;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Cotizacion\Repository;
 use App\Utils\ValidacionSistema;
@@ -162,5 +163,15 @@ class CotizacionService
     {
         $pdf = new CotizacionTablaComparativaFormato($this->repository->show($id));
         return $pdf;
+    }
+
+    public function storePortalProveedor($data)
+    {
+        $invitacion = Invitacion::where('id', $data['id_invitacion'])->where('fecha_cierre_invitacion', '>=',date('Y-m-d'))->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->registrar($data, $invitacion);
     }
 }

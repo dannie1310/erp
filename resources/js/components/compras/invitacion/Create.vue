@@ -202,7 +202,15 @@
                         </div>
                     </div>
                 </div>
-                 <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && id_sucursal>0">
+                    <div class="col-md-12">
+                        <ckeditor v-model="cuerpo_correo" ></ckeditor>
+
+
+                    </div>
+                </div>
+                <br>
+                <div class="row" v-if="solicitud && id_sucursal>0">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones:</label>
@@ -264,6 +272,7 @@ import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSo
 import {ModelListSelect} from 'vue-search-select';
 import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
+
 import EncabezadoSolicitudCompra from "../solicitud-compra/partials/Encabezado";
 export default {
     name: "CreateInvitacionCompra.vue",
@@ -291,6 +300,7 @@ export default {
             nombre_archivo_carta_terminos_condiciones:'',
             archivo_formato_cotizacion:'',
             nombre_archivo_formato_cotizacion:'',
+            cuerpo_correo:''
         }
     },
     mounted() {
@@ -327,13 +337,26 @@ export default {
             return this.$store.dispatch('cadeco/empresa/index', {
                 params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:1,3', include: 'sucursales' }
             })
-                .then(data => {
-                    this.proveedores = data.data;
-                })
-                .finally(()=>{
-                    this.cargando = false;
-                })
+            .then(data => {
+                this.proveedores = data.data;
+            })
+            .finally(()=>{
+                this.getCuerpoCorreo();
+            })
         },
+        getCuerpoCorreo(){
+            this.cargando = true;
+            return this.$store.dispatch('compras/solicitud-compra/getCuerpoCorreo', {
+                id:this.solicitud.id
+            })
+            .then(data => {
+                this.cuerpo_correo = data;
+            })
+            .finally(()=>{
+                this.cargando = false;
+            })
+        },
+
         razonSocialRFC (item)
         {
             return `[${item.razon_social}] - [ ${item.rfc} ]`;
@@ -392,6 +415,7 @@ export default {
                     _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
                     _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
                     _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
+                    _self.post.cuerpo_correo = _self.cuerpo_correo;
 
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
