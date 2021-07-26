@@ -5,6 +5,7 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
@@ -68,6 +69,13 @@ class Invitacion extends Model
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
         return $this->belongsTo(Transaccion::class, "id_cotizacion_generada", "id_transaccion")->withoutGlobalScopes();
+    }
+
+    public function cotizacionCompra()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(CotizacionCompra::class, "id_cotizacion_generada", "id_transaccion")->withoutGlobalScopes();
     }
 
     public function usuarioInvito()
@@ -179,6 +187,16 @@ class Invitacion extends Model
     {
         try{
             return $this->sucursal->descripcion;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getDireccionSucursalAttribute()
+    {
+        try{
+            return $this->sucursal->direccion;
         }catch (\Exception $e)
         {
             return null;

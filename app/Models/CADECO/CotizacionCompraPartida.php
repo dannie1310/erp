@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Moneda;
 use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
@@ -55,8 +56,11 @@ class CotizacionCompraPartida extends Model
     }
 
     public function getItemSolicitudAttribute(){
-        $item = Item::where('id_transaccion', '=', $this->cotizacion->id_antecedente)->where('id_material', '=', $this->id_material)->first();
-        return $item->id_item;
+        if(!is_null(Context::getIdObra())) {
+            $item = Item::where('id_transaccion', '=', $this->cotizacion->id_antecedente)->where('id_material', '=', $this->id_material)->first();
+            return $item->id_item;
+        }
+        return null;
     }
 
     public function getPrecioUnitarioFormatAttribute()
@@ -139,5 +143,41 @@ class CotizacionCompraPartida extends Model
     public function getTipoCambioAttribute()
     {
         return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
+    }
+
+    public function getDescripcionMaterialAttribute()
+    {
+        try{
+            return $this->material->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getNumeroParteMaterialAttribute()
+    {
+        try{
+            return $this->material->numero_parte;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getUnidadMaterialAttribute()
+    {
+        try{
+            return $this->material->unidad;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getMonedaNombreAttribute()
+    {
+        try{
+            return $this->moneda->nombre;
+        }catch (\Exception $e){
+            return null;
+        }
     }
 }

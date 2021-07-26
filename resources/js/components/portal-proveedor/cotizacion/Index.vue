@@ -40,7 +40,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: 'transaccion', scope: ['cotizacionRealizada','invitadoAutenticado'], sort: '', order: ''},
+                query: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado'], sort: '', order: ''},
                 search: '',
                 cargando: false
             }
