@@ -2,18 +2,19 @@
 
 namespace App\Models\CADECO;
 
-use App\CSV\PresupuestoLayout;
-use App\Facades\Context;
-use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
-use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
-use App\Models\CADECO\Subcontratos\AsignacionContratista;
-use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
-use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
-use App\Models\IGH\Usuario;
 use DateTime;
 use DateTimeZone;
+use App\Facades\Context;
+use App\Models\IGH\Usuario;
+use App\CSV\PresupuestoLayout;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Config;
+use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
+use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
+use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
 class PresupuestoContratista extends Transaccion
 {
@@ -810,5 +811,98 @@ class PresupuestoContratista extends Transaccion
             $i++;
         }
         return $salida;
+    }
+
+    public function registrarPortalProveedor($data, $invitacion){
+        try
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+            DB::connection('cadeco')->beginTransaction();
+            $contrato = ContratoProyectado::find($invitacion->id_transaccion_antecedente);
+            $fecha = new DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if(!$data['pendiente'])
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $data['id_contrato'],
+                    'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_obra' => $invitacion->id_obra,
+                    'id_sucursal' => $invitacion->id_sucursal_sao,
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => $data['id_sucursal'],
+                    'monto' => $data['total'],
+                    'impuesto' => $data['impuesto'],
+                    'anticipo' => $data['anticipo'],
+                    'observaciones' => $data['observacion'],
+                    'PorcentajeDescuento' => $data['descuento_cot'],
+                    'TcUSD' => $data['tc_usd'],
+                    'TcEuro' => $data['tc_eur'],
+                    'TcLibra' => $data['tc_libra'],
+                    'DiasCredito' => $data['credito'],
+                    'DiasVigencia' => $data['vigencia']
+                ]);
+
+                foreach($data['partidas'] as $t => $partida)
+                {
+                    $precio_conversion = ($data['enable'][$t]) ? $presupuesto->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null;
+                    if($precio_conversion){
+                        $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$t]/100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => $precio_descuento,
+                        'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
+                        'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
+                        'IdMoneda' => $data['moneda'][$t],
+                        'Observaciones' => ($data['enable'][$t] && array_key_exists($t,$data['observaciones'] )) ? $data['observaciones'][$t] : ''
+                    ]);
+                }
+            }else
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $data['id_contrato'],
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $data['id_proveedor'],
+                    'id_sucursal' => $data['id_sucursal'],
+                    'monto' => 0,
+                    'impuesto' => 0,
+                    'anticipo' => 0,
+                    'observaciones' => $data['observacion'],
+                    'PorcentajeDescuento' => null,
+                    'TcUSD' => null,
+                    'TcEuro' => null,
+                    'TcLibra' => null,
+                    'DiasCredito' => null,
+                    'DiasVigencia' => null,
+                    'estado' => 0
+                ]);
+
+                $t = 0;
+                foreach($data['partidas'] as $partida)
+                {
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => 0,
+                        'no_cotizado' => 1,
+                        'PorcentajeDescuento' => null,
+                        'IdMoneda' => null,
+                        'Observaciones' => null
+                    ]);
+                    $t ++;
+                }
+            }
+            DB::connection('cadeco')->commit();
+                return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
     }
 }

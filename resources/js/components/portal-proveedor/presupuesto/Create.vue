@@ -475,7 +475,7 @@
             },
             salir()
             {
-                //  this.$router.push({name: 'presupuesto-selecciona-contrato-proyectado'});
+                 this.$router.push({name: 'cotizacion-proveedor'});
 
             },
             calcular()
@@ -571,6 +571,7 @@
                             this.post.tc_eur = this.euro;
                             this.post.tc_usd = this.dolar;
                             this.post.tc_libra = this.libra;
+                            this.post.id_invitacion = this.id_solicitud;
                             this.store()
                         
                     }
@@ -584,10 +585,10 @@
                 }
                 else
                 {   
-                    // return this.$store.dispatch('contratos/presupuesto/store', this.post)
-                    // .then((data) => {
-                    //     this.$router.push({name: 'presupuesto'});
-                    // });
+                    return this.$store.dispatch('contratos/presupuesto/registrarPresupuestoProveedor', this.post)
+                    .then((data) => {
+                        this.$router.push({name: 'cotizacion-proveedor'});
+                    });
                 }
             },
         },
