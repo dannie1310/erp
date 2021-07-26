@@ -23,11 +23,9 @@
                                     <datos-cotizacion-compra v-bind:cotizacion_compra="invitacion.cotizacionCompra"></datos-cotizacion-compra>
                                 </div>
                             </div>
-                            <label>{{invitacion}}</label>
-                            <!--
                             <div class="row" v-if="invitacion">
                                 <div class="col-md-12">
-                                    <div>
+                                    <div v-if="invitacion.cotizacionCompra">
                                         <div class="table-responsive col-md-12">
                                             <table class="table">
                                                 <tbody>
@@ -77,8 +75,8 @@
                                                     </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr v-for="(partida, i) in invitacion.cotizacionCompra.partidas.data" v-show="no_cotizados[i]">
-                                                            <td >{{cuenta[i] + 1}}</td>
+                                                        <tr v-for="(partida, i) in invitacion.cotizacionCompra.partidas.data" v-if="partida.no_cotizado">
+                                                            <td >{{i + 1}}</td>
                                                             <td style="text-align: center"><b>{{(partida.material) ? partida.material.numero_parte : null}}</b></td>
                                                             <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
                                                             <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '-----'}}</td>
@@ -116,13 +114,13 @@
                                             <div class="col-md-2"><b>Anticipo:</b></div>
                                             <div class="col-md-2">{{invitacion.cotizacionCompra.complemento.anticipo_format}}</div>
                                         </div>
-                                        <div class="row col-md-12" v-if="cotizacion.complemento">
+                                        <div class="row col-md-12" v-if="invitacion.cotizacionCompra.complemento">
                                             <div class="col-md-2"><b>Crédito (días):</b></div>
                                             <div class="col-md-2">{{invitacion.cotizacionCompra.complemento.dias_credito}}</div>
                                             <div class="col-md-2"><b>Tiempo de Entrega (días):</b></div>
                                             <div class="col-md-2">{{invitacion.cotizacionCompra.complemento.entrega}}</div>
                                         </div>
-                                        <div class="row col-md-12" v-if="cotizacion.complemento">
+                                        <div class="row col-md-12" v-if="invitacion.cotizacionCompra.complemento">
                                             <div class="col-md-2"><b>Vigencia( días):</b></div>
                                             <div class="col-md-2">{{invitacion.cotizacionCompra.complemento.vigencia}}</div>
                                         </div>
@@ -133,7 +131,6 @@
                                     </div>
                                 </div>
                             </div>
-                            -->
                         </div>
                     </div>
                 </div>
