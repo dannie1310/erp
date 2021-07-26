@@ -31,6 +31,7 @@ class PresupuestoContratista extends Transaccion
         'id_antecedente',
         'id_empresa',
         'id_sucursal',
+        'id_obra',
         'fecha',
         'monto',
         'impuesto',
@@ -819,19 +820,17 @@ class PresupuestoContratista extends Transaccion
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
-            $contrato = ContratoProyectado::find($invitacion->id_transaccion_antecedente);
+            $contrato = ContratoProyectado::withoutGlobalScopes()->find($invitacion->id_transaccion_antecedente);
             $fecha = new DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
             {
                 $presupuesto = $this->create([
-                    'id_antecedente' => $data['id_contrato'],
+                    'id_antecedente' => $invitacion->id_transaccion_antecedente,
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'fecha' => $fecha->format("Y-m-d"),
-                    'id_empresa' => $data['id_proveedor'],
-                    'id_sucursal' => $data['id_sucursal'],
                     'monto' => $data['total'],
                     'impuesto' => $data['impuesto'],
                     'anticipo' => $data['anticipo'],
@@ -868,8 +867,9 @@ class PresupuestoContratista extends Transaccion
                 $presupuesto = $this->create([
                     'id_antecedente' => $data['id_contrato'],
                     'fecha' => $fecha->format("Y-m-d"),
-                    'id_empresa' => $data['id_proveedor'],
-                    'id_sucursal' => $data['id_sucursal'],
+                    'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_obra' => $invitacion->id_obra,
+                    'id_sucursal' => $invitacion->id_sucursal_sao,
                     'monto' => 0,
                     'impuesto' => 0,
                     'anticipo' => 0,
@@ -898,8 +898,12 @@ class PresupuestoContratista extends Transaccion
                     $t ++;
                 }
             }
+            $invitacion->update([
+                'id_cotizacion_generada' => $presupuesto->id_transaccion
+            ]);
+
             DB::connection('cadeco')->commit();
-                return $this;
+            return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
