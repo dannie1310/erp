@@ -39,6 +39,7 @@ class InvitacionTransformer extends TransformerAbstract
             'numero_folio_format' => $model->numero_folio_format,
             'email' => $model->email,
             'obra' => $model->nombre_obra,
+            'descripcion_obra' => $model->descripcion_obra,
             'observaciones' => $model->observaciones,
             'ubicacion_entrega_plataforma_digital' => $model->ubicacion_entrega_plataforma_digital,
             'direccion_entrega' => $model->direccion_entrega,

@@ -33,6 +33,8 @@ class Invitacion extends Model
         'id_area_subcontratante',
         'id_cotizacion_generada',
         'id_obra',
+        'nombre_obra',
+        'descripcion_obra',
         'fecha_cierre_invitacion',
         'direccion_entrega',
         'ubicacion_entrega_plataforma_digital',
@@ -70,7 +72,7 @@ class Invitacion extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion");
+        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
     }
 
     public function solicitud()
@@ -140,8 +142,6 @@ class Invitacion extends Model
             ->where("id_tipo_archivo","=",44);
     }
 
-    /*
-     * Scope*/
     /**
      * Scopes
      */
@@ -182,9 +182,6 @@ class Invitacion extends Model
         });
     }
 
-    /*
-     * Atributos*/
-
     public function scopeInvitadoAutenticado($query)
     {
         return $query->where('usuario_invitado',  auth()->id());
@@ -204,19 +201,10 @@ class Invitacion extends Model
         return date_format($date,"d/m/Y");
     }
 
-    public function getFechaCierreFormatAttribute()
+    public function getFechaCierreInvitacionFormatAttribute()
     {
         $date = date_create($this->fecha_cierre_invitacion);
         return date_format($date,"d/m/Y");
-    }
-
-    public function getNombreObraAttribute()
-    {
-        try{
-            return $this->obra->nombre;
-        }catch (\Exception $e){
-            return null;
-        }
     }
 
     public function getNombreUsuarioAttribute()

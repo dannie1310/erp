@@ -87,6 +87,11 @@ class InvitacionService
         {
             $this->repository->where([['referencia','LIKE', '%' . request( 'referencia') . '%' ]]);
         }
+
+        if(isset($data['descripcion_obra']))
+        {
+            $this->repository->where([['descripcion_obra','LIKE', '%' . request( 'descripcion_obra') . '%' ]]);
+        }
         return $this->repository->paginate($data);
     }
 

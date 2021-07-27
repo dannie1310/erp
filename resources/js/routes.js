@@ -3893,6 +3893,53 @@ export const routes = [
                         }
                     },
                 ]
+            },
+            {
+                path: 'invitacion-cotizar',
+                component: require('./components/portal-proveedor/invitacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'invitacion-proveedor',
+                        component: require('./components/portal-proveedor/invitacion/Index').default,
+                        meta: {
+                            title: 'Invitaciones a Cotizar',
+                            breadcrumb: {parent: 'proveedor', name: 'INVITACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_invitacion_cotizar_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'invitacion-proveedor-show',
+                        component: require('./components/portal-proveedor/invitacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Invitación a Cotizar',
+                            breadcrumb: { parent: 'invitacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_invitacion_cotizar_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/documentos',
+                        name: 'invitacion-proveedor-documentos',
+                        component: require('./components/globals/archivos/Files').default,
+                        props: route => ({
+                            id: route.params.id,
+                            permiso: ['registrar_solicitud_compra'],
+                        }),
+                        meta: {
+                            title: 'Documentos de Invitación a Cotizar',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_invitacion_cotizar_proveedor',
+                            general: true
+                        }
+                    },
+                ]
             }
         ]
     },
