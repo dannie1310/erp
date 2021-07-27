@@ -189,7 +189,7 @@ class Invitacion extends Model
     public function getImporteCotizacionFormatAttribute()
     {
         try{
-            return number_format($this->cotizacionGenerada->monto,2,'.',',');
+            return '$ '.number_format($this->cotizacionGenerada->monto,2,'.',',');
         }catch (\Exception $e)
         {
             return null;
