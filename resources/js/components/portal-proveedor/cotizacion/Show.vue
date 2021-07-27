@@ -167,19 +167,6 @@
                     this.cargando = false;
                 })
             }
-        },
-        watch: {
-            items()
-            {
-                this.x = 0;
-                this.t = 0;
-                while(this.x < this.items.length)
-                {
-                    this.no_cotizados[this.x] = this.items[this.x].no_cotizado;
-                    this.cuenta[this.x] = (this.no_cotizados[this.x]) ? this.t ++ : 0;
-                    this.x ++;
-                }
-            }
         }
     }
 </script>

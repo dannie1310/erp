@@ -27,10 +27,7 @@
                         {{cotizacion_compra.sucursal.descripcion}}
                     </td>
                     <td style="text-align: center">
-                        <router-link :to="{name: 'cotizacion-show', params:{id : cotizacion_compra.id }}" target="_blank">
-                            <span style="color:black; text-decoration: underline">{{cotizacion_compra.numero_folio_format}}</span>
-                        </router-link>
-
+                        <span style="color:black; text-decoration: underline">{{cotizacion_compra.numero_folio_format}}</span>
                     </td>
                     <td style="text-align: center">
                         {{cotizacion_compra.fecha_format}}

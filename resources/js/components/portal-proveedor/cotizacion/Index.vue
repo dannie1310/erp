@@ -121,6 +121,7 @@
                         buttons: $.extend({}, {
                             show: self.$root.can('consultar_cotizacion_proveedor') ? true : false,
                             id: invitacion.id,
+                            edit: self.$root.can('consultar_cotizacion_proveedor') ? true : false,
                         })
                     }));
                 },

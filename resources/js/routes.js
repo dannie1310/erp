@@ -3905,6 +3905,18 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/editar',
+                        name: 'cotizacion-proveedor-edit',
+                        props: true,
+                        component: require('./components/portal-proveedor/cotizacion/Edit').default,
+                        meta: {
+                            title: 'Editar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: ['editar_cotizacion_compra', 'cargar_layout_cotizacion_compra']
+                        }
+                    },
                 ]
             }
         ]
