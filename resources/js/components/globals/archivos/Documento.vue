@@ -1,10 +1,10 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver" v-if="!texto">
+        <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver" v-if="!texto">
             <i class="fa fa-file-pdf-o"></i>
         </button>
 
-        <button @click="init" type="button" class="btn btn-sm btn-outline-success" title="Ver" v-else>
+        <button @click="init" type="button" class="btn btn-sm btn-outline-primary" title="Ver" v-else>
             <i class="fa fa-file-pdf-o"></i>{{texto}}
         </button>
 

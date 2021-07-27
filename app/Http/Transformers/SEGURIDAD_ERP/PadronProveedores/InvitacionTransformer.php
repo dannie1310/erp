@@ -44,6 +44,7 @@ class InvitacionTransformer extends TransformerAbstract
             'ubicacion_entrega_plataforma_digital' => $model->ubicacion_entrega_plataforma_digital,
             'direccion_entrega' => $model->direccion_entrega,
             'base_datos' => $model->base_datos,
+            'id_obra' => $model->id_obra,
             'nombre_usuario_invito' => $model->nombre_usuario,
             'nombre_usuario_invitado' => ($model->usuarioInvitado->apaterno =="@")?$model->usuarioInvitado->nombre_completo_sin_espacios:$model->usuarioInvitado->nombre_completo,
             'fecha_hora_format' => $model->fecha_hora_format,

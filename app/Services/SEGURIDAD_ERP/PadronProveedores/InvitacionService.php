@@ -7,6 +7,7 @@ use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
@@ -104,12 +105,16 @@ class InvitacionService
         $data["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
         $data["fecha_cierre_obj"] = $fecha_cierre;
 
+        $obra = Obra::find(Context::getIdObra());
+
         $datos_registro = [
             'base_datos'=>Context::getDatabase(),
             'id_proveedor_sao'=>$data["id_proveedor"],
             'id_sucursal_sao'=>$data["id_sucursal"],
             'id_transaccion_antecedente'=>$data["id_transaccion"],
             'id_obra'=>Context::getIdObra(),
+            'nombre_obra'=>$obra->nombre,
+            'descripcion_obra'=>$obra->descripcion,
             'tipo_transaccion_antecedente'=>$transaccion->tipo_transaccion,
             'opcion_transaccion_antecedente'=>$transaccion->opciones,
             'fecha_cierre_invitacion'=>$data["fecha_cierre"],

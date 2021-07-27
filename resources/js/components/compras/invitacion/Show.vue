@@ -25,6 +25,7 @@
                     <div class="col-md-12">
                         <Documento v-bind:url="url" v-bind:id="invitacion.carta_terminos.id" v-bind:descripcion="invitacion.carta_terminos.tipo_archivo.descripcion" v-bind:texto="invitacion.carta_terminos.tipo_archivo.descripcion" ></Documento>
                         <DescargaDocumento v-if="invitacion.formato_cotizacion" v-bind:url="url_descarga" v-bind:id="invitacion.formato_cotizacion.id" v-bind:descripcion="invitacion.formato_cotizacion.tipo_archivo.descripcion" v-bind:texto="invitacion.formato_cotizacion.tipo_archivo.descripcion"></DescargaDocumento>
+                        <formato-solicitud-compra v-if="invitacion.solicitud_compra"  v-bind:id="invitacion.solicitud_compra.id" v-bind:db="invitacion.base_datos" v-bind:id_obra="invitacion.id_obra" v-bind:texto="'Solicitud de Compra'"></formato-solicitud-compra>
                     </div>
                 </div>
             </div>
@@ -38,9 +39,12 @@
     import InvitacionCompraTablaCompletaDatos from "./partials/TablaCompletaDatosInvitacion";
     import Documento from "../../globals/archivos/Documento";
     import DescargaDocumento from "../../globals/archivos/DescargaDocumento";
+    import FormatoSolicitudCompra from "../solicitud-compra/FormatoSolicitudCompra";
     export default {
         name: "InvitacionCompraShow",
-        components: {DescargaDocumento, Documento, InvitacionCompraTablaCompletaDatos, InvitacionCompraEncabezado},
+        components: {
+            FormatoSolicitudCompra,
+            DescargaDocumento, Documento, InvitacionCompraTablaCompletaDatos, InvitacionCompraEncabezado},
         props: ['id'],
         data(){
             return{

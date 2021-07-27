@@ -1,10 +1,10 @@
 <template>
     <span>
-        <button @click="descargar" type="button" class="btn btn-sm btn-outline-success" title="Descargar" v-if="!texto">
+        <button @click="descargar" type="button" class="btn btn-sm btn-outline-primary" title="Descargar" v-if="!texto">
             <i class="fa fa-file-download"></i>
         </button>
 
-        <button @click="descargar" type="button" class="btn btn-sm btn-outline-success" title="Descargar" v-else>
+        <button @click="descargar" type="button" class="btn btn-sm btn-outline-primary" title="Descargar" v-else>
             <i class="fa fa-download"></i>{{texto}}
         </button>
     </span>
