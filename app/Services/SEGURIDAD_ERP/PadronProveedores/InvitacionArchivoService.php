@@ -70,7 +70,6 @@ class InvitacionArchivoService
 
         //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
 
-
         $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
         $data_registro["id_invitacion"] = $data["id_invitacion"];
         $data_registro["tamanio_kb"] = filesize($paths["dir_tempo"].$files[0])/1024;
@@ -101,6 +100,34 @@ class InvitacionArchivoService
         $file = fopen($path.$nombre_archivo, 'r');
         Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1], $file );
         Files::eliminaDirectorio($path);
+    }
+
+    public function documento($id){
+        $archivo = $this->repository->show($id);
+        $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
+        return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
+    }
+
+    public function descargar($id)
+    {
+        $archivo =  $this->repository->show($id);
+        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->nombre.".".$archivo->extension);
+
+        $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
+        $descargaPath = "downloads/fiscal/descarga/".date("Ymdhis")."/";
+        if (!file_exists($descargaPath) && !is_dir($descargaPath)) {
+            mkdir($descargaPath, 777, true);
+        }
+        try{
+            copy($storagePath.$archivo->hashfile . '.' . $archivo->extension, $descargaPath.$archivo->nombre);
+        }catch (\Exception $e){
+        }
+
+        if(file_exists(public_path($descargaPath.$archivo->nombre))){
+            return response()->download(public_path($descargaPath.$archivo->nombre));
+        } else {
+            return response()->json(["mensaje"=>"No existe el archivo para la descarga".$archivo->uuid]);
+        }
     }
 
 }

@@ -7,11 +7,14 @@ use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
+use App\Models\CADECO\Obra;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
+use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -49,6 +52,47 @@ class InvitacionService
 
     public function paginate($data)
     {
+        if(isset($data['id']))
+        {
+            $this->repository->where([['id','=', request( 'id' ) ]]);
+        }
+
+        if(isset($data['fecha_hora_invitacion']))
+        {
+            $this->repository->whereBetween( ['fecha_hora_invitacion', [ request( 'fecha_hora_invitacion' )." 00:00:00",request( 'fecha_hora_invitacion' )." 23:59:59"]] );
+        }
+
+        if(isset($data['fecha_cierre_invitacion']))
+        {
+            $this->repository->whereBetween( ['fecha_cierre_invitacion', [ request( 'fecha_cierre_invitacion' )." 00:00:00",request( 'fecha_cierre_invitacion' )." 23:59:59"]] );
+        }
+
+        if(isset($data['razon_social']))
+        {
+            $this->repository->where([['razon_social','LIKE', '%' . request( 'razon_social' ). '%' ]]);
+        }
+
+        if(isset($data['id_referente']))
+        {
+            $fondos = $this->repository->findFondo(request('id_referente'));
+            $this->repository->whereIn(['id_referente',$fondos]);
+        }
+
+        if(isset($data['id_referente']))
+        {
+            $fondos = $this->repository->findFondo(request('id_referente'));
+            $this->repository->whereIn(['id_referente',$fondos]);
+        }
+
+        if(isset($data['referencia']))
+        {
+            $this->repository->where([['referencia','LIKE', '%' . request( 'referencia') . '%' ]]);
+        }
+
+        if(isset($data['descripcion_obra']))
+        {
+            $this->repository->where([['descripcion_obra','LIKE', '%' . request( 'descripcion_obra') . '%' ]]);
+        }
         return $this->repository->paginate($data);
     }
 
@@ -61,12 +105,16 @@ class InvitacionService
         $data["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
         $data["fecha_cierre_obj"] = $fecha_cierre;
 
+        $obra = Obra::find(Context::getIdObra());
+
         $datos_registro = [
             'base_datos'=>Context::getDatabase(),
             'id_proveedor_sao'=>$data["id_proveedor"],
             'id_sucursal_sao'=>$data["id_sucursal"],
             'id_transaccion_antecedente'=>$data["id_transaccion"],
             'id_obra'=>Context::getIdObra(),
+            'nombre_obra'=>$obra->nombre,
+            'descripcion_obra'=>$obra->descripcion,
             'tipo_transaccion_antecedente'=>$transaccion->tipo_transaccion,
             'opcion_transaccion_antecedente'=>$transaccion->opciones,
             'fecha_cierre_invitacion'=>$data["fecha_cierre"],
@@ -77,6 +125,14 @@ class InvitacionService
             'direccion_entrega'=>$data["direccion_entrega"],
             'ubicacion_entrega_plataforma_digital'=>$data["ubicacion_entrega_plataforma_digital"],
         ];
+
+        if($transaccion->tipo_transaccion == 17){
+            $solicitudService = new SolicitudCompraService(new SolicitudCompra());
+            $solicitud = $solicitudService->show($transaccion->id_transaccion);
+            if($solicitud->complemento){
+                $datos_registro["id_area_compradora"] = $solicitud->id_area_compradora;
+            }
+        }
 
         $sucursalServicio = new SucursalService(new Sucursal());
         $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);

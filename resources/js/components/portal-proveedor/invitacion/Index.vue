@@ -1,11 +1,6 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create_invitacion" v-if="$root.can('registrar_invitacion_cotizar_compra')" class="btn btn-app pull-right" >
-                <i class="fa fa-plus"></i> Registrar
-            </button>
-        </div>
-        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -21,10 +16,9 @@
     </div>
 </template>
 <script>
-    import Create from './Create';
     export default {
-        name: "IndexInvitacionCompra",
-        components: {Create},
+        name: "IndexInvitacionProveedor",
+        components: {},
         data() {
             return {
                 HeaderSettings: false,
@@ -35,7 +29,7 @@
                     { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c90', sortable: true, thComp: require('../../globals/th-Date').default },
                     { title: 'Folio de Solicitud', field: 'numero_folio_solicitud', tdClass: 'td_c100' },
                     { title: 'Fecha de Solicitud', field: 'fecha_solicitud', tdClass: 'td_c100' },
-                    { title: 'Proveedor Invitado', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default, },
+                    { title: 'Proyecto', field: 'descripcion_obra', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
 
@@ -43,7 +37,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'id',  order: 'desc', scope:['porObra','areasCompradorasPorUsuario']},
+                query: {include: [], sort: 'id',  order: 'desc', scope:['invitadoAutenticado']},
                 search: '',
                 cargando: false
             }
@@ -59,29 +53,25 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('compras/invitacion/paginate', {
+                return this.$store.dispatch('padronProveedores/invitacion/paginate', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('compras/invitacion/SET_INVITACIONES', data.data);
-                        this.$store.commit('compras/invitacion/SET_META', data.meta);
+                        this.$store.commit('padronProveedores/invitacion/SET_INVITACIONES', data.data);
+                        this.$store.commit('padronProveedores/invitacion/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
                     })
             },
-            create_invitacion() {
-                this.$router.push({name: 'invitacion-compra-selecciona-solicitud'});
-            },
-
         },
         computed: {
             invitaciones(){
-                return this.$store.getters['compras/invitacion/invitaciones'];
+                return this.$store.getters['padronProveedores/invitacion/invitaciones'];
             },
 
             meta(){
-                return this.$store.getters['compras/invitacion/meta'];
+                return this.$store.getters['padronProveedores/invitacion/meta'];
             },
 
             tbodyStyle() {
@@ -102,6 +92,7 @@
                         fecha_solicitud: invitacion.transaccion.fecha_format,
                         fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         usuario_invito: invitacion.nombre_usuario_invito,
+                        descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {
                             id: invitacion.id,
                             show: true,
