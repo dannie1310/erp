@@ -174,4 +174,14 @@ class CotizacionService
         }
         return $this->repository->registrar($data, $invitacion);
     }
+
+    public function updatePortalProveedor($data, $id)
+    {
+        $invitacion = Invitacion::where('id', $data['id_invitacion'])->where('fecha_cierre_invitacion', '>=',date('Y-m-d'))->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->editarPortalProveedor($id,$data, $invitacion);
+    }
 }

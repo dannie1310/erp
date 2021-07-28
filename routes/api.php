@@ -943,6 +943,7 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@cargaLayout');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@pdf')->where(['id' => '[0-9]+']);
             $api->post('/portal-proveedor','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@storePortalProveedor');
+            $api->patch('{id}/portal-proveedor', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@updatePortalProveedor')->where(['id' => '[0-9]+']);
         });
 
          // ORDEN DE COMPRA

@@ -119,9 +119,9 @@
                         importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
                         buttons: $.extend({}, {
-                            show: self.$root.can('consultar_cotizacion_proveedor') ? true : false,
+                            show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
                             id: invitacion.id,
-                            edit: self.$root.can('consultar_cotizacion_proveedor') ? true : false,
+                            edit: self.$root.can('editar_cotizacion_proveedor',true) ? true : false,
                         })
                     }));
                 },
