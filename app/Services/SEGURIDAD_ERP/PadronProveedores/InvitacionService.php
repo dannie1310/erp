@@ -123,7 +123,7 @@ class InvitacionService
             'observaciones'=>$data["observaciones"],
             'usuario_invito'=>auth()->id(),
             'direccion_entrega'=>$data["direccion_entrega"],
-            'ubicacion_entrega_plataforma_digital'=>$data["ubicacion_entrega_plataforma_digital"],
+            'ubicacion_entrega_plataforma_digital'=>$this->preparaURLUbicacion($data["ubicacion_entrega_plataforma_digital"]),
         ];
 
         if($transaccion->tipo_transaccion == 17){
@@ -134,13 +134,14 @@ class InvitacionService
             }
         }
 
-        $sucursalServicio = new SucursalService(new Sucursal());
-        $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
+
 
         $usuarioServicio = new UsuarioService(new Usuario());
 
         if($data["id_proveedor"]>0)
         {
+            $sucursalServicio = new SucursalService(new Sucursal());
+            $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
             $empresaService = new EmpresaService(new Empresa());
             $empresa = $empresaService->show($data["id_proveedor"]);
             if($empresa->emite_factura){
@@ -200,6 +201,7 @@ class InvitacionService
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
         $invitacion->cuerpo_correo = $this->generaCuerpoCorreo($data["cuerpo_correo"],$invitacion);
+        $invitacion->save();
 
         $carta_terminos_condiciones['archivo_nombre'] = $data["nombre_archivo_carta_terminos_condiciones"];
         $carta_terminos_condiciones['archivo'] = $data["archivo_carta_terminos_condiciones"];
@@ -331,7 +333,7 @@ class InvitacionService
     {
 
         $cuerpo = str_replace("[%contacto%]",$invitacion->nombre_contacto,$cuerpo);
-        $cuerpo = str_replace("[%fecha_cierre%]",$invitacion->fecha_cierre_format,$cuerpo);
+        $cuerpo = str_replace("[%fecha_cierre%]",$invitacion->fecha_cierre_invitacion_format,$cuerpo);
         $cuerpo = str_replace("[%razon_social%]",$invitacion->obra->facturar,$cuerpo);
         $cuerpo = str_replace("[%rfc%]",$invitacion->obra->rfc,$cuerpo);
         $cuerpo = str_replace("[%proyecto%]",$invitacion->obra->descripcion,$cuerpo);
@@ -340,5 +342,15 @@ class InvitacionService
         $cuerpo = str_replace("[%enlace_ubicacion%]",$invitacion->ubicacion_entrega_plataforma_digital,$cuerpo);
         $cuerpo = str_replace("[%email_comprador%]",$invitacion->usuarioInvito->correo,$cuerpo);
         return $cuerpo;
+    }
+
+    public function preparaURLUbicacion($url)
+    {
+        if(strpos($url,"iframe"))
+        {
+            return $url;
+        }else{
+            return $url;
+        }
     }
 }

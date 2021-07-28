@@ -20,12 +20,12 @@
                 </div>
                 <div class="form-group row" v-if="solicitud">
                     <div class="col-md-12">
-                        <!--<div class="form-check form-check-inline">
+                        <div class="form-check form-check-inline">
                             <label class="form-check-label" style="cursor:pointer" >
                                 <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="proveedor_en_catalogo" value="1" >
                             </label>
-                        </div>-->
-                        <i class="fa fa-check-square"></i>
+                        </div>
+                        <!--<i class="fa fa-check-square"></i>-->
                         <label>Enviar la invitación a un proveedor existente en el catálogo</label>
                     </div>
                 </div>
@@ -105,9 +105,9 @@
                                             class = "form-control"
                                             v-validate="{required: true}"
                                             :disabled-dates="fechasDeshabilitadas"
-                                            :class="{'is-invalid': errors.has('fecha')}"
+                                            :class="{'is-invalid': errors.has('fecha_cierre')}"
                                 />
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
+                                <div style="display:block" class="invalid-feedback" v-show="errors.has('fecha_cierre')">{{ errors.first('fecha_cierre') }}</div>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -156,7 +156,24 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                        <label for="fecha_cierre">Fecha de Cierre:</label>
+                            <datepicker v-model = "fecha_cierre"
+                                        name = "Fecha de Cierre"
+                                        id = "fecha_cierre"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :disabled-dates="fechasDeshabilitadas"
+                                        :class="{'is-invalid': errors.has('fecha_cierre')}"
+                            />
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('fecha_cierre')">{{ errors.first('fecha_cierre') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="form-group">
                         <label for="observaciones">Observaciones:</label>
                             <textarea
@@ -170,7 +187,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-6">
                         <div class="form-group">
                         <label for="direccion_entrega">Dirección de Entrega:</label>
@@ -202,7 +219,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-12">
                         <ckeditor v-model="cuerpo_correo" ></ckeditor>
 
@@ -210,7 +227,7 @@
                     </div>
                 </div>
                 <br>
-                <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones:</label>
@@ -395,6 +412,8 @@ export default {
             this.nombre_archivo_carta_terminos_condiciones = null;
             this.archivo_formato_cotizacion = null;
             this.nombre_archivo_formato_cotizacion = null;
+            this.$refs.carta_terminos.value = '';
+            this.$refs.formato_cotizacion.value = '';
         },
         enviar()
         {
