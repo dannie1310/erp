@@ -302,6 +302,18 @@ export default {
                     });
             });
         },
+        descargaLayoutProveedor(context, payload){
+            var urr = URI + 'descargaLayoutProveedor/'+ payload.id +'?id_cotizacion=' + payload.id_cotizacion + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
     },
 
     getters: {

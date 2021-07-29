@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class CotizacionCompra  extends Transaccion
+class    CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
@@ -80,11 +80,10 @@ class CotizacionCompra  extends Transaccion
         return $this->belongsTo(CotizacionComplemento::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout()
     {
-        $find = CotizacionCompra::find($id);
-        $folio = str_pad($find->numero_folio, 5, 0, 0);
-        return Excel::download(new CotizacionLayout($find), '#'.$folio.'.xlsx');
+        $folio = str_pad($this->numero_folio, 5, 0, 0);
+        return Excel::download(new CotizacionLayout($this), '#'.$folio.'.xlsx');
     }
 
     public function asignacionPartida()

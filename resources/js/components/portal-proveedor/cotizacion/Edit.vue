@@ -522,10 +522,6 @@
             total()
             {
                 return this.subtotal + this.iva;
-            },
-            carga()
-            {
-                return (this.xls) ? this.xls : false;
             }
         },
     }

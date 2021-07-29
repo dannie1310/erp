@@ -184,4 +184,14 @@ class CotizacionService
         }
         return $this->repository->editarPortalProveedor($id,$data, $invitacion);
     }
+
+    public function descargaLayoutProveedor($id, $data)
+    {
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=',date('Y-m-d'))->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->descargaLayoutProveedor($data['id_cotizacion'], $invitacion);
+    }
 }
