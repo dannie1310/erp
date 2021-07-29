@@ -1,7 +1,7 @@
 <template>
     <div class="btn-group">
         <Show v-bind:id="value.id" v-bind:show="value.show" v-if="$root.can('consultar_subcontrato')"></Show>
-        <router-link  :to="{ name: 'subcontrato-edit', params: {id: value.id}}" v-if="$root.can('editar_subcontrato')" type="button" class="btn btn-sm btn-outline-success" title="Editar">
+        <router-link  :to="{ name: 'subcontrato-edit', params: {id: value.id}}" v-if="$root.can('editar_subcontrato') && value.edit" type="button" class="btn btn-sm btn-outline-success" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
         <PDF v-bind:id="value.id" @click="value.id" v-if="$root.can('consultar_subcontrato')"></PDF>
