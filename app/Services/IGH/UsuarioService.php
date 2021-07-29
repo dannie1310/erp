@@ -47,4 +47,12 @@ class UsuarioService
     {
         return $this->repository->where([["usuario","=",$usuario]])->first();
     }
+
+    public function buscaUsuarioEmpresaPorCorreo($correo)
+    {
+        $this->repository->where([["correo","=",$correo]]);
+        $this->repository->where([["usuario_estado","!=","2"]]);
+        $this->repository->where([["usuario","!=",$correo]]);
+        return $this->repository->all();
+    }
 }

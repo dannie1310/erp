@@ -59,13 +59,13 @@ class EmpresaService
         try {
             DB::connection('cadeco')->beginTransaction();
 
-        $datos = [
-            'tipo_empresa' => $data['tipo_empresa'],
-            'razon_social' => $data['razon_social'],
-            'UsuarioRegistro'=>$data['UsuarioRegistro'],
-        ];
+            /*$datos = [
+                'tipo_empresa' => $data['tipo_empresa'],
+                'razon_social' => $data['razon_social'],
+                'UsuarioRegistro' => $data['UsuarioRegistro'],
+            ];*/
 
-         $empresa = Empresa::query()->create($datos);
+            $empresa = Empresa::query()->create($data);
 
             DB::connection('cadeco')->commit();
 
@@ -115,6 +115,13 @@ class EmpresaService
             'af_cuentas' => $af_cuentas,
         ];
 
+    }
+
+    public function getEmpresaPorRFC($rfc)
+    {
+        $this->repository->where([["rfc","=",$rfc]]);
+        $this->repository->whereIn(["tipo_empresa",[1,2,3]]);
+        return $this->repository->first();
     }
 
 }

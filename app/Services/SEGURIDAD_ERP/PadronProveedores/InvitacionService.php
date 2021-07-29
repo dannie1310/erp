@@ -134,15 +134,14 @@ class InvitacionService
             }
         }
 
-
-
         $usuarioServicio = new UsuarioService(new Usuario());
+        $empresaService = new EmpresaService(new Empresa());
+        $sucursalServicio = new SucursalService(new Sucursal());
 
         if($data["id_proveedor"]>0)
         {
-            $sucursalServicio = new SucursalService(new Sucursal());
             $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
-            $empresaService = new EmpresaService(new Empresa());
+
             $empresa = $empresaService->show($data["id_proveedor"]);
             if($empresa->emite_factura){
                 $empresaService->validaRFC($empresa->rfc);
@@ -160,6 +159,8 @@ class InvitacionService
                 {
                     $usuario = $this->generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $data["correo"]);
                 }else{
+                    $usuario->usuario_estado = 1;
+                    $usuario->save();
                     if($usuario->correo != $data["correo"])
                     {
                         $clave = str_replace(" ","",substr($usuario->nombre,0,2).date('s').substr($usuario->apaterno,0,2).date('m').substr($usuario->amaterno,0,2).date('His'));
@@ -178,6 +179,8 @@ class InvitacionService
                 {
                     $usuario = $this->generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $data["correo"]);
                 }else{
+                    $usuario->usuario_estado = 1;
+                    $usuario->save();
                     if($usuario->correo != $data["correo"])
                     {
                         $clave = str_replace(" ","",substr($usuario->nombre,0,2).date('s').substr($usuario->apaterno,0,2).date('m').substr($usuario->amaterno,0,2).date('His'));
@@ -191,12 +194,25 @@ class InvitacionService
                 }
             }
         }else{
-            $usuario = $usuarioServicio->existe($data["correo"]);
-            if(!$usuario)
-            {
-                $usuario = $this->generaUsuarioCorreo($usuarioServicio, $data["correo"]);
+            if($data["id_usuario"]>0){
+                $usuario = $usuarioServicio->show($data["id_usuario"]);
+                $empresa = $this->getEmpresa($usuario);
+                if($empresa)
+                {
+                    $datos_registro["id_proveedor_sao"] = $empresa->id_empresa;
+                    $datos_registro["id_sucursal_sao"] = $empresa->sucursales()->first()->id_sucursal;
+                    $datos_registro["razon_social"] = $empresa->razon_social;
+                    $datos_registro["rfc"] = $empresa->rfc;
+                }
+            } else {
+                $usuario = $usuarioServicio->existe($data["correo"]);
+                if(!$usuario)
+                {
+                    $usuario = $this->generaUsuarioCorreo($usuarioServicio, $data["correo"]);
+                }
             }
         }
+
         $usuario->asignaRol("proveedor");
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
@@ -223,6 +239,32 @@ class InvitacionService
             event(new RegistroInvitacion($invitacion));
         }
         return $invitacion;
+    }
+
+    private function getEmpresa(Usuario $usuario){
+        $empresaService = new EmpresaService(new Empresa());
+        $empresa = $empresaService->getEmpresaPorRFC($usuario->usuario);
+        if(!$empresa){
+            $rfc_valido = $empresaService->validaRFCSM($usuario["usuario"]);
+            if($rfc_valido){
+                $empresa = $empresaService->store(
+                    [
+                        "emite_factura"=>1,
+                        "es_nacional"=>1,
+                        "tipo_empresa"=>3,
+                        "razon_social"=>$usuario->nombre_completo,
+                        "rfc"=>$usuario->usuario,
+                        "UsuarioRegistro"=>auth()->id(),
+                    ]);
+                $empresa->sucursales()->create([
+                    "descripcion"=>"MATRIZ",
+                    "email"=>$usuario->correo
+                ]);
+            }else {
+                abort(500,"El RFC: ".$usuario["usuario"].", no es válido ante el SAT. \n \nPor favor seleccione otro proveedor o indique que no desea seleccionar un proveedor de la lista");
+            }
+        }
+        return $empresa;
     }
 
     private function registraArchivo($data)
