@@ -37,7 +37,7 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        
+
         if(array_key_exists('clave_confirmacion', $request->all())){
             if($this->actualizarPassword($request)){
                 return route('login');
@@ -45,7 +45,7 @@ class LoginController extends Controller
         }else{
             $this->validateLogin($request);
         }
-        
+
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -54,6 +54,9 @@ class LoginController extends Controller
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
+        }
+        if($this->validaDatosEmpresaFaltantes($request)){
+            return view('auth.pide_datos_empresa');
         }
         if($this->validaPasswordGenerico($request)){
             return view('auth.cambio_contrasena_temporal');
@@ -86,11 +89,20 @@ class LoginController extends Controller
         $usuario->save();
         return true;
     }
-    
+
     private function validaPasswordGenerico($request){
         Session::put('credenciales', $request->all());
         $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
         if($usuario && $usuario->pide_cambio_contrasenia == 1){
+            return true;
+        }
+        return false;
+    }
+
+    private function validaDatosEmpresaFaltantes($request){
+        Session::put('credenciales', $request->all());
+        $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
+        if($usuario && $usuario->pide_datos_empresa == 1){
             return true;
         }
         return false;
