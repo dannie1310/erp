@@ -69,13 +69,6 @@ class Invitacion extends Model
         return $this->belongsTo(Transaccion::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
     }
 
-    public function solicitudAntecedente()
-    {
-        DB::purge('cadeco');
-        Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
-    }
-
     public function solicitud()
     {
         DB::purge('cadeco');

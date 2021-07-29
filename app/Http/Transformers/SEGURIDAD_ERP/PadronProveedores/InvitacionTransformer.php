@@ -57,7 +57,6 @@ class InvitacionTransformer extends TransformerAbstract
             'importe_cotizacion' => $model->importe_cotizacion_format,
             'descripcion_sucursal' => $model->descripcion_sucursal,
             'direccion_sucursal' => $model->direccion_sucursal,
-            'importe_cotizacion' => $model->importe_cotizacion_format,
             'cuerpo_correo' => ($model->cuerpo_correo)
         ];
     }
@@ -88,13 +87,21 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSolicitudCompra(Invitacion $model) {
-        if ($item = $model->solicitudAntecedente) {
+        if ($item = $model->solicitud) {
             return $this->item($item, new SolicitudCompraTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeEmpresa(Invitacion $model) {
         if ($item = $model->empresa) {
             return $this->item($item, new EmpresaTransformer);
@@ -102,6 +109,10 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSucursal(Invitacion $model) {
         if ($item = $model->sucursal) {
             return $this->item($item, new SucursalTransformer);
@@ -109,6 +120,10 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeCartaTerminos(Invitacion $model) {
         if ($item = $model->cartaTerminos) {
             return $this->item($item, new InvitacionArchivoTransformer);
@@ -133,20 +148,10 @@ class InvitacionTransformer extends TransformerAbstract
      * @param Invitacion $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeSolicitudCompra(Invitacion $model)
-    {
-        if($solicitud = $model->solicitud)
-        {
-            return $this->item($solicitud, new SolicitudCompraTransformer);
-        }
-        return null;
-    }
-
     public function includeFormatoCotizacion(Invitacion $model) {
         if ($item = $model->formatoCotizacion) {
             return $this->item($item, new InvitacionArchivoTransformer);
         }
         return null;
     }
-
 }
