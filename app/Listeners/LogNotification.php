@@ -26,8 +26,14 @@ class LogNotification
      */
     public function handle(NotificationSent $event)
     {
-        $invitacion = $event->notification->invitacion;
-        $invitacion->enviada = 1;
-        $invitacion->save();
+        try{
+            $invitacion = $event->notification->invitacion;
+            if($invitacion){
+                $invitacion->enviada = 1;
+                $invitacion->save();
+            }
+        }catch (\Exception $e)
+        {}
+
     }
 }

@@ -55,7 +55,7 @@
             },
             salir()
             {
-                 this.$router.push({name: 'cotizacion'});
+                 this.$router.push({name: 'invitacion-compra'});
             },
             validate() {
 
@@ -64,7 +64,6 @@
 
                         this.$router.push({name: 'invitacion-compra-create', params: {id_solicitud: this.solicitud.id}});
                     }
-
                 });
             },
         },

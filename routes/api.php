@@ -415,6 +415,10 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'archivo-invitacion'], function ($api){
+            $api->get('{id}/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/documento/descargar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@descargar')->where(['id' => '[0-9]+']);
+        });
         $api->group(['prefix' => 'ctg-area'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\CtgAreaController@index');
         });
@@ -444,6 +448,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\GiroController@paginate');
         });
         $api->group(['prefix' => 'invitacion'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@paginate');
             $api->get('/getSolicitudes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPorCotizar');
             $api->get('{id}/getSolicitud', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getSolicitud')->where(['id' => '[0-9]+']);
@@ -981,15 +986,16 @@ $api->version('v1', function ($api) {
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCotizaciones')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {
-            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@paginate');
-            $api->post('/','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@store');
-            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
-            $api->delete('{id}','App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@destroy')->where(['id' => '[0-9]+']);
-            $api->get('pdf/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
-            $api->get('abierto/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@abrir')->where(['id' => '[0-9]+']);
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
+            $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@abrir')->where(['id' => '[0-9]+']);
         });
 
         // CATALOGOS

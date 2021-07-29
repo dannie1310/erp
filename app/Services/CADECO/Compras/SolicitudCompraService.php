@@ -154,6 +154,11 @@ class SolicitudCompraService
         return $this->repository->show($id)->pdfSolicitudCompra();
     }
 
+    public function getCuerpoCorreo($id)
+    {
+        return $this->repository->show($id)->getCuerpoCorreoInvitacion();
+    }
+
     public function getCotizaciones($id){
         $items = array();
         $cotizaciones = array();
