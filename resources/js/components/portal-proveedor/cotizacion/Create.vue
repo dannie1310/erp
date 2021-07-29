@@ -93,15 +93,15 @@
                                                             <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                         </div>
                                                     </td>
-                                                    <td style="text-align:center;">{{partida.cantidad_original}}</td>
-                                                    <td style="text-align:center;">{{partida.cantidad_original}}</td>
+                                                    <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
+                                                    <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
                                                                :disabled="partida.enable == false"
                                                                class="form-control"
                                                                :name="`precio[${i}]`"
                                                                data-vv-as="Precio"
-                                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                                                :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                v-model="partida.precio_cotizacion"
                                                                style="text-align: right"
@@ -232,15 +232,15 @@
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-md-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
-                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-md-2 col-form-label">IVA:</label>
-                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(iva)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-md-2 col-form-label">Total:</label>
-                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(total)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-md-4 col-form-label">Pago en Parcialidades(%):</label>

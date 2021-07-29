@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app btn-info pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -29,9 +29,9 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: false},
                     { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
-                    { title: 'Fecha', field: 'fecha', sortable: true },
+                    { title: 'Fecha', field: 'fecha', sortable: false },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
@@ -116,7 +116,7 @@
                         fecha: invitacion.cotizacion.fecha_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
-                        importe: invitacion.cotizacion.monto,
+                        importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
                     }));
                 },

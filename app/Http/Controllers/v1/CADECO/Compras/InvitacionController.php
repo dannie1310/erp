@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores;
+namespace App\Http\Controllers\v1\CADECO\Compras;
 
 
 use League\Fractal\Manager;
@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
 
-use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionTransformer as Transformer;
-use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService as Service;
+use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionTransformer;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 
 class InvitacionController extends Controller
 {
@@ -22,26 +22,25 @@ class InvitacionController extends Controller
     protected $fractal;
 
     /**
-     * @var InvitacionService
+     * @var
      */
     protected $service;
 
     /**
-     * @var InvitacionTransformer
+     * @var
      */
     protected $transformer;
 
     /**
      * InvitacionController constructor.
      * @param Manager $fractal
-     * @param Service $service
-     * @param Transformer $transformer
+     * @param InvitacionService $service
+     * @param InvitacionTransformer $transformer
      */
-    public function __construct(Manager $fractal, Service $service, Transformer $transformer)
+    public function __construct(Manager $fractal, InvitacionService $service, InvitacionTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->only("store");
-        $this->middleware('permisoGlobal:consultar_cotizacion_proveedor')->only(['getPorCotizar','getSolicitud']);
+        $this->middleware('context');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -59,15 +58,5 @@ class InvitacionController extends Controller
         $obj->abierta = 1;
         $obj->save();
         return response()->json("Gracias por confirmar la recepción de la invitación", 200);
-    }
-
-    public function getPorCotizar(Request $request)
-    {
-        return $this->service->getPorCotizar($request->all());
-    }
-
-    public function getSolicitud(Request $request, $id)
-    {
-        return $this->service->getSolicitud($id);
     }
 }
