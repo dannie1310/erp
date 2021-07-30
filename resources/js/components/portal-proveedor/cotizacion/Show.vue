@@ -80,7 +80,7 @@
                                                             <td style="text-align: center"><b>{{(partida.material) ? partida.material.numero_parte : null}}</b></td>
                                                             <td style="text-align: center">{{(partida.material) ? partida.material.descripcion : '------------'}}</td>
                                                             <td style="text-align: center">{{(partida.material) ? partida.material.unidad : '-----'}}</td>
-                                                            <td style="text-align: center">{{partida.cantidad}}</td>
+                                                            <td style="text-align: center">{{parseFloat(partida.cantidad).formatMoney(2,'.',',')}}</td>
                                                             <td class="money">{{partida.precio_unitario_format}}</td>
                                                             <td style="text-align: center">{{partida.descuento}}</td>
                                                             <td class="money">{{partida.precio_total}}</td>
