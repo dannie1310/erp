@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class CotizacionCompra  extends Transaccion
+class    CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
@@ -80,11 +80,10 @@ class CotizacionCompra  extends Transaccion
         return $this->belongsTo(CotizacionComplemento::class, 'id_transaccion', 'id_transaccion');
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout()
     {
-        $find = CotizacionCompra::find($id);
-        $folio = str_pad($find->numero_folio, 5, 0, 0);
-        return Excel::download(new CotizacionLayout($find), '#'.$folio.'.xlsx');
+        $folio = str_pad($this->numero_folio, 5, 0, 0);
+        return Excel::download(new CotizacionLayout($this), '#'.$folio.'.xlsx');
     }
 
     public function asignacionPartida()
@@ -926,6 +925,86 @@ class CotizacionCompra  extends Transaccion
             ]);
             DB::connection('cadeco')->commit();
             return $cotizacion;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+    }
+
+    public function editarPortalProveedor($data, $invitacion)
+    {
+        try
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'observaciones' => $data['observaciones'],
+                'fecha' => $fecha->format("Y-m-d"),
+                'monto' => $data['importe'],
+                'impuesto' => $data['impuesto'],
+                'porcentaje_anticipo_pactado' => $data['pago']
+            ]);
+            if($this->complemento)
+            {
+                $this->complemento->parcialidades = $data['pago'];
+                $this->complemento->dias_credito = $data['credito'];
+                $this->complemento->vigencia = $data['vigencia'];
+                $this->complemento->plazo_entrega = $data['tiempo'];
+                $this->complemento->descuento = $data['descuento'];
+                $this->complemento->anticipo = $data['anticipo'];
+                $this->complemento->importe = $data['importe'];
+                $this->complemento->tc_usd = $data['tc_usd'];
+                $this->complemento->tc_eur = $data['tc_eur'];
+                $this->complemento->tc_libra = $data['tc_libra'];
+                $this->complemento->save();
+            }
+            else{
+                $this->complemento()->create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'parcialidades' => $data['pago'],
+                    'dias_credito' => $data['credito'],
+                    'vigencia' => $data['vigencia'],
+                    'plazo_entrega' => $data['tiempo'],
+                    'descuento' => $data['descuento_cot'],
+                    'anticipo' => $data['anticipo'],
+                    'importe' => $data['importe'],
+                    'tc_usd' => $data['tc_usd'],
+                    'tc_eur' => $data['tc_eur'],
+                    'tc_libra' => $data['tc_libra'],
+                    'timestamp_registro' => $fecha->format("Y-m-d")
+                ]);
+            }
+            foreach($data['partidas']['data'] as $key => $partida) {
+                $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
+                if ($item) {
+                    $item->update([
+                        'precio_unitario' => $partida['no_cotizado'] ? $partida['precio_unitario'] : 0,
+                        'descuento' => $partida['no_cotizado']  ? ($data['descuento'] + $partida['descuento'] - (($data['descuento'] * $partida['descuento']) / 100)) : 0,
+                        'no_cotizado' => !$partida['no_cotizado'] ? 1 : 0,
+                        'id_moneda' => $partida['no_cotizado'] ? $partida['id_moneda'] : null
+                    ]);
+                    if ($item->partida) {
+                        $item->partida->update([
+                            'descuento_partida' => $partida['no_cotizado'] ? $partida['descuento'] : 0,
+                            'observaciones' => ($partida['no_cotizado'] && $partida['observacion']) ? $partida['observacion'] : null,
+                            'estatus' => $partida['no_cotizado'] ? 3 : 1
+                        ]);
+                    } else {
+                        $item->partida->create([
+                            'id_transaccion' => $this->id_transaccion,
+                            'id_material' => $partida['material']['id'],
+                            'descuento_partida' => $partida['no_cotizado'] ? $partida['descuento'] : 0,
+                            'observaciones' => ($partida['no_cotizado'] && $partida['observacion']) ? $partida['observacion'] : null,
+                            'estatus' => $partida['no_cotizado'] ? 3 : 1
+                        ]);
+                    }
+                }
+            }
+            DB::connection('cadeco')->commit();
+            return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);

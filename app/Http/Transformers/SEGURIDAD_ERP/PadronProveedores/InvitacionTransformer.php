@@ -3,6 +3,7 @@
 
 namespace App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores;
 
+use App\Http\Transformers\CADECO\Compras\CotizacionCompraTransformer;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\CADECO\TransaccionTransformer;
@@ -18,6 +19,7 @@ class InvitacionTransformer extends TransformerAbstract
         'empresa',
         'sucursal',
         'cotizacion'
+
     ];
 
     protected $availableIncludes = [
@@ -26,7 +28,9 @@ class InvitacionTransformer extends TransformerAbstract
         'sucursal',
         'solicitud_compra',
         'carta_terminos',
-        'formato_cotizacion'
+        'formato_cotizacion',
+        'cotizacion',
+        'cotizacionCompra',
     ];
 
     public function transform(Invitacion $model)
@@ -51,6 +55,8 @@ class InvitacionTransformer extends TransformerAbstract
             'fecha_cierre_format' => $model->fecha_cierre_invitacion_format,
             'tipo_antecedente' => $model->tipo_transaccion_antecedente,
             'importe_cotizacion' => $model->importe_cotizacion_format,
+            'descripcion_sucursal' => $model->descripcion_sucursal,
+            'direccion_sucursal' => $model->direccion_sucursal,
             'cuerpo_correo' => ($model->cuerpo_correo)
         ];
     }
@@ -81,13 +87,21 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSolicitudCompra(Invitacion $model) {
-        if ($item = $model->solicitudAntecedente) {
+        if ($item = $model->solicitud) {
             return $this->item($item, new SolicitudCompraTransformer);
         }
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeEmpresa(Invitacion $model) {
         if ($item = $model->empresa) {
             return $this->item($item, new EmpresaTransformer);
@@ -95,6 +109,10 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeSucursal(Invitacion $model) {
         if ($item = $model->sucursal) {
             return $this->item($item, new SucursalTransformer);
@@ -102,6 +120,10 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeCartaTerminos(Invitacion $model) {
         if ($item = $model->cartaTerminos) {
             return $this->item($item, new InvitacionArchivoTransformer);
@@ -109,11 +131,27 @@ class InvitacionTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeCotizacionCompra(Invitacion $model)
+    {
+        if($cotizacion_compra = $model->cotizacionCompra)
+        {
+            return $this->item($cotizacion_compra, new CotizacionCompraTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeFormatoCotizacion(Invitacion $model) {
         if ($item = $model->formatoCotizacion) {
             return $this->item($item, new InvitacionArchivoTransformer);
         }
         return null;
     }
-
 }

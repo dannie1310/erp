@@ -452,6 +452,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@paginate');
             $api->get('/getSolicitudes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPorCotizar');
             $api->get('{id}/getSolicitud', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getSolicitud')->where(['id' => '[0-9]+']);
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
         });
     });
 
@@ -947,6 +948,9 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@cargaLayout');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@pdf')->where(['id' => '[0-9]+']);
             $api->post('/portal-proveedor','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@storePortalProveedor');
+            $api->patch('{id}/portal-proveedor', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@updatePortalProveedor')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayoutProveedor/{id}', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayoutProveedor')->where(['id' => '[0-9]+']);
+            $api->post('layoutProveedor', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@cargaLayoutProveedor');
         });
 
          // ORDEN DE COMPRA

@@ -36,11 +36,11 @@
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                   // { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: 'transaccion', scope: ['cotizacionRealizada','invitadoAutenticado'], sort: '', order: ''},
+                query: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado'], sort: '', order: ''},
                 search: '',
                 cargando: false
             }
@@ -118,6 +118,14 @@
                         observaciones: invitacion.cotizacion.observaciones,
                         importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
+                        buttons: $.extend({}, {
+                            show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
+                            id: invitacion.id,
+                            id_cotizacion: invitacion.cotizacion.id_transaccion,
+                            edit: self.$root.can('editar_cotizacion_proveedor',true) ? true : false,
+                            descarga_layout: (self.$root.can('descargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false,
+                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false
+                        })
                     }));
                 },
                 deep: true
