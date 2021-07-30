@@ -23,7 +23,7 @@
                 .then(() => {
                         this.$emit('success')
                         this.cargando = false;
-                    })
+                })
             }
         },
     }

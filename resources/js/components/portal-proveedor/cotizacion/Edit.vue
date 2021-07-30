@@ -345,10 +345,11 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     import DatosCotizacionCompra from "./partials/DatosCotizacionCompra";
+    import invitacion from "../../../store/modules/padronProveedores/invitacion";
     export default {
         name: "cotizacion-proveedor-edit",
         components: {DatosCotizacionCompra, Datepicker, ModelListSelect},
-        props: ['id'],
+        props: ['id', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -522,6 +523,12 @@
             total()
             {
                 return this.subtotal + this.iva;
+            },
+            carga()
+            {
+                console.log(this.invitacion)
+                console.log(this.xls)
+                return (this.xls) ? this.xls : false;
             }
         },
     }

@@ -42,7 +42,7 @@ class CotizacionController extends Controller
     public function __construct(Manager $fractal, CotizacionService $service, CotizacionCompraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['storePortalProveedor','updatePortalProveedor','descargaLayoutProveedor']);
+        $this->middleware('context')->except(['storePortalProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor']);
         $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
         $this->middleware('permiso:cargar_layout_cotizacion_compra')->only(['cargaLayout']);
         $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
@@ -51,7 +51,8 @@ class CotizacionController extends Controller
         $this->middleware('permiso:eliminar_cotizacion_compra')->only(['destroy']);
         $this->middleware('permisoGlobal:registrar_cotizacion_proveedor')->only(['storePortalProveedor']);
         $this->middleware('permisoGlobal:editar_cotizacion_proveedor')->only(['updatePortalProveedor']);
-        $this->middleware('permisoGlobal:editar_cotizacion_proveedor')->only(['descargaLayoutProveedor']);
+        $this->middleware('permisoGlobal:descargar_layout_cotizacion_proveedor')->only(['descargaLayoutProveedor']);
+        $this->middleware('permisoGlobal:cargar_layout_cotizacion_proveedor')->only(['cargaLayoutProveedor']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -92,5 +93,11 @@ class CotizacionController extends Controller
     public function descargaLayoutProveedor(Request $request, $id)
     {
         return $this->service->descargaLayoutProveedor($id, $request->all());
+    }
+
+    public function cargaLayoutProveedor(Request $request)
+    {
+        $res = $this->service->cargaLayoutProveedor($request->file, $request->id, $request->name, $request->id_cotizacion);
+        return response()->json($res, 200);
     }
 }
