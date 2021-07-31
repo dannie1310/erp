@@ -115,14 +115,21 @@
                     </div>
 
                     <div class="row">
-                        <div class="offset-md-10 col-md-2">
+                        <div class=" col-md-10">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" style="cursor:pointer" >
+                                    <input class="form-check-input" type="checkbox" name="aviso_privacidad_aceptado" v-model="aviso_privacidad_aceptado" value="1" >
+                                </label>
+                            </div>
+                            <b>He leído y acepto el <a v-on:click="abreAviso" href="#" style="text-decoration: underline"> Aviso de Privacidad</a></b>
+                        </div>
+                        <div  class="col-md-2">
                             <button type="submit" class="btn btn-warning btn-block btn-flat">Continuar</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="modal fade" ref="criterios_contraseña" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+        </div><div class="modal fade" ref="criterios_contraseña" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -151,6 +158,48 @@
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" ref="aviso_privacidad" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" ><i class="fa fa-info-circle"></i> Aviso de Privacidad</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p style="text-align: justify">
+                                    Hermes Infraestructura S.A. de C.V., con domicilio ubicado en Paseo de la Reforma 383, Piso 8, Col. Cuauhtémoc, Alcaldía Cuauhtémoc, Ciudad de México,
+                                    C.P. 06500, hará uso de sus datos personales, sensibles y patrimoniales, para el desarrollo de las siguientes finalidades: cumplimiento de
+                                    la relación contractual generada como cliente o proveedor, establecimiento y cumplimiento de la relación laboral y prestaciones derivados de
+                                    la misma; atención a solicitudes, quejas, dudas y/o comentarios relacionados con los servicios prestados por Hermes Infraestructura; para
+                                    control estadísctico, publicitario, mercadológico o prospección comercial y/o laboral de Hermes Infraestructura, sus filiales, subsidiarias,
+                                    afiliadas, empresas que tengan el control sobre sus acciones y/o terceros, así con quien se tengan contratos de colaboración en beneficio de
+                                    sus colaboradores.
+                                </p>
+                                <p style="text-align: justify">
+                                    Para mayor información acerca del tratamiento de sus datos personales, los derechos (ARCO) y procedimientos que podrían hacerse valer, Grupo Hermes,
+                                    pone a su disposición el Aviso de Privacidad Integral en el Departamento de Datos Personales, ubicado en el domicilio enunciado previamente.
+                                </p>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-check form-check-inline">
+                                <label class="form-check-label" style="cursor:pointer" >
+                                    <input class="form-check-input" type="checkbox" name="aviso_privacidad_aceptado" v-model="aviso_privacidad_aceptado" value="1" >
+                                </label>
+                            </div>
+                            <b>He leído y acepto el Aviso de Privacidad</b>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" :disabled="aviso_privacidad_aceptado==0"><i class="fa fa-close"></i>Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </form>
 </div>
 </body>
@@ -164,6 +213,7 @@
             rfc:'',
             archivo_constancia:'',
             nombre_archivo_constancia:'',
+            aviso_privacidad_aceptado : 0,
             rules: [
 				{ message:'Un caracter especial (->@#)', valido:true, regex:/[->@#]+/ },
 				{ message:"Al menos una letra mayúscula", valido:true,  regex:/[A-Z]+/ },
@@ -176,6 +226,7 @@
         methods:{
             enviar: function(event){
                 event.preventDefault();
+
                 if(this.clave_nueva != this.clave_confirmacion){
                     swal({
                         title: "Actualización de Contraseña",
@@ -183,6 +234,9 @@
                         icon: "warning",
                         confirmButtonText: "Ok",
                     });
+                }else if(this.aviso_privacidad_aceptado == 0){
+                    $(this.$refs.aviso_privacidad).appendTo('body')
+                    $(this.$refs.aviso_privacidad).modal('show');
                 }else if(this.validacion_contrasenia()){
                     return new Promise((resolve, reject) => {
                         axios
@@ -193,6 +247,7 @@
                                 nombre_archivo_constancia : this.nombre_archivo_constancia,
                                 razon_social : this.razon_social,
                                 rfc : this.rfc,
+                                aviso_privacidad_aceptado : this.aviso_privacidad_aceptado,
                             })
                             .then(r => r.data)
                             .then(data => {
@@ -259,6 +314,10 @@
                             })
                         })
                 }
+            },
+            abreAviso(){
+                $(this.$refs.aviso_privacidad).appendTo('body')
+                $(this.$refs.aviso_privacidad).modal('show');
             },
             validacion_contrasenia(){
                 let self = this;

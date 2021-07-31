@@ -220,6 +220,8 @@ class UsuarioService
         $usuario->nombre = $nombreArr[0];
         $usuario->apaterno = (key_exists(1,$nombreArr))?$nombreArr[1]:'';
         $usuario->amaterno = (key_exists(2,$nombreArr))?$nombreArr[2]:'';
+        $usuario->aviso_privacidad_leido_aceptado = $datos["aviso_privacidad_aceptado"];
+        $usuario->fecha_hora_aceptacion_aviso_privacidad = date("Y-m-d h:i:s");
         $usuario->save();
         return $usuario;
     }
