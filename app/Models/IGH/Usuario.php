@@ -70,7 +70,9 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      * @var array
      */
     protected $fillable = [
-        'usuario', 'nombre', 'apaterno', 'amaterno', 'usuario_estado', 'correo', 'clave', 'id_empresa', 'pide_cambio_contrasenia', 'pide_datos_empresa'
+        'usuario', 'nombre', 'apaterno', 'amaterno', 'usuario_estado', 'correo', 'clave', 'id_empresa'
+        , 'pide_cambio_contrasenia', 'pide_datos_empresa', 'tipo_empresa', 'aviso_privacidad_leido_aceptado',
+        'fecha_hora_aceptacion_aviso_privacidad', 'id_empresa_invito'
     ];
 
     /**

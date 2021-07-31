@@ -10,12 +10,14 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
+use App\Traits\EmpresaTrait;
 use App\Utils\Files;
 use Chumper\Zipper\Zipper;
 use Illuminate\Support\Facades\Storage;
 
 class EmpresaService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */
@@ -156,7 +158,7 @@ class EmpresaService
         $empresa = $this->repository->getEmpresaXRFC($data["rfc"]);
         if($empresa){
             if(in_array($empresa->id_tipo_empresa,[1,2])){
-                $empresa;
+                return $empresa;
             } else if($empresa->id_tipo_empresa == 3) {
                 abort(403, 'el RFC ingresado corresponde a la empresa prestadora de servicios: '.$empresa->razon_social."; no se puede iniciar el expediente");
             } else if($empresa->id_tipo_empresa == 4)  {
@@ -420,5 +422,11 @@ class EmpresaService
         if(is_file(Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix().$rfc_proveedora.'/'.$nombre_archivo)) {
             Storage::disk('padron_contratista')->delete($rfc_proveedora.'/'.$nombre_archivo);
         }
+    }
+
+    public function buscaPorRFC($rfc)
+    {
+        $this->repository->where([["rfc","=",$rfc]]);
+        return $this->repository->first();
     }
 }

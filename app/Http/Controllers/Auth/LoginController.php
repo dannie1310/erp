@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\IGH\Usuario;
+use App\Services\IGH\UsuarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\AuthenticatesIghUsers;
@@ -38,7 +39,11 @@ class LoginController extends Controller
     public function login(Request $request)
     {
 
-        if(array_key_exists('clave_confirmacion', $request->all())){
+        if(array_key_exists('razon_social', $request->all())){
+            if($this->actualizarEmpresaPassword($request)){
+                return route('login');
+            }
+        }else if(array_key_exists('clave_confirmacion', $request->all())){
             if($this->actualizarPassword($request)){
                 return route('login');
             }
@@ -83,10 +88,17 @@ class LoginController extends Controller
 
     public function actualizarPassword($request){
         $credenciales = Session::get('credenciales');
-        $usuario = Usuario::where('usuario', '=', $credenciales['usuario'])->where('clave', '=', md5($credenciales['clave']))->first();
-        $usuario->clave = $request['clave_nueva'];
-        $usuario->pide_cambio_contrasenia = 0;
-        $usuario->save();
+        $usuarioServicio = new UsuarioService(new Usuario());
+        $usuarioServicio->actualizaClaveProvisional($credenciales, $request->all());
+        return true;
+    }
+
+    public function actualizarEmpresaPassword($request){
+
+        $credenciales = Session::get('credenciales');
+
+        $usuarioServicio = new UsuarioService(new Usuario());
+        $usuarioServicio->generaEmpresa($credenciales, $request->all());
         return true;
     }
 

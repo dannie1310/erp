@@ -20,7 +20,8 @@ class Empresa extends Model
         'no_imss',
         'id_giro',
         'id_tipo_empresa',
-        'id_tipo_personalidad'
+        'id_tipo_personalidad',
+        'usuario_registro'
     ];
 
     public function giro()

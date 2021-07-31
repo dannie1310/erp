@@ -42,7 +42,7 @@
         <div class="login-box offset-4 centered">
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg"><i class="fa fa-retweet" /><b>Actualización de Contraseña</b></p>
+                    <p class="login-box-msg"><i class="fa fa-retweet" ></i><b>Actualización de Contraseña</b></p>
                     <div class="input-group mb-3">
                         <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" v-model="clave_nueva" placeholder="Contraseña Nueva" value="{{ old('clave_nueva') }}" required autofocus>
                         <div class="input-group-append">
@@ -139,14 +139,51 @@
                                     title: "Actualizar Contraseña",
                                     text: "Contraseña Actualizada Correctamente.",
                                     icon: "success",
-                                    confirmButtonText: "Ok",
-                                    closeOnConfirm: true,
+                                    timer: 1500,
+                                    buttons: false
                                 }).then((value) => {
                                     window.location.href = data;
                                 });
                             })
                             .catch(error => {
-                                console.log(error);
+                                if (!error.response) {
+                                    alert('NETWORK ERROR')
+                                } else {
+                                    const code = error.response.status
+                                    const message = error.response.data.message
+                                    const originalRequest = error.config;
+                                    switch (true) {
+                                        case (code === 401 && !originalRequest._retry):
+                                            swal({
+                                                title: "La sesión ha expirado",
+                                                text: "Volviendo a la página de Inicio de Sesión",
+                                                icon: "error",
+                                            }).then((value) => {
+                                                localStorage.clear();
+                                                window.location.href = 'login';
+                                            })
+                                            break;
+                                        case (code === 500):
+                                            swal({
+                                                title: "¡Error!",
+                                                text: message,
+                                                icon: "error"
+                                            });
+                                        case (code === 400):
+                                            swal({
+                                                title: "Atención",
+                                                text: message,
+                                                icon: "warning"
+                                            });
+                                            break;
+                                        default:
+                                            swal({
+                                                title: "¡Error!",
+                                                text: message,
+                                                icon: "error"
+                                            });
+                                    }
+                                }
                             })
                         })
                 }

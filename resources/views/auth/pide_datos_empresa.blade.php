@@ -74,7 +74,13 @@
                             <div class="form-group">
                                 <label for="carta_terminos">Constancia de situación fiscal (pdf):</label>
                                 <div class="input-group mb-3">
-                                    <input type="file" name="constancia_situacion_fiscal" class="form-control{{ $errors->has('constancia_situacion_fiscal') ? ' is-invalid' : '' }}"  placeholder="Constancia de Situación Fiscal" value="{{ old('constancia_situacion_fiscal') }}" required autofocus>
+                                    <input type="file" id="constancia_situacion_fiscal"
+                                           @change="onFileChange"
+                                           name="constancia_situacion_fiscal"
+                                           class="form-control{{ $errors->has('constancia_situacion_fiscal') ? ' is-invalid' : '' }}"
+                                           placeholder="Constancia de Situación Fiscal"
+                                           value="{{ old('constancia_situacion_fiscal') }}"
+                                           required autofocus>
                                     <div class="input-group-append">
                                         <span class="input-group-text"></span>
                                     </div>
@@ -121,7 +127,6 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" ><i class="fa fa-info-circle"></i> Atención</h5>
-
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -157,6 +162,8 @@
             clave_confirmacion:'',
             razon_social:'',
             rfc:'',
+            archivo_constancia:'',
+            nombre_archivo_constancia:'',
             rules: [
 				{ message:'Un caracter especial (->@#)', valido:true, regex:/[->@#]+/ },
 				{ message:"Al menos una letra mayúscula", valido:true,  regex:/[A-Z]+/ },
@@ -179,21 +186,65 @@
                 }else if(this.validacion_contrasenia()){
                     return new Promise((resolve, reject) => {
                         axios
-                            .post('login', { clave_confirmacion:this.clave_confirmacion, clave_nueva:this.clave_nueva})
+                            .post('login', {
+                                clave_confirmacion : this.clave_confirmacion,
+                                clave_nueva : this.clave_nueva,
+                                archivo_constancia : this.archivo_constancia,
+                                nombre_archivo_constancia : this.nombre_archivo_constancia,
+                                razon_social : this.razon_social,
+                                rfc : this.rfc,
+                            })
                             .then(r => r.data)
                             .then(data => {
                                 swal({
                                     title: "Actualizar Contraseña",
                                     text: "Contraseña Actualizada Correctamente.",
                                     icon: "success",
-                                    confirmButtonText: "Ok",
-                                    closeOnConfirm: true,
+                                    timer: 1500,
+                                    buttons: false
                                 }).then((value) => {
                                     window.location.href = data;
                                 });
                             })
                             .catch(error => {
-                                console.log(error);
+                                if (!error.response) {
+                                    alert('NETWORK ERROR')
+                                } else {
+                                    const code = error.response.status
+                                    const message = error.response.data.message
+                                    const originalRequest = error.config;
+                                    switch (true) {
+                                        case (code === 401 && !originalRequest._retry):
+                                            swal({
+                                                title: "La sesión ha expirado",
+                                                text: "Volviendo a la página de Inicio de Sesión",
+                                                icon: "error",
+                                            }).then((value) => {
+                                                localStorage.clear();
+                                                window.location.href = 'login';
+                                            })
+                                            break;
+                                        case (code === 500):
+                                            swal({
+                                                title: "¡Error!",
+                                                text: message,
+                                                icon: "error"
+                                            });
+                                        case (code === 400):
+                                            swal({
+                                                title: "Atención",
+                                                text: message,
+                                                icon: "warning"
+                                            });
+                                            break;
+                                        default:
+                                            swal({
+                                                title: "¡Error!",
+                                                text: message,
+                                                icon: "error"
+                                            });
+                                    }
+                                }
                             })
                         })
                 }
@@ -221,7 +272,23 @@
                     $(this.$refs.criterios_contraseña).modal('show');
                     return false;
                 }
-            }
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+                reader.onload = (e) => {
+                    vm.archivo_constancia = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            onFileChange(e){
+                this.file = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.nombre_archivo_constancia = files[0].name;
+                this.createImage(files[0]);
+            },
         }
     });
 </script>

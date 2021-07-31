@@ -16,6 +16,7 @@ use App\Repositories\CADECO\Empresa\Repository;
 use App\Models\CADECO\Obra;
 use App\Traits\EmpresaTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class EmpresaService
 {
@@ -119,9 +120,12 @@ class EmpresaService
 
     public function getEmpresaPorRFC($rfc)
     {
-        $this->repository->where([["rfc","=",$rfc]]);
-        $this->repository->whereIn(["tipo_empresa",[1,2,3]]);
-        return $this->repository->first();
+        return $this->repository->getEmpresaPorRFC($rfc);
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 
 }
