@@ -242,8 +242,8 @@
                                                 title: "Atención",
                                                 text: message,
                                                 icon: "warning",
-                                                timer: 5000,
-                                                buttons: false
+                                                confirmButtonText: "Entendido",
+                                                closeOnConfirm: true,
                                             }).then((value) => {
                                                 window.location.href = 'login';
                                             });
