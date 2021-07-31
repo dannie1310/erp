@@ -424,8 +424,7 @@
                     this.cargando = false;
                 })
             },
-            salir()
-            {
+            salir() {
                 this.$router.push({name: 'cotizacion-proveedor'});
             },
             getPrecioTotal(precio, moneda) {

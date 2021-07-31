@@ -2,6 +2,7 @@
 
 namespace App\CSV;
 
+use App\Models\CADECO\SolicitudCompra;
 use function Complex\cot;
 use App\Models\CADECO\Item;
 use App\Models\CADECO\Cambio;
@@ -36,7 +37,6 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
         $this->tc_partida_dlls  = ($cotizacion->complemento) ? $cotizacion->complemento->tc_usd : $moneda[1]->cambio->cambio;
         $this->tc_partida_euro  = ($cotizacion->complemento) ? $cotizacion->complemento->tc_eur : $moneda[2]->cambio->cambio;
         $this->tc_partida_libra = ($cotizacion->complemento) ? $cotizacion->complemento->tc_libra : $moneda[3]->cambio->cambio;
-
     }
 
     /**
@@ -67,7 +67,13 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('L')->setAutoSize(true);
 
                 $i=2;
-                foreach ($this->cotizacion->solicitud->partidas as $item){
+                $solicitud = $this->cotizacion->solicitud;
+                if(is_null($solicitud))
+                {
+                    $solicitud = SolicitudCompra::where('id_transaccion', $this->cotizacion->id_antecedente)->withoutGlobalScopes()->first();
+                }
+
+                foreach ($solicitud->partidas as $item){
                     $cot = CotizacionCompraPartida::where('id_transaccion', '=', $this->cotizacion->id_transaccion)->where('id_material', '=', $item->id_material)->first();
                     if(!$cot){continue;}
                     $id_moneda = '';

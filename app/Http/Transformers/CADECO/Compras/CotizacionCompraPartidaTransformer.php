@@ -45,6 +45,10 @@ class CotizacionCompraPartidaTransformer extends TransformerAbstract
             'no_cotizado' => ($model->no_cotizado == 0) ? true :false,
             'id_moneda' => (int) $model->id_moneda,
             'id_item_solicitud' => (int) $model->item_solicitud,
+            'descripcion_material' => $model->descripcion_material,
+            'numero_parte' => $model->numero_parte_material,
+            'unidad' => $model->unidad_material,
+            'nombre_moneda' => $model->moneda_nombre
         ];
     }
 
