@@ -12,6 +12,7 @@ use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Services\CADECO\Compras\SolicitudCompraService;
@@ -21,6 +22,7 @@ use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Rep
 use App\Services\CADECO\SucursalService;
 use App\Services\CADECO\TransaccionService;
 use App\Services\IGH\UsuarioService;
+use App\Services\SEGURIDAD_ERP\Contabilidad\EmpresaSATService;
 use DateTime;
 use DateTimeZone;
 
@@ -123,7 +125,7 @@ class InvitacionService
             'observaciones'=>$data["observaciones"],
             'usuario_invito'=>auth()->id(),
             'direccion_entrega'=>$data["direccion_entrega"],
-            'ubicacion_entrega_plataforma_digital'=>$data["ubicacion_entrega_plataforma_digital"],
+            'ubicacion_entrega_plataforma_digital'=>$this->preparaURLUbicacion($data["ubicacion_entrega_plataforma_digital"]),
         ];
 
         if($transaccion->tipo_transaccion == 17){
@@ -134,14 +136,16 @@ class InvitacionService
             }
         }
 
-        $sucursalServicio = new SucursalService(new Sucursal());
-        $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
-
         $usuarioServicio = new UsuarioService(new Usuario());
+        $empresaService = new EmpresaService(new Empresa());
+        $sucursalServicio = new SucursalService(new Sucursal());
+        $empresaGlobalService = new EmpresaSATService(new EmpresaSAT());
+        $empresaGlobal = $empresaGlobalService->buscaPorRFC($transaccion->obra->rfc);
 
         if($data["id_proveedor"]>0)
         {
-            $empresaService = new EmpresaService(new Empresa());
+            $sucursalServicio->show($data["id_sucursal"])->update(["contacto"=>$data["contacto"], "email"=>$data["correo"]]);
+
             $empresa = $empresaService->show($data["id_proveedor"]);
             if($empresa->emite_factura){
                 $empresaService->validaRFC($empresa->rfc);
@@ -157,8 +161,10 @@ class InvitacionService
                 $usuario = $usuarioServicio->existe($empresa->rfc);
                 if(!$usuario)
                 {
-                    $usuario = $this->generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $data["correo"]);
+                    $usuario = $this->generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $data["correo"], $empresaGlobal);
                 }else{
+                    $usuario->usuario_estado = 1;
+                    $usuario->save();
                     if($usuario->correo != $data["correo"])
                     {
                         $clave = str_replace(" ","",substr($usuario->nombre,0,2).date('s').substr($usuario->apaterno,0,2).date('m').substr($usuario->amaterno,0,2).date('His'));
@@ -175,8 +181,10 @@ class InvitacionService
                 $usuario = $usuarioServicio->existe($nombre);
                 if(!$usuario)
                 {
-                    $usuario = $this->generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $data["correo"]);
+                    $usuario = $this->generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $data["correo"], $empresaGlobal);
                 }else{
+                    $usuario->usuario_estado = 1;
+                    $usuario->save();
                     if($usuario->correo != $data["correo"])
                     {
                         $clave = str_replace(" ","",substr($usuario->nombre,0,2).date('s').substr($usuario->apaterno,0,2).date('m').substr($usuario->amaterno,0,2).date('His'));
@@ -190,16 +198,62 @@ class InvitacionService
                 }
             }
         }else{
-            $usuario = $usuarioServicio->existe($data["correo"]);
-            if(!$usuario)
-            {
-                $usuario = $this->generaUsuarioCorreo($usuarioServicio, $data["correo"]);
+            if($data["id_usuario"]>0){
+                $usuario = $usuarioServicio->show($data["id_usuario"]);
+                $empresa = $this->getEmpresa($usuario);
+                if($empresa)
+                {
+                    $datos_registro["id_proveedor_sao"] = $empresa->id_empresa;
+                    $datos_registro["id_sucursal_sao"] = $empresa->sucursales()->first()->id_sucursal;
+                    $datos_registro["razon_social"] = $empresa->razon_social;
+                    $datos_registro["rfc"] = $empresa->rfc;
+                }
+            } else {
+                $usuario = $usuarioServicio->existe($data["correo"]);
+                if(!$usuario)
+                {
+                    $usuario = $this->generaUsuarioCorreo($usuarioServicio, $data["correo"], $empresaGlobal);
+                    /*Se agrega este dato para poder determinar si el usuario-empresa deberá darse de alta en el padrón
+                    de proveedores como contratista o como proveedor*/
+                    if($transaccion->tipo_transaccion == 17){
+                        $usuario->tipo_empresa = 1;
+                        $usuario->save();
+                    }else if($transaccion->tipo_transaccion == 49){
+                        $usuario->tipo_empresa = 2;
+                        $usuario->save();
+                    }
+                } else {
+                    /*Se agrega este dato para poder determinar si el usuario-empresa deberá darse de alta en el padrón
+                    de proveedores como contratista o como proveedor*/
+                    if($transaccion->tipo_transaccion == 17){
+                        if($usuario->tipo_empresa == 2){
+                            $usuario->tipo_empresa = 3;
+                            $usuario->save();
+                        } else if($usuario->tipo_empresa == ''){
+                            $usuario->tipo_empresa = 1;
+                            $usuario->save();
+                        }
+
+                    } else if($transaccion->tipo_transaccion == 49){
+                        /*Se agrega este dato para poder determinar si el usuario-empresa deberá darse de alta en el padrón
+                    de proveedores como contratista o como proveedor*/
+                        if($usuario->tipo_empresa == 1){
+                            $usuario->tipo_empresa = 3;
+                            $usuario->save();
+                        } else if($usuario->tipo_empresa == ''){
+                            $usuario->tipo_empresa = 2;
+                            $usuario->save();
+                        }
+                    }
+                }
             }
         }
+
         $usuario->asignaRol("proveedor");
         $datos_registro ["usuario_invitado"] = $usuario->idusuario;
         $invitacion = $this->repository->store($datos_registro);
         $invitacion->cuerpo_correo = $this->generaCuerpoCorreo($data["cuerpo_correo"],$invitacion);
+        $invitacion->save();
 
         $carta_terminos_condiciones['archivo_nombre'] = $data["nombre_archivo_carta_terminos_condiciones"];
         $carta_terminos_condiciones['archivo'] = $data["archivo_carta_terminos_condiciones"];
@@ -223,13 +277,56 @@ class InvitacionService
         return $invitacion;
     }
 
+    private function getEmpresa(Usuario $usuario){
+        $empresaService = new EmpresaService(new Empresa());
+        $empresa = $empresaService->getEmpresaPorRFC($usuario->usuario);
+        if(!$empresa){
+            $rfc_valido = $empresaService->validaRFCSM($usuario["usuario"]);
+            if($rfc_valido){
+                $empresa = $this->generaEmpresaSAO($usuario);
+            }else {
+                abort(500,"El RFC: ".$usuario["usuario"].", no es válido ante el SAT. \n \nPor favor seleccione otro proveedor o indique que no desea seleccionar un proveedor de la lista");
+            }
+        }
+        return $empresa;
+    }
+
+    public function generaEmpresaSAO(Usuario $usuario, Invitacion $invitacion = null)
+    {
+        $empresaService = new EmpresaService(new Empresa());
+        $usuario_registro = auth()->id();
+        if($invitacion){
+            $empresaService->setDB($invitacion->base_datos);
+            $usuario_registro = $invitacion->usuario_invitado;
+        }
+
+        $empresaPreexistente = $empresaService->getEmpresaPorRFC($usuario->usuario);
+        if(!$empresaPreexistente){
+            $empresa = $empresaService->store(
+                [
+                    "emite_factura"=>1,
+                    "es_nacional"=>1,
+                    "tipo_empresa"=>3,
+                    "razon_social"=>$usuario->nombre_completo,
+                    "rfc"=>$usuario->usuario,
+                    "UsuarioRegistro"=>$usuario_registro,
+                ]);
+            $empresa->sucursales()->create([
+                "descripcion"=>"MATRIZ",
+                "email"=>$usuario->correo
+            ]);
+            return $empresa;
+        }
+        return $empresaPreexistente;
+    }
+
     private function registraArchivo($data)
     {
         $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
         $archivoService->agregarArchivo($data);
     }
 
-    private function generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $correo)
+    private function generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $correo, $empresaGlobal)
     {
         $nombreArr = Usuario::generaArregloNombre($empresa->razon_social);
         $nombre = $nombreArr[0];
@@ -248,7 +345,8 @@ class InvitacionService
             'correo'=>$correo,
             'clave'=>$clave,
             'id_empresa'=>$id_empresa,
-            'pide_cambio_contrasenia'=>1
+            'pide_cambio_contrasenia'=>1,
+            'id_empresa_invito'=>$empresaGlobal->id
         ];
         $usuario = $usuarioServicio->store($datos_usuario);
         if($usuario){
@@ -257,7 +355,7 @@ class InvitacionService
         return $usuario;
     }
 
-    private function generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $correo)
+    private function generaUsuarioEmpresaNoDeducible($usuarioServicio, $empresa, $correo, $empresaGlobal)
     {
         $nombreArr = Usuario::generaArregloNombre($empresa->razon_social);
         $nombre = $nombreArr[0];
@@ -276,7 +374,8 @@ class InvitacionService
             'correo'=>$correo,
             'clave'=>$clave,
             'id_empresa'=>$id_empresa,
-            'pide_cambio_contrasenia'=>1
+            'pide_cambio_contrasenia'=>1,
+            'id_empresa_invito'=>$empresaGlobal->id,
         ];
         $usuario = $usuarioServicio->store($datos_usuario);
         if($usuario){
@@ -285,7 +384,7 @@ class InvitacionService
         return $usuario;
     }
 
-    private function generaUsuarioCorreo($usuarioServicio, $correo)
+    private function generaUsuarioCorreo($usuarioServicio, $correo, $empresaGlobal)
     {
         $nombreArr = explode("@",$correo);
         $nombre = $nombreArr[0];
@@ -303,7 +402,8 @@ class InvitacionService
             'clave'=>$clave,
             'id_empresa'=>$id_empresa,
             'pide_cambio_contrasenia'=>1,
-            'pide_datos_empresa'=>1
+            'pide_datos_empresa'=>1,
+            'id_empresa_invito'=>$empresaGlobal->id
         ];
         $usuario = $usuarioServicio->store($datos_usuario);
         if($usuario){
@@ -331,7 +431,7 @@ class InvitacionService
     {
 
         $cuerpo = str_replace("[%contacto%]",$invitacion->nombre_contacto,$cuerpo);
-        $cuerpo = str_replace("[%fecha_cierre%]",$invitacion->fecha_cierre_format,$cuerpo);
+        $cuerpo = str_replace("[%fecha_cierre%]",$invitacion->fecha_cierre_invitacion_format,$cuerpo);
         $cuerpo = str_replace("[%razon_social%]",$invitacion->obra->facturar,$cuerpo);
         $cuerpo = str_replace("[%rfc%]",$invitacion->obra->rfc,$cuerpo);
         $cuerpo = str_replace("[%proyecto%]",$invitacion->obra->descripcion,$cuerpo);
@@ -340,5 +440,36 @@ class InvitacionService
         $cuerpo = str_replace("[%enlace_ubicacion%]",$invitacion->ubicacion_entrega_plataforma_digital,$cuerpo);
         $cuerpo = str_replace("[%email_comprador%]",$invitacion->usuarioInvito->correo,$cuerpo);
         return $cuerpo;
+    }
+
+    public function preparaURLUbicacion($url)
+    {
+        if(strpos($url,"iframe"))
+        {
+            return $url;
+        }else{
+            return $url;
+        }
+    }
+
+    public function transfiereInvitaciones(Usuario $usuario, Usuario $nuevo_usuario)
+    {
+        $this->repository->where([["usuario_invitado", "=", $usuario->idusuario]]);
+        $invitaciones = $this->repository->all();
+        foreach($invitaciones as $invitacion){
+            $invitacion->usuario_invitado = $nuevo_usuario->idusuario;
+            $invitacion->save();
+            $this->generaEmpresaSAO($nuevo_usuario, $invitacion);
+        }
+    }
+
+    public function generaEmpresasSAO(Usuario $usuario)
+    {
+        $empresas = [];
+        $this->repository->where([["usuario_invitado", "=", $usuario->idusuario]]);
+        $invitaciones = $this->repository->all();
+        foreach($invitaciones as $invitacion){
+            $empresas[] = $this->generaEmpresaSAO($usuario, $invitacion);
+        }
     }
 }

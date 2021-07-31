@@ -34,31 +34,89 @@
 <body>
 <div id="content">
     <div class="row">
-        <div class="login-logo offset-4 centered">
+        <div class="login-logo offset-2 centered">
             <img src="{{URL::asset('/img/logo_hc.png')}}" class="img-responsive img-rounded" width="70%">
         </div>
     </div>
     <form method="POST" @submit.prevent="enviar">
-        <div class="login-box offset-4 centered">
+        <div class="login-box offset-2 centered">
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg"><i class="fa fa-retweet" ></i><b>Actualización de Contraseña</b></p>
-                    <div class="input-group mb-3">
-                        <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" v-model="clave_nueva" placeholder="Contraseña Nueva" value="{{ old('clave_nueva') }}" required autofocus>
-                        <div class="input-group-append">
-                            <span class="fas fa-lock input-group-text"></span>
+                    <p class="login-box-msg"><b>Complementar los datos básicos de la empresa</b></p>
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="rfc">Razón Social:</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" name="razon_social" class="form-control{{ $errors->has('razon_social') ? ' is-invalid' : '' }}" v-model="razon_social" value="{{ old('razon_social') }}" required autofocus>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="input-group mb-3">
-                        <input type="password" name="clave_confirmacion" v-model="clave_confirmacion" class="form-control{{ $errors->has('clave_confirmacion') ? ' is-invalid' : '' }}" placeholder="Confirmar Contraseña" required>
-                        <div class="input-group-append">
-                            <span class="fa fa-lock input-group-text"></span>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="rfc">RFC:</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" name="rfc" class="form-control{{ $errors->has('rfc') ? ' is-invalid' : '' }}" v-model="rfc" value="{{ old('rfc') }}" required autofocus>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="carta_terminos">Constancia de situación fiscal (pdf):</label>
+                                <div class="input-group mb-3">
+                                    <input type="file" id="constancia_situacion_fiscal"
+                                           @change="onFileChange"
+                                           name="constancia_situacion_fiscal"
+                                           class="form-control{{ $errors->has('constancia_situacion_fiscal') ? ' is-invalid' : '' }}"
+                                           placeholder="Constancia de Situación Fiscal"
+                                           value="{{ old('constancia_situacion_fiscal') }}"
+                                           required autofocus>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clave_nueva">Nueva Contraseña:</label>
+                                <div class="input-group mb-3">
+                                    <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" v-model="clave_nueva"  value="{{ old('clave_nueva') }}" required autofocus>
+                                    <div class="input-group-append">
+                                        <span class="fas fa-lock input-group-text"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="clave_nueva">Confirmar Contraseña:</label>
+                                <div class="input-group mb-3">
+                                    <input type="password" name="clave_confirmacion" v-model="clave_confirmacion" class="form-control{{ $errors->has('clave_confirmacion') ? ' is-invalid' : '' }}" required>
+                                    <div class="input-group-append">
+                                        <span class="fa fa-lock input-group-text"></span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-warning btn-block btn-flat">Actualizar Contraseña</button>
+                        <div class="offset-md-10 col-md-2">
+                            <button type="submit" class="btn btn-warning btn-block btn-flat">Continuar</button>
                         </div>
                     </div>
                 </div>
@@ -69,7 +127,6 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" ><i class="fa fa-info-circle"></i> Atención</h5>
-
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -101,12 +158,12 @@
     new Vue({
         el:'#content',
         data:{
-            clave_nueva : '',
-            clave_confirmacion : '',
-            razon_social : '',
-            rfc : '',
-            archivo_constancia : '',
-            nombre_archivo_constancia : '',
+            clave_nueva:'',
+            clave_confirmacion:'',
+            razon_social:'',
+            rfc:'',
+            archivo_constancia:'',
+            nombre_archivo_constancia:'',
             rules: [
 				{ message:'Un caracter especial (->@#)', valido:true, regex:/[->@#]+/ },
 				{ message:"Al menos una letra mayúscula", valido:true,  regex:/[A-Z]+/ },
@@ -122,7 +179,7 @@
                 if(this.clave_nueva != this.clave_confirmacion){
                     swal({
                         title: "Actualización de Contraseña",
-                        text: 'La contraseña nueva debe conincidir con la confirmación de contraseña.',
+                        text: 'La nueva contraseña debe conincidir con la confirmación de contraseña.',
                         icon: "warning",
                         confirmButtonText: "Ok",
                     });
@@ -130,8 +187,12 @@
                     return new Promise((resolve, reject) => {
                         axios
                             .post('login', {
-                                clave_confirmacion:this.clave_confirmacion,
-                                clave_nueva:this.clave_nueva
+                                clave_confirmacion : this.clave_confirmacion,
+                                clave_nueva : this.clave_nueva,
+                                archivo_constancia : this.archivo_constancia,
+                                nombre_archivo_constancia : this.nombre_archivo_constancia,
+                                razon_social : this.razon_social,
+                                rfc : this.rfc,
                             })
                             .then(r => r.data)
                             .then(data => {
@@ -176,6 +237,17 @@
                                                 icon: "warning"
                                             });
                                             break;
+                                        case (code === 444):
+                                            swal({
+                                                title: "Atención",
+                                                text: message,
+                                                icon: "warning",
+                                                confirmButtonText: "Entendido",
+                                                closeOnConfirm: true,
+                                            }).then((value) => {
+                                                window.location.href = 'login';
+                                            });
+                                            break;
                                         default:
                                             swal({
                                                 title: "¡Error!",
@@ -211,8 +283,29 @@
                     $(this.$refs.criterios_contraseña).modal('show');
                     return false;
                 }
-            }
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+                reader.onload = (e) => {
+                    vm.archivo_constancia = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            onFileChange(e){
+                this.file = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.nombre_archivo_constancia = files[0].name;
+                this.createImage(files[0]);
+            },
         }
     });
 </script>
+<style scoped>
+    .login-box, .register-box{
+        width: 600px;
+    }
+</style>
 </html>

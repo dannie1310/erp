@@ -37,4 +37,10 @@ class EmpresaSATService
     {
         return $this->repository->paginate($data);
     }
+
+    public function buscaPorRFC($rfc)
+    {
+        $this->repository->where([["rfc","=",$rfc]]);
+        return $this->repository->first();
+    }
 }

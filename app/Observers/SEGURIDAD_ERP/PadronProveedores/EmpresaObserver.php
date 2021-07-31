@@ -13,7 +13,9 @@ class EmpresaObserver
      */
     public function creating(Empresa $empresa)
     {
-        $empresa->usuario_registro = auth()->id();
+        if(!$empresa->usuario_registro >0){
+            $empresa->usuario_registro = auth()->id();
+        }
         $empresa->estatus = 1;
         $empresa->id_estado_expediente = 1;
     }
