@@ -4,17 +4,51 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">MÓDULOS</li>
-            <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
-                <router-link :to="{name: 'invitacion-proveedor'}" class="nav-link">
-                    <i class="fa fa-envelope nav-icon"></i>
-                    <p>Invitaciones</p>
+            <li class="nav-header">COTIZACIONES</li>
+            <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
+                <router-link :to="{name: 'cotizacion-proveedor-seleccionar-solicitud'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-cfdi'}">
+                    <i class="fa fa-plus nav-icon"></i>
+                    <p>Registrar Cotización</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
                 <router-link :to="{name: 'cotizacion-proveedor'}" class="nav-link">
-                    <i class="fa fa-tasks nav-icon"></i>
-                    <p>Cotizaciones</p>
+                    <i class="fa fa-comment-dollar nav-icon"></i>
+                    <p>Lista de Cotizaciones</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
+                <router-link :to="{name: 'invitacion-proveedor'}" class="nav-link">
+                    <i class="fa fa-envelope nav-icon"></i>
+                    <p>Lista de Invitaciones a Cotizar</p>
+                </router-link>
+            </li>
+
+        </ul>
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">SOLICITUDES DE REVISIÓN DE CFDI</li>
+            <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
+                <router-link :to="{name: 'seleccionar-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-cfdi'}">
+                    <i class="fa fa-plus nav-icon"></i>
+                    <p>Registrar Solicitud</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('aprobar_solicitud_recepcion_cfdi')">
+                <router-link :to="{name: 'recepcion-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'recepcion-cfdi'}">
+                    <i class="fa fa-check-circle nav-icon"></i>
+                    <p>Recibir CFDI</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_solicitud_recepcion_cfdi_proveedor',true)">
+                <router-link :to="{name: 'entrega-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'entrega-cfdi'}">
+                    <i class="fa fa-copy nav-icon"></i>
+                    <p>Lista de Solicitudes de Revisión</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_solicitud_recepcion_cfdi_proyecto',true)">
+                <router-link :to="{name: 'solicitud-recepcion-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-recepcion-cfdi'}">
+                    <i class="fa fa-copy nav-icon"></i>
+                    <p>Lista de Solicitudes de Revisión</p>
                 </router-link>
             </li>
         </ul>
