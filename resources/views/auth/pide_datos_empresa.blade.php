@@ -237,6 +237,17 @@
                                                 icon: "warning"
                                             });
                                             break;
+                                        case (code === 444):
+                                            swal({
+                                                title: "Atención",
+                                                text: message,
+                                                icon: "warning",
+                                                timer: 5000,
+                                                buttons: false
+                                            }).then((value) => {
+                                                window.location.href = 'login';
+                                            });
+                                            break;
                                         default:
                                             swal({
                                                 title: "¡Error!",

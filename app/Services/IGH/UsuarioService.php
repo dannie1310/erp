@@ -80,7 +80,6 @@ class UsuarioService
                 $invitacionesService->transfiereInvitaciones($usuarioProvisional, $usuario);
                 $empresaPadron = $empresaPadronService->buscaPorRFC($datos["rfc"]);
 
-
                 if($empresaPadron){
                     /* 1.1.1 si el expediente no tiene archivo de situación fiscal se carga*/
                     $archivoConstanciaSituacion = $empresaPadron->archivos()->where("id_tipo_archivo","=",20)->first();
@@ -98,10 +97,11 @@ class UsuarioService
                         $archivoService->cargarArchivosPDF($data_archivos);
                     }
                 }else{
+                    $empresaPadronService = new EmpresaService(new Empresa());
                     /* 1.1.1 se inicia expediente y carga constancia de situación fiscal*/
 
                     $datos_padron = [
-                        "id_tipo_empresa"=>$usuario->tipo_empresa,
+                        "id_tipo_empresa"=>$usuarioProvisional->tipo_empresa,
                         "rfc"=>$datos["rfc"],
                         "razon_social"=>$datos["razon_social"],
                         "id_giro"=>1,
@@ -109,7 +109,7 @@ class UsuarioService
                         "id_especialidades"=>[],
                         'usuario_registro'=>$usuario->idusuario
                     ];
-                    $empresaPadronService->store($datos_padron);
+                    $empresaPadron = $empresaPadronService->store($datos_padron);
                     $archivoConstanciaSituacion = $empresaPadron->archivos()->where("id_tipo_archivo","=",20)->first();
                     if($archivoConstanciaSituacion){
                         if($archivoConstanciaSituacion->hash_file == ''){
@@ -126,8 +126,12 @@ class UsuarioService
                     }
                 }
 
+                $usuarioProvisional->usuario_estado = 0;
+                $usuarioProvisional->clave = date("his");
+                $usuarioProvisional->save();
+
                 /* 1.1.2 se notifica que debe iniciar con las credenciales correspondientes al usuario*/
-                abort(500, "Ya existe un usuario registrado con el RFC: ". $datos["rfc"] . ", la invitación a cotizar ha sido transferida a este usuario. \n \n Por favor inicie sesión con las credenciales de dicho usuario compartidas previamente por correo.");
+                abort(444, "Ya existe un usuario registrado con el RFC: ". $datos["rfc"] . ", la invitación a cotizar ha sido transferida a este usuario. \n \n Por favor inicie sesión con las credenciales de dicho usuario compartidas previamente por correo.");
             }else{
                 /*1.2 si si existe y el correo no es igual al correo del usuario que esta iniciando sesión no se cambia la contraseña y se
                   notifica que ese rfc esta asociado a otro correo y que debe contactar a soporte a aplicaciones de grupo hermes para solicitar el cambio*/

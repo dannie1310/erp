@@ -294,6 +294,7 @@ class InvitacionService
     public function generaEmpresaSAO(Usuario $usuario, Invitacion $invitacion = null)
     {
         $empresaService = new EmpresaService(new Empresa());
+        $usuario_registro = auth()->id();
         if($invitacion){
             $empresaService->setDB($invitacion->base_datos);
             $usuario_registro = $invitacion->usuario_invitado;
@@ -301,8 +302,6 @@ class InvitacionService
 
         $empresaPreexistente = $empresaService->getEmpresaPorRFC($usuario->usuario);
         if(!$empresaPreexistente){
-            $usuario_registro = auth()->id();
-
             $empresa = $empresaService->store(
                 [
                     "emite_factura"=>1,
@@ -458,8 +457,9 @@ class InvitacionService
         $this->repository->where([["usuario_invitado", "=", $usuario->idusuario]]);
         $invitaciones = $this->repository->all();
         foreach($invitaciones as $invitacion){
-            $invitacion->usuario_invitado = $nuevo_usuario->id;
+            $invitacion->usuario_invitado = $nuevo_usuario->idusuario;
             $invitacion->save();
+            $this->generaEmpresaSAO($nuevo_usuario, $invitacion);
         }
     }
 
