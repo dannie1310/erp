@@ -3365,77 +3365,6 @@ export const routes = [
         ]
     },
     {
-        path: '/entrega-cfdi',
-        components:  {
-            default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
-            menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
-        },
-        children:[
-            {
-                path:'',
-                name: 'entrega-cfdi',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
-                    meta: {
-                    title: 'Listado de Solicitudes de Revisión de CFDI',
-                    middleware: [auth, permission],
-                    permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
-                    general: true
-                }
-            },
-            {
-                path: 'seleccionar-cfdi',
-                name: 'seleccionar-cfdi',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/SeleccionarCFDI.vue').default,
-                meta: {
-                    title: 'Seleccionar CFDI',
-                    breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
-                    middleware: [auth, permission],
-                    permission: ['registrar_solicitud_recepcion_cfdi'],
-                    general: true
-                }
-            },
-            {
-                path: ':id_cfdi/create',
-                props : true,
-                name: 'solicitud-recepcion-cfdi-create',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
-                meta: {
-                    title: 'Registrar Solicitud de Revisión de CFDI',
-                    breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
-                    middleware: [auth, permission],
-                    permission: ['registrar_solicitud_recepcion_cfdi'],
-                    general: true
-                }
-            },
-            {
-                path: ':id',
-                name: 'solicitud-recepcion-cfdi-show',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
-                props: true,
-                meta: {
-                    title: 'Consultar Solicitud de Revisión de CFDI',
-                    breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
-                    middleware: [auth, permission],
-                    permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
-                    general: true
-                }
-            },
-            {
-                path: ':id/cancelar',
-                name: 'solicitud-recepcion-cfdi-cancelar',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
-                props: true,
-                meta: {
-                    title: 'Cancelar Solicitud de Revisión de CFDI',
-                    breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
-                    middleware: [auth, permission],
-                    permission: 'cancelar_solicitud_recepcion_cfdi',
-                    general: true
-                }
-            },
-        ]
-    },
-    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,
@@ -3966,7 +3895,78 @@ export const routes = [
                         }
                     },
                 ]
-            }
+            },
+            {
+                path: 'entrega-cfdi',
+                components:  {
+                    default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+                    menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
+                },
+                children:[
+                    {
+                        path:'',
+                        name: 'entrega-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Solicitudes de Revisión de CFDI',
+                            middleware: [auth, permission],
+                            permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'seleccionar-cfdi',
+                        name: 'seleccionar-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/SeleccionarCFDI.vue').default,
+                        meta: {
+                            title: 'Seleccionar CFDI',
+                            breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_recepcion_cfdi'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_cfdi/create',
+                        props : true,
+                        name: 'solicitud-recepcion-cfdi-create',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Solicitud de Revisión de CFDI',
+                            breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_recepcion_cfdi'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'solicitud-recepcion-cfdi-show',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/cancelar',
+                        name: 'solicitud-recepcion-cfdi-cancelar',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
+                        props: true,
+                        meta: {
+                            title: 'Cancelar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
+                            middleware: [auth, permission],
+                            permission: 'cancelar_solicitud_recepcion_cfdi',
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
