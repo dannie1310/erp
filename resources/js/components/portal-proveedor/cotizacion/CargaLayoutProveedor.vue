@@ -53,7 +53,7 @@
 <script>
     export default {
         name: "cargar-layout-cotizacion",
-        props: ['id','id_cotizacion'],
+        props: ['id_invitacion','id_cotizacion'],
         data() {
             return {
                 cargando: false,
@@ -95,7 +95,7 @@
             cargarLayout(){
                 var formData = new FormData();
                 formData.append('file', this.file);
-                formData.append('id', this.id);
+                formData.append('id_invitacion', this.id_invitacion);
                 formData.append('name', this.nombre);
                 formData.append('id_cotizacion', this.id_cotizacion);
                 return this.$store.dispatch('compras/cotizacion/cargaLayoutProveedor',

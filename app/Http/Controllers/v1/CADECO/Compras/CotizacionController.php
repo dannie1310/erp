@@ -97,7 +97,7 @@ class CotizacionController extends Controller
 
     public function cargaLayoutProveedor(Request $request)
     {
-        $res = $this->service->cargaLayoutProveedor($request->file, $request->id, $request->name, $request->id_cotizacion);
+        $res = $this->service->cargaLayoutProveedor($request->file, $request->id_invitacion, $request->name, $request->id_cotizacion);
         return response()->json($res, 200);
     }
 }

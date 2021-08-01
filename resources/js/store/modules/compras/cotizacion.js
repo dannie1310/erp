@@ -318,7 +318,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Cargar Layout de Cotización",
-                    text: "¿Está seguro/a de que desea cargar xlsx?",
+                    text: "¿Está seguro que desea cargar el archivo del layout?",
                     icon: "warning",
                     buttons: {
                         cancel: {

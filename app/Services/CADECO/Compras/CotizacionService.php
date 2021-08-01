@@ -178,9 +178,9 @@ class CotizacionService
         return $this->repository->descargaLayoutProveedor($data['id_cotizacion'], $invitacion);
     }
 
-    public function cargaLayoutProveedor($file, $id, $name, $id_cotizacion)
+    public function cargaLayoutProveedor($file, $id_invitacion, $name, $id_cotizacion)
     {
-        $invitacion = $this->validaFechaCierreInvitacion($id);
+        $invitacion = $this->validaFechaCierreInvitacion($id_invitacion);
         $file_xls = $this->getFileXls($file, $name);
         $celdas = $this->getDatosPartidas($file_xls);
         $this->verifica = new ValidacionSistema();
