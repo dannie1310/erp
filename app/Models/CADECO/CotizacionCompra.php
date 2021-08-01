@@ -946,7 +946,7 @@ class    CotizacionCompra  extends Transaccion
                 'fecha' => $fecha->format("Y-m-d"),
                 'monto' => $data['importe'],
                 'impuesto' => $data['impuesto'],
-                'porcentaje_anticipo_pactado' => $data['pago']
+                'porcentaje_anticipo_pactado' => $data['pago'],
             ]);
             if($this->complemento)
             {
@@ -1002,6 +1002,13 @@ class    CotizacionCompra  extends Transaccion
                             'estatus' => $partida['no_cotizado'] ? 3 : 1
                         ]);
                     }
+                }
+            }
+            if(key_exists('partidas', $data)){
+                if(key_exists('data', $data['partidas'])){
+                    $this->update([
+                        'estado' => -1,
+                    ]);
                 }
             }
             DB::connection('cadeco')->commit();
