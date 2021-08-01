@@ -9,17 +9,17 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_solicitud">Buscar Solicitud o Contrato:</label>
+                                            <label for="id_invitacion">Buscar Invitación:</label>
                                                  <model-list-select
-                                                     id="id_solicitud"
-                                                     name="id_solicitud"
+                                                     id="id_invitacion"
+                                                     name="id_invitacion"
                                                      option-value="id"
-                                                     v-model="id_solicitud"
+                                                     v-model="id_invitacion"
                                                      :custom-text="idFolioObservaciones"
-                                                     :list="solicitudes"
-                                                     :placeholder="!cargando?'Seleccionar o buscar folio o observación':'Cargando...'">
+                                                     :list="invitaciones"
+                                                     :placeholder="!cargando?'Seleccionar o buscar por folio u observación':'Cargando...'">
                                                  </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_invitacion')">{{ errors.first('id_invitacion') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -54,19 +54,21 @@
             return {
                 cargando: false,
                 id_solicitud: '',
+                id_invitacion: '',
                 solicitudes : [],
+                invitaciones : [],
                 solicitud : null
             }
         },
         mounted() {
             this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
             this.$validator.reset();
-            this.getSolicitudes();
+            this.getInvitaciones();
         },
         methods : {
             idFolioObservaciones (item)
             {
-                return `[${item.numero_folio_format}]-[ ${item.observaciones} ]`;
+                return `[${item.numero_folio_format}]-[ ${item.observaciones} ]-[ ${item.transaccion.tipo.descripcion}]-[ ${item.transaccion.numero_folio_format} ]`;
             },
             salir()
             {
@@ -76,12 +78,27 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_solicitud,
+                    id: this.id_invitacion,
                     params:{}
                 }).then(data => {
                     this.solicitud = data
                     this.cargando = false;
                 })
+            },
+            getInvitaciones(){
+                this.invitaciones = [];
+                this.cargando = true;
+
+                return this.$store.dispatch('padronProveedores/invitacion/index', {
+                    params:{ include: ['transaccion'], scope: ['invitadoAutenticado'], sort: 'id', order: 'desc'}
+
+                })
+                    .then(data => {
+                        this.invitaciones = data;
+                    })
+                    .finally(()=>{
+                        this.cargando = false;
+                    })
             },
             getSolicitudes() {
                 this.solicitudes = [];
@@ -105,7 +122,7 @@
             },
         },
         watch: {
-            id_solicitud(value)
+            id_invitacion(value)
             {
                 if(value !== '' && value !== null && value !== undefined)
                 {
