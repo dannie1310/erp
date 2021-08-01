@@ -27,6 +27,7 @@ class InvitacionTransformer extends TransformerAbstract
         'empresa',
         'sucursal',
         'solicitud_compra',
+        'solicitud_compra_cotizar',
         'carta_terminos',
         'formato_cotizacion',
         'cotizacion',
@@ -95,6 +96,13 @@ class InvitacionTransformer extends TransformerAbstract
     public function includeSolicitudCompra(Invitacion $model) {
         if ($item = $model->solicitud) {
             return $this->item($item, new SolicitudCompraTransformer);
+        }
+        return null;
+    }
+
+    public function includeSolicitudCompraCotizar(Invitacion $model) {
+        if ($item = $model->getSolicitud()) {
+            return $this->item($item, new SolicitudCompraCotizarProveedorTransformer);
         }
         return null;
     }

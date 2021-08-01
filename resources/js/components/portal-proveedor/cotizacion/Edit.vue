@@ -349,7 +349,7 @@
     export default {
         name: "cotizacion-proveedor-edit",
         components: {DatosCotizacionCompra, Datepicker, ModelListSelect},
-        props: ['id', 'xls'],
+        props: ['id_invitacion', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -387,7 +387,7 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id,
+                    id: this.id_invitacion,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidas'], scope: ['invitadoAutenticado']}
                 }).then(data => {
                     this.invitacion = data;

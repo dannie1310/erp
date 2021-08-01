@@ -3801,8 +3801,8 @@ export const routes = [
                         name: 'cotizacion-proveedor-seleccionar-solicitud',
                         component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,
                         meta: {
-                            title: 'Seleccionar Solicitud o Contrato',
-                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
+                            title: 'Seleccionar Invitación',
+                                breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR INVITACIÓN'},
                             middleware: [auth, permission],
                             permission: ['registrar_cotizacion_proveedor'],
                             general: true
@@ -3835,7 +3835,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/editar',
+                        path: ':id_invitacion/editar',
                         name: 'cotizacion-proveedor-edit',
                         props: true,
                         component: require('./components/portal-proveedor/cotizacion/Edit').default,

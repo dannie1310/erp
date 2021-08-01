@@ -46,6 +46,7 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     import DatosSolicitud from './partials/DatosSolicitud';
+    import invitacion from "../../../store/modules/padronProveedores/invitacion";
     export default {
         name: "cotizacion-proveedor-seleccionar-solicitud",
         components: {
@@ -55,7 +56,8 @@
                 cargando: false,
                 id_invitacion: '',
                 invitaciones : [],
-                solicitud : null
+                solicitud : null,
+                invitacion : null,
             }
         },
         mounted() {
@@ -75,11 +77,12 @@
             find() {
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
-                return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
+                return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
-                    params:{}
+                    params:{include: ['solicitud_compra_cotizar']}
                 }).then(data => {
-                    this.solicitud = data
+                    this.invitacion = data;
+                    this.solicitud = data.solicitud_compra
                     this.cargando = false;
                 })
             },
@@ -101,7 +104,11 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                        if(this.invitacion.cotizacion){
+                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
+                        }else{
+                            this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                        }
                     }
                 });
             },

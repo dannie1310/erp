@@ -286,6 +286,12 @@ class Invitacion extends Model
 
     public function getSolicitud()
     {
+        $invitacion_fl =  Invitacion::where('id',$this->id)->first();
+        $invitacion = Invitacion::where('id',$this->id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
         if($this->tipo_transaccion_antecedente == 17) {
             return [
                 'id' => $this->solicitud->getKey(),
