@@ -80,14 +80,14 @@ class Invitacion extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(Transaccion::class, "id_cotizacion_generada", "id_transaccion")->withoutGlobalScopes();
+        return $this->hasOne(Transaccion::class, "id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
     public function cotizacionCompra()
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(CotizacionCompra::class, "id_cotizacion_generada", "id_transaccion")->withoutGlobalScopes();
+        return $this->hasOne(CotizacionCompra::class,"id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
     public function usuarioInvito()
