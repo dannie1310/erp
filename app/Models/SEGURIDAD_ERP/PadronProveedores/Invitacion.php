@@ -199,6 +199,12 @@ class Invitacion extends Model
     public function getFechaHoraFormatAttribute()
     {
         $date = date_create($this->fecha_hora_invitacion);
+        return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_invitacion);
         return date_format($date,"d/m/Y");
     }
 

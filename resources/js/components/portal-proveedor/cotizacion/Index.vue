@@ -28,12 +28,13 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: false},
-                    { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
-                    { title: 'Fecha', field: 'fecha', sortable: false },
-                    { title: 'Proveedor', field: 'empresa', sortable: false },
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
+                    { title: 'Proyecto', field: 'descripcion_obra', tdClass: 'td_c250', sortable: true},
+                    { title: 'Folio de Invitación', tdClass: 'td_c100', field: 'numero_folio', sortable: true},
+                    { title: 'Fecha de Invitación', tdClass: 'td_c100', field: 'fecha_hora_invitacion', sortable: true},
+                    { title: 'Folio de Solicitud', tdClass: 'td_c100', field: 'solicitud'},
+                    { title: 'Folio de Cotización', field: 'numero_folio_cotizacion', tdClass: 'td_c100', sortable: false},
+                    { title: 'Fecha de Cotización', field: 'fecha_cotizacion', tdClass: 'td_c100', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
@@ -111,13 +112,16 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: invitacion.cotizacion.numero_folio_format,
+                        numero_folio: invitacion.numero_folio_format,
+                        numero_folio_cotizacion: invitacion.cotizacion.numero_folio_format,
                         solicitud: invitacion.transaccion.numero_folio_format,
-                        fecha: invitacion.cotizacion.fecha_format,
+                        fecha_cotizacion: invitacion.cotizacion.fecha_format,
+                        fecha_hora_invitacion: invitacion.fecha_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
                         importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
+                        descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {
                             show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
                             id: invitacion.id,
