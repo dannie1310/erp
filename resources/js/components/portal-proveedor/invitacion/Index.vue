@@ -86,13 +86,14 @@
                         razon_social:invitacion.nombre_usuario_invitado,
                         id: invitacion.numero_folio_format,
                         numero_folio_solicitud: invitacion.transaccion.numero_folio_format,
-                        fecha_hora_invitacion: invitacion.fecha_hora_format,
+                        fecha_hora_invitacion: invitacion.fecha_format,
                         fecha_solicitud: invitacion.transaccion.fecha_format,
                         fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         usuario_invito: invitacion.nombre_usuario_invito,
                         descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {
                             id: invitacion.id,
+                            con_cotizacion: invitacion.con_cotizacion,
                             show: true,
                         })
                     }));

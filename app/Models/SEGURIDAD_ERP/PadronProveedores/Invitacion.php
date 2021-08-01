@@ -263,6 +263,14 @@ class Invitacion extends Model
         }
     }
 
+    public function getConCotizacionAttribute()
+    {
+        if($this->id_cotizacion_generada>0){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Métodos
      */
