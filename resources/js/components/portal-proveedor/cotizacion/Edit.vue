@@ -511,7 +511,7 @@
 
                 if(this.total == 0)
                 {
-                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
+                    swal('Error', 'No puede ingresar una cotización donde todas las partidas tengan precio $0.00, favor de corregir para continuar', 'error');
                 }
                 else
                 {

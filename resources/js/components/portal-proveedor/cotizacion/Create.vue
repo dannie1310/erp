@@ -506,7 +506,7 @@
             store() {
                 if(this.total == 0 && this.pendiente === false)
                 {
-                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
+                    swal('Error', "No puede ingresar una cotización donde todas las partidas tengan precio $0.00. \n  \n Favor de ingresar los precios o seleccionar la opción de dejar pendiente la carga de precios.", 'error');
                 }
                 else
                 {
