@@ -362,7 +362,7 @@
     import TablaDatosSolicitud from "./partials/TablaDatosSolicitud";
     export default {
         name: "cotizacion-proveedor-create",
-        props: ['id_solicitud'],
+        props: ['id_invitacion'],
         components: {
             TablaDatosSolicitud,
             Datepicker, ModelListSelect},
@@ -404,7 +404,7 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_solicitud,
+                    id: this.id_invitacion,
                     params:{}
                 }).then(data => {
                     this.solicitud = data
@@ -472,7 +472,6 @@
                         {
                             partida.calculo_precio_total = (estado ? partida.cantidad_original_num : partida.cantidad)
                                 * (partida.precio_cotizacion - (partida.precio_cotizacion * (partida.descuento ? partida.descuento : 0))/100);
-                            console.log(partida.calculo_precio_total);
                             if(partida.moneda_seleccionada == 1)
                             {
                                 pesos += partida.calculo_precio_total;

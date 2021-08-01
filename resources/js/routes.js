@@ -3809,7 +3809,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id_solicitud/create',
+                        path: ':id_invitacion/create',
                         name: 'cotizacion-proveedor-create',
                         component: require('./components/portal-proveedor/cotizacion/Create').default,
                         props: true,

@@ -53,9 +53,7 @@
         data() {
             return {
                 cargando: false,
-                id_solicitud: '',
                 id_invitacion: '',
-                solicitudes : [],
                 invitaciones : [],
                 solicitud : null
             }
@@ -100,23 +98,10 @@
                         this.cargando = false;
                     })
             },
-            getSolicitudes() {
-                this.solicitudes = [];
-                this.cargando = true;
-                return this.$store.dispatch('padronProveedores/invitacion/getSolicitudes', {
-                    params: { }
-                })
-                    .then(data => {
-                        this.solicitudes = data;
-                    })
-                    .finally(()=>{
-                        this.cargando = false;
-                    })
-            },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$router.push({name: 'cotizacion-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
+                        this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
                     }
                 });
             },
