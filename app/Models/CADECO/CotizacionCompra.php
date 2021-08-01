@@ -63,6 +63,7 @@ class    CotizacionCompra  extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 18)
+                ->where("estado",">",-1)
             ->where('opciones','=', 1)->whereHas('complemento');
         });
     }
@@ -815,7 +816,7 @@ class    CotizacionCompra  extends Transaccion
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'observaciones' => $data['observaciones_cot'],
-                    'estado' => 1,
+                    'estado' => -1,
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => $data['importe'],
                     'impuesto' => $data['impuesto'],
@@ -881,7 +882,7 @@ class    CotizacionCompra  extends Transaccion
                     'observaciones' => $data['observaciones_cot'],
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => 0,
-                    'estado' => 0,
+                    'estado' => -2,
                     'impuesto' => 0,
                     'cumplimiento' => $fecha->format("Y-m-d"),
                     'vencimiento' => $fecha->format("Y-m-d"),
