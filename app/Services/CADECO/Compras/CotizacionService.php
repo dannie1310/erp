@@ -162,37 +162,25 @@ class CotizacionService
 
     public function storePortalProveedor($data)
     {
-        $invitacion = Invitacion::where('id', $data['id_invitacion'])->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
-        if (is_null($invitacion)) {
-            abort(400, 'La fecha limite para recibir su cotización ha sido superada.');
-        }
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
         return $this->repository->registrar($data, $invitacion);
     }
 
     public function updatePortalProveedor($data, $id)
     {
-        $invitacion = Invitacion::where('id', $data['id_invitacion'])->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
-        if (is_null($invitacion)) {
-            abort(400, 'La fecha limite para recibir su cotización ha sido superada.');
-        }
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
         return $this->repository->editarPortalProveedor($id, $data, $invitacion);
     }
 
     public function descargaLayoutProveedor($id, $data)
     {
-        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
-        if (is_null($invitacion)) {
-            abort(400, 'La fecha limite para recibir su cotización ha sido superada.');
-        }
+        $invitacion = $this->validaFechaCierreInvitacion($id);
         return $this->repository->descargaLayoutProveedor($data['id_cotizacion'], $invitacion);
     }
 
     public function cargaLayoutProveedor($file, $id, $name, $id_cotizacion)
     {
-        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
-        if (is_null($invitacion)) {
-            abort(400, 'La fecha limite para recibir su cotización ha sido superada.');
-        }
+        $invitacion = $this->validaFechaCierreInvitacion($id);
         $file_xls = $this->getFileXls($file, $name);
         $celdas = $this->getDatosPartidas($file_xls);
         $this->verifica = new ValidacionSistema();
@@ -263,5 +251,15 @@ class CotizacionService
         ];
 
         return $repuesta;
+    }
+
+    public function validaFechaCierreInvitacion($id, $codigo = 400)
+    {
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
+        if (is_null($invitacion)) {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $invitacion;
     }
 }
