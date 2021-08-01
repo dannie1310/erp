@@ -907,6 +907,7 @@ class    CotizacionCompra  extends Transaccion
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['id_material'],
+                        'id_moneda' => $partida['moneda_seleccionada'],
                         'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
                     ]);
 

@@ -352,7 +352,8 @@ class Invitacion extends Model
                 'cantidad_original_num' => ($partida->cantidad_original1 > 0) ? $partida->cantidad_original1 : $partida->cantidad,
                 'descuento' => $partida->descuento,
                 'observaciones' => $partida->complemento ? $partida->complemento->observaciones : '',
-                'enable' => true
+                'enable' => true,
+                'moneda_seleccionada' => 1
             ]);
         }
        return $partidas;
