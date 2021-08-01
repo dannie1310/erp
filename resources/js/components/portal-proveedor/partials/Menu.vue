@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">COTIZACIONES</li>
             <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
-                <router-link :to="{name: 'cotizacion-proveedor-seleccionar-solicitud'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-cfdi'}">
+                <router-link :to="{name: 'cotizacion-proveedor-seleccionar-solicitud'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion-proveedor-seleccionar-solicitud'}">
                     <i class="fa fa-plus nav-icon"></i>
                     <p>Registrar Cotización</p>
                 </router-link>

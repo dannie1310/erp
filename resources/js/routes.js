@@ -3789,7 +3789,7 @@ export const routes = [
                         name: 'cotizacion-proveedor',
                         component: require('./components/portal-proveedor/cotizacion/Index').default,
                         meta: {
-                            title: 'Cotizaciones de Proveedor',
+                            title: 'Lista de Cotizaciones',
                             breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES'},
                             middleware: [auth, permission],
                             permission: 'consultar_cotizacion_proveedor',

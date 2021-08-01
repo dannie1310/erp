@@ -73,19 +73,34 @@
             getEstado(estado) {
                 let val = parseInt(estado);
                 switch (val) {
+                    case -2:
+                        return {
+                            color: '#e50c25',
+                            text_color:'#f5f1f1',
+                            descripcion: 'Precios Pendientes'
+                        }
+                    case -1:
+                        return {
+                            color: '#f39c12',
+                            text_color:'#000000',
+                            descripcion: 'Registrada'
+                        }
                     case 0:
                         return {
-                            color: '#ff0000',
-                            descripcion: 'Precios Pendientes'
+                            color: '#396bea',
+                            text_color:'#f5f1f1',
+                            descripcion: 'Enviada'
                         }
                     case 1:
                         return {
-                            color: '#f39c12',
+                            color: '#59a153',
+                            text_color:'#000000',
                             descripcion: 'Registrada'
                         }
                     case 2:
                         return {
-                            color: '#4f9b34',
+                            color: '#59a153',
+                            text_color:'#000000',
                             descripcion: 'En Asignación'
                         }
                 }
