@@ -37,11 +37,17 @@
                             <span style="color:black; text-decoration: underline">{{invitacion.solicitud_compra.numero_folio_format}}</span>
                         </router-link>
                     </td>
-                    <td>
+                    <td v-if="invitacion.empresa">
                         {{invitacion.empresa.razon_social}}
                     </td>
-                    <td >
+                    <td v-else>
+                        N/A
+                    </td>
+                    <td v-if="invitacion.sucursal">
                         {{invitacion.sucursal.descripcion}}
+                    </td>
+                    <td v-else>
+                        N/A
                     </td>
                     <td >
                         {{invitacion.nombre_contacto}}

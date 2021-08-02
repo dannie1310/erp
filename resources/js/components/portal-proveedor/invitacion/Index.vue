@@ -23,12 +23,10 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', thClass:"t", sortable: false },
-                    { title: 'Folio de Invitación', field: 'id', tdClass: 'td_c80', thComp: require('../../globals/th-Filter').default, sortable: true },
-                    { title: 'Fecha de Invitación', field: 'fecha_hora_invitacion', tdClass: 'td_c80', thComp: require('../../globals/th-Date').default, sortable: true },
-                    { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c90', sortable: true, thComp: require('../../globals/th-Date').default },
-                    { title: 'Folio de Solicitud', field: 'numero_folio_solicitud', tdClass: 'td_c100' },
-                    { title: 'Fecha de Solicitud', field: 'fecha_solicitud', tdClass: 'td_c100' },
+                    { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
+                    { title: 'Folio de Invitación', field: 'id', tdClass: 'td_c100', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Fecha de Invitación', field: 'fecha_hora_invitacion', tdClass: 'td_c100', thComp: require('../../globals/th-Date').default, sortable: true },
+                    { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c100', sortable: true, thComp: require('../../globals/th-Date').default },
                     { title: 'Proyecto', field: 'descripcion_obra', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
@@ -88,13 +86,14 @@
                         razon_social:invitacion.nombre_usuario_invitado,
                         id: invitacion.numero_folio_format,
                         numero_folio_solicitud: invitacion.transaccion.numero_folio_format,
-                        fecha_hora_invitacion: invitacion.fecha_hora_format,
+                        fecha_hora_invitacion: invitacion.fecha_format,
                         fecha_solicitud: invitacion.transaccion.fecha_format,
                         fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         usuario_invito: invitacion.nombre_usuario_invito,
                         descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {
                             id: invitacion.id,
+                            con_cotizacion: invitacion.con_cotizacion,
                             show: true,
                         })
                     }));

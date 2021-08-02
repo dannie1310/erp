@@ -42,7 +42,7 @@
         <div class="login-box offset-4 centered">
             <div class="card">
                 <div class="card-body login-card-body">
-                    <p class="login-box-msg"><b>Actualización de Contraseña</b></p>
+                    <p class="login-box-msg"><i class="fa fa-retweet" ></i><b>Actualización de Contraseña</b></p>
                     <div class="input-group mb-3">
                         <input type="password" name="clave_nueva" class="form-control{{ $errors->has('clave_nueva') ? ' is-invalid' : '' }}" v-model="clave_nueva" placeholder="Contraseña Nueva" value="{{ old('clave_nueva') }}" required autofocus>
                         <div class="input-group-append">
@@ -64,14 +64,32 @@
                 </div>
             </div>
         </div>
-        <div class="login-box offset-4 centered" v-if="cant_errores > 0">
-            <div class="card">
-                <div class="card-body login-card-body">
-                    <p class="login-box-msg">La contraseña debe cumplir con los siguientes criterios:</p>
-                    <div class="input-group mb-3" v-for="error in errors">
-                        <i v-if="error.valido" class="fa fa-check" style="color:green"></i>
-                        <i v-else class="fa fa-times" style="color:red"></i>
-                        <b>@{{error.message}}</b>
+        <div class="modal fade" ref="criterios_contraseña" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" ><i class="fa fa-info-circle"></i> Atención</h5>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12"  v-if="cant_errores > 0">
+                                La contraseña debe cumplir con los siguientes criterios:
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12"  v-if="cant_errores > 0">
+                                <div class="input-group mb-3" v-for="error in errors">
+                                    <i v-if="error.valido" class="fa fa-check" style="color:green"></i>
+                                    <i v-else class="fa fa-times" style="color:red"></i>
+                                    <b>@{{error.message}}</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -83,8 +101,12 @@
     new Vue({
         el:'#content',
         data:{
-            clave_nueva:'',
-            clave_confirmacion:'',
+            clave_nueva : '',
+            clave_confirmacion : '',
+            razon_social : '',
+            rfc : '',
+            archivo_constancia : '',
+            nombre_archivo_constancia : '',
             rules: [
 				{ message:'Un caracter especial (->@#)', valido:true, regex:/[->@#]+/ },
 				{ message:"Al menos una letra mayúscula", valido:true,  regex:/[A-Z]+/ },
@@ -100,28 +122,68 @@
                 if(this.clave_nueva != this.clave_confirmacion){
                     swal({
                         title: "Actualización de Contraseña",
-                        text: 'La contraseña nueva debe conincidir con la confirmación.',
+                        text: 'La contraseña nueva debe conincidir con la confirmación de contraseña.',
                         icon: "warning",
                         confirmButtonText: "Ok",
                     });
                 }else if(this.validacion_contrasenia()){
                     return new Promise((resolve, reject) => {
                         axios
-                            .post('login', { clave_confirmacion:this.clave_confirmacion, clave_nueva:this.clave_nueva})
+                            .post('login', {
+                                clave_confirmacion:this.clave_confirmacion,
+                                clave_nueva:this.clave_nueva
+                            })
                             .then(r => r.data)
                             .then(data => {
                                 swal({
                                     title: "Actualizar Contraseña",
                                     text: "Contraseña Actualizada Correctamente.",
                                     icon: "success",
-                                    confirmButtonText: "Ok",
-                                    closeOnConfirm: true,
+                                    timer: 1500,
+                                    buttons: false
                                 }).then((value) => {
                                     window.location.href = data;
                                 });
                             })
                             .catch(error => {
-                                console.log(error);
+                                if (!error.response) {
+                                    alert('NETWORK ERROR')
+                                } else {
+                                    const code = error.response.status
+                                    const message = error.response.data.message
+                                    const originalRequest = error.config;
+                                    switch (true) {
+                                        case (code === 401 && !originalRequest._retry):
+                                            swal({
+                                                title: "La sesión ha expirado",
+                                                text: "Volviendo a la página de Inicio de Sesión",
+                                                icon: "error",
+                                            }).then((value) => {
+                                                localStorage.clear();
+                                                window.location.href = 'login';
+                                            })
+                                            break;
+                                        case (code === 500):
+                                            swal({
+                                                title: "¡Error!",
+                                                text: message,
+                                                icon: "error"
+                                            });
+                                        case (code === 400):
+                                            swal({
+                                                title: "Atención",
+                                                text: message,
+                                                icon: "warning"
+                                            });
+                                            break;
+                                        default:
+                                            swal({
+                                                title: "¡Error!",
+                                                text: message,
+                                                icon: "error"
+                                            });
+                                    }
+                                }
                             })
                         })
                 }
@@ -145,6 +207,8 @@
                 if (cant === 0) {
 				    return true;
                 } else {
+                    $(this.$refs.criterios_contraseña).appendTo('body')
+                    $(this.$refs.criterios_contraseña).modal('show');
                     return false;
                 }
             }

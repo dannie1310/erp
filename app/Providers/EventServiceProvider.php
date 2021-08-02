@@ -70,6 +70,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\LogSentMessage',
         ],
 
+        'App\Events\EnvioCotizacion' => [
+            'App\Listeners\SendCotizacionEnviadaNotification',
+        ],
+
         'Illuminate\Notifications\Events\NotificationSent' => [
             'App\Listeners\LogNotification',
         ],

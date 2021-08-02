@@ -7,6 +7,13 @@ trait EmpresaTrait
 {
     public function validaRFC($rfc)
     {
+        if(!$this->validaRFCSM($rfc)){
+            abort(500,"El RFC: ".$rfc.", no es válido ante el SAT");
+        }
+    }
+
+    public function validaRFCSM($rfc)
+    {
         $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
         if ($usa_servicio == 1) {
             $client = new \GuzzleHttp\Client();
@@ -22,8 +29,11 @@ trait EmpresaTrait
                     'headers' => $headers,
                 ]);
             } catch (\Exception $e){
-                abort(500,"El RFC: ".$rfc.", no es válido ante el SAT");
+                return false;
             }
+            return true;
+        } else {
+            return true;
         }
     }
 

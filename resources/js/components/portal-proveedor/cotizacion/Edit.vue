@@ -349,7 +349,7 @@
     export default {
         name: "cotizacion-proveedor-edit",
         components: {DatosCotizacionCompra, Datepicker, ModelListSelect},
-        props: ['id', 'xls'],
+        props: ['id_invitacion', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -387,10 +387,41 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id,
+                    id: this.id_invitacion,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidas'], scope: ['invitadoAutenticado']}
                 }).then(data => {
                     this.invitacion = data;
+                    this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;
+                    this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
+                    this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
+                    if(this.xls != null)
+                    {
+                        data.cotizacionCompra.complemento.anticipo = this.xls.anticipo;
+                        data.cotizacionCompra.complemento.dias_credito = this.xls.credito;
+                        data.cotizacionCompra.complemento.descuento = this.xls.descuento_cot;
+                        data.cotizacionCompra.fecha = this.xls.fecha_cotizacion;
+                        data.cotizacionCompra.observaciones = this.xls.observaciones_generales;
+                        data.cotizacionCompra.parcialidades = this.xls.pago_parcialidades;
+                        this.euro = this.xls.tc_eur;
+                        this.libra = this.xls.tc_libra;
+                        this.dolar = this.xls.tc_usd;
+                        data.cotizacionCompra.complemento.entrega = this.xls.tiempo_entrega;
+                        data.cotizacionCompra.complemento.vigencia = this.xls.vigencia;
+                        for(var i = 0; i < data.cotizacionCompra.partidas.data.length; i++)
+                        {
+                            for(var x = 0; x < this.xls.partidas.length; x++)
+                            {
+                                if(data.cotizacionCompra.partidas.data[i].material.id == this.xls.partidas[x].id_material)
+                                {
+                                    data.cotizacionCompra.partidas.data[i].descuento = this.xls.partidas[x].descuento;
+                                    data.cotizacionCompra.partidas.data[i].id_moneda = this.xls.partidas[x].id_moneda;
+                                    data.cotizacionCompra.partidas.data[i].observacion = this.xls.partidas[x].observaciones;
+                                    data.cotizacionCompra.partidas.data[i].precio_unitario = this.xls.partidas[x].precio_unitario;
+                                    data.cotizacionCompra.partidas.data[i].unidad = this.xls.partidas[x].unidad;
+                                }
+                            }
+                        }
+                    }
                     this.getMonedas(data.base_datos);
                     this.calcular()
                 })
@@ -456,9 +487,15 @@
                     base : base
                 }).then(data => {
                     this.monedas = data.data;
-                    this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
-                    this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
-                    this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    if(this.dolar == 0) {
+                        this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    }
+                    if(this.euro == 0) {
+                        this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    }
+                    if(this.libra == 0) {
+                        this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    }
                 }).finally(()=>{
                     this.cargando = false;
                 })
@@ -474,7 +511,7 @@
 
                 if(this.total == 0)
                 {
-                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
+                    swal('Error', 'No puede ingresar una cotización donde todas las partidas tengan precio $0.00, favor de corregir para continuar', 'error');
                 }
                 else
                 {
@@ -526,8 +563,6 @@
             },
             carga()
             {
-                console.log(this.invitacion)
-                console.log(this.xls)
                 return (this.xls) ? this.xls : false;
             }
         },

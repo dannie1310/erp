@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Documentacion\Archivo;
 use Carbon\Carbon;
 use App\Facades\Context;
 use App\Models\IGH\Usuario;
@@ -54,6 +55,11 @@ class Transaccion extends Model
             }
             return $query->where('id_obra', '=', Context::getIdObra());
         });
+    }
+
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class, "id_transaccion", "id_transaccion");
     }
 
     public function getUsuarioRegistroAttribute()

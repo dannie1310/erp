@@ -9,17 +9,17 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_solicitud">Buscar Solicitud o Contrato:</label>
+                                            <label for="id_invitacion">Buscar Invitación:</label>
                                                  <model-list-select
-                                                     id="id_solicitud"
-                                                     name="id_solicitud"
+                                                     id="id_invitacion"
+                                                     name="id_invitacion"
                                                      option-value="id"
-                                                     v-model="id_solicitud"
+                                                     v-model="id_invitacion"
                                                      :custom-text="idFolioObservaciones"
-                                                     :list="solicitudes"
-                                                     :placeholder="!cargando?'Seleccionar o buscar folio o observación':'Cargando...'">
+                                                     :list="invitaciones"
+                                                     :placeholder="!cargando?'Seleccionar o buscar por folio u observación':'Cargando...'">
                                                  </model-list-select>
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
+                                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_invitacion')">{{ errors.first('id_invitacion') }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -48,6 +48,7 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosSolicitud from './partials/DatosSolicitud';
     import DatosContratoProyectado from '../presupuesto/partials/DatosContratoProyectado.vue';
+    import invitacion from "../../../store/modules/padronProveedores/invitacion";
     export default {
         name: "cotizacion-proveedor-seleccionar-solicitud",
         components: {
@@ -55,20 +56,21 @@
         data() {
             return {
                 cargando: false,
-                id_solicitud: '',
-                solicitudes : [],
-                solicitud : null
+                id_invitacion: '',
+                invitaciones : [],
+                solicitud : null,
+                invitacion : null,
             }
         },
         mounted() {
             this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
             this.$validator.reset();
-            this.getSolicitudes();
+            this.getInvitaciones();
         },
         methods : {
             idFolioObservaciones (item)
             {
-                return `[${item.numero_folio_format}]-[ ${item.observaciones} ]`;
+                return `[${item.numero_folio_format}]-[ ${item.observaciones} ]-[ ${item.transaccion.tipo.descripcion}]-[ ${item.transaccion.numero_folio_format} ]`;
             },
             salir()
             {
@@ -77,22 +79,25 @@
             find() {
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
-                return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_solicitud,
-                    params:{}
+                return this.$store.dispatch('padronProveedores/invitacion/find', {
+                    id: this.id_invitacion,
+                    params:{include: ['solicitud_compra_cotizar']}
                 }).then(data => {
-                    this.solicitud = data
+                    this.invitacion = data;
+                    this.solicitud = data.solicitud_compra
                     this.cargando = false;
                 })
             },
-            getSolicitudes() {
-                this.solicitudes = [];
+            getInvitaciones(){
+                this.invitaciones = [];
                 this.cargando = true;
-                return this.$store.dispatch('padronProveedores/invitacion/getSolicitudes', {
-                    params: { }
+
+                return this.$store.dispatch('padronProveedores/invitacion/index', {
+                    params:{ include: ['transaccion'], scope: ['invitadoAutenticado'], sort: 'id', order: 'desc'}
+
                 })
                     .then(data => {
-                        this.solicitudes = data;
+                        this.invitaciones = data;
                     })
                     .finally(()=>{
                         this.cargando = false;
@@ -107,12 +112,17 @@
                             this.$router.push({name: 'presupuesto-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
                         }
                         
+                        if(this.invitacion.cotizacion){
+                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
+                        }else{
+                            this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                        }
                     }
                 });
             },
         },
         watch: {
-            id_solicitud(value)
+            id_invitacion(value)
             {
                 if(value !== '' && value !== null && value !== undefined)
                 {
