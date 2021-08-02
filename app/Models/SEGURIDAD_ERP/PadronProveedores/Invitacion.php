@@ -80,14 +80,14 @@ class Invitacion extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(Transaccion::class, "id_cotizacion_generada", "id_transaccion")->withoutGlobalScopes();
+        return $this->hasOne(Transaccion::class, "id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
     public function cotizacionCompra()
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(CotizacionCompra::class, "id_cotizacion_generada", "id_transaccion")->withoutGlobalScopes();
+        return $this->hasOne(CotizacionCompra::class,"id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
     public function usuarioInvito()
@@ -199,6 +199,12 @@ class Invitacion extends Model
     public function getFechaHoraFormatAttribute()
     {
         $date = date_create($this->fecha_hora_invitacion);
+        return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_invitacion);
         return date_format($date,"d/m/Y");
     }
 
@@ -257,6 +263,14 @@ class Invitacion extends Model
         }
     }
 
+    public function getConCotizacionAttribute()
+    {
+        if($this->id_cotizacion_generada>0){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Métodos
      */
@@ -280,6 +294,12 @@ class Invitacion extends Model
 
     public function getSolicitud()
     {
+        $invitacion_fl =  Invitacion::where('id',$this->id)->first();
+        $invitacion = Invitacion::where('id',$this->id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
         if($this->tipo_transaccion_antecedente == 17) {
             return [
                 'id' => $this->solicitud->getKey(),
@@ -332,7 +352,8 @@ class Invitacion extends Model
                 'cantidad_original_num' => ($partida->cantidad_original1 > 0) ? $partida->cantidad_original1 : $partida->cantidad,
                 'descuento' => $partida->descuento,
                 'observaciones' => $partida->complemento ? $partida->complemento->observaciones : '',
-                'enable' => true
+                'enable' => true,
+                'moneda_seleccionada' => 1
             ]);
         }
        return $partidas;

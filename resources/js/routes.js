@@ -3789,7 +3789,7 @@ export const routes = [
                         name: 'cotizacion-proveedor',
                         component: require('./components/portal-proveedor/cotizacion/Index').default,
                         meta: {
-                            title: 'Cotizaciones de Proveedor',
+                            title: 'Lista de Cotizaciones',
                             breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES'},
                             middleware: [auth, permission],
                             permission: 'consultar_cotizacion_proveedor',
@@ -3801,15 +3801,15 @@ export const routes = [
                         name: 'cotizacion-proveedor-seleccionar-solicitud',
                         component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,
                         meta: {
-                            title: 'Seleccionar Solicitud o Contrato',
-                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR SOLICITUD'},
+                            title: 'Seleccionar Invitación',
+                                breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR INVITACIÓN'},
                             middleware: [auth, permission],
                             permission: ['registrar_cotizacion_proveedor'],
                             general: true
                         }
                     },
                     {
-                        path: ':id_solicitud/create',
+                        path: ':id_invitacion/create',
                         name: 'cotizacion-proveedor-create',
                         component: require('./components/portal-proveedor/cotizacion/Create').default,
                         props: true,
@@ -3835,13 +3835,26 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/editar',
+                        path: ':id_invitacion/editar',
                         name: 'cotizacion-proveedor-edit',
                         props: true,
                         component: require('./components/portal-proveedor/cotizacion/Edit').default,
                         meta: {
                             title: 'Editar Cotización',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: ['editar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion/enviar',
+                        name: 'cotizacion-proveedor-send',
+                        props: true,
+                        component: require('./components/portal-proveedor/cotizacion/Enviar').default,
+                        meta: {
+                            title: 'Enviar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'ENVIAR'},
                             middleware: [auth, permission],
                             permission: ['editar_cotizacion_proveedor'],
                             general: true

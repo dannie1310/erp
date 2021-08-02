@@ -28,12 +28,14 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: false},
-                    { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
-                    { title: 'Fecha', field: 'fecha', sortable: false },
-                    { title: 'Proveedor', field: 'empresa', sortable: false },
-                    { title: 'Observaciones', field: 'observaciones', sortable: false },
+                    { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
+                    { title: 'Proyecto', field: 'descripcion_obra', tdClass: 'td_c250', sortable: true},
+                    { title: 'Folio de Invitación', tdClass: 'td_c100', field: 'numero_folio', sortable: true},
+                    { title: 'Fecha de Registro de Invitación', tdClass: 'td_c100', field: 'fecha_hora_invitacion', sortable: true},
+                    { title: 'Fecha de Cierre de Invitación', tdClass: 'td_c100', field: 'fecha_cierre_invitacion', sortable: true},
+                    { title: 'Folio de Solicitud', tdClass: 'td_c100', field: 'solicitud'},
+                    { title: 'Folio de Cotización', field: 'numero_folio_cotizacion', tdClass: 'td_c100', sortable: false},
+                    { title: 'Fecha de Cotización', field: 'fecha_cotizacion', tdClass: 'td_c100', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
@@ -72,19 +74,34 @@
             getEstado(estado) {
                 let val = parseInt(estado);
                 switch (val) {
+                    case -2:
+                        return {
+                            color: '#e50c25',
+                            text_color:'#f5f1f1',
+                            descripcion: 'Precios Pendientes'
+                        }
+                    case -1:
+                        return {
+                            color: '#f39c12',
+                            text_color:'#000000',
+                            descripcion: 'Registrada'
+                        }
                     case 0:
                         return {
-                            color: '#ff0000',
-                            descripcion: 'Precios Pendientes'
+                            color: '#396bea',
+                            text_color:'#f5f1f1',
+                            descripcion: 'Enviada'
                         }
                     case 1:
                         return {
-                            color: '#f39c12',
-                            descripcion: 'Registrada'
+                            color: '#59a153',
+                            text_color:'#000000',
+                            descripcion: 'Enviada'
                         }
                     case 2:
                         return {
-                            color: '#4f9b34',
+                            color: '#59a153',
+                            text_color:'#000000',
                             descripcion: 'En Asignación'
                         }
                 }
@@ -111,20 +128,25 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: invitacion.cotizacion.numero_folio_format,
+                        numero_folio: invitacion.numero_folio_format,
+                        numero_folio_cotizacion: invitacion.cotizacion.numero_folio_format,
                         solicitud: invitacion.transaccion.numero_folio_format,
-                        fecha: invitacion.cotizacion.fecha_format,
+                        fecha_cotizacion: invitacion.cotizacion.fecha_format,
+                        fecha_hora_invitacion: invitacion.fecha_format,
+                        fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
                         importe: invitacion.importe_cotizacion,
                         estado: this.getEstado(invitacion.cotizacion.estado),
+                        descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {
                             show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
-                            id: invitacion.id,
+                            id_invitacion: invitacion.id,
                             id_cotizacion: invitacion.cotizacion.id_transaccion,
-                            edit: self.$root.can('editar_cotizacion_proveedor',true) ? true : false,
-                            descarga_layout: (self.$root.can('descargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false,
-                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false
+                            enviar: (self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado == -1)  ? true : false,
+                            edit: self.$root.can('editar_cotizacion_proveedor',true && invitacion.cotizacion.estado < 0) ? true : false,
+                            descarga_layout: (self.$root.can('descargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false,
+                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false
                         })
                     }));
                 },

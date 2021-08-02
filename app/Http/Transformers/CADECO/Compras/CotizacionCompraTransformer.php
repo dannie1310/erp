@@ -46,7 +46,8 @@ class CotizacionCompraTransformer extends TransformerAbstract
             'importe' => $model->monto_format,
             'subtotal' => $model->subtotal_format,
             'impuesto' => $model->impuesto_format,
-            'asignada' => $model->asignada
+            'asignada' => $model->asignada,
+            'id_referente' => $model->id_referente,
         ];
     }
 

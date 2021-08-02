@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="descargar()" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Descargar Layout">
+        <button @click="descargar()" type="button" class="btn btn-sm btn-outline-primary" :disabled="cargando" title="Descargar Layout">
             <i class="fa fa-download" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>

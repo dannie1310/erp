@@ -27,6 +27,7 @@ class InvitacionTransformer extends TransformerAbstract
         'empresa',
         'sucursal',
         'solicitud_compra',
+        'solicitud_compra_cotizar',
         'carta_terminos',
         'formato_cotizacion',
         'cotizacion',
@@ -52,12 +53,14 @@ class InvitacionTransformer extends TransformerAbstract
             'nombre_usuario_invito' => $model->nombre_usuario,
             'nombre_usuario_invitado' => ($model->usuarioInvitado->apaterno =="@")?$model->usuarioInvitado->nombre_completo_sin_espacios:$model->usuarioInvitado->nombre_completo,
             'fecha_hora_format' => $model->fecha_hora_format,
+            'fecha_format' => $model->fecha_format,
             'fecha_cierre_format' => $model->fecha_cierre_invitacion_format,
             'tipo_antecedente' => $model->tipo_transaccion_antecedente,
             'importe_cotizacion' => $model->importe_cotizacion_format,
             'descripcion_sucursal' => $model->descripcion_sucursal,
             'direccion_sucursal' => $model->direccion_sucursal,
-            'cuerpo_correo' => ($model->cuerpo_correo)
+            'cuerpo_correo' => ($model->cuerpo_correo),
+            'con_cotizacion' => $model->con_cotizacion
         ];
     }
 
@@ -94,6 +97,13 @@ class InvitacionTransformer extends TransformerAbstract
     public function includeSolicitudCompra(Invitacion $model) {
         if ($item = $model->solicitud) {
             return $this->item($item, new SolicitudCompraTransformer);
+        }
+        return null;
+    }
+
+    public function includeSolicitudCompraCotizar(Invitacion $model) {
+        if ($item = $model->getSolicitud()) {
+            return $this->item($item, new SolicitudCompraCotizarProveedorTransformer);
         }
         return null;
     }

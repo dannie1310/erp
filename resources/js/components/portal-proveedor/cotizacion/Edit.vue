@@ -349,7 +349,7 @@
     export default {
         name: "cotizacion-proveedor-edit",
         components: {DatosCotizacionCompra, Datepicker, ModelListSelect},
-        props: ['id', 'xls'],
+        props: ['id_invitacion', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -387,7 +387,7 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id,
+                    id: this.id_invitacion,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidas'], scope: ['invitadoAutenticado']}
                 }).then(data => {
                     this.invitacion = data;
@@ -511,7 +511,7 @@
 
                 if(this.total == 0)
                 {
-                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
+                    swal('Error', 'No puede ingresar una cotización donde todas las partidas tengan precio $0.00, favor de corregir para continuar', 'error');
                 }
                 else
                 {

@@ -31,6 +31,7 @@ class    CotizacionCompra  extends Transaccion
     protected $fillable = [
         'id_transaccion',
         'id_antecedente',
+        'id_referente',
         'id_empresa',
         'id_sucursal',
         'id_moneda',
@@ -63,6 +64,7 @@ class    CotizacionCompra  extends Transaccion
 
         self::addGlobalScope(function($query) {
             return $query->where('tipo_transaccion', '=', 18)
+                ->where("estado",">",-1)
             ->where('opciones','=', 1)->whereHas('complemento');
         });
     }
@@ -124,6 +126,11 @@ class    CotizacionCompra  extends Transaccion
     public function ordenesCompra()
     {
         return $this->hasMany(OrdenCompra::class,"id_referente", "id_transaccion");
+    }
+
+    public function invitacion()
+    {
+        return $this->belongsTo(Invitacion::class, "id_referente", "id_transaccion");
     }
 
     /**
@@ -811,11 +818,12 @@ class    CotizacionCompra  extends Transaccion
             {
                 $cotizacion = $this->create([
                     'id_antecedente' => $data['id'],
+                    'id_referente'=>$invitacion->id,
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'observaciones' => $data['observaciones_cot'],
-                    'estado' => 1,
+                    'estado' => -1,
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => $data['importe'],
                     'impuesto' => $data['impuesto'],
@@ -875,13 +883,14 @@ class    CotizacionCompra  extends Transaccion
             else{
                 $cotizacion = $this->create([
                     'id_antecedente' => $data['id'],
+                    'id_referente'=>$invitacion->id,
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'observaciones' => $data['observaciones_cot'],
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => 0,
-                    'estado' => 0,
+                    'estado' => -2,
                     'impuesto' => 0,
                     'cumplimiento' => $fecha->format("Y-m-d"),
                     'vencimiento' => $fecha->format("Y-m-d"),
@@ -906,6 +915,7 @@ class    CotizacionCompra  extends Transaccion
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['id_material'],
+                        'id_moneda' => $partida['moneda_seleccionada'],
                         'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
                     ]);
 
@@ -945,7 +955,7 @@ class    CotizacionCompra  extends Transaccion
                 'fecha' => $fecha->format("Y-m-d"),
                 'monto' => $data['importe'],
                 'impuesto' => $data['impuesto'],
-                'porcentaje_anticipo_pactado' => $data['pago']
+                'porcentaje_anticipo_pactado' => $data['pago'],
             ]);
             if($this->complemento)
             {
@@ -1003,11 +1013,25 @@ class    CotizacionCompra  extends Transaccion
                     }
                 }
             }
+            if(key_exists('partidas', $data)){
+                if(key_exists('data', $data['partidas'])){
+                    $this->update([
+                        'estado' => -1,
+                    ]);
+                }
+            }
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
         }
+    }
+
+    public function envia(){
+        $this->estado = 1;
+        $this->save();
+
+        return $this->estado;
     }
 }
