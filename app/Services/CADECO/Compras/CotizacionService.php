@@ -264,4 +264,13 @@ class CotizacionService
 
         return $repuesta;
     }
+
+    public function deleteProveedor(array $data, $id)
+    {
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
+        if (is_null($invitacion)) {
+            abort(400, 'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->eliminar($invitacion->cotizacionCompra->getKey(),$invitacion->base_datos,$data['data']);
+    }
 }

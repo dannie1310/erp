@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\CSV\CotizacionLayout;
+use App\Facades\Context;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
@@ -567,19 +568,25 @@ class    CotizacionCompra  extends Transaccion
     public function cambioEstadoSolicitud()
     {
         $this->refresh();
-        if(!$this->solicitud->validarCotizada()){
+        if(!is_null(Context::getIdObra()))
+        {
+            $solicitud = $this->solicitud;
+        }else{
+            $solicitud = SolicitudCompra::where('id_transaccion', $this->id_antecedente)->withoutGlobalScopes()->first();
+        }
+        if(!$solicitud->validarCotizada()){
             /**
              * Cambiar estado de la solicitud de: 'Cotizada' a:  'En proceso de cotización'
              */
-            $this->solicitud->complemento->setCambiarEstado(3,2);
+            $solicitud->complemento->setCambiarEstado(3,2);
 
         }
-        if($this->solicitud->cotizaciones->count() == 0)
+        if($solicitud->cotizaciones->count() == 0)
         {
             /**
              * Cambiar estado de la solicitud de: 'En proceso de cotización' a: 'Pendiente de cotización'
              */
-            $this->solicitud->complemento->setCambiarEstado(2,1);
+            $solicitud->complemento->setCambiarEstado(2,1);
         }
     }
 
@@ -1010,4 +1017,28 @@ class    CotizacionCompra  extends Transaccion
             abort(400, $e);
         }
     }
+
+    /**
+     * Eliminar cotización de un proveedor
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminarProveedor($motivo, $base)
+    {
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $base);
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            $this->cambioEstadoSolicitud();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
 }

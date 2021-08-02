@@ -42,7 +42,7 @@ class CotizacionController extends Controller
     public function __construct(Manager $fractal, CotizacionService $service, CotizacionCompraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['storePortalProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor']);
+        $this->middleware('context')->except(['storePortalProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor','destroyProveedor']);
         $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
         $this->middleware('permiso:cargar_layout_cotizacion_compra')->only(['cargaLayout']);
         $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
@@ -53,6 +53,7 @@ class CotizacionController extends Controller
         $this->middleware('permisoGlobal:editar_cotizacion_proveedor')->only(['updatePortalProveedor']);
         $this->middleware('permisoGlobal:descargar_layout_cotizacion_proveedor')->only(['descargaLayoutProveedor']);
         $this->middleware('permisoGlobal:cargar_layout_cotizacion_proveedor')->only(['cargaLayoutProveedor']);
+        $this->middleware('permisoGlobal:eliminar_cotizacion_proveedor')->only(['destroyProveedor']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -99,5 +100,11 @@ class CotizacionController extends Controller
     {
         $res = $this->service->cargaLayoutProveedor($request->file, $request->id, $request->name, $request->id_cotizacion);
         return response()->json($res, 200);
+    }
+
+    public function destroyProveedor(Request $request, $id)
+    {
+        $this->service->deleteProveedor($request->all(), $id);
+        return response()->json("{}", 200);
     }
 }

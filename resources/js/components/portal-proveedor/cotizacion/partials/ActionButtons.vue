@@ -8,14 +8,16 @@
         <router-link :to="{ name: 'cotizacion-proveedor-edit', params: {id: this.value.id}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
+        <DeleteProveedor v-bind:id="value.id" v-if="value.delete"/>
     </div>
 </template>
 <script>
     import DescargaLayoutProveedor from "../DescargaLayoutProveedor";
     import CargaLayoutProveedor from "../CargaLayoutProveedor";
+    import DeleteProveedor from "../Delete";
     export default {
         name: "cotizacion-buttons",
-        components: { DescargaLayoutProveedor, CargaLayoutProveedor },
+        components: { DescargaLayoutProveedor, CargaLayoutProveedor, DeleteProveedor },
         props: ['value'],
         data()
         {

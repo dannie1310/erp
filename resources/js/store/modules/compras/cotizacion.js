@@ -353,6 +353,47 @@ export default {
                 });
             });
         },
+        eliminarProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Cotización de Compra",
+                    text: "¿Está seguro de que desea eliminar esta cotización?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id+'/proveedor', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cotización eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

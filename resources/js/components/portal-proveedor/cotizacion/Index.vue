@@ -124,7 +124,8 @@
                             id_cotizacion: invitacion.cotizacion.id_transaccion,
                             edit: self.$root.can('editar_cotizacion_proveedor',true) ? true : false,
                             descarga_layout: (self.$root.can('descargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false,
-                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false
+                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true)) ? true : false,
+                            delete: self.$root.can('eliminar_cotizacion_proveedor',true) ? true : false,
                         })
                     }));
                 },
