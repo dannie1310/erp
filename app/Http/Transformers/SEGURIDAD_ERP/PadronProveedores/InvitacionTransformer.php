@@ -18,8 +18,6 @@ class InvitacionTransformer extends TransformerAbstract
         'solicitud_compra',
         'empresa',
         'sucursal',
-        'cotizacion'
-
     ];
 
     protected $availableIncludes = [
@@ -60,7 +58,8 @@ class InvitacionTransformer extends TransformerAbstract
             'descripcion_sucursal' => $model->descripcion_sucursal,
             'direccion_sucursal' => $model->direccion_sucursal,
             'cuerpo_correo' => ($model->cuerpo_correo),
-            'con_cotizacion' => $model->con_cotizacion
+            'con_cotizacion' => $model->con_cotizacion,
+            'estado' => $model->estado
         ];
     }
 

@@ -37,9 +37,8 @@
                     { title: 'Fecha de Solicitud', field: 'fecha_solicitud', tdClass: 'td_c100' },
                     { title: 'Proveedor Invitado', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default, },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
+                    { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
-
-
                 ],
                 data: [],
                 total: 0,
@@ -73,6 +72,35 @@
             create_invitacion() {
                 this.$router.push({name: 'invitacion-compra-selecciona-solicitud'});
             },
+            getEstado(estado) {
+                let val = parseInt(estado);
+                switch (val) {
+                    case 0:
+                        return {
+                            color: '#e50c25',
+                            text_color:'#f5f1f1',
+                            descripcion: 'Enviada'
+                        }
+                    case 1:
+                        return {
+                            color: '#f36112',
+                            text_color:'#000000',
+                            descripcion: 'Leída'
+                        }
+                    case 2:
+                        return {
+                            color: '#f39c12',
+                            text_color:'#000000',
+                            descripcion: 'Cotizada'
+                        }
+                    case 3:
+                        return {
+                            color: '#59a153',
+                            text_color:'#000000',
+                            descripcion: 'Atendida'
+                        }
+                }
+            },
 
         },
         computed: {
@@ -98,10 +126,11 @@
                         razon_social:invitacion.nombre_usuario_invitado,
                         id: invitacion.numero_folio_format,
                         numero_folio_solicitud: invitacion.transaccion.numero_folio_format,
-                        fecha_hora_invitacion: invitacion.fecha_hora_format,
+                        fecha_hora_invitacion: invitacion.fecha_format,
                         fecha_solicitud: invitacion.transaccion.fecha_format,
                         fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         usuario_invito: invitacion.nombre_usuario_invito,
+                        estado: this.getEstado(invitacion.estado),
                         buttons: $.extend({}, {
                             id: invitacion.id,
                             show: true,

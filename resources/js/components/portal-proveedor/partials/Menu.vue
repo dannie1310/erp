@@ -5,10 +5,16 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">COTIZACIONES</li>
-            <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
+            <li class="nav-item"  v-if="$root.can('registrar_cotizacion_proveedor',true)">
                 <router-link :to="{name: 'cotizacion-proveedor-seleccionar-solicitud'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion-proveedor-seleccionar-solicitud'}">
                     <i class="fa fa-plus nav-icon"></i>
                     <p>Registrar Cotización</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('registrar_cotizacion_proveedor',true)">
+                <router-link :to="{name: 'cotizacion-proveedor-para-envio'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion-proveedor-para-envio'}">
+                    <i class="fa fa-send nav-icon"></i>
+                    <p>Enviar Cotización</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">

@@ -3797,6 +3797,18 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'enviar',
+                        name: 'cotizacion-proveedor-para-envio',
+                        component: require('./components/portal-proveedor/cotizacion/IndexEnvio').default,
+                        meta: {
+                            title: 'Lista de Cotizaciones Disponibles a Enviar',
+                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES A ENVIAR'},
+                            middleware: [auth, permission],
+                            permission: 'registrar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
                         path: 'create',
                         name: 'cotizacion-proveedor-seleccionar-solicitud',
                         component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,

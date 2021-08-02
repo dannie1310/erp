@@ -23,7 +23,7 @@
 
 <script>
     export default {
-        name: "cotizacion-index",
+        name: "cotizacion-index-envio",
         data() {
             return {
                 HeaderSettings: false,
@@ -38,11 +38,11 @@
                     { title: 'Fecha de Cotización', field: 'fecha_cotizacion', tdClass: 'td_c100', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: '', field: 'buttons', thClass: 'th_icono', tdComp: require('./partials/ActionEnviar').default},
                 ],
                 data: [],
                 total: 0,
-                query: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado'], sort: 'id', order: 'desc'},
+                query: {include: ['transaccion','cotizacion'], scope: ['disponibleEnvio','invitadoAutenticado'], sort: 'id', order: 'desc'},
                 search: '',
                 cargando: false
             }
