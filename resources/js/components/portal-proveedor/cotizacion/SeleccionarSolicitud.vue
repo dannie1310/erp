@@ -125,11 +125,16 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(this.invitacion.cotizacion){
-                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
-                        }else{
-                            this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
-                        }
+                        return this.$store.dispatch('padronProveedores/invitacion/abrir', {
+                            id: this.id_invitacion,
+                            params:{}
+                        }).then(data => {
+                            if(this.invitacion.cotizacion){
+                                this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
+                            }else{
+                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                            }
+                        });
                     }
                 });
             },

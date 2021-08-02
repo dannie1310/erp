@@ -86,7 +86,12 @@
                 this.$router.go(-1);
             },
             cotizar() {
-                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                return this.$store.dispatch('padronProveedores/invitacion/abrir', {
+                    id: this.id_invitacion,
+                    params:{}
+                }).then(data => {
+                    this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                });
             },
         },
         computed: {

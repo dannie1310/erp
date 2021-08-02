@@ -473,4 +473,18 @@ class InvitacionService
             $empresas[] = $this->generaEmpresaSAO($usuario, $invitacion);
         }
     }
+
+    public function abrir($id)
+    {
+        $invitacion = $this->repository->show($id);
+        if($invitacion->estado == 0)
+        {
+            $invitacion->update([
+                "estado"=>1,
+                "abierta"=>1,
+                "fecha_hora_apertura"=>date("Y-m-d h:i:s")
+            ]);
+
+        }
+    }
 }

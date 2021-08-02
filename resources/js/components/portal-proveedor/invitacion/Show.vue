@@ -69,7 +69,13 @@
                     this.$store.commit('padronProveedores/invitacion/SET_INVITACION', data);
                 })
                 .finally(()=> {
-                    this.cargando = false;
+                    return this.$store.dispatch('padronProveedores/invitacion/abrir', {
+                        id: this.id,
+                        params:{}
+                    }).then(data => {
+                        this.cargando = false;
+                    });
+
                 })
             },
         },

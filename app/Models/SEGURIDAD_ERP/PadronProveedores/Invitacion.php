@@ -51,7 +51,11 @@ class Invitacion extends Model
         'usuario_invitado',
         'estado',
         'enviada',
-        'cuerpo_correo'
+        'cuerpo_correo',
+        'fecha_hora_apertura',
+        'abierta',
+        'fecha_hora_cotizacion',
+        'fecha_hora_envio_cotizacion',
     ];
 
     //protected $dates = ["fecha_cierre_invitacion"];
