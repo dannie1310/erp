@@ -53,11 +53,11 @@ class NotificacionCotizacionEnviada extends Notification
 
         if(!file_exists($path_carta_terminos)){
             return (new MailMessage)
-                ->subject("Solicitud de Cotización")
+                ->subject("Cotización enviada por ".$this->cotizacion->empresa->rfc .' '. $this->cotizacion->empresa->razon_social)
                 ->view('emails.cotizacion_enviada',["invitacion"=>$this->invitacion, "cotizacion"=>$this->cotizacion]);
         }else{
             return (new MailMessage)
-                ->subject("Solicitud de Cotización")
+                ->subject("Cotización enviada por ".$this->cotizacion->empresa->rfc .' '. $this->cotizacion->empresa->razon_social)
                 ->view('emails.cotizacion_enviada',["invitacion"=>$this->invitacion, "cotizacion"=>$this->cotizacion])
                 ->attach($path_carta_terminos,["as"=>$carta_terminos->tipoArchivo->descripcion.".".$carta_terminos->extension]);
         }

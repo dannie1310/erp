@@ -161,6 +161,11 @@ class Invitacion extends Model
         return $query->whereNotNull("id_cotizacion_generada");
     }
 
+    public function scopeDisponibleEnvio($query)
+    {
+        return $query->where("estado","=",2);
+    }
+
     public function scopeDisponibleCotizar($query)
     {
         return $query->whereNull("id_cotizacion_generada");

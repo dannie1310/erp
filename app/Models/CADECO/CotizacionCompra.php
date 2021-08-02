@@ -130,7 +130,7 @@ class    CotizacionCompra  extends Transaccion
 
     public function invitacion()
     {
-        return $this->belongsTo(Invitacion::class, "id_referente", "id_transaccion");
+        return $this->belongsTo(Invitacion::class, "id_referente", "id");
     }
 
     /**
@@ -879,6 +879,9 @@ class    CotizacionCompra  extends Transaccion
                      */
                     $solicitud->complemento->setCambiarEstado(2, 3);
                 }
+                $this->invitacion->update([
+                    "estado"=>2
+                ]);
             }
             else{
                 $cotizacion = $this->create([
@@ -1018,6 +1021,9 @@ class    CotizacionCompra  extends Transaccion
                     $this->update([
                         'estado' => -1,
                     ]);
+                    $this->invitacion->update([
+                        "estado"=>2
+                    ]);
                 }
             }
             DB::connection('cadeco')->commit();
@@ -1029,8 +1035,13 @@ class    CotizacionCompra  extends Transaccion
     }
 
     public function envia(){
-        $this->estado = 1;
-        $this->save();
+        $this->update([
+            'estado' => 1,
+        ]);
+
+        $this->invitacion->update([
+            "estado"=>3
+        ]);
 
         return $this->estado;
     }

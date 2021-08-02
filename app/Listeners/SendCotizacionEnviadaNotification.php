@@ -33,7 +33,7 @@ class SendCotizacionEnviadaNotification
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $usuario = Usuario::suscripcion($suscripciones)->get();
 
-        Notification::send($usuario, new NotificacionInvitacionCotizar($event->invitacion));
+        Notification::send($usuario, new NotificacionCotizacionEnviada($event->invitacion, $event->cotizacion));
         Notification::send($event->invitacion->usuarioInvito, new NotificacionCotizacionEnviada($event->invitacion, $event->cotizacion));
     }
 }

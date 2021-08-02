@@ -157,7 +157,7 @@ export default {
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
                     params: {
-                        include: ['cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas'],
+                        include: ['cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas'],
                         scope: ['invitadoAutenticado']
                     }
                 }).then(data => {
