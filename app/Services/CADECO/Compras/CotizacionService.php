@@ -3,6 +3,7 @@
 
 namespace App\Services\CADECO\Compras;
 
+use App\Events\EnvioCotizacion;
 use App\Imports\CotizacionImport;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Documentacion\Archivo;
@@ -289,7 +290,7 @@ class CotizacionService
 
         $estado = $cotizacion->envia();
         if($estado == 1){
-
+            event(new EnvioCotizacion($invitacion, $cotizacion));
         }
     }
 }
