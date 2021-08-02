@@ -31,6 +31,7 @@ class    CotizacionCompra  extends Transaccion
     protected $fillable = [
         'id_transaccion',
         'id_antecedente',
+        'id_referente',
         'id_empresa',
         'id_sucursal',
         'id_moneda',
@@ -125,6 +126,11 @@ class    CotizacionCompra  extends Transaccion
     public function ordenesCompra()
     {
         return $this->hasMany(OrdenCompra::class,"id_referente", "id_transaccion");
+    }
+
+    public function invitacion()
+    {
+        return $this->belongsTo(Invitacion::class, "id_referente", "id_transaccion");
     }
 
     /**
@@ -812,6 +818,7 @@ class    CotizacionCompra  extends Transaccion
             {
                 $cotizacion = $this->create([
                     'id_antecedente' => $data['id'],
+                    'id_referente'=>$invitacion->id,
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
@@ -876,6 +883,7 @@ class    CotizacionCompra  extends Transaccion
             else{
                 $cotizacion = $this->create([
                     'id_antecedente' => $data['id'],
+                    'id_referente'=>$invitacion->id,
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
@@ -1018,5 +1026,12 @@ class    CotizacionCompra  extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
         }
+    }
+
+    public function envia(){
+        $this->estado = 1;
+        $this->save();
+
+        return $this->estado;
     }
 }

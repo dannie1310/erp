@@ -5,9 +5,12 @@ namespace App\Services\CADECO\Compras;
 
 use App\Imports\CotizacionImport;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Cotizacion\Repository;
+use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 use App\Utils\ValidacionSistema;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -261,5 +264,32 @@ class CotizacionService
             abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
         }
         return $invitacion;
+    }
+
+    public function enviar($id, $data)
+    {
+        $this->validaFechaCierreInvitacion($data["id_invitacion"]);
+
+        $invitacionService = new InvitacionService(new Invitacion());
+        $invitacion = $invitacionService->show($data["id_invitacion"]);
+
+        $archivoService = new ArchivoService(new Archivo());
+        $archivoService->setDB($invitacion->base_datos);
+        $cotizacion = $this->repository->withoutGlobalScopes()->show($id);
+
+        $data_archivos["id"] = $id;
+        $data_archivos["id_transaccion"] = $id;
+        $data_archivos["id_tipo_archivo"] = 3;
+        $data_archivos["id_categoria"] = 1;
+        $data_archivos["descripcion"] = 'Carta asociada a la cotización '.$cotizacion->numero_folio_format;
+        $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_carta_terminos_condiciones"]]]);
+        $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_carta_terminos_condiciones"]]]);
+
+        $archivoService->cargarArchivosPDF($data_archivos);
+
+        $estado = $cotizacion->envia();
+        if($estado == 1){
+
+        }
     }
 }

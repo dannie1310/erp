@@ -31,7 +31,8 @@
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Proyecto', field: 'descripcion_obra', tdClass: 'td_c250', sortable: true},
                     { title: 'Folio de Invitación', tdClass: 'td_c100', field: 'numero_folio', sortable: true},
-                    { title: 'Fecha de Invitación', tdClass: 'td_c100', field: 'fecha_hora_invitacion', sortable: true},
+                    { title: 'Fecha de Registro de Invitación', tdClass: 'td_c100', field: 'fecha_hora_invitacion', sortable: true},
+                    { title: 'Fecha de Cierre de Invitación', tdClass: 'td_c100', field: 'fecha_cierre_invitacion', sortable: true},
                     { title: 'Folio de Solicitud', tdClass: 'td_c100', field: 'solicitud'},
                     { title: 'Folio de Cotización', field: 'numero_folio_cotizacion', tdClass: 'td_c100', sortable: false},
                     { title: 'Fecha de Cotización', field: 'fecha_cotizacion', tdClass: 'td_c100', sortable: false },
@@ -95,7 +96,7 @@
                         return {
                             color: '#59a153',
                             text_color:'#000000',
-                            descripcion: 'Registrada'
+                            descripcion: 'Enviada'
                         }
                     case 2:
                         return {
@@ -132,6 +133,7 @@
                         solicitud: invitacion.transaccion.numero_folio_format,
                         fecha_cotizacion: invitacion.cotizacion.fecha_format,
                         fecha_hora_invitacion: invitacion.fecha_format,
+                        fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
                         importe: invitacion.importe_cotizacion,

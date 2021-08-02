@@ -42,7 +42,7 @@ class CotizacionController extends Controller
     public function __construct(Manager $fractal, CotizacionService $service, CotizacionCompraTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['storePortalProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor']);
+        $this->middleware('context')->except(['storePortalProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor','enviar']);
         $this->middleware('permiso:registrar_cotizacion_compra')->only(['store']);
         $this->middleware('permiso:cargar_layout_cotizacion_compra')->only(['cargaLayout']);
         $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
@@ -99,5 +99,10 @@ class CotizacionController extends Controller
     {
         $res = $this->service->cargaLayoutProveedor($request->file, $request->id_invitacion, $request->name, $request->id_cotizacion);
         return response()->json($res, 200);
+    }
+    public function enviar(Request $request, $id)
+    {
+        $this->service->enviar($id, $request->all());
+        return response()->json([], 200);
     }
 }

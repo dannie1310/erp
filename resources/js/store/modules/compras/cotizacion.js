@@ -229,7 +229,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Cotización de Compra",
-                    text: "¿Estás seguro/a de que la información es correcta?",
+                    text: "¿Estás seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
                         cancel: {
@@ -247,7 +247,7 @@ export default {
                                 .post(URI+"portal-proveedor", payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Cotización de Compra registrada correctamente", {
+                                    swal("Cotización de compra registrada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -286,7 +286,7 @@ export default {
                                 .patch(URI + payload.id+'/portal-proveedor', payload.cotizacion)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("La Cotización se ha actualizado correctamente", {
+                                    swal("La cotización se ha actualizado correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -351,6 +351,46 @@ export default {
                             })
                     }
                 });
+            });
+        },
+
+        enviarCotizacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Enviar Cotización",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Enviar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id_cotizacion+'/portal-proveedor/enviar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("La cotización se ha enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
             });
         },
     },

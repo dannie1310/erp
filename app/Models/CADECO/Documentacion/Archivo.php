@@ -6,6 +6,7 @@ namespace App\Models\CADECO\Documentacion;
 
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
@@ -90,6 +91,12 @@ class Archivo extends Model
             return true;
         }
         return false;
+    }
+
+    public function setBaseDatos($base_datos)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base_datos);
     }
 
 }

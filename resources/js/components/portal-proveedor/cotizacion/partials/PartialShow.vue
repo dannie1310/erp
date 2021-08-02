@@ -153,7 +153,6 @@ export default {
     methods : {
         find() {
 
-
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
@@ -166,6 +165,8 @@ export default {
                     this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;
                     this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
                     this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
+                }).finally(()=>{
+                    this.$emit('cargaFinalizada', this.invitacion.cotizacion.id_transaccion);
                 })
 
         },

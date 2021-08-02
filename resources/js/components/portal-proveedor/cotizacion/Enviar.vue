@@ -1,12 +1,34 @@
 <template>
     <span>
-        <div class="card" v-if="!cargando">
+        <div class="card" >
 			<div class="card-body">
-                <cotizacion-proveedor-partial-show v-bind:id_invitacion="this.id_invitacion"> </cotizacion-proveedor-partial-show>
+                <div class="row">
+                    <div class="col-md-12">
+                        <cotizacion-proveedor-partial-show v-bind:id_invitacion="this.id_invitacion" v-on:cargaFinalizada="cargaFinalizada" > </cotizacion-proveedor-partial-show>
+                    </div>
+                </div>
+                <hr>
+                <div class="row" v-if="cargando == false">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="carta_terminos">Carta de Términos y Condiciones FIRMADA:</label>
+                            <input type="file" class="form-control" id="carta_terminos"
+                                   @change="onFileChange"
+                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
+                                   name="carta_terminos"
+                                   data-vv-as="Carta de Términos y Condiciones"
+                                   ref="carta_terminos"
+                                   :class="{'is-invalid': errors.has('carta_terminos')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
+                        </div>
+                    </div>
+                 </div>
 			</div>
             <div class="card-footer">
                 <div class="pull-right">
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                    <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="cargando"><i class="fa fa-send"></i>Enviar</button>
                 </div>
             </div>
         </div>
@@ -21,7 +43,9 @@
         props: ['id_invitacion'],
         data() {
             return {
-                cargando: false,
+                cargando : true,
+                id_cotizacion : '',
+                post : {},
             }
         },
         mounted() {
@@ -31,6 +55,50 @@
             salir() {
                 this.$router.push({name: 'cotizacion-proveedor'});
             },
+            cargaFinalizada(id_cotizacion)
+            {
+                this.cargando = false;
+                this.id_cotizacion = id_cotizacion;
+            },
+            onFileChange(e){
+                this.file = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+
+                if(e.target.id == 'carta_terminos') {
+                    this.nombre_archivo_carta_terminos_condiciones = files[0].name;
+                }
+                this.createImage(files[0], e.target.id);
+            },
+            createImage(file, tipo) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    if(tipo == "carta_terminos")
+                    {
+                        vm.archivo_carta_terminos_condiciones = e.target.result;
+                    }
+                };
+                reader.readAsDataURL(file);
+            },
+            enviar() {
+                let _self = this;
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        _self.post.id_invitacion = _self.id_invitacion;
+                        _self.post.id_cotizacion = _self.id_cotizacion;
+                        _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;
+                        _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
+
+                        return this.$store.dispatch('compras/cotizacion/enviarCotizacion', _self.post)
+                        .then((data) => {
+                            this.$router.push({name: 'cotizacion-proveedor'});
+                        });
+                    }
+                });
+            }
         },
         computed: {
 
