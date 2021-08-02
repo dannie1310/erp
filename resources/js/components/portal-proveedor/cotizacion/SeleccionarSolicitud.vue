@@ -3,9 +3,9 @@
         <nav>
             <div class="row">
                 <div class="col-12">
-                    <div class="invoice p-3 mb-3">
+                    <div class="card">
                         <form role="form" @submit.prevent="validate">
-                            <div class="modal-body">
+                            <div class="card-body">
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
@@ -23,17 +23,34 @@
                                         </div>
                                     </div>
                                 </div>
-                                <DatosSolicitud :solicitud="solicitud"></DatosSolicitud>
+                                <div class="row" v-if="id_invitacion>0 && !invitacion">
+                                    <div class="col-md-12">
+                                        <div class="spinner-border text-success" role="status">
+                                           <span class="sr-only">Cargando...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <DatosInvitacion v-else v-bind:invitacion="invitacion"></DatosInvitacion>
+
                             </div>
 
-                             <div class="modal-footer">
-                                 <button type="button" class="btn btn-secondary" v-on:click="salir">
-                                        <i class="fa fa-angle-left"></i>
-                                        Regresar</button>
-                                    <button type="submit" :disabled="solicitud == null" class="btn btn-primary">
-                                        Continuar
-                                        <i class="fa fa-angle-right"></i>
-                                    </button>
+                             <div class="card-footer">
+                                 <div class="row">
+                                     <div class="col-md-6">
+                                         <documentos-invitacion v-if="invitacion" v-bind:invitacion="invitacion"></documentos-invitacion>
+                                     </div>
+                                     <div class="col-md-6">
+                                         <div class="pull-right">
+                                             <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                                <i class="fa fa-angle-left"></i>
+                                                Regresar</button>
+                                            <button type="submit" :disabled="solicitud == null" class="btn btn-primary">
+                                                Continuar
+                                                <i class="fa fa-angle-right"></i>
+                                            </button>
+                                         </div>
+                                     </div>
+                                 </div>
                              </div>
                         </form>
                     </div>
@@ -47,9 +64,13 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosSolicitud from './partials/DatosSolicitud';
     import invitacion from "../../../store/modules/padronProveedores/invitacion";
+    import DatosInvitacion from "../invitacion/partials/DatosInvitacion";
+    import DocumentosInvitacion from "../invitacion/partials/DocumentosInvitacion";
     export default {
         name: "cotizacion-proveedor-seleccionar-solicitud",
         components: {
+            DocumentosInvitacion,
+            DatosInvitacion,
             DatosSolicitud, ModelListSelect},
         data() {
             return {
@@ -79,7 +100,7 @@
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
-                    params:{include: ['solicitud_compra_cotizar']}
+                    params:{include: ['solicitud_compra_cotizar', "carta_terminos", "formato_cotizacion"]}
                 }).then(data => {
                     this.invitacion = data;
                     this.solicitud = data.solicitud_compra

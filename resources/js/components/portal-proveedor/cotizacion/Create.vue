@@ -428,7 +428,7 @@
                 })
             },
             salir() {
-                this.$router.push({name: 'cotizacion-proveedor'});
+                this.$router.go(-1);
             },
             getPrecioTotal(precio, moneda) {
                 if(moneda == undefined)
