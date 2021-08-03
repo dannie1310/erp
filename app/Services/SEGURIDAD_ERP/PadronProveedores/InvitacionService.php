@@ -3,6 +3,7 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Events\ActualizacionClaveUsuarioProveedor;
+use App\Events\AperturaInvitacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
@@ -482,9 +483,9 @@ class InvitacionService
             $invitacion->update([
                 "estado"=>1,
                 "abierta"=>1,
-                "fecha_hora_apertura"=>date("Y-m-d h:i:s")
+                "fecha_hora_apertura"=>date("Y-m-d H:i:s")
             ]);
-
+            event(new AperturaInvitacion($invitacion));
         }
     }
 }

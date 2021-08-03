@@ -58,8 +58,8 @@ class Invitacion extends Model
         'fecha_hora_envio_cotizacion',
     ];
 
-    //protected $dates = ["fecha_cierre_invitacion"];
-    //protected $dateFormat = 'M d Y h:i:s A';
+    protected $dates = ["fecha_cierre_invitacion"];
+    protected $dateFormat = 'M d Y h:i:s A';
     /*
      * Relaciones*/
 
@@ -209,6 +209,24 @@ class Invitacion extends Model
     {
         $date = date_create($this->fecha_hora_invitacion);
         return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getFechaHoraAperturaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_apertura);
+        return date_format($date,"d/m/Y H:i");
+    }
+
+    public function getFechaAperturaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_apertura);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getHoraAperturaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_apertura);
+        return $date->format("H:i");
     }
 
     public function getFechaFormatAttribute()
