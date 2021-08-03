@@ -17,15 +17,20 @@
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
-                        <invitacion-compra-encabezado v-bind:invitacion="invitacion"></invitacion-compra-encabezado>
-                        <invitacion-compra-tabla-completa-datos v-bind:invitacion="invitacion"></invitacion-compra-tabla-completa-datos>
+                        <datos-invitacion v-bind:invitacion="this.invitacion"></datos-invitacion>
                     </div>
                 </div>
                 <div class="row" >
-                    <div class="col-md-12">
+                    <div class="col-md-6">
                         <Documento v-if="invitacion.carta_terminos" v-bind:url="url" v-bind:id="invitacion.carta_terminos.id" v-bind:descripcion="invitacion.carta_terminos.tipo_archivo.descripcion" v-bind:texto="invitacion.carta_terminos.tipo_archivo.descripcion" ></Documento>
                         <DescargaDocumento v-if="invitacion.formato_cotizacion" v-bind:url="url_descarga" v-bind:id="invitacion.formato_cotizacion.id" v-bind:descripcion="invitacion.formato_cotizacion.tipo_archivo.descripcion" v-bind:texto="invitacion.formato_cotizacion.tipo_archivo.descripcion"></DescargaDocumento>
                         <formato-solicitud-compra v-if="invitacion.solicitud_compra"  v-bind:id="invitacion.solicitud_compra.id" v-bind:db="invitacion.base_datos" v-bind:id_obra="invitacion.id_obra" v-bind:texto="'Solicitud de Compra'"></formato-solicitud-compra>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                            <button type="button" class="btn btn-primary" v-on:click="cotizar" :disabled="!invitacion"><i class="fa fa-comment-dollar"></i>Cotizar</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -35,18 +40,23 @@
 </template>
 
 <script>
-    import InvitacionCompraEncabezado from "./partials/Encabezado";
-    import InvitacionCompraTablaCompletaDatos from "./partials/TablaCompletaDatosInvitacion";
+
     import Documento from "../../globals/archivos/Documento";
     import DescargaDocumento from "../../globals/archivos/DescargaDocumento";
     import FormatoSolicitudCompra from "../../compras/solicitud-compra/FormatoSolicitudCompra";
+    import InvitacionCompraEncabezado from "../../compras/invitacion/partials/Encabezado";
+    import InvitacionCompraTablaCompletaDatos from "../../compras/invitacion/partials/TablaCompletaDatosInvitacion";
+    import DatosInvitacion from "../invitacion/partials/DatosInvitacion";
 
     export default {
-        name: "ShowInvitacionProveedor",
+        name: "PrevisualizarInvitacion",
         components: {
+            DatosInvitacion,
+            InvitacionCompraTablaCompletaDatos,
+            InvitacionCompraEncabezado,
             FormatoSolicitudCompra,
-            DescargaDocumento, Documento, InvitacionCompraTablaCompletaDatos, InvitacionCompraEncabezado},
-        props: ['id'],
+            DescargaDocumento, Documento},
+        props: ['id_invitacion'],
         data(){
             return{
                 cargando: false,
@@ -62,21 +72,26 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id,
+                    id: this.id_invitacion,
                     params:{include: [ "carta_terminos", "formato_cotizacion"
                             ]}
                 }).then(data => {
                     this.$store.commit('padronProveedores/invitacion/SET_INVITACION', data);
                 })
                 .finally(()=> {
-                    return this.$store.dispatch('padronProveedores/invitacion/abrir', {
-                        id: this.id,
-                        params:{}
-                    }).then(data => {
-                        this.cargando = false;
-                    });
-
+                    this.cargando = false;
                 })
+            },
+            salir() {
+                this.$router.go(-1);
+            },
+            cotizar() {
+                return this.$store.dispatch('padronProveedores/invitacion/abrir', {
+                    id: this.id_invitacion,
+                    params:{}
+                }).then(data => {
+                    this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                });
             },
         },
         computed: {

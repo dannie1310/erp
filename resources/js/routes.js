@@ -3821,6 +3821,19 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id_invitacion/invitacion',
+                        name: 'cotizacion-proveedor-invitacion',
+                        component: require('./components/portal-proveedor/cotizacion/PrevisualizarInvitacion').default,
+                        props: true,
+                        meta: {
+                            title: 'Detalle de Invitación',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'INVITACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
                         path: ':id_invitacion/create',
                         name: 'cotizacion-proveedor-create',
                         component: require('./components/portal-proveedor/cotizacion/Create').default,
