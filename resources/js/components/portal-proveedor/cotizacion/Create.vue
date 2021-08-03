@@ -428,7 +428,7 @@
                 })
             },
             salir() {
-                this.$router.go(-1);
+                this.$router.back(2);
             },
             getPrecioTotal(precio, moneda) {
                 if(moneda == undefined)

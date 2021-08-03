@@ -879,7 +879,7 @@ class    CotizacionCompra  extends Transaccion
                      */
                     $solicitud->complemento->setCambiarEstado(2, 3);
                 }
-                $this->invitacion->update([
+                $cotizacion->invitacion->update([
                     "estado"=>2
                 ]);
             }
