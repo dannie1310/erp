@@ -282,6 +282,10 @@ class Subcontrato extends Transaccion
         return round($this->saldo - ($this->montoFacturadoEstimacion + $this->montoFacturadoSubcontrato + $this->MontoPagoAnticipado), 2);
     }
 
+    public function getTieneEstimacionesAttribute(){
+        return count($this->estimaciones) > 0;
+    }
+
     public function scopeSubcontratosDisponible($query, $id_empresa)
     {
         $transacciones = DB::connection('cadeco')->select(DB::raw("
@@ -662,6 +666,9 @@ class Subcontrato extends Transaccion
     public function updateContrato($data){
         try {
             DB::connection('cadeco')->beginTransaction();
+            if($this->tiene_estimaciones){
+                abort(403, "El subcontrato tiene estimaciones registradas.");
+            }
             $fecha =New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $fecha_ini_ejec =New DateTime($data['fecha_ini_ejec']);
