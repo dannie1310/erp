@@ -169,7 +169,7 @@
 <script>
     export default {
         name: "cotizacion-proveedor-delete",
-        props: ['id'],
+        props: ['id_invitacion'],
         data(){
             return{
                 cargando : false,
@@ -182,7 +182,7 @@
                 this.motivo = ''
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id,
+                    id: this.id_invitacion,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidas'], scope: ['invitadoAutenticado']}
                 }).then(data => {
                     this.invitacion = data;
@@ -196,7 +196,7 @@
             eliminar() {
                 this.cargando = true;
                 return this.$store.dispatch('compras/cotizacion/eliminarProveedor', {
-                    id: this.id,
+                    id: this.id_invitacion,
                     params: {data: this.$data.motivo}
                 })
                     .then(data => {

@@ -11,7 +11,7 @@
         <router-link :to="{ name: 'cotizacion-proveedor-send', params: {id_invitacion: this.value.id_invitacion}}" v-if="value.enviar" type="button" class="btn btn-sm btn-outline-success" title="Enviar">
             <i class="fa fa-send"></i>
         </router-link>
-        <DeleteProveedor v-bind:id="value.id" v-if="value.delete"/>
+        <DeleteProveedor v-bind:id_invitacion="value.id_invitacion" v-if="value.delete"/>
     </div>
 </template>
 <script>

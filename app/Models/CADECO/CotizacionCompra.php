@@ -575,25 +575,19 @@ class    CotizacionCompra  extends Transaccion
     public function cambioEstadoSolicitud()
     {
         $this->refresh();
-        if(!is_null(Context::getIdObra()))
-        {
-            $solicitud = $this->solicitud;
-        }else{
-            $solicitud = SolicitudCompra::where('id_transaccion', $this->id_antecedente)->withoutGlobalScopes()->first();
-        }
-        if(!$solicitud->validarCotizada()){
+        if(!$this->solicitud->validarCotizada()){
             /**
              * Cambiar estado de la solicitud de: 'Cotizada' a:  'En proceso de cotización'
              */
-            $solicitud->complemento->setCambiarEstado(3,2);
+            $this->solicitud->complemento->setCambiarEstado(3,2);
 
         }
-        if($solicitud->cotizaciones->count() == 0)
+        if($this->solicitud->cotizaciones->count() == 0)
         {
             /**
              * Cambiar estado de la solicitud de: 'En proceso de cotización' a: 'Pendiente de cotización'
              */
-            $solicitud->complemento->setCambiarEstado(2,1);
+            $this->solicitud->complemento->setCambiarEstado(2,1);
         }
     }
 
@@ -1060,6 +1054,9 @@ class    CotizacionCompra  extends Transaccion
      */
     public function eliminarProveedor($motivo, $base)
     {
+        if ($this->estado > 0) {
+            abort(400, "La cotización se encuentra enviada.");
+        }
         try {
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $base);
@@ -1067,7 +1064,10 @@ class    CotizacionCompra  extends Transaccion
             $this->validar();
             $this->delete();
             $this->revisarRespaldos($motivo);
-            $this->cambioEstadoSolicitud();
+            $this->invitacion->update([
+                "estado" => 0,
+                "id_cotizacion_generada" => null
+            ]);
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {

@@ -296,10 +296,7 @@ class CotizacionService
 
     public function deleteProveedor(array $data, $id)
     {
-        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
-        if (is_null($invitacion)) {
-            abort(400, 'La fecha limite para recibir su cotización ha sido superada.');
-        }
+        $invitacion = $this->validaFechaCierreInvitacion($id);
         return $this->repository->eliminar($invitacion->cotizacionCompra->getKey(),$invitacion->base_datos,$data['data']);
     }
 }
