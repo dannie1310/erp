@@ -29,13 +29,12 @@
                     { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c100', sortable: true, thComp: require('../../globals/th-Date').default },
                     { title: 'Proyecto', field: 'descripcion_obra', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
+                    { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
-
-
                 ],
                 data: [],
                 total: 0,
-                query: {include: [], sort: 'id',  order: 'desc', scope:['invitadoAutenticado']},
+                query: {include: ['cotizacion'], sort: 'id',  order: 'desc', scope:['invitadoAutenticado']},
                 search: '',
                 cargando: false
             }
@@ -61,6 +60,35 @@
                     .finally(() => {
                         this.cargando = false;
                     })
+            },
+            getEstado(estado) {
+                let val = parseInt(estado);
+                switch (val) {
+                    case 0:
+                        return {
+                            color: '#e50c25',
+                            text_color:'#f5f1f1',
+                            descripcion: 'Recibida'
+                        }
+                    case 1:
+                        return {
+                            color: '#f36112',
+                            text_color:'#000000',
+                            descripcion: 'Leída'
+                        }
+                    case 2:
+                        return {
+                            color: '#f39c12',
+                            text_color:'#000000',
+                            descripcion: 'Cotizada'
+                        }
+                    case 3:
+                        return {
+                            color: '#59a153',
+                            text_color:'#000000',
+                            descripcion: 'Atendida'
+                        }
+                }
             },
         },
         computed: {
@@ -91,10 +119,13 @@
                         fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         usuario_invito: invitacion.nombre_usuario_invito,
                         descripcion_obra: invitacion.descripcion_obra,
+                        estado: this.getEstado(invitacion.estado),
                         buttons: $.extend({}, {
                             id: invitacion.id,
                             con_cotizacion: invitacion.con_cotizacion,
                             show: true,
+                            editar_cotizacion: (self.$root.can('editar_cotizacion_proveedor',true)  && invitacion.estado < 3 && !invitacion.con_cotizacion == 0) ? true : false,
+                            registrar_cotizacion: (self.$root.can('registrar_cotizacion_proveedor',true) && invitacion.estado < 3 && invitacion.con_cotizacion == 0) ? true : false,
                         })
                     }));
                 },

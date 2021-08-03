@@ -382,7 +382,7 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             salir() {
-                this.$router.push({name: 'cotizacion-proveedor'});
+                this.$router.back(2);
             },
             find() {
                 this.cargando = true;

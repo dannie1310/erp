@@ -3,6 +3,7 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Events\ActualizacionClaveUsuarioProveedor;
+use App\Events\AperturaInvitacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
@@ -471,6 +472,20 @@ class InvitacionService
         $invitaciones = $this->repository->all();
         foreach($invitaciones as $invitacion){
             $empresas[] = $this->generaEmpresaSAO($usuario, $invitacion);
+        }
+    }
+
+    public function abrir($id)
+    {
+        $invitacion = $this->repository->show($id);
+        if($invitacion->estado == 0)
+        {
+            $invitacion->update([
+                "estado"=>1,
+                "abierta"=>1,
+                "fecha_hora_apertura"=>date("Y-m-d H:i:s")
+            ]);
+            event(new AperturaInvitacion($invitacion));
         }
     }
 }

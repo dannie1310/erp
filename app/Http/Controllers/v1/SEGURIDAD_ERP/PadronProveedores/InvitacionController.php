@@ -55,10 +55,8 @@ class InvitacionController extends Controller
 
     public function abrir($id)
     {
-        $obj = $this->service->show($id);
-        $obj->abierta = 1;
-        $obj->save();
-        return response()->json("Gracias por confirmar la recepción de la invitación", 200);
+        $this->service->abrir($id);
+        return response()->json([], 200);
     }
 
     public function getPorCotizar(Request $request)
