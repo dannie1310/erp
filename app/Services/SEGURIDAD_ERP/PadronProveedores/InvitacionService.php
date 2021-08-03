@@ -473,4 +473,14 @@ class InvitacionService
             $empresas[] = $this->generaEmpresaSAO($usuario, $invitacion);
         }
     }
+
+    public function getPresupuestoEdit($id){
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $this->repository->show($id)->getPresupuestoEdit();
+    }
 }

@@ -3889,7 +3889,33 @@ export const routes = [
                             middleware: [auth],
                             permission: ['registrar_cotizacion_proveedor'],
                         }
-                    }
+                    },
+                    {
+                        path: ':id',
+                        name: 'presupuesto-proveedor-show',
+                        component: require('./components/portal-proveedor/presupuesto/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'presupuesto-proveedor-edit',
+                        component: require('./components/portal-proveedor/presupuesto/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Actualizar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth],
+                            // permission: 'consultar_cotizacion_proveedor',
+                            // general: true
+                        }
+                    },
                 ]
             },
             {

@@ -311,9 +311,12 @@ class PresupuestoContratista extends Transaccion
 
     public function getConMonedaExtranjeraAttribute()
     {
-        $id_moneda = Obra::find(Context::getIdObra())->id_moneda;
-        $cantidad = $this->partidas()->where("IdMoneda","<>",$id_moneda)->count();
-        return $cantidad>0?true:false;
+        if(Context::getIdObra()){
+            $id_moneda = Obra::find(Context::getIdObra())->id_moneda;
+            $cantidad = $this->partidas()->where("IdMoneda","<>",$id_moneda)->count();
+            return $cantidad>0?true:false;
+        }
+        return false;
     }
 
     public function getConObservacionesPartidasAttribute()
@@ -334,7 +337,10 @@ class PresupuestoContratista extends Transaccion
 
     public function getMonedaConversionAttribute()
     {
-        return Obra::find(Context::getIdObra())->moneda->nombre;
+        if(Context::getIdObra()){
+            return Obra::find(Context::getIdObra())->moneda->nombre;
+        }
+        return 'PESOS';
     }
 
     public function  getSubtotalMcAntesDescuentoGlobalFormatAttribute()

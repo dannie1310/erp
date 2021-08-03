@@ -41,7 +41,7 @@ class InvitacionController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context')->only("store");
-        $this->middleware('permisoGlobal:consultar_cotizacion_proveedor')->only(['getPorCotizar','getSolicitud']);
+        $this->middleware('permisoGlobal:consultar_cotizacion_proveedor')->only(['getPorCotizar','getSolicitud', 'getPresupuestoEdit']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -69,5 +69,10 @@ class InvitacionController extends Controller
     public function getSolicitud(Request $request, $id)
     {
         return $this->service->getSolicitud($id);
+    }
+    
+    public function getPresupuestoEdit(Request $request, $id)
+    {
+        return $this->service->getPresupuestoEdit($id);
     }
 }

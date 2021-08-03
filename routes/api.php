@@ -454,6 +454,7 @@ $api->version('v1', function ($api) {
             $api->get('/getSolicitudes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPorCotizar');
             $api->get('{id}/getSolicitud', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getSolicitud')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getPresupuestoEdit', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPresupuestoEdit')->where(['id' => '[0-9]+']);
         });
     });
 

@@ -9,7 +9,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_invitacion">Buscar Invitación:</label>
+                                        <label for="id_invitacion">Buscar Invitación:</label>
                                                  <model-list-select
                                                      id="id_invitacion"
                                                      name="id_invitacion"
@@ -107,16 +107,14 @@
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(this.solicitud.tipo_transaccion == 17){
-                            this.$router.push({name: 'cotizacion-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
+                            if(this.invitacion.cotizacion){
+                                this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
+                            }else{
+                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                            }
                         }else if(this.solicitud.tipo_transaccion == 49){
-                            this.$router.push({name: 'presupuesto-proveedor-create', params: {id_solicitud: this.solicitud.id_invitacion}});
-                        }
-                        
-                        if(this.invitacion.cotizacion){
-                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
-                        }else{
-                            this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
-                        }
+                            this.$router.push({name: 'presupuesto-proveedor-create', params: {id_solicitud: this.id_invitacion}});
+                        }   
                     }
                 });
             },

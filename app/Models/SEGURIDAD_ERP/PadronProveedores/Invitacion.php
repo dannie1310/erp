@@ -5,19 +5,22 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Obra;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
-use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
+use Illuminate\Support\Facades\Config;
+use App\Models\CADECO\CotizacionCompra;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Http\Transformers\CADECO\DestinoTransformer;
+use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 
@@ -98,6 +101,13 @@ class Invitacion extends Model
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
         return $this->hasOne(CotizacionCompra::class,"id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
+    }
+
+    public function presupuesto()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->hasOne(PresupuestoContratista::class,"id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
     public function usuarioInvito()
@@ -323,6 +333,7 @@ class Invitacion extends Model
         {
             abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
         }
+        // dd(1);
         if($this->tipo_transaccion_antecedente == 17) {
             return [
                 'id' => $this->solicitud->getKey(),
@@ -352,11 +363,12 @@ class Invitacion extends Model
             ];
         }else if($this->tipo_transaccion_antecedente == 49){
             $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
-            $contratosTransformer = new ContratoTransformer; 
             $transaccionRelacionTransformer = new TransaccionRelacionTransformer;
 
+            $contratosTransformer = new ContratoTransformer; 
+
             $resp = $contratoProyectadoTransformer->transform($this->contratoProyectado);
-            $transaccion = $contratoProyectadoTransformer->includeTransaccion($this->contratoProyectado);
+            $transaccion = $transaccionRelacionTransformer->transform($this->contratoProyectado);
 
             $conceptos = [];
             foreach($this->contratoProyectado->conceptos as $key => $concepto){
@@ -402,5 +414,9 @@ class Invitacion extends Model
             ]);
         }
        return $partidas;
+    }
+
+    public function getPresupuestoEdit(){
+        dd(1, $this);
     }
 }
