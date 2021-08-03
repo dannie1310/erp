@@ -105,6 +105,15 @@ axios.interceptors.response.use((response) => {
                     icon: "warning"
                 });
                 break;
+            case (code === 399):
+                swal({
+                    title: "Atención",
+                    text: message,
+                    icon: "warning",
+                }).then((value) => {
+                    window.history.back();
+                });
+                break;
             default:
                 swal({
                     title: "¡Error!",

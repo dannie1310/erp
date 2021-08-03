@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\IGH\Usuario;
+use App\Services\IGH\UsuarioService;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Traits\AuthenticatesIghUsers;
@@ -37,15 +38,19 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
-        
-        if(array_key_exists('clave_confirmacion', $request->all())){
+
+        if(array_key_exists('razon_social', $request->all())){
+            if($this->actualizarEmpresaPassword($request)){
+                return route('login');
+            }
+        }else if(array_key_exists('clave_confirmacion', $request->all())){
             if($this->actualizarPassword($request)){
                 return route('login');
             }
         }else{
             $this->validateLogin($request);
         }
-        
+
 
         // If the class is using the ThrottlesLogins trait, we can automatically throttle
         // the login attempts for this application. We'll key this by the username and
@@ -54,6 +59,9 @@ class LoginController extends Controller
             $this->fireLockoutEvent($request);
 
             return $this->sendLockoutResponse($request);
+        }
+        if($this->validaDatosEmpresaFaltantes($request)){
+            return view('auth.pide_datos_empresa');
         }
         if($this->validaPasswordGenerico($request)){
             return view('auth.cambio_contrasena_temporal');
@@ -80,17 +88,33 @@ class LoginController extends Controller
 
     public function actualizarPassword($request){
         $credenciales = Session::get('credenciales');
-        $usuario = Usuario::where('usuario', '=', $credenciales['usuario'])->where('clave', '=', md5($credenciales['clave']))->first();
-        $usuario->clave = $request['clave_nueva'];
-        $usuario->pide_cambio_contrasenia = 0;
-        $usuario->save();
+        $usuarioServicio = new UsuarioService(new Usuario());
+        $usuarioServicio->actualizaClaveProvisional($credenciales, $request->all());
         return true;
     }
-    
+
+    public function actualizarEmpresaPassword($request){
+
+        $credenciales = Session::get('credenciales');
+
+        $usuarioServicio = new UsuarioService(new Usuario());
+        $usuarioServicio->generaEmpresa($credenciales, $request->all());
+        return true;
+    }
+
     private function validaPasswordGenerico($request){
         Session::put('credenciales', $request->all());
         $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
         if($usuario && $usuario->pide_cambio_contrasenia == 1){
+            return true;
+        }
+        return false;
+    }
+
+    private function validaDatosEmpresaFaltantes($request){
+        Session::put('credenciales', $request->all());
+        $usuario = Usuario::where('usuario', '=', $request['usuario'])->where('clave', '=', md5($request['clave']))->first();
+        if($usuario && $usuario->pide_datos_empresa == 1){
             return true;
         }
         return false;

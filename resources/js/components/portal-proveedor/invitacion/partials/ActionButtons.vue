@@ -1,6 +1,11 @@
 <template>
     <div class="btn-group">
-
+        <router-link  :to="{ name: 'cotizacion-proveedor-create', params: {id_invitacion: value.id}}" v-if="$root.can('registrar_cotizacion_proveedor',true) && value.con_cotizacion == 0" type="button" class="btn btn-sm btn-outline-success" title="Cotizar">
+            <i class="fa fa-comment-dollar"></i>
+        </router-link>
+        <router-link  :to="{ name: 'cotizacion-proveedor-edit', params: {id_invitacion: value.id}}" v-if="$root.can('editar_cotizacion_proveedor',true) && value.con_cotizacion == 1" type="button" class="btn btn-sm btn-outline-primary" title="Editar Cotización">
+            <i class="fa fa-comment-dollar"></i>
+        </router-link>
         <router-link  :to="{ name: 'invitacion-proveedor-show', params: {id: value.id}}" v-if="$root.can('consultar_invitacion_cotizar_proveedor', 1)" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
             <i class="fa fa-eye"></i>
         </router-link>

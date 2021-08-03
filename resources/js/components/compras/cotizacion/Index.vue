@@ -135,8 +135,8 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
-                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
-                            edit: (cotizacion.asignada) ? false : true,
+                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada && !cotizacion.id_referente > 0 ? true : false,
+                            edit: (!cotizacion.asignada && !cotizacion.id_referente > 0) ? true : false,
                             transaccion: {id:cotizacion.id, tipo:18},
                         })
                     }));

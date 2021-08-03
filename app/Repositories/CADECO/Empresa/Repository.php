@@ -28,4 +28,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         return $this->model->where('rfc', '=', $rfc)->whereIn('tipo_empresa', [1,2,3])->orderBy('id_empresa', 'ASC')->get();
     }
 
+    public function getEmpresaPorRFC($rfc)
+    {
+        return $this->model->getEmpresaPorRFC($rfc);
+    }
+
 }

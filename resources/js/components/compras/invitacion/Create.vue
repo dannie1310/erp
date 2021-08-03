@@ -20,12 +20,12 @@
                 </div>
                 <div class="form-group row" v-if="solicitud">
                     <div class="col-md-12">
-                        <!--<div class="form-check form-check-inline">
+                        <div class="form-check form-check-inline">
                             <label class="form-check-label" style="cursor:pointer" >
                                 <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="proveedor_en_catalogo" value="1" >
                             </label>
-                        </div>-->
-                        <i class="fa fa-check-square"></i>
+                        </div>
+                        <!--<i class="fa fa-check-square"></i>-->
                         <label>Enviar la invitación a un proveedor existente en el catálogo</label>
                     </div>
                 </div>
@@ -105,9 +105,9 @@
                                             class = "form-control"
                                             v-validate="{required: true}"
                                             :disabled-dates="fechasDeshabilitadas"
-                                            :class="{'is-invalid': errors.has('fecha')}"
+                                            :class="{'is-invalid': errors.has('fecha_cierre')}"
                                 />
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
+                                <div style="display:block" class="invalid-feedback" v-show="errors.has('fecha_cierre')">{{ errors.first('fecha_cierre') }}</div>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -136,6 +136,7 @@
                                 v-model="correo"
                                 type="text"
                                 class="form-control"
+                                :class="{'is-invalid': errors.has('correo')}"
                                 v-validate="{ required: true, email:true }"
 
                             />
@@ -151,12 +152,30 @@
                                 v-model="contacto"
                                 type="text"
                                 class="form-control"
+                                :class="{'is-invalid': errors.has('contacto')}"
                                 v-validate="{ required: true }"
                             />
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-2">
+                        <div class="form-group">
+                        <label for="fecha_cierre">Fecha de Cierre:</label>
+                            <datepicker v-model = "fecha_cierre"
+                                        name = "Fecha de Cierre"
+                                        id = "fecha_cierre"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :disabled-dates="fechasDeshabilitadas"
+                                        :class="{'is-invalid': errors.has('fecha_cierre')}"
+                            />
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('fecha_cierre')">{{ errors.first('fecha_cierre') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
                         <div class="form-group">
                         <label for="observaciones">Observaciones:</label>
                             <textarea
@@ -170,7 +189,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-6">
                         <div class="form-group">
                         <label for="direccion_entrega">Dirección de Entrega:</label>
@@ -202,15 +221,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-12">
                         <ckeditor v-model="cuerpo_correo" ></ckeditor>
-
-
                     </div>
                 </div>
                 <br>
-                <div class="row" v-if="solicitud && id_sucursal>0">
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones:</label>
@@ -255,16 +272,69 @@
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <button type="submit" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0"><i class="fa fa-envelope"></i>
+                            <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0"><i class="fa fa-envelope"></i>
                                 Enviar</button>
                         </div>
                     </div>
                 </div>
 
             </div>
+
+        </div>
+        <div class="modal fade" ref="modal_usuarios" role="dialog" data-backdrop="static" data-keyboard="false" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-list"></i> Seleccionar un proveedor preexistente</h5>
+
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="callout callout-warning">
+                                    <h6><i class="fa fa-info-circle"></i>Atención</h6>
+                                    Los siguientes proveedores tienen coincidencia con el correo que ha ingresado, favor de seleccionar alguno.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" v-if="usuarios.length>0">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="id_usuario">Proveedores:</label>
+                                        <model-list-select
+                                            id="id_usuario"
+                                            name="proveedor"
+                                            option-value="id"
+                                            v-model="id_usuario"
+                                            :custom-text="usuarioNombre"
+                                            :list="usuarios"
+                                            v-validate ="{ required: this.sin_coincidencia_proveedor == 0 ? true : false}"
+                                            :isError="errors.has('proveedor')"
+                                            :placeholder="!cargando?'Seleccionar un usuario preexistente en la el catálogo':'Cargando...'">
+                                         </model-list-select>
+                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('proveedor')">{{ errors.first('proveedor') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label" style="cursor:pointer" >
+                                        <input class="form-check-input" type="checkbox" name="sin_coincidencia_proveedor" v-model="sin_coincidencia_proveedor" >
+                                    </label>
+                                </div>
+                                <label>No deseo seleccionar un proveedor de la lista</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModal"><i class="fa fa-close"></i>Cerrar</button>
+                        <button type="button" class="btn btn-primary" @click="enviar" :disabled="errors.count() > 0"><i class="fa fa-envelope"></i> Enviar</button>
+                    </div>
+                </div>
+             </div>
         </div>
     </span>
-
 </template>
 
 <script>
@@ -283,9 +353,11 @@ export default {
             cargando : false,
             proveedores : [],
             sucursales: [],
+            usuarios : [],
             es:es,
             post: {},
             id_proveedor : null,
+            id_usuario : null,
             id_sucursal : null,
             proveedor_en_catalogo : 1,
             correo : '',
@@ -300,7 +372,9 @@ export default {
             nombre_archivo_carta_terminos_condiciones:'',
             archivo_formato_cotizacion:'',
             nombre_archivo_formato_cotizacion:'',
-            cuerpo_correo:''
+            cuerpo_correo:'',
+            usuarios_cargados : 0,
+            sin_coincidencia_proveedor : 0
         }
     },
     mounted() {
@@ -356,19 +430,31 @@ export default {
                 this.cargando = false;
             })
         },
-
         razonSocialRFC (item)
         {
             return `[${item.razon_social}] - [ ${item.rfc} ]`;
+        },
+        usuarioNombre(item)
+        {
+            return `[${item.usuario}] - [ ${item.nombre} ]`;
         },
         salir()
         {
             this.$router.push({name: 'invitacion-compra-selecciona-solicitud'});
         },
+        cerrarModal()
+        {
+            this.usuarios = [];
+            this.usuarios_cargados = 0;
+            this.id_usuario = '';
+            this.sin_coincidencia_proveedor = 0;
+            $(this.$refs.modal_usuarios).modal('hide');
+        },
         limpiar()
         {
             this.post.id_transaccion = null;
             this.post.id_proveedor = null;
+            this.post.id_usuario = null;
             this.post.id_sucursal = null;
             this.post.observaciones = null;
             this.post.proveedor_en_catalogo = null;
@@ -390,13 +476,46 @@ export default {
 
             this.correo = null;
             this.contacto = null;
+            this.sin_coincidencia_proveedor = 0;
+            this.usuarios = [];
+            this.id_usuario = '';
+            this.usuarios_cargados = 0;
 
             this.archivo_carta_terminos_condiciones = null;
             this.nombre_archivo_carta_terminos_condiciones = null;
             this.archivo_formato_cotizacion = null;
             this.nombre_archivo_formato_cotizacion = null;
+            this.$refs.carta_terminos.value = '';
+            this.$refs.formato_cotizacion.value = '';
         },
         enviar()
+        {
+            let _self = this;
+            this.$validator.validate().then(result => {
+                if (result) {
+                    if (_self.proveedor_en_catalogo == 0 && _self.usuarios_cargados == 0 && _self.correo != '') {
+                        return this.$store.dispatch('igh/usuario/findPorCorreo', {
+                            params: {sort: 'usuario',  order: 'asc'},
+                            correo: _self.correo,
+                        })
+                            .then((data) => {
+                                _self.usuarios_cargados = 1;
+                                _self.usuarios = data.data;
+                                if (_self.usuarios.length > 0) {
+                                    $(this.$refs.modal_usuarios).appendTo('body')
+                                    $(this.$refs.modal_usuarios).modal('show');
+                                } else {
+                                    _self.usuarios_cargados = 0;
+                                    this.store();
+                                }
+                            });
+                    } else {
+                        this.store();
+                    }
+                }
+            });
+        },
+        store()
         {
             let _self = this;
             this.$validator.validate().then(result => {
@@ -404,6 +523,7 @@ export default {
                     _self.post.id_transaccion = _self.id_solicitud;
                     _self.post.id_proveedor = _self.id_proveedor;
                     _self.post.id_sucursal = _self.id_sucursal;
+                    _self.post.id_usuario = _self.id_usuario;
                     _self.post.observaciones = _self.observaciones;
                     _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
                     _self.post.correo = _self.correo;
@@ -416,17 +536,17 @@ export default {
                     _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
                     _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
                     _self.post.cuerpo_correo = _self.cuerpo_correo;
-
-                    return this.$store.dispatch('compras/invitacion/store', _self.post)
-                        .then((data) => {
-                            if(_self.mas_invitaciones == true){
-                                this.limpiar();
-                            } else {
-                                this.$router.push({name: 'invitacion-compra'});
-                            }
-                        });
                 }
             });
+            return this.$store.dispatch('compras/invitacion/store', _self.post)
+                .then((data) => {
+                    $(this.$refs.modal_usuarios).modal('hide');
+                    if(_self.mas_invitaciones == true){
+                        this.limpiar();
+                    } else {
+                        this.$router.push({name: 'invitacion-compra'});
+                    }
+                });
         },
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
@@ -497,6 +617,13 @@ export default {
             } else {
                 this.id_sucursal = null;
                 this.id_proveedor = null;
+            }
+        },
+        sin_coincidencia_proveedor(value){
+            if(value == 1){
+                this.id_usuario = '';
+            } else {
+
             }
         },
     }
