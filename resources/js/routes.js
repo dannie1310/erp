@@ -3992,6 +3992,23 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'expediente',
+                component: require('./components/portal-proveedor/invitacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'expediente',
+                        component: require('./components/portal-proveedor/expediente/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Expediente de Proveedor',
+                            breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth],
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
