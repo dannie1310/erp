@@ -17,7 +17,7 @@
                                                      v-model="id_invitacion"
                                                      :custom-text="idFolioObservaciones"
                                                      :list="invitaciones"
-                                                     :placeholder="!cargando?'Seleccionar o buscar por folio u observación':'Cargando...'">
+                                                     :placeholder="!cargando?'Seleccionar o buscar por folio':'Cargando...'">
                                                  </model-list-select>
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_invitacion')">{{ errors.first('id_invitacion') }}</div>
                                         </div>
@@ -89,7 +89,7 @@
         methods : {
             idFolioObservaciones (item)
             {
-                return `[${item.numero_folio_format}]-[ ${item.observaciones} ]-[ ${item.transaccion.tipo.descripcion}]-[ ${item.transaccion.numero_folio_format} ]`;
+                return `[Invitación ${item.numero_folio_format}]-[ ${item.transaccion.tipo_str} ${item.transaccion.numero_folio_format} ]`;
             },
             salir()
             {

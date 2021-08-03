@@ -37,8 +37,11 @@ class TransaccionTransformer extends TransformerAbstract
     public function transform(Transaccion $model)
     {
         $transaccion = $model->toArray();
-        $complemento = ["fecha_format"=>$model->fecha_format,
-            "numero_folio_format"=>$model->numero_folio_format];
+        $complemento = [
+            "fecha_format"=>$model->fecha_format,
+            "numero_folio_format"=>$model->numero_folio_format,
+            "tipo_str"=>$model->tipo_transaccion_str,
+        ];
         return array_merge($transaccion, $complemento);
     }
 
