@@ -11,6 +11,9 @@
         <router-link :to="{ name: 'cotizacion-proveedor-send', params: {id_invitacion: this.value.id_invitacion}}" v-if="value.enviar" type="button" class="btn btn-sm btn-outline-success" title="Enviar">
             <i class="fa fa-send"></i>
         </router-link>
+        <router-link  :to="{ name: 'cotizacion-proveedor-documentos', params: {id: value.id_cotizacion, base_datos:value.invitacion.base_datos, id_obra:value.invitacion.id_obra}}" v-if="$root.can('consultar_cotizacion_proveedor',1)  && $root.can('consultar_archivos_transaccion',1)" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+            <i class="fa fa-folder-open"></i>
+        </router-link>
     </div>
 </template>
 <script>

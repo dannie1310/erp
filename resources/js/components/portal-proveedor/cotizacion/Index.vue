@@ -140,6 +140,7 @@
                         estado: this.getEstado(invitacion.cotizacion.estado),
                         descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {
+                            invitacion: invitacion,
                             show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
                             id_invitacion: invitacion.id,
                             id_cotizacion: invitacion.cotizacion.id_transaccion,

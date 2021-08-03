@@ -30,14 +30,29 @@
 
 <script>
     export default {
-        props: ['id', 'url', 'descripcion','texto'],
+        props: ['id', 'url', 'descripcion','texto','base_datos','id_obra'],
         methods: {
             init() {
                 this.pdf()
             },
             pdf(){
                 var url = this.url.replace("{id}", this.id);
-                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Archivo</iframe>');
+
+                if(this.base_datos)
+                {
+                    url = url.replace("{base_datos}", this.base_datos);
+                }else{
+                    url = url.replace("{base_datos}", this.$session.get('db'));
+                }
+
+                if(this.id_obra)
+                {
+                    url = url.replace("{id_obra}", this.id_obra);
+                }else {
+                    url = url.replace("{id_obra}", this.$session.get('id_obra') );
+                }
+
+                $(this.$refs.body).html('<iframe src="'+url+'"  height="100%" width="100%">Archivo</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }

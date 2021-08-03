@@ -3885,6 +3885,26 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/:base_datos/:id_obra/documentos',
+                        name: 'cotizacion-proveedor-documentos',
+                        component: require('./components/globals/archivos/Files').default,
+                        props: route => ({
+                            id: route.params.id,
+                            global: true,
+                            sin_contexto: 1,
+                            base_datos: route.params.base_datos,
+                            id_obra: route.params.id_obra,
+                            permiso: ['registrar_cotizacion_proveedor'],
+                        }),
+                        meta: {
+                            title: 'Documentos de Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    }
                 ]
             },
             {
