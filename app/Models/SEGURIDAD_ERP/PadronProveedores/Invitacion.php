@@ -58,8 +58,8 @@ class Invitacion extends Model
         'fecha_hora_envio_cotizacion',
     ];
 
-    protected $dates = ["fecha_cierre_invitacion"];
-    protected $dateFormat = 'M d Y h:i:s A';
+    //protected $dates = ["fecha_cierre_invitacion"];
+    //protected $dateFormat = 'M d Y h:i:s A';
     /*
      * Relaciones*/
 
