@@ -39,7 +39,7 @@ class Archivo extends Model
 
     public function transaccion()
     {
-        return $this->belongsTo(Transaccion::class, 'id_transaccion','id_transaccion');
+        return $this->belongsTo(Transaccion::class, 'id_transaccion','id_transaccion')->withOutGlobalScopes();
     }
 
     public function categoria()

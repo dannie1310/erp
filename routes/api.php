@@ -39,8 +39,10 @@ $api->version('v1', function ($api) {
             $api->get('{id}/documento', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
             $api->get('{id}/transaccion', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccion')->where(['id' => '[0-9]+']);
             $api->get('{tipo}/{id}/transaccion-relacionados', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccion')->where(['id' => '[0-9]+']);
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+            $api->post('{id}/transaccion-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccionSC');
+            $api->get('{tipo}/{id}/transaccion-relacionados-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccionSC')->where(['id' => '[0-9]+']);
         });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {

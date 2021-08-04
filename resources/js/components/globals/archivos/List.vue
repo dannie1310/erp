@@ -44,7 +44,7 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <Documento v-bind:url="url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
+                                                        <Documento v-bind:url="url" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
                                                         <button v-if="archivo.extension && archivo.extension.toLowerCase()  != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
                                                             <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
                                                                 <i class="fa fa-spin fa-spinner"></i>
@@ -88,11 +88,11 @@ import Documento from './Documento';
 import Imagen from './Imagen';
 export default {
     name: "List",
-    props: ['id','tipo','cargar','relacionadas'],
+    props: ['id','tipo','cargar','relacionadas', 'sin_contexto', 'id_obra', 'base_datos'],
     components:{Documento, Imagen},
     data(){
         return{
-            url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt')+'&db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra'),
+            url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
             id_archivo:'',
             descripcion:'',
             archivo:'',
@@ -104,10 +104,24 @@ export default {
             cargando: false,
             cargando_imagenes: false,
             eliminando_imagenes : false,
+            id_obra_url : '',
+            base_datos_url : '',
         }
     },
     mounted() {
         this.find();
+        if(this.base_datos)
+        {
+            this.base_datos_url = this.base_datos;
+        }else{
+            this.base_datos_url = this.$session.get('db');
+        }
+        if(this.id_obra)
+        {
+            this.id_obra_url = this.id_obra;
+        }else{
+            this.id_obra_url = this.$session.get('id_obra');
+        }
     },
     methods: {
         createImage(file, tipo) {
@@ -120,25 +134,47 @@ export default {
         },
         find() {
             this.cargando = true;
-            if(!this.relacionadas){
-                return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
-                    id: this.id,
-                    params: {include: []}
-                }).then(data => {
-                }).finally(()=> {
-                    this.cargando = false;
-                })
-            }else{
-                return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccion', {
-                    id: this.id,
-                    tipo: this.tipo,
-                    params: {include: []}
-                }).then(data => {
-                }).finally(()=> {
-                    this.cargando = false;
-                })
+            if(!this.sin_contexto){
+                if(!this.relacionadas){
+                    return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
+                        id: this.id,
+                        params: {include: []}
+                    }).then(data => {
+                    }).finally(()=> {
+                        this.cargando = false;
+                    })
+                }else{
+                    return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccion', {
+                        id: this.id,
+                        tipo: this.tipo,
+                        params: {include: []}
+                    }).then(data => {
+                    }).finally(()=> {
+                        this.cargando = false;
+                    })
+                }
+            }else {
+                if(!this.relacionadas){
+                    let _self = this;
+                    return this.$store.dispatch('documentacion/archivo/getArchivosTransaccionSC', {
+                        id: this.id,
+                        id_obra : _self.id_obra,
+                        base_datos : _self.base_datos
+                    }).then(data => {
+                    }).finally(()=> {
+                        this.cargando = false;
+                    })
+                }else{
+                    return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccionSC', {
+                        id: this.id,
+                        'tipo': this.tipo,
+                        data: {id_obra : this.id_obra, base_datos : this.base_datos}
+                    }).then(data => {
+                    }).finally(()=> {
+                        this.cargando = false;
+                    })
+                }
             }
-
         },
         modalImagen(archivo){
             this.cargando_imagenes = true;
@@ -161,9 +197,11 @@ export default {
 
         eliminar(archivo){
             this.eliminando_imagenes = true;
+            let _self = this;
             return this.$store.dispatch('documentacion/archivo/eliminar', {
                 id: archivo.id,
-                params: {}
+                id_obra : _self.id_obra,
+                base_datos : _self.base_datos,
             }).then(data => {
                 //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
             }).finally( ()=>{

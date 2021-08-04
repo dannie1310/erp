@@ -248,25 +248,30 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function roles()
     {
-        $obra =  Obra::query()->find(Context::getIdObra());
-
-        if ($obra->configuracion) {
-            if ($obra->configuracion->esquema_permisos == 1) {
+        if(Context::getIdObra())
+        {
+            $obra =  Obra::query()->find(Context::getIdObra());
+            if ($obra->configuracion) {
+                if ($obra->configuracion->esquema_permisos == 1) {
+                    // Esquema Global
+                    return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
+                        ->withPivot('id_obra', 'id_proyecto')
+                        ->where('id_obra', $obra->getKey())
+                        ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+                } else if ($obra->configuracion->esquema_permisos == 2) {
+                    // Esquema Personalizado
+                    return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+                }
+            } else {
                 // Esquema Global
                 return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
-                    ->withPivot('id_obra', 'id_proyecto')
                     ->where('id_obra', $obra->getKey())
                     ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
-            } else if ($obra->configuracion->esquema_permisos == 2) {
-                // Esquema Personalizado
-                return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
             }
-        } else {
-            // Esquema Global
-            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
-                ->where('id_obra', $obra->getKey())
-                ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+        }else{
+            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
         }
+
     }
 
     public function rolesSinContexto()
