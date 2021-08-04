@@ -145,9 +145,10 @@
                             id_invitacion: invitacion.id,
                             id_cotizacion: invitacion.cotizacion.id_transaccion,
                             enviar: (self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado == -1)  ? true : false,
-                            edit: self.$root.can('editar_cotizacion_proveedor',true && invitacion.cotizacion.estado < 0) ? true : false,
+                            edit: (self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false,
                             descarga_layout: (self.$root.can('descargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false,
-                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false
+                            carga_layout: (self.$root.can('cargar_layout_cotizacion_proveedor',true) && self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false,
+                            delete: (self.$root.can('eliminar_cotizacion_proveedor',true) && invitacion.cotizacion.estado < 0) ? true : false,
                         })
                     }));
                 },

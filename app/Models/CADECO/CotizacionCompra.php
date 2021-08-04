@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\CSV\CotizacionLayout;
+use App\Facades\Context;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
@@ -1045,4 +1046,34 @@ class    CotizacionCompra  extends Transaccion
 
         return $this->estado;
     }
+
+    /**
+     * Eliminar cotización de un proveedor
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminarProveedor($motivo, $base)
+    {
+        if ($this->estado > 0) {
+            abort(400, "La cotización se encuentra enviada.");
+        }
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $base);
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            $this->invitacion->update([
+                "estado" => 0,
+                "id_cotizacion_generada" => null
+            ]);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
 }

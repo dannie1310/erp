@@ -293,4 +293,10 @@ class CotizacionService
             event(new EnvioCotizacion($invitacion, $cotizacion));
         }
     }
+
+    public function deleteProveedor(array $data, $id)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id);
+        return $this->repository->eliminar($invitacion->cotizacionCompra->getKey(),$invitacion->base_datos,$data['data']);
+    }
 }
