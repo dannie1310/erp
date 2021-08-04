@@ -207,13 +207,14 @@
                                     class="form-control"
                                     option-text="descripcion"
                                     v-model="factura.id_costo"
+                                    v-validate="{required: true}"
                                     :list="tipo_gasto"
                                     :placeholder="!cargando?'Seleccionar':'Cargando...'"
                                     :isError="errors.has(`tipo_gasto_select`)"
                                     id="tipo_gasto_select">
                                 </model-list-select>
                                 <div class="invalid-feedback" v-show="errors.has('tipo_gasto_select')">{{ errors.first('tipo_gasto_select') }}</div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3">
@@ -243,7 +244,7 @@
                                     :class="{'is-invalid': errors.has('iva_subtotal')}"
                                     v-model="resumen.iva_subtotal"/>
                                 <div class="invalid-feedback" v-show="errors.has('iva_subtotal')">{{ errors.first('iva_subtotal') }}</div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-4 offset-5">
@@ -291,7 +292,7 @@
                                     v-on:keyup="actualizar_resumen()"
                                     v-model="resumen.ret_iva_6"/>
                                 <div class="invalid-feedback" v-show="errors.has('ret_iva_6')">{{ errors.first('ret_iva_6') }}</div>
-                            </div>                            
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
@@ -309,7 +310,7 @@
                                     v-on:keyup="actualizar_resumen()"
                                     v-model="resumen.ret_iva_2_3"/>
                                 <div class="invalid-feedback" v-show="errors.has('ret_iva_2_3')">{{ errors.first('ret_iva_2_3') }}</div>
-                            </div>                           
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
@@ -333,7 +334,7 @@
                                     v-on:keyup="actualizar_resumen()"
                                     v-model="resumen.ieps"/>
                                 <div class="invalid-feedback" v-show="errors.has('ieps')">{{ errors.first('ieps') }}</div>
-                            </div>                           
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
@@ -351,7 +352,7 @@
                                     v-on:keyup="actualizar_resumen()"
                                     v-model="resumen.imp_hosp"/>
                                 <div class="invalid-feedback" v-show="errors.has('imp_hosp')">{{ errors.first('imp_hosp') }}</div>
-                            </div>                          
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
@@ -370,7 +371,7 @@
                                     v-model="resumen.ret_isr"/>
                                 <div class="invalid-feedback" v-show="errors.has('ret_isr')">{{ errors.first('ret_isr') }}</div>
                             </div>
-                            
+
                         </div>
                     </div>
                     <div class="col-md-3 offset-9">
@@ -417,7 +418,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+
                             </div>
                             <div class="modal-footer">
                                 <button  type="button"  class="btn btn-secondary" data-dismiss="modal">
@@ -581,7 +582,7 @@ export default {
             return '$ ' + parseFloat(this.resumen.total - this.factura.monto).formatMoney(2);
         },
         getMonto(partida){
-            return '$ ' + parseFloat(partida.cantidad * partida.precio).formatMoney(2); 
+            return '$ ' + parseFloat(partida.cantidad * partida.precio).formatMoney(2);
         },
         getTipoGasto(){
             this.tipo_gasto = [];
@@ -610,7 +611,7 @@ export default {
                 this.nodo = true;
                 $(this.$refs.modal_destino).modal('show');
             }
-            
+
         },
         salir(){
             this.$router.push({name: 'factura'});
@@ -643,7 +644,7 @@ export default {
                     }else{
                         this.store()
                     }
-                    
+
                 }
             });
         },
