@@ -382,7 +382,7 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             salir() {
-                this.$router.back(2);
+                this.$router.go(-1);
             },
             find() {
                 this.cargando = true;
