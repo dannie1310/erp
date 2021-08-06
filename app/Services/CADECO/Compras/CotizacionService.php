@@ -3,10 +3,15 @@
 
 namespace App\Services\CADECO\Compras;
 
+use App\Events\EnvioCotizacion;
 use App\Imports\CotizacionImport;
 use App\Models\CADECO\CotizacionCompra;
+use App\Models\CADECO\Documentacion\Archivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Cotizacion\Repository;
+use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 use App\Utils\ValidacionSistema;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -61,40 +66,35 @@ class CotizacionService
 
         $x = 2;
         $partidas = array();
-        if(count($celdas[0]) != 12)
-        {
-            abort(400,'Archivo XLS no compatible');
+        if (count($celdas[0]) != 12) {
+            abort(400, 'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($cotizacion->partidas) +21)
-        {
-            abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
+        if (count($celdas) != count($cotizacion->partidas) + 21) {
+            abort(400, 'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
         }
-        while($x < count($cotizacion->partidas) + 2)
-        {
+        while ($x < count($cotizacion->partidas) + 2) {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
             $item = $cotizacion->partidas->where('id_material', $decodificado)->first();
-            if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][7]))
-            {
-                abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
+            if (!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][7])) {
+                abort(400, 'No es posible obtener datos de la partida # ' . ($x - 1));
             }
-            if(!$item)
-            {
-                abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
+            if (!$item) {
+                abort(400, 'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
             }
             $idMoneda = 0;
             switch ($celdas[$x][9]) {
                 case 'PESO MXN':
                     $idMoneda = 1;
-                break;
+                    break;
                 case 'DOLAR USD':
                     $idMoneda = 2;
-                break;
+                    break;
                 case 'EURO':
                     $idMoneda = 3;
-                break;
+                    break;
                 case 'LIBRA':
                     $idMoneda = 4;
-                break;
+                    break;
             }
             $partidas[] = array(
                 'precio_unitario' => $celdas[$x][6],
@@ -162,5 +162,135 @@ class CotizacionService
     {
         $pdf = new CotizacionTablaComparativaFormato($this->repository->show($id));
         return $pdf;
+    }
+
+    public function storePortalProveedor($data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
+        return $this->repository->registrar($data, $invitacion);
+    }
+
+    public function updatePortalProveedor($data, $id)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
+        return $this->repository->editarPortalProveedor($id, $data, $invitacion);
+    }
+
+    public function descargaLayoutProveedor($id, $data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id);
+        return $this->repository->descargaLayoutProveedor($data['id_cotizacion'], $invitacion);
+    }
+
+    public function cargaLayoutProveedor($file, $id_invitacion, $name, $id_cotizacion)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id_invitacion);
+        $file_xls = $this->getFileXls($file, $name);
+        $celdas = $this->getDatosPartidas($file_xls);
+        $this->verifica = new ValidacionSistema();
+        $cotizacion = $this->repository->findProveedor($id_cotizacion, $invitacion->base_datos);
+        $x = 2;
+        $partidas = array();
+        if(count($celdas[0]) != 12)
+        {
+            abort(400,'Archivo XLS no compatible');
+        }
+        if(count($celdas) != count($cotizacion->partidas) +21)
+        {
+            abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
+        }
+        while($x < count($cotizacion->partidas) + 2)
+        {
+            $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
+            $item = $cotizacion->partidas->where('id_material', $decodificado)->first();
+            if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][7]))
+            {
+                abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
+            }
+            if(!$item)
+            {
+                abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
+            }
+            $idMoneda = 0;
+            switch ($celdas[$x][9]) {
+                case 'PESO MXN':
+                    $idMoneda = 1;
+                    break;
+                case 'DOLAR USD':
+                    $idMoneda = 2;
+                    break;
+                case 'EURO':
+                    $idMoneda = 3;
+                    break;
+                case 'LIBRA':
+                    $idMoneda = 4;
+                    break;
+            }
+            $partidas[] = array(
+                'precio_unitario' => $celdas[$x][6],
+                'descuento' => $celdas[$x][7],
+                'id_moneda' => $idMoneda,
+                'observaciones' => $celdas[$x][11],
+                'id_material' => $item->material->id_material,
+                'descripcion' => $item->material->descripcion,
+                'numero_parte' => $item->material->numero_parte,
+                'unidad' => $item->material->unidad
+            );
+            $x++;
+        }
+
+        $repuesta = [
+            'descuento_cot' => $celdas[$x][6],
+            'tc_usd' => $celdas[$x + 5][6],
+            'tc_eur' => $celdas[$x + 6][6],
+            'tc_libra' => $celdas[$x + 7][6],
+            'fecha_cotizacion' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($celdas[$x + 12][6])->format("Y/m/d"),
+            'pago_parcialidades' => $celdas[$x + 13][6],
+            'anticipo' => $celdas[$x + 14][6],
+            'credito' => $celdas[$x + 15][6],
+            'tiempo_entrega' => $celdas[$x + 16][6],
+            'vigencia' => $celdas[$x + 17][6],
+            'observaciones_generales' => $celdas[$x + 18][6],
+            'partidas' => $partidas
+        ];
+
+        return $repuesta;
+    }
+
+    public function validaFechaCierreInvitacion($id, $codigo = 400)
+    {
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
+        if (is_null($invitacion)) {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $invitacion;
+    }
+
+    public function enviar($id, $data)
+    {
+        $this->validaFechaCierreInvitacion($data["id_invitacion"]);
+
+        $invitacionService = new InvitacionService(new Invitacion());
+        $invitacion = $invitacionService->show($data["id_invitacion"]);
+
+        $archivoService = new ArchivoService(new Archivo());
+        $archivoService->setDB($invitacion->base_datos);
+        $cotizacion = $this->repository->withoutGlobalScopes()->show($id);
+
+        $data_archivos["id"] = $id;
+        $data_archivos["id_transaccion"] = $id;
+        $data_archivos["id_tipo_archivo"] = 3;
+        $data_archivos["id_categoria"] = 1;
+        $data_archivos["descripcion"] = 'Carta asociada a la cotización '.$cotizacion->numero_folio_format;
+        $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_carta_terminos_condiciones"]]]);
+        $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_carta_terminos_condiciones"]]]);
+
+        $archivoService->cargarArchivosPDF($data_archivos);
+
+        $estado = $cotizacion->envia();
+        if($estado == 1){
+            event(new EnvioCotizacion($invitacion, $cotizacion));
+        }
     }
 }

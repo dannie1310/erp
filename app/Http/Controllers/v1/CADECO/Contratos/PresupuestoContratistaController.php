@@ -42,7 +42,7 @@ class PresupuestoContratistaController extends Controller
      public function __construct(Manager $fractal, PresupuestoContratistaService $service, PresupuestoContratistaTransformer $transformer)
      {
          $this->middleware('auth:api');
-         $this->middleware('context');
+         $this->middleware('context')->except('registrarPresupuestoProveedor');
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find', 'pdf']);
          $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
          $this->middleware('permiso:eliminar_presupuesto_contratista')->only('destroy');
@@ -76,5 +76,10 @@ class PresupuestoContratistaController extends Controller
             return $this->service->pdf($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+    }
+
+    public function registrarPresupuestoProveedor(Request $request){
+        $item = $this->service->storePortalProveedor($request->all());
+        return $this->respondWithItem($item);
     }
 }

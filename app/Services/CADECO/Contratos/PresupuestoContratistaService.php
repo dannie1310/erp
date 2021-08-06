@@ -3,14 +3,15 @@
 
 namespace App\Services\CADECO\Contratos;
 
-use App\Imports\PresupuestoImport;
-use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\PresupuestoContratista;
-use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
-use App\Repositories\CADECO\PresupuestoContratista\Repository;
 use App\Utils\ValidacionSistema;
+use App\Imports\PresupuestoImport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
+use App\Repositories\CADECO\PresupuestoContratista\Repository;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 
 class PresupuestoContratistaService
 {
@@ -202,5 +203,15 @@ class PresupuestoContratistaService
     {
         $pdf = new PresupuestoContratistaTablaComparativaFormato($this->repository->show($id));
         return $pdf;
+    }
+
+    public function storePortalProveedor($data)
+    {
+        $invitacion = Invitacion::where('id', $data['id_invitacion'])->where('fecha_cierre_invitacion', '>=',date('Y-m-d'))->first();
+        if(is_null($invitacion))
+        {
+            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
+        }
+        return $this->repository->registrar($data, $invitacion);
     }
 }

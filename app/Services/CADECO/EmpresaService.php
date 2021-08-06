@@ -14,10 +14,13 @@ use App\Models\CADECO\Empresa;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgBanco;
 use App\Repositories\CADECO\Empresa\Repository;
 use App\Models\CADECO\Obra;
+use App\Traits\EmpresaTrait;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class EmpresaService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */
@@ -57,13 +60,13 @@ class EmpresaService
         try {
             DB::connection('cadeco')->beginTransaction();
 
-        $datos = [
-            'tipo_empresa' => $data['tipo_empresa'],
-            'razon_social' => $data['razon_social'],
-            'UsuarioRegistro'=>$data['UsuarioRegistro'],
-        ];
+            /*$datos = [
+                'tipo_empresa' => $data['tipo_empresa'],
+                'razon_social' => $data['razon_social'],
+                'UsuarioRegistro' => $data['UsuarioRegistro'],
+            ];*/
 
-         $empresa = Empresa::query()->create($datos);
+            $empresa = Empresa::query()->create($data);
 
             DB::connection('cadeco')->commit();
 
@@ -113,6 +116,16 @@ class EmpresaService
             'af_cuentas' => $af_cuentas,
         ];
 
+    }
+
+    public function getEmpresaPorRFC($rfc)
+    {
+        return $this->repository->getEmpresaPorRFC($rfc);
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 
 }

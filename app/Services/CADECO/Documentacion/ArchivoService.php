@@ -8,6 +8,7 @@ use App\Utils\Files;
 use Clegginabox\PDFMerger\PDFMerger;
 use Chumper\Zipper\Zipper;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\CADECO\Documentacion\ArchivoRepository as Repository;
 use App\Models\CADECO\Documentacion\Archivo;
@@ -314,6 +315,10 @@ class ArchivoService
     public function delete($data, $id)
     {
         $archivo = $this->repository->show($id);
+        if($archivo->usuario_registro != auth()->user()->id)
+        {
+            abort(500, 'No puede eliminar un archivo que fue cargado por otro usuario.');
+        }
         $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
         if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
             Storage::disk('archivos_transacciones')->delete($nombre_archivo);
@@ -331,5 +336,10 @@ class ArchivoService
         $imagenes['0']['imagen'] = "data:image/" . $archivo->extension_archivo. ";base64," . base64_encode(file_get_contents(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix() . $archivo->hashfile.".".$archivo->extension));
         $imagenes['0']['descripcion'] = $archivo->descripcion;
         return $imagenes;
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 }
