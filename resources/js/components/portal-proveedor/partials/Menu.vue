@@ -58,6 +58,15 @@
                 </router-link>
             </li>
         </ul>
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">EXPEDIENTE</li>
+            <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
+                <router-link :to="{name: 'expediente'}" class="nav-link" :class="{active: this.$route.name == 'expediente'}">
+                    <i class="fa fa-folder-open nav-icon"></i>
+                    <p>Actualizar Expediente</p>
+                </router-link>
+            </li>
+        </ul>
     </nav>
     <!-- /.sidebar-menu -->
 </template>

@@ -29,7 +29,7 @@ class ArchivoRepository extends Repository implements RepositoryInterface
     }
 
     public function getTransaccion($id_transaccion){
-        $transaccion = Transaccion::find($id_transaccion);
+        $transaccion = Transaccion::withoutGlobalScopes()->find($id_transaccion);
         return $transaccion->tipo." ".$transaccion->numero_folio_format.' '.$transaccion->observaciones;
     }
 

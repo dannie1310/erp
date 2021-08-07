@@ -39,8 +39,10 @@ $api->version('v1', function ($api) {
             $api->get('{id}/documento', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documento')->where(['id' => '[0-9]+']);
             $api->get('{id}/transaccion', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccion')->where(['id' => '[0-9]+']);
             $api->get('{tipo}/{id}/transaccion-relacionados', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccion')->where(['id' => '[0-9]+']);
-            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+            $api->post('{id}/transaccion-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccionSC');
+            $api->get('{tipo}/{id}/transaccion-relacionados-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccionSC')->where(['id' => '[0-9]+']);
         });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
@@ -430,6 +432,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@show')->where(['id' => '[0-9]+']);
+            $api->get('{rfc}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@showRFC');
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@update')->where(['id' => '[0-9]+']);
             $api->post('registrarPrestadora', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@registrarPrestadora');
             $api->patch('{id}/revisarRFC', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaController@revisarRFC')->where(['id' => '[0-9]+']);
@@ -454,6 +457,7 @@ $api->version('v1', function ($api) {
             $api->get('/getSolicitudes', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPorCotizar');
             $api->get('{id}/getSolicitud', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getSolicitud')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->post('abrir/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@abrir')->where(['id' => '[0-9]+']);
             $api->get('{id}/getPresupuestoEdit', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPresupuestoEdit')->where(['id' => '[0-9]+']);
         });
     });
@@ -954,6 +958,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/portal-proveedor/enviar', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@enviar')->where(['id' => '[0-9]+']);
             $api->get('descargaLayoutProveedor/{id}', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayoutProveedor')->where(['id' => '[0-9]+']);
             $api->post('layoutProveedor', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@cargaLayoutProveedor');
+            $api->delete('{id}/proveedor','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@destroyProveedor')->where(['id' => '[0-9]+']);
         });
 
          // ORDEN DE COMPRA

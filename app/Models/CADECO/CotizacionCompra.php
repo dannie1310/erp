@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\CSV\CotizacionLayout;
+use App\Facades\Context;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
 use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
@@ -36,6 +37,7 @@ class    CotizacionCompra  extends Transaccion
         'id_sucursal',
         'id_moneda',
         'tipo_transaccion',
+        'opciones',
         'numero_folio',
         'fecha',
         'cumplimiento',
@@ -824,6 +826,7 @@ class    CotizacionCompra  extends Transaccion
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'observaciones' => $data['observaciones_cot'],
                     'estado' => -1,
+                    'opciones' => 10,
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => $data['importe'],
                     'impuesto' => $data['impuesto'],
@@ -879,7 +882,7 @@ class    CotizacionCompra  extends Transaccion
                      */
                     $solicitud->complemento->setCambiarEstado(2, 3);
                 }
-                $this->invitacion->update([
+                $cotizacion->invitacion->update([
                     "estado"=>2
                 ]);
             }
@@ -894,6 +897,7 @@ class    CotizacionCompra  extends Transaccion
                     'fecha' => $fecha->format("Y-m-d"),
                     'monto' => 0,
                     'estado' => -2,
+                    'opciones' => 10,
                     'impuesto' => 0,
                     'cumplimiento' => $fecha->format("Y-m-d"),
                     'vencimiento' => $fecha->format("Y-m-d"),
@@ -1045,4 +1049,34 @@ class    CotizacionCompra  extends Transaccion
 
         return $this->estado;
     }
+
+    /**
+     * Eliminar cotización de un proveedor
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminarProveedor($motivo, $base)
+    {
+        if ($this->estado > 0) {
+            abort(400, "La cotización se encuentra enviada.");
+        }
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $base);
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            $this->invitacion->update([
+                "estado" => 0,
+                "id_cotizacion_generada" => null
+            ]);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
 }

@@ -88,6 +88,20 @@ export default {
                     })
             });
         },
+        abrir(context, payload){
+
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'abrir/'+payload.id,   payload.params )
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         index(context, payload) {
             return new Promise((resolve, reject) => {
 

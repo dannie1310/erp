@@ -31,6 +31,11 @@ class ArchivoService
 
     public function cargarArchivo($data){
 
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
+
         $tipos_imagen = ['jpg', 'jpeg', 'png'];
         $archivos_nombres = \json_decode($data['archivos_nombres']);
         $ext_inicio = '';
@@ -98,8 +103,12 @@ class ArchivoService
         }
     }
 
-    public function getArchivosTransaccion($id_transaccion)
+    public function getArchivosTransaccion($id_transaccion, $bd ='')
     {
+        if($bd != '')
+        {
+            $this->setDB($bd);
+        }
         $salida = [];
         $salida["archivos"] = $this->repository->where([['id_transaccion', '=', $id_transaccion]])->all();
         $salida["transaccion"] = $this->repository->getTransaccion($id_transaccion);
@@ -306,7 +315,11 @@ class ArchivoService
         return ["path_zip" => $path_zip, "path_pdf" => $path_pdf, "dir_tempo" => $dir_tempo];
     }
 
-    public function documento($id){
+    public function documento($id, $db = ''){
+        if($db != '')
+        {
+            $this->setDB($db);
+        }
         $archivo = $this->repository->show($id);
         $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
@@ -314,6 +327,10 @@ class ArchivoService
 
     public function delete($data, $id)
     {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
         $archivo = $this->repository->show($id);
         if($archivo->usuario_registro != auth()->user()->id)
         {

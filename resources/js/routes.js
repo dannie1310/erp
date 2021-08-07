@@ -3821,6 +3821,19 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id_invitacion/invitacion',
+                        name: 'cotizacion-proveedor-invitacion',
+                        component: require('./components/portal-proveedor/cotizacion/PrevisualizarInvitacion').default,
+                        props: true,
+                        meta: {
+                            title: 'Detalle de Invitación',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'INVITACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
                         path: ':id_invitacion/create',
                         name: 'cotizacion-proveedor-create',
                         component: require('./components/portal-proveedor/cotizacion/Create').default,
@@ -3872,6 +3885,26 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/:base_datos/:id_obra/documentos',
+                        name: 'cotizacion-proveedor-documentos',
+                        component: require('./components/globals/archivos/Files').default,
+                        props: route => ({
+                            id: route.params.id,
+                            global: true,
+                            sin_contexto: 1,
+                            base_datos: route.params.base_datos,
+                            id_obra: route.params.id_obra,
+                            permiso: ['registrar_cotizacion_proveedor'],
+                        }),
+                        meta: {
+                            title: 'Documentos de Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    }
                 ]
             },
             {
@@ -4032,6 +4065,23 @@ export const routes = [
                             middleware: [auth, permission],
                             permission: 'cancelar_solicitud_recepcion_cfdi',
                             general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'expediente',
+                component: require('./components/portal-proveedor/invitacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'expediente',
+                        component: require('./components/portal-proveedor/expediente/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Expediente de Proveedor',
+                            breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth],
                         }
                     },
                 ]

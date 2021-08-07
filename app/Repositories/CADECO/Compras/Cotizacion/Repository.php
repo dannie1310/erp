@@ -65,4 +65,23 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         Config::set('database.connections.cadeco.database', $base);
         return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first();
     }
+
+    public function eliminar($id, $base, $motivo)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->eliminarProveedor($motivo,$base);
+    }
+
+    public function liberaCotizacion($id_cotizacion, $base)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        $cotizacion = $this->model->where('id_transaccion', $id_cotizacion)->where("estado","=",1)->where("opciones","=",10)->withoutGlobalScopes()->first();
+        if($cotizacion){
+            $cotizacion->opciones = 1;
+            $cotizacion->save();
+        }
+        return $cotizacion;
+    }
 }

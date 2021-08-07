@@ -3,9 +3,12 @@
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Events\ActualizacionClaveUsuarioProveedor;
+use App\Events\AperturaInvitacion;
+use App\Events\EnvioCotizacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
+use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudCompra;
@@ -15,6 +18,7 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
+use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
@@ -471,6 +475,32 @@ class InvitacionService
         $invitaciones = $this->repository->all();
         foreach($invitaciones as $invitacion){
             $empresas[] = $this->generaEmpresaSAO($usuario, $invitacion);
+        }
+    }
+
+    public function abrir($id)
+    {
+        $invitacion = $this->repository->show($id);
+        if($invitacion->estado == 0)
+        {
+            $invitacion->update([
+                "estado"=>1,
+                "abierta"=>1,
+                "fecha_hora_apertura"=>date("Y-m-d H:i:s")
+            ]);
+            event(new AperturaInvitacion($invitacion));
+        }
+    }
+
+    public function liberaCotizaciones()
+    {
+        $this->repository->where([['fecha_cierre_invitacion', '<', date("Y/m/d") ]]);
+        $this->repository->where([['estado', '=', 3 ]]);
+        $invitaciones = $this->repository->all();
+        foreach($invitaciones as $invitacion)
+        {
+            $cotizacionService = new CotizacionService(new CotizacionCompra());
+            $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
         }
     }
 
