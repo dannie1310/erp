@@ -288,10 +288,8 @@ class CotizacionService
 
         $archivoService->cargarArchivosPDF($data_archivos);
 
-        $estado = $cotizacion->envia();
-        if($estado == 1){
-            event(new EnvioCotizacion($invitacion, $cotizacion));
-        }
+        $cotizacion->envia();
+
     }
 
     public function deleteProveedor(array $data, $id)
@@ -299,4 +297,14 @@ class CotizacionService
         $invitacion = $this->validaFechaCierreInvitacion($id);
         return $this->repository->eliminar($invitacion->cotizacionCompra->getKey(),$invitacion->base_datos,$data['data']);
     }
+
+    public function liberaCotizacion($id_transaccion_cotizacion, $base_datos)
+    {
+        $cotizacion =  $this->repository->liberaCotizacion($id_transaccion_cotizacion, $base_datos);
+        if($cotizacion){
+            event(new EnvioCotizacion($cotizacion->invitacion, $cotizacion));
+        }
+        return $cotizacion;
+    }
+
 }
