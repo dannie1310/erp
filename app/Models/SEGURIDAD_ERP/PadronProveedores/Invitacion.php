@@ -56,6 +56,7 @@ class Invitacion extends Model
         'abierta',
         'fecha_hora_cotizacion',
         'fecha_hora_envio_cotizacion',
+        'requiere_fichas_tecnicas'
     ];
 
     //protected $dates = ["fecha_cierre_invitacion"];

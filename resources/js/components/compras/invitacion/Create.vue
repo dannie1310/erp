@@ -228,6 +228,17 @@
                 </div>
                 <br>
                 <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
+                    <div class="col-md-12">
+                        <div class="form-check form-check-inline">
+                            <label class="form-check-label" style="cursor:pointer" >
+                                <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="requiere_fichas_tecnicas" value="1" >
+                            </label>
+                        </div>
+                        <label>Requerir fichas técnicas del material</label>
+                    </div>
+                </div>
+                <br>
+                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones:</label>
@@ -374,7 +385,8 @@ export default {
             nombre_archivo_formato_cotizacion:'',
             cuerpo_correo:'',
             usuarios_cargados : 0,
-            sin_coincidencia_proveedor : 0
+            sin_coincidencia_proveedor : 0,
+            requiere_fichas_tecnicas : 1,
         }
     },
     mounted() {
@@ -467,6 +479,7 @@ export default {
             this.post.nombre_archivo_carta_terminos_condiciones = null;
             this.post.archivo_formato_cotizacion = null;
             this.post.nombre_archivo_formato_cotizacion = null;
+            this.post.requerir_fichas_tecnicas = null;
 
 
             //this.id_solicitud;
@@ -480,6 +493,7 @@ export default {
             this.usuarios = [];
             this.id_usuario = '';
             this.usuarios_cargados = 0;
+            this.requiere_fichas_tecnicas = 1;
 
             this.archivo_carta_terminos_condiciones = null;
             this.nombre_archivo_carta_terminos_condiciones = null;
@@ -536,6 +550,7 @@ export default {
                     _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
                     _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
                     _self.post.cuerpo_correo = _self.cuerpo_correo;
+                    _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;
                 }
             });
             return this.$store.dispatch('compras/invitacion/store', _self.post)
