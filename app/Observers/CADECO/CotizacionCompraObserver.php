@@ -17,7 +17,10 @@ class CotizacionCompraObserver extends TransaccionObserver
     {
         parent::creating($cotizacionCompra);
         $cotizacionCompra->tipo_transaccion = 18;
-        $cotizacionCompra->opciones = 1;
+        if($cotizacionCompra->opciones == ''){
+            $cotizacionCompra->opciones = 1;
+        }
+
         $cotizacionCompra->id_moneda = 1;
     }
 
