@@ -87,7 +87,7 @@ class Archivo extends Model
 
     public function getEliminableAttribute()
     {
-        if(!$this->id_tipo_general_archivo>0){
+        if(!$this->id_tipo_general_archivo>0 && $this->id_categoria != 2){
             return true;
         }
         return false;
