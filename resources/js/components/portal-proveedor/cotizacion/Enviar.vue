@@ -9,6 +9,20 @@
                 </div>
                 <hr>
                 <div class="row" v-if="cargando == false">
+                    <div class="col-md-4" v-if="invitacion.formato_cotizacion">
+                        <div class="form-group">
+                            <label for="formato_cotizacion">Formato de Cotización:</label>
+                            <input type="file" class="form-control" id="formato_cotizacion"
+                                   @change="onFileChange"
+                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
+                                   name="formato_cotizacion"
+                                   data-vv-as="Formato de Cotización"
+                                   ref="formato_cotizacion"
+                                   :class="{'is-invalid': errors.has('formato_cotizacion')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('formato_cotizacion')">{{ errors.first('formato_cotizacion') }} (pdf)</div>
+                        </div>
+                    </div>
                     <div class="col-md-4">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones FIRMADA:</label>
@@ -21,6 +35,20 @@
                                    :class="{'is-invalid': errors.has('carta_terminos')}"
                             >
                             <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4" v-if="requiere_fichas_tecnicas">
+                        <div class="form-group">
+                            <label for="carta_terminos">Fichas Técnicas:</label>
+                            <input type="file" class="form-control" id="fichas_tecnicas" multiple="multiple"
+                                   @change="onFileChange"
+                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
+                                   name="fichas_tecnicas"
+                                   data-vv-as="Fichas Técnicas"
+                                   ref="fichas_tecnicas"
+                                   :class="{'is-invalid': errors.has('fichas_tecnicas')}"
+                            >
+                            <div class="invalid-feedback" v-show="errors.has('fichas_tecnicas')">{{ errors.first('fichas_tecnicas') }} (pdf)</div>
                         </div>
                     </div>
                  </div>
@@ -44,7 +72,11 @@
         data() {
             return {
                 cargando : true,
+                invitacion : '',
                 id_cotizacion : '',
+                requiere_fichas_tecnicas : '',
+                archivos_fichas_tecnicas : [],
+                nombres_archivos_fichas_tecnicas : [],
                 post : {},
             }
         },
@@ -55,10 +87,12 @@
             salir() {
                 this.$router.push({name: 'cotizacion-proveedor'});
             },
-            cargaFinalizada(id_cotizacion)
+            cargaFinalizada(invitacion)
             {
                 this.cargando = false;
-                this.id_cotizacion = id_cotizacion;
+                this.invitacion = invitacion;
+                this.id_cotizacion = invitacion.cotizacion.id_transaccion;
+                this.requiere_fichas_tecnicas = invitacion.requiere_fichas_tecnicas;
             },
             onFileChange(e){
                 this.file = null;
@@ -68,17 +102,32 @@
 
                 if(e.target.id == 'carta_terminos') {
                     this.nombre_archivo_carta_terminos_condiciones = files[0].name;
+                    this.createImage(files[0], e.target.id);
+                }else if(e.target.id == 'formato_cotizacion') {
+                    this.nombre_archivo_formato_cotizacion = files[0].name;
+                    this.createImage(files[0], e.target.id);
+                }else if(e.target.id == 'fichas_tecnicas') {
+                    for(let i=0; i<files.length; i++) {
+                        this.createImage(files[i], e.target.id);
+                        this.nombres_archivos_fichas_tecnicas[i] = {
+                            nombre: files[i].name,
+                        };
+                    }
                 }
-                this.createImage(files[0], e.target.id);
             },
             createImage(file, tipo) {
                 var reader = new FileReader();
                 var vm = this;
-
                 reader.onload = (e) => {
                     if(tipo == "carta_terminos")
                     {
                         vm.archivo_carta_terminos_condiciones = e.target.result;
+                    }else if(tipo == "formato_cotizacion")
+                    {
+                        vm.archivo_formato_cotizacion = e.target.result;
+                    }else if(tipo == "fichas_tecnicas")
+                    {
+                        vm.archivos_fichas_tecnicas.push({archivo: e.target.result});
                     }
                 };
                 reader.readAsDataURL(file);
@@ -91,6 +140,10 @@
                         _self.post.id_cotizacion = _self.id_cotizacion;
                         _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;
                         _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
+                        _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
+                        _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
+                        _self.post.archivos_fichas_tecnicas = _self.archivos_fichas_tecnicas;
+                        _self.post.nombres_archivos_fichas_tecnicas = _self.nombres_archivos_fichas_tecnicas;
 
                         return this.$store.dispatch('compras/cotizacion/enviarCotizacion', _self.post)
                         .then((data) => {
