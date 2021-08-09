@@ -1,5 +1,5 @@
 <template>
-    <span v-if="contrato_proyectado && contrato_proyectado.tipo_transaccion == 49">
+    <span v-if="contrato_proyectado">
         <encabezado-contrato-proyectado v-bind:contrato_proyectado="contrato_proyectado"></encabezado-contrato-proyectado>
         <tabla-datos-contrato-proyectado v-bind:contrato_proyectado="contrato_proyectado"></tabla-datos-contrato-proyectado>
     </span>

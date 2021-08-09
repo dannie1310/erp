@@ -14,7 +14,7 @@
         <div class="card" v-else>
             <div class="card-body table-responsive">
                 <DatosContratoProyectado :contrato_proyectado="presupuesto"></DatosContratoProyectado>
-                <div class="row" >
+               <!-- <div class="row" >
                     <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos" >
                             <thead>
@@ -102,7 +102,7 @@
                                     <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal {{subtotal.moneda}}:</td>
                                     <td class="numerico">{{subtotal.subtotal_format}}</td>
                                 </tr> -->
-                                <tr>
+                         <!--       <tr>
                                     <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC USD:</td>
                                     <td class="numerico">{{presupuesto.tc_usd_format}}</td>
                                 </tr>
@@ -133,7 +133,7 @@
                             </tfoot>
                         </table>
                     </div>
-                </div>
+                </div>-->
             </div>
 
         </div>
@@ -180,12 +180,9 @@
                         id: this.id,
                         params:{}
                     }).then(data => {
-                        console.log(data);
                         this.presupuesto = data
                         this.cargando = false;
                     })
-               
-                
             },
         },
         computed: {

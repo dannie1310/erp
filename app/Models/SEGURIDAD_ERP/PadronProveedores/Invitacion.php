@@ -331,7 +331,7 @@ class Invitacion extends Model
     {
         $transacciones = [];
         $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->orderBy('id_transaccion_antecedente','desc')->get();
-        
+
         foreach ($solicitudes as $key =>  $solicitud) {
             $observaciones = '';
             if($solicitud->tipo_transaccion_antecedente == 17){
@@ -355,7 +355,6 @@ class Invitacion extends Model
         {
             abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
         }
-        // dd(1);
         if($this->tipo_transaccion_antecedente == 17) {
             return [
                 'id' => $this->solicitud->getKey(),
@@ -387,7 +386,7 @@ class Invitacion extends Model
             $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
             $transaccionRelacionTransformer = new TransaccionRelacionTransformer;
 
-            $contratosTransformer = new ContratoTransformer; 
+            $contratosTransformer = new ContratoTransformer;
 
             $resp = $contratoProyectadoTransformer->transform($this->contratoProyectado);
             $transaccion = $transaccionRelacionTransformer->transform($this->contratoProyectado);
@@ -405,9 +404,9 @@ class Invitacion extends Model
             $resp['sucursal'] = $this->descripcion_sucursal;
             $resp['transaccion'] = $transaccion;
             $resp['conceptos']['data'] = $conceptos;
+            dd($transaccion, $resp, $conceptos);
             return $resp;
         }
-
     }
 
     public function partidasSolicitud()

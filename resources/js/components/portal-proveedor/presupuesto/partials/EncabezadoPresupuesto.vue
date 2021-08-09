@@ -15,10 +15,7 @@
                                         <tr>
                                             <td>Folio:</td>
                                             <td style="text-align: right">
-                                                <router-link :to="{name: 'proyectado-show', params:{id : contrato_proyectado.id }}" target="_blank">
-                                                    <b><span style="color:black; text-decoration: underline">{{contrato_proyectado.numero_folio_format}}</span></b>
-                                                </router-link>
-
+                                                <b><span style="color:black; text-decoration: underline">{{contrato_proyectado.numero_folio_format}}</span></b>
                                             </td>
                                         </tr>
                                         <tr>
