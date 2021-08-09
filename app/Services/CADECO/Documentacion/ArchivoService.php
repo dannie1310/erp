@@ -99,7 +99,6 @@ class ArchivoService
                 $archivo->save();
 
             }
-
         }
     }
 
@@ -166,24 +165,6 @@ class ArchivoService
             Files::eliminaDirectorio($paths["dir_tempo"]);
             return $archivo;
         }
-
-        /*if($repetidos->count() > 0 && $repetidos[0] != $archivo){
-            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
-            ;
-        }*/
-
-        /*if($ok = Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
-            $archivo->hashfile = $hashfile;
-            $archivo->nombre_archivo = $archivo->nombre_descarga;
-            $archivo->extension_archivo = 'pdf';
-            $archivo->save();
-            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hashfile.'.pdf',  $pdf_file);
-
-        }else{
-            Files::eliminaDirectorio($paths["dir_tempo"]);
-            abort(403, 'Hubo un error al cargar el archivo, intente mas tarde y si el problema persiste reportelo a soporte_aplicaciones@grupohi.mx');
-        }*/
-
 
     }
 
@@ -332,7 +313,7 @@ class ArchivoService
             $this->setDB($data["base_datos"]);
         }
         $archivo = $this->repository->show($id);
-        if($archivo->usuario_registro != auth()->user()->id)
+        if($archivo->usuario_registro != auth()->user()->idusuario)
         {
             abort(500, 'No puede eliminar un archivo que fue cargado por otro usuario.');
         }

@@ -29,8 +29,6 @@ use App\Services\IGH\UsuarioService;
 use App\Services\SEGURIDAD_ERP\Contabilidad\EmpresaSATService;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 
 class InvitacionService
 {
@@ -505,10 +503,5 @@ class InvitacionService
             $cotizacionService = new CotizacionService(new CotizacionCompra());
             $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
         }
-    }
-
-    public function setDB($base_datos){
-        DB::purge('cadeco');
-        Config::set('database.connections.cadeco.database',$base_datos);
     }
 }
