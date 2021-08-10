@@ -157,7 +157,7 @@ export default {
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
                     params: {
-                        include: ['cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas'],
+                        include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas'],
                         scope: ['invitadoAutenticado']
                     }
                 }).then(data => {
@@ -166,7 +166,7 @@ export default {
                     this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
                     this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
                 }).finally(()=>{
-                    this.$emit('cargaFinalizada', this.invitacion.cotizacion.id_transaccion);
+                    this.$emit('cargaFinalizada', this.invitacion);
                 })
 
         },

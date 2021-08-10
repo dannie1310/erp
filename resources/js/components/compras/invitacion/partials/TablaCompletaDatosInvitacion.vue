@@ -32,11 +32,14 @@
 
                 </tr>
                 <tr>
-                    <td style="text-align: center">
+                    <td style="text-align: center" v-if="this.$session.get('db')">
                         <router-link :to="{name: 'solicitud-show', params:{id : invitacion.solicitud_compra.id }}" target="_blank">
                             <span style="color:black; text-decoration: underline">{{invitacion.solicitud_compra.numero_folio_format}}</span>
                         </router-link>
                     </td>
+                  <td style="text-align: center" v-else>
+                     {{invitacion.solicitud_compra.numero_folio_format}}
+                  </td>
                     <td v-if="invitacion.empresa">
                         {{invitacion.empresa.razon_social}}
                     </td>
