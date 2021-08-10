@@ -94,8 +94,7 @@ class SubcontratoFormato extends FPDI
             $this->Cell(11.5);
             $this->Cell(2.5,.5,'TOTAL:','LB',0,'L');
             $this->Cell(5.5,.5, "$ ". number_format($this->subcontrato->monto, 2, ',', '.'),'RB',1,'R');
-
-            if($ln > 0){
+            if($ln > 0 && $this->encola == 'clausulado'){
                 $meses = array("Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre");
                 $fecha_exp = explode('/', $this->subcontrato->fecha_format);
 
@@ -407,14 +406,14 @@ class SubcontratoFormato extends FPDI
         $this->SetWidths(array(19.5));
         $this->encola="observaciones";
         $this->Row(array(utf8_decode($this->subcontrato->observaciones)));
-        $this->encola = 'clausulado';
+        $this->encola = 'firmas';
 
     }
 
     function footer(){
         $residuo = $this->PageNo() % 2;
         $this->SetTextColor('0,0,0');
-        if($this->encola != 'clausulado' || ($this->subcontrato->clasificacionSubcontrato && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
+        if($this->encola == 'firmas' || ($this->subcontrato->clasificacionSubcontrato && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 4 && $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 3 &&$this->subcontrato->clasificacionSubcontrato->id_tipo_contrato != 7)){
             if(Context::getDatabase() == "SAO1814_TERMINAL_NAICM"){
                 $this->SetFont('Arial', 'B', 6);
                 $this->SetFont('Arial', 'B', 5);
@@ -502,6 +501,7 @@ class SubcontratoFormato extends FPDI
                 $this->CellFitScale(4, .3, ('Gerente de Seguros y Fianzas'), 1, 0,'C');
                 $this->CellFitScale(4, .3, ('Gerente de Proyecto'), 1, 0,'C');
 			}
+            $this->encola = 'clausulado';
         }
 
         $this->SetY(-0.8);
