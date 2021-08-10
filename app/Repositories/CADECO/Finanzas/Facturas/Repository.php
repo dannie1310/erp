@@ -320,6 +320,21 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         }catch(Exception $e){
             throw new Exception("Error de ejecución de sp spSaveDocument en la base de datos: ".Config::get('database.connections.cntpqdc.database').$e->getMessage().$e->getLine(),500);
         }
+        
+        try{
+            DB::purge('cntpqdc');
+            Config::set('database.connections.cntpqdc.database', $db_doc_content);
+            $resp = DB::connection('cntpqdc')
+                ->select("SELECT top 1 * FROM [$db_doc_content].[dbo].[DocumentContent] where [GuidDocument] = '$guid' ");
+            $content = ltrim($resp[0]->Content);
+            if(substr($content, 0, 1) == '?'){
+                $content = str_replace('?<', '<', $content);
+                $upd = DB::connection('cntpqdc')
+                ->update("UPDATE [$db_doc_content].[dbo].[DocumentContent] set Content = '$content' where [GuidDocument] = '$guid' ");
+            }
+        }catch(Exception $e){
+            throw new Exception("Error de ejecución de validación de signo ? al inicio del XML: ".Config::get('database.connections.cntpqdc.database').$e->getMessage().$e->getLine(),500);
+        }
 
 
             $guid_vr = Uuid::generate()->string;
