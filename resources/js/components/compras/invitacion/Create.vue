@@ -18,6 +18,100 @@
                         <encabezado-solicitud-compra v-bind:solicitud_compra="solicitud"></encabezado-solicitud-compra>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span><i class="fa fa-envelope"></i>Destinatarios de Invitación</span>
+                        <table class="table  table-sm table-bordered">
+                            <tr>
+                                <th class="encabezado index_corto">
+                                    #
+                                </th>
+                                <th class="encabezado c70">
+                                    ¿En Catálogo?
+                                </th>
+                                <th class="encabezado">
+                                    Proveedor
+                                </th>
+                                <th class="encabezado" >
+                                    Sucursal
+                                </th>
+                                <th class="encabezado" >
+                                    Correo
+                                </th>
+                                <th class="encabezado" >
+                                    Contacto
+                                </th>
+                            </tr>
+
+                            <tr v-for="(destinatario, i) in this.destinatarios">
+                                <td>{{i+1}}</td>
+                                <td style="text-align: center">
+                                    <div class="form-check form-check-inline">
+                                        <label class="form-check-label" style="cursor:pointer" >
+                                            <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="destinatario.en_catalogo" value="1" >
+                                        </label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <model-list-select
+                                        id="`'id_proveedor_${i}'`"
+                                        :name="`proveedor[${i}]`"
+                                        :data-vv-as="`'Proveedor ${i + 1}'`"
+                                        option-value="id"
+                                        v-model="destinatario.id_proveedor"
+                                        v-validate="{required: true}"
+                                        :custom-text="razonSocialRFC"
+                                        :list="proveedores"
+                                        :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
+                                     </model-list-select>
+                                <div style="display:block" class="invalid-feedback" v-show="errors.has(`proveedor[${i}]`)">{{ errors.first(`proveedor[${i}]`) }}</div>
+                                </td>
+                                <td>
+                                    <select :disabled="destinatario.id_proveedor==''"
+                                            class="form-control"
+                                            :name="`id_sucursal[${i}]`"
+                                            data-vv-as="`'Sucursal ${i + 1}'`"
+                                            v-model="destinatario.id_sucursal"
+                                            v-validate="{required: true}"
+                                            :error="errors.has(`id_sucursal[${i}]`)"
+                                            id="`'id_sucursal_${i}'`"
+                                            @change="cambiaSucursal(destinatario)"
+                                    >
+                                        <option value >-- Seleccionar--</option>
+                                        <option v-for="sucursal in destinatario.sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
+                                    </select>
+                                    <div style="display:block" class="invalid-feedback" v-show="errors.has(`id_sucursal[${i}]`)">{{ errors.first(`id_sucursal[${i}]`) }}</div>
+                                </td>
+                                <td>
+                                    <input
+                                        :disabled="destinatario.id_sucursal==''"
+                                        name="correo"
+                                        id="`'correo_${i}'`"
+                                        v-model="destinatario.correo"
+                                        type="text"
+                                        class="form-control"
+                                        v-validate="{ required: true, email:true }"
+                                    />
+                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
+                                </td>
+                                <td>
+                                    <input
+                                        :disabled="destinatario.id_sucursal==''"
+                                        name="contacto"
+                                        id="`'contacto_${i}'`"
+                                        v-model="destinatario.contacto"
+                                        type="text"
+                                        class="form-control"
+                                        v-validate="{ required: true }"
+                                    />
+                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
+                                </td>
+                            </tr>
+
+                        </table>
+
+                    </div>
+                </div>
                 <div class="form-group row" v-if="solicitud">
                     <div class="col-md-12">
                         <div class="form-check form-check-inline">
@@ -387,6 +481,16 @@ export default {
             usuarios_cargados : 0,
             sin_coincidencia_proveedor : 0,
             requiere_fichas_tecnicas : 1,
+            destinatarios : [
+                {
+                    'id_proveedor' : '',
+                    'id_sucursal' : '',
+                    'correo' : '',
+                    'contacto' : '',
+                    'en_catalogo' : 1,
+                    'sucursales' : []
+                }
+            ]
         }
     },
     mounted() {
@@ -597,6 +701,18 @@ export default {
             }
             this.createImage(files[0], e.target.id);
         },
+        cambiaSucursal(destinatario)
+        {
+            if(destinatario.id_sucursal > 0 && destinatario.sucursales.length > 1){
+                destinatario.correo = '';
+                destinatario.contacto = '';
+                if(destinatario.id_sucursal !== '' && destinatario.id_sucursal !== null && destinatario.id_sucursal !== undefined){
+                    var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
+                    destinatario.correo = busqueda_sucursal.email;
+                    destinatario.contacto = busqueda_sucursal.contacto;
+                }
+            }
+        }
     },
     computed: {
         solicitud(){
@@ -604,6 +720,23 @@ export default {
         },
     },
     watch:{
+        destinatarios: {
+            handler(destinatarios) {
+                let self = this
+                destinatarios.map((destinatario, i) => {
+                    if(destinatario.id_proveedor>0){
+                        var busqueda = this.proveedores.find(x=>x.id === destinatario.id_proveedor);
+                        destinatario.sucursales =  busqueda.sucursales.data;
+                        if(destinatario.sucursales.length == 1){
+                            destinatario.id_sucursal = destinatario.sucursales[0].id;
+                            destinatario.correo = destinatario.sucursales[0].email;
+                            destinatario.contacto = destinatario.sucursales[0].contacto;
+                        }
+                    }
+                });
+            },
+            deep: true
+        },
         id_proveedor(value){
             this.id_sucursal = null;
             if(value !== '' && value !== null && value !== undefined){
