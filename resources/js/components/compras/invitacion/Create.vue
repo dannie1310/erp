@@ -41,6 +41,12 @@
                                 <th class="encabezado" >
                                     Contacto
                                 </th>
+                                <th class="encabezado icono">
+                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregarDestinatario" :disabled="cargando">
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
+                                </th>
                             </tr>
 
                             <tr v-for="(destinatario, i) in this.destinatarios">
@@ -67,8 +73,8 @@
                                              </model-list-select>
                                          <div style="display:block" class="invalid-feedback" v-show="errors.has(`proveedor[${i}]`)">{{ errors.first(`proveedor[${i}]`) }}</div>
                                     </span>
-                                    <span v-else style="color: #4b545c">
-                                        NO APLICA
+                                    <span v-else >
+                                        <input type="text" value="NO APLICA" disabled="disabled" class="form-control">
                                     </span>
 
                                 </td>
@@ -89,8 +95,8 @@
                                         </select>
                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`id_sucursal[${i}]`)">{{ errors.first(`id_sucursal[${i}]`) }}</div>
                                     </span>
-                                    <span v-else style="color: #4b545c">
-                                        NO APLICA
+                                    <span v-else>
+                                        <input type="text" value="NO APLICA" disabled="disabled" class="form-control">
                                     </span>
                                 </td>
                                 <td>
@@ -117,152 +123,20 @@
                                     />
                                     <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
                                 </td>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="destinatarios.length == 1" >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
                             </tr>
-
                         </table>
 
                     </div>
                 </div>
-                <div class="form-group row" v-if="solicitud">
-                    <div class="col-md-12">
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label" style="cursor:pointer" >
-                                <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="proveedor_en_catalogo" value="1" >
-                            </label>
-                        </div>
-                        <!--<i class="fa fa-check-square"></i>-->
-                        <label>Enviar la invitación a un proveedor existente en el catálogo</label>
-                    </div>
-                </div>
-                <template v-if="solicitud && proveedor_en_catalogo">
-                    <div class="row" >
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="id_proveedor">Proveedor:</label>
-                                    <model-list-select
-                                        id="id_proveedor"
-                                        name="proveedor"
-                                        option-value="id"
-                                        v-model="id_proveedor"
-                                        v-validate="{required: true}"
-                                        :custom-text="razonSocialRFC"
-                                        :list="proveedores"
-                                        :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
-                                     </model-list-select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('proveedor')">{{ errors.first('proveedor') }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4" v-if="id_proveedor">
-                            <div class="form-group">
-                                <label for="id_sucursal">Sucursal:</label>
-                                <select class="form-control"
-                                        name="id_sucursal"
-                                        data-vv-as="Sucursal"
-                                        v-model="id_sucursal"
-                                        v-validate="{required: true}"
-                                        :error="errors.has('id_sucursal')"
-                                        id="id_sucursal">
-                                    <option value >-- Seleccionar--</option>
-                                    <option v-for="sucursal in sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
-                                </select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('id_sucursal')">{{ errors.first('id_sucursal') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" v-if="id_sucursal>0">
-                        <div class="col-md-3">
-                            <div class="form-group">
-                            <label for="correo">Correo electrónico:</label>
-                                <input
-                                    name="correo"
-                                    id="correo"
-                                    v-model="correo"
-                                    type="text"
-                                    class="form-control"
-                                    v-validate="{ required: true, email:true }"
-                                />
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                            <label for="contacto">Contacto:</label>
-                                <input
-                                    name="contacto"
-                                    id="contacto"
-                                    v-model="contacto"
-                                    type="text"
-                                    class="form-control"
-                                    v-validate="{ required: true }"
-                                />
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                            <label for="fecha_cierre">Fecha de Cierre:</label>
-                                <datepicker v-model = "fecha_cierre"
-                                            name = "Fecha de Cierre"
-                                            id = "fecha_cierre"
-                                            :format = "formatoFecha"
-                                            :language = "es"
-                                            :bootstrap-styling = "true"
-                                            class = "form-control"
-                                            v-validate="{required: true}"
-                                            :disabled-dates="fechasDeshabilitadas"
-                                            :class="{'is-invalid': errors.has('fecha_cierre')}"
-                                />
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('fecha_cierre')">{{ errors.first('fecha_cierre') }}</div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                        <div class="form-group">
-                        <label for="observaciones">Observaciones:</label>
-                            <textarea
-                                name="observaciones"
-                                id="observaciones"
-                                v-model="observaciones"
-                                type="text"
-                                class="form-control"
-                            />
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                        </div>
-                    </div>
-                    </div>
-                </template>
 
-                <div class="row" v-else-if="solicitud && !proveedor_en_catalogo">
-                    <div class="col-md-3">
-                        <div class="form-group">
-                            <label for="correo">Correo electrónico:</label>
-                            <input
-                                name="correo"
-                                id="correo"
-                                v-model="correo"
-                                type="text"
-                                class="form-control"
-                                :class="{'is-invalid': errors.has('correo')}"
-                                v-validate="{ required: true, email:true }"
+                <hr>
 
-                            />
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
-                        </div>
-                    </div>
-                    <div class="col-md-3">
-                        <div class="form-group">
-                        <label for="contacto">Contacto:</label>
-                            <input
-                                name="contacto"
-                                id="contacto"
-                                v-model="contacto"
-                                type="text"
-                                class="form-control"
-                                :class="{'is-invalid': errors.has('contacto')}"
-                                v-validate="{ required: true }"
-                            />
-                            <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
-                        </div>
-                    </div>
+                <div class="row">
                     <div class="col-md-2">
                         <div class="form-group">
                         <label for="fecha_cierre">Fecha de Cierre:</label>
@@ -293,9 +167,7 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                         </div>
                     </div>
-                </div>
-                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group">
                         <label for="direccion_entrega">Dirección de Entrega:</label>
                             <textarea
@@ -309,7 +181,7 @@
                             <div style="display:block" class="invalid-feedback" v-show="errors.has('direccion_entrega')">{{ errors.first('direccion_entrega') }}</div>
                         </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <div class="form-group">
                         <label for="ubicacion_entrega_plataforma_digital">Ubicación de Entrega en Plataforma Digital:</label>
                             <input
@@ -326,13 +198,14 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
+
+                <div class="row" v-if="solicitud">
                     <div class="col-md-12">
                         <ckeditor v-model="cuerpo_correo" ></ckeditor>
                     </div>
                 </div>
                 <br>
-                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
+                <div class="row" v-if="solicitud">
                     <div class="col-md-12">
                         <div class="form-check form-check-inline">
                             <label class="form-check-label" style="cursor:pointer" >
@@ -343,7 +216,7 @@
                     </div>
                 </div>
                 <br>
-                <div class="row" v-if="solicitud && (id_sucursal>0 || proveedor_en_catalogo == 0)">
+                <div class="row" v-if="solicitud">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones:</label>
@@ -402,7 +275,6 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-list"></i> Seleccionar un proveedor preexistente</h5>
-
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -556,6 +428,20 @@ export default {
             .finally(()=>{
                 this.cargando = false;
             })
+        },
+        agregarDestinatario(){
+            var array = {
+                'id_proveedor' : '',
+                'id_sucursal' : '',
+                'correo' : '',
+                'contacto' : '',
+                'en_catalogo' : 1,
+                'sucursales' : []
+            }
+            this.destinatarios.push(array);
+        },
+        quitarDestinatario(index){
+            this.destinatarios.splice(index, 1);
         },
         razonSocialRFC (item)
         {
@@ -800,5 +686,8 @@ export default {
 </script>
 
 <style scoped>
+.encabezado{
+    background-color: #f2f4f5;
+}
 
 </style>
