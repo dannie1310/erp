@@ -29,10 +29,10 @@
                                 <th class="encabezado c70">
                                     ¿En Catálogo?
                                 </th>
-                                <th class="encabezado">
+                                <th class="encabezado c350">
                                     Proveedor
                                 </th>
-                                <th class="encabezado" >
+                                <th class="encabezado c250" >
                                     Sucursal
                                 </th>
                                 <th class="encabezado" >
@@ -48,39 +48,50 @@
                                 <td style="text-align: center">
                                     <div class="form-check form-check-inline">
                                         <label class="form-check-label" style="cursor:pointer" >
-                                            <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="destinatario.en_catalogo" value="1" >
+                                            <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="destinatario.en_catalogo" value="1" @change="toggleEnCatalogo(destinatario)">
                                         </label>
                                     </div>
                                 </td>
                                 <td>
-                                    <model-list-select
-                                        id="`'id_proveedor_${i}'`"
-                                        :name="`proveedor[${i}]`"
-                                        :data-vv-as="`'Proveedor ${i + 1}'`"
-                                        option-value="id"
-                                        v-model="destinatario.id_proveedor"
-                                        v-validate="{required: true}"
-                                        :custom-text="razonSocialRFC"
-                                        :list="proveedores"
-                                        :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
-                                     </model-list-select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has(`proveedor[${i}]`)">{{ errors.first(`proveedor[${i}]`) }}</div>
+                                    <span v-if="destinatario.en_catalogo">
+                                         <model-list-select
+                                             id="`'id_proveedor_${i}'`"
+                                             :name="`proveedor[${i}]`"
+                                             :data-vv-as="`'Proveedor ${i + 1}'`"
+                                             option-value="id"
+                                             v-model="destinatario.id_proveedor"
+                                             v-validate="{required: true}"
+                                             :custom-text="razonSocialRFC"
+                                             :list="proveedores"
+                                             :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
+                                             </model-list-select>
+                                         <div style="display:block" class="invalid-feedback" v-show="errors.has(`proveedor[${i}]`)">{{ errors.first(`proveedor[${i}]`) }}</div>
+                                    </span>
+                                    <span v-else style="color: #4b545c">
+                                        NO APLICA
+                                    </span>
+
                                 </td>
                                 <td>
-                                    <select :disabled="destinatario.id_proveedor==''"
-                                            class="form-control"
-                                            :name="`id_sucursal[${i}]`"
-                                            data-vv-as="`'Sucursal ${i + 1}'`"
-                                            v-model="destinatario.id_sucursal"
-                                            v-validate="{required: true}"
-                                            :error="errors.has(`id_sucursal[${i}]`)"
-                                            id="`'id_sucursal_${i}'`"
-                                            @change="cambiaSucursal(destinatario)"
-                                    >
-                                        <option value >-- Seleccionar--</option>
-                                        <option v-for="sucursal in destinatario.sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
-                                    </select>
-                                    <div style="display:block" class="invalid-feedback" v-show="errors.has(`id_sucursal[${i}]`)">{{ errors.first(`id_sucursal[${i}]`) }}</div>
+                                    <span v-if="destinatario.en_catalogo">
+                                        <select :disabled="destinatario.id_proveedor==''"
+                                                class="form-control"
+                                                :name="`id_sucursal[${i}]`"
+                                                data-vv-as="`'Sucursal ${i + 1}'`"
+                                                v-model="destinatario.id_sucursal"
+                                                v-validate="{required: true}"
+                                                :error="errors.has(`id_sucursal[${i}]`)"
+                                                id="`'id_sucursal_${i}'`"
+                                                @change="cambiaSucursal(destinatario)"
+                                        >
+                                            <option value >-- Seleccionar--</option>
+                                            <option v-for="sucursal in destinatario.sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
+                                        </select>
+                                        <div style="display:block" class="invalid-feedback" v-show="errors.has(`id_sucursal[${i}]`)">{{ errors.first(`id_sucursal[${i}]`) }}</div>
+                                    </span>
+                                    <span v-else style="color: #4b545c">
+                                        NO APLICA
+                                    </span>
                                 </td>
                                 <td>
                                     <input
@@ -711,6 +722,16 @@ export default {
                     destinatario.correo = busqueda_sucursal.email;
                     destinatario.contacto = busqueda_sucursal.contacto;
                 }
+            }
+        },
+        toggleEnCatalogo(destinatario){
+            if(destinatario.en_catalogo == 1){
+
+            } else {
+                destinatario.id_sucursal = null;
+                destinatario.id_proveedor = null;
+                destinatario.correo = '';
+                destinatario.contacto = '';
             }
         }
     },
