@@ -582,33 +582,36 @@ export default {
                     _self.post.id_transaccion = _self.id_solicitud;
                     /*_self.post.id_proveedor = _self.id_proveedor;
                     _self.post.id_sucursal = _self.id_sucursal;
-                    _self.post.id_usuario = _self.id_usuario;*/
-                    _self.post.observaciones = _self.observaciones;
-                    //_self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
-                    //_self.post.correo = _self.correo;
-                    //_self.post.contacto = _self.contacto;
-                    _self.post.fecha_cierre = _self.fecha_cierre;
-                    _self.post.direccion_entrega = _self.direccion_entrega;
-                    _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;
-                    _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;
-                    _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
-                    _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
-                    _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
-                    _self.post.cuerpo_correo = _self.cuerpo_correo;
-                    _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;
+                    _self.post.id_usuario = _self.id_usuario;
+                    _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
+                    _self.post.correo = _self.correo;
+                    _self.post.contacto = _self.contacto;*/
+                    _self.post.observaciones = _self.observaciones;//
+                    _self.post.fecha_cierre = _self.fecha_cierre;//
+                    _self.post.direccion_entrega = _self.direccion_entrega;//
+                    _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;//
+                    _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;//
+                    _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;//
+                    _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;//
+                    _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;//
+                    _self.post.cuerpo_correo = _self.cuerpo_correo;//
+                    _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;//
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.usuarios = _self.usuarios;
+
+                    console.log(_self.post);
+                    return this.$store.dispatch('compras/invitacion/store', _self.post)
+                        .then((data) => {
+                            $(this.$refs.modal_usuarios).modal('hide');
+                            if(_self.mas_invitaciones == true){
+                                this.limpiar();
+                            } else {
+                                this.$router.push({name: 'invitacion-compra'});
+                            }
+                        });
                 }
             });
-            return this.$store.dispatch('compras/invitacion/store', _self.post)
-                .then((data) => {
-                    $(this.$refs.modal_usuarios).modal('hide');
-                    if(_self.mas_invitaciones == true){
-                        this.limpiar();
-                    } else {
-                        this.$router.push({name: 'invitacion-compra'});
-                    }
-                });
+
         },
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
