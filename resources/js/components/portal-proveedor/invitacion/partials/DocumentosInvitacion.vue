@@ -12,22 +12,16 @@
 
 <script>
 
-    import InvitacionCompraEncabezado from "../../../compras/invitacion/partials/Encabezado";
-    import InvitacionCompraTablaCompletaDatos from "../../../compras/invitacion/partials/TablaCompletaDatosInvitacion";
     import Documento from "../../../globals/archivos/Documento";
     import DescargaDocumento from "../../../globals/archivos/DescargaDocumento";
-    import FormatoSolicitudCompra from "../../../compras/solicitud-compra/FormatoSolicitudCompra";
     import FormatoInvitacionCotizacionCompra
         from "../../../compras/solicitud-compra/partials/FormatoInvitacionCotizacionCompra";
     export default {
         name: "DocumentosInvitacion",
         components: {
             FormatoInvitacionCotizacionCompra,
-            FormatoSolicitudCompra,
             DescargaDocumento,
-            Documento,
-            InvitacionCompraTablaCompletaDatos,
-            InvitacionCompraEncabezado
+            Documento
         },
         props: ['invitacion'],
         data(){
