@@ -208,17 +208,18 @@ RFC: ' . $this->obra->rfc), '', 'J');
     function encabezado($x)
     {
 
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+        $this->SetFont('Arial', 'B', 9);
         $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO:'), 'LT', 0, 'L');
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO DE INVITACIÓN:'), 'LT', 0, 'L');
         $this->Cell(0.207 * $this->WidthTotal, 0.5, '' . $this->invitacion->numero_folio_format, 'RT', 1, 'R');
 
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FECHA:'), 'LB', 0, 'L');
-        $this->SetFont('Arial', 'B', $this->txtContenidoTam);
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, '' . $this->invitacion->fecha_hora_format, 'RB', 1, 'R');
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FECHA DE INVITACIÓN:'), 'L', 0, 'L');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, '' . $this->invitacion->fecha_hora_format, 'R', 1, 'R');
+
+        $this->SetX($x);
+        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('FOLIO DE SOLICITUD:'), 'LB', 0, 'L');
+        $this->Cell(0.207 * $this->WidthTotal, 0.5, '' . $this->solicitud->numero_folio_format, 'RB', 1, 'R');
 
     }
 

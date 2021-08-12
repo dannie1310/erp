@@ -24,7 +24,7 @@
                     <div class="col-md-6">
                         <Documento v-if="invitacion.carta_terminos" v-bind:url="url" v-bind:id="invitacion.carta_terminos.id" v-bind:descripcion="invitacion.carta_terminos.tipo_archivo.descripcion" v-bind:texto="invitacion.carta_terminos.tipo_archivo.descripcion" ></Documento>
                         <DescargaDocumento v-if="invitacion.formato_cotizacion" v-bind:url="url_descarga" v-bind:id="invitacion.formato_cotizacion.id" v-bind:descripcion="invitacion.formato_cotizacion.tipo_archivo.descripcion" v-bind:texto="invitacion.formato_cotizacion.tipo_archivo.descripcion"></DescargaDocumento>
-                        <formato-solicitud-compra v-if="invitacion.solicitud_compra"  v-bind:id="invitacion.solicitud_compra.id" v-bind:db="invitacion.base_datos" v-bind:id_obra="invitacion.id_obra" v-bind:texto="'Solicitud de Compra'"></formato-solicitud-compra>
+                        <formato-invitacion-cotizacion-compra v-bind:id="invitacion.id" v-bind:db="invitacion.base_datos" v-bind:id_obra="invitacion.id_obra" v-bind:texto="'Invitación a Cotizar'"></formato-invitacion-cotizacion-compra>
                     </div>
                     <div class="col-md-6">
                         <div class="pull-right">
@@ -47,10 +47,13 @@
     import InvitacionCompraEncabezado from "../../compras/invitacion/partials/Encabezado";
     import InvitacionCompraTablaCompletaDatos from "../../compras/invitacion/partials/TablaCompletaDatosInvitacion";
     import DatosInvitacion from "../invitacion/partials/DatosInvitacion";
+    import FormatoInvitacionCotizacionCompra
+        from "../../compras/solicitud-compra/partials/FormatoInvitacionCotizacionCompra";
 
     export default {
         name: "PrevisualizarInvitacion",
         components: {
+            FormatoInvitacionCotizacionCompra,
             DatosInvitacion,
             InvitacionCompraTablaCompletaDatos,
             InvitacionCompraEncabezado,

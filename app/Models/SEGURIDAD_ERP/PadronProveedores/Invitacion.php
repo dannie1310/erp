@@ -13,6 +13,7 @@ use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\PDF\Compras\InvitacionCotizarFormato;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -385,5 +386,11 @@ class Invitacion extends Model
             ]);
         }
        return $partidas;
+    }
+
+    public function pdf()
+    {
+        $pdf = new InvitacionCotizarFormato($this);
+        return $pdf->create();
     }
 }

@@ -558,4 +558,9 @@ class InvitacionService
             $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
         }
     }
+
+    public function pdf($id)
+    {
+        return $this->repository->show($id)->pdf();
+    }
 }
