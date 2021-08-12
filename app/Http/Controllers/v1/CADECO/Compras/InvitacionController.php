@@ -48,8 +48,8 @@ class InvitacionController extends Controller
     }
 
     public function store(Request $request){
-        $invitacion = $this->service->store($request->all());
-        return $this->respondWithItem($invitacion);
+        $invitaciones = $this->service->store($request->all());
+        return $this->respondWithCollection($invitaciones);
     }
 
     public function abrir($id)
