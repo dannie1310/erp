@@ -4,11 +4,11 @@
 namespace App\PDF\Contratos;
 
 
-use App\Facades\Context;
 // use Ghidev\Fpdf\Rotation;
+use App\Facades\Context;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\Subcontrato;
 use App\Utils\PDF\FPDI\FPDI;
+use App\Models\CADECO\Subcontrato;
 
 class SubcontratoFormato extends FPDI
 {
@@ -50,11 +50,19 @@ class SubcontratoFormato extends FPDI
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
             }
             else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7){
-                $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                if(Context::getDatabase()  == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
+                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS_CCSL.pdf'));
+                }else{
+                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOS.pdf'));
+                }
                 $ln = 11.23;
 
             }else if($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4){
-                $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                if(Context::getDatabase()  == "SAO1814_QUERETARO_SAN_LUIS" && Context::getIdObra() == 5){
+                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT_CCSL.pdf'));
+                }else{
+                    $this->setSourceFile(public_path('pdf/ClausuladosPDF/ClausuladoOT.pdf'));
+                }
                 $ln = 14.6;
             }
             else{
