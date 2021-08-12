@@ -56,6 +56,20 @@ export default {
             });
         },
 
+        findPorCorreos(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI +'por-correos/', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+
         currentUser(context, payload = {}) {
             return new Promise((resolve, reject) => {
                 axios
