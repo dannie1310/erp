@@ -62,7 +62,8 @@ class InvitacionTransformer extends TransformerAbstract
             'direccion_sucursal' => $model->direccion_sucursal,
             'cuerpo_correo' => ($model->cuerpo_correo),
             'con_cotizacion' => $model->con_cotizacion,
-            'estado' => $model->estado
+            'estado' => $model->estado,
+            'requiere_fichas_tecnicas' => $model->requiere_fichas_tecnicas
         ];
     }
 

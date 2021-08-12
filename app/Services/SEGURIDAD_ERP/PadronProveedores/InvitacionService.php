@@ -124,6 +124,7 @@ class InvitacionService
             'tipo_transaccion_antecedente'=>$transaccion->tipo_transaccion,
             'opcion_transaccion_antecedente'=>$transaccion->opciones,
             'fecha_cierre_invitacion'=>$data["fecha_cierre"],
+            'requiere_fichas_tecnicas'=>$data["requiere_fichas_tecnicas"],
             'email'=>$data["correo"],
             'nombre_contacto'=>$data["contacto"],
             'observaciones'=>$data["observaciones"],
