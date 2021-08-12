@@ -394,7 +394,9 @@ export default {
                     'contacto' : '',
                     'en_catalogo' : 1,
                     'sucursales' : [],
-                    'sucursales_cargadas' : 0
+                    'sucursales_cargadas' : 0,
+                    'id_proveedor_seleccionado' : '',
+                    'id_sucursal_seleccionada' : '',
                 }
             ]
         }
@@ -460,7 +462,9 @@ export default {
                 'contacto' : '',
                 'en_catalogo' : 1,
                 'sucursales' : [],
-                'sucursales_cargadas' : 0
+                'sucursales_cargadas' : 0,
+                'id_proveedor_seleccionado' : '',
+                'id_sucursal_seleccionada' : '',
             }
             this.destinatarios.push(array);
         },
@@ -524,7 +528,9 @@ export default {
                     'contacto' : '',
                     'en_catalogo' : 1,
                     'sucursales' : [],
-                    'sucursales_cargadas' : 0
+                    'sucursales_cargadas' : 0,
+                    'id_proveedor_seleccionado' : '',
+                    'id_sucursal_seleccionada' : '',
                 }
             ];
             this.id_usuario = '';
@@ -599,7 +605,6 @@ export default {
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.usuarios = _self.usuarios;
 
-                    console.log(_self.post);
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             $(this.$refs.modal_usuarios).modal('hide');
@@ -650,6 +655,7 @@ export default {
         cambiaSucursal(destinatario)
         {
             if(destinatario.id_sucursal > 0 && destinatario.sucursales.length>1){
+                destinatario.id_sucursal_seleccionada = destinatario.id_sucursal;
                 if(destinatario.id_sucursal !== '' && destinatario.id_sucursal !== null && destinatario.id_sucursal !== undefined){
                     var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
                     if(busqueda_sucursal  != undefined){
@@ -688,12 +694,24 @@ export default {
                     if(destinatario.id_proveedor>0){
                         var busqueda = this.proveedores.find(x=>x.id === destinatario.id_proveedor);
                         destinatario.sucursales =  busqueda.sucursales.data;
-                        if(destinatario.sucursales.length == 1 && destinatario.sucursales_cargadas == 0){
+                        if(destinatario.sucursales.length == 1 && (destinatario.sucursales_cargadas == 0 || destinatario.id_proveedor != destinatario.id_proveedor_seleccionado)){
                             destinatario.id_sucursal = destinatario.sucursales[0].id;
                             destinatario.correo = destinatario.sucursales[0].email;
                             destinatario.contacto = destinatario.sucursales[0].contacto;
                             destinatario.sucursales_cargadas = 1;
-                        }
+                            destinatario.id_sucursal_seleccionada = destinatario.sucursales[0].id;
+                            destinatario.id_proveedor_seleccionado = busqueda.id;
+                        } else if(destinatario.sucursales.length > 1 && (destinatario.sucursales_cargadas == 0 || destinatario.id_proveedor != destinatario.id_proveedor_seleccionado)){
+                            destinatario.correo = '';
+                            destinatario.contacto = '';
+                            destinatario.id_proveedor_seleccionado = busqueda.id;
+                        } /*else if(destinatario.sucursales.length > 1 &&  destinatario.id_sucursal != destinatario.id_sucursal_seleccionada){
+                            var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
+                            if(busqueda_sucursal  != undefined){
+                                destinatario.correo = busqueda_sucursal.email+'6';
+                                destinatario.contacto = busqueda_sucursal.contacto+'6';
+                            }
+                        }*/
                     }
                 });
             },
