@@ -102,7 +102,60 @@ class InvitacionService
         return $this->repository->paginate($data);
     }
 
-    public function store($data)
+    public function store($data){
+
+        $usuarios = [];
+        $invitaciones = [];
+
+        foreach($data["usuarios"] as $usuario)
+        {
+            if($usuario["id_usuario"]>0)
+            {
+                $usuarios[$usuario["correo"]] = $usuario["id_usuario"];
+            }
+        }
+
+        /*
+         *
+        _self.post.id_proveedor = _self.id_proveedor;
+        _self.post.id_sucursal = _self.id_sucursal;
+        _self.post.id_usuario = _self.id_usuario;
+        _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
+        _self.post.correo = _self.correo;
+        _self.post.contacto = _self.contacto;*/
+
+        foreach ($data["destinatarios"] as $destinatario)
+        {
+            $datos_registro["id_transaccion"] = $data["id_transaccion"];
+            $datos_registro["observaciones"] = $data["observaciones"];
+            $datos_registro["fecha_cierre"] = $data["fecha_cierre"];
+            $datos_registro["requiere_fichas_tecnicas"] = $data["requiere_fichas_tecnicas"];
+            $datos_registro["direccion_entrega"] = $data["direccion_entrega"];
+            $datos_registro["ubicacion_entrega_plataforma_digital"] = $data["ubicacion_entrega_plataforma_digital"];
+            $datos_registro["direccion_entrega"] = $data["direccion_entrega"];
+            $datos_registro["cuerpo_correo"] = $data["cuerpo_correo"];
+            $datos_registro["archivo_carta_terminos_condiciones"] = $data["archivo_carta_terminos_condiciones"];
+            $datos_registro["nombre_archivo_carta_terminos_condiciones"] = $data["nombre_archivo_carta_terminos_condiciones"];
+            $datos_registro["archivo_formato_cotizacion"] = $data["archivo_formato_cotizacion"];
+            $datos_registro["nombre_archivo_formato_cotizacion"] = $data["nombre_archivo_formato_cotizacion"];
+            $datos_registro["id_proveedor"] = $destinatario["id_proveedor"];
+            $datos_registro["id_sucursal"] = $destinatario["id_sucursal"];
+            $datos_registro["correo"] = $destinatario["correo"];
+            $datos_registro["contacto"] = $destinatario["contacto"];
+            $datos_registro["proveedor_en_catalogo"] = $destinatario["en_catalogo"];
+            if(key_exists($destinatario["correo"], $usuarios)){
+                $datos_registro["id_usuario"] = $usuarios[$destinatario["correo"]];
+            }else{
+                $datos_registro["id_usuario"] = '';
+            }
+            $invitaciones[] = $this->storeIndividual($datos_registro);
+        }
+
+        return $invitaciones;
+
+    }
+
+    public function storeIndividual($data)
     {
         $transaccionService = new TransaccionService(new Transaccion());
         $transaccion = $transaccionService->show($data["id_transaccion"]);
@@ -437,6 +490,7 @@ class InvitacionService
     {
 
         $cuerpo = str_replace("[%contacto%]",$invitacion->nombre_contacto,$cuerpo);
+        $cuerpo = str_replace("[%proveedor%]",$invitacion->razon_social,$cuerpo);
         $cuerpo = str_replace("[%fecha_cierre%]",$invitacion->fecha_cierre_invitacion_format,$cuerpo);
         $cuerpo = str_replace("[%razon_social%]",$invitacion->obra->facturar,$cuerpo);
         $cuerpo = str_replace("[%rfc%]",$invitacion->obra->rfc,$cuerpo);

@@ -56,10 +56,25 @@ class UsuarioService
 
     public function buscaUsuarioEmpresaPorCorreo($correo)
     {
-        $this->repository->where([["correo","=",$correo]]);
-        $this->repository->where([["usuario_estado","!=","2"]]);
-        $this->repository->where([["usuario","!=",$correo]]);
-        return $this->repository->all();
+
+        return $this->repository->buscaUsuarioEmpresaPorCorreo($correo);
+    }
+
+    public function buscaUsuarioEmpresaPorCorreos($correos)
+    {
+        $salida = [];
+        $i = 0;
+        foreach($correos as $correo){
+            $coincidencias = $this->buscaUsuarioEmpresaPorCorreo($correo);
+            if(count($coincidencias) > 0){
+                $salida[$i]["correo"] = $correo;
+                $salida[$i]["coincidencias"] = $coincidencias;
+                $salida[$i]["sin_coincidencia_proveedor"] = 0;
+                $salida[$i]["id_usuario"] = '';
+                $i++;
+            }
+        }
+        return $salida;
     }
 
     public function generaEmpresa($credenciales, $datos)
