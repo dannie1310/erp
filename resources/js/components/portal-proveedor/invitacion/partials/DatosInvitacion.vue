@@ -7,8 +7,8 @@
 
 <script>
 
-    import InvitacionCompraEncabezado from "../../../compras/invitacion/partials/Encabezado";
-    import InvitacionCompraTablaCompletaDatos from "../../../compras/invitacion/partials/TablaCompletaDatosInvitacion";
+    import InvitacionCompraEncabezado from "./Encabezado";
+    import InvitacionCompraTablaCompletaDatos from "./TablaCompletaDatosInvitacion";
     export default {
         name: "DatosInvitacion",
         components: {

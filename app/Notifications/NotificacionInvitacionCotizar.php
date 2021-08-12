@@ -4,7 +4,7 @@ namespace App\Notifications;
 
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
-use App\PDF\CADECO\Compras\SolicitudCompraFormato;
+use App\PDF\Compras\InvitacionCotizarFormato;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -61,155 +61,155 @@ class NotificacionInvitacionCotizar extends Notification
             //0000
             if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0001
             else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0010
             else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0011
             else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_formato_cotizacion,["as"=>$formato_cotizacion->tipo->descripcion.".".$formato_cotizacion->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0100
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0101
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0110
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_formato_cotizacion,["as"=>$formato_cotizacion->tipo->descripcion.".".$formato_cotizacion->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0111
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_formato_cotizacion,["as"=>$formato_cotizacion->tipo->descripcion.".".$formato_cotizacion->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1000
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1001
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1010
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1011
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_formato_cotizacion,["as"=>$formato_cotizacion->tipo->descripcion.".".$formato_cotizacion->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1100
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_carta_terminos,["as"=>$carta_terminos->tipo->descripcion.".".$carta_terminos->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1101
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_carta_terminos,["as"=>$carta_terminos->tipo->descripcion.".".$carta_terminos->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1110
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_carta_terminos,["as"=>$carta_terminos->tipo->descripcion.".".$carta_terminos->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //1111
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
                 $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
-                $pdf = new SolicitudCompraFormato($solicitud);
+                $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
-                    ->subject("Solicitud de Cotización")
+                    ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attach($path_carta_terminos,["as"=>$carta_terminos->tipo->descripcion.".".$carta_terminos->extension])
                     ->attach($path_formato_cotizacion,["as"=>$formato_cotizacion->tipo->descripcion.".".$formato_cotizacion->extension])
-                    ->attachData($pdf->Output("S","solicitud_compra_".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'solicitud_compra_'.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
+                    ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
         }
     }
