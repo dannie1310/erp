@@ -61,7 +61,7 @@
                                 <td>
                                     <span v-if="destinatario.en_catalogo">
                                          <model-list-select
-                                             id="`'id_proveedor_${i}'`"
+                                             :id="`id_proveedor_${i}`"
                                              :name="`proveedor[${i}]`"
                                              :data-vv-as="`'Proveedor ${i + 1}'`"
                                              option-value="id"
@@ -87,8 +87,9 @@
                                                 v-model="destinatario.id_sucursal"
                                                 v-validate="{required: true}"
                                                 :error="errors.has(`id_sucursal[${i}]`)"
-                                                id="`'id_sucursal_${i}'`"
+                                                :id="`'id_sucursal_${i}'`"
                                                 @change="cambiaSucursal(destinatario)"
+                                                :class="{'is-invalid': errors.has(`id_sucursal[${i}]`)}"
                                         >
                                             <option value >-- Seleccionar--</option>
                                             <option v-for="sucursal in destinatario.sucursales" :value="sucursal.id" >{{ sucursal.descripcion}}</option>
@@ -102,26 +103,28 @@
                                 <td>
                                     <input
                                         :disabled="destinatario.id_sucursal==''"
-                                        name="correo"
-                                        id="`'correo_${i}'`"
+                                        :name="`correo_${i}`"
+                                        :id="`correo_${i}`"
                                         v-model="destinatario.correo"
                                         type="text"
                                         class="form-control"
                                         v-validate="{ required: true, email:true }"
+                                        :class="{'is-invalid': errors.has(`correo_${i}`)}"
                                     />
-                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('correo')">{{ errors.first('correo') }}</div>
+                                    <div style="display:block" class="invalid-feedback" v-show="errors.has(`correo_${i}`)">{{ errors.first(`correo_${i}`) }}</div>
                                 </td>
                                 <td>
                                     <input
                                         :disabled="destinatario.id_sucursal==''"
-                                        name="contacto"
-                                        id="`'contacto_${i}'`"
+                                        :name="`contacto_${i}`"
+                                        :id="`contacto_${i}`"
                                         v-model="destinatario.contacto"
                                         type="text"
                                         class="form-control"
                                         v-validate="{ required: true }"
+                                        :class="{'is-invalid': errors.has(`contacto_${i}`)}"
                                     />
-                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('contacto')">{{ errors.first('contacto') }}</div>
+                                    <div style="display:block" class="invalid-feedback" v-show="errors.has(`contacto_${i}`)">{{ errors.first(`contacto_${i}`) }}</div>
                                 </td>
                                 <td style="text-align: center">
                                     <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="destinatarios.length == 1" >
@@ -274,46 +277,65 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-list"></i> Seleccionar un proveedor preexistente</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"><i class="fa fa-list"></i> Seleccionar proveedores preexistentes</h5>
                     </div>
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="callout callout-warning">
                                     <h6><i class="fa fa-info-circle"></i>Atención</h6>
-                                    Los siguientes proveedores tienen coincidencia con el correo que ha ingresado, favor de seleccionar alguno.
+                                    Los correos que ha ingresado tienen coincidencia con proveedores del catálogo, favor de seleccionar alguno.
                                 </div>
                             </div>
                         </div>
-                        <div class="row" v-if="usuarios.length>0">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="id_usuario">Proveedores:</label>
-                                        <model-list-select
-                                            id="id_usuario"
-                                            name="proveedor"
-                                            option-value="id"
-                                            v-model="id_usuario"
-                                            :custom-text="usuarioNombre"
-                                            :list="usuarios"
-                                            v-validate ="{ required: this.sin_coincidencia_proveedor == 0 ? true : false}"
-                                            :isError="errors.has('proveedor')"
-                                            :placeholder="!cargando?'Seleccionar un usuario preexistente en la el catálogo':'Cargando...'">
-                                         </model-list-select>
-                                    <div style="display:block" class="invalid-feedback" v-show="errors.has('proveedor')">{{ errors.first('proveedor') }}</div>
+                        <template v-if="usuarios.length>0" v-for="(usuario, i) in this.usuarios">
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <h6>{{usuario.correo}}</h6>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row" >
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label :for="`id_usuario_${i}`">Proveedores:</label>
+                                                    <model-list-select
+                                                        :id="`id_usuario_${i}`"
+                                                        :name="`id_usuario_${i}`"
+                                                        option-value="idusuario"
+                                                        v-model="usuario.id_usuario"
+                                                        :custom-text="usuarioNombre"
+                                                        :list="usuario.coincidencias"
+                                                        :data-vv-as="`Usuario ${i}`"
+                                                        v-validate ="{ required: usuario.sin_coincidencia_proveedor == 0 ? true : false}"
+                                                        :isError="errors.has(`id_usuario_${i}`)"
+                                                        :placeholder="!cargando?'Seleccionar un proveedor preexistente en la el catálogo':'Cargando...'">
+                                                     </model-list-select>
+                                                <div style="display:block" class="invalid-feedback" v-show="errors.has(`id_usuario_${i}`)">{{ errors.first(`id_usuario_${i}`) }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="form-check form-check-inline">
+                                                <label class="form-check-label" style="cursor:pointer" >
+                                                    <input class="form-check-input" type="checkbox" name="sin_coincidencia_proveedor"  v-model="usuario.sin_coincidencia_proveedor"
+                                                           value="1"
+                                                           @change="toggleSinCoincidenciaProveedor(usuario)">
+                                                </label>
+                                            </div>
+                                            <label>No deseo seleccionar un proveedor de la lista</label>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-check form-check-inline">
-                                    <label class="form-check-label" style="cursor:pointer" >
-                                        <input class="form-check-input" type="checkbox" name="sin_coincidencia_proveedor" v-model="sin_coincidencia_proveedor" >
-                                    </label>
-                                </div>
-                                <label>No deseo seleccionar un proveedor de la lista</label>
-                            </div>
-                        </div>
+
+                        </template>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="cerrarModal"><i class="fa fa-close"></i>Cerrar</button>
@@ -371,7 +393,8 @@ export default {
                     'correo' : '',
                     'contacto' : '',
                     'en_catalogo' : 1,
-                    'sucursales' : []
+                    'sucursales' : [],
+                    'sucursales_cargadas' : 0
                 }
             ]
         }
@@ -436,7 +459,8 @@ export default {
                 'correo' : '',
                 'contacto' : '',
                 'en_catalogo' : 1,
-                'sucursales' : []
+                'sucursales' : [],
+                'sucursales_cargadas' : 0
             }
             this.destinatarios.push(array);
         },
@@ -449,7 +473,7 @@ export default {
         },
         usuarioNombre(item)
         {
-            return `[${item.usuario}] - [ ${item.nombre} ]`;
+            return `[${item.usuario}] - [ ${item.nombre} ${item.apaterno} ${item.amaterno} ]`;
         },
         salir()
         {
@@ -492,6 +516,17 @@ export default {
             this.contacto = null;
             this.sin_coincidencia_proveedor = 0;
             this.usuarios = [];
+            this.destinatarios = [
+                {
+                    'id_proveedor' : '',
+                    'id_sucursal' : '',
+                    'correo' : '',
+                    'contacto' : '',
+                    'en_catalogo' : 1,
+                    'sucursales' : [],
+                    'sucursales_cargadas' : 0
+                }
+            ];
             this.id_usuario = '';
             this.usuarios_cargados = 0;
             this.requiere_fichas_tecnicas = 1;
@@ -508,14 +543,22 @@ export default {
             let _self = this;
             this.$validator.validate().then(result => {
                 if (result) {
-                    if (_self.proveedor_en_catalogo == 0 && _self.usuarios_cargados == 0 && _self.correo != '') {
-                        return this.$store.dispatch('igh/usuario/findPorCorreo', {
-                            params: {sort: 'usuario',  order: 'asc'},
-                            correo: _self.correo,
+
+                    let correos = [];
+                    _self.destinatarios.forEach(function (destinatario, i) {
+                        if(destinatario.en_catalogo == 0){
+                            correos.push(destinatario.correo);
+                        }
+                    });
+
+                    if (correos.length > 0 && _self.usuarios_cargados == 0) {
+                        return this.$store.dispatch('igh/usuario/findPorCorreos', {
+                            config: {sort: 'usuario',  order: 'asc'},
+                            data: {correos: correos},
                         })
                             .then((data) => {
                                 _self.usuarios_cargados = 1;
-                                _self.usuarios = data.data;
+                                _self.usuarios = data;
                                 if (_self.usuarios.length > 0) {
                                     $(this.$refs.modal_usuarios).appendTo('body')
                                     $(this.$refs.modal_usuarios).modal('show');
@@ -524,7 +567,8 @@ export default {
                                     this.store();
                                 }
                             });
-                    } else {
+
+                    }else {
                         this.store();
                     }
                 }
@@ -536,13 +580,13 @@ export default {
             this.$validator.validate().then(result => {
                 if (result) {
                     _self.post.id_transaccion = _self.id_solicitud;
-                    _self.post.id_proveedor = _self.id_proveedor;
+                    /*_self.post.id_proveedor = _self.id_proveedor;
                     _self.post.id_sucursal = _self.id_sucursal;
-                    _self.post.id_usuario = _self.id_usuario;
+                    _self.post.id_usuario = _self.id_usuario;*/
                     _self.post.observaciones = _self.observaciones;
-                    _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
-                    _self.post.correo = _self.correo;
-                    _self.post.contacto = _self.contacto;
+                    //_self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
+                    //_self.post.correo = _self.correo;
+                    //_self.post.contacto = _self.contacto;
                     _self.post.fecha_cierre = _self.fecha_cierre;
                     _self.post.direccion_entrega = _self.direccion_entrega;
                     _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;
@@ -552,6 +596,8 @@ export default {
                     _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
                     _self.post.cuerpo_correo = _self.cuerpo_correo;
                     _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;
+                    _self.post.destinatarios = _self.destinatarios;
+                    _self.post.usuarios = _self.usuarios;
                 }
             });
             return this.$store.dispatch('compras/invitacion/store', _self.post)
@@ -600,13 +646,13 @@ export default {
         },
         cambiaSucursal(destinatario)
         {
-            if(destinatario.id_sucursal > 0 && destinatario.sucursales.length > 1){
-                destinatario.correo = '';
-                destinatario.contacto = '';
+            if(destinatario.id_sucursal > 0 && destinatario.sucursales.length>1){
                 if(destinatario.id_sucursal !== '' && destinatario.id_sucursal !== null && destinatario.id_sucursal !== undefined){
                     var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
-                    destinatario.correo = busqueda_sucursal.email;
-                    destinatario.contacto = busqueda_sucursal.contacto;
+                    if(busqueda_sucursal  != undefined){
+                        destinatario.correo = busqueda_sucursal.email;
+                        destinatario.contacto = busqueda_sucursal.contacto;
+                    }
                 }
             }
         },
@@ -618,6 +664,11 @@ export default {
                 destinatario.id_proveedor = null;
                 destinatario.correo = '';
                 destinatario.contacto = '';
+            }
+        },
+        toggleSinCoincidenciaProveedor(usuario){
+            if(usuario.sin_coincidencia_proveedor == 1){
+                usuario.id_usuario = null;
             }
         }
     },
@@ -634,17 +685,18 @@ export default {
                     if(destinatario.id_proveedor>0){
                         var busqueda = this.proveedores.find(x=>x.id === destinatario.id_proveedor);
                         destinatario.sucursales =  busqueda.sucursales.data;
-                        if(destinatario.sucursales.length == 1){
+                        if(destinatario.sucursales.length == 1 && destinatario.sucursales_cargadas == 0){
                             destinatario.id_sucursal = destinatario.sucursales[0].id;
                             destinatario.correo = destinatario.sucursales[0].email;
                             destinatario.contacto = destinatario.sucursales[0].contacto;
+                            destinatario.sucursales_cargadas = 1;
                         }
                     }
                 });
             },
             deep: true
         },
-        id_proveedor(value){
+       /* id_proveedor(value){
             this.id_sucursal = null;
             if(value !== '' && value !== null && value !== undefined){
                 var busqueda = this.proveedores.find(x=>x.id === value);
@@ -680,7 +732,7 @@ export default {
             } else {
 
             }
-        },
+        },*/
     }
 }
 </script>
