@@ -1548,6 +1548,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\UsuarioController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\IGH\UsuarioController@show')->where(['id' => '[0-9]+']);
             $api->get('/por-correo/{correo}', 'App\Http\Controllers\v1\IGH\UsuarioController@buscaUsuarioEmpresaPorCorreo');
+            $api->post('/por-correos', 'App\Http\Controllers\v1\IGH\UsuarioController@buscaUsuariosEmpresaPorCorreo');
         });
 
 
