@@ -205,13 +205,19 @@ class PresupuestoContratistaService
         return $pdf;
     }
 
+    public function validaFechaCierreInvitacion($id, $codigo = 400)
+    {
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
+        if (is_null($invitacion)) {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $invitacion;
+    }
+
     public function storePortalProveedor($data)
     {
-        $invitacion = Invitacion::where('id', $data['id_invitacion'])->where('fecha_cierre_invitacion', '>=',date('Y-m-d'))->first();
-        if(is_null($invitacion))
-        {
-            abort(400,'La fecha limite para recibir su cotización ha sido superada.');
-        }
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
         return $this->repository->registrar($data, $invitacion);
     }
 }

@@ -67,8 +67,6 @@ class Invitacion extends Model
 
     //protected $dates = ["fecha_cierre_invitacion"];
     //protected $dateFormat = 'M d Y h:i:s A';
-    /*
-     * Relaciones*/
 
     /**
      * Relaciones
@@ -382,7 +380,8 @@ class Invitacion extends Model
                 'sucursal' => $this->descripcion_sucursal,
                 'partidas' => $this->partidasSolicitud()
             ];
-        }else if($this->tipo_transaccion_antecedente == 49){
+        }
+        if($this->tipo_transaccion_antecedente == 49){
             $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
             $transaccionRelacionTransformer = new TransaccionRelacionTransformer;
 
@@ -394,6 +393,9 @@ class Invitacion extends Model
             $conceptos = [];
             foreach($this->contratoProyectado->conceptos as $key => $concepto){
                 $conceptos[$key] = $contratosTransformer->transform($concepto);
+                $conceptos[$key]['enable'] = true;
+                $conceptos[$key]['moneda_seleccionada'] = 1;
+                $conceptos[$key]['descuento_cot'] = 0.0;
             }
 
             $resp['id_invitacion'] = $this->getKey();
@@ -404,7 +406,7 @@ class Invitacion extends Model
             $resp['sucursal'] = $this->descripcion_sucursal;
             $resp['transaccion'] = $transaccion;
             $resp['conceptos']['data'] = $conceptos;
-            dd($transaccion, $resp, $conceptos);
+            $resp['descuento_cot'] = 0.0;
             return $resp;
         }
     }

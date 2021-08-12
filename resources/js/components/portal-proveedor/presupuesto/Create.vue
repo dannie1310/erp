@@ -18,49 +18,51 @@
                         <div class="modal-body" v-if="contrato">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <TablaDatosContratoProyectado v-bind:contrato_proyectado="contrato"></TablaDatosContratoProyectado>
+                                    <tabla-datos-solicitud v-bind:solicitud="contrato" />
                                 </div>
                             </div>
+                            <hr />
                             <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <label for="fecha" class="col-form-label"><h6><b>Fecha:</b></h6></label>
-                                        <datepicker v-model = "fecha"
-                                                    name = "fecha"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                    </div>
+                                <div class="col-md-1">
+                                    <label>Fecha:</label>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
+                                    <datepicker v-model = "fecha"
+                                                id="fecha"
+                                                name = "fecha"
+                                                :format = "formatoFecha"
+                                                :language = "es"
+                                                :bootstrap-styling = "true"
+                                                class = "form-control"
+                                                v-validate="{required: true}"
+                                                :disabled-dates="fechasDeshabilitadas"
+                                                :class="{'is-invalid': errors.has('fecha')}"
+                                    ></datepicker>
+                                    <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-md-5">
                                     <div class="form-group error-content">
-                                        <label for="portal" class="col-form-label"><h6><b>Portal-Proveedor:</b></h6></label>
+                                        <label class="col-form-label"><h6><b>Portal-Proveedor:</b></h6></label>
                                         <h6>{{contrato.razon_social}} [{{contrato.rfc}}]</h6>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group error-content">
-                                        <label for="sucursal" class="col-form-label"><h6><b>Sucursal:</b></h6></label>
+                                        <label class="col-form-label"><h6><b>Sucursal:</b></h6></label>
                                         <h6>{{contrato.sucursal}}</h6>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <label for="precios_pendientes" class="col-form-label"></label>
-                                        <div class="custom-control custom-switch">
-                                        <input type="checkbox" class="custom-control-input button" id="presupuesto" v-model="pendiente" >
-                                        <label class="custom-control-label" for="presupuesto">Dejar pendiente la captura de precios</label>
-                                    </div>
+                                <div class="col-md-3">
+                                    <div class="custom-control custom-switch">
+                                        <input type="checkbox" class="custom-control-input button" id="cotizacion" v-model="pendiente" >
+                                        <label class="custom-control-label" for="cotizacion">Dejar pendiente la captura de precios</label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="id_contrato != '' && !pendiente">
+                            <div class="row" v-if="id_invitacion != '' && !pendiente">
                                 <div  class="col-md-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-sm">
@@ -90,62 +92,63 @@
                                                     <td>{{partida.unidad}}</td>
                                                     <td style="text-align:center; vertical-align:inherit;">
                                                         <div class="custom-control custom-switch">
-                                                            <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="enable[i]" >
+                                                            <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.enable" >
                                                             <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                         </div>
                                                     </td>
                                                     <td style="text-align:right;">{{partida.cantidad_original_format}}</td>
                                                     <td style="text-align:right;">{{partida.cantidad_presupuestada_format}}</td>
                                                     <td>
-                                                        <input type="text"
-                                                            :disabled="enable[i] == false"
+                                                        <input type="text" v-on:change="calcular"
+                                                            :disabled="partida.enable == false"
                                                             class="form-control"
                                                             :name="`precio[${i}]`"
                                                             data-vv-as="Precio"
                                                             v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                             :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                            v-model="precio[i]"/>
+                                                            v-model="partida.precio_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{'$' + parseFloat(precio[i] * partida.cantidad_presupuestada).formatMoney(2, '.', ',')}}</td>
+                                                    <td style="text-align:right;">{{getPrecioTotalAntesDesc(i,partida.precio_cot,partida.cantidad_presupuestada)}}</td>
                                                     <td>
-                                                        <input type="text"
-                                                            :disabled="enable[i] == false"
+                                                        <input type="text" v-on:change="calcular"
+                                                            :disabled="partida.enable == false"
                                                             class="form-control"
                                                             :name="`descuento[${i}]`"
                                                             data-vv-as="Descuento(%)"
                                                             v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                             :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
-                                                            v-model="descuento[i]"/>
+                                                            v-model="partida.descuento_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{'$' + parseFloat(precio[i] - ((precio[i] * descuento[i]) / 100)).formatMoney(2,'.',',')}}</td>
-                                                    <td style="text-align:right;">{{'$' + parseFloat(partida.cantidad_presupuestada * precio[i] - ((partida.cantidad_presupuestada * precio[i] * descuento[i]) / 100)).formatMoney(2,'.',',')}}</td>
+                                                    <td style="text-align:right;">{{getPrecioUnitario(i)}}</td>
+                                                    <td style="text-align:right;">{{getPrecioTotal(i)}}</td>
                                                     <td style="width:120px;" >
                                                         <select
+                                                            v-on:change="calcular"
                                                             type="text"
                                                             :name="`moneda[${i}]`"
                                                             data-vv-as="Moneda"
-                                                            :disabled="enable[i] == false"
+                                                            :disabled="partida.enable == false"
                                                             v-validate="{required: true}"
                                                             class="form-control"
                                                             id="moneda"
-                                                            v-model="moneda_input[i]"
+                                                            v-model="partida.moneda_seleccionada"
                                                             :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
                                                                 <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.abreviatura }}</option>
                                                         </select>
                                                         <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{'$' + parseFloat(getPrecioUnitarioMC(i,precio[i])).formatMoney(2,'.',',')}}</td>
-                                                    <td style="text-align:right;">{{'$' + parseFloat(partida.cantidad_presupuestada * getPrecioUnitarioMC(i,precio[i])).formatMoney(2,'.',',')}}</td>
+                                                    <td style="text-align:right;">{{getPrecioMoneda(i)}}</td>
+                                                    <td style="text-align:right;">{{'$' + parseFloat(partida.cantidad_presupuestada * partida.precio_unitario_moneda_conversion).formatMoney(2,'.',',')}}</td>
                                                     <td style="width:200px;">
                                                         <textarea class="form-control"
                                                                 :name="`observaciones[${i}]`"
                                                                 data-vv-as="Observaciones"
-                                                                :disabled="enable[i] == false"
+                                                                :disabled="partida.enable == false"
                                                                 v-validate="{}"
                                                                 :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
-                                                                v-model="observaciones_inputs[i]"/>
+                                                                v-model="partida.observaciones_cot"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                     </td>
                                                 </tr>
@@ -155,7 +158,7 @@
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Antes de Descuento:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal_antes_descuento)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Descuento (%):</label>
@@ -164,8 +167,9 @@
                                     <input
                                         :disabled="cargando"
                                         type="text"
+                                        v-on:change="calcular"
                                         name="descuento_cot"
-                                        v-model="descuento_cot"
+                                        v-model="contrato.descuento_cot"
                                         v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="descuento_cot"
@@ -231,15 +235,15 @@
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXN):</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">IVA:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Total:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Anticipo(%):</label>
@@ -249,7 +253,7 @@
                                         :disabled="cargando"
                                         type="text"
                                         name="anticipo"
-                                        v-model="anticipo"
+                                        v-model="contrato.anticipo"
                                         v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
@@ -263,7 +267,7 @@
                                         :disabled="cargando"
                                         type="text"
                                         name="credito"
-                                        v-model="credito"
+                                        v-model="contrato.credito"
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="credito"
@@ -277,7 +281,7 @@
                                         :disabled="cargando"
                                         type="text"
                                         name="vigencia"
-                                        v-model="vigencia"
+                                        v-model="contrato.vigencia"
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="vigencia"
@@ -296,7 +300,7 @@
                                             name="observaciones"
                                             id="observaciones"
                                             class="form-control"
-                                            v-model="observaciones"
+                                            v-model="contrato.observaciones_cot"
                                             v-validate="{required: true}"
                                             data-vv-as="Observaciones"
                                             :class="{'is-invalid': errors.has('observaciones')}"
@@ -310,7 +314,7 @@
                             <button type="button" class="btn btn-secondary" v-on:click="salir">
                                 <i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <button type="submit" class="btn btn-primary">
+                            <button type="submit" class="btn btn-primary" v-if="contrato">
                                 <i class="fa fa-save"></i>
                                 Guardar
                             </button>
@@ -325,26 +329,19 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
-    import TablaDatosContratoProyectado from "./partials/TablaDatosContratoProyectado";
+    import TablaDatosSolicitud from "../cotizacion/partials/TablaDatosSolicitud";
     export default {
         name: "presupuesto-proveedor-create",
-        props: ['id_solicitud'],
-        components: {Datepicker, TablaDatosContratoProyectado},
+        props: ['id_invitacion'],
+        components: {Datepicker, TablaDatosSolicitud, es },
         data() {
             return {
                 cargando: false,
                 pendiente: false,
+                contrato : null,
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
-                id_contrato: 0,
-                descuento_cot : '0.00',
-                proveedores : [],
-                sucursales: [],
-                id_sucursal: '',
-                id_proveedor : '',
-                id_tipo : '',
-                concepto : '',
                 monedas: [],
                 pesos: 0,
                 dolares: 0,
@@ -357,43 +354,10 @@
                 dolar:0,
                 euro:0,
                 libra:0,
-                moneda_input:[],
-                sucursal: true,
-                observaciones_inputs:[],
                 observaciones : '',
-                precio: [],
-                x: 0,
-                j: 0,
-                contrato:null,
-                post: {
-                    id_contrato: '',
-                    fecha: '',
-                    id_proveedor: '',
-                    id_sucursal: '',
-                    sucursal: '',
-                    observaciones: [],
-                    observacion: '',
-                    moneda: [],
-                    subtotal: '',
-                    pendiente: '',
-                    precio: [],
-                    enable: [],
-                    descuento: [],
-                    partidas: [],
-                    descuento_cot: '',
-                    pago: '',
-                    anticipo: '',
-                    credito: '',
-                    tiempo: '',
-                    vigencia: '',
-                    total:''
-                },
                 anticipo: 0,
                 credito: 0,
-                vigencia: 0,
-                descuento: [],
-                enable: []
-
+                vigencia: 0
             }
         },
         mounted() {
@@ -407,29 +371,13 @@
             },
             find() {
                 this.cargando = true;
-                if(this.contrato == null){
-                    this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
-                    return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                        id: this.id_solicitud,
-                        params:{}
-                    }).then(data => {
-                        this.contrato = data
-                        this.id_contrato = data.id_contrato;
-                        this.cargando = false;
-                        this.asigna();
-                        this.getMonedas(data.base_datos);
-                    })
-                } else {
-                    this.enable = [];
-                    this.precio = [];
-                    this.pendiente = false;
-                    this.moneda_input = [];
-                    this.observaciones_inputs = [];
-                    this.descuento = [];
-                    this.asigna();
-
-                }
-                
+                return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
+                    id: this.id_invitacion,
+                    params:{}
+                }).then(data => {
+                    this.contrato = data
+                    this.getMonedas(data.base_datos);
+                })
             },
             getMonedas(base){
                 this.cargando = true;
@@ -446,148 +394,130 @@
                     this.cargando = false;
                 })
             },
-            asigna(){
-                this.j = 0;
-                while(this.j < this.contrato.conceptos.data.length)
-                {
-                    this.enable[this.j] = true;
-                    this.descuento[this.j] = 0;
-                    this.moneda_input[this.j] = 1;
-                    this.j ++;
+            getPrecioMoneda(i) {
+                var precio = 0;
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 1) {
+                    precio = this.contrato.conceptos.data[i]['precio_unitario']
                 }
-            },
-            getPrecioUnitarioMC(i, precio) {
-                var suma_total = 0;
-                if(this.moneda_input.length != 0) {
-                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 1) {
-                       return  suma_total = precio != undefined ? precio - (precio * this.descuento[i]/100) : '1.00'
-                    }
-                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 2) {
-                        return suma_total = precio != undefined ? (precio * this.dolar) - (precio * this.dolar * this.descuento[i]/100) :  this.dolar
-                    }
-                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 3) {
-                        return suma_total = precio != undefined ? (precio * this.euro) - (precio * this.euro * this.descuento[i]/100) : this.euro
-                    }
-                    if (this.moneda_input[i] != undefined && this.moneda_input[i] == 4) {
-                        return suma_total = precio != undefined ? (precio * this.libra) - (precio * this.libra * this.descuento[i]/100) : this.libra
-                    }
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 2) {
+                    precio = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? (this.contrato.conceptos.data[i]['precio_cot'] * this.dolar) - (this.contrato.conceptos.data[i]['precio_cot'] * this.dolar * this.contrato.descuento_cot/100) :  this.dolar
                 }
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 3) {
+                    precio = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? (this.contrato.conceptos.data[i]['precio_cot'] * this.euro) - (this.contrato.conceptos.data[i]['precio_cot'] * this.euro * this.contrato.descuento_cot/100) : this.euro
+                }
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 4) {
+                    precio = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? (this.contrato.conceptos.data[i]['precio_cot'] * this.libra) - (this.contrato.conceptos.data[i]['precio_cot'] * this.libra * this.contrato.descuento_cot/100) : this.libra
+                }
+                this.contrato.conceptos.data[i]['precio_unitario_moneda_conversion'] = precio;
+                return  '$' + parseFloat(precio).formatMoney(2, '.', ',')
             },
-            salir()
+            getPrecioTotalAntesDesc(i)
             {
+                var total = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['cantidad_presupuestada'] : 0;
+                this.contrato.conceptos.data[i]['precio_total_antes_desc'] = total;
+                return  '$' + parseFloat(total).formatMoney(2, '.', ',')
+            },
+            getPrecioUnitario(i)
+            {
+                var precio_unitario = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] - ((this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['descuento_cot']) / 100) : 0;
+                this.contrato.conceptos.data[i]['precio_unitario'] = precio_unitario;
+                return  '$' + parseFloat(precio_unitario).formatMoney(2, '.', ',')
+            },
+            getPrecioTotal(i)
+            {
+                var precio_total = this.contrato.conceptos.data[i]['precio_total_antes_desc'] - ((this.contrato.conceptos.data[i]['precio_total_antes_desc'] * this.contrato.conceptos.data[i]['descuento_cot'])/100);
+                this.contrato.conceptos.data[i]['precio_total'] = precio_total;
+                return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
+            },
+            salir(){
                  this.$router.push({name: 'cotizacion-proveedor'});
-
             },
-            calcular()
-            {
-                this.x = 0;
-                this.pesos = 0;
-                this.dolares = 0;
-                this.euros = 0;
-                this.libras = 0;
-
-                this.pesos_sd = 0;
-                this.dolares_sd = 0;
-                this.euros_sd = 0;
-                this.libras_sd = 0;
-                while(this.x < this.contrato.conceptos.data.length)
+            calcular() {
+                var pesos = 0;
+                var dolares = 0;
+                var euros = 0;
+                var libras = 0;
+                var pesos_sd = 0;
+                var dolares_sd = 0;
+                var euros_sd = 0;
+                var libras_sd = 0;
+                var descuento = this.contrato.descuento_cot
+                var suma = 0;
+                var suma_desc = 0;
+                this.contrato.conceptos.data.forEach(function (partida, i)
                 {
-                    if(this.moneda_input[this.x] !== '' && this.moneda_input[this.x] !== null && this.moneda_input[this.x] !== undefined && this.enable[this.x] !== false)
+                    if (partida.enable === true)
                     {
-                        if(this.moneda_input[this.x] == 1 && this.precio[this.x] != undefined)
+                        if(partida.moneda_seleccionada != undefined && partida.precio_cot != undefined)
                         {
-
-                            this.pesos = (this.pesos + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
-                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
-                                )/100)  )
-                            ));
-
-
-                            this.pesos_sd = (this.pesos_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
-                        }
-                        if(this.moneda_input[this.x] == 2 && this.precio[this.x] != undefined)
-                        {
-                            this.dolares = (this.dolares + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                             * (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
-                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
-                                )/100)  )
-                            ));
-
-                            this.dolares_sd = (this.dolares_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
-                        }
-                        if(this.moneda_input[this.x] == 3 && this.precio[this.x] != undefined)
-                        {
-                            this.euros = (this.euros + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
-                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
-                                )/100)  )
-                            ));
-
-                            this.euros_sd = (this.euros_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
-                        }
-                        if(this.moneda_input[this.x] == 4 && this.precio[this.x] != undefined)
-                        {
-                            this.libras = (this.libras + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                                (Number(this.precio[this.x]) - ((Number(this.precio[this.x]) *
-                                    ( Number(this.descuento[this.x]) + Number(this.descuento_cot) - (Number(this.descuento[this.x]) * Number(this.descuento_cot)/100) )
-                                )/100)  )
-                            ));
-
-                            this.libras_sd = (this.libras_sd + parseFloat(this.contrato.conceptos.data[this.x].cantidad_presupuestada
-                                * (this.precio[this.x] - ((this.precio[this.x] * this.descuento[this.x])/100)  )));
+                            suma = partida.cantidad_presupuestada * (partida.precio_cot - (partida.precio_cot * (partida.descuento_cot + descuento - (partida.descuento_cot * descuento) / 100))/100);
+                            suma_desc = partida.cantidad_presupuestada * (partida.precio_cot - ((partida.precio_cot * partida.descuento_cot) / 100));
+                            if(partida.moneda_seleccionada == 1)
+                            {
+                                pesos += suma;
+                                pesos_sd += suma_desc;
+                            }
+                            if(partida.moneda_seleccionada == 2)
+                            {
+                                dolares += suma;
+                                dolares_sd += suma_desc;
+                            }
+                            if(partida.moneda_seleccionada == 3)
+                            {
+                                euros += suma;
+                                euros_sd += suma_desc;
+                            }
+                            if(partida.moneda_seleccionada == 4)
+                            {
+                                libras += suma;
+                                libras_sd += suma_desc;
+                            }
                         }
                     }
-                    this.x ++;
-                }
+                });
+                this.pesos = pesos;
+                this.dolares = dolares;
+                this.euros = euros;
+                this.libras = libras;
+
+                this.pesos_sd = pesos_sd;
+                this.dolares_sd = dolares_sd;
+                this.euros_sd = euros_sd;
+                this.libras_sd = libras_sd;
             },
             validate() {
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                            this.post.partidas = this.contrato.conceptos.data;
-                            this.post.id_contrato = this.id_contrato;
-                            this.post.id_proveedor = this.id_proveedor;
-                            this.post.sucursal = this.sucursal;
-                            this.post.id_sucursal = this.id_sucursal;
-                            this.post.observaciones = this.observaciones_inputs;
-                            this.post.moneda = this.moneda_input;
-                            this.post.observacion = this.observaciones;
-                            this.post.precio = this.precio;
-                            this.post.enable = this.enable;
-                            this.post.descuento = this.descuento;
-                            this.post.descuento_cot = this.descuento_cot;
-                            this.post.anticipo = this.anticipo;
-                            this.post.credito = this.credito;
-                            this.post.vigencia = this.vigencia;
-                            this.post.fecha = this.fecha;
-                            this.post.subtotal = this.subtotal;
-                            this.post.total = this.total;
-                            this.post.impuesto = this.iva;
-                            this.post.pendiente = this.pendiente;
-                            this.post.tc_eur = this.euro;
-                            this.post.tc_usd = this.dolar;
-                            this.post.tc_libra = this.libra;
-                            this.post.id_invitacion = this.id_solicitud;
-                            this.store()
-                        
+                        this.store()
                     }
                 });
             },
             store() {
-
                 if(this.total == 0 && this.pendiente === false)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
                 else
-                {   
-                    return this.$store.dispatch('contratos/presupuesto/registrarPresupuestoProveedor', this.post)
+                {
+                    this.contrato.pendiente = this.pendiente;
+                    this.contrato.fecha_cot = this.fecha;
+                    this.contrato.pesos = this.pesos;
+                    this.contrato.dolares = this.dolares;
+                    this.contrato.euros = this.euros;
+                    this.contrato.libras = this.libras;
+                    this.contrato.anticipo = this.anticipo;
+                    this.contrato.credito = this.credito;
+                    this.contrato.vigencia = this.vigencia;
+                    this.contrato.subtotal = this.subtotal;
+                    this.contrato.total = this.total;
+                    this.contrato.impuesto = this.iva;
+                    this.contrato.tc_eur = this.euro;
+                    this.contrato.tc_usd = this.dolar;
+                    this.contrato.tc_libra = this.libra;
+                    return this.$store.dispatch('contratos/presupuesto/registrarPresupuestoProveedor', this.contrato)
                     .then((data) => {
-                        this.$router.push({name: 'cotizacion-proveedor'});
+                        this.salir();
                     });
                 }
             },
@@ -610,49 +540,6 @@
                 return this.subtotal + this.iva;
             }
         },
-        watch: {
-            id_proveedor(value){
-                this.id_sucursal = '';
-                if(value !== '' && value !== null && value !== undefined){
-                    var busqueda = this.proveedores.find(x=>x.id === value);
-                    this.sucursales = busqueda.sucursales.data;
-                    this.sucursal = (busqueda.sucursales.data.length) ? true : false;
-                }
-            },
-            moneda_input()
-            {
-                if(this.moneda_input.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            precio()
-            {
-                if(this.precio.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            descuento()
-            {
-                if(this.descuento.length > 0)
-                {
-                    this.calcular();
-                }
-            },
-            descuento_cot()
-            {
-                this.calcular();
-            },
-            enable()
-            {
-                if(this.enable.length > 0)
-                {
-                    this.calcular();
-                }
-            }
-
-        }
     }
 </script>
 

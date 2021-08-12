@@ -3908,50 +3908,6 @@ export const routes = [
                 ]
             },
             {
-                path: 'presupuesto',
-                component: require('./components/portal-proveedor/presupuesto/Layout').default,
-                children: [
-                    {
-                        path: ':id_solicitud/create',
-                        name: 'presupuesto-proveedor-create',
-                        component: require('./components/portal-proveedor/presupuesto/Create').default,
-                        props: true,
-                        meta: {
-                            title: 'Registrar Presupuesto',
-                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
-                            middleware: [auth],
-                            permission: ['registrar_cotizacion_proveedor'],
-                        }
-                    },
-                    {
-                        path: ':id',
-                        name: 'presupuesto-proveedor-show',
-                        component: require('./components/portal-proveedor/presupuesto/Show').default,
-                        props: true,
-                        meta: {
-                            title: 'Consultar Presupuesto',
-                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'VER'},
-                            middleware: [auth, permission],
-                            permission: 'consultar_cotizacion_proveedor',
-                            general: true
-                        }
-                    },
-                    {
-                        path: ':id/editar',
-                        name: 'presupuesto-proveedor-edit',
-                        component: require('./components/portal-proveedor/presupuesto/Edit').default,
-                        props: true,
-                        meta: {
-                            title: 'Actualizar Presupuesto',
-                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
-                            middleware: [auth],
-                            // permission: 'consultar_cotizacion_proveedor',
-                            // general: true
-                        }
-                    },
-                ]
-            },
-            {
                 path: 'invitacion-cotizar',
                 component: require('./components/portal-proveedor/invitacion/Layout').default,
                 children: [
@@ -4082,6 +4038,51 @@ export const routes = [
                             title: 'Expediente de Proveedor',
                             breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
                             middleware: [auth],
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'presupuesto',
+                component: require('./components/portal-proveedor/presupuesto/Layout').default,
+                children: [
+                    {
+                        path: ':id_invitacion/create',
+                        name: 'presupuesto-proveedor-create',
+                        component: require('./components/portal-proveedor/presupuesto/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'presupuesto-proveedor-show',
+                        component: require('./components/portal-proveedor/presupuesto/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'presupuesto-proveedor-edit',
+                        component: require('./components/portal-proveedor/presupuesto/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Actualizar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth],
+                            // permission: 'consultar_cotizacion_proveedor',
+                            // general: true
                         }
                     },
                 ]

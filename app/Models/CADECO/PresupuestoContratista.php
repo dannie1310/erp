@@ -820,14 +820,15 @@ class PresupuestoContratista extends Transaccion
         return $salida;
     }
 
-    public function registrarPortalProveedor($data, $invitacion){
+    public function registrarPortalProveedor($data, $invitacion)
+    {
         try
         {
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
             $contrato = ContratoProyectado::withoutGlobalScopes()->find($invitacion->id_transaccion_antecedente);
-            $fecha = new DateTime($data['fecha']);
+            $fecha = new DateTime($data['fecha_cot']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
             {
@@ -840,7 +841,7 @@ class PresupuestoContratista extends Transaccion
                     'monto' => $data['total'],
                     'impuesto' => $data['impuesto'],
                     'anticipo' => $data['anticipo'],
-                    'observaciones' => $data['observacion'],
+                    'observaciones' => $data['observaciones_cot'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
                     'TcUSD' => $data['tc_usd'],
                     'TcEuro' => $data['tc_eur'],
@@ -849,11 +850,11 @@ class PresupuestoContratista extends Transaccion
                     'DiasVigencia' => $data['vigencia']
                 ]);
 
-                foreach($data['partidas'] as $t => $partida)
+                foreach($data['conceptos']['data'] as $t => $partida)
                 {
-                    $precio_conversion = ($data['enable'][$t]) ? $presupuesto->precioConversion($data['precio'][$t], $data['moneda'][$t]) : null;
+                    $precio_conversion = ($partida['enable']) ? $presupuesto->precioConversion($partida['precio_cot'], $partida['moneda_seleccionada']) : null;
                     if($precio_conversion){
-                        $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$t]/100);
+                        $precio_descuento = $precio_conversion -($precio_conversion*$partida['descuento_cot']/100);
                     } else {
                         $precio_descuento = null;
                     }
@@ -862,10 +863,10 @@ class PresupuestoContratista extends Transaccion
                         'id_transaccion' => $presupuesto->id_transaccion,
                         'id_concepto' => $partida['id_concepto'],
                         'precio_unitario' => $precio_descuento,
-                        'no_cotizado' => ($data['enable'][$t]) ? 0 :1,
-                        'PorcentajeDescuento' => ($data['enable'][$t]) ? $data['descuento'][$t] : null,
-                        'IdMoneda' => $data['moneda'][$t],
-                        'Observaciones' => ($data['enable'][$t] && array_key_exists($t,$data['observaciones'] )) ? $data['observaciones'][$t] : ''
+                        'no_cotizado' => $partida['enable'] ? 0 :1,
+                        'PorcentajeDescuento' => $partida['enable'] ? $partida['descuento_cot'] : null,
+                        'IdMoneda' => $partida['moneda_seleccionada'],
+                        'Observaciones' => $partida['enable'] && array_key_exists('observaciones_cot', $partida) ? $partida['observaciones_cot'] : ''
                     ]);
                 }
             }else
@@ -879,7 +880,7 @@ class PresupuestoContratista extends Transaccion
                     'monto' => 0,
                     'impuesto' => 0,
                     'anticipo' => 0,
-                    'observaciones' => $data['observacion'],
+                    'observaciones' => $data['observaciones_cot'],
                     'PorcentajeDescuento' => null,
                     'TcUSD' => null,
                     'TcEuro' => null,
@@ -888,9 +889,7 @@ class PresupuestoContratista extends Transaccion
                     'DiasVigencia' => null,
                     'estado' => 0
                 ]);
-
-                $t = 0;
-                foreach($data['partidas'] as $partida)
+                foreach($data['conceptos']['data'] as $t => $partida)
                 {
                     $presupuesto->partidas()->create([
                         'id_transaccion' => $presupuesto->id_transaccion,
@@ -901,7 +900,6 @@ class PresupuestoContratista extends Transaccion
                         'IdMoneda' => null,
                         'Observaciones' => null
                     ]);
-                    $t ++;
                 }
             }
             $invitacion->update([
@@ -909,7 +907,7 @@ class PresupuestoContratista extends Transaccion
             ]);
 
             DB::connection('cadeco')->commit();
-            return $this;
+            return $presupuesto;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);

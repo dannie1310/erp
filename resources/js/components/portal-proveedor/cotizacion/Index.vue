@@ -1,9 +1,9 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <!--<button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_proveedor',true)" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
-            </button>-->
+            </button>
         </div>
         <div class="col-12">
             <div class="card">
