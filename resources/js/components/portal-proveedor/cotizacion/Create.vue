@@ -73,7 +73,12 @@
                                                 <th style="width:110px;">No. de Parte</th>
                                                 <th>Descripción</th>
                                                 <th class="unidad">Unidad</th>
-                                                <th class="index_corto"></th>
+                                                <th class="index">Cotizar Si/No
+                                                    <div class="custom-control custom-switch">
+                                                        <input type="checkbox" class="custom-control-input" id="toggleCotizar" v-model="toggleCotizar" checked value="1">
+                                                        <label class="custom-control-label" for="toggleCotizar"></label>
+                                                    </div>
+                                                </th>
                                                 <th >Cantidad Solicitada</th>
                                                 <th >Cantidad Aprobada</th>
                                                 <th class="cantidad_input">Precio Unitario</th>
@@ -388,7 +393,8 @@
                 credito: 0,
                 tiempo: 0,
                 vigencia: 0,
-                solicitud: []
+                solicitud: [],
+                toggleCotizar : 1,
             }
         },
         mounted() {
@@ -534,6 +540,22 @@
                     });
                 }
             },
+        },
+        watch: {
+            toggleCotizar: {
+                handler(toggleCotizar) {
+                    if(toggleCotizar){
+                        this.solicitud.partidas.forEach(partida => {
+                            partida.enable = 1;
+                        })
+
+                    }else {
+                        this.solicitud.partidas.forEach(partida => {
+                            partida.enable = 0;
+                        })
+                    }
+                },
+            }
         },
         computed: {
             subtotal()
