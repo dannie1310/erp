@@ -113,7 +113,7 @@
                                                                 :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
-                                                             <option v-for="cuenta in getCuentasActivas(doc.empresa.cuentas_bancarias.data)" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
+                                                             <option v-for="cuenta in getCuentasActivas(doc.empresa.cuentas_bancarias.data, doc)" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
                                                         </select>
                                                         <div class="invalid-feedback"
                                                              v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
@@ -128,7 +128,7 @@
                                                                 :class="{'is-invalid': errors.has(`id_cuenta_abono[${i}]`)}"
                                                         >
                                                              <option value>-- Selecciona una cuenta --</option>
-                                                             <option v-for="cuenta in getCuentasActivas(doc.fondo.empresa.cuentas_bancarias.data)" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
+                                                             <option v-for="cuenta in getCuentasActivas(doc.fondo.empresa.cuentas_bancarias.data, doc)" :value="cuenta.id">{{getCuentaAbono(cuenta)}}</option>
                                                         </select>
                                                         <div class="invalid-feedback"
                                                              v-show="errors.has(`id_cuenta_abono[${i}]`)">{{ errors.first(`id_cuenta_abono[${i}]`) }}
@@ -257,8 +257,13 @@
             }
         },
         methods: {
-            getCuentasActivas(cuentas){
+            getCuentasActivas(cuentas, documento){
+                let flag = true;
                 return cuentas.filter(function (value, index,arr) {
+                    if(documento !== undefined && parseInt(value.estado) === 1 && flag){
+                        documento.id_cuenta_abono = value.id;
+                        flag = false;
+                    }
                     return parseInt(value.estado) === 1
                 })
             },
