@@ -232,6 +232,13 @@
                                                     </td>
                                                 </tr>
                                                 <tr style="border: none">
+                                                    <td :colspan="colspan"  style="border: none;"></td>
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal antes de descuento<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
+                                                    <td style="border: none; text-align: right">
+                                                        ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
+                                                    </td>
+                                                </tr>
+                                                <tr style="border: none">
                                                     <td :colspan="colspan" rowspan="10" style="border: none; padding-top: 0.75rem">
 
                                                         <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="!(multiples_monedas == false && peso_seleccionado == true)">
@@ -336,7 +343,7 @@
                                                                         </th>
                                                                         <td style="text-align: right" v-if="peso_seleccionado">
                                                                             <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(pesos_con_descuento)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -344,7 +351,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
                                                                             <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(dolares_con_descuento)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -352,7 +359,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
                                                                             <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(euros_con_descuento)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -360,7 +367,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
                                                                             <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(libras_con_descuento)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -376,7 +383,7 @@
                                                                         </th>
                                                                         <td style="text-align: right" v-if="peso_seleccionado">
                                                                             <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos*.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(pesos_con_descuento*.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -385,7 +392,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
                                                                             <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares*.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(dolares_con_descuento*.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -393,7 +400,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
                                                                             <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros*.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(euros_con_descuento*.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -401,7 +408,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
                                                                             <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras*.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(libras_con_descuento*.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -417,7 +424,7 @@
                                                                         </th>
                                                                         <td style="text-align: right" v-if="peso_seleccionado">
                                                                             <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos*1.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(pesos_con_descuento*1.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -425,7 +432,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
                                                                             <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares*1.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(dolares_con_descuento*1.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -433,7 +440,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
                                                                             <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros*1.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(euros_con_descuento*1.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -441,7 +448,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
                                                                             <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras*1.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(libras_con_descuento*1.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -458,7 +465,7 @@
                                                                         </th>
                                                                         <td style="text-align: right" v-if="peso_seleccionado">
                                                                             <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos*1.16)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(pesos_con_descuento*1.16)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -469,7 +476,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" v-if="dolar_seleccionado">
                                                                             <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares*1.16*dolar)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(dolares_con_descuento*1.16*dolar)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -480,7 +487,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" v-if="euro_seleccionado">
                                                                             <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros*1.16 * euro)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(euros_con_descuento *1.16 * euro)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -491,7 +498,7 @@
                                                                         </td>
                                                                         <td style="text-align: right" v-if="libra_seleccionado">
                                                                             <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras*1.16 * libra)).formatMoney(2,'.',',')}}
+                                                                                ${{(parseFloat(libras_con_descuento*1.16 * libra)).formatMoney(2,'.',',')}}
                                                                             </span>
                                                                             <span v-else>
                                                                                 -
@@ -508,6 +515,7 @@
                                                     </td>
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global(%):</b></td>
                                                     <td style="border: none"> <input
+                                                        v-on:keyup="calcular"
                                                         :disabled="cargando"
                                                         type="text"
                                                         name="descuento_cot"
@@ -630,6 +638,10 @@
                 dolares: 0,
                 euros: 0,
                 libras: 0,
+                pesos_con_descuento: 0,
+                dolares_con_descuento: 0,
+                euros_con_descuento: 0,
+                libras_con_descuento: 0,
                 dolar:0,
                 euro:0,
                 libra:0,
@@ -724,6 +736,12 @@
                 var euros = 0;
                 var libras = 0;
 
+                var pesos_con_descuento = 0;
+                var dolares_con_descuento = 0;
+                var euros_con_descuento = 0;
+                var libras_con_descuento = 0;
+
+
                 let _self = this;
                 this.multiples_monedas = false;
                 this.peso_seleccionado = false;
@@ -777,11 +795,19 @@
                             }
                         }
                     }
-                })
+                });
+
                 this.pesos = pesos;
                 this.dolares = dolares;
                 this.euros = euros;
                 this.libras = libras;
+
+                this.pesos_con_descuento =  this.pesos - ((this.descuento_cot > 0)?(this.pesos* parseFloat(this.descuento_cot)/100):0) ;
+                this.dolares_con_descuento = this.dolares - ((this.descuento_cot > 0)?(this.dolares* parseFloat(this.descuento_cot)/100):0) ;
+                this.euros_con_descuento = this.euros - ((this.descuento_cot > 0)?(this.euros* parseFloat(this.descuento_cot)/100):0) ;
+                this.libras_con_descuento = this.libras - ((this.descuento_cot > 0)?(this.libras* parseFloat(this.descuento_cot)/100):0) ;
+
+
 
                 if((this.libra_seleccionado && this.euro_seleccionado) || (this.libra_seleccionado && this.dolar_seleccionado) || (this.libra_seleccionado && this.peso_seleccionado)){
                     this.multiples_monedas = true;
@@ -872,6 +898,20 @@
                     return 6;
                 }
             },
+            subtotal_antes_descuento()
+            {
+                if(this.multiples_monedas){
+                    return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) );
+                } else if(this.peso_seleccionado){
+                    return this.pesos ;
+                } else if(this.dolar_seleccionado){
+                    return this.dolares ;
+                }else if(this.euro_seleccionado){
+                    return this.euros  ;
+                }else if(this.libra_seleccionado){
+                    return this.libras ;
+                }
+            },
             subtotal()
             {
                 if(this.multiples_monedas){
@@ -879,13 +919,13 @@
                         ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
                             this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
                 } else if(this.peso_seleccionado){
-                    return this.pesos;
+                    return this.pesos - ((this.descuento_cot > 0)?(this.pesos* parseFloat(this.descuento_cot)/100):0) ;
                 } else if(this.dolar_seleccionado){
-                    return this.dolares;
+                    return this.dolares  - ((this.descuento_cot > 0)?(this.dolares* parseFloat(this.descuento_cot)/100):0);
                 }else if(this.euro_seleccionado){
-                    return this.euros;
+                    return this.euros  - ((this.descuento_cot > 0)?(this.euros* parseFloat(this.descuento_cot)/100):0);
                 }else if(this.libra_seleccionado){
-                    return this.libras;
+                    return this.libras  - ((this.descuento_cot > 0)?(this.libras* parseFloat(this.descuento_cot)/100):0);
                 }
             },
             iva() {
@@ -893,6 +933,10 @@
             },
             total() {
                 return this.subtotal + this.iva;
+            },
+            subtotal_mxn_antes_descuento()
+            {
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra));
             },
             subtotal_mxn()
             {
