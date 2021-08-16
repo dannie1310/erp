@@ -85,7 +85,10 @@ class SolicitudRecepcionCFDI extends Model
     public function scopePorProveedorLogueado($query)
     {
         $proveedor = ProveedorSAT::where("rfc","=",auth()->user()->usuario)->first();
-        return $query->where('id_empresa_emisora', '=', $proveedor->id);
+        if($proveedor){
+            return $query->where('id_empresa_emisora', '=', $proveedor->id);
+        }
+        return $query->where('id_empresa_emisora', '=', 0);
     }
 
     public function scopePorProyecto($query)

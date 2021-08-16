@@ -70,4 +70,15 @@ class EmpresaController extends Controller
     {
         return $this->service->descargaExpediente($id);
     }
+
+    public function showRFC(Request $request, $rfc)
+    {
+        if(auth()->user()->usuario == $rfc){
+            $empresa =  $this->service->buscaPorRFC($rfc);
+            $item = $this->service->show($empresa->id);
+            return $this->respondWithItem($item);
+        } else {
+            return response()->json("No esta autorizado a consultar esta información", 200);
+        }
+    }
 }

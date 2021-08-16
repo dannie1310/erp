@@ -54,6 +54,34 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendCambiosNoLocalizadosNotification',
         ],
 
+        'App\Events\RegistroUsuarioProveedor' => [
+            'App\Listeners\SendCredencialesAccesoNotification',
+        ],
+
+        'App\Events\RegistroInvitacion' => [
+            'App\Listeners\SendInvitacionCotizarNotification',
+        ],
+
+        'App\Events\ActualizacionClaveUsuarioProveedor' => [
+            'App\Listeners\SendCredencialesAccesoNotification',
+        ],
+
+        'Illuminate\Mail\Events\MessageSent' => [
+            'App\Listeners\LogSentMessage',
+        ],
+
+        'App\Events\EnvioCotizacion' => [
+            'App\Listeners\SendCotizacionEnviadaNotification',
+        ],
+
+        'App\Events\AperturaInvitacion' => [
+            'App\Listeners\SendAperturaInvitacionNotification',
+        ],
+
+        'Illuminate\Notifications\Events\NotificationSent' => [
+            'App\Listeners\LogNotification',
+        ],
+
             Registered::class => [
             SendEmailVerificationNotification::class,
         ],

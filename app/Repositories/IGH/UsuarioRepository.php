@@ -27,4 +27,12 @@ class UsuarioRepository extends Repository
                 });
         }
     }
+
+    public function buscaUsuarioEmpresaPorCorreo($correo)
+    {
+        return $this->model->where("correo","=",$correo)
+        ->where("usuario_estado", "!=",2)
+        ->where("usuario", "!=",$correo)
+            ->get();
+    }
 }

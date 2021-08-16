@@ -44,7 +44,7 @@ class MonedaController extends Controller
     public function __construct(Manager $fractal, MonedaService $service, MonedaTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['monedasGlobales']);
+        $this->middleware('context')->except(['monedasGlobales', 'monedasBase']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -54,5 +54,10 @@ class MonedaController extends Controller
     public function monedasGlobales(Request $request)
     {
         return $this->respondWithCollection($this->service->index($request->all()));
+    }
+
+    public function monedasBase(Request $request)
+    {
+        return $this->respondWithCollection($this->service->monedasBase($request->all()));
     }
 }

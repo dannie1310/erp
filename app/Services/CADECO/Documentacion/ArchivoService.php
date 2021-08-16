@@ -8,6 +8,7 @@ use App\Utils\Files;
 use Clegginabox\PDFMerger\PDFMerger;
 use Chumper\Zipper\Zipper;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Repositories\CADECO\Documentacion\ArchivoRepository as Repository;
 use App\Models\CADECO\Documentacion\Archivo;
@@ -29,6 +30,11 @@ class ArchivoService
     }
 
     public function cargarArchivo($data){
+
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
 
         $tipos_imagen = ['jpg', 'jpeg', 'png'];
         $archivos_nombres = \json_decode($data['archivos_nombres']);
@@ -93,12 +99,15 @@ class ArchivoService
                 $archivo->save();
 
             }
-
         }
     }
 
-    public function getArchivosTransaccion($id_transaccion)
+    public function getArchivosTransaccion($id_transaccion, $bd ='')
     {
+        if($bd != '')
+        {
+            $this->setDB($bd);
+        }
         $salida = [];
         $salida["archivos"] = $this->repository->where([['id_transaccion', '=', $id_transaccion]])->all();
         $salida["transaccion"] = $this->repository->getTransaccion($id_transaccion);
@@ -156,24 +165,6 @@ class ArchivoService
             Files::eliminaDirectorio($paths["dir_tempo"]);
             return $archivo;
         }
-
-        /*if($repetidos->count() > 0 && $repetidos[0] != $archivo){
-            abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
-            ;
-        }*/
-
-        /*if($ok = Storage::disk('padron_contratista')->put($directorio . '/' .$archivo->nombre_descarga.'.pdf', $pdf_file )){
-            $archivo->hashfile = $hashfile;
-            $archivo->nombre_archivo = $archivo->nombre_descarga;
-            $archivo->extension_archivo = 'pdf';
-            $archivo->save();
-            Storage::disk('padron_contratista')->put( 'hashfiles/' .$archivo->hashfile.'.pdf',  $pdf_file);
-
-        }else{
-            Files::eliminaDirectorio($paths["dir_tempo"]);
-            abort(403, 'Hubo un error al cargar el archivo, intente mas tarde y si el problema persiste reportelo a soporte_aplicaciones@grupohi.mx');
-        }*/
-
 
     }
 
@@ -305,7 +296,11 @@ class ArchivoService
         return ["path_zip" => $path_zip, "path_pdf" => $path_pdf, "dir_tempo" => $dir_tempo];
     }
 
-    public function documento($id){
+    public function documento($id, $db = ''){
+        if($db != '')
+        {
+            $this->setDB($db);
+        }
         $archivo = $this->repository->show($id);
         $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
@@ -313,7 +308,15 @@ class ArchivoService
 
     public function delete($data, $id)
     {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
         $archivo = $this->repository->show($id);
+        if($archivo->usuario_registro != auth()->user()->idusuario)
+        {
+            abort(500, 'No puede eliminar un archivo que fue cargado por otro usuario.');
+        }
         $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
         if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
             Storage::disk('archivos_transacciones')->delete($nombre_archivo);
@@ -331,5 +334,10 @@ class ArchivoService
         $imagenes['0']['imagen'] = "data:image/" . $archivo->extension_archivo. ";base64," . base64_encode(file_get_contents(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix() . $archivo->hashfile.".".$archivo->extension));
         $imagenes['0']['descripcion'] = $archivo->descripcion;
         return $imagenes;
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 }
