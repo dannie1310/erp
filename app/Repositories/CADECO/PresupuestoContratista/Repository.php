@@ -29,4 +29,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         return $this->model->crear($data);        
     }
+
+    public function registrar(array $data, $invitacion)
+    {
+        return $this->model->registrarPortalProveedor($data, $invitacion);
+    }
 }

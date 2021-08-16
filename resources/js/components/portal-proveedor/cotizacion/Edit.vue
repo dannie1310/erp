@@ -345,7 +345,6 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     import DatosCotizacionCompra from "./partials/DatosCotizacionCompra";
-    import invitacion from "../../../store/modules/padronProveedores/invitacion";
     export default {
         name: "cotizacion-proveedor-edit",
         components: {DatosCotizacionCompra, Datepicker, ModelListSelect},

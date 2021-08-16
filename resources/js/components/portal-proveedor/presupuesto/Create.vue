@@ -15,10 +15,10 @@
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <form role="form" @submit.prevent="validate">
-                        <div class="modal-body">
-                            <div class="row" v-if="solicitud">
+                        <div class="modal-body" v-if="contrato">
+                            <div class="row">
                                 <div class="col-md-12">
-                                    <tabla-datos-solicitud v-bind:solicitud="solicitud"></tabla-datos-solicitud>
+                                    <tabla-datos-solicitud v-bind:solicitud="contrato" />
                                 </div>
                             </div>
                             <hr />
@@ -43,17 +43,17 @@
                             </div>
                             <br>
                             <div class="row">
-                                <div class="col-md-1">
-                                   <label>Proveedor:</label>
-                                </div>
                                 <div class="col-md-5">
-                                    <h6>{{solicitud.razon_social}} [{{solicitud.rfc}}]</h6>
+                                    <div class="form-group error-content">
+                                        <label class="col-form-label"><h6><b>Portal-Proveedor:</b></h6></label>
+                                        <h6>{{contrato.razon_social}} [{{contrato.rfc}}]</h6>
+                                    </div>
                                 </div>
-                                <div class="col-md-1">
-                                   <label>Sucursal:</label>
-                                </div>
-                                <div class="col-md-2">
-                                    <h6>{{solicitud.sucursal}}</h6>
+                                <div class="col-md-4">
+                                    <div class="form-group error-content">
+                                        <label class="col-form-label"><h6><b>Sucursal:</b></h6></label>
+                                        <h6>{{contrato.sucursal}}</h6>
+                                    </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="custom-control custom-switch">
@@ -62,69 +62,67 @@
                                     </div>
                                 </div>
                             </div>
-                            <hr />
-                            <div class="row" v-if="solicitud != '' && !pendiente">
+                            <div class="row" v-if="id_invitacion != '' && !pendiente">
                                 <div  class="col-md-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-sm">
                                             <thead>
                                             <tr>
                                                 <th class="index_corto">#</th>
-                                                <th style="width:110px;">No. de Parte</th>
                                                 <th>Descripción</th>
                                                 <th class="unidad">Unidad</th>
-                                                <th class="index_corto"></th>
+                                                <th></th>
                                                 <th >Cantidad Solicitada</th>
                                                 <th >Cantidad Aprobada</th>
                                                 <th class="cantidad_input">Precio Unitario</th>
+                                                <th >Precio Total Antes Descto.</th>
                                                 <th class="cantidad_input">% Descuento</th>
+                                                <th >Precio Unitario</th>
                                                 <th >Precio Total</th>
                                                 <th >Moneda</th>
+                                                <th >Precio Unitario Moneda Conversión</th>
                                                 <th >Precio Total Moneda Conversión</th>
-                                                <th>Observaciones</th>
+                                                <th >Observaciones</th>
                                             </tr>
                                             </thead>
-                                            <tbody v-if="Object.keys(solicitud).length > 0">
-                                                <tr v-for="(partida, i) in solicitud.partidas">
+                                            <tbody v-if="contrato">
+                                                <tr v-for="(partida, i) in contrato.conceptos.data">
                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                    <td style="text-align:center;">{{partida.numero_parte}}</td>
-                                                    <td>{{partida.material}}</td>
-                                                    <td style="text-align:center;">{{partida.unidad}}</td>
+                                                    <td style="text-align:left;" v-html="partida.descripcion_formato"></td>
+                                                    <td>{{partida.unidad}}</td>
                                                     <td style="text-align:center; vertical-align:inherit;">
                                                         <div class="custom-control custom-switch">
-                                                            <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.enable" checked>
+                                                            <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.enable" >
                                                             <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                         </div>
                                                     </td>
-                                                    <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
-                                                    <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
+                                                    <td style="text-align:right;">{{partida.cantidad_original_format}}</td>
+                                                    <td style="text-align:right;">{{partida.cantidad_presupuestada_format}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
-                                                               :disabled="partida.enable == false"
-                                                               class="form-control"
-                                                               :name="`precio[${i}]`"
-                                                               data-vv-as="Precio"
-                                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
-                                                               :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                               v-model="partida.precio_cotizacion"
-                                                               style="text-align: right"
-                                                        />
+                                                            :disabled="partida.enable == false"
+                                                            class="form-control"
+                                                            :name="`precio[${i}]`"
+                                                            data-vv-as="Precio"
+                                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            :class="{'is-invalid': errors.has(`precio[${i}]`)}"
+                                                            v-model="partida.precio_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                     </td>
+                                                    <td style="text-align:right;">{{getPrecioTotalAntesDesc(i,partida.precio_cot,partida.cantidad_presupuestada)}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
-                                                           :disabled="partida.enable == false"
-                                                           class="form-control"
-                                                           :name="`descuento[${i}]`"
-                                                           data-vv-as="Descuento(%)"
-                                                           v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                           :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
-                                                           v-model="partida.descuento"
-                                                           style="text-align: right"
-                                                        />
+                                                            :disabled="partida.enable == false"
+                                                            class="form-control"
+                                                            :name="`descuento[${i}]`"
+                                                            data-vv-as="Descuento(%)"
+                                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
+                                                            v-model="partida.descuento_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{getPrecio(partida)}}</td>
+                                                    <td style="text-align:right;">{{getPrecioUnitario(i)}}</td>
+                                                    <td style="text-align:right;">{{getPrecioTotal(i)}}</td>
                                                     <td style="width:120px;" >
                                                         <select
                                                             v-on:change="calcular"
@@ -136,60 +134,65 @@
                                                             class="form-control"
                                                             id="moneda"
                                                             v-model="partida.moneda_seleccionada"
-                                                            :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
+                                                            :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
                                                                 <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.abreviatura }}</option>
                                                         </select>
                                                         <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{getPrecioTotal(partida.calculo_precio_total, partida.moneda_seleccionada)}}</td>
+                                                    <td style="text-align:right;">{{getPrecioMoneda(i)}}</td>
+                                                    <td style="text-align:right;">{{'$' + parseFloat(partida.cantidad_presupuestada * partida.precio_unitario_moneda_conversion).formatMoney(2,'.',',')}}</td>
                                                     <td style="width:200px;">
                                                         <textarea class="form-control"
-                                                                  :name="`observaciones[${i}]`"
-                                                                  data-vv-as="Observaciones"
-                                                                  :disabled="partida.enable == false"
-                                                                  v-validate="{}"
-                                                                  :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
-                                                                  v-model="partida.observacion_partida"/>
-                                                        <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
+                                                                :name="`observaciones[${i}]`"
+                                                                data-vv-as="Observaciones"
+                                                                :disabled="partida.enable == false"
+                                                                v-validate="{}"
+                                                                :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
+                                                                v-model="partida.observaciones_cot"/>
+                                                            <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                     </td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
+                                <div class=" col-md-12" align="right">
+                                    <label class="col-sm-2 col-form-label">Subtotal Antes de Descuento:</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}</label>
+                                </div>
                                 <div class=" col-md-10" align="right">
-                                    <label class="col-sm-2 col-form-label">Descuento(%):</label>
+                                    <label class="col-sm-2 col-form-label">Descuento (%):</label>
                                 </div>
                                 <div class=" col-md-2" align="right">
                                     <input
                                         :disabled="cargando"
                                         type="text"
+                                        v-on:change="calcular"
                                         name="descuento_cot"
-                                        v-model="descuento_cot"
+                                        v-model="contrato.descuento_cot"
                                         v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="descuento_cot"
-                                        style="text-align: right"
                                         :class="{'is-invalid': errors.has('descuento_cot')}">
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-4 col-form-label">Subtotal Precios Peso (MXN)</label>
-                                    <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXN)</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">${{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-4 col-form-label">Subtotal Precios Dolar (USD):</label>
-                                    <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">${{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-4 col-form-label">Subtotal Precios EURO:</label>
-                                    <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">${{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-4 col-form-label">Subtotal Precios Libra:</label>
-                                    <label class="col-md-2 col-form-label" style="text-align: right">${{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">${{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
-                                    <label class="col-md-2 col-form-label">TC USD:</label>
+                                    <label class="col-sm-2 col-form-label">TC USD:</label>
                                 </div>
                                 <div class=" col-md-2 p-1" align="right">
                                     <input
@@ -200,7 +203,6 @@
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_usd"
-                                        style="text-align: right"
                                         :class="{'is-invalid': errors.has('tc_usd')}">
                                 </div>
                                 <div class=" col-md-10" align="right">
@@ -215,7 +217,6 @@
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_eur"
-                                        style="text-align: right"
                                         :class="{'is-invalid': errors.has('tc_eur')}">
                                 </div>
                                 <div class=" col-md-10" align="right">
@@ -230,35 +231,19 @@
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_libra"
-                                        style="text-align: right"
                                         :class="{'is-invalid': errors.has('tc_libra')}">
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
-                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXN):</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-2 col-form-label">IVA:</label>
-                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(iva)).formatMoney(2,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label">IVA:</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
-                                    <label class="col-md-2 col-form-label">Total:</label>
-                                    <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(total)).formatMoney(2,'.',',')}}</label>
-                                </div>
-                                <div class=" col-md-10" align="right">
-                                    <label class="col-md-4 col-form-label">Pago en Parcialidades(%):</label>
-                                </div>
-                                <div class=" col-md-2 p-1" align="right">
-                                    <input
-                                        :disabled="cargando"
-                                        type="text"
-                                        name="pago"
-                                        v-model="pago"
-                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                        class="col-sm-6 form-control"
-                                        id="pago"
-                                        style="text-align: right"
-                                        :class="{'is-invalid': errors.has('pago')}">
+                                    <label class="col-sm-2 col-form-label">Total:</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Anticipo(%):</label>
@@ -268,11 +253,10 @@
                                         :disabled="cargando"
                                         type="text"
                                         name="anticipo"
-                                        v-model="anticipo"
+                                        v-model="contrato.anticipo"
                                         v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
-                                        style="text-align: right"
                                         :class="{'is-invalid': errors.has('anticipo')}">
                                 </div>
                                 <div class=" col-md-10" align="right">
@@ -283,25 +267,11 @@
                                         :disabled="cargando"
                                         type="text"
                                         name="credito"
-                                        v-model="credito"
+                                        v-model="contrato.credito"
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="credito"
                                         :class="{'is-invalid': errors.has('credito')}">
-                                </div>
-                                <div class=" col-md-10" align="right">
-                                    <label class="col-md-4 col-form-label">Tiempo de Entrega (días):</label>
-                                </div>
-                                <div class=" col-md-2 p-1" align="right">
-                                    <input
-                                        :disabled="cargando"
-                                        type="text"
-                                        name="tiempo"
-                                        v-model="tiempo"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                        class="col-sm-6 form-control"
-                                        id="tiempo"
-                                        :class="{'is-invalid': errors.has('tiempo')}">
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Vigencia (días):</label>
@@ -311,7 +281,7 @@
                                         :disabled="cargando"
                                         type="text"
                                         name="vigencia"
-                                        v-model="vigencia"
+                                        v-model="contrato.vigencia"
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="vigencia"
@@ -330,7 +300,8 @@
                                             name="observaciones"
                                             id="observaciones"
                                             class="form-control"
-                                            v-model="observaciones"
+                                            v-model="contrato.observaciones_cot"
+                                            v-validate="{required: true}"
                                             data-vv-as="Observaciones"
                                             :class="{'is-invalid': errors.has('observaciones')}"
                                         ></textarea>
@@ -339,15 +310,15 @@
                                 </div>
                             </div>
                         </div>
-                         <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" v-on:click="salir">
-                                    <i class="fa fa-angle-left"></i>
-                                    Regresar</button>
-                                <button type="button" @click="validate" :disabled="solicitud == ''" class="btn btn-primary">
-                                    <i class="fa fa-save"></i>
-                                    Guardar
-                                </button>
-                         </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                <i class="fa fa-angle-left"></i>
+                                Regresar</button>
+                            <button type="submit" class="btn btn-primary" v-if="contrato">
+                                <i class="fa fa-save"></i>
+                                Guardar
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -358,35 +329,35 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
-    import {ModelListSelect} from 'vue-search-select';
-    import TablaDatosSolicitud from "./partials/TablaDatosSolicitud";
+    import TablaDatosSolicitud from "../cotizacion/partials/TablaDatosSolicitud";
     export default {
-        name: "cotizacion-proveedor-create",
+        name: "presupuesto-proveedor-create",
         props: ['id_invitacion'],
-        components: {TablaDatosSolicitud,Datepicker, ModelListSelect},
+        components: {Datepicker, TablaDatosSolicitud, es },
         data() {
             return {
                 cargando: false,
                 pendiente: false,
+                contrato : null,
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
-                descuento_cot : '0.00',
                 monedas: [],
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
-                libras: 0,
+                libras:0,
+                pesos_sd: 0,
+                dolares_sd: 0,
+                euros_sd: 0,
+                libras_sd:0,
                 dolar:0,
                 euro:0,
                 libra:0,
                 observaciones : '',
-                pago: 0,
                 anticipo: 0,
                 credito: 0,
-                tiempo: 0,
-                vigencia: 0,
-                solicitud: []
+                vigencia: 0
             }
         },
         mounted() {
@@ -400,13 +371,11 @@
             },
             find() {
                 this.cargando = true;
-                this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
                     id: this.id_invitacion,
                     params:{}
                 }).then(data => {
-                    this.solicitud = data
-                    this.cargando = false;
+                    this.contrato = data
                     this.getMonedas(data.base_datos);
                 })
             },
@@ -425,76 +394,99 @@
                     this.cargando = false;
                 })
             },
-            salir() {
-                this.$router.go(-2);
+            getPrecioMoneda(i) {
+                var precio = 0;
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 1) {
+                    precio = this.contrato.conceptos.data[i]['precio_unitario']
+                }
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 2) {
+                    precio = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? (this.contrato.conceptos.data[i]['precio_cot'] * this.dolar) - (this.contrato.conceptos.data[i]['precio_cot'] * this.dolar * this.contrato.descuento_cot/100) :  this.dolar
+                }
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 3) {
+                    precio = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? (this.contrato.conceptos.data[i]['precio_cot'] * this.euro) - (this.contrato.conceptos.data[i]['precio_cot'] * this.euro * this.contrato.descuento_cot/100) : this.euro
+                }
+                if (this.contrato.conceptos.data[i]['moneda_seleccionada'] == 4) {
+                    precio = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? (this.contrato.conceptos.data[i]['precio_cot'] * this.libra) - (this.contrato.conceptos.data[i]['precio_cot'] * this.libra * this.contrato.descuento_cot/100) : this.libra
+                }
+                this.contrato.conceptos.data[i]['precio_unitario_moneda_conversion'] = precio;
+                return  '$' + parseFloat(precio).formatMoney(2, '.', ',')
             },
-            getPrecioTotal(precio, moneda) {
-                if(moneda == undefined)
-                {
-                    return '$1.00'
-                }
-                if(moneda === 1)
-                {
-                    return '$'+parseFloat(precio != undefined ? precio : 1).formatMoney(2,'.',',')
-                }
-                if(moneda === 2)
-                {
-                    return '$'+parseFloat(precio != undefined ? precio * this.dolar : this.dolar).formatMoney(2,'.',',')
-                }
-                if(moneda === 3)
-                {
-                    return '$'+parseFloat(precio != undefined ? precio * this.euro : this.euro).formatMoney(2,'.',',')
-                }
-                if(moneda === 4)
-                {
-                    return '$'+parseFloat(precio != undefined ? precio * this.libra : this.libra).formatMoney(2,'.',',')
-                }
+            getPrecioTotalAntesDesc(i)
+            {
+                var total = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['cantidad_presupuestada'] : 0;
+                this.contrato.conceptos.data[i]['precio_total_antes_desc'] = total;
+                return  '$' + parseFloat(total).formatMoney(2, '.', ',')
             },
-            getPrecio(partida){
-                if(partida.precio_cotizacion){
-                    let cantidad = 0;
-                    this.solicitud.estado === 0? cantidad = partida.cantidad_original_num : cantidad = partida.cantidad;
-                    return '$' + parseFloat(partida.precio_cotizacion * cantidad - (partida.precio_cotizacion * cantidad * (partida.descuento ? partida.descuento : 0) / 100).formatMoney(2,'.',','));
-                }
-                return '$ 0.00';
+            getPrecioUnitario(i)
+            {
+                var precio_unitario = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] - ((this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['descuento_cot']) / 100) : 0;
+                this.contrato.conceptos.data[i]['precio_unitario'] = precio_unitario;
+                return  '$' + parseFloat(precio_unitario).formatMoney(2, '.', ',')
             },
-            calcular(){
+            getPrecioTotal(i)
+            {
+                var precio_total = this.contrato.conceptos.data[i]['precio_total_antes_desc'] - ((this.contrato.conceptos.data[i]['precio_total_antes_desc'] * this.contrato.conceptos.data[i]['descuento_cot'])/100);
+                this.contrato.conceptos.data[i]['precio_total'] = precio_total;
+                return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
+            },
+            salir(){
+                 this.$router.push({name: 'cotizacion-proveedor'});
+            },
+            calcular() {
                 var pesos = 0;
                 var dolares = 0;
                 var euros = 0;
                 var libras = 0;
-                var estado = (this.solicitud.estado == 0)
-                this.solicitud.partidas.forEach(function (partida, i) {
-                    if(partida.enable === true) {
-                        if(partida.moneda_seleccionada != undefined && partida.precio_cotizacion != undefined)
+                var pesos_sd = 0;
+                var dolares_sd = 0;
+                var euros_sd = 0;
+                var libras_sd = 0;
+                var descuento = this.contrato.descuento_cot
+                var suma = 0;
+                var suma_desc = 0;
+                this.contrato.conceptos.data.forEach(function (partida, i)
+                {
+                    if (partida.enable === true)
+                    {
+                        if(partida.moneda_seleccionada != undefined && partida.precio_cot != undefined)
                         {
-                            partida.calculo_precio_total = (estado ? partida.cantidad_original_num : partida.cantidad)
-                                * (partida.precio_cotizacion - (partida.precio_cotizacion * (partida.descuento ? partida.descuento : 0))/100);
+                            suma = partida.cantidad_presupuestada * (partida.precio_cot - (partida.precio_cot * (partida.descuento_cot + descuento - (partida.descuento_cot * descuento) / 100))/100);
+                            suma_desc = partida.cantidad_presupuestada * (partida.precio_cot - ((partida.precio_cot * partida.descuento_cot) / 100));
                             if(partida.moneda_seleccionada == 1)
                             {
-                                pesos += partida.calculo_precio_total;
+                                pesos += suma;
+                                pesos_sd += suma_desc;
                             }
                             if(partida.moneda_seleccionada == 2)
                             {
-                                dolares += partida.calculo_precio_total;
+                                dolares += suma;
+                                dolares_sd += suma_desc;
                             }
                             if(partida.moneda_seleccionada == 3)
                             {
-                                euros += partida.calculo_precio_total;
+                                euros += suma;
+                                euros_sd += suma_desc;
                             }
                             if(partida.moneda_seleccionada == 4)
                             {
-                                libras += partida.calculo_precio_total;
+                                libras += suma;
+                                libras_sd += suma_desc;
                             }
                         }
                     }
-                })
+                });
                 this.pesos = pesos;
                 this.dolares = dolares;
                 this.euros = euros;
                 this.libras = libras;
+
+                this.pesos_sd = pesos_sd;
+                this.dolares_sd = dolares_sd;
+                this.euros_sd = euros_sd;
+                this.libras_sd = libras_sd;
             },
             validate() {
+
                 this.$validator.validate().then(result => {
                     if (result) {
                         this.store()
@@ -504,29 +496,26 @@
             store() {
                 if(this.total == 0 && this.pendiente === false)
                 {
-                    swal('Error', "No puede ingresar una cotización donde todas las partidas tengan precio $0.00. \n  \n Favor de ingresar los precios o seleccionar la opción de dejar pendiente la carga de precios.", 'error');
+                    swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
                 else
                 {
-                    this.solicitud.pendiente = this.pendiente;
-                    this.solicitud.fecha_cot = this.fecha;
-                    this.solicitud.descuento_cot = this.descuento_cot;
-                    this.solicitud.pesos = this.pesos;
-                    this.solicitud.dolares = this.dolares;
-                    this.solicitud.euros = this.euros;
-                    this.solicitud.libras = this.libras;
-                    this.solicitud.observaciones_cot = this.observaciones;
-                    this.solicitud.pago = this.pago;
-                    this.solicitud.anticipo = this.anticipo;
-                    this.solicitud.credito = this.credito;
-                    this.solicitud.tiempo = this.tiempo;
-                    this.solicitud.vigencia = this.vigencia;
-                    this.solicitud.importe = this.total;
-                    this.solicitud.impuesto = this.iva;
-                    this.solicitud.tc_eur = this.euro;
-                    this.solicitud.tc_usd = this.dolar;
-                    this.solicitud.tc_libra = this.libra;
-                    return this.$store.dispatch('compras/cotizacion/registrarCotizacionProveedor', this.solicitud)
+                    this.contrato.pendiente = this.pendiente;
+                    this.contrato.fecha_cot = this.fecha;
+                    this.contrato.pesos = this.pesos;
+                    this.contrato.dolares = this.dolares;
+                    this.contrato.euros = this.euros;
+                    this.contrato.libras = this.libras;
+                    this.contrato.anticipo = this.anticipo;
+                    this.contrato.credito = this.credito;
+                    this.contrato.vigencia = this.vigencia;
+                    this.contrato.subtotal = this.subtotal;
+                    this.contrato.total = this.total;
+                    this.contrato.impuesto = this.iva;
+                    this.contrato.tc_eur = this.euro;
+                    this.contrato.tc_usd = this.dolar;
+                    this.contrato.tc_libra = this.libra;
+                    return this.$store.dispatch('contratos/presupuesto/registrarPresupuestoProveedor', this.contrato)
                     .then((data) => {
                         this.salir();
                     });
@@ -536,20 +525,24 @@
         computed: {
             subtotal()
             {
-                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) -
-                    ((this.descuento_cot > 0) ? (((this.pesos + (this.dolares * this.dolar) + (this.euros *
-                        this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
+                return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) );
             },
-            iva() {
+            subtotal_antes_descuento()
+            {
+                return (this.pesos_sd + (this.dolares_sd * this.dolar) + (this.euros_sd * this.euro) + (this.libras_sd * this.libra) );
+            },
+            iva()
+            {
                 return this.subtotal * 0.16;
             },
-            total() {
+            total()
+            {
                 return this.subtotal + this.iva;
-            },
+            }
         },
     }
 </script>
 
-<style scoped>
+<style>
 
 </style>
