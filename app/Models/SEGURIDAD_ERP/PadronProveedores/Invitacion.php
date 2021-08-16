@@ -5,7 +5,10 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
 use App\Facades\Context;
+use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
@@ -354,7 +357,8 @@ class Invitacion extends Model
         {
             abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
         }
-        if($this->tipo_transaccion_antecedente == 17) {
+        if($this->tipo_transaccion_antecedente == 17)
+        {
             return [
                 'id' => $this->solicitud->getKey(),
                 'numero_folio' => $this->solicitud->numero_folio,
@@ -382,7 +386,8 @@ class Invitacion extends Model
                 'partidas' => $this->partidasSolicitud()
             ];
         }
-        if($this->tipo_transaccion_antecedente == 49){
+        if($this->tipo_transaccion_antecedente == 49)
+        {
             $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
             $transaccionRelacionTransformer = new TransaccionRelacionTransformer;
 
@@ -438,6 +443,43 @@ class Invitacion extends Model
             ]);
         }
        return $partidas;
+    }
+
+    public function getPresupuesto()
+    {
+        $resp = [];
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        if($this->tipo_transaccion_antecedente == 49) {
+            $presupuestoTransformer = new PresupuestoContratistaTransformer;
+            $resp = $presupuestoTransformer->transform($this->presupuesto);
+
+            $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
+            $resp['contrato_proyectado'] = $contratoProyectadoTransformer->transform($this->contratoProyectado);
+            $resp['razon_social'] = $this->empresa->razon_social;
+            $conceptos = [];
+            foreach( $this->contratoProyectado->contratos as $key => $concepto) {
+                $conceptos[$key] = $concepto;
+                $conceptos[$key]['cantidad_original_format'] = $concepto->cantidad_original_format;
+                $conceptos[$key]['cantidad_presupuestada_format'] = $concepto->cantidad_presupuestada_format;
+                $partida = PresupuestoContratistaPartida::where('id_concepto', $concepto->id_concepto)->where('id_transaccion', $this->id_cotizacion_generada)->withoutGlobalScopes()->first();
+                $conceptos[$key]['precio_unitario_antes_descuento_format'] = $partida->precio_unitario_antes_descuento_format;
+                $conceptos[$key]['total_antes_descuento_format'] = $partida->total_antes_descuento_format;
+                $conceptos[$key]['descuento_format'] = $partida->descuento_format;
+                $conceptos[$key]['precio_unitario_despues_descuento_format'] = $partida->precio_unitario_despues_descuento_format;
+                $conceptos[$key]['total_despues_descuento_format'] = $partida->total_despues_descuento_format;
+                $conceptos[$key]['moneda'] = $partida->moneda->nombre;
+                $conceptos[$key]['con_moneda_extranjera'] = $partida->moneda->id_moneda != 1 ? true : false;
+                $conceptos[$key]['precio_unitario_despues_descuento_partida_mc_format'] = $partida->precio_unitario_despues_descuento_partida_mc_format;
+                $conceptos[$key]['total_despues_descuento_partida_mc_format'] = $partida->total_despues_descuento_partida_mc_format;
+                $conceptos[$key]['observaciones'] = $partida->observaciones;
+                $destino = $concepto->destino->concepto_sgv;
+                $conceptos[$key]['path_corta'] = $destino->path_corta;
+                $conceptos[$key]['path'] = $destino->path;
+            }
+            $resp['contratos'] = $conceptos;
+            return $resp;
+        }
     }
 
     public function getPresupuestoEdit(){

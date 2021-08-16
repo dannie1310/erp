@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="!presupuesto">
+        <div class="card" v-if="!invitacion.presupuesto_proveedor">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -13,10 +13,10 @@
         </div>
         <div class="card" v-else>
             <div class="card-body table-responsive">
-                <DatosContratoProyectado :contrato_proyectado="presupuesto"></DatosContratoProyectado>
-               <!-- <div class="row" >
+                <DatosPresupuesto :presupuesto="presupuesto"></DatosPresupuesto>
+                <div class="row" >
                     <div class="col-md-12 table-responsive">
-                        <table id="tabla-conceptos" >
+                        <table id="tabla-conceptos" v-if="presupuesto">
                             <thead>
                                 <tr>
                                     <th >#</th>
@@ -31,16 +31,16 @@
                                     <th  v-if="presupuesto.con_descuento_partidas">% Descuento</th>
                                     <th  >PU</th>
                                     <th  >Importe</th>
-                                    <th  v-if="presupuesto.con_moneda_extranjera">Moneda</th>
-                                    <th  v-if="presupuesto.con_moneda_extranjera">PU Moneda Conversión</th>
-                                    <th  v-if="presupuesto.con_moneda_extranjera">Importe Moneda Conversión</th>
-                                    <th  v-if="presupuesto.con_observaciones_partidas">Observaciones</th>
+                                    <th>Moneda</th>
+                                    <th>PU Moneda Conversión</th>
+                                    <th>Importe Moneda Conversión</th>
+                                    <th>Observaciones</th>
 
                                     <th class="destino">Destino</th>
                                 </tr>
 
                             </thead>
-                            <tbody v-for="(concepto, i) in presupuesto.conceptos.data">
+                            <tbody v-for="(concepto, i) in presupuesto.contratos">
                                 <tr v-if="concepto.unidad == null">
                                     <td >{{i + 1}}</td>
                                     <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
@@ -57,11 +57,10 @@
                                     <td v-if="presupuesto.con_descuento_partidas"></td>
                                     <td></td>
                                     <td></td>
-                                    <td v-if="presupuesto.con_moneda_extranjera"></td>
-                                    <td v-if="presupuesto.con_moneda_extranjera"></td>
-                                    <td v-if="presupuesto.con_moneda_extranjera"></td>
-                                    <td v-if="presupuesto.con_observaciones_partidas"></td>
-
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
                                     <td></td>
                                 </tr>
                                 <tr v-else>
@@ -75,26 +74,25 @@
                                     <td class="numerico">{{concepto.cantidad_original_format}}</td>
 
                                     <td class="numerico">{{concepto.cantidad_presupuestada_format}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.presupuesto.precio_unitario_antes_descuento_format}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.presupuesto.total_antes_descuento_format}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.presupuesto.descuento_format}}</td>
-                                    <td class="numerico">{{concepto.presupuesto.precio_unitario_despues_descuento_format}}</td>
-                                    <td class="numerico">{{concepto.presupuesto.total_despues_descuento_format}}</td>
-                                    <td v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.moneda.nombre}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.precio_unitario_despues_descuento_partida_mc_format}}</td>
-                                    <td class="numerico" v-if="presupuesto.con_moneda_extranjera">{{concepto.presupuesto.total_despues_descuento_partida_mc_format}}</td>
-                                    <td v-if="presupuesto.con_observaciones_partidas">{{concepto.presupuesto.observaciones}}</td>
-
-                                    <td :title="concepto.destino.concepto.path" style="text-decoration: underline">{{ concepto.destino.concepto.path_corta }}</td>
+                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.precio_unitario_antes_descuento_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{ concepto.total_antes_descuento_format}}</td>
+                                    <td class="numerico" v-if="presupuesto.con_descuento_partidas">{{concepto.descuento_format}}</td>
+                                    <td class="numerico">{{concepto.precio_unitario_despues_descuento_format}}</td>
+                                    <td class="numerico">{{concepto.total_despues_descuento_format}}</td>
+                                    <td>{{concepto.moneda}}</td>
+                                    <td class="numerico">{{concepto.precio_unitario_despues_descuento_partida_mc_format}}</td>
+                                    <td class="numerico">{{concepto.total_despues_descuento_partida_mc_format}}</td>
+                                    <td>{{concepto.observaciones}}</td>
+                                    <td :title="concepto.path" style="text-decoration: underline">{{ concepto.path_corta }}</td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal antes de descuento:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">Subtotal antes de descuento:</td>
                                     <td class="numerico">{{presupuesto.subtotal_mc_antes_descuento_global_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">% Descuento:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">% Descuento:</td>
                                     <td class="numerico">{{presupuesto.porcentaje_descuento_format}}</td>
                                 </tr>
 
@@ -102,98 +100,83 @@
                                     <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal {{subtotal.moneda}}:</td>
                                     <td class="numerico">{{subtotal.subtotal_format}}</td>
                                 </tr> -->
-                         <!--       <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC USD:</td>
+                                <tr>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">TC USD:</td>
                                     <td class="numerico">{{presupuesto.tc_usd_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC EURO:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">TC EURO:</td>
                                     <td class="numerico">{{presupuesto.tc_euro_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">TC Libra:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">TC Libra:</td>
                                     <td class="numerico">{{presupuesto.tc_libra_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Moneda Conversión:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">Moneda Conversión:</td>
                                     <td >{{presupuesto.moneda_conversion}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Subtotal:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">Subtotal:</td>
                                     <td class="numerico">{{presupuesto.subtotal_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">IVA:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">IVA:</td>
                                     <td class="numerico">{{presupuesto.impuesto_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Monto:</td>
+                                    <td colspan ="13" style="text-align: right" class="sin_borde">Monto:</td>
                                     <td class="numerico">{{presupuesto.monto_format}}</td>
                                 </tr>
                             </tfoot>
                         </table>
                     </div>
-                </div>-->
+                </div>
             </div>
-
+            <div class="card-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                </div>
+            </div>
         </div>
     </span>
 </template>
 
 <script>
-    import DatosContratoProyectado from '../presupuesto/partials/DatosContratoProyectado.vue';
+    import DatosPresupuesto from './partials/DatosPresupuesto';
     export default {
         name: "presupuesto-show",
-        components: {DatosContratoProyectado},
+        components: {DatosPresupuesto},
         props: ['id'],
         data(){
             return{
                 cargando: false,
                 presupuesto:[],
+                invitacion:[]
             }
         },
         mounted() {
             this.find();
         },
         methods: {
-            // find() {
-
-            //     this.cargando = true;
-            //     this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', null);
-            //     return this.$store.dispatch('contratos/presupuesto/find', {
-            //         id: this.id,
-            //         params:{include: [
-            //             'contrato_proyectado',
-            //             'contratos.presupuesto:id_transaccion_presupuesto('+this.id+')',
-            //             'contratos.destino',
-            //             'sucursal',
-            //             'empresa', 'subtotales_por_moneda']}
-            //     }).then(data => {
-            //         this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', data);
-            //         this.cargando = false;
-            //     });
-            // }
             find() {
                 this.cargando = true;
-                    this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
-                    return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                        id: this.id,
-                        params:{}
-                    }).then(data => {
-                        this.presupuesto = data
-                        this.cargando = false;
-                    })
+                return this.$store.dispatch('padronProveedores/invitacion/find', {
+                    id: this.id,
+                    params: {
+                        include: ['presupuesto_proveedor'],
+                        scope: ['invitadoAutenticado']
+                    }
+                }).then(data => {
+                    this.presupuesto = data.presupuesto_proveedor
+                    this.invitacion = data
+                    this.cargando = false;
+                })
+            },
+            salir() {
+                    this.$router.push({name: 'cotizacion-proveedor'});
             },
         },
-        computed: {
-            // presupuesto() {
-            //     return this.$store.getters['contratos/presupuesto/currentPresupuesto'];
-            // },
-            total()
-            {
-                return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
-            }
-        }
     }
 </script>
 
