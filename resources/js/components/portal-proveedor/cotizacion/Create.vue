@@ -148,7 +148,7 @@
                                                 <th style="width:110px;">No. de Parte</th>
                                                 <th>Descripción</th>
                                                 <th class="unidad">Unidad</th>
-                                                <th class="index">Cotizar Si/No
+                                                <th class="index">¿Cotizar? No/Si
                                                     <div class="custom-control custom-switch">
                                                         <input type="checkbox" class="custom-control-input" id="toggleCotizar" v-model="toggleCotizar" checked value="1">
                                                         <label class="custom-control-label" for="toggleCotizar"></label>
@@ -171,7 +171,7 @@
                                                     <td style="text-align:center;">{{partida.unidad}}</td>
                                                     <td style="text-align:center; vertical-align:inherit;">
                                                         <div class="custom-control custom-switch">
-                                                            <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.enable" checked>
+                                                            <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.enable" checked v-on:change="calcular">
                                                             <label class="custom-control-label" :for="`enable[${i}]`"></label>
                                                         </div>
                                                     </td>
@@ -241,7 +241,7 @@
                                                 <tr style="border: none">
                                                     <td :colspan="colspan" rowspan="10" style="border: none; padding-top: 0.75rem">
 
-                                                        <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="!(multiples_monedas == false && peso_seleccionado == true)">
+                                                        <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
                                                             <div class="card-header">
                                                                 <h6><i class="fa fa-coins" ></i>Detalle por Moneda</h6>
                                                             </div>
@@ -736,12 +736,6 @@
                 var euros = 0;
                 var libras = 0;
 
-                var pesos_con_descuento = 0;
-                var dolares_con_descuento = 0;
-                var euros_con_descuento = 0;
-                var libras_con_descuento = 0;
-
-
                 let _self = this;
                 this.multiples_monedas = false;
                 this.peso_seleccionado = false;
@@ -749,7 +743,6 @@
                 this.euro_seleccionado = false;
                 this.libra_seleccionado = false;
                 this.ancho_tabla_detalle = 330;
-
 
                 var estado = (this.solicitud.estado == 0)
                 this.solicitud.partidas.forEach(function (partida, i) {
@@ -759,15 +752,15 @@
                             if(partida.moneda_seleccionada == 1)
                             {
                                 _self.peso_seleccionado = true;
-                            }
+                            } else
                             if(partida.moneda_seleccionada == 2)
                             {
                                 _self.dolar_seleccionado = true;
-                            }
+                            } else
                             if(partida.moneda_seleccionada == 3)
                             {
                                 _self.euro_seleccionado = true;
-                            }
+                            } else
                             if(partida.moneda_seleccionada == 4)
                             {
                                 _self.libra_seleccionado = true;
@@ -878,14 +871,15 @@
                 handler(toggleCotizar) {
                     if(toggleCotizar){
                         this.solicitud.partidas.forEach(partida => {
-                            partida.enable = 1;
+                            partida.enable = true;
                         })
 
                     }else {
                         this.solicitud.partidas.forEach(partida => {
-                            partida.enable = 0;
+                            partida.enable = false;
                         })
                     }
+                    this.calcular();
                 },
             }
         },
