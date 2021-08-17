@@ -56,6 +56,8 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     ]]);
                 $event->sheet->getProtection()->setSheet(true);
 
+                $event->sheet->getColumnDimension('A')->setAutoSize(false);
+                $event->sheet->getColumnDimension('A')->setWidth(10);
                 $event->sheet->getColumnDimension('B')->setAutoSize(false);
                 $event->sheet->getColumnDimension('B')->setWidth(60);
                 $event->sheet->getColumnDimension('C')->setAutoSize(false);
@@ -72,6 +74,11 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 {
                     $solicitud = SolicitudCompra::where('id_transaccion', $this->cotizacion->id_antecedente)->withoutGlobalScopes()->first();
                 }
+
+
+                $verificacion_cotizacion = $this->verifica->encripta($this->cotizacion->invitacion->base_datos."|".$this->cotizacion->invitacion->id_obra."|".$this->cotizacion->id_transaccion);
+
+                $event->sheet->setCellValue("A1", $verificacion_cotizacion);
 
                 foreach ($solicitud->partidas as $item){
                     $cot = CotizacionCompraPartida::where('id_transaccion', '=', $this->cotizacion->id_transaccion)->where('id_material', '=', $item->id_material)->first();

@@ -197,17 +197,41 @@ class CotizacionService
         {
             abort(400,'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($cotizacion->partidas) +21)
+
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_cotizacion_validar = $cadena_validacion_exp[2];
+
+        if($base_datos != $invitacion->base_datos || $id_obra != $invitacion->id_obra || $id_cotizacion != $id_cotizacion_validar )
         {
             abort(400,'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
         }
-        while($x < count($cotizacion->partidas) + 2)
+
+        while($x < count($cotizacion->partidasEdicion) + 2)
         {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
-            $item = $cotizacion->partidas->where('id_material', $decodificado)->first();
-            if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][7]))
+            $item = $cotizacion->partidasEdicion->where('id_material', $decodificado)->first();
+            if(!is_numeric($celdas[$x][0]))
             {
-                abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
+                abort(400,'El número de partida debe ser numérico, revisar celda A'. ($x + 1));
+            }
+            if(!is_numeric($celdas[$x][6]) && $celdas[$x][6] != '')
+            {
+                abort(400,'El precio unitario debe ser numérico o vacio, revisar celda G'. ($x + 1));
+            }
+            if(!is_numeric($celdas[$x][7]))
+            {
+                abort(400,'El porcentaje de descuento debe ser numérico, revisar celda H'. ($x + 1));
+            }else if($celdas[$x][7]>100)
+            {
+                abort(400,'El valor del porcentaje de descuento debe ser menor o igual a 100, revisar celda H'. ($x + 1));
+            }
+            else if($celdas[$x][7]<0)
+            {
+                abort(400,'El valor del porcentaje de descuento debe ser mayor a 0 y menor a 100, revisar celda H'. ($x + 1));
             }
             if(!$item)
             {
