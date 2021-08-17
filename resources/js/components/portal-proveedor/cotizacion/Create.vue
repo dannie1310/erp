@@ -861,7 +861,7 @@
                     this.solicitud.tc_libra = this.libra;
                     return this.$store.dispatch('compras/cotizacion/registrarCotizacionProveedor', this.solicitud)
                     .then((data) => {
-                        this.salir();
+                        this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: data.id_referente}});
                     });
                 }
             },
