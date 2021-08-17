@@ -1,5 +1,5 @@
 <template>
-    <span v-if="solicitud_compra">
+    <span v-if="contrato_proyectado">
             <div class="row">
                 <div class="offset-md-8 col-md-4">
                     <span class="pull-right">
@@ -9,26 +9,26 @@
                                     <tbody>
                                         <tr>
                                             <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
-                                                <b v-if="solicitud_compra.tipo_transaccion == 17">Solicitud de Compra</b>
-                                                <b v-if="solicitud_compra.tipo_transaccion == 50">Contrato Proyectado</b>
+                                                <b>Contrato Proyectado</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Folio:</td>
                                             <td style="text-align: right">
-                                                <b><span style="color:black; text-decoration: underline">{{solicitud_compra.numero_folio_format}}</span></b>
+                                                <b><span style="color:black; text-decoration: underline">{{contrato_proyectado.numero_folio_format}}</span></b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Fecha:</td>
                                             <td style="text-align: right">
-                                                <b>{{solicitud_compra.fecha_format}}</b>
+                                                <b>{{contrato_proyectado.fecha_format}}</b>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
+
                     </span>
                 </div>
             </div>
@@ -39,9 +39,9 @@
 <script>
 
 export default {
-    name: "EncabezadoSolicitud",
+    name: "EncabezadoContratoProyectado",
     components: {},
-    props: ["solicitud_compra"],
+    props: ["contrato_proyectado"],
 }
 </script>
 

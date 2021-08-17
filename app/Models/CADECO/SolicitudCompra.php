@@ -18,6 +18,7 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
@@ -101,6 +102,11 @@ class SolicitudCompra extends Transaccion
     public function asignacionesProveedores()
     {
         return $this->hasMany(AsignacionProveedor::class, 'id_transaccion_solicitud', 'id_transaccion');
+    }
+
+    public function invitaciones()
+    {
+        return $this->hasMany(Invitacion::class, "id_transaccion_antecedente", "id_transaccion");
     }
 
     /**
