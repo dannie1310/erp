@@ -1021,23 +1021,30 @@ class    CotizacionCompra  extends Transaccion
                     'timestamp_registro' => $fecha->format("Y-m-d")
                 ]);
             }
+
+            //array_pop($data['partidas']['data']);
+
             foreach($data['partidas']['data'] as $key => $partida) {
+
+                $item = null;
                 $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
+
                 if ($item) {
-                    $item->update([
-                        'precio_unitario' => $partida['no_cotizado'] ? $partida['precio_unitario'] : 0,
+                    CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
+                        'precio_unitario' => $partida['no_cotizado'] == 1 ? $partida['precio_unitario'] : null,
                         'descuento' => $partida['no_cotizado']  ? ($data['descuento'] + $partida['descuento'] - (($data['descuento'] * $partida['descuento']) / 100)) : 0,
                         'no_cotizado' => !$partida['no_cotizado'] ? 1 : 0,
-                        'id_moneda' => $partida['no_cotizado'] ? $partida['id_moneda'] : null
+                        'id_moneda' => $partida['no_cotizado'] ? $partida['id_moneda'] : 1
                     ]);
+
                     if ($item->partida) {
-                        $item->partida->update([
+                        CotizacionComplementoPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                             'descuento_partida' => $partida['no_cotizado'] ? $partida['descuento'] : 0,
                             'observaciones' => ($partida['no_cotizado'] && $partida['observacion']) ? $partida['observacion'] : null,
                             'estatus' => $partida['no_cotizado'] ? 3 : 1
                         ]);
                     } else {
-                        $item->partida->create([
+                        CotizacionComplementoPartida::create([
                             'id_transaccion' => $this->id_transaccion,
                             'id_material' => $partida['material']['id'],
                             'descuento_partida' => $partida['no_cotizado'] ? $partida['descuento'] : 0,
@@ -1047,6 +1054,7 @@ class    CotizacionCompra  extends Transaccion
                     }
                 }
             }
+
             if(key_exists('partidas', $data)){
                 if(key_exists('data', $data['partidas'])){
                     $this->update([
