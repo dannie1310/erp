@@ -15,9 +15,7 @@
                                         <tr>
                                             <td>Folio:</td>
                                             <td style="text-align: right">
-                                                <router-link :to="{name: 'invitacion-proveedor-show', params:{id : invitacion.id }}" target="_blank">
-                                                    <b><span style="color:black; text-decoration: underline">{{invitacion.numero_folio_format}}</span></b>
-                                                </router-link>
+                                                <b>{{invitacion.numero_folio_format}}</b>
                                             </td>
                                         </tr>
                                         <tr>

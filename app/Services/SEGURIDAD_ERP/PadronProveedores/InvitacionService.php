@@ -559,6 +559,11 @@ class InvitacionService
         }
     }
 
+    public function pdf($id)
+    {
+        return $this->repository->show($id)->pdf();
+    }
+
     public function getPresupuestoEdit($id){
         $invitacion_fl =  Invitacion::where('id',$id)->first();
         $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();

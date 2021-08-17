@@ -1003,7 +1003,7 @@ $api->version('v1', function ($api) {
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@destroy')->where(['id' => '[0-9]+']);
-            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@pdfSolicitudCompra')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@pdf')->where(['id' => '[0-9]+']);
             $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@abrir')->where(['id' => '[0-9]+']);
         });
 
