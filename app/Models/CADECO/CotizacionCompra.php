@@ -813,10 +813,16 @@ class    CotizacionCompra  extends Transaccion
 
     public function registrarPortalProveedor($data, $invitacion)
     {
+
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->cotizacionGenerada){
+            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación."
+                );
+        }
+
         try
         {
-            DB::purge('cadeco');
-            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
             $solicitud = SolicitudCompra::withoutGlobalScopes()->find($data['id']);
             $fecha =New DateTime($data['fecha']);
