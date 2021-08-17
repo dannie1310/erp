@@ -1031,25 +1031,25 @@ class    CotizacionCompra  extends Transaccion
 
                 if ($item) {
                     CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
-                        'precio_unitario' => $partida['no_cotizado'] == 1 ? $partida['precio_unitario'] : null,
-                        'descuento' => $partida['no_cotizado']  ? ($data['descuento'] + $partida['descuento'] - (($data['descuento'] * $partida['descuento']) / 100)) : 0,
-                        'no_cotizado' => !$partida['no_cotizado'] ? 1 : 0,
-                        'id_moneda' => $partida['no_cotizado'] ? $partida['id_moneda'] : 1
+                        'precio_unitario' => $partida['enable'] ? $partida['precio_unitario'] : null,
+                        'descuento' => $partida['enable']  ? ($data['descuento'] + $partida['descuento'] - (($data['descuento'] * $partida['descuento']) / 100)) : 0,
+                        'no_cotizado' => !$partida['enable'] ,
+                        'id_moneda' => $partida['enable'] ? $partida['id_moneda'] : 1
                     ]);
 
                     if ($item->partida) {
                         CotizacionComplementoPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
-                            'descuento_partida' => $partida['no_cotizado'] ? $partida['descuento'] : 0,
-                            'observaciones' => ($partida['no_cotizado'] && $partida['observacion']) ? $partida['observacion'] : null,
-                            'estatus' => $partida['no_cotizado'] ? 3 : 1
+                            'descuento_partida' => $partida['enable'] ? $partida['descuento'] : 0,
+                            'observaciones' => ($partida['enable'] && $partida['observacion']) ? $partida['observacion'] : null,
+                            'estatus' => $partida['enable'] ? 3 : 1
                         ]);
                     } else {
                         CotizacionComplementoPartida::create([
                             'id_transaccion' => $this->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'descuento_partida' => $partida['no_cotizado'] ? $partida['descuento'] : 0,
-                            'observaciones' => ($partida['no_cotizado'] && $partida['observacion']) ? $partida['observacion'] : null,
-                            'estatus' => $partida['no_cotizado'] ? 3 : 1
+                            'descuento_partida' => $partida['enable'] ? $partida['descuento'] : 0,
+                            'observaciones' => ($partida['enable'] && $partida['observacion']) ? $partida['observacion'] : null,
+                            'estatus' => $partida['enable'] ? 3 : 1
                         ]);
                     }
                 }

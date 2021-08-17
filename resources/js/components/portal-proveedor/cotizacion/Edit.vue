@@ -38,13 +38,13 @@
                                         <label>Anticipo (%):</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Crédito (%):</label>
+                                        <label>Crédito (días):</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Tiempo de entrega (dias):</label>
+                                        <label>Tiempo de entrega (días):</label>
                                     </div>
                                     <div class="col-md-2">
-                                        <label>Vigencia (dias):</label>
+                                        <label>Vigencia (días):</label>
                                     </div>
                                 </div>
 
@@ -157,7 +157,7 @@
                                                         <td >{{(partida.material) ? partida.material.unidad : '----'}}</td>
                                                          <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
-                                                                <input type="checkbox" class="custom-control-input" :id="`no_cotizado[${i}]`" v-model="partida.no_cotizado" v-on:change="calcular" checked>
+                                                                <input type="checkbox" class="custom-control-input" :id="`no_cotizado[${i}]`" v-model="partida.enable" v-on:change="calcular" checked>
                                                                 <label class="custom-control-label" :for="`no_cotizado[${i}]`"></label>
                                                             </div>
                                                         </td>
@@ -166,7 +166,7 @@
                                                             <input type="text"
                                                                    v-on:keyup="calcular"
                                                                    class="form-control"
-                                                                   :disabled="partida.no_cotizado == false"
+                                                                   :disabled="!partida.enable"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
                                                                    v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
@@ -177,7 +177,7 @@
                                                         </td>
                                                         <td>
                                                             <input type="text"
-                                                                   :disabled="partida.no_cotizado == false"
+                                                                   :disabled="!partida.enable"
                                                                    class="form-control"
                                                                    :name="`descuento[${i}]`"
                                                                    v-on:keyup="calcular"
@@ -195,7 +195,7 @@
                                                                 v-on:change="calcular"
                                                                 :name="`moneda[${i}]`"
                                                                 data-vv-as="Moneda"
-                                                                :disabled="partida.no_cotizado == false"
+                                                                :disabled="!partida.enable"
                                                                 v-validate="{required: true}"
                                                                 class="form-control"
                                                                 id="moneda"
@@ -210,7 +210,7 @@
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
                                                                       data-vv-as="Observaciones"
-                                                                      :disabled="partida.no_cotizado == false"
+                                                                      :disabled="!partida.enable"
                                                                       v-validate="{}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="partida.observacion"/>
@@ -218,14 +218,7 @@
                                                         </td>
                                                     </tr>
                                                     <tr style="border: none">
-                                                    <td :colspan="colspan"  style="border: none;"></td>
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal antes de descuento<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right">
-                                                        ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
-                                                    </td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td :colspan="colspan" rowspan="10" style="border: none; padding-top: 0.75rem">
+                                                        <td :colspan="colspan" rowspan="25" style="border: none; padding-top: 0.75rem">
 
                                                         <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
                                                             <div class="card-header">
@@ -320,7 +313,7 @@
                                                                             Partidas Cotizadas  <br>en Libras (GBL)
                                                                         </th>
                                                                         <th style="background-color: #f2f4f5; max-width: 150px">
-                                                                            Valor de Cotización en <br>Moneda de Conversión <br>(Pesos MXN)
+                                                                            Valor de Cotización en <br>Pesos MXN
                                                                         </th>
                                                                     </tr>
                                                                     <tr>
@@ -499,6 +492,13 @@
                                                         </div>
 
                                                     </td>
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal <span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
+                                                        <td style="border: none; text-align: right">
+                                                            ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
+                                                        </td>
+                                                    </tr>
+                                                <tr style="border: none">
+
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global(%):</b></td>
                                                     <td style="border: none"> <input
                                                         :disabled="cargando"
@@ -532,29 +532,85 @@
                                                     </td>
                                                 </tr>
                                                 <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                    <td style="border: none; text-align: right"></td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                    <td style="border: none; text-align: right"></td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                    <td style="border: none; text-align: right"></td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                    <td style="border: none; text-align: right"></td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                    <td style="border: none; text-align: right"></td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                    <td style="border: none; text-align: right"></td>
-                                                </tr>
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                        <td style="border: none; text-align: right"></td>
+                                                    </tr>
 
                                                 </tbody>
                                             </table>
@@ -737,7 +793,7 @@
                 this.ancho_tabla_detalle = 330;
 
                 this.invitacion.cotizacionCompra.partidasEdicion.data.forEach(function (partida, i) {
-                    if(partida.no_cotizado === true) {
+                    if(partida.enable) {
                         partida.calculo_precio_total = partida.cantidad * (partida.precio_unitario - ((partida.precio_unitario * partida.descuento)/100));
                         if(partida.id_moneda == 1)
                         {
@@ -871,12 +927,12 @@
                     if(toggleCotizar){
                         this.invitacion.cotizacionCompra.partidasEdicion.data.forEach(partida => {
                             partida.enable = true;
-                            partida.no_cotizado = true;
+                            partida.no_cotizado = false;
                         })
                     }else {
                         this.invitacion.cotizacionCompra.partidasEdicion.data.forEach(partida => {
                             partida.enable = false;
-                            partida.no_cotizado = false;
+                            partida.no_cotizado = true;
                         })
                     }
                     this.calcular();

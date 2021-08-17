@@ -25,7 +25,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="form-group">
-                            <label for="carta_terminos">Carta de Términos y Condiciones FIRMADA:</label>
+                            <label for="carta_terminos">Carta de Términos y Condiciones FIRMADA*:</label>
                             <input type="file" class="form-control" id="carta_terminos"
                                    @change="onFileChange"
                                    v-validate="{required:true, ext: ['pdf'],  size: 10240}"
@@ -52,6 +52,12 @@
                         </div>
                     </div>
                  </div>
+                <div class="row" v-if="cargando == false">
+                    <div class="col-md-12">
+                        <small><b style="font-style: italic; color: #00b44e">* Adjuntar un archivo en el campo para la carta de términos y condiciones firmada implica la aceptación tácita de los términos y condiciones.</b></small>
+                    </div>
+
+                </div>
 			</div>
             <div class="card-footer">
                 <div class="pull-right">

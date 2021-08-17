@@ -33,13 +33,13 @@
                                     <label>Anticipo (%):</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <label>Crédito (%):</label>
+                                    <label>Crédito (días):</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <label>Tiempo de entrega (dias):</label>
+                                    <label>Tiempo de entrega (días):</label>
                                 </div>
                                 <div class="col-md-2">
-                                    <label>Vigencia (dias):</label>
+                                    <label>Vigencia (días):</label>
                                 </div>
 
                             </div>
@@ -334,7 +334,7 @@
                                                                             Partidas Cotizadas  <br>en Libras (GBL)
                                                                         </th>
                                                                         <th style="background-color: #f2f4f5; max-width: 150px">
-                                                                            Valor de Cotización en <br>Moneda de Conversión <br>(Pesos MXN)
+                                                                            Valor de Cotización en <br>Pesos MXN
                                                                         </th>
                                                                     </tr>
                                                                     <tr>

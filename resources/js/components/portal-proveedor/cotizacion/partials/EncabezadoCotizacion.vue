@@ -15,7 +15,7 @@
                                 <tr>
                                     <td>Folio:</td>
                                     <td style="text-align: right">
-                                        <b><span style="color:black; text-decoration: underline">{{cotizacion_compra.numero_folio_format}}</span></b>
+                                        <b><span style="color:black; ">{{cotizacion_compra.numero_folio_format}}</span></b>
                                     </td>
                                 </tr>
                                 <tr>
