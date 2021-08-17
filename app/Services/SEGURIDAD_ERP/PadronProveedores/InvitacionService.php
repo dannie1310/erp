@@ -568,4 +568,9 @@ class InvitacionService
         }
         return $this->repository->show($id)->getPresupuestoEdit();
     }
+
+    public function pdf($id)
+    {
+        return $this->repository->show($id)->pdf();
+    }
 }

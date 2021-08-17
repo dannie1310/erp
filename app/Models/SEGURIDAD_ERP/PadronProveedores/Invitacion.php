@@ -14,16 +14,17 @@ use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\PDF\Compras\InvitacionCotizarFormato;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use App\Models\CADECO\CotizacionCompra;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\PresupuestoContratista;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Http\Transformers\CADECO\DestinoTransformer;
 use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
-use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 
@@ -484,5 +485,11 @@ class Invitacion extends Model
 
     public function getPresupuestoEdit(){
         dd(1, $this);
+    }
+
+    public function pdf()
+    {
+        $pdf = new InvitacionCotizarFormato($this);
+        return $pdf->create();
     }
 }
