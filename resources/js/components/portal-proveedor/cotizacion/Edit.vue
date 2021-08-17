@@ -23,27 +23,106 @@
                             <div class="modal-body" v-if="invitacion.cotizacionCompra">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <datos-cotizacion-compra v-bind:cotizacion_compra="invitacion.cotizacionCompra"></datos-cotizacion-compra>
+                                        <encabezado-cotizacion-compra-proveedor v-bind:cotizacion_compra="invitacion.cotizacionCompra"></encabezado-cotizacion-compra-proveedor>
                                     </div>
                                 </div>
+
+                                 <div class="row">
+                                    <div class="col-md-2">
+                                        <label>Fecha:</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Pago en Parcialidades (%):</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Anticipo (%):</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Crédito (%):</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Tiempo de entrega (dias):</label>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label>Vigencia (dias):</label>
+                                    </div>
+                                </div>
+
                                 <div class="row">
                                     <div class="col-md-2">
-                                        <div class="form-group error-content">
-                                            <label for="fecha" class="col-form-label">Fecha:</label>
-                                            <datepicker v-model = "invitacion.cotizacionCompra.fecha"
-                                                        name = "fecha"
-                                                        :format = "formatoFecha"
-                                                        :language = "es"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        v-validate="{required: true}"
-                                                        :disabled-dates="fechasDeshabilitadas"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
-                                            ></datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                        </div>
+                                        <datepicker v-model = "invitacion.cotizacionCompra.fecha"
+                                                    id = "fecha"
+                                                    name = "fecha"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :disabled-dates="fechasDeshabilitadas"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input
+                                            :disabled="cargando"
+                                            type="text"
+                                            name="pago"
+                                            v-model="invitacion.cotizacionCompra.complemento.parcialidades"
+                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                            class="form-control"
+                                            id="pago"
+                                            style="text-align: right"
+                                            :class="{'is-invalid': errors.has('pago')}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input
+                                            :disabled="cargando"
+                                            type="text"
+                                            name="anticipo"
+                                            v-model="invitacion.cotizacionCompra.complemento.anticipo"
+                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                            class="form-control"
+                                            id="anticipo"
+                                            style="text-align: right"
+                                            :class="{'is-invalid': errors.has('anticipo')}">
+                                    </div>
+                                    <div class=" col-md-2">
+                                        <input
+                                            :disabled="cargando"
+                                            type="text"
+                                            name="credito"
+                                            v-model="invitacion.cotizacionCompra.complemento.dias_credito"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                            class="form-control"
+                                            id="credito"
+                                            :class="{'is-invalid': errors.has('credito')}">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input
+                                            :disabled="cargando"
+                                            type="text"
+                                            name="tiempo"
+                                            v-model="invitacion.cotizacionCompra.complemento.entrega"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                            class="form-control"
+                                            id="tiempo"
+                                            :class="{'is-invalid': errors.has('tiempo')}">
+                                    </div>
+                                    <div class="col-md-2" >
+                                        <input
+                                            :disabled="cargando"
+                                            type="text"
+                                            name="vigencia"
+                                            v-model="invitacion.cotizacionCompra.complemento.vigencia"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                            class="form-control"
+                                            id="vigencia"
+                                            :class="{'is-invalid': errors.has('vigencia')}">
                                     </div>
                                 </div>
+
                                 <hr />
                                 <div class="row" v-if="invitacion">
                                     <div  class="col-md-12">
@@ -145,7 +224,7 @@
                                             :disabled="cargando"
                                             type="text"
                                             name="descuento_cot"
-                                            v-model="descuento_cot"
+                                            v-model="invitacion.cotizacionCompra.complemento.descuento"
                                             v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                             class="col-sm-6 form-control"
                                             id="descuento_cot"
@@ -228,78 +307,6 @@
                                         <label class="col-sm-2 col-form-label">Total:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">${{(parseFloat(total)).formatMoney(2,'.',',')}}</label>
                                     </div>
-                                    <div class=" col-md-10" align="right">
-                                        <label class="col-md-4 col-form-label">Pago en Parcialidades(%):</label>
-                                    </div>
-                                    <div class=" col-md-2 p-1" align="right">
-                                        <input
-                                            :disabled="cargando"
-                                            type="text"
-                                            name="pago"
-                                            v-model="invitacion.cotizacionCompra.complemento.parcialidades"
-                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                            class="col-sm-6 form-control"
-                                            id="pago"
-                                            style="text-align: right"
-                                            :class="{'is-invalid': errors.has('pago')}">
-                                    </div>
-                                    <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Anticipo(%):</label>
-                                    </div>
-                                    <div class=" col-md-2 p-1" align="right">
-                                        <input
-                                            :disabled="cargando"
-                                            type="text"
-                                            name="anticipo"
-                                            v-model="invitacion.cotizacionCompra.complemento.anticipo"
-                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                            class="col-sm-6 form-control"
-                                            id="anticipo"
-                                            style="text-align: right"
-                                            :class="{'is-invalid': errors.has('anticipo')}">
-                                    </div>
-                                    <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Crédito (días):</label>
-                                    </div>
-                                    <div class=" col-md-2 p-1" align="right">
-                                        <input
-                                            :disabled="cargando"
-                                            type="text"
-                                            name="credito"
-                                            v-model="invitacion.cotizacionCompra.complemento.dias_credito"
-                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                            class="col-sm-6 form-control"
-                                            id="credito"
-                                            :class="{'is-invalid': errors.has('credito')}">
-                                    </div>
-                                    <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Tiempo de Entrega (días):</label>
-                                    </div>
-                                    <div class=" col-md-2 p-1" align="right">
-                                        <input
-                                            :disabled="cargando"
-                                            type="text"
-                                            name="tiempo"
-                                            v-model="invitacion.cotizacionCompra.complemento.entrega"
-                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                            class="col-sm-6 form-control"
-                                            id="tiempo"
-                                            :class="{'is-invalid': errors.has('tiempo')}">
-                                    </div>
-                                    <div class=" col-md-10" align="right">
-                                        <label class="col-sm-2 col-form-label">Vigencia (días):</label>
-                                    </div>
-                                    <div class=" col-md-2 p-1" align="right">
-                                        <input
-                                            :disabled="cargando"
-                                            type="text"
-                                            name="vigencia"
-                                            v-model="invitacion.cotizacionCompra.complemento.vigencia"
-                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                            class="col-sm-6 form-control"
-                                            id="vigencia"
-                                            :class="{'is-invalid': errors.has('vigencia')}">
-                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-12">
@@ -345,10 +352,12 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     import DatosCotizacionCompra from "./partials/DatosCotizacionCompra";
-    import invitacion from "../../../store/modules/padronProveedores/invitacion";
+    import EncabezadoCotizacionCompraProveedor from "./partials/EncabezadoCotizacion";
     export default {
         name: "cotizacion-proveedor-edit",
-        components: {DatosCotizacionCompra, Datepicker, ModelListSelect},
+        components: {
+            EncabezadoCotizacionCompraProveedor,
+            DatosCotizacionCompra, Datepicker, ModelListSelect},
         props: ['id_invitacion', 'xls'],
         data() {
             return {

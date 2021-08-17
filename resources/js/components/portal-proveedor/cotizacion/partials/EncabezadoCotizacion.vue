@@ -37,7 +37,7 @@
 
 <script>
     export default {
-        name: "EncabezadoCotizacionCompra",
+        name: "EncabezadoCotizacionCompraProveedor",
         components: {},
         props: ["cotizacion_compra"],
     }
