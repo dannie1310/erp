@@ -127,20 +127,25 @@
                                 <div class="row" v-if="invitacion">
                                     <div  class="col-md-12">
                                         <div class="table-responsive">
-                                            <table class="table table-bordered table-sm">
+                                            <table class="table table-sm tabla-resumen-monedas">
                                                 <thead>
                                                 <tr>
                                                     <th class="index_corto">#</th>
                                                     <th style="width:110px;">No. de Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
-                                                    <th class="index_corto"></th>
+                                                    <th class="index">¿Cotizar? No/Si
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="toggleCotizar" v-model="toggleCotizar" checked value="1">
+                                                            <label class="custom-control-label" for="toggleCotizar"></label>
+                                                        </div>
+                                                    </th>
                                                     <th >Cantidad</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
                                                     <th class="cantidad_input">% Descuento</th>
-                                                    <th >Precio Total</th>
-                                                    <th >Moneda</th>
-                                                    <th >Precio Total Moneda Conversión</th>
+                                                    <th class="cantidad_input">Precio Total</th>
+                                                    <th class="cantidad_input">Moneda</th>
+                                                    <th class="cantidad_input">Precio Total Moneda Conversión</th>
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
@@ -159,7 +164,7 @@
                                                         <td style="text-align:center;">{{partida.cantidad_format}}</td>
                                                         <td>
                                                             <input type="text"
-                                                                   v-on:change="calcular"
+                                                                   v-on:keyup="calcular"
                                                                    class="form-control"
                                                                    :disabled="partida.no_cotizado == false"
                                                                    :name="`precio[${i}]`"
@@ -175,7 +180,7 @@
                                                                    :disabled="partida.no_cotizado == false"
                                                                    class="form-control"
                                                                    :name="`descuento[${i}]`"
-                                                                   v-on:change="calcular"
+                                                                   v-on:keyup="calcular"
                                                                    data-vv-as="Descuento(%)"
                                                                    v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                                    :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
@@ -380,6 +385,17 @@
                 credito: 0,
                 tiempo: 0,
                 vigencia: 0,
+                pesos_con_descuento: 0,
+                dolares_con_descuento: 0,
+                euros_con_descuento: 0,
+                libras_con_descuento: 0,
+                toggleCotizar : 1,
+                multiples_monedas : false,
+                libra_seleccionado : false,
+                dolar_seleccionado : false,
+                euro_seleccionado : false,
+                peso_seleccionado : true,
+                ancho_tabla_detalle: '330',
             }
         },
         mounted() {
@@ -556,6 +572,24 @@
                 }
             },
         },
+        watch: {
+            toggleCotizar: {
+                handler(toggleCotizar) {
+                    if(toggleCotizar){
+                        this.invitacion.cotizacionCompra.partidas.data.forEach(partida => {
+                            partida.enable = true;
+                            partida.no_cotizado = true;
+                        })
+                    }else {
+                        this.invitacion.cotizacionCompra.partidas.data.forEach(partida => {
+                            partida.enable = false;
+                            partida.no_cotizado = false;
+                        })
+                    }
+                    this.calcular();
+                },
+            }
+        },
         computed: {
             subtotal()
             {
@@ -577,3 +611,86 @@
         },
     }
 </script>
+<style scoped>
+table.tabla-resumen-monedas {
+    word-wrap: unset;
+    width: 100%;
+    background-color: white;
+    border-color: transparent;
+    border-collapse: collapse;
+    clear: both;
+}
+
+table.tabla-resumen-monedas th, table.tabla-resumen-monedas td {
+    border: 1px solid #dee2e6;
+}
+
+table thead th
+{
+    padding: 0.2em;
+
+    background-color: #f2f4f5;
+    font-weight: bold;
+    color: black;
+    overflow: hidden;
+    text-align: center;
+}
+
+table.tabla-resumen-monedas td.sin_borde {
+    border: none;
+    padding: 2px 5px;
+}
+
+table thead th {
+    text-align: center;
+}
+table tbody tr
+{
+    border-width: 0 1px 1px 1px;
+    border-style: none solid solid solid;
+    border-color: white #CCCCCC #CCCCCC #CCCCCC;
+}
+table tbody td,
+table.tabla-resumen-monedas table tbody th
+{
+    border-right: 1px solid #ccc;
+    color: #242424;
+    line-height: 20px;
+    overflow: hidden;
+    padding: 2px 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+table tbody td input.text
+{
+    border: none;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    background-color: transparent;
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: bold;
+}
+
+table .numerico
+{
+    text-align: right;
+    padding-left: 0;
+    white-space: normal;
+}
+
+.text.is-invalid {
+    color: #dc3545;
+}
+
+table tbody td input.text {
+    text-align: right;
+}
+</style>
+
