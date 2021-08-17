@@ -76,6 +76,11 @@ class    CotizacionCompra  extends Transaccion
      */
     public function partidas()
     {
+        return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion')->where("no_cotizado", "=", 0);
+    }
+
+    public function partidasEdicion()
+    {
         return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion');
     }
 
@@ -861,7 +866,7 @@ class    CotizacionCompra  extends Transaccion
                             'anticipo' => $data['anticipo'],
                             'dias_credito' => $data['credito'],
                             'dias_entrega' => $data['tiempo'],
-                            'no_cotizado' => 0,
+                            'no_cotizado' => !$partida['enable'],
                             'disponibles' => 1,
                             'id_moneda' => $partida['moneda_seleccionada']
                         ]);
@@ -870,6 +875,28 @@ class    CotizacionCompra  extends Transaccion
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['id_material'],
                             'descuento_partida' => $partida['descuento'],
+                            'observaciones' => array_key_exists('observacion_partida', $partida) ? $partida['observacion_partida'] : '',
+                            'estatus' => 3
+                        ]);
+                    } else {
+                        $cotizaciones = $cotizacion->partidas()->create([
+                            'id_transaccion' => $cotizacion->id_transaccion,
+                            'id_material' => $partida['id_material'],
+                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'precio_unitario' => null,
+                            'descuento' => 0,
+                            'anticipo' => $data['anticipo'],
+                            'dias_credito' => $data['credito'],
+                            'dias_entrega' => $data['tiempo'],
+                            'no_cotizado' => !$partida['enable'],
+                            'disponibles' => 1,
+                            'id_moneda' => $partida['moneda_seleccionada']
+                        ]);
+                        #------- Compras.cotizacion_partidas_complemento
+                        $cotizaciones->partida()->create([
+                            'id_transaccion' => $cotizacion->id_transaccion,
+                            'id_material' => $partida['id_material'],
+                            'descuento_partida' => 0,
                             'observaciones' => array_key_exists('observacion_partida', $partida) ? $partida['observacion_partida'] : '',
                             'estatus' => 3
                         ]);

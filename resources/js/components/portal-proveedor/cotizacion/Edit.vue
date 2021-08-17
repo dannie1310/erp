@@ -149,8 +149,8 @@
                                                     <th>Observaciones</th>
                                                 </tr>
                                                 </thead>
-                                                <tbody v-if="invitacion.cotizacionCompra.partidas">
-                                                    <tr v-for="(partida, i) in invitacion.cotizacionCompra.partidas.data">
+                                                <tbody v-if="invitacion.cotizacionCompra.partidasEdicion">
+                                                    <tr v-for="(partida, i) in invitacion.cotizacionCompra.partidasEdicion.data">
                                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                         <td>{{(partida.material) ? partida.material.numero_parte : '----'}}</td>
                                                         <td>{{(partida.material) ? partida.material.descripcion : '----'}}</td>
@@ -661,7 +661,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
-                    params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidas'], scope: ['invitadoAutenticado']}
+                    params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidasEdicion'], scope: ['invitadoAutenticado']}
                 }).then(data => {
                     this.descuento_cot = data.cotizacionCompra.complemento.descuento;
                     this.invitacion = data;
@@ -681,17 +681,17 @@
                         this.dolar = this.xls.tc_usd;
                         data.cotizacionCompra.complemento.entrega = this.xls.tiempo_entrega;
                         data.cotizacionCompra.complemento.vigencia = this.xls.vigencia;
-                        for(var i = 0; i < data.cotizacionCompra.partidas.data.length; i++)
+                        for(var i = 0; i < data.cotizacionCompra.partidasEdicion.data.length; i++)
                         {
                             for(var x = 0; x < this.xls.partidas.length; x++)
                             {
-                                if(data.cotizacionCompra.partidas.data[i].material.id == this.xls.partidas[x].id_material)
+                                if(data.cotizacionCompra.partidasEdicion.data[i].material.id == this.xls.partidas[x].id_material)
                                 {
-                                    data.cotizacionCompra.partidas.data[i].descuento = this.xls.partidas[x].descuento;
-                                    data.cotizacionCompra.partidas.data[i].id_moneda = this.xls.partidas[x].id_moneda;
-                                    data.cotizacionCompra.partidas.data[i].observacion = this.xls.partidas[x].observaciones;
-                                    data.cotizacionCompra.partidas.data[i].precio_unitario = this.xls.partidas[x].precio_unitario;
-                                    data.cotizacionCompra.partidas.data[i].unidad = this.xls.partidas[x].unidad;
+                                    data.cotizacionCompra.partidasEdicion.data[i].descuento = this.xls.partidas[x].descuento;
+                                    data.cotizacionCompra.partidasEdicion.data[i].id_moneda = this.xls.partidas[x].id_moneda;
+                                    data.cotizacionCompra.partidasEdicion.data[i].observacion = this.xls.partidas[x].observaciones;
+                                    data.cotizacionCompra.partidasEdicion.data[i].precio_unitario = this.xls.partidas[x].precio_unitario;
+                                    data.cotizacionCompra.partidasEdicion.data[i].unidad = this.xls.partidas[x].unidad;
                                 }
                             }
                         }
@@ -736,7 +736,7 @@
                 this.libra_seleccionado = false;
                 this.ancho_tabla_detalle = 330;
 
-                this.invitacion.cotizacionCompra.partidas.data.forEach(function (partida, i) {
+                this.invitacion.cotizacionCompra.partidasEdicion.data.forEach(function (partida, i) {
                     if(partida.no_cotizado === true) {
                         partida.calculo_precio_total = partida.cantidad * (partida.precio_unitario - ((partida.precio_unitario * partida.descuento)/100));
                         if(partida.id_moneda == 1)
@@ -852,7 +852,7 @@
                         'tc_eur' : this.euro,
                         'tc_usd' : this.dolar,
                         'tc_libra' : this.libra,
-                        'partidas' : this.invitacion.cotizacionCompra.partidas
+                        'partidas' : this.invitacion.cotizacionCompra.partidasEdicion
                     }
 
                     return this.$store.dispatch('compras/cotizacion/updateCotizacionProveedor', {
@@ -869,12 +869,12 @@
             toggleCotizar: {
                 handler(toggleCotizar) {
                     if(toggleCotizar){
-                        this.invitacion.cotizacionCompra.partidas.data.forEach(partida => {
+                        this.invitacion.cotizacionCompra.partidasEdicion.data.forEach(partida => {
                             partida.enable = true;
                             partida.no_cotizado = true;
                         })
                     }else {
-                        this.invitacion.cotizacionCompra.partidas.data.forEach(partida => {
+                        this.invitacion.cotizacionCompra.partidasEdicion.data.forEach(partida => {
                             partida.enable = false;
                             partida.no_cotizado = false;
                         })
