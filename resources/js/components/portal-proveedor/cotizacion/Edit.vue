@@ -719,41 +719,59 @@
                     id: this.id_invitacion,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidasEdicion'], scope: ['invitadoAutenticado']}
                 }).then(data => {
-                    this.descuento_cot = data.cotizacionCompra.complemento.descuento;
-                    this.invitacion = data;
-                    this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;
-                    this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
-                    this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
-                    if(this.xls != null)
-                    {
-                        data.cotizacionCompra.complemento.anticipo = this.xls.anticipo;
-                        data.cotizacionCompra.complemento.dias_credito = this.xls.credito;
-                        data.cotizacionCompra.complemento.descuento = this.xls.descuento_cot;
-                        data.cotizacionCompra.fecha = this.xls.fecha_cotizacion;
-                        data.cotizacionCompra.observaciones = this.xls.observaciones_generales;
-                        data.cotizacionCompra.parcialidades = this.xls.pago_parcialidades;
-                        this.euro = this.xls.tc_eur;
-                        this.libra = this.xls.tc_libra;
-                        this.dolar = this.xls.tc_usd;
-                        data.cotizacionCompra.complemento.entrega = this.xls.tiempo_entrega;
-                        data.cotizacionCompra.complemento.vigencia = this.xls.vigencia;
-                        for(var i = 0; i < data.cotizacionCompra.partidasEdicion.data.length; i++)
+
+                    if(data.con_cotizacion){
+                        this.descuento_cot = data.cotizacionCompra.complemento.descuento;
+                        this.invitacion = data;
+                        this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;
+                        this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
+                        this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
+                        if(this.xls != null)
                         {
-                            for(var x = 0; x < this.xls.partidas.length; x++)
+                            data.cotizacionCompra.complemento.anticipo = this.xls.anticipo;
+                            data.cotizacionCompra.complemento.dias_credito = this.xls.credito;
+                            data.cotizacionCompra.complemento.descuento = this.xls.descuento_cot;
+                            data.cotizacionCompra.fecha = this.xls.fecha_cotizacion;
+                            data.cotizacionCompra.observaciones = this.xls.observaciones_generales;
+                            data.cotizacionCompra.parcialidades = this.xls.pago_parcialidades;
+                            this.euro = this.xls.tc_eur;
+                            this.libra = this.xls.tc_libra;
+                            this.dolar = this.xls.tc_usd;
+                            data.cotizacionCompra.complemento.entrega = this.xls.tiempo_entrega;
+                            data.cotizacionCompra.complemento.vigencia = this.xls.vigencia;
+                            for(var i = 0; i < data.cotizacionCompra.partidasEdicion.data.length; i++)
                             {
-                                if(data.cotizacionCompra.partidasEdicion.data[i].material.id == this.xls.partidas[x].id_material)
+                                for(var x = 0; x < this.xls.partidas.length; x++)
                                 {
-                                    data.cotizacionCompra.partidasEdicion.data[i].descuento = this.xls.partidas[x].descuento;
-                                    data.cotizacionCompra.partidasEdicion.data[i].id_moneda = this.xls.partidas[x].id_moneda;
-                                    data.cotizacionCompra.partidasEdicion.data[i].observacion = this.xls.partidas[x].observaciones;
-                                    data.cotizacionCompra.partidasEdicion.data[i].precio_unitario = this.xls.partidas[x].precio_unitario;
-                                    data.cotizacionCompra.partidasEdicion.data[i].unidad = this.xls.partidas[x].unidad;
+                                    if(data.cotizacionCompra.partidasEdicion.data[i].material.id == this.xls.partidas[x].id_material)
+                                    {
+                                        data.cotizacionCompra.partidasEdicion.data[i].descuento = this.xls.partidas[x].descuento;
+                                        data.cotizacionCompra.partidasEdicion.data[i].id_moneda = this.xls.partidas[x].id_moneda;
+                                        data.cotizacionCompra.partidasEdicion.data[i].observacion = this.xls.partidas[x].observaciones;
+                                        data.cotizacionCompra.partidasEdicion.data[i].precio_unitario = this.xls.partidas[x].precio_unitario;
+                                        data.cotizacionCompra.partidasEdicion.data[i].unidad = this.xls.partidas[x].unidad;
+                                    }
                                 }
                             }
                         }
+                        this.getMonedas(data.base_datos);
+                        this.calcular()
+                    } else {
+                        swal("La invitación "+data.numero_folio_format + " no tiene una cotización disponible para editar, debe registrarla primero", {
+                            icon: "error",
+                            closeOnClickOutside: false,
+                            buttons: {
+                                confirm: {
+                                    text: 'Entendido',
+                                }
+                            }
+                        }).then((value) => {
+                            if(value) {
+                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: data.id}});
+                                swal.close();
+                            }
+                        });
                     }
-                    this.getMonedas(data.base_datos);
-                    this.calcular()
                 })
             },
             getPrecioTotal(precio, moneda) {
