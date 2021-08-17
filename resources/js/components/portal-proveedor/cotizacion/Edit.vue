@@ -750,6 +750,10 @@
                                         data.cotizacionCompra.partidasEdicion.data[i].observacion = this.xls.partidas[x].observaciones;
                                         data.cotizacionCompra.partidasEdicion.data[i].precio_unitario = this.xls.partidas[x].precio_unitario;
                                         data.cotizacionCompra.partidasEdicion.data[i].unidad = this.xls.partidas[x].unidad;
+                                        if(this.xls.partidas[x].precio_unitario>0)
+                                        {
+                                            data.cotizacionCompra.partidasEdicion.data[i].enable = 1;
+                                        }
                                     }
                                 }
                             }
