@@ -12,13 +12,14 @@ use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\PDF\Compras\InvitacionCotizarFormato;
-use App\Models\CADECO\SolicitudCompra;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use App\Models\CADECO\CotizacionCompra;
-use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\PresupuestoContratista;
 use App\Http\Transformers\CADECO\DestinoTransformer;
@@ -26,7 +27,6 @@ use App\Http\Transformers\CADECO\ConceptoTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
 use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
-use Illuminate\Support\Facades\DB;
 
 class Invitacion extends Model
 {
@@ -334,6 +334,7 @@ class Invitacion extends Model
     {
         $transacciones = [];
         $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->orderBy('id_transaccion_antecedente','desc')->get();
+
         foreach ($solicitudes as $key =>  $solicitud) {
             $observaciones = '';
             if($solicitud->tipo_transaccion_antecedente == 17){
@@ -445,12 +446,6 @@ class Invitacion extends Model
        return $partidas;
     }
 
-    public function pdf()
-    {
-        $pdf = new InvitacionCotizarFormato($this);
-        return $pdf->create();
-    }
-
     public function getPresupuesto()
     {
         $resp = [];
@@ -486,6 +481,12 @@ class Invitacion extends Model
             $resp['contratos'] = $conceptos;
             return $resp;
         }
+    }
+
+    public function pdf()
+    {
+        $pdf = new InvitacionCotizarFormato($this);
+        return $pdf->create();
     }
 
     public function getPresupuestoEdit(){

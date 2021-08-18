@@ -123,7 +123,7 @@
                             id: this.id_invitacion,
                             params:{}
                         }).then(data => {
-                            if(this.invitacion.cotizacion){
+                            if(this.invitacion.con_cotizacion){
                                 this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
                             }else{
                                 console.log(this.invitacion.tipo_antecedente)
