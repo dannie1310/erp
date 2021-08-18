@@ -126,6 +126,7 @@
                             if(this.invitacion.cotizacion){
                                 this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
                             }else{
+                                console.log(this.invitacion.tipo_antecedente)
                                 if(this.invitacion.tipo_antecedente == 49) {
                                     this.$router.push({
                                         name: 'presupuesto-proveedor-create',
