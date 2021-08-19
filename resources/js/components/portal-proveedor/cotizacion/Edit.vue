@@ -493,7 +493,7 @@
 
                                                     </td>
                                                         <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal <span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                        <td style="border: none; text-align: right">
+                                                        <td style="border: none; text-align: right; padding-top: 0.75rem;">
                                                             ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
                                                         </td>
                                                     </tr>
@@ -508,26 +508,26 @@
                                                         v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                         class="form-control"
                                                         id="descuento_cot"
-                                                        style="text-align: right"
+                                                        style="text-align: right; padding-right: 4px"
                                                         :class="{'is-invalid': errors.has('descuento_cot')}">
                                                     </td>
                                                 </tr>
                                                     <!--  -->
                                                 <tr style="border: none">
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right">
+                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
                                                         ${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}
                                                     </td>
                                                 </tr>
                                                 <tr style="border: none">
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>IVA<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right">
+                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
                                                         ${{(parseFloat(iva)).formatMoney(2,'.',',')}}
                                                     </td>
                                                 </tr>
                                                 <tr style="border: none">
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Total<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right">
+                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
                                                         ${{(parseFloat(total)).formatMoney(2,'.',',')}}
                                                     </td>
                                                 </tr>
