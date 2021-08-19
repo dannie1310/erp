@@ -6,7 +6,7 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header">COTIZACIONES</li>
             <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
-                <router-link :to="{name: 'invitacion-proveedor'}" class="nav-link">
+                <router-link :to="{name: 'invitacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'invitacion-proveedor'}">
                     <i class="fa fa-mail-bulk nav-icon"></i>
                     <p>Lista de Invitaciones a Cotizar</p>
                 </router-link>
@@ -18,7 +18,7 @@
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
-                <router-link :to="{name: 'cotizacion-proveedor'}" class="nav-link">
+                <router-link :to="{name: 'cotizacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion-proveedor'}">
                     <i class="fa fa-comment-dollar nav-icon"></i>
                     <p>Lista de Cotizaciones Registradas</p>
                 </router-link>

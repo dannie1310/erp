@@ -259,7 +259,7 @@
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0"><i class="fa fa-envelope"></i>
+                            <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0 || cargando"><i class="fa fa-envelope"></i>
                                 Enviar</button>
                         </div>
                     </div>
