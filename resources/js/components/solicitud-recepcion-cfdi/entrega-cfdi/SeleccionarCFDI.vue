@@ -49,9 +49,6 @@
         </div>
         <cfdi-show v-if="cargado" v-bind:cfdi="dato"></cfdi-show>
         <div class="pull-right" style="padding-bottom: 48px" >
-            <button type="button" class="btn btn-secondary" >
-                <i class="fa fa-angle-left"></i>Regresar
-            </button>
             <button type="button" class="btn btn-primary" @click="validate()" :disabled="errors.count() > 0 || !cargado"  >
                 Continuar <i class="fa fa-angle-right"></i>
             </button>
