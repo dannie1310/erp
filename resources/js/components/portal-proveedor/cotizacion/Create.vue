@@ -232,14 +232,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr style="border: none">
-                                                    <td :colspan="colspan"  style="border: none;"></td>
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal antes de descuento<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
-                                                        ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
-                                                    </td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td :colspan="colspan" rowspan="10" style="border: none; padding-top: 0.75rem">
+                                                    <td :colspan="colspan" rowspan="21" style="border: none; padding-top: 0.75rem">
 
                                                         <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
                                                             <div class="card-header">
@@ -513,6 +506,12 @@
                                                         </div>
 
                                                     </td>
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal antes de descuento<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
+                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
+                                                        ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
+                                                    </td>
+                                                </tr>
+                                                <tr style="border: none">
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global(%):</b></td>
                                                     <td style="border: none; text-align: right"> <input
                                                         v-on:keyup="calcular"
@@ -546,6 +545,7 @@
                                                         ${{(parseFloat(total)).formatMoney(2,'.',',')}}
                                                     </td>
                                                 </tr>
+                                                <template  v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
                                                 <tr style="border: none">
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
                                                     <td style="border: none; text-align: right"></td>
@@ -570,6 +570,48 @@
                                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
                                                     <td style="border: none; text-align: right"></td>
                                                 </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                <tr style="border: none">
+                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                    <td style="border: none; text-align: right"></td>
+                                                </tr>
+                                                </template>
+
                                             </tbody>
                                         </table>
                                     </div>
