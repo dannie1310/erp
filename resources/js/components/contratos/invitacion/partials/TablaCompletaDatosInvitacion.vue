@@ -40,9 +40,9 @@
                             <span style="color:black; text-decoration: underline">{{invitacion.contrato.numero_folio_format}}</span>
                         </router-link>
                     </td>
-                  <td style="text-align: center" v-else>
-                     {{invitacion.contrato.numero_folio_format}}
-                  </td>
+                    <td style="text-align: center" v-else>
+                       {{invitacion.contrato.numero_folio_format}}
+                    </td>
                     <td v-if="invitacion.empresa">
                         {{invitacion.empresa.razon_social}}
                     </td>
