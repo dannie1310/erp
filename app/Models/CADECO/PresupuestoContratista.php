@@ -512,7 +512,8 @@ class PresupuestoContratista extends Transaccion
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
-                    'DiasVigencia' => $data['vigencia']
+                    'DiasVigencia' => $data['vigencia'],
+                    'estado' => 1,
                 ]);
 
                 foreach($data['partidas'] as $t => $partida)
@@ -843,6 +844,7 @@ class PresupuestoContratista extends Transaccion
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observaciones_cot'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
+                    'estado' => -1,
                     'TcUSD' => $data['tc_usd'],
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
@@ -887,7 +889,7 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => null,
                     'DiasCredito' => null,
                     'DiasVigencia' => null,
-                    'estado' => 0
+                    'estado' => -2
                 ]);
                 foreach($data['conceptos']['data'] as $t => $partida)
                 {
