@@ -1047,6 +1047,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@index');
             $api->get('getContratos', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getContratos');
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCotizaciones');
+            $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1152,6 +1153,15 @@ $api->version('v1', function ($api) {
                 $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@cancelar')->where(['id' => '[0-9]+']);
                 $api->patch('{id}/revertir-autorizacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@revertirAutorizacion')->where(['id' => '[0-9]+']);
             });
+        });
+
+        $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@abrir')->where(['id' => '[0-9]+']);
         });
     });
 
