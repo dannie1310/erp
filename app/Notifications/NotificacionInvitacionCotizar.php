@@ -4,7 +4,7 @@ namespace App\Notifications;
 
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
-use App\PDF\Compras\InvitacionCotizarFormato;
+use App\PDF\PortalProveedores\InvitacionCotizarFormato;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -57,10 +57,9 @@ class NotificacionInvitacionCotizar extends Notification
 
         $tamanio_mb = 12;
 
-        if($this->invitacion->transaccionAntecedente->tipo_transaccion == 17){
+        if(17 == 17){
             //0000
             if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -69,7 +68,6 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0001
             else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -78,7 +76,6 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0010
             else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -87,7 +84,6 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0011
             else if(!file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -97,7 +93,6 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0100
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -106,7 +101,6 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0101
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -115,7 +109,6 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0110
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -125,7 +118,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //0111
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -135,7 +128,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1000
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -144,7 +137,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1001
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -153,7 +146,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1010
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -162,7 +155,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1011
             else if(file_exists($path_carta_terminos)  && !(($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -172,7 +165,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1100
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -182,7 +175,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1101
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -192,7 +185,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1110
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
@@ -202,7 +195,7 @@ class NotificacionInvitacionCotizar extends Notification
             }
             //1111
             else if(file_exists($path_carta_terminos)  && (($carta_terminos->tamanio_kb/1024)<$tamanio_mb) && file_exists($path_formato_cotizacion) && (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $solicitud = SolicitudCompra::find($this->invitacion->transaccionAntecedente->id_transaccion);
+
                 $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")

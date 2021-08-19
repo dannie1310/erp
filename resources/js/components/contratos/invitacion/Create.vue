@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="card" v-if="!solicitud">
+        <div class="card" v-if="!contrato">
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
@@ -13,9 +13,9 @@
         </div>
         <div class="card" v-else>
             <div class="card-body">
-                <div class="row" v-if="solicitud">
+                <div class="row" v-if="contrato">
                     <div class="col-md-12">
-                        <encabezado-solicitud-compra v-bind:solicitud_compra="solicitud"></encabezado-solicitud-compra>
+                        <encabezado-contrato-proyectado v-bind:contrato_proyectado="contrato"></encabezado-contrato-proyectado>
                     </div>
                 </div>
                 <div class="row">
@@ -172,7 +172,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                        <label for="direccion_entrega">Dirección de Entrega:</label>
+                        <label for="direccion_entrega">Dirección:</label>
                             <textarea
                                 name="direccion_entrega"
                                 id="direccion_entrega"
@@ -186,7 +186,7 @@
                     </div>
                     <div class="col-md-3">
                         <div class="form-group">
-                        <label for="ubicacion_entrega_plataforma_digital">Ubicación de Entrega en Plataforma Digital:</label>
+                        <label for="ubicacion_entrega_plataforma_digital">Ubicación en Plataforma Digital:</label>
                             <input
                                 name="ubicacion_entrega_plataforma_digital"
                                 id="ubicacion_entrega_plataforma_digital"
@@ -202,24 +202,14 @@
                     </div>
                 </div>
 
-                <div class="row" v-if="solicitud">
+                <div class="row" v-if="contrato">
                     <div class="col-md-12">
                         <ckeditor v-model="cuerpo_correo" ></ckeditor>
                     </div>
                 </div>
                 <br>
-                <div class="row" v-if="solicitud">
-                    <div class="col-md-12">
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label" style="cursor:pointer" >
-                                <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="requiere_fichas_tecnicas" value="1" >
-                            </label>
-                        </div>
-                        <label>Requerir fichas técnicas del material</label>
-                    </div>
-                </div>
-                <br>
-                <div class="row" v-if="solicitud">
+
+                <div class="row" v-if="contrato">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="carta_terminos">Carta de Términos y Condiciones:</label>
@@ -236,7 +226,7 @@
                     </div>
                      <div class="col-md-6">
                          <div class="form-group">
-                            <label for="carta_terminos">Formato de Cotización:</label>
+                            <label for="carta_terminos">Formato de Presupuesto:</label>
                             <input type="file" class="form-control" id="formato_cotizacion"
                                    @change="onFileChange"
                                    v-validate="{ext: ['docx'],  size: 102400}"
@@ -251,7 +241,7 @@
                  </div>
             </div>
             <div class="card-footer">
-                <div class="row" v-if="solicitud">
+                <div class="row" v-if="contrato">
                     <div class="col-md-8">
 
                     </div>
@@ -259,7 +249,7 @@
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0 || cargando"><i class="fa fa-envelope"></i>
+                            <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0"><i class="fa fa-envelope"></i>
                                 Enviar</button>
                         </div>
                     </div>
@@ -343,16 +333,17 @@
 </template>
 
 <script>
-import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSolicitudCompra";
 import {ModelListSelect} from 'vue-search-select';
 import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
 
-import EncabezadoSolicitudCompra from "../solicitud-compra/partials/Encabezado";
+import EncabezadoContratoProyectado from "../proyectado/Encabezado";
 export default {
     name: "CreateInvitacionCompra.vue",
-    components: {EncabezadoSolicitudCompra, Datepicker,es,TablaDatosSolicitudCompra, ModelListSelect},
-    props: ['id_solicitud'],
+    components: {
+        EncabezadoContratoProyectado,
+         Datepicker,es, ModelListSelect},
+    props: ['id_contrato'],
     data(){
         return {
             cargando : false,
@@ -397,12 +388,12 @@ export default {
         }
     },
     mounted() {
-        if(!this.solicitud)
+        if(!this.contrato)
         {
             this.find();
         }else{
-            this.direccion_entrega = this.solicitud.direccion_entrega;
-            this.ubicacion_entrega_plataforma_digital = this.solicitud.ubicacion_entrega_plataforma_digital;
+            this.direccion_entrega = this.contrato.direccion_entrega;
+            this.ubicacion_entrega_plataforma_digital = this.contrato.ubicacion_entrega_plataforma_digital;
             this.getProveedores();
         }
 
@@ -412,13 +403,13 @@ export default {
     methods:{
         find() {
             this.cargando = true;
-            return this.$store.dispatch('compras/solicitud-compra/find', {
-                id: this.id_solicitud,
+            return this.$store.dispatch('contratos/contrato-proyectado/find', {
+                id: this.id_contrato,
                 params:{include: [
                         ],
                     }
             }).then(data => {
-                this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', data);
+                this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
                 this.direccion_entrega = data.direccion_entrega;
                 this.ubicacion_entrega_plataforma_digital = data.ubicacion_entrega_plataforma_digital;
             }).finally(()=>{
@@ -428,7 +419,7 @@ export default {
         getProveedores() {
             this.cargando = true;
             return this.$store.dispatch('cadeco/empresa/index', {
-                params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:1,3', include: 'sucursales' }
+                params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:2,3', include: 'sucursales' }
             })
             .then(data => {
                 this.proveedores = data.data;
@@ -439,8 +430,8 @@ export default {
         },
         getCuerpoCorreo(){
             this.cargando = true;
-            return this.$store.dispatch('compras/solicitud-compra/getCuerpoCorreo', {
-                id:this.solicitud.id
+            return this.$store.dispatch('contratos/contrato-proyectado/getCuerpoCorreo', {
+                id:this.contrato.id
             })
             .then(data => {
                 this.cuerpo_correo = data;
@@ -476,7 +467,7 @@ export default {
         },
         salir()
         {
-            this.$router.push({name: 'invitacion-compra-selecciona-solicitud'});
+            this.$router.push({name: 'invitacion-compra-selecciona-contrato'});
         },
         cerrarModal()
         {
@@ -506,7 +497,7 @@ export default {
             this.post.requerir_fichas_tecnicas = null;
 
 
-            //this.id_solicitud;
+            //this.id_contrato;
             this.id_proveedor = null;
             this.id_sucursal = null;
             this.observaciones = null;
@@ -580,7 +571,7 @@ export default {
             let _self = this;
             this.$validator.validate().then(result => {
                 if (result) {
-                    _self.post.id_transaccion = _self.id_solicitud;
+                    _self.post.id_transaccion = _self.id_contrato;
                     /*_self.post.id_proveedor = _self.id_proveedor;
                     _self.post.id_sucursal = _self.id_sucursal;
                     _self.post.id_usuario = _self.id_usuario;
@@ -603,7 +594,11 @@ export default {
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             $(this.$refs.modal_usuarios).modal('hide');
-                            this.$router.push({name: 'invitacion-compra'});
+                            if(_self.mas_invitaciones == true){
+                                this.limpiar();
+                            } else {
+                                this.$router.push({name: 'invitacion-compra'});
+                            }
                         });
                 }
             });
@@ -673,8 +668,8 @@ export default {
         }
     },
     computed: {
-        solicitud(){
-             return this.$store.getters['compras/solicitud-compra/currentSolicitud'];
+        contrato(){
+             return this.$store.getters['contratos/contrato-proyectado/currentContrato'];
         },
     },
     watch:{

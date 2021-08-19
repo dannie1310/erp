@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" :disabled="cargando" title="Eliminar Cotización">
+        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" :disabled="cargando" title="Eliminar">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">

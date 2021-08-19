@@ -5,10 +5,22 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">COTIZACIONES</li>
+            <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
+                <router-link :to="{name: 'invitacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'invitacion-proveedor'}">
+                    <i class="fa fa-mail-bulk nav-icon"></i>
+                    <p>Lista de Invitaciones a Cotizar</p>
+                </router-link>
+            </li>
             <li class="nav-item"  v-if="$root.can('registrar_cotizacion_proveedor',true)">
                 <router-link :to="{name: 'cotizacion-proveedor-seleccionar-solicitud'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion-proveedor-seleccionar-solicitud'}">
                     <i class="fa fa-plus nav-icon"></i>
                     <p>Registrar Cotización</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
+                <router-link :to="{name: 'cotizacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion-proveedor'}">
+                    <i class="fa fa-comment-dollar nav-icon"></i>
+                    <p>Lista de Cotizaciones Registradas</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('registrar_cotizacion_proveedor',true)">
@@ -17,18 +29,7 @@
                     <p>Enviar Cotización</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
-                <router-link :to="{name: 'cotizacion-proveedor'}" class="nav-link">
-                    <i class="fa fa-comment-dollar nav-icon"></i>
-                    <p>Lista de Cotizaciones</p>
-                </router-link>
-            </li>
-            <li class="nav-item"  v-if="$root.can('consultar_cotizacion_proveedor',true)">
-                <router-link :to="{name: 'invitacion-proveedor'}" class="nav-link">
-                    <i class="fa fa-envelope nav-icon"></i>
-                    <p>Lista de Invitaciones a Cotizar</p>
-                </router-link>
-            </li>
+
 
         </ul>
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
