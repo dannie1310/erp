@@ -12,11 +12,12 @@ use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\PDF\Compras\InvitacionCotizarFormato;
+use App\PDF\PortalProveedores\InvitacionCotizarFormato;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use App\Models\CADECO\CotizacionCompra;
@@ -87,7 +88,8 @@ class Invitacion extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")
+            ->where("tipo_transaccion","=",17)->withoutGlobalScopes();
     }
 
     public function cotizacionGenerada()
@@ -100,7 +102,8 @@ class Invitacion extends Model
     public function contratoProyectado(){
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(ContratoProyectado::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+        return $this->belongsTo(ContratoProyectado::class, "id_transaccion_antecedente", "id_transaccion")
+            ->where("tipo_transaccion","=",49)->withoutGlobalScopes();
     }
 
     public function cotizacionCompra()
@@ -156,6 +159,11 @@ class Invitacion extends Model
     public function areaCompradora()
     {
         return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora','id');
+    }
+
+    public function areaContratante()
+    {
+        return $this->belongsTo(TipoAreaSubcontratante::class, 'id_area_contratante','id');
     }
 
     public function cartaTerminos()
@@ -214,6 +222,15 @@ class Invitacion extends Model
             return $q1->areasPorUsuario();
         });
     }
+
+    public function scopeAreasContratantesPorUsuario($query)
+    {
+        return $query->whereHas('areaContratante', function ($q1) {
+            return $q1->areasPorUsuario();
+        });
+    }
+
+
 
     public function scopeInvitadoAutenticado($query)
     {

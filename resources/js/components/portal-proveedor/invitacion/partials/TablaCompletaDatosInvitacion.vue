@@ -5,8 +5,11 @@
             <table class="table  table-sm">
 
                 <tr >
-                    <th class="encabezado c120" >
-                      Solicitud de Compra
+                    <th class="encabezado c120"  v-if="invitacion.tipo_antecedente == 17">
+                        Solicitud de Compra
+                    </th>
+                    <th class="encabezado c120"  v-if="invitacion.tipo_antecedente == 49">
+                        Contrato Proyectado
                     </th>
                     <th class="encabezado c280" >
                       Proyecto
@@ -23,7 +26,7 @@
                 </tr>
                 <tr>
                     <td style="text-align: center">
-                       {{invitacion.solicitud_compra.numero_folio_format}}
+                       {{invitacion.transaccion.numero_folio_format}}
                     </td>
                     <td>
                         {{invitacion.descripcion_obra}}

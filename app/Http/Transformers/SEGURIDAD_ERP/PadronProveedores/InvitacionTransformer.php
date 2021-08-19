@@ -17,6 +17,8 @@ class InvitacionTransformer extends TransformerAbstract
 {
     protected $defaultIncludes = [
         'transaccion',
+        'solicitud_compra',
+        'contrato',
         'cotizacion',
         'empresa',
         'sucursal',

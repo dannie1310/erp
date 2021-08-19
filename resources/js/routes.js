@@ -977,6 +977,58 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'invitacion-cotizar',
+                        component: require('./components/contratos/invitacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'invitacion-cotizar-contrato',
+                                component: require('./components/contratos/invitacion/Index').default,
+                                meta: {
+                                    title: 'Invitaciones a Cotizar',
+                                    breadcrumb: {parent: 'contratos', name: 'INVITACIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_invitacion_cotizar_contrato'
+                                }
+                            },
+                            {
+                                path: 'create/seleccionar_contrato',
+                                name: 'invitacion-contrato-selecciona-contrato',
+                                component: require('./components/contratos/invitacion/SeleccionaContrato').default,
+                                meta: {
+                                    title: 'Seleccionar Contrato Proyectado',
+                                    breadcrumb: { parent: 'invitacion-cotizar-contrato', name: 'SELECCIONAR CONTRATO'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_invitacion_cotizar_contrato']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'invitacion-contrato-show',
+                                component: require('./components/contratos/invitacion/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Invitación a Cotizar',
+                                    breadcrumb: { parent: 'invitacion-cotizar-contrato', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_invitacion_cotizar_contrato'
+                                }
+                            },
+                            {
+                                path: ':id_contrato/invitacion/create',
+                                name: 'invitacion-contrato-create',
+                                component: require('./components/contratos/invitacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Invitación',
+                                    breadcrumb: { parent: 'invitacion-cotizar-contrato', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'presupuesto',
                         component: require('./components/contratos/presupuesto/Layout').default,
                         children: [

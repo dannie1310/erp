@@ -192,8 +192,13 @@ class Transaccion extends Model
         $date = date_create($this->cumplimiento);
         return date_format($date,"d/m/Y");
     }
+
     public function  getObservacionesFormatAttribute(){
-        return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        if(strlen($this->observaciones)>60){
+            return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        } else {
+            return $this->observaciones;
+        }
     }
 
     public function getTipoTransaccionStrAttribute()
