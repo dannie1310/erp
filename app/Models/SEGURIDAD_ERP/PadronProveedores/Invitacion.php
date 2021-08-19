@@ -203,9 +203,9 @@ class Invitacion extends Model
 
     public function scopeDisponibleCotizar($query)
     {
-        return $query->whereNull("id_cotizacion_generada")
-            ->where("fecha_cierre_invitacion","<=",date("Y-m-d"));
+        return $query->whereNull("id_cotizacion_generada")->whereRaw("fecha_cierre_invitacion >= '".date("Y-m-d")."'");
     }
+
     public function scopePorObra($query)
     {
         if (Context::isEstablished()) {

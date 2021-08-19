@@ -37,12 +37,6 @@
                     <th class="encabezado">
                         Fecha de Presupuesto
                     </th>
-                    <th class="encabezado">
-                        Monto de Presupuesto
-                    </th>
-                    <th class="encabezado">
-                        Moneda
-                    </th>
                 </tr>
                 <tr v-if="solicitud.tipo_transaccion == 17">
                     <td>
@@ -76,12 +70,6 @@
                     </td>
                     <td style="text-align: center">
                         {{ solicitud.fecha_format }}
-                    </td>
-                    <td style="text-align: center">
-                        {{solicitud.monto_format}}
-                    </td>
-                    <td style="text-align: center">
-                        {{solicitud.moneda_conversion}}
                     </td>
                 </tr>
                 <template v-if="solicitud.observaciones!='...'">
