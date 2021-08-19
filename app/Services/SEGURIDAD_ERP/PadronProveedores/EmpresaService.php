@@ -8,6 +8,7 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgEstadoExpediente;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\EmpresaRepository as Repository;
 use App\Traits\EmpresaTrait;
@@ -428,5 +429,24 @@ class EmpresaService
     {
         $this->repository->where([["rfc","=",$rfc]]);
         return $this->repository->first();
+    }
+
+    public function generaExpediente($rfc)
+    {
+        $empresaPadronService = new EmpresaService(new Empresa());
+        $invitacionService = new InvitacionService(new Invitacion());
+
+        $tipo_empresa = $invitacionService->regresaTipoEmpresaPadronPorInvitaciones(auth()->user()->idusuario);
+
+        $datos_padron = [
+            "id_tipo_empresa"=>$tipo_empresa,
+            "rfc"=>$rfc,
+            "razon_social"=>auth()->user()->nombre_completo,
+            "id_giro"=>1,
+            "id_especialidad"=>1,
+            "id_especialidades"=>[],
+            'usuario_registro'=>auth()->user()->idusuario,
+        ];
+        return $empresaPadronService->store($datos_padron);
     }
 }

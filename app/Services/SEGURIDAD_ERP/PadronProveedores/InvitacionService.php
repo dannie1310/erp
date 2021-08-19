@@ -573,4 +573,17 @@ class InvitacionService
         }
         return $this->repository->show($id)->getPresupuestoEdit();
     }
+
+    public function regresaTipoEmpresaPadronPorInvitaciones($id_usuario)
+    {
+        $this->repository->where([["usuario_invitado", "=", $id_usuario]]);
+        $this->repository->where([["tipo_transaccion_antecedente", "=", 49]]);
+        $invitaciones = $this->repository->all();
+        if(count($invitaciones)>0)
+        {
+            return 2;
+        } else {
+            return 1;
+        }
+    }
 }
