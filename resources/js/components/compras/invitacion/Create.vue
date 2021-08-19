@@ -253,12 +253,7 @@
             <div class="card-footer">
                 <div class="row" v-if="solicitud">
                     <div class="col-md-8">
-                        <div class="form-check form-check-inline">
-                            <label class="form-check-label" style="cursor:pointer" >
-                                <input class="form-check-input" type="checkbox" name="proveedor_en_catalogo" v-model="mas_invitaciones" value="1" >
-                            </label>
-                        </div>
-                        <label>Generar mas invitaciones para esta solicitud</label>
+
                     </div>
                     <div class="col-md-4">
                         <div class="pull-right">
@@ -608,11 +603,7 @@ export default {
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             $(this.$refs.modal_usuarios).modal('hide');
-                            if(_self.mas_invitaciones == true){
-                                this.limpiar();
-                            } else {
-                                this.$router.push({name: 'invitacion-compra'});
-                            }
+                            this.$router.push({name: 'invitacion-compra'});
                         });
                 }
             });
