@@ -68,9 +68,14 @@ class InvitacionController extends Controller
     {
         return $this->service->getSolicitud($id);
     }
-    
+
     public function getPresupuestoEdit(Request $request, $id)
     {
         return $this->service->getPresupuestoEdit($id);
+    }
+
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
     }
 }

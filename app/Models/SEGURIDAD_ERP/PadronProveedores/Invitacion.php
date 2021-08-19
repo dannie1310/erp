@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\PDF\Compras\InvitacionCotizarFormato;
+use App\PDF\PortalProveedores\InvitacionCotizarFormato;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use App\Models\CADECO\CotizacionCompra;
