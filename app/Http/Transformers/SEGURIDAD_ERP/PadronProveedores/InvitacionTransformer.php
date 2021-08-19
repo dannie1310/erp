@@ -5,6 +5,8 @@ namespace App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Http\Transformers\CADECO\Compras\CotizacionCompraTransformer;
 use App\Http\Transformers\CADECO\Compras\SolicitudCompraTransformer;
+use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
+use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;
 use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
@@ -16,6 +18,8 @@ class InvitacionTransformer extends TransformerAbstract
     protected $defaultIncludes = [
         'transaccion',
         'solicitud_compra',
+        'contrato',
+        'cotizacion',
         'empresa',
         'sucursal',
     ];
@@ -30,6 +34,9 @@ class InvitacionTransformer extends TransformerAbstract
         'formato_cotizacion',
         'cotizacion',
         'cotizacionCompra',
+        'contrato',
+        'presupuesto',
+        'presupuesto_proveedor'
     ];
 
     public function transform(Invitacion $model)
@@ -158,9 +165,50 @@ class InvitacionTransformer extends TransformerAbstract
      * @param Invitacion $model
      * @return \League\Fractal\Resource\Item|null
      */
-    public function includeFormatoCotizacion(Invitacion $model) {
-        if ($item = $model->formatoCotizacion) {
+    public function includeFormatoCotizacion(Invitacion $model)
+    {
+        if ($item = $model->formatoCotizacion)
+        {
             return $this->item($item, new InvitacionArchivoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeContrato(Invitacion $model)
+    {
+        if($contrato = $model->contratoProyectado)
+        {
+            return $this->item($contrato, new ContratoProyectadoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePresupuesto(Invitacion $model)
+    {
+        if($presupuesto = $model->presupuesto)
+        {
+            return $this->item($presupuesto, new PresupuestoContratistaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includePresupuestoProveedor(Invitacion $model)
+    {
+        if($presupuesto = $model->getPresupuesto())
+        {
+            return $this->item($presupuesto, new PresupuestoProveedorTransformer);
         }
         return null;
     }

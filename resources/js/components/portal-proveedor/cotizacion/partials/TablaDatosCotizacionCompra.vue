@@ -105,12 +105,9 @@
 </template>
 
 <script>
-import EncabezadoSolicitudCompra from "./Encabezado";
 export default {
     name: "TablaDatosCotizacionCompraProveedor",
-    components: {
-        EncabezadoSolicitudCompra,
-    },
+    components: {},
     props: ['cotizacion_compra'],
 }
 </script>

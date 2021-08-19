@@ -3,14 +3,15 @@
 
 namespace App\Services\CADECO\Contratos;
 
-use App\Imports\PresupuestoImport;
-use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\PresupuestoContratista;
-use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
-use App\Repositories\CADECO\PresupuestoContratista\Repository;
 use App\Utils\ValidacionSistema;
+use App\Imports\PresupuestoImport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
+use App\Repositories\CADECO\PresupuestoContratista\Repository;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 
 class PresupuestoContratistaService
 {
@@ -202,5 +203,21 @@ class PresupuestoContratistaService
     {
         $pdf = new PresupuestoContratistaTablaComparativaFormato($this->repository->show($id));
         return $pdf;
+    }
+
+    public function validaFechaCierreInvitacion($id, $codigo = 400)
+    {
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
+        if (is_null($invitacion)) {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $invitacion;
+    }
+
+    public function storePortalProveedor($data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
+        return $this->repository->registrar($data, $invitacion);
     }
 }
