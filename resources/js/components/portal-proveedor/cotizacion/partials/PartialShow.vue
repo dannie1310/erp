@@ -357,7 +357,8 @@
                                         ${{(parseFloat(total)).formatMoney(2,'.',',')}}
                                     </td>
                                 </tr>
-                                <tr style="border: none">
+                                <template  v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
+                                    <tr style="border: none">
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
                                     <td style="border: none; text-align: right"></td>
                                 </tr>
@@ -437,6 +438,7 @@
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
                                     <td style="border: none; text-align: right"></td>
                                 </tr>
+                                </template>
                             </tfoot>
                         </table>
                     </div>

@@ -601,30 +601,18 @@ export const routes = [
                                 }
                             },
                             {
-                                path: ':id/editar',
-                                name: 'invitacion-compra-edit',
-                                component: require('./components/compras/solicitud-compra/Edit').default,
-                                props: true,
-                                meta: {
-                                    title: 'Editar Solicitud',
-                                    breadcrumb: { parent: 'solicitud-compra', name: 'EDITAR'},
-                                    middleware: [auth, context, permission],
-                                    permission: 'editar_solicitud_compra'
-                                }
-                            },
-                            {
                                 path: ':id/documentos',
                                 name: 'invitacion-compra-documentos',
                                 component: require('./components/globals/archivos/Files').default,
                                 props: route => ({
                                     id: route.params.id,
-                                    permiso: ['registrar_solicitud_compra'],
+                                    permiso: ['registrar_invitacion_cotizar_compra'],
                                 }),
                                 meta: {
-                                    title: 'Documentos de Solicitud',
-                                    breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                                    title: 'Documentos de Invitación',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'DOCUMENTOS'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_solicitud_compra'
+                                    permission: 'consultar_invitacion_cotizar_compra'
                                 }
                             },
                             {
@@ -636,7 +624,7 @@ export const routes = [
                                     title: 'Registrar Invitación',
                                     breadcrumb: { parent: 'invitacion', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
-                                    permission: ['registrar_cotizacion_compra']
+                                    permission: ['registrar_invitacion_cotizar_compra']
                                 }
                             },
                         ]
@@ -3829,7 +3817,7 @@ export const routes = [
                             title: 'Detalle de Invitación',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'INVITACIÓN'},
                             middleware: [auth, permission],
-                            permission: ['registrar_cotizacion_proveedor'],
+                            permission: ['consultar_cotizacion_proveedor'],
                             general: true
                         }
                     },
@@ -3881,7 +3869,7 @@ export const routes = [
                             title: 'Enviar Cotización',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'ENVIAR'},
                             middleware: [auth, permission],
-                            permission: ['editar_cotizacion_proveedor'],
+                            permission: ['registrar_cotizacion_proveedor'],
                             general: true
                         }
                     },

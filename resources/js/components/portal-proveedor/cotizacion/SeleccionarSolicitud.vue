@@ -112,7 +112,7 @@
                 this.cargando = true;
 
                 return this.$store.dispatch('padronProveedores/invitacion/index', {
-                    params:{ include: ['transaccion'], scope: ['invitadoAutenticado'], sort: 'id', order: 'desc'}
+                    params:{ include: ['transaccion'], scope: ['invitadoAutenticado', 'disponibleCotizar'], sort: 'id', order: 'desc'}
 
                 })
                     .then(data => {
