@@ -17,7 +17,7 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <!-- <encabezado-presupuesto v-bind:presupuesto="presupuesto"></encabezado-presupuesto> -->
+                                <encabezado-presupuesto v-bind:presupuesto="presupuesto"></encabezado-presupuesto>
                             </div>
                         </div>
                         <div class="row">
@@ -326,12 +326,10 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
-    // import DatosPresupuesto from "./partials/DatosPresupuesto";
-    // import EncabezadoPresupuesto from "./partials/EncabezadoPresupuesto";
+    import EncabezadoPresupuesto from "./partials/EncabezadoPresupuesto";
     export default {
         name: "presupuesto-edit",
-
-        components: {  Datepicker, ModelListSelect},
+        components: {  Datepicker, ModelListSelect, EncabezadoPresupuesto},
         props: ['id', 'xls'],
         data() {
             return {
@@ -340,9 +338,8 @@
                 fechasDeshabilitadas:{},
                 fecha : '',
                 descuento_cot : '0.00',
-                tipo_cambio: [],
-                id_tipo : '',
                 monedas: [],
+                presupuesto: [],
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
@@ -354,49 +351,34 @@
                 dolar:0,
                 euro:0,
                 libra:0,
-                presupuesto: '',
-                moneda_input:[],
-                observaciones_inputs:[],
-                observaciones : '',
-                precio: [],
-                x: 0,
-                post: {
-                    id_presupuesto: '',
-                    fecha: '',
-                    moneda: [],
-                    partidas: [],
-                    precio: [],
-                    enable: [],
-                    descuento: [],
-                    descuento_cot: '',
-                    anticipo: '',
-                    credito: '',
-                    vigencia: '',
-                    subtotal: '',
-                    impuesto: '',
-                    observaciones: '',
-                    tipo_cambio: []
-                },
                 anticipo: 0,
                 credito: 0,
-                vigencia: 0,
-                descuento: [],
-                enable: []
-
+                vigencia: 0
             }
         },
         mounted() {
             // this.getMonedas();
-            this.enable = [];
-            this.precio = [];
-            this.moneda_input = [];
-            this.observaciones_inputs = [];
-            this.descuento = [];
             this.find();
             this.$validator.reset();
-
         },
         methods : {
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
+            find() {
+                this.cargando = true;
+                return this.$store.dispatch('padronProveedores/invitacion/find', {
+                    id: this.id,
+                    params: {
+                        include: ['presupuesto_proveedor'],
+                        scope: ['invitadoAutenticado']
+                    }
+                }).then(data => {
+                    this.presupuesto = data.presupuesto_proveedor
+                    this.invitacion = data
+                    this.cargando = false;
+                })
+            },
             actualizaTC(index){
                 switch (index){
                     case 2:
@@ -428,9 +410,6 @@
                     }
                 }
             },
-            formatoFecha(date){
-                return moment(date).format('DD/MM/YYYY');
-            },
             getMonedas(){
                 this.cargando = true;
                 this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
@@ -441,32 +420,10 @@
 
                 })
             },
-            salir()
-            {
+            salir(){
                  this.$router.push({name: 'presupuesto'});
             },
-            find() {
-                this.cargando = true;
-                return this.$store.dispatch('padronProveedores/invitacion/getPresupuestoEdit', {
-                    id: this.id,
-                    params:{
-                    //     include: [
-                    //         'empresa',
-                    //         'sucursal',
-                    //         'contrato_proyectado',
-                    //         'partidas.concepto',
-                    //         'contrato.conceptos'
-                    // ]
-                    }
-                }).then(data => {
-                    this.presupuesto = data;
-                    this.fecha = data.fecha;
-                    this.ordenar();
-                    this.cargando = false;
-                })
-            },
-            calcular()
-            {
+            calcular() {
                 this.x = 0;
                 this.pesos = 0;
                 this.dolares = 0;
@@ -531,8 +488,7 @@
                     this.x ++;
                 }
             },
-            ordenar()
-            {
+            ordenar() {
                 this.x = 0;
                 while(this.x < this.presupuesto.partidas.data.length)
                 {
@@ -631,28 +587,22 @@
             },
         },
         computed: {
-            subtotal()
-            {
+            subtotal(){
                 return (this.pesos + (this.dolares * this.dolar) + (this.euros * this.euro) + (this.libras * this.libra) );
             },
-            subtotal_antes_descuento()
-            {
+            subtotal_antes_descuento(){
                 return (this.pesos_sd + (this.dolares_sd * this.dolar) + (this.euros_sd * this.euro) + (this.libras_sd * this.libra) );
             },
-            iva()
-            {
+            iva() {
                 return this.subtotal * 0.16;
             },
-            total()
-            {
+            total(){
                 return this.subtotal + this.iva;
             },
-            importe()
-            {
+            importe(){
                 return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
             },
-            carga()
-            {
+            carga(){
                 return (this.xls) ? this.xls : false;
             }
         },

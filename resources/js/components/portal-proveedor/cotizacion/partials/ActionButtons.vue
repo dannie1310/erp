@@ -11,6 +11,9 @@
         <router-link :to="{ name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.value.id_invitacion}}" v-if="value.edit && (value.tipo_transaccion == 17)" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
+        <router-link :to="{ name: 'presupuesto-proveedor-edit', params: {id_invitacion: this.value.id_invitacion}}" v-if="value.edit && (value.tipo_transaccion == 49)" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
+            <i class="fa fa-pencil"></i>
+        </router-link>
         <!--<router-link :to="{ name: 'cotizacion-proveedor-send', params: {id_invitacion: this.value.id_invitacion}}" v-if="value.enviar" type="button" class="btn btn-sm btn-outline-success" title="Enviar">
             <i class="fa fa-send"></i>
         </router-link>-->
