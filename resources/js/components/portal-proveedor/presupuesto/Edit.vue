@@ -168,20 +168,20 @@
                                         :class="{'is-invalid': errors.has('descuento_cot')}">
                                 </div>
                                  <div class=" col-md-12" align="right">
-                                    <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXN)</label>
+                                    <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXN):</label>
                                     <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(pesos)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Precios Dolar (USD):</label>
-                                    <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(dolares)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Precios EURO:</label>
-                                    <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(euros)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Precios LIBRA:</label>
-                                    <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label" style="text-align: right">$&nbsp;{{(parseFloat(libras)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                  <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">TC USD:</label>
@@ -230,15 +230,15 @@
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">IVA:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Total:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(total)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">% Anticipo:</label>
@@ -446,7 +446,8 @@
                 var dolares_sd = 0;
                 var euros_sd = 0;
                 var libras_sd = 0;
-                var descuento = this.presupuesto.descuento
+                var descuento = parseFloat(this.presupuesto.descuento)
+                var partida_descuento = 0
                 var suma = 0;
                 var suma_desc = 0;
                 this.presupuesto.contratos.forEach(function (partida, i)
@@ -455,7 +456,8 @@
                     {
                         if(partida.IdMoneda != undefined && partida.precio_unitario != undefined)
                         {
-                            suma = partida.cantidad_presupuestada * (partida.precio_unitario - (partida.precio_unitario * (partida.descuento + descuento - (partida.descuento * descuento) / 100))/100);
+                            partida_descuento = parseFloat(partida.descuento)
+                            suma = partida.cantidad_presupuestada * (partida.precio_unitario - ((partida.precio_unitario * (partida_descuento + descuento - (partida_descuento * descuento / 100)))/100));
                             suma_desc = partida.cantidad_presupuestada * (partida.precio_unitario - ((partida.precio_unitario * partida.descuento) / 100));
                             if(partida.IdMoneda == 1)
                             {
