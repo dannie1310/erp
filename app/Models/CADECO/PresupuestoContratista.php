@@ -915,4 +915,9 @@ class PresupuestoContratista extends Transaccion
             abort(400, $e);
         }
     }
+
+    public function editarPortalProveedor($data, $invitacion)
+    {
+        dd($data, $invitacion);
+    }
 }

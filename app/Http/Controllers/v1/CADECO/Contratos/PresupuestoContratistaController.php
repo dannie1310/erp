@@ -42,7 +42,7 @@ class PresupuestoContratistaController extends Controller
      public function __construct(Manager $fractal, PresupuestoContratistaService $service, PresupuestoContratistaTransformer $transformer)
      {
          $this->middleware('auth:api');
-         $this->middleware('context')->except('registrarPresupuestoProveedor');
+         $this->middleware('context')->except(['registrarPresupuestoProveedor','updatePortalProveedor']);
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find', 'pdf']);
          $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
          $this->middleware('permiso:eliminar_presupuesto_contratista')->only('destroy');
@@ -50,6 +50,7 @@ class PresupuestoContratistaController extends Controller
          $this->middleware('permiso:descargar_layout_presupuesto_contratista')->only(['descargaLayout']);
          $this->middleware('permiso:cargar_layout_presupuesto_contratista')->only(['cargaLayout']);
          $this->middleware('permisoGlobal:registrar_cotizacion_proveedor')->only(['registrarPresupuestoProveedor']);
+         $this->middleware('permisoGlobal:editar_cotizacion_proveedor')->only(['updatePortalProveedor']);
 
          $this->fractal = $fractal;
          $this->service = $service;
@@ -81,6 +82,12 @@ class PresupuestoContratistaController extends Controller
 
     public function registrarPresupuestoProveedor(Request $request){
         $item = $this->service->storePortalProveedor($request->all());
+        return $this->respondWithItem($item);
+    }
+
+    public function updatePortalProveedor(Request $request, $id)
+    {
+        $item = $this->service->updatePortalProveedor($request->all(), $id);
         return $this->respondWithItem($item);
     }
 }

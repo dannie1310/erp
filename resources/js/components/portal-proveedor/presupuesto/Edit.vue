@@ -496,41 +496,27 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        /*
-                        this.post.partidas = this.presupuesto.partidas.data;
-                        this.post.id_presupuesto = this.id;
-                        this.post.fecha = this.presupuesto.fecha;
-                        this.post.moneda = this.moneda_input;
-                        this.post.precio = this.precio;
-                        this.post.enable = this.enable;
-                        this.post.descuento = this.descuento;
-                        this.post.descuento_cot = this.descuento_cot;
-                        this.post.anticipo = this.anticipo;
-                        this.post.credito = this.credito;
-                        this.post.vigencia = this.vigencia;
-                        this.post.subtotal = this.subtotal;
-                        this.post.monto = this.total;
-                        this.post.impuesto = this.iva;
-                        this.post.observaciones = this.presupuesto.observaciones;
-                        this.post.tipo_cambio = this.tipo_cambio;
-                        this.post.tcUsd = this.dolar;
-                        this.post.tdEuro = this.euro;
-                        this.post.tcLibra = this.libra;*/
+                        this.presupuesto.id_invitacion = this.id;
+                        this.presupuesto.subtotal = this.subtotal;
+                        this.presupuesto.monto = this.total;
+                        this.presupuesto.impuesto = this.iva;
+                        this.presupuesto.tcUsd = this.dolar;
+                        this.presupuesto.tdEuro = this.euro;
+                        this.presupuesto.tcLibra = this.libra;
                         this.save()
                     }
                 });
             },
             save() {
-
                 if(this.total == 0)
                 {
                     swal('¡Error!', 'Favor de ingresar partidas a cotizar', 'error');
                 }
                 else
                 {
-                    return this.$store.dispatch('contratos/presupuesto/update', {
-                        id: this.id,
-                       // post: this.post
+                    return this.$store.dispatch('contratos/presupuesto/updatePresupuestoProveedor', {
+                        id: this.presupuesto.id,
+                        presupuesto: this.presupuesto
                         })
                     .then((data) => {
                         this.salir()

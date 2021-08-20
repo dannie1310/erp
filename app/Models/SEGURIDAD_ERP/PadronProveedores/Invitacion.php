@@ -510,8 +510,4 @@ class Invitacion extends Model
         $pdf = new InvitacionCotizarFormato($this);
         return $pdf->create();
     }
-
-    public function getPresupuestoEdit(){
-        dd(1, $this);
-    }
 }

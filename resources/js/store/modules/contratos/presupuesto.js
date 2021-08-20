@@ -23,7 +23,7 @@ export default {
     },
 
     actions: {
-        paginate (context, payload) {           
+        paginate (context, payload) {
 
             return new Promise((resolve, reject) => {
                 axios
@@ -37,7 +37,7 @@ export default {
                     })
             })
         },
-        delete(context, payload) {            
+        delete(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Eliminar Presupuesto Contratista",
@@ -127,8 +127,7 @@ export default {
                 })
             }
         },
-        update(context, payload)
-        {
+        update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
@@ -256,6 +255,45 @@ export default {
                     });
             });
 
+        },
+        updatePresupuestoProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Presupuesto Contratista",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + "/portal-proveedor", payload.presupuesto)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("El Presupuesto Contratista se ha actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
         },
     },
 
