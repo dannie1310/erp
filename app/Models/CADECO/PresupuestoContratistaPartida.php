@@ -262,7 +262,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPorcentajeDescuentoFormatAttribute()
     {
-        return number_format($this->PorcentajeDescuento, "2",".","")." %";
+        return number_format($this->PorcentajeDescuento, "2",".","") ." %";
     }
 
     public function getPrecioUnitarioAntesDescuentoAttribute()

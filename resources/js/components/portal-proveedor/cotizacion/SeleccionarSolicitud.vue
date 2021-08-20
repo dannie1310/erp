@@ -130,13 +130,13 @@
                                 if(this.invitacion.tipo_antecedente == 49) {
                                     this.$router.push({
                                         name: 'presupuesto-proveedor-create',
-                                        params: {id_invitacion: this.id_invitacion}
+                                        params: {id: this.id_invitacion}
                                     });
                                 }
                                 if(this.invitacion.tipo_antecedente == 17) {
                                     this.$router.push({
                                         name: 'cotizacion-proveedor-create',
-                                        params: {id_invitacion: this.id_invitacion}
+                                        params: {id: this.id_invitacion}
                                     });
                                 }
 

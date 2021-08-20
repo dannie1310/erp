@@ -495,6 +495,10 @@ class Invitacion extends Model
                 $destino = $concepto->destino->concepto_sgv;
                 $conceptos[$key]['path_corta'] = $destino->path_corta;
                 $conceptos[$key]['path'] = $destino->path;
+                $conceptos[$key]['partida_activa'] = ($concepto->no_cotizado == 0) ? true :false;
+                $conceptos[$key]['precio_unitario'] = number_format($partida->precio_unitario, "2",".","");
+                $conceptos[$key]['descuento'] = number_format($partida->PorcentajeDescuento, "2",".","");
+                $conceptos[$key]['IdMoneda'] = $partida->IdMoneda;
             }
             $resp['contratos'] = $conceptos;
             return $resp;

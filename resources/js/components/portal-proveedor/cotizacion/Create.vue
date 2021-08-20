@@ -663,7 +663,7 @@
     import TablaDatosSolicitud from "./partials/TablaDatosSolicitud";
     export default {
         name: "cotizacion-proveedor-create",
-        props: ['id_invitacion'],
+        props: ['id'],
         components: {TablaDatosSolicitud,Datepicker, ModelListSelect},
         data() {
             return {
@@ -714,7 +714,7 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{}
                 }).then(data => {
                     this.solicitud = data
