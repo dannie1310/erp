@@ -931,34 +931,32 @@ class PresupuestoContratista extends Transaccion
                 'impuesto' => $data['impuesto'],
                 'anticipo' => $data['anticipo'],
                 'observaciones' => $data['observaciones'],
-                'PorcentajeDescuento' => $data['descuento'],
+                'PorcentajeDescuento' => number_format($data['descuento'], "2",".",""),
                 'TcUSD' => $data['tcUsd'],
                 'TcEuro' => $data['tdEuro'],
                 'TcLibra' => $data['tcLibra'],
-                'DiasCredito' => $data['credito'],
-                'DiasVigencia' => $data['vigencia']
+                'DiasCredito' => $data['dias_credito'],
+                'DiasVigencia' => $data['dias_vigencia']
             ]);
 
             foreach($data['contratos'] as $partida)
             {
-                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id_transaccion'])->where('id_concepto', '=', $partida['id_concepto'])->first();
-                dd($item);
-
-                $precio_conversion = ($partida['partida_activa']) ? $this->precioConversion($data['precio'][$x], $data['moneda'][$x]) : null;
-                if($precio_conversion){
-                    $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$x]/100);
-                } else {
-                    $precio_descuento = null;
+                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id_transaccion'])->where('id_concepto', '=', $partida['id_concepto']);
+                if(!is_null($partida['unidad'])) {
+                    $precio_conversion = $partida['partida_activa'] ? $this->precioConversion($partida['precio_unitario'], $partida['IdMoneda']) : null;
+                    if ($precio_conversion) {
+                        $precio_descuento = $precio_conversion - ($precio_conversion * $partida['descuento'] / 100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+                    $item->update([
+                        'precio_unitario' => $precio_descuento,
+                        'no_cotizado' => $partida['partida_activa'] ? 0 : 1,
+                        'PorcentajeDescuento' => $partida['partida_activa'] ? $partida['descuento'] : null,
+                        'IdMoneda' => $partida['IdMoneda'],
+                        'Observaciones' => $partida['observaciones']
+                    ]);
                 }
-
-                $item->update([
-                    'precio_unitario' => $precio_descuento,
-                    'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
-                    'PorcentajeDescuento' => ($data['enable'][$x]) ? $data['descuento'][$x] : null,
-                    'IdMoneda' => $data['moneda'][$x],
-                    'Observaciones' => $partida['observaciones']
-                ]);
-                $x++;
             }
 
             DB::connection('cadeco')->commit();

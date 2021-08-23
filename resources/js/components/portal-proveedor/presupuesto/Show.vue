@@ -88,11 +88,11 @@
                             </tbody>
                             <tfoot>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">Subtotal antes de descuento:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">Subtotal antes de descuento:</td>
                                     <td class="numerico">{{presupuesto.subtotal_mc_antes_descuento_global_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">% Descuento:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">% Descuento:</td>
                                     <td class="numerico">{{presupuesto.porcentaje_descuento_format}}</td>
                                 </tr>
 
@@ -101,31 +101,31 @@
                                     <td class="numerico">{{subtotal.subtotal_format}}</td>
                                 </tr> -->
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">TC USD:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">TC USD:</td>
                                     <td class="numerico">{{presupuesto.tc_usd_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">TC EURO:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">TC EURO:</td>
                                     <td class="numerico">{{presupuesto.tc_euro_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">TC Libra:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">TC Libra:</td>
                                     <td class="numerico">{{presupuesto.tc_libra_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">Moneda Conversión:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">Moneda Conversión:</td>
                                     <td >{{presupuesto.moneda_conversion}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">Subtotal:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">Subtotal:</td>
                                     <td class="numerico">{{presupuesto.subtotal_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">IVA:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">IVA:</td>
                                     <td class="numerico">{{presupuesto.impuesto_format}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan ="13" style="text-align: right" class="sin_borde">Monto:</td>
+                                    <td colspan ="11" style="text-align: right" class="sin_borde">Monto:</td>
                                     <td class="numerico">{{presupuesto.monto_format}}</td>
                                 </tr>
                             </tfoot>
