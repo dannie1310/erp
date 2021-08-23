@@ -598,7 +598,7 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => $data['tcLibra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
-                ]);;
+                ]);
                 $x = 0;
                 foreach($data['partidas'] as $partida)
                 {
@@ -918,6 +918,54 @@ class PresupuestoContratista extends Transaccion
 
     public function editarPortalProveedor($data, $invitacion)
     {
-        dd($data, $invitacion);
+        try
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'fecha' => $fecha->format("Y-m-d"),
+                'monto' => $data['monto'],
+                'impuesto' => $data['impuesto'],
+                'anticipo' => $data['anticipo'],
+                'observaciones' => $data['observaciones'],
+                'PorcentajeDescuento' => $data['descuento'],
+                'TcUSD' => $data['tcUsd'],
+                'TcEuro' => $data['tdEuro'],
+                'TcLibra' => $data['tcLibra'],
+                'DiasCredito' => $data['credito'],
+                'DiasVigencia' => $data['vigencia']
+            ]);
+
+            foreach($data['contratos'] as $partida)
+            {
+                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id_transaccion'])->where('id_concepto', '=', $partida['id_concepto'])->first();
+                dd($item);
+
+                $precio_conversion = ($partida['partida_activa']) ? $this->precioConversion($data['precio'][$x], $data['moneda'][$x]) : null;
+                if($precio_conversion){
+                    $precio_descuento = $precio_conversion -($precio_conversion*$data['descuento'][$x]/100);
+                } else {
+                    $precio_descuento = null;
+                }
+
+                $item->update([
+                    'precio_unitario' => $precio_descuento,
+                    'no_cotizado' => ($data['enable'][$x]) ? 0 : 1,
+                    'PorcentajeDescuento' => ($data['enable'][$x]) ? $data['descuento'][$x] : null,
+                    'IdMoneda' => $data['moneda'][$x],
+                    'Observaciones' => $partida['observaciones']
+                ]);
+                $x++;
+            }
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 }

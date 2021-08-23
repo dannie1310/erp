@@ -50,7 +50,6 @@
                                         <table class="table table-bordered">
                                             <thead>
                                             <tr>
-                                                <th class="index_corto">#</th>
                                                 <th>Descripción</th>
                                                 <th class="unidad">Unidad</th>
                                                 <th></th>
@@ -67,9 +66,8 @@
                                                 <th style="width:10%;">Observaciones</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
-                                                <tr v-for="(partida, i) in presupuesto.contratos">
-                                                    <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                            <tbody v-for="(partida, i) in presupuesto.contratos">
+                                                <tr v-if="partida.unidad">
                                                     <td>{{partida.descripcion}}</td>
                                                     <td style="text-align:center;">{{partida.unidad}}</td>
                                                      <td style="text-align:center; vertical-align:inherit;">
@@ -251,7 +249,7 @@
                                         max="100"
                                         min="0"
                                         name="anticipo"
-                                        v-model="anticipo"
+                                        v-model="presupuesto.anticipo"
                                         v-validate="{required: true}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
@@ -267,7 +265,7 @@
                                         step="1"
                                         min="0"
                                         name="credito"
-                                        v-model="credito"
+                                        v-model="presupuesto.credito"
                                         v-validate="{required: true,}"
                                         class="col-sm-6 form-control"
                                         id="credito"
@@ -283,7 +281,7 @@
                                         step="1"
                                         min="0"
                                         name="vigencia"
-                                        v-model="vigencia"
+                                        v-model="presupuesto.vigencia"
                                         v-validate="{required: true}"
                                         class="col-sm-6 form-control"
                                         id="vigencia"
@@ -342,7 +340,6 @@
                 es:es,
                 fechasDeshabilitadas:{},
                 fecha : '',
-                descuento_cot : '0.00',
                 monedas: [],
                 presupuesto: [],
                 invitacion : [],
@@ -357,13 +354,9 @@
                 dolar:0,
                 euro:0,
                 libra:0,
-                anticipo: 0,
-                credito: 0,
-                vigencia: 0
             }
         },
         mounted() {
-            this.getMonedas();
             this.find();
             this.$validator.reset();
         },
@@ -382,6 +375,7 @@
                 }).then(data => {
                     this.presupuesto = data.presupuesto_proveedor
                     this.invitacion = data
+                    this.getMonedas(data.base_datos);
                     this.dolar = parseFloat(this.presupuesto.tc_usd).formatMoney(2, '.', ',')
                     this.euro = parseFloat(this.presupuesto.tc_euro).formatMoney(2, '.', ',')
                     this.libra = parseFloat(this.presupuesto.tc_libra).formatMoney(2, '.', ',')
@@ -389,18 +383,19 @@
                     this.cargando = false;
                 })
             },
-            getMonedas(){
+            getMonedas(base){
                 this.cargando = true;
-                this.$store.commit('cadeco/moneda/SET_MONEDAS', null);
-                return this.$store.dispatch('cadeco/moneda/index', {
+                return this.$store.dispatch('cadeco/moneda/monedasBase', {
+                    params: {sort: 'id_moneda', order: 'asc'},
+                    base : base
                 }).then(data => {
                     this.monedas = data.data;
                 }).finally(()=>{
-
+                    this.cargando = false;
                 })
             },
-            salir(){
-                this.$router.push({name: 'presupuesto'});
+            salir() {
+                this.$router.go(-1);
             },
             getPrecioTotalAntesDesc(i){
                 var total = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? this.presupuesto.contratos[i]['precio_unitario'] * this.presupuesto.contratos[i]['cantidad_presupuestada'] : 0;

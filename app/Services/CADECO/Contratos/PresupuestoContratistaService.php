@@ -223,7 +223,6 @@ class PresupuestoContratistaService
 
     public function updatePortalProveedor($data, $id)
     {
-        dd($data);
         $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
         return $this->repository->editarPortalProveedor($id, $data, $invitacion);
     }
