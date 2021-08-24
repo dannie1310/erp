@@ -2,6 +2,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
 use DateTimeZone;
 use App\Facades\Context;
@@ -29,6 +30,7 @@ class PresupuestoContratista extends Transaccion
     protected $fillable = [
         'id_transaccion',
         'id_antecedente',
+        'id_referente',
         'id_empresa',
         'id_sucursal',
         'id_obra',
@@ -102,6 +104,11 @@ class PresupuestoContratista extends Transaccion
     public function partidasAsignaciones()
     {
         return $this->hasMany(AsignacionContratistaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function invitacion()
+    {
+        return $this->belongsTo(Invitacion::class, "id_referente", "id");
     }
 
     /**
@@ -630,10 +637,10 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout()
     {
-        $find = $this::find($id);
-        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
+        $folio = str_pad($this->numero_folio, 5, 0, 0);
+        return Excel::download(new PresupuestoLayout($this), '#'.$folio.'.xlsx');
     }
 
     public function datosComparativos()
@@ -836,6 +843,7 @@ class PresupuestoContratista extends Transaccion
                 $presupuesto = $this->create([
                     'id_antecedente' => $invitacion->id_transaccion_antecedente,
                     'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_referente'=>$invitacion->id,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'fecha' => $fecha->format("Y-m-d"),
@@ -879,6 +887,7 @@ class PresupuestoContratista extends Transaccion
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
+                    'id_referente'=>$invitacion->id,
                     'monto' => 0,
                     'impuesto' => 0,
                     'anticipo' => 0,

@@ -295,6 +295,57 @@ export default {
                     });
             });
         },
+        descargaLayoutProveedor(context, payload){
+            var urr = URI + 'descargaLayoutProveedor/'+ payload.id +'?id_presupuesto=' + payload.id_presupuesto+ '&idobra=' + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+        cargaLayoutProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout de Presupuesto Contratista",
+                    text: "¿Está seguro/a de que desea cargar xlsx?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'layout', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo cargado correctamente:", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

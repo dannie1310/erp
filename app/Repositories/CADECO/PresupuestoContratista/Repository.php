@@ -43,4 +43,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->editarPortalProveedor($data, $invitacion);
     }
+
+    public function descargaLayoutProveedor($id,$invitacion)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->descargaLayout();
+    }
 }

@@ -226,4 +226,10 @@ class PresupuestoContratistaService
         $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
         return $this->repository->editarPortalProveedor($id, $data, $invitacion);
     }
+
+    public function descargaLayoutProveedor($id, $data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id);
+        return $this->repository->descargaLayoutProveedor($data['id_presupuesto'], $invitacion);
+    }
 }
