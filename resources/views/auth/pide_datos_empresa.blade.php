@@ -61,7 +61,7 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="rfc">RFC:</label>
+                                <label for="rfc">RFC <span style="color: #F00">*</span>:</label>
                                 <div class="input-group mb-3">
                                     <input type="text" name="rfc" class="form-control{{ $errors->has('rfc') ? ' is-invalid' : '' }}" v-model="rfc" value="{{ old('rfc') }}" required autofocus>
                                     <div class="input-group-append">
@@ -113,7 +113,12 @@
                             </div>
                         </div>
                     </div>
-
+                    <div class="row">
+                        <div class="col-md-12">
+                            <b><span style="color: #F00">* el RFC que ingrese será su nuevo usuario para inicio de sesión</span></b>
+                        </div>
+                    </div>
+                    <br>
                     <div class="row">
                         <div class=" col-md-10">
                             <div class="form-check form-check-inline">
