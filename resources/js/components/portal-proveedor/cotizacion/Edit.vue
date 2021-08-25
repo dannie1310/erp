@@ -1007,7 +1007,7 @@
                 return this.subtotal_mxn * 0.16;
             },
             total_mxn() {
-                return this.subtotal_mxn + this.iva;
+                return this.subtotal_mxn + this.iva_mxn;
             },
         },
     }
