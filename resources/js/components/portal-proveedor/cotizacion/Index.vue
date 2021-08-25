@@ -36,7 +36,8 @@
                     { title: 'Folio de Solicitud', tdClass: 'td_c100', field: 'solicitud'},
                     { title: 'Folio de Cotización', field: 'numero_folio_cotizacion', tdClass: 'td_c100', sortable: false},
                     { title: 'Fecha de Cotización', field: 'fecha_cotizacion', tdClass: 'td_c100', sortable: false },
-                    { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
+                    { title: 'Importe', field: 'importe_consulta', tdClass: 'money', sortable: false },
+                    { title: 'Moneda', field: 'moneda_consulta', tdClass: 'money', sortable: false },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -137,6 +138,8 @@
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
                         importe: invitacion.importe_cotizacion,
+                        importe_consulta: invitacion.cotizacion.monto_consulta_proveedor,
+                        moneda_consulta: invitacion.cotizacion.moneda_consulta_proveedor,
                         estado: this.getEstado(invitacion.cotizacion.estado),
                         descripcion_obra: invitacion.descripcion_obra,
                         buttons: $.extend({}, {

@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Documentacion\Archivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use Carbon\Carbon;
 use App\Facades\Context;
 use App\Models\IGH\Usuario;
@@ -19,6 +20,8 @@ use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\SEGURIDAD_ERP\CtgContratista;
 use App\Models\CADECO\Contabilidad\HistPoliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Transaccion extends Model
 {
@@ -103,6 +106,21 @@ class Transaccion extends Model
         return $this->hasMany(Item::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function invitacion()
+    {
+        return $this->belongsTo(Invitacion::class, "id_referente", "id");
+    }
+
+    public function cotizaciones()
+    {
+        if($this->invitacion && $this->tipo_transaccio == 18)
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $this->invitacion->base_datos);
+        }
+        return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function validaTipoAntecedente()
     {
         if(!is_null($this::TIPO_ANTECEDENTE))
@@ -128,6 +146,11 @@ class Transaccion extends Model
 
     public function obra()
     {
+        if($this->invitacion && ($this->tipo_transaccio == 18 || $this->tipo_transaccio == 50))
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $this->invitacion->base_datos);
+        }
         return $this->belongsTo(Obra::class, 'id_obra', 'id_obra');
     }
 
@@ -270,6 +293,86 @@ class Transaccion extends Model
             case  72: return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
             default:  return "";
         }
+    }
+
+    public function getArrMonedasAttribute()
+    {
+        $monedas = [];
+        foreach ($this->cotizaciones()->activa()->get() as $partida)
+        {
+            $monedas[$partida->id_moneda] = $partida->id_moneda;
+        }
+        return $monedas;
+    }
+
+    public function getMultimonedaAttribute()
+    {
+        $multimoneda = false;
+        $monedas = $this->arr_monedas;
+
+        if(count($monedas)>1){
+            $multimoneda = true;
+        }
+        return $multimoneda;
+    }
+
+    public function getMontoConsultaProveedorFormatAttribute()
+    {
+        if($this->multimoneda){
+            return $this->monto_format;
+        }else {
+            return "$".number_format($this->subtotal_despues_descuento_por_cotizaciones * (1+($this->obra->iva /100)),2,".", ",");
+        }
+    }
+
+    public function getImpuestoConsultaProveedorFormatAttribute()
+    {
+        if($this->multimoneda){
+            return $this->impuesto_format;
+        }else {
+            return "$".number_format($this->subtotal_despues_descuento_por_cotizaciones * (($this->obra->iva /100)),2,".", ",");
+        }
+    }
+
+    public function getSubtotalConsultaProveedorFormatAttribute()
+    {
+        if($this->multimoneda){
+            return $this->subtotal_format;
+        }else {
+            return "$".number_format($this->subtotal_por_cotizaciones,2,".", ",");
+        }
+    }
+
+    public function getMonedaConsultaProveedorFormatAttribute()
+    {
+        if($this->multimoneda){
+            return "PESOS";
+        }else {
+            if($this->cotizaciones()->activa()->first())
+            {
+                return $this->cotizaciones()->first()->moneda->nombre;
+            }
+        }
+    }
+
+    public function getSubtotalPorCotizacionesAttribute()
+    {
+        $suma = 0;
+        foreach ($this->cotizaciones()->activa()->get() as $partida)
+        {
+            $suma += $partida->precio_total_descuento_partida;
+        }
+        return $suma;
+    }
+
+    public function getSubtotalDespuesDescuentoPorCotizacionesAttribute()
+    {
+        $suma = 0;
+        foreach ($this->cotizaciones()->activa()->get() as $partida)
+        {
+            $suma += $partida->precio_compuesto_total;
+        }
+        return $suma;
     }
 
     public  function costo(){
