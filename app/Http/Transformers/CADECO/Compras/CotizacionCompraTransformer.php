@@ -23,6 +23,7 @@ class CotizacionCompraTransformer extends TransformerAbstract
         'sucursal',
         'complemento',
         'partidas',
+        'partidasEdicion',
         'relaciones'
     ];
 
@@ -46,7 +47,8 @@ class CotizacionCompraTransformer extends TransformerAbstract
             'importe' => $model->monto_format,
             'subtotal' => $model->subtotal_format,
             'impuesto' => $model->impuesto_format,
-            'asignada' => $model->asignada
+            'asignada' => $model->asignada,
+            'id_referente' => $model->id_referente,
         ];
     }
 
@@ -104,6 +106,15 @@ class CotizacionCompraTransformer extends TransformerAbstract
     public function includePartidas(CotizacionCompra $model)
     {
         if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new CotizacionCompraPartidaTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidasEdicion(CotizacionCompra $model)
+    {
+        if($partidas = $model->partidasEdicion)
         {
             return $this->collection($partidas, new CotizacionCompraPartidaTransformer);
         }

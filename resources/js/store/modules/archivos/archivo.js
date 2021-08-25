@@ -142,10 +142,38 @@ export default {
                     });
             });
         },
+        getArchivosTransaccionSC(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + payload.id + '/transaccion-sc', payload )
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit("SET_ARCHIVOS", data.data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         getArchivosRelacionadosTransaccion(context, payload){
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + payload.tipo+ '/' + payload.id + '/transaccion-relacionados',payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit("SET_ARCHIVOS", data.data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        getArchivosRelacionadosTransaccionSC(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.tipo+ '/' + payload.id + '/transaccion-relacionados-sc',payload)
                     .then(r => r.data)
                     .then(data => {
                         context.commit("SET_ARCHIVOS", data.data);
@@ -177,7 +205,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .delete(URI + payload.id, {params: payload.params})
+                                .post(URI + payload.id, payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Archivo eliminado correctamente", {

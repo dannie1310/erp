@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Documentacion\Archivo;
 use Carbon\Carbon;
 use App\Facades\Context;
 use App\Models\IGH\Usuario;
@@ -39,6 +40,7 @@ class Transaccion extends Model
     public const TIPO_ANTECEDENTE = 0;
     public const OPCION_ANTECEDENTE = 0;
     public const SHOW_ROUTE = "";
+    public const ARTICULO = "La";
 
     protected static function boot()
     {
@@ -53,6 +55,11 @@ class Transaccion extends Model
             }
             return $query->where('id_obra', '=', Context::getIdObra());
         });
+    }
+
+    public function archivos()
+    {
+        return $this->hasMany(Archivo::class, "id_transaccion", "id_transaccion");
     }
 
     public function getUsuarioRegistroAttribute()
@@ -100,7 +107,12 @@ class Transaccion extends Model
     {
         if(!is_null($this::TIPO_ANTECEDENTE))
         {
-            $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
+            if(!is_null(Context::getIdObra()))
+            {
+                $antecedente = Transaccion::query()->withoutGlobalScope('tipo')->find($this->id_antecedente);
+            }else{
+                $antecedente = Transaccion::withoutGlobalScopes()->where('id_transaccion', $this->id_antecedente)->where('id_obra', $this->id_obra)->first();
+            }
             if($antecedente->tipo_transaccion != $this::TIPO_ANTECEDENTE || $antecedente->opciones != $this::OPCION_ANTECEDENTE)
             {
                 return false;
@@ -199,6 +211,25 @@ class Transaccion extends Model
             case  65: return Factura::NOMBRE;
             case  82: return Pago::NOMBRE;
             case  72: return SolicitudPagoAnticipado::NOMBRE;
+            default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
+        }
+    }
+
+    public function getArticuloTipoTransaccionStrAttribute()
+    {
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::ARTICULO;
+            case  18: return CotizacionCompra::ARTICULO;
+            case  19: return OrdenCompra::ARTICULO;
+            case  33: return EntradaMaterial::ARTICULO;
+            case  34: return SalidaAlmacen::ARTICULO;
+            case  49: return ContratoProyectado::ARTICULO;
+            case  50: return PresupuestoContratista::ARTICULO;
+            case  51: return Subcontrato::ARTICULO;
+            case  52: return Estimacion::ARTICULO;
+            case  65: return Factura::ARTICULO;
+            case  82: return Pago::ARTICULO;
+            case  72: return SolicitudPagoAnticipado::ARTICULO;
             default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
         }
     }

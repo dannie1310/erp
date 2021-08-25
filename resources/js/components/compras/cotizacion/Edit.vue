@@ -618,7 +618,7 @@
                 {   return this.$store.dispatch('compras/cotizacion/update', {
                     id: this.id,
                     post: this.post
-                })
+                    })
                     .then((data) => {
                         this.$router.push({name: 'cotizacion'});
                     });

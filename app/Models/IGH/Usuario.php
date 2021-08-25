@@ -16,8 +16,10 @@ use App\Models\SEGURIDAD_ERP\Compras\CtgAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudEdicion;
 use App\Models\SEGURIDAD_ERP\ControlInterno\UsuarioNotificacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\AsignacionValor;
 use App\Models\SEGURIDAD_ERP\Permiso;
 use App\Models\SEGURIDAD_ERP\RoleUser;
+use App\Models\SEGURIDAD_ERP\RoleUserGlobal;
 use App\Models\SEGURIDAD_ERP\TipoAreaCompradora;
 use App\Models\SEGURIDAD_ERP\TipoAreaSolicitante;
 use App\Models\SEGURIDAD_ERP\UsuarioAreaSubcontratante;
@@ -26,6 +28,7 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\RolGeneral;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\Traits\IghAuthenticatable;
+use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -37,6 +40,7 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 use Illuminate\Notifications\Notification;
+use App\Models\SEGURIDAD_ERP\Rol as RolSeguridadERP;
 
 class Usuario extends Model implements JWTSubject, AuthenticatableContract,
     AuthorizableContract,
@@ -66,7 +70,9 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
      * @var array
      */
     protected $fillable = [
-        'usuario', 'nombre', 'correo', 'clave',
+        'usuario', 'nombre', 'apaterno', 'amaterno', 'usuario_estado', 'correo', 'clave', 'id_empresa'
+        , 'pide_cambio_contrasenia', 'pide_datos_empresa', 'tipo_empresa', 'aviso_privacidad_leido_aceptado',
+        'fecha_hora_aceptacion_aviso_privacidad', 'id_empresa_invito'
     ];
 
     /**
@@ -242,25 +248,30 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function roles()
     {
-        $obra =  Obra::query()->find(Context::getIdObra());
-
-        if ($obra->configuracion) {
-            if ($obra->configuracion->esquema_permisos == 1) {
+        if(Context::getIdObra())
+        {
+            $obra =  Obra::query()->find(Context::getIdObra());
+            if ($obra->configuracion) {
+                if ($obra->configuracion->esquema_permisos == 1) {
+                    // Esquema Global
+                    return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
+                        ->withPivot('id_obra', 'id_proyecto')
+                        ->where('id_obra', $obra->getKey())
+                        ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+                } else if ($obra->configuracion->esquema_permisos == 2) {
+                    // Esquema Personalizado
+                    return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
+                }
+            } else {
                 // Esquema Global
                 return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
-                    ->withPivot('id_obra', 'id_proyecto')
                     ->where('id_obra', $obra->getKey())
                     ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
-            } else if ($obra->configuracion->esquema_permisos == 2) {
-                // Esquema Personalizado
-                return $this->belongsToMany(Rol::class, Context::getDatabase() . '.Seguridad.role_user', 'user_id', 'role_id');
             }
-        } else {
-            // Esquema Global
-            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'dbo.role_user', 'user_id', 'role_id')
-                ->where('id_obra', $obra->getKey())
-                ->where('id_proyecto', Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first()->getKey());
+        }else{
+            return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
         }
+
     }
 
     public function rolesSinContexto()
@@ -390,9 +401,19 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->belongsToMany(\App\Models\SEGURIDAD_ERP\Rol::class, 'SEGURIDAD_ERP.dbo.role_user_global', 'user_id', 'role_id');
     }
 
+    public function rolesUsuarioGlobal()
+    {
+        return $this->hasMany(RoleUserGlobal::class, "user_id", "idusuario");
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
+    }
+
+    public function getNombreCompletoSinEspaciosAttribute()
+    {
+        return $this->nombre.$this->apaterno.$this->amaterno;
     }
 
     public function google2faSecret()
@@ -414,5 +435,156 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         $this->update([
             'clave' => $clave_nueva
         ]);
+    }
+
+    public function asignaRol($rol)
+    {
+        $rolObj = RolSeguridadERP::where('name',"=",$rol)->first();
+        if($rolObj){
+            $preexistente = RoleUserGlobal::where("user_id","=",$this->idusuario)
+            ->where("role_id","=",$rolObj->id)
+            ->first();
+            if(!$preexistente){
+                $this->rolesUsuarioGlobal()->create([
+                    'role_id'=>$rolObj->id
+                ]);
+            }
+        }
+    }
+
+    public static function calculaNombre($razon_social)
+    {
+        $arregloNombre = explode(" ",Util::eliminaCaracteresEspeciales($razon_social));
+        if(count($arregloNombre)>4){
+            $arregloNombre = Usuario::generaArregloNombre($razon_social);
+        }
+        $nombre = '';
+        foreach($arregloNombre as $i=>$elemento_nombre)
+        {
+            $nombre.=substr($arregloNombre[$i],0,1).Usuario::getPrimeraVocal($arregloNombre[$i]);
+        }
+
+        $nombre.=Usuario::getHomonimia($razon_social);
+        $nombre.=Usuario::getDigitoVerificador($nombre);
+        return $nombre;
+    }
+
+    public static function getPrimeraVocal($string)
+    {
+        $vocales = ["a","e","i","o","u","A","E","I","O","U"];
+        for($i=0; $i<strlen($string); $i++)
+        {
+            $letra = substr($string,$i,1);
+            if(in_array($letra,$vocales) && $i>0)
+            {
+                return $letra;
+            }
+        }
+        return "X";
+    }
+
+    public static function getDigitoVerificador($string)
+    {
+        $arreglo = [];
+        for($i=0; $i<strlen($string); $i++)
+        {
+            $caracter = substr($string,$i,1);
+            $arreglo[] = sprintf("%02d", AsignacionValor::where("caracter","=",$caracter)->first()->valor_codigo_verificador);
+        }
+        $multiplicaciones = [];
+        $i=0;
+        foreach($arreglo as $item){
+            $multiplicaciones[$i]["resultado"] = $item * (count($arreglo)-$i+1);
+            $multiplicaciones[$i]["a"] = $item;
+            $multiplicaciones[$i]["b"] = (count($arreglo)-$i+1);
+            $i++;
+        }
+
+        $suma_multiplicaciones = 0;
+        foreach($multiplicaciones as $multiplicacion){
+            $suma_multiplicaciones += $multiplicacion["resultado"];
+        }
+
+        $residuo = $suma_multiplicaciones%11;
+        if($residuo == 0){
+            return 0;
+        } else if($residuo == 10){
+            return "A";
+        } else if($residuo>0){
+            return 11-$residuo;
+        }
+    }
+
+    public static function getHomonimia($string)
+    {
+        $cadena = '0';
+
+        for($i=0; $i<strlen($string); $i++)
+        {
+            $caracter = substr($string,$i,1);
+            try{
+                $cadena.= sprintf("%02d", AsignacionValor::where("caracter","=",$caracter)->first()->valor_homonimo);
+            }catch (\Exception $e){
+                $cadena.='';
+            }
+
+        }
+
+        $multiplicaciones = [];
+
+        $j = 0;
+        for($i=0; $i<strlen($cadena); $i++)
+        {
+            $extracto =  substr($cadena,$i,2);
+            $digito = sprintf("%02d",substr($extracto,1,1));
+            try{
+                $multiplicaciones[$j]["resultado"] = $extracto * $digito;
+                $multiplicaciones[$j]["a"] = $extracto;
+                $multiplicaciones[$j]["b"] = $digito;
+            }catch (\Exception $e)
+            {
+                dd($cadena,$extracto, $digito, $multiplicaciones);
+            }
+            $j++;
+
+        }
+        $suma_multiplicaciones = 0;
+        foreach($multiplicaciones as $multiplicacion){
+            $suma_multiplicaciones += $multiplicacion["resultado"];
+        }
+
+        $dividendo = substr($suma_multiplicaciones,strlen($suma_multiplicaciones)-3,3);
+        $cociente = intval($dividendo/34);
+        $residuo = $dividendo % 34;
+
+        $clave_homonimia = AsignacionValor::where("caracter","like",$cociente)->first()->valor_coeficiente_residuo;
+        $clave_homonimia .= AsignacionValor::where("caracter","like",$residuo)->first()->valor_coeficiente_residuo;
+
+        return $clave_homonimia;
+
+    }
+
+    public static function generaArregloNombre($razon_social)
+    {
+        $rs_ex = explode(" ",Util::eliminaCaracteresEspeciales($razon_social));
+        $longitud = count($rs_ex);
+        $cantidadPorCampo = floor($longitud/3);
+        $nombreArr = [];
+        $icc = 0;
+        for($i = 0;$i<$longitud;$i++)
+        {
+            if(key_exists($icc,$nombreArr)){
+                $nombreArr[$icc] .= " ".$rs_ex[$i];
+            } else {
+                $nombreArr[] = $rs_ex[$i];
+            }
+
+            if($i==$cantidadPorCampo)
+            {
+                $icc++;
+                $cantidadPorCampo+=$cantidadPorCampo;
+            }
+        }
+        return $nombreArr;
     }
 }

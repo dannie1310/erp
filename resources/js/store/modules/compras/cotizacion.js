@@ -106,8 +106,7 @@ export default {
                 })
             }
         },
-        update(context, payload)
-        {
+        update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
@@ -225,7 +224,215 @@ export default {
                         }
                     });
             });
-        }
+        },
+        registrarCotizacionProveedor(context,payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Cotización de Compra",
+                    text: "¿Estás seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI+"portal-proveedor", payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cotización de compra registrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        },
+        updateCotizacionProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Actualizar Cotización",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Actualizar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id+'/portal-proveedor', payload.cotizacion)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("La cotización se ha actualizado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        descargaLayoutProveedor(context, payload){
+            var urr = URI + 'descargaLayoutProveedor/'+ payload.id +'?id_cotizacion=' + payload.id_cotizacion + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+        cargaLayoutProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout de Cotización",
+                    text: "¿Está seguro que desea cargar el archivo del layout?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI + 'layoutProveedor', payload.data, payload.config)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Archivo leido correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+
+                            })
+                            .catch(error => {
+                                reject('Archivo no procesable');
+                            })
+                    }
+                });
+            });
+        },
+        enviarCotizacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Enviar Cotización",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Enviar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id_cotizacion+'/portal-proveedor/enviar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("La cotización se ha enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        eliminarProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Cotización de Compra",
+                    text: "¿Está seguro de que desea eliminar esta cotización?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id+'/proveedor', { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Cotización eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error =>  {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

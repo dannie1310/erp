@@ -2,7 +2,7 @@
     <div class="btn-group">
         <router-link  :to="{ name: 'solicitud-recepcion-cfdi-show-proyecto', params: {id: value.id}}"
                       v-if="$root.can('consultar_solicitud_recepcion_cfdi_proyecto')"
-                      type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+                      type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
             <i class="fa fa-eye"></i>
         </router-link>
 

@@ -3,8 +3,8 @@
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser && $router.currentRoute.name != 'google-2fa' &&  $router.currentRoute.name.indexOf('modal') ===-1" class="wrapper">
-        <AppHeader/>
-        <AppSidebar/>
+        <AppHeader />
+        <AppSidebar v-bind:sidebar="sidebar" v-bind:logo = "logo" />
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -72,6 +72,7 @@
     export default {
         name: 'main-app',
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+        props: ['sidebar', 'logo'],
 
         data() {
             return {

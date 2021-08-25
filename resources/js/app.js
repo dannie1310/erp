@@ -30,6 +30,8 @@ Vue.use(VueProgressBar, {
     failedColor: 'red',
     height: '10px'
 });
+import CKEditor from 'ckeditor4-vue';
+Vue.use(CKEditor);
 
 const app = new Vue({
     el: '#app',
