@@ -51,7 +51,13 @@ class CotizacionService
 
     public function update(array $data, $id)
     {
-        return $this->repository->show($id)->actualizar($data);
+        $cotizacion = $this->repository->show($id);
+        if($cotizacion->invitacion){
+            abort(399,"Esta cotización no puede ser editada porque proviene de un proceso de invitación a proveedores para cotizar.");
+
+        }else {
+            return $cotizacion->actualizar($data);
+        }
     }
 
     public function delete(array $data, $id)
