@@ -62,7 +62,13 @@ class CotizacionService
 
     public function delete(array $data, $id)
     {
-        return $this->repository->show($id)->eliminar($data['data']);
+        $cotizacion = $this->repository->show($id);
+        if($cotizacion->invitacion){
+            abort(399,"Esta cotización no puede ser editada porque proviene de un proceso de invitación a proveedores para cotizar.");
+
+        }else {
+            return $cotizacion->eliminar($data['data']);
+        }
     }
 
     public function cargaLayout($file, $id, $name)
