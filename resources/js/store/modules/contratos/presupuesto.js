@@ -327,7 +327,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI + 'layout', payload.data, payload.config)
+                                .post(URI + 'layoutProveedor', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Archivo cargado correctamente:", {

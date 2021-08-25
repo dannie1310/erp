@@ -379,6 +379,31 @@
                     this.dolar = parseFloat(this.presupuesto.tc_usd).formatMoney(2, '.', ',')
                     this.euro = parseFloat(this.presupuesto.tc_euro).formatMoney(2, '.', ',')
                     this.libra = parseFloat(this.presupuesto.tc_libra).formatMoney(2, '.', ',')
+                    if(this.xls != null)
+                    {
+                        this.presupuesto.anticipo = this.xls.anticipo;
+                        this.presupuesto.dias_credito = this.xls.credito;
+                        this.presupuesto.descuento = this.xls.descuento;
+                        this.presupuesto.observaciones = this.xls.observaciones;
+                        this.presupuesto.dias_vigencia = this.xls.vigencia;
+                        this.euro = this.xls.tc_euro;
+                        this.libra = this.xls.tc_libra;
+                        this.dolar = this.xls.tc_usd;
+                        for(var i = 0; i < this.presupuesto.contratos.length; i++)
+                        {
+                            for(var x = 0; x < this.xls.contratos.length; x++)
+                            {
+                                if(this.presupuesto.contratos[i].id_concepto == this.xls.contratos[x].id_concepto)
+                                {
+                                    this.presupuesto.contratos[i].descuento = this.xls.contratos[x].descuento;
+                                    this.presupuesto.contratos[i].IdMoneda = this.xls.contratos[x].id_moneda;
+                                    this.presupuesto.contratos[i].observaciones = this.xls.contratos[x].observaciones;
+                                    this.presupuesto.contratos[i].precio_unitario = this.xls.contratos[x].precio_unitario;
+                                    this.presupuesto.contratos[i].partida_activa = this.xls.contratos[x].partida_activa;
+                                }
+                            }
+                        }
+                    }
                     this.calcular();
                     this.cargando = false;
                 })

@@ -42,7 +42,7 @@ class PresupuestoContratistaController extends Controller
      public function __construct(Manager $fractal, PresupuestoContratistaService $service, PresupuestoContratistaTransformer $transformer)
      {
          $this->middleware('auth:api');
-         $this->middleware('context')->except(['registrarPresupuestoProveedor','updatePortalProveedor','descargaLayoutProveedor']);
+         $this->middleware('context')->except(['registrarPresupuestoProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor']);
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find', 'pdf']);
          $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
          $this->middleware('permiso:eliminar_presupuesto_contratista')->only('destroy');
@@ -52,6 +52,7 @@ class PresupuestoContratistaController extends Controller
          $this->middleware('permisoGlobal:registrar_cotizacion_proveedor')->only(['registrarPresupuestoProveedor']);
          $this->middleware('permisoGlobal:editar_cotizacion_proveedor')->only(['updatePortalProveedor']);
          $this->middleware('permisoGlobal:descargar_layout_cotizacion_proveedor')->only(['descargaLayoutProveedor']);
+         $this->middleware('permisoGlobal:cargar_layout_cotizacion_proveedor')->only(['cargaLayoutProveedor']);
 
          $this->fractal = $fractal;
          $this->service = $service;
@@ -73,6 +74,7 @@ class PresupuestoContratistaController extends Controller
          $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
          return response()->json($res, 200);
      }
+
     public function pdf($id)
     {
         if(auth()->user()->can('consultar_presupuesto_contratista')) {
@@ -95,5 +97,11 @@ class PresupuestoContratistaController extends Controller
     public function descargaLayoutProveedor(Request $request, $id)
     {
         return $this->service->descargaLayoutProveedor($id, $request->all());
+    }
+
+    public function cargaLayoutProveedor(Request $request)
+    {
+        $res = $this->service->cargaLayoutProveedor($request->file, $request->id_invitacion, $request->name, $request->id_presupuesto);
+        return response()->json($res, 200);
     }
 }
