@@ -27,8 +27,8 @@
                                 <th class="cantidad_input">Precio Unitario</th>
                                 <th class="cantidad_input">% Descuento</th>
                                 <th class="cantidad_input">Precio Total</th>
-                                <th class="cantidad_input">Moneda</th>
-                                <th class="cantidad_input">Precio Total Moneda Conversión</th>
+                                <th class="cantidad_input" >Moneda</th>
+                                <th class="cantidad_input" v-if="multiples_monedas">Precio Total Moneda Conversión</th>
                                 <th>Observaciones</th>
                             </tr>
                             </thead>
@@ -50,7 +50,7 @@
                                     <td style="width:120px;" >
                                         {{ partida.moneda.nombre}}
                                     </td>
-                                    <td style="text-align:right;">{{partida.precio_total_moneda}}</td>
+                                    <td style="text-align:right;" v-if="multiples_monedas">{{partida.precio_total_moneda}}</td>
                                     <td style="width:200px;">
                                         {{partida.observacion}}
                                     </td>
