@@ -692,7 +692,7 @@
                     })
             },
             calculaCubicacion(){
-                this.cubicacion_pago = parseFloat((this.ancho * this.largo * (this.alto + this.altura_extension) - this.espacio_gato - this.disminucion)).formatMoney(2,'.',',')
+                this.cubicacion_real = parseFloat((this.ancho * this.largo * (this.alto + this.altura_extension) - this.espacio_gato - this.disminucion)).formatMoney(2,'.',',')
             }
         },
         watch: {
@@ -732,10 +732,10 @@
                     this.calculaCubicacion();
                 }
             },
-            cubicacion_pago(value)
+            cubicacion_real(value)
             {
                 if(value){
-                    this.cubicacion_real = parseFloat(value).formatMoney(2,'.',',')
+                    this.cubicacion_pago = Math.round(parseFloat(value))
                 }
             }
         }
