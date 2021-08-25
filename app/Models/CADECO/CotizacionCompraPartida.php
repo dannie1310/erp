@@ -52,7 +52,7 @@ class CotizacionCompraPartida extends Model
 
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad, 1, '.', ',');
+        return number_format($this->cantidad, 2, '.', ',');
     }
 
     public function getItemSolicitudAttribute(){
