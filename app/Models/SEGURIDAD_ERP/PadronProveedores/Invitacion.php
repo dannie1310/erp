@@ -231,8 +231,6 @@ class Invitacion extends Model
         });
     }
 
-
-
     public function scopeInvitadoAutenticado($query)
     {
         return $query->where('usuario_invitado',  auth()->id());

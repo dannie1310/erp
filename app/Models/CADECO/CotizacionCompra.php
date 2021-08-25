@@ -817,8 +817,7 @@ class    CotizacionCompra  extends Transaccion
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         if($invitacion->cotizacionGenerada){
-            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación."
-                );
+            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
         }
 
         try
@@ -983,10 +982,15 @@ class    CotizacionCompra  extends Transaccion
 
     public function editarPortalProveedor($data, $invitacion)
     {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->estado == 3 || $this->estado > 0){
+            abort(500, "Esta cotización no puede ser editada porque ya ha sido enviada como respuesta a la invitación ".$invitacion->numero_folio_format.""
+            );
+        }
+
         try
         {
-            DB::purge('cadeco');
-            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
             $fecha =New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
@@ -1098,8 +1102,9 @@ class    CotizacionCompra  extends Transaccion
      */
     public function eliminarProveedor($motivo, $base)
     {
-        if ($this->estado > 0) {
-            abort(400, "La cotización se encuentra enviada.");
+        if ($this->estado > 0 || $this->invitacion->estado > 0) {
+            abort(500, "Esta cotización no puede ser eliminada porque ya ha sido enviada como respuesta a la invitación ".$this->invitacion->numero_folio_format.""
+            );
         }
         try {
             DB::purge('cadeco');
