@@ -817,8 +817,7 @@ class    CotizacionCompra  extends Transaccion
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         if($invitacion->cotizacionGenerada){
-            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación."
-                );
+            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
         }
 
         try

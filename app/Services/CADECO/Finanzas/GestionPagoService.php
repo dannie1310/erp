@@ -546,9 +546,17 @@ class GestionPagoService
         foreach ($bitacora as $key => $pago){
             $transaccion_pagada = Transaccion::query()->where('referencia', '=', $pago['referencia'])->where('monto', '=', -1 * abs($pago['monto']))->first();
             if($transaccion_pagada){
-                $empresa = $transaccion_pagada->empresa;
+                $cuenta_abono = null;
+                $empresa = null;
+                if($transaccion_pagada->empresa){
+                    $cuenta_abono = $transaccion_pagada->empresa->cuentasBancarias[0];
+                    $empresa = $transaccion_pagada->empresa;
+                }else if($transaccion_pagada->fondoFijo){
+                    $empresa = $transaccion_pagada->fondoFijo->empresa;
+                    $cuenta_abono = $transaccion_pagada->fondoFijo->empresa->cuentasBancarias[0];
+                }
+                
                 $cta_cargo = Cuenta::find($transaccion_pagada->id_cuenta);
-                $cuenta_abono = $empresa->cuentasBancarias[0];
                 $registros_bitacora[] = array(
                     'id_documento' => null,
                     'id_distribucion_recurso' => null,

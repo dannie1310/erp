@@ -105,7 +105,7 @@ class ViajeNetoService
             $telefonos = array([
                 'id' => $telefono->impresora ? $telefono->impresora->id : null,
                 'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-                'IMEI' => "N/A"
+                'IMEI' => $data['IMEI']
             ]);
         }
 
