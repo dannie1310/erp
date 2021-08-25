@@ -13,7 +13,9 @@
     <div>Usuario: {{$usuario}}</div>
     <div>Contraseña: {{$clave}}</div>
     <div>Dirección: <a href="http://portal-aplicaciones.grupohi.mx/">http://portal-aplicaciones.grupohi.mx/</a></div>
+
+    <p><b>Por favor revise el video que esta en el siguiente enlace para que aclare sus dudas sobre el inicio de sesión al portal de proveedores -> <a href="https://drive.google.com/file/d/1bI8LnyUVchzOfTRDF802Iiwhb7w_W66p/view?usp=sharing">Inicio de Sesión por Primera Vez</a></b></p>
     <br>
-    <small><b>Por favor no responda a este correo, se envió automáticamente.</b></small>
+    <small><b>Por favor NO RESPONDA A ESTE CORREO, se envió automáticamente.</b></small>
 </div>
 </html>
