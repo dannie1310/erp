@@ -896,8 +896,8 @@
                     this.solicitud.credito = this.credito;
                     this.solicitud.tiempo = this.tiempo;
                     this.solicitud.vigencia = this.vigencia;
-                    this.solicitud.importe = this.total;
-                    this.solicitud.impuesto = this.iva;
+                    this.solicitud.importe = this.total_mxn;
+                    this.solicitud.impuesto = this.iva_mxn;
                     this.solicitud.tc_eur = this.euro;
                     this.solicitud.tc_usd = this.dolar;
                     this.solicitud.tc_libra = this.libra;
