@@ -37,10 +37,10 @@
                         {{cotizacion_compra.fecha_format}}
                     </td>
                     <td style="text-align: center">
-                        {{cotizacion_compra.impuesto}}
+                        {{cotizacion_compra.impuesto_consulta_proveedor}} {{cotizacion_compra.moneda_consulta_proveedor}}
                     </td>
                      <td style="text-align: center">
-                        {{cotizacion_compra.importe}}
+                        {{cotizacion_compra.monto_consulta_proveedor}} {{cotizacion_compra.moneda_consulta_proveedor}}
                     </td>
                 </tr>
 

@@ -373,9 +373,31 @@ class InvitacionService
                 "descripcion"=>"MATRIZ",
                 "email"=>$usuario->correo
             ]);
+
+            $sucursal = $empresa->sucursales()->first();
+
+            if($invitacion){
+                $invitacion->razon_social= $empresa->razon_social;
+                $invitacion->rfc = $empresa->rfc;
+                $invitacion->id_proveedor_sao= $empresa->id_empresa;
+                $invitacion->id_sucursal_sao = $sucursal->id_sucursal;
+                $invitacion->save();
+            }
+
             return $empresa;
+        }else {
+
+            $sucursal = $empresaPreexistente->sucursales()->first();
+
+            if($invitacion){
+                $invitacion->razon_social= $empresaPreexistente->razon_social;
+                $invitacion->rfc = $empresaPreexistente->rfc;
+                $invitacion->id_proveedor_sao= $empresaPreexistente->id_empresa;
+                $invitacion->id_sucursal_sao = $sucursal->id_sucursal;
+                $invitacion->save();
+            }
+            return $empresaPreexistente;
         }
-        return $empresaPreexistente;
     }
 
     private function registraArchivo($data)

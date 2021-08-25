@@ -92,7 +92,9 @@ class UsuarioService
         if($usuario){
             if($usuario->correo == $credenciales["usuario"]){
                 /*1.1 si si existe y el correo es igual al correo del usuario se transfieren las invitaciones a dicho usuario*/
-                $invitacionesService->transfiereInvitaciones($usuarioProvisional, $usuario);
+                if($usuarioProvisional){
+                    $invitacionesService->transfiereInvitaciones($usuarioProvisional, $usuario);
+                }
                 $empresaPadron = $empresaPadronService->buscaPorRFC($datos["rfc"]);
 
                 if($empresaPadron){
@@ -141,12 +143,12 @@ class UsuarioService
                     }
                 }
 
-                $usuarioProvisional->usuario_estado = 0;
+                /*$usuarioProvisional->usuario_estado = 0;
                 $usuarioProvisional->clave = date("his");
-                $usuarioProvisional->save();
+                $usuarioProvisional->save();*/
 
                 /* 1.1.2 se notifica que debe iniciar con las credenciales correspondientes al usuario*/
-                abort(444, "Ya existe un usuario registrado con el RFC: ". $datos["rfc"] . ", la invitación a cotizar ha sido transferida a este usuario. \n \n Por favor inicie sesión con las credenciales de dicho usuario compartidas previamente por correo.");
+                abort(444, "Ya existe un usuario registrado con el RFC: ". $datos["rfc"] . ", la invitación a cotizar ha sido transferida a este usuario. \n \n Inicie sesión con las credenciales de dicho usuario compartidas previamente por correo.  \n \n Si tiene alguna duda por favor pongase en contacto con el área de soporte a aplicaciones enviando un correo a la dirección: \n \n soporte_aplicaciones@desarrollo-hi.atlassian.net");
             }else{
                 /*1.2 si si existe y el correo no es igual al correo del usuario que esta iniciando sesión no se cambia la contraseña y se
                   notifica que ese rfc esta asociado a otro correo y que debe contactar a soporte a aplicaciones de grupo hermes para solicitar el cambio*/

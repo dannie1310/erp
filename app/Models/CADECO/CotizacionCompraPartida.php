@@ -52,7 +52,7 @@ class CotizacionCompraPartida extends Model
 
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad, 1, '.', ',');
+        return number_format($this->cantidad, 2, '.', ',');
     }
 
     public function getItemSolicitudAttribute(){
@@ -141,6 +141,13 @@ class CotizacionCompraPartida extends Model
         return $this->descuento != 0 ? $this->precio_unitario - ($this->precio_unitario * $this->descuento / 100) : $this->precio_unitario;
     }
 
+    public function getPrecioTotalDescuentoPartidaAttribute()
+    {
+        if($this->partida){
+            return ($this->precio_unitario - ($this->precio_unitario * $this->partida->descuento_partida / 100)) * $this->cantidad ;
+        }
+    }
+
     public function getPrecioCompuestoTotalAttribute()
     {
         return $this->precio_compuesto * $this->cantidad;
@@ -185,5 +192,10 @@ class CotizacionCompraPartida extends Model
         }catch (\Exception $e){
             return null;
         }
+    }
+
+    public function scopeActiva($query)
+    {
+        return $query->where("no_cotizado","=",0);
     }
 }

@@ -41,6 +41,10 @@ class TransaccionTransformer extends TransformerAbstract
             "fecha_format"=>$model->fecha_format,
             "numero_folio_format"=>$model->numero_folio_format,
             "tipo_str"=>$model->tipo_transaccion_str,
+            'impuesto_consulta_proveedor' => $model->impuesto_consulta_proveedor_format,
+            'subtotal_consulta_proveedor' => $model->subtotal_consulta_proveedor_format,
+            'monto_consulta_proveedor' => $model->monto_consulta_proveedor_format,
+            'moneda_consulta_proveedor' => $model->moneda_consulta_proveedor_format,
         ];
         return array_merge($transaccion, $complemento);
     }
