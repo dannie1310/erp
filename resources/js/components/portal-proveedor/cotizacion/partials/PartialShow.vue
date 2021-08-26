@@ -27,8 +27,8 @@
                                 <th class="cantidad_input">Precio Unitario</th>
                                 <th class="cantidad_input">% Descuento</th>
                                 <th class="cantidad_input">Precio Total</th>
-                                <th class="cantidad_input">Moneda</th>
-                                <th class="cantidad_input">Precio Total Moneda Conversión</th>
+                                <th class="cantidad_input" >Moneda</th>
+                                <th class="cantidad_input" v-if="multiples_monedas">Precio Total Moneda Conversión</th>
                                 <th>Observaciones</th>
                             </tr>
                             </thead>
@@ -50,7 +50,7 @@
                                     <td style="width:120px;" >
                                         {{ partida.moneda.nombre}}
                                     </td>
-                                    <td style="text-align:right;">{{partida.precio_total_moneda}}</td>
+                                    <td style="text-align:right;" v-if="multiples_monedas">{{partida.precio_total_moneda}}</td>
                                     <td style="width:200px;">
                                         {{partida.observacion}}
                                     </td>
@@ -332,7 +332,7 @@
                                         </div>
                                     </td>
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal <span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                    <td style="border: none; text-align: right">{{ invitacion.cotizacionCompra.subtotal }}</td>
+                                    <td style="border: none; text-align: right">{{ invitacion.cotizacionCompra.subtotal_consulta_proveedor }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global (%):</b></td>
@@ -685,7 +685,7 @@ export default {
             return this.subtotal_mxn * 0.16;
         },
         total_mxn() {
-            return this.subtotal_mxn + this.iva;
+            return this.subtotal_mxn + this.iva_mxn;
         },
     },
 }
