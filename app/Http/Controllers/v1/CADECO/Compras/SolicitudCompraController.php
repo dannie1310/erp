@@ -73,4 +73,9 @@ class SolicitudCompraController extends Controller
     {
         return $this->service->leerQR($request->all()['data']);
     }
+
+    public function getCuerpoCorreo($id)
+    {
+        return $this->service->getCuerpoCorreo($id);
+    }
 }

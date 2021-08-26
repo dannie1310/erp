@@ -25,7 +25,9 @@
                         {{solicitud_compra.area_compradora}}
                     </td>
                     <td style="text-align: center">
-                        {{solicitud_compra.numero_folio_format}}
+                        <router-link :to="{name: 'solicitud-show', params:{id : solicitud_compra.id }}" target="_blank">
+                            <span style="color:black; text-decoration: underline">{{solicitud_compra.numero_folio_format}}</span>
+                        </router-link>
                     </td>
                     <td style="text-align: center">
                         {{solicitud_compra.fecha_format}}

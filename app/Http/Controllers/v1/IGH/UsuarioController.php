@@ -48,4 +48,15 @@ class UsuarioController extends Controller
             'permisos' => Context::isEstablished() ? $usuario->permisos() : []
         ]);
     }
+
+    public function buscaUsuarioEmpresaPorCorreo($correo)
+    {
+        return $this->respondWithCollection($this->service->buscaUsuarioEmpresaPorCorreo($correo));
+    }
+
+    public function buscaUsuariosEmpresaPorCorreo(Request $request)
+    {
+        $respuesta =$this->service->buscaUsuarioEmpresaPorCorreos($request->correos);
+        return response()->json($respuesta, 200);
+    }
 }

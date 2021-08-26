@@ -22,7 +22,9 @@ class EmpresaObserver
         $empresa->personalidad = $empresa->getIdPersonalidadRFC();
         $empresa->razon_social = mb_strtoupper($empresa->razon_social);
         $empresa->FechaHoraRegistro = date('Y-m-d H:i:s');
-        $empresa->UsuarioRegistro = auth()->id();
+        if(!$empresa->UsuarioRegistro >0){
+            $empresa->UsuarioRegistro = auth()->id();
+        }
     }
 
     /**
