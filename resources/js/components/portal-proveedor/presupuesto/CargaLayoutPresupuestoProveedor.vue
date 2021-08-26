@@ -8,7 +8,7 @@
             <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE COTIZACIÓN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE PRESUPUESTO</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -52,8 +52,8 @@
 
 <script>
     export default {
-        name: "cargar-layout-cotizacion",
-        props: ['id','id_cotizacion'],
+        name: "cargar-layout-presupuesto-cotizacion",
+        props: ['id','id_presupuesto'],
         data() {
             return {
                 cargando: false,
@@ -97,8 +97,8 @@
                 formData.append('file', this.file);
                 formData.append('id_invitacion', this.id);
                 formData.append('name', this.nombre);
-                formData.append('id_cotizacion', this.id_cotizacion);
-                return this.$store.dispatch('compras/cotizacion/cargaLayoutProveedor',
+                formData.append('id_presupuesto', this.id_presupuesto);
+                return this.$store.dispatch('contratos/presupuesto/cargaLayoutProveedor',
                     {
                         data: formData,
                         config: {

@@ -3874,7 +3874,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id_invitacion/create',
+                        path: ':id/create',
                         name: 'cotizacion-proveedor-create',
                         component: require('./components/portal-proveedor/cotizacion/Create').default,
                         props: true,
@@ -3900,7 +3900,7 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id_invitacion/editar',
+                        path: ':id/editar',
                         name: 'cotizacion-proveedor-edit',
                         props: true,
                         component: require('./components/portal-proveedor/cotizacion/Edit').default,
@@ -4087,7 +4087,7 @@ export const routes = [
                 component: require('./components/portal-proveedor/presupuesto/Layout').default,
                 children: [
                     {
-                        path: ':id_invitacion/create',
+                        path: ':id/create',
                         name: 'presupuesto-proveedor-create',
                         component: require('./components/portal-proveedor/presupuesto/Create').default,
                         props: true,
@@ -4118,11 +4118,11 @@ export const routes = [
                         component: require('./components/portal-proveedor/presupuesto/Edit').default,
                         props: true,
                         meta: {
-                            title: 'Actualizar Presupuesto',
+                            title: 'Editar Presupuesto',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
-                            middleware: [auth],
-                            // permission: 'consultar_cotizacion_proveedor',
-                            // general: true
+                            middleware: [auth, permission],
+                            permission: 'editar_cotizacion_proveedor',
+                            general: true
                         }
                     },
                 ]

@@ -14,15 +14,12 @@
                     <th class="encabezado c280" >
                       Proyecto
                     </th>
-
                     <th class="encabezado c120" >
                       Fecha de Cierre de Invitación
                     </th>
-
                     <th colspan="2" class="encabezado">
                       Observaciones
                     </th>
-
                 </tr>
                 <tr>
                     <td style="text-align: center">

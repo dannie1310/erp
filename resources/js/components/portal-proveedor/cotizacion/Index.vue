@@ -137,7 +137,6 @@
                         fecha_cierre_invitacion: invitacion.fecha_cierre_format,
                         empresa: invitacion.razon_social,
                         observaciones: invitacion.cotizacion.observaciones,
-                        importe: invitacion.importe_cotizacion,
                         importe_consulta: invitacion.cotizacion.monto_consulta_proveedor,
                         moneda_consulta: invitacion.cotizacion.moneda_consulta_proveedor,
                         estado: this.getEstado(invitacion.cotizacion.estado),
