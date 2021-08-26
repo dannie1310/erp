@@ -156,7 +156,7 @@ class Material extends Model
 
     public function requisicionInsumos()
     {
-        return $this->requisicion()->get();
+        return $this->materialesParaCompras()->orderBy('descripcion', 'asc')->get();
     }
 
     public function hijos()
