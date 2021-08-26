@@ -830,12 +830,15 @@ class PresupuestoContratista extends Transaccion
 
     public function registrarPortalProveedor($data, $invitacion)
     {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->cotizacionGenerada){
+            abort(500, "Esta cotización no puede ser registrada porque ya existe el presupuesto ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
+        }
+
         try
         {
-            DB::purge('cadeco');
-            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
-            $contrato = ContratoProyectado::withoutGlobalScopes()->find($invitacion->id_transaccion_antecedente);
             $fecha = new DateTime($data['fecha_cot']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
