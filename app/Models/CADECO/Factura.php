@@ -485,7 +485,7 @@ class Factura extends Transaccion
             foreach ($this->transacciones_revisadas as $transaccion_revisada) {
                 if ($transaccion_revisada) {
                     if ($transaccion_revisada->tipo_transaccion == 52) {
-                        $estimacion = Estimacion::find($transaccion_revisada->id_transaccion);
+                        $estimacion = Estimacion::withoutGlobalScopes()->find($transaccion_revisada->id_transaccion);
                         if($estimacion){
                             foreach ($estimacion->relaciones as $relacion) {
                                 if ($relacion["tipo_numero"] != 65) {
@@ -496,7 +496,7 @@ class Factura extends Transaccion
                             }
                         }
                     } else if ($transaccion_revisada->tipo_transaccion == 51) {
-                        $subcontrato = Subcontrato::find($transaccion_revisada->id_transaccion);
+                        $subcontrato = Subcontrato::withoutGlobalScopes()->find($transaccion_revisada->id_transaccion);
                         if($subcontrato){
                             foreach ($subcontrato->relaciones as $relacion) {
                                 if ($relacion["tipo_numero"] != 65) {
@@ -507,7 +507,7 @@ class Factura extends Transaccion
                             }
                         }
                     } else if ($transaccion_revisada->tipo_transaccion == 33 && $transaccion_revisada->opciones == 1) {
-                        $entrada = EntradaMaterial::find($transaccion_revisada->id_transaccion);
+                        $entrada = EntradaMaterial::withoutGlobalScopes()->find($transaccion_revisada->id_transaccion);
                         foreach ($entrada->relaciones as $relacion) {
                             if ($relacion["tipo_numero"] != 65) {
                                 $relaciones[$i] = $relacion;
@@ -516,7 +516,7 @@ class Factura extends Transaccion
                             }
                         }
                     } else if ($transaccion_revisada->tipo_transaccion == 19 && $transaccion_revisada->opciones == 1) {
-                        $orden_compra = OrdenCompra::find($transaccion_revisada->id_transaccion);
+                        $orden_compra = OrdenCompra::withoutGlobalScopes()->find($transaccion_revisada->id_transaccion);
                         foreach ($orden_compra->relaciones as $relacion) {
                             if ($relacion["tipo_numero"] != 65) {
                                 $relaciones[$i] = $relacion;
@@ -670,7 +670,7 @@ class Factura extends Transaccion
 
     private function generaPrepoliza()
     {
-        DB::connection('cadeco')->update("[Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+        DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
         return $this;
     }
 
@@ -1017,6 +1017,7 @@ class Factura extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             if(abs($data['factura']['monto'] - $data['resumen']['total_documentos']) > 0.99){
+                DB::connection('cadeco')->rollBack();
                 abort(403, 'Para proceder con la revisión, la diferencia debe ser menor a 0.99');
             }
             foreach($data['items']['pendientes'] as $pendiente){
@@ -1208,15 +1209,20 @@ class Factura extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
+        DB::connection('cadeco')->commit();
 
         $obra = Obra::query()->find(Context::getIdObra());
-        if ($obra->datosContables) {
-            if ($obra->datosContables->BDContPaq != "") {
-                $this->generaPrepoliza();
+        try{
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    $this->generaPrepoliza();
+                }
             }
+        }catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
 
-        DB::connection('cadeco')->commit();
         return $this;
     }
 

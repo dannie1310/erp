@@ -33,6 +33,11 @@ class CuentaSaldoNegativo extends Model
         static::addGlobalScope(new EstadoActivoScope);
     }
 
+    public function tipoCuenta()
+    {
+        return $this->belongsTo(TipoCuenta::class,"tipo","tipo");
+    }
+
     public function getSaldoFormatAttribute()
     {
         return '$' . number_format($this->saldo,2);
@@ -81,22 +86,7 @@ group by IdCuenta";
 
     public function getNaturalezaAttribute()
     {
-        switch ($this->digito_inicial){
-            case 1: return "Acreedora";
-                break;
-            case 5: return "Acreedora";
-                break;
-            case 6: return "Acreedora";
-                break;
-            case 7: return "Acreedora";
-                break;
-            case 2: return "Deudora";
-                break;
-            case 3: return "Deudora";
-                break;
-            case 4: return "Deudora";
-                break;
-        }
+        return $this->tipoCuenta->naturaleza;
     }
 
 }

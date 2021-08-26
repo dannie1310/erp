@@ -71,7 +71,7 @@ trait AuthenticatesIghUsers
             'clave' => 'required|string',
         ]);
     }
-
+    
     /**
      * Attempt to log the user into the application.
      *
@@ -104,8 +104,6 @@ trait AuthenticatesIghUsers
      */
     protected function sendLoginResponse(Request $request)
     {
-        // dd(4, $request);
-        //$request->session()->regenerate();
 
         $this->clearLoginAttempts($request);
         
@@ -137,6 +135,13 @@ trait AuthenticatesIghUsers
     {
         throw ValidationException::withMessages([
             $this->username() => [trans('auth.failed')],
+        ]);
+    }
+
+    protected function sendFailedPasswordResponse(Request $request)
+    {
+        throw ValidationException::withMessages([
+            'clave_confirmacion' => [trans('auth.failed')],
         ]);
     }
 

@@ -15,7 +15,10 @@ use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
@@ -101,6 +104,11 @@ class SolicitudCompra extends Transaccion
         return $this->hasMany(AsignacionProveedor::class, 'id_transaccion_solicitud', 'id_transaccion');
     }
 
+    public function invitaciones()
+    {
+        return $this->hasMany(Invitacion::class, "id_transaccion_antecedente", "id_transaccion");
+    }
+
     /**
      * Scopes
      */
@@ -183,6 +191,28 @@ class SolicitudCompra extends Transaccion
             return $this->complemento->id_area_compradora;
         }catch (\Exception $e){
             return null;
+        }
+    }
+    public function getAreaCompradoraAttribute()
+    {
+        try{
+            return $this->complemento->area_compradora->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getAreaSolicitanteAttribute()
+    {
+        try{
+            if($this->complemento->area_solicitante)
+            {
+                return $this->complemento->area_solicitante->descripcion;
+
+            }
+            return "N/A";
+        }catch (\Exception $e){
+            return "null";
         }
     }
 
@@ -669,5 +699,30 @@ class SolicitudCompra extends Transaccion
 
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function getCuerpoCorreoInvitacion()
+    {
+        if($this->complemento){
+            $cuerpo_correo = CuerpoCorreo::where("id_tipo_antecedente", "=", $this->tipo_transaccion)
+                ->where("id_area_compradora","=",$this->complemento->id_area_compradora)
+            ->where("estado", "=",1)
+            ->first();
+            if(!$cuerpo_correo)
+            {
+                $area_compradora = CtgAreaCompradora::find($this->complemento->id_area_compradora);
+                abort(500,"No hay un machote de correo de invitación definido para el área compradora: ".$area_compradora->descripcion.". \n \nPor favor reportelo con el área de Soporte a Aplicaciones Web");
+            }
+            return $cuerpo_correo->cuerpo;
+        }else{
+            $cuerpo_correo = CuerpoCorreo::where("id_tipo_antecedente", "=", $this->tipo_transaccion)
+                ->where("estado", "=",1)
+                ->first();
+            if(!$cuerpo_correo)
+            {
+                abort(500,"No hay un machote de correo de invitación definido para la solicitud de compra. \n \nPor favor reportelo con el área de Soporte a Aplicaciones Web");
+            }
+        }
+
     }
 }

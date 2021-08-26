@@ -18,6 +18,7 @@ class CuentaSaldoNegativoTransformer extends TransformerAbstract
             'saldo_cuenta' => $model->saldo_format,
             'fecha_actualizacion' => $model->fecha_actualizacion,
             'tipo' => $model->tipo,
+            'tipo_cuenta' => $model->tipoCuenta->descripcion,
         ];
     }
 

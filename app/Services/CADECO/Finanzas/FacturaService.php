@@ -161,8 +161,11 @@ class FacturaService
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["folio"] = $arreglo_cfd["folio"];
         $arreglo["fecha"] = $arreglo_cfd["fecha"]->format("Y-m-d");
+        $arreglo["fecha_hora"] = $arreglo_cfd["fecha_hora"];
         $arreglo["version"] = $arreglo_cfd["version"];
         $arreglo["moneda"] = $arreglo_cfd["moneda"];
+        $arreglo["no_certificado"] = $arreglo_cfd["no_certificado"];
+        $arreglo["certificado"] = $arreglo_cfd["certificado"];
 
         $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
         $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
@@ -336,6 +339,7 @@ class FacturaService
             } else {
                 $this->validaTotal($data["total"],$arreglo_cfd["total"],0);
             }
+            $this->validaPresuntoEFO($arreglo_cfd);
         }
 
 
@@ -381,11 +385,35 @@ class FacturaService
         $datos["factura_repositorio"] = $datos_rfactura;
         $datos["nc_repositorio"] = $datos_rnc;
         $transaccion = $this->repository->create($datos);
-        $this->validaPresuntoEFO($arreglo_cfd);
 
         foreach ($transaccion->facturasRepositorio as $facturaRepositorio) {
             $servicio_cfdi = new CFDSATService(new CFDSAT());
             $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+        }
+
+        foreach($transaccion->facturasRepositorio as $facturaRepositorio){
+            if($facturaRepositorio->cfdiSAT){
+                $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
+                $logs = $this->guardarXmlEnADD($xml);
+                foreach($logs as $log)
+                {
+                    if(is_array($log)){
+                        $facturaRepositorio->logsADD()->create(
+                            [
+                                "log_add"=>$log["descripcion"],
+                                "tipo"=>$log["tipo"]
+                            ]
+                        );
+                    }else {
+                        $facturaRepositorio->logsADD()->create(
+                            [
+                                "log_add"=>$log
+                            ]
+                        );
+                    }
+
+                }
+            }
         }
         return $transaccion;
     }
@@ -623,5 +651,13 @@ class FacturaService
             return "Error de lectura";
         }
     }
+
+    public function guardarXmlEnADD($xml){
+        $xml_arreglo = $this->getArregloCFD($xml);
+        if(in_array($xml_arreglo['tipo_comprobante'], ["I", "E"])){
+            return $this->repository->guardarXml($xml, $xml_arreglo);
+        }
+    }
+
 }
 

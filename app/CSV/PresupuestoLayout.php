@@ -96,7 +96,7 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $id_moneda = '';
                     switch ((int)$cot->IdMoneda){
                         case 1:
-                            $id_moneda = 'PESO MXP';
+                            $id_moneda = 'PESO MXN';
                         break;
                         case 2:
                             $id_moneda = 'DOLAR USD';
@@ -136,10 +136,10 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $objValidation->setError('Value is not in list.');
                     $objValidation->setPromptTitle('Choose from list');
                     $objValidation->setPrompt('Please pick a value from the drop-down list.');
-                    $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXP"');
+                    $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXN"');
 
-                    $event->sheet->setCellValue('N'.$i,'=IF(L'.$i.'="EURO",K'.$i.'*G'.($t_part+9).'/1,IF(L'.$i.'="LIBRA",K'.$i.'*G'.($t_part+10).'/1,IF(L'.$i.'="DOLAR USD",K'.$i.'*G'.($t_part+8).'/1, IF(L'.$i.'="PESO MXP",K'.$i.',0))))');
-                    $event->sheet->setCellValue('M'.$i,'=IF(L'.$i.'="EURO",J'.$i.'*G'.($t_part+9).'/1,IF(L'.$i.'="LIBRA",J'.$i.'*G'.($t_part+10).'/1,IF(L'.$i.'="DOLAR USD",J'.$i.'*G'.($t_part+8).'/1, IF(L'.$i.'="PESO MXP",J'.$i.',0))))');
+                    $event->sheet->setCellValue('N'.$i,'=IF(L'.$i.'="EURO",K'.$i.'*G'.($t_part+9).'/1,IF(L'.$i.'="LIBRA",K'.$i.'*G'.($t_part+10).'/1,IF(L'.$i.'="DOLAR USD",K'.$i.'*G'.($t_part+8).'/1, IF(L'.$i.'="PESO MXN",K'.$i.',0))))');
+                    $event->sheet->setCellValue('M'.$i,'=IF(L'.$i.'="EURO",J'.$i.'*G'.($t_part+9).'/1,IF(L'.$i.'="LIBRA",J'.$i.'*G'.($t_part+10).'/1,IF(L'.$i.'="DOLAR USD",J'.$i.'*G'.($t_part+8).'/1, IF(L'.$i.'="PESO MXN",J'.$i.',0))))');
                     $event->sheet->setCellValue("K".$i, '=G'.$i.'*F'.$i.'-((G'.$i.'*F'.$i.'*I'.$i.')/100)');
                     $event->sheet->setCellValue("J".$i, '=G'.$i.'-((G'.$i.'*I'.$i.')/100)');
                     $event->sheet->setCellValue("H".$i, '=G'.$i.'*F'.$i);
@@ -162,12 +162,12 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                         'bold' => true
                     ],
                     ]);
-                
+
                 $event->sheet->setCellValue("F".($i+1), '% Descuento');
                 $event->sheet->setCellValue("G".($i+1), ($this->presupuesto->PorcentajeDescuento) ? $this->presupuesto->PorcentajeDescuento : 0);
-                
-                $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXP)');
-                $event->sheet->setCellValue("G".($i+2), '=SUMIF(L3:L'.$i.',"PESO MXP",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"PESO MXP",K3:K'.$i.')*G'.($i+1).'/100)');
+
+                $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXN)');
+                $event->sheet->setCellValue("G".($i+2), '=SUMIF(L3:L'.$i.',"PESO MXN",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"PESO MXN",K3:K'.$i.')*G'.($i+1).'/100)');
 
                 $event->sheet->setCellValue("F".($i+3), '%Subtotal Precios Dolar (USD)');
                 $event->sheet->setCellValue("G".($i+3), '=SUMIF(L3:L'.$i.',"DOLAR USD",K3:K'.$i.')-(SUMIF(L3:L'.$i.',"DOLAR USD",K3:K'.$i.')*G'.($i+1).'/100)');
@@ -199,7 +199,7 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+12), 'TOTAL');
                 $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'+G'.($i+11));
 
-                $event->sheet->setCellValue("F".($i+13), 'Fecha de Presupuesto');   
+                $event->sheet->setCellValue("F".($i+13), 'Fecha de Presupuesto');
                 $event->sheet->setCellValue("G".($i+13), date("d/m/Y"));
 
                 $event->sheet->setCellValue("F".($i+14), '% Anticipo');

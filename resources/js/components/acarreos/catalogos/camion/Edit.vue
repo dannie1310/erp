@@ -317,8 +317,6 @@
                                 <label class="col-md-1 col-form-label">Ancho:</label>
                                 <div class="col-md-2">
                                     <input type="number"
-                                           min="0"
-                                           step="1"
                                            class="form-control"
                                            :name="ancho"
                                            data-vv-as="Ancho"
@@ -330,8 +328,6 @@
                                 <label class="col-md-1 col-form-label">Largo:</label>
                                 <div class="col-md-2">
                                     <input type="number"
-                                           min="0"
-                                           step="1"
                                            class="form-control"
                                            :name="largo"
                                            data-vv-as="Largo"
@@ -343,8 +339,6 @@
                                 <label class="col-md-1 col-form-label">Alto:</label>
                                 <div class="col-md-2">
                                     <input type="number"
-                                           min="0"
-                                           step="1"
                                            class="form-control"
                                            :name="alto"
                                            data-vv-as="Alto"
@@ -355,13 +349,11 @@
                                 </div>
                                 <label class="col-md-1 col-form-label">Gato:</label>
                                 <div class="col-md-2">
-                                    <input type="number"
-                                           min="0"
-                                           step="1"
-                                           class="form-control"
+                                    <input class="form-control"
+                                           type="number"
+                                           v-validate="{required: true, min_value:0}"
                                            :name="espacio_gato"
                                            data-vv-as="Espacio de gato"
-                                           v-validate="{min_value:0}"
                                            :class="{'is-invalid': errors.has('espacio_gato')}"
                                            v-model="espacio_gato"/>
                                     <div class="invalid-feedback" v-show="errors.has('espacio_gato')">{{ errors.first('espacio_gato') }}</div>
@@ -373,8 +365,6 @@
                                 <label class="col-md-1 col-form-label">Disminución:</label>
                                 <div class="col-md-2">
                                     <input type="number"
-                                           min="0"
-                                           step="1"
                                            class="form-control"
                                            :name="disminucion"
                                            data-vv-as="Disminución"
@@ -386,8 +376,6 @@
                                 <label class="col-md-1 col-form-label">Extensión:</label>
                                 <div class="col-md-2">
                                     <input type="number"
-                                           min="0"
-                                           step="1"
                                            class="form-control"
                                            :name="altura_extension"
                                            data-vv-as="Altura Extensión"
@@ -399,8 +387,6 @@
                                 <label class="col-md-1 col-form-label">Cubicación Real:</label>
                                 <div class="col-md-2">
                                     <input type="number"
-                                           min="0"
-                                           step="0.01"
                                            disabled="true"
                                            v-validate="{min_value:0, max_value:40}"
                                            class="form-control"
@@ -412,8 +398,6 @@
                                 <div class="col-md-2">
                                     <input disabled="true"
                                         type="number"
-                                        min="0"
-                                        step="1"
                                         class="form-control"
                                         :name="cubicacion_pago"
                                         data-vv-as="Cubicación para pago"
@@ -465,14 +449,14 @@
                 fechasDeshabilitadas:{},
                 fecha_requisicion : '',
                 fecha_hoy : '',
-                ancho : 0,
-                largo : 0,
-                alto : 0,
-                espacio_gato : 0,
-                altura_extension : 0,
-                disminucion : 0,
-                cubicacion_real : 0,
-                cubicacion_pago : 0,
+                ancho : 0.0,
+                largo : 0.0,
+                alto : 0.0,
+                espacio_gato : 0.0,
+                altura_extension : 0.0,
+                disminucion : 0.0,
+                cubicacion_real : 0.0,
+                cubicacion_pago : 0.0,
                 dropzoneOptions: {
                     url: 'prueba',
                     chunking: false,
@@ -708,50 +692,50 @@
                     })
             },
             calculaCubicacion(){
-                this.cubicacion_pago = this.ancho * this.largo * (this.alto + this.altura_extension) - this.espacio_gato - this.disminucion
+                this.cubicacion_real = parseFloat((this.ancho * this.largo * (this.alto + this.altura_extension) - this.espacio_gato - this.disminucion)).formatMoney(2,'.',',')
             }
         },
         watch: {
             ancho(value) {
                 if(value){
-                    this.ancho = parseInt(value)
+                    this.ancho = parseFloat(value)
                     this.calculaCubicacion();
                 }
             },
             largo(value) {
                 if(value){
-                    this.largo = parseInt(value)
+                    this.largo = parseFloat(value)
                     this.calculaCubicacion();
                 }
             },
             alto(value) {
                 if(value){
-                    this.alto = parseInt(value)
+                    this.alto = parseFloat(value)
                     this.calculaCubicacion();
                 }
             },
             espacio_gato(value) {
                 if(value){
-                    this.espacio_gato = parseInt(value)
+                    this.espacio_gato = parseFloat(value)
                     this.calculaCubicacion();
                 }
             },
             disminucion(value) {
                 if(value){
-                    this.disminucion = parseInt(value)
+                    this.disminucion = parseFloat(value)
                     this.calculaCubicacion();
                 }
             },
             altura_extension(value) {
                 if(value){
-                    this.altura_extension = parseInt(value)
+                    this.altura_extension = parseFloat(value)
                     this.calculaCubicacion();
                 }
             },
-            cubicacion_pago(value)
+            cubicacion_real(value)
             {
                 if(value){
-                    this.cubicacion_real = parseFloat(value).formatMoney(2,'.',',')
+                    this.cubicacion_pago = Math.round(parseFloat(value))
                 }
             }
         }

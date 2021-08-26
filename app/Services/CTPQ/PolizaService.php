@@ -251,7 +251,7 @@ class PolizaService
         }catch (\Exception $e) {
             abort(500,"Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').". \n \n Favor de contactar a soporte a aplicaciones.");
             throw $e;
-        } 
+        }
         if($cantidad == 0){abort(500, "No hay pólizas con los datos de búsqueda.");}
         try{
             $zip_name = 'Polizas '.date("Ymdhis") . '.zip';
@@ -382,5 +382,4 @@ class PolizaService
         }
         return $solicitud;
     }
-
 }

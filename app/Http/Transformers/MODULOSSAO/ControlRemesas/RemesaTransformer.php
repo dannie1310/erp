@@ -41,7 +41,7 @@ class RemesaTransformer extends TransformerAbstract
             'tipo' => $model->tipo,
             'folio' => $model->Folio,
             'proyecto' => $model->IDProyecto,
-            'proyecto_descripcion' => $model->proyecto->Nombre
+            'proyecto_descripcion' => $model->nombre_proyecto
         ];
     }
 

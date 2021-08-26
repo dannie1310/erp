@@ -32,4 +32,9 @@ class ProcesamientoListaEfos extends Model
     {
         return $this->hasMany(EFOSCambio::class, "id_procesamiento_efos", "id");
     }
+
+    public function logs()
+    {
+        return $this->hasMany(ProcesamientoListaEfosLog::class, "id_procesamiento_lista_efos", "id");
+    }
 }

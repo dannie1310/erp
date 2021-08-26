@@ -95,7 +95,7 @@
                                         <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.descuento}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">
-                                        <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXP):</label>
+                                        <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
                                         <label class="col-sm-2 col-form-label" style="text-align: right">{{presupuesto.subtotal_format}}</label>
                                     </div>
                                     <div class=" col-md-12" align="right">

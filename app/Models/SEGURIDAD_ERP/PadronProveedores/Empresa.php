@@ -20,7 +20,8 @@ class Empresa extends Model
         'no_imss',
         'id_giro',
         'id_tipo_empresa',
-        'id_tipo_personalidad'
+        'id_tipo_personalidad',
+        'usuario_registro'
     ];
 
     public function giro()
@@ -205,10 +206,10 @@ class Empresa extends Model
                         }
                         $i++;
                     }
-                }
-                if(!$empresa->representantesLegales()->count()>0)
-                {
-                    abort(500, "Debe existir al menos un representante legal para la empresa.");
+                    /*if(!$empresa->representantesLegales()->count()>0)
+                    {
+                        abort(500, "Debe existir al menos un representante legal para la empresa.");
+                    }*/
                 }
             }
 

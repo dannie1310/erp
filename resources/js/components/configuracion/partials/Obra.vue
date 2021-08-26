@@ -27,7 +27,18 @@
                 </div>
             </div>
             <div class="form-group row">
-                <label for="nombre" class="col-lg-2 col-form-label">Abreviatura</label>
+                <label for="clave" class="col-lg-2 col-form-label">Clave:</label>
+                <div class="col-lg-4">
+                    <input type="text" class="form-control" id="clave" v-model="form.clave"
+                           v-validate="{required:true, max: 32}"
+                           name="clave"
+                           data-vv-as="Clave"
+                           :class="{'is-invalid': errors.has('clave')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('clave')">{{ errors.first('clave') }}</div>
+                </div>
+
+                <label for="nombre" class="col-lg-2 col-form-label">Abreviatura:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="nombre" v-model="form.nombre"
                            v-validate="{required:true, max: 16}"
@@ -37,10 +48,11 @@
                     >
                     <div class="invalid-feedback" v-show="errors.has('nombre')">{{ errors.first('nombre') }}</div>
                 </div>
-           <!-- </div>
 
-            <div class="form-group row">-->
-                <label for="descripcion" class="col-lg-2 col-form-label">Descripción</label>
+            </div>
+
+            <div class="form-group row">
+                <label for="descripcion" class="col-lg-2 col-form-label">Descripción:</label>
                 <div class="col-lg-4">
                     <textarea class="form-control" id="descripcion" v-model="form.descripcion"
                               v-validate="{required:true, max: 255}"
@@ -68,7 +80,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="cliente" class="col-lg-2 col-form-label">Cliente</label>
+                <label for="cliente" class="col-lg-2 col-form-label">Cliente:</label>
                 <div class="col-lg-5">
                     <input type="text" class="form-control" id="cliente" v-model="form.cliente"
                            v-validate="{required:true, max: 255}"
@@ -81,7 +93,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="facturar" class="col-lg-2 col-form-label">Facturar a</label>
+                <label for="facturar" class="col-lg-2 col-form-label">Facturar a:</label>
                 <div class="col-lg-5">
                     <input type="text" class="form-control" id="facturar" v-model="form.facturar"
                            v-validate="{required:true, max: 255}"
@@ -94,7 +106,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="responsable" class="col-lg-2 col-form-label">Responsable</label>
+                <label for="responsable" class="col-lg-2 col-form-label">Responsable:</label>
                 <div class="col-lg-4">
                     <usuario-select
                             name="responsable"
@@ -110,7 +122,7 @@
   <!--          </div>
 
             <div class="form-group row">-->
-                <label for="administrador" class="col-lg-2 col-form-label">Administrador</label>
+                <label for="administrador" class="col-lg-2 col-form-label">Administrador:</label>
                 <div class="col-lg-4">
                     <usuario-select
                             name="administrador"
@@ -126,7 +138,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="rfc" class="col-lg-2 col-form-label">RFC</label>
+                <label for="rfc" class="col-lg-2 col-form-label">RFC:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="rfc" v-model="form.rfc"
                            v-validate="{max: 16}"
@@ -135,6 +147,18 @@
                            :class="{'is-invalid': errors.has('rfc')}"
                     >
                     <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="direccion" class="col-lg-2 col-form-label">Dirección para facturación:</label>
+                <div class="col-lg-10">
+                    <textarea id="direccion" class="form-control" v-model="form.direccion"
+                              v-validate="{required:true, max: 255}"
+                              name="direccion"
+                              data-vv-as="Dirección"
+                              :class="{'is-invalid': errors.has('direccion')}"
+                    ></textarea>
+                    <div class="invalid-feedback" v-show="errors.has('direccion')">{{ errors.first('direccion') }}</div>
                 </div>
             </div>
 
@@ -246,22 +270,35 @@
             </fieldset>
 
             <hr>
-            <h5 id="ubicacion">Ubicación</h5>
+            <h5 id="ubicacion">Ubicación del Proyecto</h5>
 
             <div class="form-group row">
-                <label for="direccion" class="col-lg-2 col-form-label">Dirección</label>
+                <label for="direccion_proyecto" class="col-lg-2 col-form-label">Dirección del Proyecto:</label>
                 <div class="col-lg-10">
-                    <textarea id="direccion" class="form-control" v-model="form.direccion"
+                    <textarea id="direccion_proyecto" class="form-control" v-model="form.direccion_proyecto"
                               v-validate="{required:true, max: 255}"
-                              name="direccion"
-                              data-vv-as="Dirección"
-                              :class="{'is-invalid': errors.has('direccion')}"
+                              name="direccion_proyecto"
+                              data-vv-as="Dirección del Proyecto"
+                              :class="{'is-invalid': errors.has('direccion_proyecto')}"
                     ></textarea>
-                    <div class="invalid-feedback" v-show="errors.has('direccion')">{{ errors.first('direccion') }}</div>
+                    <div class="invalid-feedback" v-show="errors.has('direccion_proyecto')">{{ errors.first('direccion_proyecto') }}</div>
                 </div>
             </div>
             <div class="form-group row">
-                <label for="ciudad" class="col-lg-2 col-form-label">Ciudad</label>
+                <label for="direccion_plataforma_digital" class="col-lg-2 col-form-label">Ubicación en plataforma digital:</label>
+                <div class="col-lg-10">
+                    <input id="direccion_plataforma_digital" class="form-control" v-model="form.direccion_plataforma_digital"
+                              v-validate="{required:true, max: 255}"
+                              placeholder="https://goo.gl/maps/yrVG5u7RwdUJFgU47"
+                              name="direccion_plataforma_digital"
+                              data-vv-as="Dirección del Proyecto"
+                              :class="{'is-invalid': errors.has('direccion_plataforma_digital')}"
+                    >
+                    <div class="invalid-feedback" v-show="errors.has('direccion_plataforma_digital')">{{ errors.first('direccion_plataforma_digital') }}</div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="ciudad" class="col-lg-2 col-form-label">Ciudad:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="ciudad" v-model="form.ciudad"
                            v-validate="{required:true, max: 255}"
@@ -274,7 +311,7 @@
          <!--   </div>
 
             <div class="form-group row">-->
-                <label for="estado" class="col-lg-2 col-form-label">Estado</label>
+                <label for="estado" class="col-lg-2 col-form-label">Estado:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="estado" v-model="form.estado"
                            v-validate="{required:true, max: 255}"
@@ -287,7 +324,7 @@
             </div>
 
             <div class="form-group row">
-                <label for="codigo_postal" class="col-lg-2 col-form-label">Código Postal</label>
+                <label for="codigo_postal" class="col-lg-2 col-form-label">Código Postal:</label>
                 <div class="col-lg-4">
                     <input type="text" class="form-control" id="codigo_postal" v-model="form.codigo_postal"
                            v-validate="{required:true, integer: true, digits: 5}"
@@ -378,9 +415,15 @@
                 formData.append('configuracion[id_tipo_proyecto]', this.form.configuracion.id_tipo_proyecto);
                 if (this.logo_nuevo) formData.append('configuracion[logotipo_original]', this.logo_nuevo, this.logo_nuevo.name);
 
-                formData.append('constructora', this.form.constructora)
+                formData.append('constructora', this.form.constructora);
+                formData.append('clave', this.form.clave)
+                formData.append('configuracion[clave]', this.form.clave);
                 formData.append('descripcion', this.form.descripcion);
                 formData.append('direccion', this.form.direccion);
+                formData.append('direccion_proyecto', this.form.direccion_proyecto);
+                formData.append('configuracion[direccion_proyecto]', this.form.direccion_proyecto);
+                formData.append('direccion_plataforma_digital', this.form.direccion_plataforma_digital);
+                formData.append('configuracion[direccion_plataforma_digital]', this.form.direccion_plataforma_digital);
                 formData.append('estado', this.form.estado);
                 formData.append('facturar', this.form.facturar)
                 formData.append('fecha_final', this.form.fecha_final)

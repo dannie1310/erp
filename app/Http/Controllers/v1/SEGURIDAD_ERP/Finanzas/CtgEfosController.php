@@ -48,8 +48,14 @@ class CtgEfosController extends Controller
         $this->transformer = $transformer;
     }
 
-    public function cargaLayout(Request $request){
+    public function cargaLayout(Request $request)
+    {
         $respuesta = $this->service->cargaLayout($request->file);
+        return response()->json($respuesta, 200);
+    }
+
+    public function procesaURLCSV(){
+        $respuesta = $this->service->procesaURLCSV();
         return response()->json($respuesta, 200);
     }
 

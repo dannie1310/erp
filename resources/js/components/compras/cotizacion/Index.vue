@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app btn-info pull-right">
+            <button @click="create" v-if="$root.can('registrar_cotizacion_compra')" class="btn btn-app pull-right">
                 <i class="fa fa-plus"></i> Registrar
             </button>
         </div>
@@ -39,14 +39,14 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true},
-                    { title: 'Solicitud', tdClass: 'folio', field: 'solicitud'},
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'td_c80', sortable: true},
+                    { title: 'Solicitud', tdClass: 'td_c80', field: 'solicitud'},
                     { title: 'Fecha', field: 'fecha', sortable: true },
                     { title: 'Proveedor', field: 'empresa', sortable: false },
                     { title: 'Observaciones', field: 'observaciones', sortable: false },
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c100', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -100,8 +100,11 @@
                         }
                 }
             },
-            create() {
+            create1() {
                 this.$router.push({name: 'cotizacion-create'});
+            },
+            create() {
+                this.$router.push({name: 'cotizacion-selecciona-solicitud-compra'});
             },
         },
         computed: {
@@ -132,8 +135,8 @@
                         buttons: $.extend({}, {
                             show: true,
                             id: cotizacion.id,
-                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada ? true : false,
-                            edit: (cotizacion.asignada) ? false : true,
+                            delete: self.$root.can('eliminar_cotizacion_compra') && !cotizacion.asignada && !cotizacion.id_referente > 0 ? true : false,
+                            edit: (!cotizacion.asignada && !cotizacion.id_referente > 0) ? true : false,
                             transaccion: {id:cotizacion.id, tipo:18},
                         })
                     }));

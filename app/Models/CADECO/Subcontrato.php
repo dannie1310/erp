@@ -100,6 +100,11 @@ class Subcontrato extends Transaccion
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function contratoProyectadoSinGlobalScope()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function contratoProyectado_sgc()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
@@ -113,6 +118,11 @@ class Subcontrato extends Transaccion
     public function estimaciones()
     {
         return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function estimacionesSinGlobalScope()
+    {
+        return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function subcontratos()
@@ -270,6 +280,10 @@ class Subcontrato extends Transaccion
     public function getMontoDisponibleAttribute()
     {
         return round($this->saldo - ($this->montoFacturadoEstimacion + $this->montoFacturadoSubcontrato + $this->MontoPagoAnticipado), 2);
+    }
+
+    public function getTieneEstimacionesAttribute(){
+        return count($this->estimaciones) > 0;
     }
 
     public function scopeSubcontratosDisponible($query, $id_empresa)
@@ -489,7 +503,7 @@ class Subcontrato extends Transaccion
         $i = 0;
 
         #CONTRATOS PROYECTADOS
-        $relaciones[$i] = $this->contratoProyectado->datos_para_relacion;
+        $relaciones[$i] = $this->contratoProyectadoSinGlobalScope->datos_para_relacion;
         $i++;
         #PRESUPUESTOS
         $presupuestos = $this->presupuestos;
@@ -535,7 +549,7 @@ class Subcontrato extends Transaccion
             }
         }
         #ESTIMACION
-        foreach ($subcontrato->estimaciones as $estimacion){
+        foreach ($subcontrato->estimacionesSinGlobalScope as $estimacion){
             $relaciones[$i] = $estimacion->datos_para_relacion;
             $i++;
 
@@ -652,6 +666,9 @@ class Subcontrato extends Transaccion
     public function updateContrato($data){
         try {
             DB::connection('cadeco')->beginTransaction();
+            if($this->tiene_estimaciones){
+                abort(403, "El subcontrato tiene estimaciones registradas.");
+            }
             $fecha =New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             $fecha_ini_ejec =New DateTime($data['fecha_ini_ejec']);

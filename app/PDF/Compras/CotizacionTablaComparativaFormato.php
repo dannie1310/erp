@@ -339,7 +339,7 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->SetTextColor(255, 255, 255);
             $this->SetFont('Arial', 'B', $font);
             $this->Cell($anchos["espacio_detalles_globales"]);
-            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe Peso (MXP):", 1, 0, "R", 1);
+            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Subtotal Importe Peso (MXN):", 1, 0, "R", 1);
             for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);

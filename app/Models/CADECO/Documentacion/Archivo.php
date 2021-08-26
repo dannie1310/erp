@@ -6,6 +6,7 @@ namespace App\Models\CADECO\Documentacion;
 
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 
@@ -38,7 +39,7 @@ class Archivo extends Model
 
     public function transaccion()
     {
-        return $this->belongsTo(Transaccion::class, 'id_transaccion','id_transaccion');
+        return $this->belongsTo(Transaccion::class, 'id_transaccion','id_transaccion')->withOutGlobalScopes();
     }
 
     public function categoria()
@@ -86,10 +87,16 @@ class Archivo extends Model
 
     public function getEliminableAttribute()
     {
-        if(!$this->id_tipo_general_archivo>0){
+        if(!$this->id_tipo_general_archivo>0 && $this->id_categoria != 2){
             return true;
         }
         return false;
+    }
+
+    public function setBaseDatos($base_datos)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base_datos);
     }
 
 }

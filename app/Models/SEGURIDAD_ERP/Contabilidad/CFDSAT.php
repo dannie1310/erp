@@ -217,27 +217,27 @@ class CFDSAT extends Model
 
     public function getTotalFormatAttribute()
     {
-        return '$ ' . number_format(($this->total),2);
+        return '$' . number_format(($this->total),2);
     }
 
     public function getSubtotalFormatAttribute()
     {
-        return '$ ' . number_format(($this->subtotal),2);
+        return '$' . number_format(($this->subtotal),2);
     }
 
     public function getDescuentoFormatAttribute()
     {
-        return '$ ' . number_format(($this->descuento),2);
+        return '$' . number_format(($this->descuento),2);
     }
 
     public function getTotalImpuestosRetenidosFormatAttribute()
     {
-        return '$ ' . number_format(($this->total_impuestos_retenidos),2);
+        return '$' . number_format(($this->total_impuestos_retenidos),2);
     }
 
     public function getTotalImpuestosTrasladadosFormatAttribute()
     {
-        return '$ ' . number_format(($this->total_impuestos_trasladados),2);
+        return '$' . number_format(($this->total_impuestos_trasladados),2);
     }
 
     public function getReferenciaAttribute()

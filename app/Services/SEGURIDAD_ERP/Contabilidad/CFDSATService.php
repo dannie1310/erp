@@ -8,26 +8,27 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
-use App\Events\CambioEFOS;
-use App\Events\CambioNoLocalizados;
-use App\Events\FinalizaCargaCFD;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
-use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
-use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
-use App\Models\SEGURIDAD_ERP\Proyecto;
-use App\PDF\Fiscal\CFDI;
-use App\PDF\Fiscal\InformeCFDICompleto;
-use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
+use DateTime;
 use App\Utils\CFD;
 use App\Utils\Util;
-use Illuminate\Support\Facades\Storage;
-use Chumper\Zipper\Zipper;
-use DateTime;
 use App\Utils\Files;
+use App\PDF\Fiscal\CFDI;
+use Webpatser\Uuid\Uuid;
+use App\Events\CambioEFOS;
+use Chumper\Zipper\Zipper;
+use App\Events\FinalizaCargaCFD;
+use App\Events\CambioNoLocalizados;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\PDF\Fiscal\InformeCFDICompleto;
+use Illuminate\Support\Facades\Storage;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT as Model;
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository as Repository;
 
 class CFDSATService
 {

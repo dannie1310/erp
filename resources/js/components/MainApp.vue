@@ -3,8 +3,8 @@
     <vue-progress-bar></vue-progress-bar>
     <!-- Site wrapper -->
     <div v-if="currentUser && $router.currentRoute.name != 'google-2fa' &&  $router.currentRoute.name.indexOf('modal') ===-1" class="wrapper">
-        <AppHeader/>
-        <AppSidebar/>
+        <AppHeader />
+        <AppSidebar v-bind:sidebar="sidebar" v-bind:logo = "logo" />
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -12,7 +12,7 @@
                 <div class="container-fluid">
                     <div class="row mb-2">
                         <div class="col-sm-6">
-                            <h1>{{ this.$route.meta.title }}</h1>
+                            <h5>{{ this.$route.meta.title }}</h5>
                         </div>
                         <div class="col-sm-6">
                             <AppBreadcrumb v-if="$router.currentRoute.name != 'portal'"/>
@@ -72,6 +72,7 @@
     export default {
         name: 'main-app',
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+        props: ['sidebar', 'logo'],
 
         data() {
             return {

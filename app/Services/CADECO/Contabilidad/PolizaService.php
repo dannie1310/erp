@@ -5,8 +5,19 @@ namespace App\Services\CADECO\Contabilidad;
 
 use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Contabilidad\PolizaMovimiento;
-use App\Repositories\Repository;
+use App\Models\CADECO\Factura;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Repositories\CADECO\Contabilidad\PolizaRepository as Repository;
+use App\Repositories\CADECO\Finanzas\FacturaRepositorioRepository;
+use App\Services\CADECO\Finanzas\FacturaService;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService;
+use App\Utils\Files;
+use Chumper\Zipper\Zipper;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\Repository as RepositoryMovimiento;
+
 
 class PolizaService
 {
@@ -87,7 +98,7 @@ class PolizaService
                 foreach ($data['movimientos']['data'] as $movimiento) {
                     $movimiento = auth()->user()->can('editar_importe_movimiento_prepoliza') ? $movimiento : array_except($movimiento, 'importe');
 
-                    $movimientoRepository = new Repository(new PolizaMovimiento);
+                    $movimientoRepository = new RepositoryMovimiento(new PolizaMovimiento);
                     if (isset($movimiento['id'])) {
                         $movimiento = auth()->user()->can(['ingresar_cuenta_faltante_movimiento_prepoliza', 'editar_cuenta_contable_movimiento_prepoliza']) ? $movimiento : array_except($movimiento, 'cuenta_contable');
                         $movimientoRepository->update($movimiento, $movimiento['id']);
@@ -159,6 +170,105 @@ class PolizaService
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort($e->getCode(), $e->getMessage());
+        }
+    }
+
+    public function asociarCFDI($data)
+    {
+        return $this->repository->asociarCFDI($data['cfdi']);
+    }
+
+    public function getPolizasPorAsociar()
+    {
+        return $this->repository->getAsociarCFDI();
+    }
+
+    public function getCFDIPorCargar()
+    {
+        return $this->repository->getCFDIPorCargar();
+    }
+
+    public function cargaCFDIADD($cfdis)
+    {
+        foreach($cfdis as $cfdi){
+            $facturaRepositorioRepository = new FacturaRepositorioRepository(new FacturaRepositorio());
+            $facturaRepositorio = $facturaRepositorioRepository->where([["uuid","=",$cfdi["uuid"]]])->first();
+            if($facturaRepositorio){
+                if(!$facturaRepositorio->cfdiSAT)
+                {
+                    $servicio_cfdi = new CFDSATService(new CFDSAT());
+                    $servicio_cfdi->procesaFacturaRepositorio($facturaRepositorio);
+                }
+                $facturaRepositorio->load("cfdiSAT");
+                if($facturaRepositorio->cfdiSAT){
+                    $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
+                    $facturaService = new FacturaService(new Factura());
+                    $logs = $facturaService->guardarXmlEnADD($xml);
+                    foreach($logs as $log)
+                    {
+                        if(is_array($log)){
+                            $facturaRepositorio->logsADD()->create(
+                                [
+                                    "log_add"=>$log["descripcion"],
+                                    "tipo"=>$log["tipo"]
+                                ]
+                            );
+                        }else {
+                            $facturaRepositorio->logsADD()->create(
+                                [
+                                    "log_add"=>$log
+                                ]
+                            );
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public function descargarCFDIPorCargar()
+    {
+        $descargar =  $this->repository->getCFDIPorCargar();
+        $uuid = $descargar["cfdi_pendientes"];
+
+        $dir_xml = "uploads/contabilidad/XML_SAT/";
+        $dir_descarga = "downloads/fiscal/descarga/".date("Ymd")."/";
+        if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
+            mkdir($dir_descarga, 777, true);
+        }
+        foreach ($uuid as $uuid_individual){
+            try{
+                copy($dir_xml.$uuid_individual["uuid"].".xml", $dir_descarga.$uuid_individual["uuid"].".xml");
+            }catch (\Exception $e){
+                $cfdi_repositorio_global = CFDSAT::where("uuid","=",$uuid_individual["uuid"])->first();
+                if($cfdi_repositorio_global)
+                {
+                    $data_cfdi =  base64_decode($cfdi_repositorio_global->xml_file);
+                    $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
+                    file_put_contents($file, $data_cfdi);
+                } else {
+                    $factura_repositorio = FacturaRepositorio::where("uuid","=",$uuid_individual["uuid"])->first();
+                    $exp = explode("base64,", $factura_repositorio->xml_file);
+                    $data = base64_decode($exp[1]);
+                    $file = public_path($dir_descarga.$uuid_individual["uuid"].".xml");
+                    file_put_contents($file, $data);
+                }
+            }
+        }
+        $path = "downloads/fiscal/descarga/";
+        $nombre_zip = $path.date("Ymd_his").".zip";
+
+        $zipper = new Zipper;
+        $zipper->make(public_path($nombre_zip))
+            ->add(public_path($dir_descarga));
+        $zipper->close();
+
+        Files::eliminaDirectorio($dir_descarga);
+
+        if(file_exists(public_path($nombre_zip))){
+            return response()->download(public_path($nombre_zip));
+        } else {
+            return response()->json(["mensaje"=>"No hay CFDI para la descarga "]);
         }
     }
 }

@@ -335,17 +335,6 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create',
-                                name: 'cotizacion-create',
-                                component: require('./components/compras/cotizacion/Create').default,
-                                meta: {
-                                    title: 'Registrar Cotización',
-                                    breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['registrar_cotizacion_compra']
-                                }
-                            },
-                            {
                                 path: ':id/editar',
                                 name: 'cotizacion-edit',
                                 props: true,
@@ -367,6 +356,17 @@ export const routes = [
                                     breadcrumb: { parent: 'cotizacion', name: 'VER'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_cotizacion_compra'
+                                }
+                            },
+                            {
+                                path: 'create/seleccionar_solicitud_compra',
+                                name: 'cotizacion-selecciona-solicitud-compra',
+                                component: require('./components/compras/cotizacion/SeleccionaSolicitud').default,
+                                meta: {
+                                    title: 'Seleccionar Solicitud de Compra',
+                                    breadcrumb: { parent: 'cotizacion', name: 'SELECCIONAR SOLICITUD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
                                 }
                             },
                             {
@@ -535,7 +535,98 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_solicitud_compra'
                                 }
-                            }
+                            },
+                            {
+                                path: ':id_solicitud/cotizacion/create',
+                                name: 'cotizacion-create',
+                                component: require('./components/compras/cotizacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Cotización',
+                                    breadcrumb: { parent: 'cotizacion', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_cotizacion_compra']
+                                }
+                            },
+                            {
+                                path: ':id_solicitud/invitacion-compra/create',
+                                name: 'invitacion-compra-create',
+                                component: require('./components/compras/invitacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Invitación a Cotizar',
+                                    breadcrumb: { parent: 'invitacion-compra-selecciona-solicitud', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_invitacion_cotizar_compra'
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'invitacion-compra',
+                        component: require('./components/compras/invitacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'invitacion-compra',
+                                component: require('./components/compras/invitacion/Index').default,
+                                meta: {
+                                    title: 'Invitaciones a Cotizar',
+                                    breadcrumb: {parent: 'compras', name: 'INVITACIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_invitacion_cotizar_compra'
+                                }
+                            },
+                            {
+                                path: 'create/seleccionar_solicitud_compra',
+                                name: 'invitacion-compra-selecciona-solicitud',
+                                component: require('./components/compras/invitacion/SeleccionaSolicitud').default,
+                                meta: {
+                                    title: 'Seleccionar Solicitud de Compra',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'SELECCIONAR SOLICITUD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_invitacion_cotizar_compra']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'invitacion-compra-show',
+                                component: require('./components/compras/invitacion/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Invitación a Cotizar',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_invitacion_cotizar_compra'
+                                }
+                            },
+                            {
+                                path: ':id/documentos',
+                                name: 'invitacion-compra-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id: route.params.id,
+                                    permiso: ['registrar_invitacion_cotizar_compra'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Invitación',
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_invitacion_cotizar_compra'
+                                }
+                            },
+                            {
+                                path: ':id_solicitud/cotizacion/create',
+                                name: 'invitacion-create',
+                                component: require('./components/compras/invitacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Invitación',
+                                    breadcrumb: { parent: 'invitacion', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_invitacion_cotizar_compra']
+                                }
+                            },
                         ]
                     }
                 ]
@@ -2006,6 +2097,40 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'asociar-poliza-cfdi',
+                        component: require('./components/contabilidad/asociar-poliza-cfdi/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"asociar-poliza-cfdi",
+                                component: require('./components/contabilidad/asociar-poliza-cfdi/Index.vue').default,
+                                meta: {
+                                    title: 'Asociar CFDI con Pólizas de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'ASOCIAR CFDI CON PÓLIZAS DE CONTPAQ'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['asociar_poliza_contpaq_cfdi'],
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'cfdi-pendientes-carga-add',
+                        component: require('./components/contabilidad/cfdi-add-contpaq/Layout.vue').default,
+                        children:[
+                            {
+                                path:"/",
+                                name:"cfdi-pendientes-carga-add",
+                                component: require('./components/contabilidad/cfdi-add-contpaq/Index.vue').default,
+                                meta: {
+                                    title: 'Cargar CFDI a ADD de Contpaq',
+                                    breadcrumb: {parent: 'sistema_contable', name: 'CARGAR CFDI A ADD'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar-cfdi-pendientes-carga-add'],
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'poliza-cfdi',
                         component: require('./components/contabilidad/poliza-cfdi/Layout.vue').default,
                         children:[
@@ -3228,77 +3353,6 @@ export const routes = [
         ]
     },
     {
-        path: '/entrega-cfdi',
-        components:  {
-            default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
-            menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
-        },
-        children:[
-            {
-                path:'',
-                name: 'entrega-cfdi',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
-                    meta: {
-                    title: 'Listado de Solicitudes de Revisión de CFDI',
-                    middleware: [auth, permission],
-                    permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
-                    general: true
-                }
-            },
-            {
-                path: 'seleccionar-cfdi',
-                name: 'seleccionar-cfdi',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/SeleccionarCFDI.vue').default,
-                meta: {
-                    title: 'Seleccionar CFDI',
-                    breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
-                    middleware: [auth, permission],
-                    permission: ['registrar_solicitud_recepcion_cfdi'],
-                    general: true
-                }
-            },
-            {
-                path: ':id_cfdi/create',
-                props : true,
-                name: 'solicitud-recepcion-cfdi-create',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
-                meta: {
-                    title: 'Registrar Solicitud de Revisión de CFDI',
-                    breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
-                    middleware: [auth, permission],
-                    permission: ['registrar_solicitud_recepcion_cfdi'],
-                    general: true
-                }
-            },
-            {
-                path: ':id',
-                name: 'solicitud-recepcion-cfdi-show',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
-                props: true,
-                meta: {
-                    title: 'Consultar Solicitud de Revisión de CFDI',
-                    breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
-                    middleware: [auth, permission],
-                    permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
-                    general: true
-                }
-            },
-            {
-                path: ':id/cancelar',
-                name: 'solicitud-recepcion-cfdi-cancelar',
-                component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
-                props: true,
-                meta: {
-                    title: 'Cancelar Solicitud de Revisión de CFDI',
-                    breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
-                    middleware: [auth, permission],
-                    permission: 'cancelar_solicitud_recepcion_cfdi',
-                    general: true
-                }
-            },
-        ]
-    },
-    {
         path: '/fiscal',
         components:  {
             default: require('./components/fiscal/partials/Layout.vue').default,
@@ -3634,6 +3688,48 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'proveedor-no-localizado',
+                component: require('./components/remesas/proveedor-no-localizado/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'proveedor-no-localizado',
+                        component: require('./components/remesas/proveedor-no-localizado/Index').default,
+                        meta: {
+                            title: 'Proveedor No Localizado',
+                            breadcrumb: {parent: 'remesas', name: 'PROVEEDOR NO LOCALIZADO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_limite_remesa',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'transacciones',
+                        name: 'enlistar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/Index').default,
+                        meta: {
+                            title: 'Lista de Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIÓN', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_transaccion_proveedor_no_localizado'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-transacciones-no-localizados',
+                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/IndexAutorizacion').default,
+                        meta: {
+                            title: 'Autorizar Transacciones de  Proveedores No Localizados en Remesa',
+                            breadcrumb: {name: 'AUTORIZAR TRANSACCIONES', parent: 'proveedor-no-localizado'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_rechazar_transaccion_proveedor_no_localizado'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
@@ -3652,6 +3748,289 @@ export const routes = [
             },
             permission: 'administracion_configuracion_obra'
         }
+    },
+    {
+        path: '/portal-proveedor',
+        components:  {
+            default: require('./components/portal-proveedor/partials/Layout.vue').default,
+            menu: require('./components/portal-proveedor/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'proveedor',
+                component: require('./components/portal-proveedor/Index').default,
+                meta: {
+                    title: 'Portal de Proveedores',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'PORTAL DE PROVEEDORES'},
+                    permission: ['consultar_cotizacion_proveedor'],
+                    general: true
+                }
+            },
+            {
+                path: 'cotizacion',
+                component: require('./components/portal-proveedor/cotizacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'cotizacion-proveedor',
+                        component: require('./components/portal-proveedor/cotizacion/Index').default,
+                        meta: {
+                            title: 'Lista de Cotizaciones',
+                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'enviar',
+                        name: 'cotizacion-proveedor-para-envio',
+                        component: require('./components/portal-proveedor/cotizacion/IndexEnvio').default,
+                        meta: {
+                            title: 'Lista de Cotizaciones Disponibles a Enviar',
+                            breadcrumb: {parent: 'proveedor', name: 'COTIZACIONES A ENVIAR'},
+                            middleware: [auth, permission],
+                            permission: 'registrar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'cotizacion-proveedor-seleccionar-solicitud',
+                        component: require('./components/portal-proveedor/cotizacion/SeleccionarSolicitud').default,
+                        meta: {
+                            title: 'Seleccionar Invitación',
+                                breadcrumb: { parent: 'cotizacion-proveedor', name: 'SELECCIONAR INVITACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion/invitacion',
+                        name: 'cotizacion-proveedor-invitacion',
+                        component: require('./components/portal-proveedor/cotizacion/PrevisualizarInvitacion').default,
+                        props: true,
+                        meta: {
+                            title: 'Detalle de Invitación',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'INVITACIÓN'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion/create',
+                        name: 'cotizacion-proveedor-create',
+                        component: require('./components/portal-proveedor/cotizacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'cotizacion-proveedor-show',
+                        component: require('./components/portal-proveedor/cotizacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion/editar',
+                        name: 'cotizacion-proveedor-edit',
+                        props: true,
+                        component: require('./components/portal-proveedor/cotizacion/Edit').default,
+                        meta: {
+                            title: 'Editar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: ['editar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion/enviar',
+                        name: 'cotizacion-proveedor-send',
+                        props: true,
+                        component: require('./components/portal-proveedor/cotizacion/Enviar').default,
+                        meta: {
+                            title: 'Enviar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'ENVIAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base_datos/:id_obra/documentos',
+                        name: 'cotizacion-proveedor-documentos',
+                        component: require('./components/globals/archivos/Files').default,
+                        props: route => ({
+                            id: route.params.id,
+                            global: true,
+                            sin_contexto: 1,
+                            base_datos: route.params.base_datos,
+                            id_obra: route.params.id_obra,
+                            permiso: ['registrar_cotizacion_proveedor'],
+                        }),
+                        meta: {
+                            title: 'Documentos de Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: 'invitacion-cotizar',
+                component: require('./components/portal-proveedor/invitacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'invitacion-proveedor',
+                        component: require('./components/portal-proveedor/invitacion/Index').default,
+                        meta: {
+                            title: 'Invitaciones a Cotizar',
+                            breadcrumb: {parent: 'proveedor', name: 'INVITACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_invitacion_cotizar_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'invitacion-proveedor-show',
+                        component: require('./components/portal-proveedor/invitacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Invitación a Cotizar',
+                            breadcrumb: { parent: 'invitacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_invitacion_cotizar_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/documentos',
+                        name: 'invitacion-proveedor-documentos',
+                        component: require('./components/globals/archivos/Files').default,
+                        props: route => ({
+                            id: route.params.id,
+                            permiso: ['registrar_solicitud_compra'],
+                        }),
+                        meta: {
+                            title: 'Documentos de Invitación a Cotizar',
+                            breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_invitacion_cotizar_proveedor',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'entrega-cfdi',
+                components:  {
+                    default: require('./components/solicitud-recepcion-cfdi/Layout.vue').default,
+                    menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
+                },
+                children:[
+                    {
+                        path:'',
+                        name: 'entrega-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Solicitudes de Revisión de CFDI',
+                            middleware: [auth, permission],
+                            permission: ['consultar_solicitud_recepcion_cfdi_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'seleccionar-cfdi',
+                        name: 'seleccionar-cfdi',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/SeleccionarCFDI.vue').default,
+                        meta: {
+                            title: 'Seleccionar CFDI',
+                            breadcrumb: {name: 'SELECCIONAR CFDI', parent: 'entrega-cfdi'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_recepcion_cfdi'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_cfdi/create',
+                        props : true,
+                        name: 'solicitud-recepcion-cfdi-create',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Create.vue').default,
+                        meta: {
+                            title: 'Registrar Solicitud de Revisión de CFDI',
+                            breadcrumb: {name: 'REGISTRAR SOLICITUD', parent: 'seleccionar-cfdi'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_recepcion_cfdi'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'solicitud-recepcion-cfdi-show',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'entrega-cfdi', name: 'VER SOLICITUD'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_recepcion_cfdi_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/cancelar',
+                        name: 'solicitud-recepcion-cfdi-cancelar',
+                        component: require('./components/solicitud-recepcion-cfdi/entrega-cfdi/Cancelar').default,
+                        props: true,
+                        meta: {
+                            title: 'Cancelar Solicitud de Revisión de CFDI',
+                            breadcrumb: { parent: 'entrega-cfdi', name: 'CANCELAR'},
+                            middleware: [auth, permission],
+                            permission: 'cancelar_solicitud_recepcion_cfdi',
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'expediente',
+                component: require('./components/portal-proveedor/invitacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'expediente',
+                        component: require('./components/portal-proveedor/expediente/Edit').default,
+                        props: true,
+                        meta: {
+                            title: 'Expediente de Proveedor',
+                            breadcrumb: {name: 'EXPEDIENTE', parent: 'proveedores-index'},
+                            middleware: [auth],
+                        }
+                    },
+                ]
+            },
+        ]
     },
     {
         path: '/auth',
