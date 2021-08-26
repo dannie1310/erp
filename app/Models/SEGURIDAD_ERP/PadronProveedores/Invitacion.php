@@ -476,10 +476,11 @@ class Invitacion extends Model
             $resp['razon_social'] = $this->empresa->razon_social;
             $conceptos = [];
             foreach( $this->contratoProyectado->contratos as $key => $concepto) {
-                $conceptos[$key] = $concepto;
+                $conceptos[$key] = $concepto->toArray();
                 $conceptos[$key]['cantidad_original_format'] = $concepto->cantidad_original_format;
                 $conceptos[$key]['cantidad_presupuestada_format'] = $concepto->cantidad_presupuestada_format;
                 $partida = PresupuestoContratistaPartida::where('id_concepto', $concepto->id_concepto)->where('id_transaccion', $this->id_cotizacion_generada)->withoutGlobalScopes()->first();
+                $conceptos[$key]['id_transaccion'] = $partida ? $partida->id_transaccion : $concepto->id_transaccion;
                 $conceptos[$key]['precio_unitario_antes_descuento_format'] = $partida ? $partida->precio_unitario_antes_descuento_format : '';
                 $conceptos[$key]['total_antes_descuento_format'] = $partida ? $partida->total_antes_descuento_format : '';
                 $conceptos[$key]['descuento_format'] = $partida ? $partida->descuento_format : '';
@@ -494,7 +495,7 @@ class Invitacion extends Model
                 $conceptos[$key]['path_corta'] = $destino ? $destino->path_corta : '';
                 $conceptos[$key]['path'] = $destino ? $destino->path : '';
                 $conceptos[$key]['partida_activa'] = ($concepto->no_cotizado == 0) ? true :false;
-                $conceptos[$key]['precio_unitario'] = $partida ? number_format($partida->precio_unitario, "2",".","") : '';
+                $conceptos[$key]['precio_unitario'] = $partida ? number_format($partida->precio_unitario_convert, "2",".","") : '';
                 $conceptos[$key]['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
                 $conceptos[$key]['IdMoneda'] = $partida ? $partida->IdMoneda : '';
             }

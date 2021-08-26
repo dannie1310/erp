@@ -398,6 +398,10 @@ class Transaccion extends Model
             {
                 return $this->cotizaciones()->first()->moneda->nombre;
             }
+            if($this->presupuestos()->cotizadas()->first())
+            {
+                return $this->presupuestos()->cotizadas()->first()->moneda->nombre;
+            }
         }
     }
 

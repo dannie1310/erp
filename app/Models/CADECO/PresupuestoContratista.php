@@ -957,7 +957,7 @@ class PresupuestoContratista extends Transaccion
 
             foreach($data['contratos'] as $partida)
             {
-                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $partida['id_transaccion'])->where('id_concepto', '=', $partida['id_concepto']);
+                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $data['id'])->where('id_concepto', '=', $partida['id_concepto']);
                 if(!is_null($partida['unidad'])) {
                     $precio_conversion = $partida['partida_activa'] ? $this->precioConversion($partida['precio_unitario'], $partida['IdMoneda']) : null;
                     if ($precio_conversion) {
