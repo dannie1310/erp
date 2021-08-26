@@ -930,10 +930,14 @@ class PresupuestoContratista extends Transaccion
 
     public function editarPortalProveedor($data, $invitacion)
     {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->estado == 3 || $this->estado > 0){
+            abort(500, "Esta cotización no puede ser editada porque ya ha sido enviada como respuesta a la invitación ".$invitacion->numero_folio_format."");
+        }
+
         try
         {
-            DB::purge('cadeco');
-            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
             $fecha =New DateTime($data['fecha']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
