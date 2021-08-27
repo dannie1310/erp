@@ -285,7 +285,7 @@ class CFD
         $this->arreglo_factura["folio"] = (string)$factura_xml["folio"];
 
         $this->arreglo_factura["fecha"] = $this->getFecha((string)$factura_xml["fecha"]);
-        $this->arreglo_factura["fecha_hora"] = $this->getFechaHora((string)$factura_xml["Fecha"]);
+        $this->arreglo_factura["fecha_hora"] = $this->getFechaHora((string)$factura_xml["fecha"]);
         $this->arreglo_factura["moneda"] = (string)$factura_xml["Moneda"];
         $this->arreglo_factura["tipo_cambio"] = (string)$factura_xml["TipoCambio"];
         $this->arreglo_factura["no_certificado"] = (string)$factura_xml["NoCertificado"];
@@ -427,7 +427,7 @@ class CFD
         }
         return $fecha_xml;
     }
-    
+
     private function getFechaHora(string $fecha)
     {
         $fecha_xml = DateTime::createFromFormat('Y-m-d\TH:i:s', $fecha);
