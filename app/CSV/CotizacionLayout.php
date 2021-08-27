@@ -2,6 +2,7 @@
 
 namespace App\CSV;
 
+use App\Facades\Context;
 use App\Models\CADECO\SolicitudCompra;
 use function Complex\cot;
 use App\Models\CADECO\Item;
@@ -73,11 +74,10 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 if(is_null($solicitud))
                 {
                     $solicitud = SolicitudCompra::where('id_transaccion', $this->cotizacion->id_antecedente)->withoutGlobalScopes()->first();
+                    $verificacion_cotizacion = $this->verifica->encripta($this->cotizacion->invitacion->base_datos."|".$this->cotizacion->invitacion->id_obra."|".$this->cotizacion->id_transaccion);
+                }else{
+                    $verificacion_cotizacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->cotizacion->id_transaccion);
                 }
-
-
-                $verificacion_cotizacion = $this->verifica->encripta($this->cotizacion->invitacion->base_datos."|".$this->cotizacion->invitacion->id_obra."|".$this->cotizacion->id_transaccion);
-
                 $event->sheet->setCellValue("A1", $verificacion_cotizacion);
 
                 foreach ($solicitud->partidas as $item){

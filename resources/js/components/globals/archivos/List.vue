@@ -44,7 +44,7 @@
                                                 <td>{{archivo.fecha_registro_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
-                                                        <Documento v-bind:url="url" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
+                                                        <Documento v-bind:url="url" v-bind:metodo = "metodo" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
                                                         <button v-if="archivo.extension && archivo.extension.toLowerCase()  != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
                                                             <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
                                                                 <i class="fa fa-spin fa-spinner"></i>
@@ -92,7 +92,7 @@ export default {
     components:{Documento, Imagen},
     data(){
         return{
-            url : '/api/archivo/{id}/documento?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
+            url : '/api/archivo/{id}/{metodo}?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
             id_archivo:'',
             descripcion:'',
             archivo:'',
@@ -106,6 +106,7 @@ export default {
             eliminando_imagenes : false,
             id_obra_url : '',
             base_datos_url : '',
+            metodo : '',
         }
     },
     mounted() {
@@ -121,6 +122,13 @@ export default {
             this.id_obra_url = this.id_obra;
         }else{
             this.id_obra_url = this.$session.get('id_obra');
+        }
+        if(this.sin_contexto)
+        {
+            this.metodo = 'documento-sc'
+        }
+        else  {
+            this.metodo = 'documento';
         }
     },
     methods: {
@@ -196,17 +204,33 @@ export default {
         },
 
         eliminar(archivo){
-            this.eliminando_imagenes = true;
-            let _self = this;
-            return this.$store.dispatch('documentacion/archivo/eliminar', {
-                id: archivo.id,
-                id_obra : _self.id_obra,
-                base_datos : _self.base_datos,
-            }).then(data => {
-                //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
-            }).finally( ()=>{
-                this.eliminando_imagenes = false;
-            })
+
+            if(this.sin_contexto)
+            {
+                this.eliminando_imagenes = true;
+                let _self = this;
+                return this.$store.dispatch('documentacion/archivo/eliminarSC', {
+                    id: archivo.id,
+                    id_obra : _self.id_obra,
+                    base_datos : _self.base_datos,
+                }).then(data => {
+                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
+                }).finally( ()=>{
+                    this.eliminando_imagenes = false;
+                })
+            }else {
+                this.eliminando_imagenes = true;
+                let _self = this;
+                return this.$store.dispatch('documentacion/archivo/eliminar', {
+                    id: archivo.id,
+                    id_obra : _self.id_obra,
+                    base_datos : _self.base_datos,
+                }).then(data => {
+                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
+                }).finally( ()=>{
+                    this.eliminando_imagenes = false;
+                })
+            }
         },
     },
     computed: {

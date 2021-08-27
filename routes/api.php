@@ -43,6 +43,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
             $api->post('{id}/transaccion-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccionSC');
             $api->get('{tipo}/{id}/transaccion-relacionados-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccionSC')->where(['id' => '[0-9]+']);
+            $api->get('{id}/documento-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documentoSC')->where(['id' => '[0-9]+']);
+            $api->post('cargar-archivo-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivoSC');
+            $api->post('{id}/destroy-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroySC')->where(['id' => '[0-9]+']);
         });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {

@@ -1201,6 +1201,67 @@ class EstimacionFormato extends Rotation
             $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Gerente de Proyecto'), 'TRLB', 0, 'C', 1);
             $this->Cell(0.6);
             $this->Cell(($this->GetPageWidth() - 6) / 6, 0.4, utf8_decode('Director de Proyecto'), 'TRLB', 0, 'C', 1);
+        }else if(Context::getDatabase() == "SAO1814_CUTZAMALA" && Context::getIdObra() == 6){
+            /*Firmas Presa Madin*/
+            $this->SetY(-3.5);
+            $this->SetTextColor('0', '0', '0');
+            $this->SetFont('Arial', '', 6);
+            $this->SetFillColor(180, 180, 180);
+
+            $this->SetFont('Arial', 'B', 4.2);
+            $this->Cell(0.01);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+
+            $this->Ln();
+            $this->Cell(0.01);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->SetFont('Arial', 'B', 4.2);
+            $this->Ln();
+            $this->Cell(0.01);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Subcontratos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Construcción'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de ACSMA'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Personal'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Control de Proyectos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable de Administración'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Gerencia Técnica / Ingeniería'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.285);
+            $this->Cell(($this->GetPageWidth() - 6) / 7, 0.4, utf8_decode('Responsable del Proyecto'), 'TRLB', 0, 'C', 1);
         }
         else {
             /*Firmas en Gral*/
