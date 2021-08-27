@@ -4079,7 +4079,7 @@ export const routes = [
                         component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
                         meta: {
                             title: 'Control de Cambios al Presupuesto',
-                            breadcrumb: {parent: 'control_presupuesto', name: 'CONTROL CAMBIOS'},
+                            breadcrumb: {parent: 'control_presupuesto', name: 'CONTROL DE CAMBIOS'},
                             middleware: [auth, context],
                             permission: ['consultar_variacion_volumen','registrar_variacion_volumen']
                         }
@@ -4095,8 +4095,8 @@ export const routes = [
                         name: 'variacion-volumen',
                         component: require('./components/control-presupuesto/variacion-volumen/Index').default,
                         meta: {
-                            title: 'Variación de Volumen (Aditivas o Deductivas)',
-                            breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN VOLUMEN'},
+                            title: 'Variación de Volumen (Aditivas / Deductivas)',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN DE VOLUMEN'},
                             middleware: [auth, context],
                             permission: ['consultar_variacion_volumen','registrar_variacion_volumen']
                         }
