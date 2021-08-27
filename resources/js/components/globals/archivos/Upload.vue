@@ -170,16 +170,29 @@ export default {
             }
         },
         uploadPDF(data){
-            return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
-                data: data,
-                config: {
-                    params: { _method: 'POST'}
-                }
-            }).then((data) => {
+            if(this.global){
+                return this.$store.dispatch('documentacion/archivo/cargarArchivoSC', {
+                    data: data,
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                }).then((data) => {
 
-            }).finally(()=> {
-                $(this.$refs.modal).modal('hide');
-            })
+                }).finally(()=> {
+                    $(this.$refs.modal).modal('hide');
+                })
+            } else {
+                return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
+                    data: data,
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                }).then((data) => {
+
+                }).finally(()=> {
+                    $(this.$refs.modal).modal('hide');
+                })
+            }
         },
         uploadZIP(data){
             return this.$store.dispatch('documentacion/archivo/cargarArchivoZIP', {

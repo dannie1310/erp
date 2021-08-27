@@ -30,7 +30,7 @@
 
 <script>
     export default {
-        props: ['id', 'url', 'descripcion','texto','base_datos','id_obra'],
+        props: ['id', 'url', 'descripcion','texto','base_datos','id_obra', 'metodo'],
         methods: {
             init() {
                 this.pdf()
@@ -51,6 +51,8 @@
                 }else {
                     url = url.replace("{id_obra}", this.$session.get('id_obra') );
                 }
+
+                url = url.replace("{metodo}", this.metodo);
 
                 $(this.$refs.body).html('<iframe src="'+url+'"  height="100%" width="100%">Archivo</iframe>');
                 $(this.$refs.modal).appendTo('body')
