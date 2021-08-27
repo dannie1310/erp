@@ -7,8 +7,13 @@
             <i class="fa fa-eye"></i>
         </router-link>
         <DescargaLayoutProveedor v-if="value.descarga_layout && (value.tipo_transaccion == 17)" v-bind:id="value.id_invitacion" v-bind:id_cotizacion="value.id_cotizacion" />
-        <CargaLayoutProveedor v-if="value.carga_layout && (value.tipo_transaccion == 17)" v-on:back="layout" v-bind:id_invitacion="value.id_invitacion" v-bind:id_cotizacion="value.id_cotizacion" />
-        <router-link :to="{ name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.value.id_invitacion}}" v-if="value.edit && (value.tipo_transaccion == 17)" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
+        <DescargaLayoutPresupuestoProveedor v-if="value.descarga_layout && (value.tipo_transaccion == 49)" v-bind:id="value.id_invitacion" v-bind:id_presupuesto="value.id_cotizacion" />
+        <CargaLayoutProveedor v-if="value.carga_layout && (value.tipo_transaccion == 17)" v-on:back="layout" v-bind:id="value.id_invitacion" v-bind:id_cotizacion="value.id_cotizacion" />
+        <CargaLayoutPresupuestoProveedor v-if="value.carga_layout && (value.tipo_transaccion == 49)" v-on:back="layoutPresupuesto" v-bind:id="value.id_invitacion" v-bind:id_presupuesto="value.id_cotizacion" />
+        <router-link :to="{ name: 'cotizacion-proveedor-edit', params: {id: this.value.id_invitacion}}" v-if="value.edit && (value.tipo_transaccion == 17)" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
+            <i class="fa fa-pencil"></i>
+        </router-link>
+        <router-link :to="{ name: 'presupuesto-proveedor-edit', params: {id: this.value.id_invitacion}}" v-if="value.edit && (value.tipo_transaccion == 49)" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
         <DeleteProveedor v-bind:id_invitacion="value.id_invitacion" v-if="value.delete && (value.tipo_transaccion == 17)"/>
@@ -24,9 +29,11 @@
     import DescargaLayoutProveedor from "../DescargaLayoutProveedor";
     import CargaLayoutProveedor from "../CargaLayoutProveedor";
     import DeleteProveedor from "../Delete";
+    import DescargaLayoutPresupuestoProveedor from "../../presupuesto/DescargaLayoutPresupuestoProveedor";
+    import CargaLayoutPresupuestoProveedor from "../../presupuesto/CargaLayoutPresupuestoProveedor";
     export default {
         name: "cotizacion-buttons",
-        components: { DescargaLayoutProveedor, CargaLayoutProveedor, DeleteProveedor },
+        components: { DescargaLayoutProveedor, CargaLayoutProveedor, DeleteProveedor, DescargaLayoutPresupuestoProveedor, CargaLayoutPresupuestoProveedor },
         props: ['value'],
         data()
         {
@@ -40,7 +47,15 @@
                 this.xls = (dat) ? dat : null;
                 if(this.xls)
                 {
-                    this.$router.push({ name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.value.id_invitacion, xls: this.xls, id_cotizacion: this.value.id_cotizacion}});
+                    this.$router.push({ name: 'cotizacion-proveedor-edit', params: {id: this.value.id_invitacion, xls: this.xls, id_cotizacion: this.value.id_cotizacion}});
+                }
+            },
+            layoutPresupuesto(dat)
+            {
+                this.xls = (dat) ? dat : null;
+                if(this.xls)
+                {
+                    this.$router.push({ name: 'presupuesto-proveedor-edit', params: {id: this.value.id_invitacion, xls: this.xls}});
                 }
             }
         }

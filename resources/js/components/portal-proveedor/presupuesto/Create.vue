@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="id_invitacion != '' && !pendiente">
+                            <div class="row" v-if="id != '' && !pendiente">
                                 <div  class="col-md-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-sm">
@@ -109,7 +109,7 @@
                                                             v-model="partida.precio_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{getPrecioTotalAntesDesc(i,partida.precio_cot,partida.cantidad_presupuestada)}}</td>
+                                                    <td style="text-align:right;">{{getPrecioTotalAntesDesc(i)}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
                                                             :disabled="partida.enable == false"
@@ -332,7 +332,7 @@
     import TablaDatosSolicitud from "../cotizacion/partials/TablaDatosSolicitud";
     export default {
         name: "presupuesto-proveedor-create",
-        props: ['id_invitacion'],
+        props: ['id'],
         components: {Datepicker, TablaDatosSolicitud, es },
         data() {
             return {
@@ -372,7 +372,7 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{}
                 }).then(data => {
                     this.contrato = data
@@ -411,20 +411,17 @@
                 this.contrato.conceptos.data[i]['precio_unitario_moneda_conversion'] = precio;
                 return  '$' + parseFloat(precio).formatMoney(2, '.', ',')
             },
-            getPrecioTotalAntesDesc(i)
-            {
+            getPrecioTotalAntesDesc(i){
                 var total = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['cantidad_presupuestada'] : 0;
                 this.contrato.conceptos.data[i]['precio_total_antes_desc'] = total;
                 return  '$' + parseFloat(total).formatMoney(2, '.', ',')
             },
-            getPrecioUnitario(i)
-            {
+            getPrecioUnitario(i){
                 var precio_unitario = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] - ((this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['descuento_cot']) / 100) : 0;
                 this.contrato.conceptos.data[i]['precio_unitario'] = precio_unitario;
                 return  '$' + parseFloat(precio_unitario).formatMoney(2, '.', ',')
             },
-            getPrecioTotal(i)
-            {
+            getPrecioTotal(i){
                 var precio_total = this.contrato.conceptos.data[i]['precio_total_antes_desc'] - ((this.contrato.conceptos.data[i]['precio_total_antes_desc'] * this.contrato.conceptos.data[i]['descuento_cot'])/100);
                 this.contrato.conceptos.data[i]['precio_total'] = precio_total;
                 return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')

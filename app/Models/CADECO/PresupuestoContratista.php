@@ -2,6 +2,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
 use DateTimeZone;
 use App\Facades\Context;
@@ -29,6 +30,7 @@ class PresupuestoContratista extends Transaccion
     protected $fillable = [
         'id_transaccion',
         'id_antecedente',
+        'id_referente',
         'id_empresa',
         'id_sucursal',
         'id_obra',
@@ -102,6 +104,11 @@ class PresupuestoContratista extends Transaccion
     public function partidasAsignaciones()
     {
         return $this->hasMany(AsignacionContratistaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function invitacion()
+    {
+        return $this->belongsTo(Invitacion::class, "id_referente", "id");
     }
 
     /**
@@ -512,7 +519,8 @@ class PresupuestoContratista extends Transaccion
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
-                    'DiasVigencia' => $data['vigencia']
+                    'DiasVigencia' => $data['vigencia'],
+                    'estado' => 1,
                 ]);
 
                 foreach($data['partidas'] as $t => $partida)
@@ -597,7 +605,7 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => $data['tcLibra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
-                ]);;
+                ]);
                 $x = 0;
                 foreach($data['partidas'] as $partida)
                 {
@@ -629,10 +637,10 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout()
     {
-        $find = $this::find($id);
-        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
+        $folio = str_pad($this->numero_folio, 5, 0, 0);
+        return Excel::download(new PresupuestoLayout($this), '#'.$folio.'.xlsx');
     }
 
     public function datosComparativos()
@@ -822,12 +830,15 @@ class PresupuestoContratista extends Transaccion
 
     public function registrarPortalProveedor($data, $invitacion)
     {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->cotizacionGenerada){
+            abort(500, "Esta cotización no puede ser registrada porque ya existe el presupuesto ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
+        }
+
         try
         {
-            DB::purge('cadeco');
-            Config::set('database.connections.cadeco.database', $invitacion->base_datos);
             DB::connection('cadeco')->beginTransaction();
-            $contrato = ContratoProyectado::withoutGlobalScopes()->find($invitacion->id_transaccion_antecedente);
             $fecha = new DateTime($data['fecha_cot']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
@@ -835,6 +846,7 @@ class PresupuestoContratista extends Transaccion
                 $presupuesto = $this->create([
                     'id_antecedente' => $invitacion->id_transaccion_antecedente,
                     'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_referente'=>$invitacion->id,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
                     'fecha' => $fecha->format("Y-m-d"),
@@ -843,6 +855,7 @@ class PresupuestoContratista extends Transaccion
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observaciones_cot'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
+                    'estado' => -1,
                     'TcUSD' => $data['tc_usd'],
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
@@ -877,6 +890,7 @@ class PresupuestoContratista extends Transaccion
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
                     'id_sucursal' => $invitacion->id_sucursal_sao,
+                    'id_referente'=>$invitacion->id,
                     'monto' => 0,
                     'impuesto' => 0,
                     'anticipo' => 0,
@@ -887,7 +901,7 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => null,
                     'DiasCredito' => null,
                     'DiasVigencia' => null,
-                    'estado' => 0
+                    'estado' => -2
                 ]);
                 foreach($data['conceptos']['data'] as $t => $partida)
                 {
@@ -911,6 +925,61 @@ class PresupuestoContratista extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
+        }
+    }
+
+    public function editarPortalProveedor($data, $invitacion)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->estado == 3 || $this->estado > 0){
+            abort(500, "Esta cotización no puede ser editada porque ya ha sido enviada como respuesta a la invitación ".$invitacion->numero_folio_format."");
+        }
+
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'fecha' => $fecha->format("Y-m-d"),
+                'monto' => $data['monto'],
+                'impuesto' => $data['impuesto'],
+                'anticipo' => $data['anticipo'],
+                'observaciones' => $data['observaciones'],
+                'PorcentajeDescuento' => number_format($data['descuento'], "2",".",""),
+                'TcUSD' => $data['tcUsd'],
+                'TcEuro' => $data['tdEuro'],
+                'TcLibra' => $data['tcLibra'],
+                'DiasCredito' => $data['dias_credito'],
+                'DiasVigencia' => $data['dias_vigencia']
+            ]);
+
+            foreach($data['contratos'] as $partida)
+            {
+                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $data['id'])->where('id_concepto', '=', $partida['id_concepto']);
+                if(!is_null($partida['unidad'])) {
+                    $precio_conversion = $partida['partida_activa'] ? $this->precioConversion($partida['precio_unitario'], $partida['IdMoneda']) : null;
+                    if ($precio_conversion) {
+                        $precio_descuento = $precio_conversion - ($precio_conversion * $partida['descuento'] / 100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+                    $item->update([
+                        'precio_unitario' => $precio_descuento,
+                        'no_cotizado' => $partida['partida_activa'] ? 0 : 1,
+                        'PorcentajeDescuento' => $partida['partida_activa'] ? $partida['descuento'] : null,
+                        'IdMoneda' => $partida['IdMoneda'],
+                        'Observaciones' => $partida['observaciones']
+                    ]);
+                }
+            }
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
         }
     }
 }

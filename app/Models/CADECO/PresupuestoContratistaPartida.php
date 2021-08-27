@@ -70,6 +70,11 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioConvertAttribute()
     {
+        if(is_null(Context::getIdObra()))
+        {
+            $this->presupuesto = $this->presupuesto()->withoutGlobalScopes()->first();
+        }
+
         switch ($this->IdMoneda) {
             case(1):
                 return $this->precio_unitario;
@@ -262,7 +267,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPorcentajeDescuentoFormatAttribute()
     {
-        return number_format($this->PorcentajeDescuento, "2",".","")." %";
+        return number_format($this->PorcentajeDescuento, "2",".","") ." %";
     }
 
     public function getPrecioUnitarioAntesDescuentoAttribute()

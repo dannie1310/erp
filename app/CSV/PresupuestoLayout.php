@@ -65,6 +65,8 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     ]);
                 $event->sheet->getProtection()->setSheet(true);
 
+                $event->sheet->getColumnDimension('A')->setAutoSize(false);
+                $event->sheet->getColumnDimension('A')->setWidth(10);
                 $event->sheet->getColumnDimension('B')->setAutoSize(false);
                 $event->sheet->getColumnDimension('B')->setWidth(60);
                 $event->sheet->getColumnDimension('C')->setAutoSize(false);
@@ -90,9 +92,11 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('O')->setAutoSize(true);
 
                 $i=2;
+                $verificacion_cotizacion = $this->verifica->encripta($this->presupuesto->invitacion->base_datos."|".$this->presupuesto->invitacion->id_obra."|".$this->presupuesto->id_transaccion);
+                $event->sheet->setCellValue("A1", $verificacion_cotizacion);
                 $t_part = count($this->presupuesto->partidas);
                 foreach ($this->presupuesto->partidas as $cot){
-                    $item = Contrato::where('id_transaccion', '=', $cot->presupuesto->contratoProyectado->id_transaccion)->where('id_concepto', '=', $cot->id_concepto)->first();
+                    $item = Contrato::where('id_transaccion', '=', $this->presupuesto->id_antecedente)->where('id_concepto', '=', $cot->id_concepto)->first();
                     $id_moneda = '';
                     switch ((int)$cot->IdMoneda){
                         case 1:
