@@ -143,8 +143,8 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0">Eliminar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
+                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0"><i class="fa fa-trash"></i>Eliminar</button>
                         </div>
                     </form>
                 </div>

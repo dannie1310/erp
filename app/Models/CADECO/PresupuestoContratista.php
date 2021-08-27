@@ -891,7 +891,7 @@ class PresupuestoContratista extends Transaccion
             }else
             {
                 $presupuesto = $this->create([
-                    'id_antecedente' => $data['id_contrato'],
+                    'id_antecedente' => $invitacion->id_transaccion_antecedente,
                     'fecha' => $fecha->format("Y-m-d"),
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
