@@ -32,6 +32,7 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'numeroFolio' => $model->numero_folio,
+            'tipo_transaccion' => $model->tipo_transaccion,
             'fecha_format' => $model->fecha_format,
             'numero_folio_format' => $model->numero_folio_format,
             'fecha' => $model->fecha_format,
@@ -44,6 +45,9 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'observaciones'=>$model->observaciones_format,
             'fecha_hora_registro_format' => $model->fecha_hora_registro_format,
             'usuario_registro' => $model->usuario_registro,
+            'direccion_entrega' => $model->obra->direccion_proyecto,
+            'ubicacion_entrega_plataforma_digital' => $model->obra->direccion_plataforma_digital,
+            "tipo_transaccion" => $model->tipo_transaccion,
         ];
     }
 
