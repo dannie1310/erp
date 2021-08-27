@@ -486,8 +486,8 @@ class Invitacion extends Model
                 $conceptos[$key]['descuento_format'] = $partida ? $partida->descuento_format : '';
                 $conceptos[$key]['precio_unitario_despues_descuento_format'] = $partida ? $partida->precio_unitario_despues_descuento_format : '';
                 $conceptos[$key]['total_despues_descuento_format'] = $partida ? $partida->total_despues_descuento_format : '';
-                $conceptos[$key]['moneda'] = $partida ? $partida->moneda->nombre : '';
-                $conceptos[$key]['con_moneda_extranjera'] = $partida ? $partida->moneda->id_moneda != 1 ? true : false : '';
+                $conceptos[$key]['moneda'] = $partida ? $partida->moneda ? $partida->moneda->nombre : '' : '';
+                $conceptos[$key]['con_moneda_extranjera'] = $partida ?  $partida->moneda ? $partida->moneda->id_moneda != 1 ? true : false : '': '';
                 $conceptos[$key]['precio_unitario_despues_descuento_partida_mc_format'] = $partida ? $partida->precio_unitario_despues_descuento_partida_mc_format : '';
                 $conceptos[$key]['total_despues_descuento_partida_mc_format'] = $partida ? $partida->total_despues_descuento_partida_mc_format : '';
                 $conceptos[$key]['observaciones'] = $partida ? $partida->Observaciones : '';

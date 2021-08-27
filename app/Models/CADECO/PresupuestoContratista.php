@@ -828,6 +828,12 @@ class PresupuestoContratista extends Transaccion
         return $salida;
     }
 
+    /**
+     * Registrar presupuesto desde el portal proveedor
+     * @param $data
+     * @param $invitacion
+     * @return mixed
+     */
     public function registrarPortalProveedor($data, $invitacion)
     {
         DB::purge('cadeco');
@@ -885,7 +891,7 @@ class PresupuestoContratista extends Transaccion
             }else
             {
                 $presupuesto = $this->create([
-                    'id_antecedente' => $data['id_contrato'],
+                    'id_antecedente' => $invitacion->id_transaccion_antecedente,
                     'fecha' => $fecha->format("Y-m-d"),
                     'id_empresa' => $invitacion->id_proveedor_sao,
                     'id_obra' => $invitacion->id_obra,
@@ -928,6 +934,12 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
+    /**
+     * Editar presupuesto desde el portal proveedor
+     * @param $data
+     * @param $invitacion
+     * @return $this
+     */
     public function editarPortalProveedor($data, $invitacion)
     {
         DB::purge('cadeco');
@@ -975,6 +987,37 @@ class PresupuestoContratista extends Transaccion
                 }
             }
 
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    /**
+     * Eliminar cotización de un proveedor
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminarProveedor($motivo, $base)
+    {
+        if ($this->estado > 0 || $this->invitacion->estado == 3 )
+        {
+            abort(500, "Este presupuesto no puede ser eliminada porque ya ha sido enviada como respuesta a la invitación ".$this->invitacion->numero_folio_format."");
+        }
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $base);
+            DB::connection('cadeco')->beginTransaction();
+            $this->delete();
+            $eliminar = PresupuestoContratistaEliminado::find($this->id_transaccion);
+            $eliminar->motivo_elimino = $motivo;
+            $eliminar->save();
+            $this->invitacion->update([
+                "estado" => 0,
+                "id_cotizacion_generada" => null
+            ]);
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {

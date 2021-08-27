@@ -17,6 +17,7 @@
             <i class="fa fa-pencil"></i>
         </router-link>
         <DeleteProveedor v-bind:id_invitacion="value.id_invitacion" v-if="value.delete && (value.tipo_transaccion == 17)"/>
+        <DeletePresupuesto v-bind:id="value.id_invitacion" v-if="value.delete && (value.tipo_transaccion == 49)"/>
         <router-link  :to="{ name: 'cotizacion-proveedor-documentos', params: {id: value.id_cotizacion, base_datos:value.invitacion.base_datos, id_obra:value.invitacion.id_obra}}" v-if="$root.can('consultar_cotizacion_proveedor',1)  && $root.can('consultar_archivos_transaccion',1)" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
             <i class="fa fa-folder-open"></i>
         </router-link>
@@ -31,9 +32,10 @@
     import DeleteProveedor from "../Delete";
     import DescargaLayoutPresupuestoProveedor from "../../presupuesto/DescargaLayoutPresupuestoProveedor";
     import CargaLayoutPresupuestoProveedor from "../../presupuesto/CargaLayoutPresupuestoProveedor";
+    import DeletePresupuesto from "../../presupuesto/Delete";
     export default {
         name: "cotizacion-buttons",
-        components: { DescargaLayoutProveedor, CargaLayoutProveedor, DeleteProveedor, DescargaLayoutPresupuestoProveedor, CargaLayoutPresupuestoProveedor },
+        components: { DescargaLayoutProveedor, CargaLayoutProveedor, DeleteProveedor, DescargaLayoutPresupuestoProveedor, CargaLayoutPresupuestoProveedor, DeletePresupuesto },
         props: ['value'],
         data()
         {
