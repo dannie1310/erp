@@ -311,4 +311,10 @@ class PresupuestoContratistaService
 
         return $respuesta;
     }
+
+    public function deleteProveedor(array $data, $id)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id);
+        return $this->repository->eliminar($invitacion->presupuesto->getKey(),$invitacion->base_datos,$data['data']);
+    }
 }
