@@ -4081,7 +4081,7 @@ export const routes = [
                             title: 'Control de Cambios al Presupuesto',
                             breadcrumb: {parent: 'control_presupuesto', name: 'CONTROL CAMBIOS'},
                             middleware: [auth, context],
-                            // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                            permission: ['consultar_variacion_volumen','registrar_variacion_volumen']
                         }
                     },
                 ]
@@ -4098,7 +4098,7 @@ export const routes = [
                             title: 'Variación de Volumen (Aditivas o Deductivas)',
                             breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN VOLUMEN'},
                             middleware: [auth, context],
-                            // permission: ['consultar_inventario_fisico','iniciar_conteo_inventario_fisico']
+                            permission: ['consultar_variacion_volumen','registrar_variacion_volumen']
                         }
                     },
                     {
