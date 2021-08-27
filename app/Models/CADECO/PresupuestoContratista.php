@@ -1002,8 +1002,7 @@ class PresupuestoContratista extends Transaccion
      */
     public function eliminarProveedor($motivo, $base)
     {
-        dd($this->estado , $this->invitacion->estado);
-        if ($this->estado > 0 || $this->invitacion->estado > 0)
+        if ($this->estado > 0 || $this->invitacion->estado == 3 )
         {
             abort(500, "Este presupuesto no puede ser eliminada porque ya ha sido enviada como respuesta a la invitación ".$this->invitacion->numero_folio_format."");
         }

@@ -349,7 +349,7 @@ export default {
         deletePresupuestoProveedor(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar Presupuesto Contratista123",
+                    title: "Eliminar Presupuesto Contratista",
                     text: "¿Está seguro/a de que desea eliminar presupuesto?",
                     icon: "warning",
                     buttons: {

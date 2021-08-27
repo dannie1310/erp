@@ -196,15 +196,16 @@ export default {
                 params: {data: this.motivo}
             })
             .then(() => {
+                $(this.$refs.modal).modal('hide');
+                this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/paginate', {
-                    params: this.query
+                    params: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado']},
                 }).then(data => {
                     this.$store.commit('padronProveedores/invitacion/SET_INVITACIONES', data.data);
                     this.$store.commit('padronProveedores/invitacion/SET_META', data.meta);
+                    this.cargando = false;
                 })
-            }).finally( ()=>{
-                $(this.$refs.modal).modal('hide');
-            });
+            })
         },
     },
     computed: {
