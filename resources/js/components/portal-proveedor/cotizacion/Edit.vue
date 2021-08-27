@@ -155,7 +155,7 @@
                                                         <td>{{(partida.material) ? partida.material.numero_parte : '----'}}</td>
                                                         <td>{{(partida.material) ? partida.material.descripcion : '----'}}</td>
                                                         <td >{{(partida.material) ? partida.material.unidad : '----'}}</td>
-                                                         <td style="text-align:center; vertical-align:inherit;">
+                                                        <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
                                                                 <input type="checkbox" class="custom-control-input" :id="`no_cotizado[${i}]`" v-model="partida.enable" v-on:change="calcular" checked>
                                                                 <label class="custom-control-label" :for="`no_cotizado[${i}]`"></label>
@@ -214,385 +214,318 @@
                                                                       v-validate="{}"
                                                                       :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
                                                                       v-model="partida.observacion"/>
-                                                             <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
+                                                            <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                         </td>
                                                     </tr>
                                                     <tr style="border: none">
                                                         <td :colspan="colspan" rowspan="20" style="border: none; padding-top: 0.75rem">
-
-                                                        <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
-                                                            <div class="card-header">
-                                                                <h6><i class="fa fa-coins" ></i>Detalle por Moneda</h6>
+                                                            <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}" v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
+                                                                <div class="card-header">
+                                                                    <h6><i class="fa fa-coins" ></i>Detalle por Moneda</h6>
+                                                                </div>
+                                                                <div class="card-body">
+                                                                    <table class="table table-sm" id="tabla-resumen-monedas" >
+                                                                        <tr style="border: none">
+                                                                            <td style="width: 150px; border: none"></td>
+                                                                            <th style="border: none" v-if="peso_seleccionado"></th>
+                                                                            <th style="padding-top: 0.75rem; border: none" v-if="dolar_seleccionado" colspan="2">T.C. Dólar:</th>
+                                                                            <th style="border: none" v-if="euro_seleccionado" colspan="2">T.C. Euro:</th>
+                                                                            <th style="border: none" v-if="libra_seleccionado" colspan="2">T.C. Libra:
+                                                                            </th>
+                                                                        </tr>
+                                                                        <tr style="border: none">
+                                                                            <td style="width: 150px; border: none"></td>
+                                                                            <th style="border: none" v-if="peso_seleccionado"></th>
+                                                                            <th style="border: none" v-if="dolar_seleccionado" colspan="2">
+                                                                                <input
+                                                                                    :disabled="cargando"
+                                                                                    type="text"
+                                                                                    name="tc_usd"
+                                                                                    v-model="dolar"
+                                                                                    v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                                                    class="form-control"
+                                                                                    id="tc_usd"
+                                                                                    style="text-align: right"
+                                                                                    :class="{'is-invalid': errors.has('tc_usd')}">
+                                                                            </th>
+                                                                            <th style="border: none" v-if="euro_seleccionado" colspan="2">
+                                                                                <input
+                                                                                    :disabled="cargando"
+                                                                                    type="text"
+                                                                                    name="tc_eur"
+                                                                                    v-model="euro"
+                                                                                    v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                                                    class="form-control"
+                                                                                    id="tc_eur"
+                                                                                    style="text-align: right"
+                                                                                    :class="{'is-invalid': errors.has('tc_eur')}">
+                                                                            </th>
+                                                                            <th style="border: none" v-if="libra_seleccionado" colspan="2">
+                                                                                <input
+                                                                                    :disabled="cargando"
+                                                                                    type="text"
+                                                                                    name="tc_libra"
+                                                                                    v-model="libra"
+                                                                                    v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                                                    class="form-control"
+                                                                                    id="tc_libra"
+                                                                                    style="text-align: right"
+                                                                                    :class="{'is-invalid': errors.has('tc_libra')}">
+                                                                            </th>
+                                                                        </tr>
+                                                                        <tr style="border: none">
+                                                                            <td style="border: none">&nbsp;</td>
+                                                                        </tr>
+                                                                        <tr style="border: none">
+                                                                            <td style="width: 150px; border: none"></td>
+                                                                            <th style="background-color: #f2f4f5; width: 150px" v-if="peso_seleccionado">Partidas Cotizadas  <br>en Pesos (MXN)</th>
+                                                                            <th colspan="2" style="background-color: #f2f4f5; max-width: 150px" v-if="dolar_seleccionado">Partidas Cotizadas  <br>en Dólares (USD)</th>
+                                                                            <th colspan="2" style="background-color: #f2f4f5; max-width: 150px" v-if="euro_seleccionado">Partidas Cotizadas  <br>en Euros (EUR)</th>
+                                                                            <th colspan="2" style="background-color: #f2f4f5; max-width: 150px" v-if="libra_seleccionado">Partidas Cotizadas  <br>en Libras (GBL)</th>
+                                                                            <th style="background-color: #f2f4f5; max-width: 150px">Valor de Cotización en <br>Pesos MXN</th>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="text-align: right; background-color: #f2f4f5">Subtotal:</th>
+                                                                            <td style="text-align: right" v-if="peso_seleccionado">
+                                                                                <span v-if="pesos>0">
+                                                                                    ${{(parseFloat(pesos_con_descuento)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
+                                                                                <span v-if="dolares>0">
+                                                                                    ${{(parseFloat(dolares_con_descuento)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
+                                                                                <span v-if="euros>0">
+                                                                                    ${{(parseFloat(euros_con_descuento)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
+                                                                                <span v-if="libras>0">
+                                                                                    ${{(parseFloat(libras_con_descuento)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right">
+                                                                                ${{(parseFloat(subtotal_mxn)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="text-align: right; background-color: #f2f4f5">
+                                                                                IVA:
+                                                                            </th>
+                                                                            <td style="text-align: right" v-if="peso_seleccionado">
+                                                                                <span v-if="pesos>0">
+                                                                                    ${{(parseFloat(pesos_con_descuento*.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
+                                                                                <span v-if="dolares>0">
+                                                                                    ${{(parseFloat(dolares_con_descuento*.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
+                                                                                <span v-if="euros>0">
+                                                                                    ${{(parseFloat(euros_con_descuento*.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
+                                                                                <span v-if="libras>0">
+                                                                                    ${{(parseFloat(libras_con_descuento*.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right">
+                                                                                ${{(parseFloat(iva_mxn)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="text-align: right; background-color: #f2f4f5">Total:</th>
+                                                                            <td style="text-align: right" v-if="peso_seleccionado">
+                                                                                <span v-if="pesos>0">
+                                                                                    ${{(parseFloat(pesos_con_descuento*1.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
+                                                                                <span v-if="dolares>0">
+                                                                                    ${{(parseFloat(dolares_con_descuento*1.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
+                                                                                <span v-if="euros>0">
+                                                                                    ${{(parseFloat(euros_con_descuento*1.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
+                                                                                <span v-if="libras>0">
+                                                                                    ${{(parseFloat(libras_con_descuento*1.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right">
+                                                                                ${{(parseFloat(total_mxn)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <th style="text-align: right; background-color: #f2f4f5">Total en Pesos (MXN):</th>
+                                                                            <td style="text-align: right" v-if="peso_seleccionado">
+                                                                                <span v-if="pesos>0">
+                                                                                    ${{(parseFloat(pesos_con_descuento*1.16)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right; width: 80px" v-if="dolar_seleccionado">
+                                                                                T.C.: ${{(parseFloat(dolar)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                            <td style="text-align: right" v-if="dolar_seleccionado">
+                                                                                <span v-if="dolares>0">
+                                                                                    ${{(parseFloat(dolares_con_descuento*1.16*dolar)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right; width: 80px" v-if="euro_seleccionado">
+                                                                                T.C.: ${{(parseFloat(euro)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                            <td style="text-align: right" v-if="euro_seleccionado">
+                                                                                <span v-if="euros>0">
+                                                                                    ${{(parseFloat(euros_con_descuento *1.16 * euro)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right; width: 80px" v-if="libra_seleccionado">
+                                                                                T.C.: ${{(parseFloat(libra)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                            <td style="text-align: right" v-if="libra_seleccionado">
+                                                                                <span v-if="libras>0">
+                                                                                    ${{(parseFloat(libras_con_descuento*1.16 * libra)).formatMoney(2,'.',',')}}
+                                                                                </span>
+                                                                                <span v-else>-</span>
+                                                                            </td>
+                                                                            <td style="text-align: right">
+                                                                                ${{(parseFloat(total_mxn)).formatMoney(2,'.',',')}}
+                                                                            </td>
+                                                                        </tr>
+                                                                    </table>
+                                                                </div>
                                                             </div>
-                                                            <div class="card-body">
-                                                                <table class="table table-sm" id="tabla-resumen-monedas" >
-                                                                    <tr style="border: none">
-                                                                        <td style="width: 150px; border: none">
-
-                                                                        </td>
-                                                                        <th style="border: none" v-if="peso_seleccionado">
-
-                                                                        </th>
-                                                                        <th style="padding-top: 0.75rem; border: none" v-if="dolar_seleccionado" colspan="2">
-                                                                            T.C. Dólar:
-                                                                        </th>
-
-                                                                        <th style="border: none" v-if="euro_seleccionado" colspan="2">
-                                                                            T.C. Euro:
-                                                                        </th>
-
-                                                                        <th style="border: none" v-if="libra_seleccionado" colspan="2">
-                                                                            T.C. Libra:
-                                                                        </th>
-
-                                                                    </tr>
-                                                                    <tr style="border: none">
-                                                                        <td style="width: 150px; border: none">
-
-                                                                        </td>
-                                                                        <th style="border: none" v-if="peso_seleccionado">
-
-                                                                        </th>
-
-                                                                        <th style="border: none" v-if="dolar_seleccionado" colspan="2">
-                                                                            <input
-                                                                                :disabled="cargando"
-                                                                                type="text"
-                                                                                name="tc_usd"
-                                                                                v-model="dolar"
-                                                                                v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                                                class="form-control"
-                                                                                id="tc_usd"
-                                                                                style="text-align: right"
-                                                                                :class="{'is-invalid': errors.has('tc_usd')}">
-                                                                        </th>
-
-                                                                        <th style="border: none" v-if="euro_seleccionado" colspan="2">
-                                                                            <input
-                                                                                :disabled="cargando"
-                                                                                type="text"
-                                                                                name="tc_eur"
-                                                                                v-model="euro"
-                                                                                v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                                                class="form-control"
-                                                                                id="tc_eur"
-                                                                                style="text-align: right"
-                                                                                :class="{'is-invalid': errors.has('tc_eur')}">
-                                                                        </th>
-
-                                                                        <th style="border: none" v-if="libra_seleccionado" colspan="2">
-                                                                            <input
-                                                                                :disabled="cargando"
-                                                                                type="text"
-                                                                                name="tc_libra"
-                                                                                v-model="libra"
-                                                                                v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                                                class="form-control"
-                                                                                id="tc_libra"
-                                                                                style="text-align: right"
-                                                                                :class="{'is-invalid': errors.has('tc_libra')}">
-                                                                        </th>
-                                                                    </tr>
-                                                                    <tr style="border: none">
-                                                                        <td style="border: none">&nbsp;</td>
-                                                                    </tr>
-                                                                    <tr style="border: none">
-                                                                        <td style="width: 150px; border: none">
-
-                                                                        </td>
-                                                                        <th style="background-color: #f2f4f5; width: 150px" v-if="peso_seleccionado">
-                                                                            Partidas Cotizadas  <br>en Pesos (MXN)
-                                                                        </th>
-                                                                        <th colspan="2" style="background-color: #f2f4f5; max-width: 150px" v-if="dolar_seleccionado">
-                                                                            Partidas Cotizadas  <br>en Dólares (USD)
-                                                                        </th>
-                                                                        <th colspan="2" style="background-color: #f2f4f5; max-width: 150px" v-if="euro_seleccionado">
-                                                                            Partidas Cotizadas  <br>en Euros (EUR)
-                                                                        </th>
-                                                                        <th colspan="2" style="background-color: #f2f4f5; max-width: 150px" v-if="libra_seleccionado">
-                                                                            Partidas Cotizadas  <br>en Libras (GBL)
-                                                                        </th>
-                                                                        <th style="background-color: #f2f4f5; max-width: 150px">
-                                                                            Valor de Cotización en <br>Pesos MXN
-                                                                        </th>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th style="text-align: right; background-color: #f2f4f5">
-                                                                            Subtotal:
-                                                                        </th>
-                                                                        <td style="text-align: right" v-if="peso_seleccionado">
-                                                                            <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos_con_descuento)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
-                                                                            <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares_con_descuento)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
-                                                                            <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros_con_descuento)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
-                                                                            <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras_con_descuento)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right">
-                                                                            ${{(parseFloat(subtotal_mxn)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th style="text-align: right; background-color: #f2f4f5">
-                                                                            IVA:
-                                                                        </th>
-                                                                        <td style="text-align: right" v-if="peso_seleccionado">
-                                                                            <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos_con_descuento*.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
-                                                                            <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares_con_descuento*.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
-                                                                            <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros_con_descuento*.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
-                                                                            <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras_con_descuento*.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right">
-                                                                            ${{(parseFloat(iva_mxn)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <th style="text-align: right; background-color: #f2f4f5">
-                                                                            Total:
-                                                                        </th>
-                                                                        <td style="text-align: right" v-if="peso_seleccionado">
-                                                                            <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos_con_descuento*1.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="dolar_seleccionado">
-                                                                            <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares_con_descuento*1.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="euro_seleccionado">
-                                                                            <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros_con_descuento*1.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right" colspan="2" v-if="libra_seleccionado">
-                                                                            <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras_con_descuento*1.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right">
-                                                                            ${{(parseFloat(total_mxn)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                    </tr>
-
-                                                                    <tr>
-                                                                        <th style="text-align: right; background-color: #f2f4f5">
-                                                                            Total en Pesos (MXN):
-                                                                        </th>
-                                                                        <td style="text-align: right" v-if="peso_seleccionado">
-                                                                            <span v-if="pesos>0">
-                                                                                ${{(parseFloat(pesos_con_descuento*1.16)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right; width: 80px" v-if="dolar_seleccionado">
-                                                                            T.C.: ${{(parseFloat(dolar)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                        <td style="text-align: right" v-if="dolar_seleccionado">
-                                                                            <span v-if="dolares>0">
-                                                                                ${{(parseFloat(dolares_con_descuento*1.16*dolar)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right; width: 80px" v-if="euro_seleccionado">
-                                                                           T.C.: ${{(parseFloat(euro)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                        <td style="text-align: right" v-if="euro_seleccionado">
-                                                                            <span v-if="euros>0">
-                                                                                ${{(parseFloat(euros_con_descuento *1.16 * euro)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right; width: 80px" v-if="libra_seleccionado">
-                                                                            T.C.: ${{(parseFloat(libra)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                        <td style="text-align: right" v-if="libra_seleccionado">
-                                                                            <span v-if="libras>0">
-                                                                                ${{(parseFloat(libras_con_descuento*1.16 * libra)).formatMoney(2,'.',',')}}
-                                                                            </span>
-                                                                            <span v-else>
-                                                                                -
-                                                                            </span>
-                                                                        </td>
-                                                                        <td style="text-align: right">
-                                                                            ${{(parseFloat(total_mxn)).formatMoney(2,'.',',')}}
-                                                                        </td>
-                                                                    </tr>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-
-                                                    </td>
+                                                        </td>
                                                         <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal <span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
                                                         <td style="border: none; text-align: right; padding-top: 0.75rem;">
                                                             ${{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}
                                                         </td>
                                                     </tr>
-                                                <tr style="border: none">
-
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global(%):</b></td>
-                                                    <td style="border: none"> <input
-                                                        :disabled="cargando"
-                                                        type="text"
-                                                        name="descuento_cot"
-                                                        v-model="descuento_cot"
-                                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                        class="form-control"
-                                                        id="descuento_cot"
-                                                        style="text-align: right; padding-right: 4px"
-                                                        :class="{'is-invalid': errors.has('descuento_cot')}">
-                                                    </td>
-                                                </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global(%):</b></td>
+                                                        <td style="border: none"> <input
+                                                            :disabled="cargando"
+                                                            type="text"
+                                                            name="descuento_cot"
+                                                            v-model="descuento_cot"
+                                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            class="form-control"
+                                                            id="descuento_cot"
+                                                            style="text-align: right; padding-right: 4px"
+                                                            :class="{'is-invalid': errors.has('descuento_cot')}">
+                                                        </td>
+                                                    </tr>
                                                     <!--  -->
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
-                                                        ${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}
-                                                    </td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>IVA<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
-                                                        ${{(parseFloat(iva)).formatMoney(2,'.',',')}}
-                                                    </td>
-                                                </tr>
-                                                <tr style="border: none">
-                                                    <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Total<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                                    <td style="border: none; text-align: right; padding-top: 0.75rem;">
-                                                        ${{(parseFloat(total)).formatMoney(2,'.',',')}}
-                                                    </td>
-                                                </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
+                                                        <td style="border: none; text-align: right; padding-top: 0.75rem;">
+                                                            ${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>IVA<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
+                                                        <td style="border: none; text-align: right; padding-top: 0.75rem;">
+                                                            ${{(parseFloat(iva)).formatMoney(2,'.',',')}}
+                                                        </td>
+                                                    </tr>
+                                                    <tr style="border: none">
+                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Total<span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
+                                                        <td style="border: none; text-align: right; padding-top: 0.75rem;">
+                                                            ${{(parseFloat(total)).formatMoney(2,'.',',')}}
+                                                        </td>
+                                                    </tr>
                                                     <template v-if="multiples_monedas == true || dolar_seleccionado == true || euro_seleccionado == true || libra_seleccionado == true ">
                                                         <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
-                                                    <tr style="border: none">
-                                                        <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
-                                                        <td style="border: none; text-align: right"></td>
-                                                    </tr>
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
+                                                        <tr style="border: none">
+                                                            <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"></td>
+                                                            <td style="border: none; text-align: right"></td>
+                                                        </tr>
                                                     </template>
+                                                    <tr style="border: none">
+                                                        <td :colspan="colspan" rowspan="20" style="border: none; padding-top: 0.75rem">
+                                                            <div class="card" :style="{'max-width': ancho_tabla_detalle+'px'}">
+                                                                <exclusiones />
+                                                            </div>
+                                                        </td>
+                                                    </tr>
                                                 </tbody>
                                             </table>
                                         </div>
@@ -618,6 +551,11 @@
                                     </div>
                                 </div>
                             </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <exclusiones />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -643,11 +581,12 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosCotizacionCompra from "./partials/DatosCotizacionCompra";
     import EncabezadoCotizacionCompraProveedor from "./partials/EncabezadoCotizacion";
+    import Exclusiones from "./partials/Exclusiones";
     export default {
         name: "cotizacion-proveedor-edit",
         components: {
             EncabezadoCotizacionCompraProveedor,
-            DatosCotizacionCompra, Datepicker, ModelListSelect},
+            DatosCotizacionCompra, Datepicker, ModelListSelect, Exclusiones},
         props: ['id_invitacion', 'xls'],
         data() {
             return {
