@@ -817,8 +817,7 @@ class    CotizacionCompra  extends Transaccion
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         if($invitacion->cotizacionGenerada){
-            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación."
-                );
+            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
         }
 
         try
@@ -1103,7 +1102,7 @@ class    CotizacionCompra  extends Transaccion
      */
     public function eliminarProveedor($motivo, $base)
     {
-        if ($this->estado > 0 || $this->invitacion->estado > 0) {
+        if ($this->estado > 0 || $this->invitacion->estado == 3 ) {
             abort(500, "Esta cotización no puede ser eliminada porque ya ha sido enviada como respuesta a la invitación ".$this->invitacion->numero_folio_format.""
             );
         }

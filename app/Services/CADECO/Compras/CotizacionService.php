@@ -4,6 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 use App\Events\EnvioCotizacion;
+use App\Facades\Context;
 use App\Imports\CotizacionImport;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Documentacion\Archivo;
@@ -83,9 +84,18 @@ class CotizacionService
         if (count($celdas[0]) != 12) {
             abort(400, 'Archivo XLS no compatible');
         }
-        if (count($celdas) != count($cotizacion->partidas) + 21) {
+
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_cotizacion_validar = $cadena_validacion_exp[2];
+        if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $id != $id_cotizacion_validar)
+        {
             abort(400, 'El archivo  XLS no corresponde a la cotización ' . $cotizacion->numero_folio_format);
         }
+
         while ($x < count($cotizacion->partidas) + 2) {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
             $item = $cotizacion->partidas->where('id_material', $decodificado)->first();
@@ -397,5 +407,4 @@ class CotizacionService
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database',$base_datos);
     }
-
 }
