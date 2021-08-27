@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button  @click="openModal" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('cargar_archivos_transaccion') && $root.can(permiso)">
+        <button  @click="openModal" type="button" class="btn btn-app btn-primary pull-right" title="Cargar" v-if="$root.can('cargar_archivos_transaccion', this.global) && $root.can(permiso, this.global)">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-upload" v-else></i>
             Subir Archivo
@@ -75,7 +75,7 @@
 
 export default {
     name: "upload",
-    props: ['id','permiso'],
+    props: ['id','permiso','global', 'base_datos', 'id_obra'],
 
     data(){
         return{
@@ -160,24 +160,39 @@ export default {
             if(this.esZip(this.names)){
                 formData.append('archivo',  this.files[0].archivo);
                 formData.append('archivo_nombre',  this.names[0].nombre);
+                formData.append('base_datos',  this.base_datos);
                 this.uploadZIP(formData);
             }else{
                 formData.append('archivos',  JSON.stringify(this.files));
                 formData.append('archivos_nombres',  JSON.stringify(this.names));
+                formData.append('base_datos',  this.base_datos);
                 this.uploadPDF(formData);
             }
         },
         uploadPDF(data){
-            return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
-                data: data,
-                config: {
-                    params: { _method: 'POST'}
-                }
-            }).then((data) => {
+            if(this.global){
+                return this.$store.dispatch('documentacion/archivo/cargarArchivoSC', {
+                    data: data,
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                }).then((data) => {
 
-            }).finally(()=> {
-                $(this.$refs.modal).modal('hide');
-            })
+                }).finally(()=> {
+                    $(this.$refs.modal).modal('hide');
+                })
+            } else {
+                return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
+                    data: data,
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                }).then((data) => {
+
+                }).finally(()=> {
+                    $(this.$refs.modal).modal('hide');
+                })
+            }
         },
         uploadZIP(data){
             return this.$store.dispatch('documentacion/archivo/cargarArchivoZIP', {

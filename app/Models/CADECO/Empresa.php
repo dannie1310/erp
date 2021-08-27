@@ -11,6 +11,7 @@ namespace App\Models\CADECO;
 use App\Models\IGH\Usuario;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
@@ -41,7 +42,8 @@ class Empresa extends Model
         'porcentaje',
         'tipo_cliente',
         'emite_factura',
-        'es_nacional'
+        'es_nacional',
+        'UsuarioRegistro'
     ];
 
     public function cuentasEmpresa()
@@ -97,6 +99,16 @@ class Empresa extends Model
     public function usuario ()
     {
         return $this->belongsTo(Usuario::class, 'UsuarioRegistro', 'idusuario');
+    }
+
+    public function empresaPadron()
+    {
+        return $this->belongsTo(\App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa::class, "rfc", "rfc");
+    }
+
+    public function empresaSAT()
+    {
+        return $this->belongsTo(ProveedorSAT::class, "rfc", "rfc");
     }
 
     public function scopeConCuentas($query)
@@ -350,5 +362,10 @@ class Empresa extends Model
     public function getCuentaBancariaEmresaAfectacion(){
         $cuentas = $this->cuentasBancarias;
         return $cuentas->count();
+    }
+
+    public function getEmpresaPorRFC($rfc)
+    {
+        return Empresa::where('rfc', '=', $rfc)->withoutGlobalScopes()->first();
     }
 }

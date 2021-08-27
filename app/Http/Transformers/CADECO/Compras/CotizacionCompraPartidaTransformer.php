@@ -42,9 +42,14 @@ class CotizacionCompraPartidaTransformer extends TransformerAbstract
             'precio_total' => $model->precio_total,
             'precio_total_moneda' => $model->precio_total_moneda,
             'observacion' => ($model->partida) ? $model->partida->observaciones : null,
-            'no_cotizado' => ($model->no_cotizado == 0) ? true :false,
+            'enable' => ($model->no_cotizado == 0) ? true :false,
+            'no_cotizado' => $model->no_cotizado,
             'id_moneda' => (int) $model->id_moneda,
             'id_item_solicitud' => (int) $model->item_solicitud,
+            'descripcion_material' => $model->descripcion_material,
+            'numero_parte' => $model->numero_parte_material,
+            'unidad' => $model->unidad_material,
+            'nombre_moneda' => $model->moneda_nombre
         ];
     }
 

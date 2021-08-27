@@ -4,6 +4,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Moneda;
 use App\Models\IGH\TipoCambio;
 use Illuminate\Database\Eloquent\Model;
@@ -51,12 +52,15 @@ class CotizacionCompraPartida extends Model
 
     public function getCantidadFormatAttribute()
     {
-        return number_format($this->cantidad, 1, '.', ',');
+        return number_format($this->cantidad, 2, '.', ',');
     }
 
     public function getItemSolicitudAttribute(){
-        $item = Item::where('id_transaccion', '=', $this->cotizacion->id_antecedente)->where('id_material', '=', $this->id_material)->first();
-        return $item->id_item;
+        if(!is_null(Context::getIdObra())) {
+            $item = Item::where('id_transaccion', '=', $this->cotizacion->id_antecedente)->where('id_material', '=', $this->id_material)->first();
+            return $item->id_item;
+        }
+        return null;
     }
 
     public function getPrecioUnitarioFormatAttribute()
@@ -71,16 +75,22 @@ class CotizacionCompraPartida extends Model
 
     public function getPrecioTotalMonedaAttribute()
     {
+        if(!is_null(Context::getIdObra()))
+        {
+            $cotizacion = $this->cotizacion;
+        }else{
+            $cotizacion = CotizacionCompra::withoutGlobalScopes()->where('id_transaccion', $this->id_transaccion)->first();
+        }
         switch ($this->id_moneda)
         {
             case (1):
                 return '$ '. number_format(($this->cantidad * $this->precio_unitario), 2, '.', ',');
                 break;
             case (2):
-                return ($this->cotizacion->complemento) ? '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->cotizacion->complemento->tc_usd), 2, '.', ',') : '---------';
+                return ($cotizacion->complemento) ? '$ '. number_format(($this->cantidad * $this->precio_unitario * $cotizacion->complemento->tc_usd), 2, '.', ',') : '---------';
                 break;
             case (3):
-                return ($this->cotizacion->complemento) ? '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->cotizacion->complemento->tc_eur), 2, '.', ',') : '---------';
+                return ($cotizacion->complemento) ? '$ '. number_format(($this->cantidad * $this->precio_unitario * $cotizacion->complemento->tc_eur), 2, '.', ',') : '---------';
                 break;
             case (4):
                 return  '$ '. number_format(($this->cantidad * $this->precio_unitario * $this->tipo_cambio), 2, '.', ',');
@@ -131,6 +141,13 @@ class CotizacionCompraPartida extends Model
         return $this->descuento != 0 ? $this->precio_unitario - ($this->precio_unitario * $this->descuento / 100) : $this->precio_unitario;
     }
 
+    public function getPrecioTotalDescuentoPartidaAttribute()
+    {
+        if($this->partida){
+            return ($this->precio_unitario - ($this->precio_unitario * $this->partida->descuento_partida / 100)) * $this->cantidad ;
+        }
+    }
+
     public function getPrecioCompuestoTotalAttribute()
     {
         return $this->precio_compuesto * $this->cantidad;
@@ -139,5 +156,46 @@ class CotizacionCompraPartida extends Model
     public function getTipoCambioAttribute()
     {
         return $this->moneda->cambio ? $this->moneda->cambio->cambio : 1;
+    }
+
+    public function getDescripcionMaterialAttribute()
+    {
+        try{
+            return $this->material->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getNumeroParteMaterialAttribute()
+    {
+        try{
+            return $this->material->numero_parte;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getUnidadMaterialAttribute()
+    {
+        try{
+            return $this->material->unidad;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function getMonedaNombreAttribute()
+    {
+        try{
+            return $this->moneda->nombre;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
+    public function scopeActiva($query)
+    {
+        return $query->where("no_cotizado","=",0);
     }
 }

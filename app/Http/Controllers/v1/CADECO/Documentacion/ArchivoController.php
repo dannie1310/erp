@@ -39,10 +39,13 @@ class ArchivoController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC']);
         $this->middleware('permiso:cargar_archivos_transaccion')->only('cargarArchivo');
         $this->middleware('permiso:eliminar_archivos_transaccion')->only('destroy');
         $this->middleware('permiso:consultar_archivos_transaccion')->only(['documento', 'getArchivosTransaccion','imagenes']);
+        $this->middleware('permisoGlobal:eliminar_archivos_transaccion')->only('destroySC');
+        $this->middleware('permisoGlobal:consultar_archivos_transaccion')->only(['documentoSC', 'getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC']);
+        $this->middleware('permisoGlobal:cargar_archivos_transaccion')->only('cargarArchivoSC');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -54,18 +57,35 @@ class ArchivoController extends Controller
         return $this->respondWithItem($archivo);
     }
 
+    public function cargarArchivoSC(Request $request){
+        $archivo = $this->service->cargarArchivo($request->all());
+        return $this->respondWithItem($archivo);
+    }
+
     public function cargarArchivoZIP(Request $request){
         $archivo = $this->service->cargarArchivoZIP($request->all());
         return $this->respondWithItem($archivo);
     }
 
-    public function documento($id){
-        return $this->service->documento($id);
+    public function documento(Request $request, $id){
+
+        return $this->service->documento($id, $request->db);
+    }
+
+    public function documentoSC(Request $request, $id){
+
+        return $this->service->documento($id, $request->db);
     }
 
     public function getArchivosTransaccion($id)
     {
         $archivos = $this->service->getArchivosTransaccion($id);
+        return $this->respondWithCollection($archivos["archivos"]);
+    }
+
+    public function getArchivosTransaccionSC(Request $request,$id)
+    {
+        $archivos = $this->service->getArchivosTransaccion($id, $request->base_datos);
         return $this->respondWithCollection($archivos["archivos"]);
     }
 
@@ -75,8 +95,27 @@ class ArchivoController extends Controller
         return $this->respondWithCollection($archivos);
     }
 
+    public function getArchivosRelacionadosTransaccionSC($tipo,$id)
+    {
+        $archivos = $this->service->getArchivosRelacionadosTransaccion($tipo,$id);
+        return $this->respondWithCollection($archivos);
+    }
+
     public function imagenes(Request $request, $id)
     {
         return $this->service->imagenBase64($id);
     }
+
+    public function destroy(Request $request, $id)
+    {
+        $this->service->delete($request->all(), $id);
+        return response()->json("{}", 200);
+    }
+
+    public function destroySC(Request $request, $id)
+    {
+        $this->service->delete($request->all(), $id);
+        return response()->json("{}", 200);
+    }
+
 }

@@ -58,6 +58,12 @@ class SolicitudCompraFormato extends Rotation
         $this->txtFooterTam = 6;
         $this->encabezado_pdf = $this->solicitud->encabezado_pdf;
         $this->createQR();
+
+        $this->SetMargins(1, 0.5, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true, 6);
+        $this->partidas();
     }
 
     function Header()
@@ -530,12 +536,6 @@ RFC: ' . $this->obra->rfc), '', 'J');
 
     function create()
     {
-        $this->SetMargins(1, 0.5, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->SetAutoPageBreak(true, 6);
-        $this->partidas();
-
         try {
             $this->Output('I', "Formato - Solicitud Compra_" . $this->solicitud->numero_folio . ".pdf", 1);
         } catch (\Exception $ex) {

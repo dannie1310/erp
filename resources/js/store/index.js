@@ -58,6 +58,7 @@ import proyecto from './modules/catalogos/proyecto';
 
 //COMPRAS
 import asignacion from "./modules/compras/asignacion";
+import invitacionCotizarCompra from "./modules/compras/invitacion-cotizar";
 import cotizacion from './modules/compras/cotizacion';
 import itemContratista from './modules/compras/item-contratista';
 import ordenCompra from './modules/compras/orden-compra';
@@ -159,6 +160,7 @@ import ctgArea from './modules/padronProveedores/ctg-area';
 import empresaProveedor from './modules/padronProveedores/empresa';
 import especialidad from './modules/padronProveedores/especialidad';
 import giro from './modules/padronProveedores/giro';
+import invitacion  from "./modules/padronProveedores/invitacion";
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -277,6 +279,7 @@ export default new Vuex.Store({
         'compras/requisicion' : requisicion,
         'compras/solicitud-compra' : solicitudCompra,
         'compras/forma-pago-credito' : formaPagoCredito,
+        'compras/invitacion' : invitacionCotizarCompra,
 
 
         'configuracion/area-compradora' : areaCompradora,
@@ -399,6 +402,7 @@ export default new Vuex.Store({
         'padronProveedores/empresa' : empresaProveedor,
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
+        'padronProveedores/invitacion' : invitacion,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 
