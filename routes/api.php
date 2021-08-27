@@ -1170,6 +1170,7 @@ $api->version('v1', function ($api) {
         // TARJETAS
         $api->group(['prefix' => 'tarjeta'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TarjetaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TarjetaController@show')->where(['id' => '[0-9]+']);
         });
 
         // CONCEPTOS TARJETAS

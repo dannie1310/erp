@@ -9,6 +9,7 @@
 namespace App\Http\Transformers\CADECO\ControlPresupuesto;
 
 use App\Models\CADECO\Concepto;
+use App\Models\CADECO\ControlPresupuesto\Tarjeta;
 use League\Fractal\TransformerAbstract;
 
 class TarjetaTransformer extends TransformerAbstract
@@ -30,11 +31,12 @@ class TarjetaTransformer extends TransformerAbstract
     protected $defaultIncludes = [
     ];
 
-    public function transform(Concepto $model) {
+    public function transform(Tarjeta $model) {
         return [
             'id' => (int) $model->getKey(),
             'nivel'=> $model->nivel,
             'descripcion'=> $model->descripcion,
+            'clave_concepto'=> $model->clave_concepto,
             'unidad'=> $model->unidad,
             'cantidad_presupuestada'=> $model->cantidad_presupuestada,
             'cantidad_presupuestada_format'=> number_format($model->cantidad_presupuestada, 2, '.', ','),
