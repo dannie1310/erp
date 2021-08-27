@@ -594,11 +594,7 @@ export default {
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
                             $(this.$refs.modal_usuarios).modal('hide');
-                            if(_self.mas_invitaciones == true){
-                                this.limpiar();
-                            } else {
-                                this.$router.push({name: 'invitacion-compra'});
-                            }
+                            this.$router.push({name: 'invitacion-cotizar-contrato'});
                         });
                 }
             });
