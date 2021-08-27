@@ -89,6 +89,46 @@ export default {
                     });
             });
         },
+        cargarArchivoSC(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Cargar archivo.",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cargar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'cargar-archivo-sc', payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo cargado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit("INSERT_ARCHIVO", data);
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         cargarArchivoZIP(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
@@ -206,6 +246,48 @@ export default {
                         if (value) {
                             axios
                                 .post(URI + payload.id, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit("DELETE_ARCHIVO", payload.id);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
+        eliminarSC(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Archivo",
+                    text: "¿Está seguro que desea eliminar el archivo previamente cargado?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + "/destroy-sc", payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Archivo eliminado correctamente", {
