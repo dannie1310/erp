@@ -283,7 +283,7 @@
 
                              <div class="col-md-12">
                                 <div class="form-group row error-content">
-                                    <label for="otras_condiciones" class="col-sm-2 col-form-label">Observaciones:  </label>
+                                    <label for="observaciones" class="col-sm-2 col-form-label">Observaciones:  </label>
                                     <div class="col-sm-10">
                                         <textarea
                                             name="observaciones"
