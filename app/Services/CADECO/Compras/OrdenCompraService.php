@@ -107,6 +107,7 @@ class OrdenCompraService
         $orden_compra->porcentaje_anticipo_pactado = $data['porcentaje_anticipo_pactado'];
         $orden_compra->impuesto = $data['impuesto'];
         $orden_compra->monto = $data['subtotal'] + $data['impuesto'];
+        $orden_compra->observaciones = $data['observaciones'];
 
         $orden_compra->complemento->plazos_entrega_ejecucion = $data['complemento']['plazos_entrega_ejecucion'];
         $orden_compra->complemento->id_forma_pago = $data['complemento']['id_forma_pago'];
