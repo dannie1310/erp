@@ -9,13 +9,13 @@
                 <thead>
                 <tr>
                     <th class="bg-gray-light index_corto">#</th>
-                    <th class="bg-gray-light">Nombre(s)</th>
-                    <th class="bg-gray-light">Apellido Paterno</th>
-                    <th class="bg-gray-light">Apellido Materno</th>
-                    <th class="bg-gray-light">Nacionalidad</th>
-                    <th class="bg-gray-light">CURP ó Número de Identificación</th>
+                    <th class="bg-gray-light">Descripción</th>
+                    <th class="bg-gray-light">Unidad</th>
+                    <th class="bg-gray-light">Cantidad</th>
+                    <th class="bg-gray-light">Precio Unitario</th>
+                    <th class="bg-gray-light">Moneda</th>
                     <th class="bg-gray-light icono">
-                        <button type="button" class="btn btn-sm btn-outline-success" @click="agregarRepresentanteLegal" :disabled="cargando">
+                        <button type="button" class="btn btn-sm btn-outline-success" @click="agregarExclusion" :disabled="cargando">
                             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                             <i class="fa fa-plus" v-else></i>
                         </button>

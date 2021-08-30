@@ -11,6 +11,7 @@ use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 use App\Models\CADECO\Compras\CotizacionEliminada;
 use App\Models\CADECO\Compras\CotizacionPartidaEliminada;
+use App\Models\CADECO\Compras\Exclusion;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
@@ -138,6 +139,11 @@ class    CotizacionCompra  extends Transaccion
     public function invitacion()
     {
         return $this->belongsTo(Invitacion::class, "id_referente", "id");
+    }
+
+    public function exclusiones()
+    {
+        return $this->hasMany(Exclusion::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -1032,8 +1038,6 @@ class    CotizacionCompra  extends Transaccion
                 ]);
             }
 
-            //array_pop($data['partidas']['data']);
-
             foreach($data['partidas']['data'] as $key => $partida) {
 
                 $item = null;
@@ -1062,6 +1066,26 @@ class    CotizacionCompra  extends Transaccion
                             'estatus' => $partida['enable'] ? 3 : 1
                         ]);
                     }
+                }
+            }
+
+            foreach ($this->exclusiones as $exclusion)
+            {
+                dd($exclusion);
+            }
+
+            foreach ($data['exclusiones']['data'] as $exclusion)
+            {
+                if(!array_key_exists('id',$exclusion))
+                {
+                    Exclusion::create([
+                       'id_transaccion' => $this->id_transaccion,
+                        'descripcion' => $exclusion['descripcion'],
+                        'unidad' => $exclusion['unidad'],
+                        'cantidad' => $exclusion['cantidad'],
+                        'precio_unitario' => $exclusion['precio_unitario'],
+                        'id_moneda' => $exclusion['id_moneda'],
+                    ]);
                 }
             }
 
