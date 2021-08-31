@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 class ConceptoTarjeta extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'ControlPresupuesto.concepto_tarjeta';
+    protected $table = 'ControlPresupuesto.conceptos_tarjetas';
     protected $primaryKey = 'id';
 
     protected static function boot()

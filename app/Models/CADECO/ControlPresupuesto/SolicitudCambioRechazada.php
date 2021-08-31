@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class SolicitudCambioRechazada extends Model
 {
-    protected $table = 'ControlPresupuesto.solicitud_cambio_rechazada';
+    protected $table = 'ControlPresupuesto.solicitudes_cambio_rechazadas';
     protected $connection = 'cadeco';
     protected $fillable = [
         'id_solicitud_cambio',

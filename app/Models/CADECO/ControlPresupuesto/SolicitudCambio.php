@@ -20,7 +20,7 @@ use App\Models\CADECO\ControlPresupuesto\SolicitudCambioRechazada;
 class SolicitudCambio extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'ControlPresupuesto.solicitud_cambio';
+    protected $table = 'ControlPresupuesto.solicitudes_cambio';
     protected $primaryKey = 'id';
 
     protected $fillable = [

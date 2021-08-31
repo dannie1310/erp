@@ -15,7 +15,7 @@ use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidas;
 class SolicitudCambioPartidaHistorico extends Model
 {
     protected $connection = 'cadeco';
-    protected $table = 'ControlPresupuesto.solicitud_cambio_partidas_historico';
+    protected $table = 'ControlPresupuesto.solicitudes_cambio_partidas_historico';
     protected $primaryKey = 'id';
 
     protected $fillable = [
