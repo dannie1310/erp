@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\DB;
 use App\PDF\ControlPresupuesto\VariacionVolumenFormato;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidaHistorico;
+use App\Repositories\CADECO\ControlPresupuesto\VariacionVolumenRepository;
 
 class VariacionVolumenService{
     /**
@@ -29,7 +30,7 @@ class VariacionVolumenService{
      */
     public function __construct(VariacionVolumen $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new VariacionVolumenRepository($model);
     }
 
     public function paginate($data)
@@ -42,37 +43,18 @@ class VariacionVolumenService{
         return $this->repository->show($id);
     }
 
-    
+
     public function delete($data, $id)
     {
         return $this->repository->show($id)->rechazar($data['data'][0]);
     }
-    
+
     public function store(array $data)
     {
-        $Solicitud_variacion_volumen = $this->repository->create([
-            'area_solicitante' => $data['area_solicitante'],
-            'motivo' => $data['motivo'],
-            'id_tipo_orden' => 4,
-            'importe_afectacion' => $data['variacion_volumen'] * $data['precio_unitario'],
-            'numero_folio' => $this->repository->all()->count() + 1,
-            'id_solicita' => auth()->id(),
-            'id_obra' => Context::getIdObra(),
-            'id_estatus' => 1,
-        ]);
-        $Solicitud_variacion_volumen->solicitudPartidas()->create([
-            'id_tipo_orden' => 4,
-            'id_concepto' => $data['id'],
-            'nivel' => $data['nivel'],
-            'unidad' => $data['unidad'],
-            'cantidad_presupuestada_original' => $data['cantidad_presupuestada'],
-            'cantidad_presupuestada_nueva' => $data['cantidad_presupuestada'] + $data['variacion_volumen'],
-            'precio_unitario_original' => $data['precio_unitario'],
-            'monto_presupuestado' => $data['monto_presupuestado'],
-            'variacion_volumen' => $data['variacion_volumen'],
-        ]);
-        
-        return $Solicitud_variacion_volumen;
+
+        $solicitud_variacion_volumen = $this->repository->create($data);
+
+        return $solicitud_variacion_volumen;
     }
 
     public function autorizar($id){
@@ -81,7 +63,7 @@ class VariacionVolumenService{
             $variacion_volumen = $this->repository->show($id);
             foreach($variacion_volumen->variacionVolumenPartidas as $partida){
                 $concepto = $partida->concepto;
-                
+
                 $monto_presupuestado_original = $concepto->monto_presupuestado;
                 $cantidad_presupuestada_original = $concepto->cantidad_presupuestada;
 
@@ -104,7 +86,7 @@ class VariacionVolumenService{
                     $concepto_afectable->monto_presupuestado = $concepto_afectable->monto_presupuestado * $factor;
                     $concepto_afectable->save();
                 }
-                
+
                 $len_nivel = strlen($concepto->nivel) - 4;
                 while ($len_nivel > 0) {
                     $concepto_propagado = Concepto::where('id_obra', '=', Context::getIdObra())->where('nivel', '=', substr($concepto->nivel, 0, $len_nivel))->first();
