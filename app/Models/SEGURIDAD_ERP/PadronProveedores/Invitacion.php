@@ -418,7 +418,6 @@ class Invitacion extends Model
                 $conceptos[$key] = $contratosTransformer->transform($concepto);
                 $conceptos[$key]['enable'] = true;
                 $conceptos[$key]['moneda_seleccionada'] = 1;
-                $conceptos[$key]['descuento_cot'] = 0.0;
             }
 
             $resp['id_invitacion'] = $this->getKey();
@@ -430,6 +429,9 @@ class Invitacion extends Model
             $resp['transaccion'] = $transaccion;
             $resp['conceptos']['data'] = $conceptos;
             $resp['descuento_cot'] = 0.0;
+            $resp['anticipo'] = 0.0;
+            $resp['vigencia'] = 0.0;
+            $resp['credito'] = 0.0;
             return $resp;
         }
     }

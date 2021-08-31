@@ -295,10 +295,16 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->SetAligns(['C', 'R', 'R', 'C', 'L', 'L', 'C']);
             $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
 
+            $autorizada = '-';
+            if($this->solicitud->estado>0)
+            {
+                $autorizada  = $item->cantidad ;
+            }
+
             $this->Row([
                 $i + 1,
                 $item->cantidad_original1 > 0 ? $item->cantidad_original1 : $item->cantidad,
-                $item->cantidad_original1 > 0 ? $item->cantidad : '-',
+                $autorizada,
                 $item->unidad,
                 utf8_decode($item->material->numero_parte),
                 utf8_decode($item->material->descripcion),

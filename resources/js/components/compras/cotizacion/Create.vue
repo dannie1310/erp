@@ -511,6 +511,7 @@
                         sort:'id_item'}
                 }).then(data => {
                     this.solicitud_editar = data;
+                    this.observaciones = data.observaciones;
                     this.fillMonedaInput();
                     this.cargando = false;
                 }).finally(()=>{
