@@ -292,7 +292,7 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioDespuesDescuentoAttribute()
     {
-        return $this->precio_unitario_moneda_original ;
+        return $this->precio_unitario_moneda_original;
     }
 
     public function getPrecioUnitarioDespuesDescuentoFormatAttribute()

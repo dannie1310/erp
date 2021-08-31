@@ -366,7 +366,7 @@ class Transaccion extends Model
             }
             if($this->tipo_transaccion == 50)
             {
-                return "$" . number_format($this->subtotal_despues_descuento_por_presupuestos * (1 + ($this->obra->iva / 100)), 2, ".", ",");
+                return "$" . number_format($this->total_por_moneda_presupuesto, 2, ".", ",");
             }
         }
     }
@@ -425,14 +425,24 @@ class Transaccion extends Model
         return $suma;
     }
 
-    public function getSubtotalDespuesDescuentoPorPresupuestosAttribute()
+    public function getTotalPorMonedaPresupuestoAttribute()
     {
-        $suma = 0;
-        foreach ($this->presupuestos()->cotizadas()->get() as $partida)
+        $partida = $this->presupuestos()->cotizadas()->first();
+        switch ($partida->IdMoneda)
         {
-            $suma += $partida->total_despues_descuento;
+            case 1:
+                return $this->monto;
+                break;
+            case 2:
+                return $this->monto / $this->TcUSD;
+                break;
+            case 3:
+                return $this->monto / $this->TcEuro;
+                break;
+            case 4:
+                return $this->monto / $this->TcLibra;
+                break;
         }
-        return $suma;
     }
 
     public  function costo(){

@@ -44,7 +44,7 @@
                                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                                     <td class="bg-gray-light">{{presupuesto.fecha_format}}</td>
                                                     <td class="bg-gray-light"><b>Importe:</b></td>
-                                                    <td class="bg-gray-light">{{'$ ' + (parseFloat(presupuesto.subtotal) + parseFloat(presupuesto.impuesto)).formatMoney(2,'.',',')}}</td>
+                                                    <td class="bg-gray-light">{{presupuesto.monto_calculado_format}}</td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -103,7 +103,7 @@
                                         </div>
                                         <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label">Total:</label>
-                                            <label class="col-sm-2 col-form-label money" style="text-align: right">{{total}}</label>
+                                            <label class="col-sm-2 col-form-label money" style="text-align: right">{{presupuesto.monto_calculado_format}}</label>
                                         </div>
                                         <hr>
                                         <div class="row col-md-12">
@@ -207,12 +207,6 @@ export default {
                 })
             })
         },
-    },
-    computed: {
-        total()
-        {
-            return '$ ' + (parseFloat(this.presupuesto.subtotal) + parseFloat(this.presupuesto.impuesto)).formatMoney(2,'.',',');
-        }
     }
 }
 </script>
