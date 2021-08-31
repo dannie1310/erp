@@ -103,8 +103,8 @@
                                                             :disabled="partida.enable == false"
                                                             class="form-control"
                                                             :name="`precio[${i}]`"
-                                                            data-vv-as="Precio"
-                                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            :data-vv-as="`'Precio ${i + 1}'`"
+                                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                                             :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                             v-model="partida.precio_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
@@ -115,8 +115,8 @@
                                                             :disabled="partida.enable == false"
                                                             class="form-control"
                                                             :name="`descuento[${i}]`"
-                                                            data-vv-as="Descuento(%)"
-                                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            :data-vv-as="`'Descuento(%) ${i + 1}'`"
+                                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                                             :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
                                                             v-model="partida.descuento_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
@@ -128,7 +128,7 @@
                                                             v-on:change="calcular"
                                                             type="text"
                                                             :name="`moneda[${i}]`"
-                                                            data-vv-as="Moneda"
+                                                            :data-vv-as="`'Moneda ${i + 1}'`"
                                                             :disabled="partida.enable == false"
                                                             v-validate="{required: true}"
                                                             class="form-control"
@@ -144,7 +144,7 @@
                                                     <td style="width:200px;">
                                                         <textarea class="form-control"
                                                                 :name="`observaciones[${i}]`"
-                                                                data-vv-as="Observaciones"
+                                                                :data-vv-as="`'Observaciones ${i + 1}'`"
                                                                 :disabled="partida.enable == false"
                                                                 v-validate="{}"
                                                                 :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
@@ -170,7 +170,7 @@
                                         v-on:change="calcular"
                                         name="descuento_cot"
                                         v-model="contrato.descuento_cot"
-                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="descuento_cot"
                                         :class="{'is-invalid': errors.has('descuento_cot')}">
@@ -200,7 +200,7 @@
                                         type="text"
                                         name="tc_usd"
                                         v-model="dolar"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_usd"
                                         :class="{'is-invalid': errors.has('tc_usd')}">
@@ -214,7 +214,7 @@
                                         type="text"
                                         name="tc_eur"
                                         v-model="euro"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_eur"
                                         :class="{'is-invalid': errors.has('tc_eur')}">
@@ -228,7 +228,7 @@
                                         type="text"
                                         name="tc_libra"
                                         v-model="libra"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$ /}"
                                         class="col-sm-6 form-control"
                                         id="tc_libra"
                                         :class="{'is-invalid': errors.has('tc_libra')}">
@@ -254,7 +254,7 @@
                                         type="text"
                                         name="anticipo"
                                         v-model="contrato.anticipo"
-                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
                                         :class="{'is-invalid': errors.has('anticipo')}">
@@ -268,7 +268,7 @@
                                         type="text"
                                         name="credito"
                                         v-model="contrato.credito"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="credito"
                                         :class="{'is-invalid': errors.has('credito')}">
@@ -282,7 +282,7 @@
                                         type="text"
                                         name="vigencia"
                                         v-model="contrato.vigencia"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="vigencia"
                                         :class="{'is-invalid': errors.has('vigencia')}">
