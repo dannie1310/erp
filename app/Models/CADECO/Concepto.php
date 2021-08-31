@@ -34,6 +34,7 @@ class Concepto extends Model
         'monto_presupuestado',
         'activo',
         'clave_concepto',
+        'id_confirmacion_cambio',
     ];
 
     protected static function boot()
