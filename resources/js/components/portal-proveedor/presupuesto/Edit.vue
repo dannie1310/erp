@@ -240,7 +240,7 @@
                                         type="text"
                                         name="anticipo"
                                         v-model="presupuesto.anticipo"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
+                                        v-validate="{required: true, min_value:0}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
                                         :class="{'is-invalid': errors.has('anticipo')}">
@@ -255,7 +255,7 @@
                                         type="text"
                                         name="credito"
                                         v-model="presupuesto.dias_credito"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
+                                        v-validate="{required: true, min_value:0}"
                                         class="col-sm-6 form-control"
                                         id="credito"
                                         :class="{'is-invalid': errors.has('credito')}">
@@ -270,7 +270,7 @@
                                         type="text"
                                         name="vigencia"
                                         v-model="presupuesto.dias_vigencia"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
+                                        v-validate="{required: true, min_value:0}"
                                         class="col-sm-6 form-control"
                                         id="vigencia"
                                         :class="{'is-invalid': errors.has('vigencia')}">
