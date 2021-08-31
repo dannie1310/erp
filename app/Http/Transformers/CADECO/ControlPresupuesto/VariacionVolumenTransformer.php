@@ -41,6 +41,7 @@ class VariacionVolumenTransformer extends TransformerAbstract
             'area_solicitante' => (string) $model->area_solicitante,
             'motivo' => (string) $model->motivo,
             'numero_folio' =>  $model->numero_folio,
+            'numero_folio_format' =>  $model->numero_folio_format,
             'id_estatus' => (int) $model->id_estatus,
             'estatus' => $model->estatus->descripcion,
             'id_tipo_orden' => (int) $model->id_tipo_orden,
@@ -48,6 +49,7 @@ class VariacionVolumenTransformer extends TransformerAbstract
             'importe_afectacion' => $model->importe_afectacion,
             'importe_afectacion_format' => $model->importe_afectacion_format,
             'fecha_solicitud' => $model->fecha_solicitud,
+            'fecha_solicitud_format' => $model->fecha_solicitud_format,
         ];
     }
 

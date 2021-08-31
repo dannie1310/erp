@@ -91,4 +91,15 @@ class VariacionVolumen extends SolicitudCambio
         return $solicitud_variacion_volumen;
     }
 
+    public function getNumeroFolioFormatAttribute()
+    {
+        return '# ' . sprintf("%05d", $this->numero_folio);
+    }
+
+    public function getFechaSolicitudFormatAttribute()
+    {
+        $date = date_create($this->fecha_solicitud);
+        return date_format($date,"d/m/Y");
+    }
+
 }

@@ -9,8 +9,7 @@
         </div>
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                </div>
+
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
@@ -32,14 +31,14 @@ export default {
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default,  sortable: true},
-                    { title: 'Tipo Orden', field: 'tipo_orden', sortable: true },
-                    { title: 'Fecha Solicitud', field: 'fecha',  sortable: true  },
-                    { title: 'Usuario Solicita', field: 'usuario', sortable: true  },
-                    { title: 'Motivo', field: 'motivo',sortable: true },
-                    { title: 'Importe Afectación', field: 'monto_afectacion',tdClass: 'money', sortable: false },
-                    { title: 'Estatus', field: 'estatus', sortable: false },
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: '#', field: 'index', thClass: 'th_index_corto', sortable: false },
+                    { title: 'Folio', field: 'numero_folio', thClass:'th_c120', thComp: require('../../globals/th-Filter').default,  sortable: true},
+                    { title: 'Fecha ', field: 'fecha', thClass: 'th_fecha', sortable: true  },
+                    { title: 'Área Solicitante ', thClass:'th_c150', field: 'area_solicitante',  sortable: true  },
+                    { title: 'Motivo ', field: 'motivo',  sortable: true  },
+                    { title: 'Monto de la Afectación', field: 'monto_afectacion', tdClass: 'money', sortable: false },
+                    { title: 'Estatus', field: 'estatus', thClass:'th_c120', sortable: false },
+                    { title: 'Acciones', field: 'buttons', thClass:'th_c120',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -74,7 +73,7 @@ export default {
             },
             create() {
                 this.$router.push({name: 'variacion-volumen-create'});
-                
+
             },
         },
         computed: {
@@ -96,13 +95,14 @@ export default {
                     solicitudes.forEach(function (solicitud, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                           numero_folio: solicitud.numero_folio,
-                           tipo_orden: solicitud.tipo_orden,
-                           fecha: solicitud.fecha_solicitud,
-                           usuario: solicitud.usuario.nombre,
-                           motivo: solicitud.motivo,
-                           monto_afectacion: solicitud.importe_afectacion_format,
-                           estatus: solicitud.estatus,
+                            numero_folio: solicitud.numero_folio_format,
+                            tipo_orden: solicitud.tipo_orden,
+                            fecha: solicitud.fecha_solicitud_format,
+                            usuario: solicitud.usuario.nombre,
+                            motivo: solicitud.motivo,
+                            area_solicitante : solicitud.area_solicitante,
+                            monto_afectacion: solicitud.importe_afectacion_format,
+                            estatus: solicitud.estatus,
                             buttons: $.extend({}, {
                                 id:solicitud.id,
                                 estado: solicitud.id_estatus,

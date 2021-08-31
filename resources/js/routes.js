@@ -4125,6 +4125,18 @@ export const routes = [
                             permission: ['consultar_variacion_volumen']
                         }
                     },
+                    {
+                        path: ':id/autorizar',
+                        name: 'variacion-volumen-autorizar',
+                        component: require('./components/control-presupuesto/variacion-volumen/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Autorizar Variación de Volumen',
+                            breadcrumb: {name: 'VER', parent: 'variacion-volumen'},
+                            middleware: [auth, context, permission],
+                            permission: ['autorizar_variacion_volumen','rechazar_variacion_volumen']
+                        }
+                    },
                 ]
             },
         ]
