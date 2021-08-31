@@ -497,7 +497,7 @@ class Invitacion extends Model
                 $conceptos[$key]['path_corta'] = $destino ? $destino->path_corta : '';
                 $conceptos[$key]['path'] = $destino ? $destino->path : '';
                 $conceptos[$key]['partida_activa'] = $partida ? ($partida->no_cotizado == 0) ? true : false : '';
-                $conceptos[$key]['precio_unitario'] = $partida ? number_format($partida->precio_unitario_convert, "2",".","") : '';
+                $conceptos[$key]['precio_unitario'] = $partida ? number_format($partida->precio_unitario_antes_descuento, "2",".","") : '';
                 $conceptos[$key]['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
                 $conceptos[$key]['IdMoneda'] = $partida ? $partida->IdMoneda : '';
             }

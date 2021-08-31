@@ -149,16 +149,14 @@
                                     <input
                                         v-on:change="calcular"
                                         :disabled="cargando"
-                                        type="number"
-                                        step=".01"
-                                        max="100"
-                                        min="0"
+                                        type="text"
                                         name="descuento_cot"
                                         v-model="presupuesto.descuento"
-                                        v-validate="{required: true}"
+                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="descuento_cot"
                                         :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    <div class="invalid-feedback" v-show="errors.has('descuento_cot')">{{ errors.first('descuento_cot') }}</div>
                                 </div>
                                  <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXN):</label>
@@ -189,6 +187,7 @@
                                         class="col-sm-6 form-control"
                                         id="tc_usd"
                                         :class="{'is-invalid': errors.has('tc_usd')}">
+                                    <div class="invalid-feedback" v-show="errors.has('tc_usd')">{{ errors.first('tc_usd') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">TC EURO:</label>
@@ -203,6 +202,7 @@
                                         class="col-sm-6 form-control"
                                         id="tc_eur"
                                         :class="{'is-invalid': errors.has('tc_eur')}">
+                                    <div class="invalid-feedback" v-show="errors.has('tc_eur')">{{ errors.first('tc_eur') }}</div>
                                 </div>
                                  <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">TC LIBRA:</label>
@@ -211,13 +211,13 @@
                                     <input
                                         :disabled="cargando"
                                         type="text"
-                                        step="any"
                                         name="tc_libra"
                                         v-model="libra"
                                         v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_libra"
                                         :class="{'is-invalid': errors.has('tc_libra')}">
+                                    <div class="invalid-feedback" v-show="errors.has('tc_libra')">{{ errors.first('tc_libra') }}</div>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal:</label>
@@ -244,6 +244,7 @@
                                         class="col-sm-6 form-control"
                                         id="anticipo"
                                         :class="{'is-invalid': errors.has('anticipo')}">
+                                    <div class="invalid-feedback" v-show="errors.has('anticipo')">{{ errors.first('anticipo') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Crédito (días):</label>
@@ -258,6 +259,7 @@
                                         class="col-sm-6 form-control"
                                         id="credito"
                                         :class="{'is-invalid': errors.has('credito')}">
+                                    <div class="invalid-feedback" v-show="errors.has('credito')">{{ errors.first('credito') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Vigencia( días):</label>
@@ -272,6 +274,7 @@
                                         class="col-sm-6 form-control"
                                         id="vigencia"
                                         :class="{'is-invalid': errors.has('vigencia')}">
+                                    <div class="invalid-feedback" v-show="errors.has('vigencia')">{{ errors.first('vigencia') }}</div>
                                 </div>
                             </div>
                             <div class="row">
@@ -425,17 +428,20 @@
             },
             getPrecioMoneda(i) {
                 var precio = 0;
-                if (this.presupuesto.contratos[i]['IdMoneda'] == 1) {
-                    precio = this.presupuesto.contratos[i]['precio_unitario_calculado']
-                }
-                if (this.presupuesto.contratos[i]['IdMoneda'] == 2) {
-                    precio = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? (this.presupuesto.contratos[i]['precio_unitario'] * this.dolar) - (this.presupuesto.contratos[i]['precio_unitario'] * this.dolar * this.presupuesto.descuento/100) :  this.dolar
-                }
-                if (this.presupuesto.contratos[i]['IdMoneda'] == 3) {
-                    precio = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? (this.presupuesto.contratos[i]['precio_unitario'] * this.euro) - (this.presupuesto.contratos[i]['precio_unitario'] * this.euro * this.presupuesto.descuento/100) : this.euro
-                }
-                if (this.presupuesto.contratos[i]['IdMoneda'] == 4) {
-                    precio = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? (this.presupuesto.contratos[i]['precio_unitario'] * this.libra) - (this.presupuesto.contratos[i]['precio_unitario'] * this.libra * this.presupuesto.descuento/100) : this.libra
+                if(this.presupuesto.contratos[i]['partida_activa'] === true)
+                {
+                    if (this.presupuesto.contratos[i]['IdMoneda'] == 1) {
+                        precio = this.presupuesto.contratos[i]['precio_unitario_calculado']
+                    }
+                    if (this.presupuesto.contratos[i]['IdMoneda'] == 2) {
+                        precio = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? (this.presupuesto.contratos[i]['precio_unitario'] * this.dolar) - (this.presupuesto.contratos[i]['precio_unitario'] * this.dolar * this.presupuesto.contratos[i]['descuento']/100) :  this.dolar
+                    }
+                    if (this.presupuesto.contratos[i]['IdMoneda'] == 3) {
+                        precio = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? (this.presupuesto.contratos[i]['precio_unitario'] * this.euro) - (this.presupuesto.contratos[i]['precio_unitario'] * this.euro * this.presupuesto.contratos[i]['descuento']/100) : this.euro
+                    }
+                    if (this.presupuesto.contratos[i]['IdMoneda'] == 4) {
+                        precio = this.presupuesto.contratos[i]['precio_unitario'] != undefined ? (this.presupuesto.contratos[i]['precio_unitario'] * this.libra) - (this.presupuesto.contratos[i]['precio_unitario'] * this.libra * this.presupuesto.contratos[i]['descuento']/100) : this.libra
+                    }
                 }
                 this.presupuesto.contratos[i]['precio_unitario_moneda_conversion'] = precio;
                 return  '$' + parseFloat(precio).formatMoney(2, '.', ',')
