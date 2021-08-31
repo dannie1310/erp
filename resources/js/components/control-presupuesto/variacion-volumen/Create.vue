@@ -65,19 +65,21 @@
                                                    class="form-control"
                                                    name="variacion_volumen"
                                                    data-vv-as="Volumen del Cambio"
+                                                   v-on:keyup="calcular"
                                                    v-model="concepto_seleccionado.variacion_volumen"
                                                    v-validate="{required:true, min_value:concepto_seleccionado.cantidad_presupuestada *-1, decimal:4}"
                                                    :class="{'is-invalid': errors.has('variacion_volumen')}"
+                                                   style="text-align: right"
                                                    id="variacion_volumen">
                                             <div class="invalid-feedback" v-show="errors.has(`variacion_volumen`)">{{ errors.first(`variacion_volumen`) }}</div>
                                         </td>
-                                        <td></td>
+                                        <td style="text-align: right">${{parseFloat(concepto_seleccionado.importe_cambio).formatMoney(2,".",",")}}</td>
                                     </tr>
                                     <tr>
                                         <td colspan="3" class="text-right"><b>Subtotal:</b></td>
-                                        <td class="text-right"><b>{{}}</b></td>
+                                        <td class="text-right"><b>${{ suma_importe.formatMoney(2,'.',',') }}</b></td>
                                         <td></td>
-                                        <td class="text-right"><b>{{}}</b></td>
+                                        <td class="text-right"><b>${{ suma_importe_cambio.formatMoney(2,'.',',')  }}</b></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -142,6 +144,8 @@ export default {
             tarjetas:[],
             conceptos_seleccionados : [],
             concepto:null,
+            suma_importe : 0,
+            suma_importe_cambio : 0,
         }
     },
     methods: {
@@ -176,6 +180,7 @@ export default {
                 .then(data => {
                     this.conceptos_seleccionados.push(data);
                     this.concepto = data;
+                    this.suma_importe += parseFloat(data.monto_presupuestado);
                 })
                 .finally(() => {
                     this.id_tarjeta='';
@@ -219,6 +224,15 @@ export default {
             .finally(() => {
                 this.cargando = false;
             })
+        },
+        calcular() {
+
+            let _self = this;
+            _self.suma_importe_cambio = 0;
+            this.conceptos_seleccionados.forEach(function (concepto_seleccionado, i) {
+                _self.suma_importe_cambio += concepto_seleccionado.variacion_volumen * concepto_seleccionado.precio_unitario;
+                concepto_seleccionado.importe_cambio = concepto_seleccionado.variacion_volumen * concepto_seleccionado.precio_unitario;
+            });
         }
     },
     computed: {
@@ -234,13 +248,6 @@ export default {
     mounted() {
         this.getTarjetas();
     },
-    /*watch:{
-        id_tarjeta(value){
-            if(value != ''){
-                this.getConcepto(value);
-            }
-        }
-    }*/
 }
 </script>
 
