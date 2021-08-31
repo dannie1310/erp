@@ -182,11 +182,10 @@
                                 <div class=" col-md-2 p-1" align="right">
                                     <input
                                         :disabled="cargando"
-                                        type="number"
-                                        step="any"
+                                        type="text"
                                         name="tc_usd"
                                         v-model="dolar"
-                                        v-validate="{required: true}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_usd"
                                         :class="{'is-invalid': errors.has('tc_usd')}">
@@ -197,11 +196,10 @@
                                  <div class=" col-md-2 p-1" align="right">
                                     <input
                                         :disabled="cargando"
-                                        type="number"
-                                        step="any"
+                                        type="text"
                                         name="tc_eur"
                                         v-model="euro"
-                                        v-validate="{required: true}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_eur"
                                         :class="{'is-invalid': errors.has('tc_eur')}">
@@ -212,11 +210,11 @@
                                 <div class=" col-md-2 p-1" align="right">
                                     <input
                                         :disabled="cargando"
-                                        type="number"
+                                        type="text"
                                         step="any"
                                         name="tc_libra"
                                         v-model="libra"
-                                        v-validate="{required: true}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="tc_libra"
                                         :class="{'is-invalid': errors.has('tc_libra')}">
@@ -239,13 +237,10 @@
                                 <div class=" col-md-2 p-1" align="right">
                                     <input
                                         :disabled="cargando"
-                                        type="number"
-                                        step=".01"
-                                        max="100"
-                                        min="0"
+                                        type="text"
                                         name="anticipo"
                                         v-model="presupuesto.anticipo"
-                                        v-validate="{required: true}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
                                         :class="{'is-invalid': errors.has('anticipo')}">
@@ -256,12 +251,10 @@
                                 <div class=" col-md-2 p-1" align="right">
                                     <input
                                         :disabled="cargando"
-                                        type="number"
-                                        step="1"
-                                        min="0"
+                                        type="text"
                                         name="credito"
                                         v-model="presupuesto.dias_credito"
-                                        v-validate="{required: true,}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="credito"
                                         :class="{'is-invalid': errors.has('credito')}">
@@ -272,12 +265,10 @@
                                 <div class=" col-md-2 p-1" align="right">
                                     <input
                                         :disabled="cargando"
-                                        type="number"
-                                        step="1"
-                                        min="0"
+                                        type="text"
                                         name="vigencia"
                                         v-model="presupuesto.dias_vigencia"
-                                        v-validate="{required: true}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="vigencia"
                                         :class="{'is-invalid': errors.has('vigencia')}">
