@@ -18,7 +18,7 @@
                         <div class="modal-body">
                             <div class="row" v-if="solicitud">
                                 <div class="col-md-12">
-                                    <tabla-datos-solicitud v-bind:solicitud_compra="solicitud"></tabla-datos-solicitud>
+                                    <tabla-datos-solicitud v-bind:solicitud="solicitud"></tabla-datos-solicitud>
                                 </div>
                             </div>
                             <hr />
@@ -663,10 +663,8 @@
     import TablaDatosSolicitud from "./partials/TablaDatosSolicitud";
     export default {
         name: "cotizacion-proveedor-create",
-        props: ['id_invitacion'],
-        components: {
-            TablaDatosSolicitud,
-            Datepicker, ModelListSelect},
+        props: ['id'],
+        components: {TablaDatosSolicitud,Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
@@ -716,7 +714,7 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{}
                 }).then(data => {
                     this.solicitud = data

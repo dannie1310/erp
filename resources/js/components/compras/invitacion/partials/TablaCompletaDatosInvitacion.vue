@@ -4,8 +4,11 @@
             <span><i class="fa fa-envelope"></i>Datos de Invitación a Cotizar</span>
             <table class="table  table-sm">
                 <tr>
-                    <th class="encabezado c120" rowspan="2">
+                    <th class="encabezado c120" rowspan="2" v-if="invitacion.tipo_antecedente == 17">
                         Solicitud de Compra
+                    </th>
+                    <th class="encabezado c120" rowspan="2" v-if="invitacion.tipo_antecedente == 49">
+                        Contrato Proyectad
                     </th>
                     <th class="encabezado" colspan="4">
                         Proveedor Invitado
@@ -107,13 +110,9 @@
 </template>
 
 <script>
-import EncabezadoSolicitudCompra from "./Encabezado";
-
 export default {
     name: "InvitacionCompraTablaCompletaDatos",
-    components: {
-        EncabezadoSolicitudCompra,
-    },
+    components: { },
     props: ['invitacion'],
     methods :{
 

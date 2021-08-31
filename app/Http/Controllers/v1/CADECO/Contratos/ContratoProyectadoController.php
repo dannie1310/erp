@@ -82,12 +82,17 @@ class ContratoProyectadoController extends Controller
     {
         return $this->service->pdf($id);
     }
-    
+
     public function getContratos(){
         return $this->service->getContratos();
     }
 
     public function getCotizaciones($id){
         return $this->service->getCotizaciones($id);
+    }
+
+    public function getCuerpoCorreo($id)
+    {
+        return $this->service->getCuerpoCorreo($id);
     }
 }

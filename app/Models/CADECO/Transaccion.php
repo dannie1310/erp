@@ -113,12 +113,22 @@ class Transaccion extends Model
 
     public function cotizaciones()
     {
-        if($this->invitacion && $this->tipo_transaccio == 18)
+        if($this->invitacion && $this->tipo_transaccion == 18)
         {
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $this->invitacion->base_datos);
         }
         return $this->hasMany(CotizacionCompraPartida::class, 'id_transaccion', 'id_transaccion')->withoutGlobalScopes();
+    }
+
+    public function presupuestos()
+    {
+        if($this->invitacion && $this->tipo_transaccion == 50)
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $this->invitacion->base_datos);
+        }
+        return $this->hasMany(PresupuestoContratistaPartida::class, 'id_transaccion', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function validaTipoAntecedente()
@@ -215,8 +225,13 @@ class Transaccion extends Model
         $date = date_create($this->cumplimiento);
         return date_format($date,"d/m/Y");
     }
+
     public function  getObservacionesFormatAttribute(){
-        return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        if(strlen($this->observaciones)>60){
+            return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        } else {
+            return $this->observaciones;
+        }
     }
 
     public function getTipoTransaccionStrAttribute()
@@ -291,7 +306,7 @@ class Transaccion extends Model
             case  65: return Factura::find($this->id_transaccion)->relaciones;
             case  82: return Pago::find($this->id_transaccion)->relaciones;
             case  72: return SolicitudPagoAnticipado::find($this->id_transaccion)->relaciones;
-            case  72: 
+            case  72:
                 if($sol_p_a = SolicitudPagoAnticipado::find($this->id_transaccion)){
                     return $sol_p_a->relaciones;
                 }
@@ -310,10 +325,28 @@ class Transaccion extends Model
         return $monedas;
     }
 
+    public function getArrMonedasPresupuestoAttribute()
+    {
+        $monedas = [];
+        foreach ($this->presupuestos()->cotizadas()->get() as $partida)
+        {
+            $monedas[$partida->IdMoneda] = $partida->IdMoneda;
+        }
+        return $monedas;
+    }
+
     public function getMultimonedaAttribute()
     {
         $multimoneda = false;
-        $monedas = $this->arr_monedas;
+        $monedas = [];
+        if($this->tipo_transaccion == 18)
+        {
+            $monedas = $this->arr_monedas;
+        }
+        if($this->tipo_transaccion == 50)
+        {
+            $monedas = $this->arr_monedas_presupuesto;
+        }
 
         if(count($monedas)>1){
             $multimoneda = true;
@@ -323,10 +356,18 @@ class Transaccion extends Model
 
     public function getMontoConsultaProveedorFormatAttribute()
     {
-        if($this->multimoneda){
+        if($this->multimoneda)
+        {
             return $this->monto_format;
         }else {
-            return "$".number_format($this->subtotal_despues_descuento_por_cotizaciones * (1+($this->obra->iva /100)),2,".", ",");
+            if($this->tipo_transaccion == 18)
+            {
+                return "$" . number_format($this->subtotal_despues_descuento_por_cotizaciones * (1 + ($this->obra->iva / 100)), 2, ".", ",");
+            }
+            if($this->tipo_transaccion == 50)
+            {
+                return "$" . number_format($this->subtotal_despues_descuento_por_presupuestos * (1 + ($this->obra->iva / 100)), 2, ".", ",");
+            }
         }
     }
 
@@ -357,6 +398,10 @@ class Transaccion extends Model
             {
                 return $this->cotizaciones()->first()->moneda->nombre;
             }
+            if($this->presupuestos()->cotizadas()->first())
+            {
+                return $this->presupuestos()->cotizadas()->first()->moneda->nombre;
+            }
         }
     }
 
@@ -376,6 +421,16 @@ class Transaccion extends Model
         foreach ($this->cotizaciones()->activa()->get() as $partida)
         {
             $suma += $partida->precio_compuesto_total;
+        }
+        return $suma;
+    }
+
+    public function getSubtotalDespuesDescuentoPorPresupuestosAttribute()
+    {
+        $suma = 0;
+        foreach ($this->presupuestos()->cotizadas()->get() as $partida)
+        {
+            $suma += $partida->total_despues_descuento;
         }
         return $suma;
     }

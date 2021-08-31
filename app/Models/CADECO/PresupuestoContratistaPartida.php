@@ -2,6 +2,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Facades\Context;
 use App\Models\CADECO\Subcontratos\AsignacionContratista;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 use Illuminate\Database\Eloquent\Model;
@@ -39,6 +40,11 @@ class PresupuestoContratistaPartida extends Model
         return $this->hasOne(PresupuestoContratista::class, 'id_transaccion');
     }
 
+    public function presupuestoProveedor()
+    {
+        return $this->hasOne(PresupuestoContratista::class, 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function partidasAsignacion()
     {
         return $this->hasMany(AsignacionContratistaPartida::class, "id_concepto", "id_concepto");
@@ -64,6 +70,11 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioConvertAttribute()
     {
+        if(is_null(Context::getIdObra()))
+        {
+            $this->presupuesto = $this->presupuesto()->withoutGlobalScopes()->first();
+        }
+
         switch ($this->IdMoneda) {
             case(1):
                 return $this->precio_unitario;
@@ -231,25 +242,32 @@ class PresupuestoContratistaPartida extends Model
 
     public function getPrecioUnitarioMonedaOriginalAttribute()
     {
+        if(!is_null(Context::getIdObra()))
+        {
+            $presupuesto = $this->presupuesto;
+        }else{
+           $presupuesto = $this->presupuestoProveedor;
+        }
+
         switch ($this->IdMoneda) {
             case (1):
                 return $this->precio_unitario;
                 break;
             case (2):
-                return $this->precio_unitario / $this->presupuesto->dolar;
+                return $this->precio_unitario / $presupuesto->dolar;
                 break;
             case (3):
-                return $this->precio_unitario / $this->presupuesto->euro;
+                return $this->precio_unitario / $presupuesto->euro;
                 break;
             case (4):
-                return $this->precio_unitario / $this->presupuesto->libra;
+                return $this->precio_unitario / $presupuesto->libra;
                 break;
         }
     }
 
     public function getPorcentajeDescuentoFormatAttribute()
     {
-        return number_format($this->PorcentajeDescuento, "2",".","")." %";
+        return number_format($this->PorcentajeDescuento, "2",".","") ." %";
     }
 
     public function getPrecioUnitarioAntesDescuentoAttribute()
