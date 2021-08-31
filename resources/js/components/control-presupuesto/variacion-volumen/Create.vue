@@ -1,131 +1,130 @@
 <template>
     <span>
-        <form role="form" @submit.prevent="validate">
 
-            <div class="card">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <label>
-                                Seleccione el concepto al que le desea aplicar un cambio de volumen:
-                            </label>
-                        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <label>
+                            Seleccione el concepto al que le desea aplicar un cambio de volumen:
+                        </label>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <model-list-select
-                                :disabled="cargando"
-                                name="id_subcontrato"
-                                v-model="id_tarjeta"
-                                option-value="id"
-                                :custom-text="claveDescripcion"
-                                :list="tarjetas"
-                                :placeholder="!cargando?'Seleccionar o buscar por clave o descripción':'Cargando...'"
-                                :isError="errors.has(`id_tarjeta`)">
-                            </model-list-select>
-                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <model-list-select
+                            :disabled="cargando"
+                            name="id_subcontrato"
+                            v-model="id_tarjeta"
+                            option-value="id"
+                            :custom-text="claveDescripcion"
+                            :list="tarjetas"
+                            :placeholder="!cargando?'Seleccionar o buscar por clave o descripción':'Cargando...'"
+                            :isError="errors.has(`id_tarjeta`)">
+                        </model-list-select>
                     </div>
-                    <br>
-                     <div class="row">
-                        <div class="col-md-12">
+                </div>
+                <br>
+                 <div class="row">
+                    <div class="col-md-12">
 
-                            <button class="btn btn-primary float-right" type="button" @click="agregar"
-                                    :disabled="!id_tarjeta > 0">
-                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                <i class="fa fa-plus" v-else></i>
-                                Agregar
-                            </button>
+                        <button class="btn btn-primary float-right" type="button" @click="agregar"
+                                :disabled="!id_tarjeta > 0">
+                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                            <i class="fa fa-plus" v-else></i>
+                            Agregar
+                        </button>
 
-                        </div>
                     </div>
+                </div>
 
-                    <br>
+                <br>
 
-                    <div class="row" v-if="conceptos_seleccionados.length > 0">
-                        <div class="col-sm-12">
-                            <table class="table table-striped table-sm">
-                                <thead>
-                                <tr>
-                                    <th class="text-center" >Descripción</th>
-                                    <th class="text-center cantidad_input">Unidad</th>
-                                    <th class="text-center cantidad_input">Volumen</th>
-                                    <th class="text-center cantidad_input">Importe</th>
-                                    <th class="text-center cantidad_input">Volumen del Cambio</th>
-                                    <th class="text-center cantidad_input">Importe del Cambio</th>
+                <div class="row" v-if="conceptos_seleccionados.length > 0">
+                    <div class="col-sm-12">
+                        <table class="table table-striped table-sm">
+                            <thead>
+                            <tr>
+                                <th class="text-center" >Descripción</th>
+                                <th class="text-center cantidad_input">Unidad</th>
+                                <th class="text-center cantidad_input">Volumen</th>
+                                <th class="text-center cantidad_input">Importe</th>
+                                <th class="text-center cantidad_input">Volumen del Cambio</th>
+                                <th class="text-center cantidad_input">Importe del Cambio</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="concepto_seleccionado in conceptos_seleccionados">
+                                    <td>{{ concepto_seleccionado.descripcion}}</td>
+                                    <td class="text-center">{{ concepto_seleccionado.unidad}}</td>
+                                    <td class="text-center">{{ concepto_seleccionado.cantidad_presupuestada_format}}</td>
+                                    <td class="text-right">{{ concepto_seleccionado.monto_presupuestado_format}}</td>
+                                    <td>
+                                        <input type="text"
+                                               class="form-control"
+                                               name="variacion_volumen"
+                                               data-vv-as="Volumen del Cambio"
+                                               v-on:keyup="calcular"
+                                               v-model="concepto_seleccionado.variacion_volumen"
+                                               v-validate="{required:true, min_value:concepto_seleccionado.cantidad_presupuestada *-1, decimal:4}"
+                                               :class="{'is-invalid': errors.has('variacion_volumen')}"
+                                               style="text-align: right"
+                                               id="variacion_volumen">
+                                        <div class="invalid-feedback" v-show="errors.has(`variacion_volumen`)">{{ errors.first(`variacion_volumen`) }}</div>
+                                    </td>
+                                    <td style="text-align: right">${{parseFloat(concepto_seleccionado.importe_cambio).formatMoney(2,".",",")}}</td>
                                 </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="concepto_seleccionado in conceptos_seleccionados">
-                                        <td>{{ concepto_seleccionado.descripcion}}</td>
-                                        <td class="text-center">{{ concepto_seleccionado.unidad}}</td>
-                                        <td class="text-center">{{ concepto_seleccionado.cantidad_presupuestada_format}}</td>
-                                        <td class="text-right">{{ concepto_seleccionado.monto_presupuestado_format}}</td>
-                                        <td>
-                                            <input type="text"
-                                                   class="form-control"
-                                                   name="variacion_volumen"
-                                                   data-vv-as="Volumen del Cambio"
-                                                   v-on:keyup="calcular"
-                                                   v-model="concepto_seleccionado.variacion_volumen"
-                                                   v-validate="{required:true, min_value:concepto_seleccionado.cantidad_presupuestada *-1, decimal:4}"
-                                                   :class="{'is-invalid': errors.has('variacion_volumen')}"
-                                                   style="text-align: right"
-                                                   id="variacion_volumen">
-                                            <div class="invalid-feedback" v-show="errors.has(`variacion_volumen`)">{{ errors.first(`variacion_volumen`) }}</div>
-                                        </td>
-                                        <td style="text-align: right">${{parseFloat(concepto_seleccionado.importe_cambio).formatMoney(2,".",",")}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td colspan="3" class="text-right"><b>Subtotal:</b></td>
-                                        <td class="text-right"><b>${{ suma_importe.formatMoney(2,'.',',') }}</b></td>
-                                        <td></td>
-                                        <td class="text-right"><b>${{ suma_importe_cambio.formatMoney(2,'.',',')  }}</b></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                                <tr>
+                                    <td colspan="3" class="text-right"><b>Subtotal:</b></td>
+                                    <td class="text-right"><b>${{ suma_importe.formatMoney(2,'.',',') }}</b></td>
+                                    <td></td>
+                                    <td class="text-right"><b>${{ suma_importe_cambio.formatMoney(2,'.',',')  }}</b></td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row error-content">
-                                <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
-                                <textarea
-                                    name="motivo"
-                                    id="motivo"
-                                    class="form-control"
-                                    data-vv-as="Motivo"
-                                    v-model="motivo"
-                                    :class="{'is-invalid': errors.has('motivo')}"
-                                ></textarea>
-                                <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group row error-content">
-                                <label for="area_solicitante" class="col-form-label">Área Solicitante: </label>
-                                <input type="text"
-                                       class="form-control"
-                                       name="area_solicitante"
-                                       data-vv-as="Area Solicitante"
-                                       v-model="area_solicitante"
-                                       v-validate="{required: true}"
-                                       :class="{'is-invalid': errors.has('area_solicitante')}"
-                                       id="area_solicitante">
-                                <div class="invalid-feedback" v-show="errors.has('area_solicitante')">{{ errors.first('area_solicitante') }}</div>
-                            </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row error-content">
+                            <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
+                            <textarea
+                                name="motivo"
+                                id="motivo"
+                                class="form-control"
+                                data-vv-as="Motivo"
+                                v-model="motivo"
+                                :class="{'is-invalid': errors.has('motivo')}"
+                            ></textarea>
+                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                         </div>
                     </div>
                 </div>
-                <div class="card-footer">
-                    <button class="btn btn-primary float-right" type="submit" @click="validate"  :disabled="errors.count() > 0 || !concepto">
-                        <i class="fa fa-save"></i>
-                        Guardar
-                    </button>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row error-content">
+                            <label for="area_solicitante" class="col-form-label">Área Solicitante: </label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="area_solicitante"
+                                   data-vv-as="Area Solicitante"
+                                   v-model="area_solicitante"
+                                   v-validate="{required: true}"
+                                   :class="{'is-invalid': errors.has('area_solicitante')}"
+                                   id="area_solicitante">
+                            <div class="invalid-feedback" v-show="errors.has('area_solicitante')">{{ errors.first('area_solicitante') }}</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </form>
+            <div class="card-footer">
+                <button class="btn btn-primary float-right" type="button" @click="validate"  :disabled="errors.count() > 0 || !concepto">
+                    <i class="fa fa-save"></i>
+                    Guardar
+                </button>
+            </div>
+        </div>
+
     </span>
 </template>
 
@@ -217,7 +216,14 @@ export default {
         },
         store() {
             this.cargando = true;
-            return this.$store.dispatch('control-presupuesto/variacion-volumen/store', this.concepto)
+
+            var datos_solicitud_cambio = {
+                'motivo' : this.motivo,
+                'area_solicitante' : this.area_solicitante,
+                'conceptos_cambio' : this.conceptos_seleccionados
+            }
+
+            return this.$store.dispatch('control-presupuesto/variacion-volumen/store', datos_solicitud_cambio)
             .then(data => {
                 this.$router.push({name: 'variacion-volumen'});
             })
