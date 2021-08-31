@@ -485,7 +485,7 @@ class Invitacion extends Model
                 $conceptos[$key]['id_transaccion'] = $partida ? $partida->id_transaccion : $concepto->id_transaccion;
                 $conceptos[$key]['precio_unitario_antes_descuento_format'] = $partida ? $partida->precio_unitario_antes_descuento_format : '';
                 $conceptos[$key]['total_antes_descuento_format'] = $partida ? $partida->total_antes_descuento_format : '';
-                $conceptos[$key]['descuento_format'] = $partida ? $partida->descuento_format : '';
+                $conceptos[$key]['descuento_format'] = $partida ? "$ ".number_format($partida->PorcentajeDescuento, "2",".","") : '0.00';
                 $conceptos[$key]['precio_unitario_despues_descuento_format'] = $partida ? $partida->precio_unitario_despues_descuento_format : '';
                 $conceptos[$key]['total_despues_descuento_format'] = $partida ? $partida->total_despues_descuento_format : '';
                 $conceptos[$key]['moneda'] = $partida ? $partida->moneda ? $partida->moneda->nombre : '' : '';
