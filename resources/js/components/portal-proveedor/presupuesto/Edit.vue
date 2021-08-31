@@ -140,7 +140,7 @@
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Antes de Descuento:</label>
-                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal_antes_descuento)).formatMoney(4,'.',',')}}</label>
+                                    <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal_antes_descuento)).formatMoney(2,'.',',')}}</label>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">% Descuento:</label>
