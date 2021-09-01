@@ -15,6 +15,7 @@ use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Scopes\ActivoScope;
 use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Concepto extends Model
 {
@@ -22,16 +23,20 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
-    public $fillable = [
-        'activo',
-        'clave_concepto',
-    ];
     public $searchable = [
         'descripcion',
         'clave_concepto',
     ];
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'cantidad_presupuestada',
+        'monto_presupuestado',
+        'activo',
+        'clave_concepto',
+        'id_confirmacion_cambio',
+    ];
 
     protected static function boot()
     {
@@ -74,6 +79,7 @@ class Concepto extends Model
 
     public function getPathAttribute()
     {
+        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
@@ -251,5 +257,16 @@ class Concepto extends Model
             }
         }
         return implode(" -> ",$path_corta);
+    }
+
+    public function setHistorico($id_confirmacion_cambio)
+    {
+        if($id_confirmacion_cambio != $this->id_confirmacion_cambio)
+        {
+            $valores = $this->toArray();
+            $arreglo_valores = array_merge(["id_confirmacion_cambio_referente"=>$id_confirmacion_cambio],$valores);
+
+            DB::connection("cadeco")->table("ControlPresupuesto.conceptos_historicos")->insert($arreglo_valores);
+        }
     }
 }
