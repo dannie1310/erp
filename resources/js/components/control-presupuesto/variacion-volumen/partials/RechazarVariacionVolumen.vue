@@ -1,6 +1,7 @@
 <template>
     <span>
-        <button @click="init()" v-if="$root.can('rechazar_variacion_volumen')" class="btn btn-default float-right">
+        <button @click="init()" v-if="$root.can('rechazar_variacion_volumen')" class="btn btn-warning">
+            <i class="fa fa-thumbs-down"></i>
             Rechazar
         </button>
        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -59,27 +60,27 @@
                                         </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                            <label for="motivo" class="col-sm-2 col-form-label">Motivo:</label>
-                                        <div class="col-sm-10">
-                                            <textarea
-                                                name="motivo"
-                                                id="motivo"
-                                                class="form-control"
-                                                v-model="motivo"
-                                                v-validate="{required: true}"
-                                                data-vv-as="Motivo"
-                                                :class="{'is-invalid': errors.has('motivo')}"
-                                            ></textarea>
-                                                <div class="error-label" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                                        </div>
-                                    </div>
+                                    <label for="motivo" >Motivo de Rechazo:</label>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="col-md-12">
+                                    <textarea
+                                        name="motivo"
+                                        id="motivo"
+                                        class="form-control"
+                                        v-model="motivo"
+                                        v-validate="{required: true}"
+                                        data-vv-as="Motivo"
+                                        :class="{'is-invalid': errors.has('motivo')}"
+                                    ></textarea>
+                                    <div class="error-label" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                                <button type="submit" class="btn btn-primary">Rechazar</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
+                                <button type="submit" class="btn btn-warning"><i class="fa fa-thumbs-down"></i>Rechazar</button>
                          </div>
                    </form>
                </div>
@@ -122,7 +123,7 @@ export default {
                 this.cargando = false;
             })
         }
-        
+
     },
     computed: {
         solicitud() {

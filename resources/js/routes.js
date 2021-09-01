@@ -4128,7 +4128,7 @@ export const routes = [
                     {
                         path: ':id/autorizar',
                         name: 'variacion-volumen-autorizar',
-                        component: require('./components/control-presupuesto/variacion-volumen/Show').default,
+                        component: require('./components/control-presupuesto/variacion-volumen/Autorizar').default,
                         props: true,
                         meta: {
                             title: 'Autorizar Variación de Volumen',

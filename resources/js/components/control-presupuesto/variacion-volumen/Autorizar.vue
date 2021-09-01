@@ -1,5 +1,6 @@
 <template>
     <span>
+
         <div class="card" v-if="cargando">
             <div class="card-body">
                 <div class="row" >
@@ -17,8 +18,13 @@
                 <solicitud-cambio-presupuesto-partial-show v-bind:solicitud = solicitud></solicitud-cambio-presupuesto-partial-show>
 			</div>
             <div class="modal-footer">
+                <button type="button" @click="autorizar()" v-if="$root.can('autorizar_variacion_volumen') && solicitud && solicitud.id_estatus == 1" :disabled="cargando" class="btn btn-danger float-right" >
+                    <i class="fa fa-thumbs-up"></i>
+                    Autorizar
+                </button>
+                <RechazarVariacionVolumen @created="find()" v-if="solicitud && solicitud.id_estatus == 1" v-bind:id="id" ></RechazarVariacionVolumen>
                 <PdfVariacion v-bind:id="id" v-bind:txt="'Formato'"></PdfVariacion>
-                <button type="button" class="btn btn-secondary " v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
             </div>
         </div>
 

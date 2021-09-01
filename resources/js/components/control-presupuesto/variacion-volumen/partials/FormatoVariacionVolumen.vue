@@ -1,7 +1,8 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('consultar_variacion_volumen')" type="button" class="btn btn-sm btn-outline-primary float-right" title="Ver Formato PDF">
+        <button @click="init" v-if="$root.can('consultar_variacion_volumen')" type="button" :class="txt ?'':'btn-sm'" class="btn btn-outline-primary float-right" title="Ver Formato PDF">
             <i class="fa fa-file-pdf-o"></i>
+            <span v-if="txt">{{txt}}</span>
         </button>
 
          <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
@@ -26,7 +27,7 @@
 <script>
     export default {
         name: "variacion-volumen-pdf",
-        props: ['id'],
+        props: ['id', 'txt'],
         methods: {
             init() {
                 this.pdf()

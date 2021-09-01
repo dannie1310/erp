@@ -31,6 +31,20 @@ class VariacionVolumen extends SolicitudCambio
         return $this->hasMany(VariacionVolumenPartidas::class, 'id_solicitud_cambio', 'id');
     }
 
+    /**
+     * Scopes
+     */
+
+    /**
+     * Atributos
+     */
+
+
+
+    /**
+     * Metodos
+     */
+
     public function genera_folio(){
         return $this->all()->count() + 1;
     }
@@ -58,6 +72,7 @@ class VariacionVolumen extends SolicitudCambio
             ]);
 
             $importe_afectacion = 0;
+            $importe_original = 0;
             foreach ($data["conceptos_cambio"] as $concepto_cambio){
                 $solicitud_variacion_volumen->solicitudPartidas()->create([
                     'id_tipo_orden' => 4,
@@ -71,10 +86,12 @@ class VariacionVolumen extends SolicitudCambio
                     'variacion_volumen' => $concepto_cambio['variacion_volumen'],
                 ]);
 
+                $importe_original += $concepto_cambio['monto_presupuestado'];
                 $importe_afectacion += ($concepto_cambio['precio_unitario'] * $concepto_cambio['variacion_volumen']);
             }
 
             $solicitud_variacion_volumen->importe_afectacion = $importe_afectacion;
+            $solicitud_variacion_volumen->importe_original = $importe_original;
             $solicitud_variacion_volumen->save();
 
             if(count($data["conceptos_cambio"]) != $solicitud_variacion_volumen->solicitudPartidas()->count()){
@@ -89,17 +106,6 @@ class VariacionVolumen extends SolicitudCambio
         DB::connection('cadeco')->commit();
 
         return $solicitud_variacion_volumen;
-    }
-
-    public function getNumeroFolioFormatAttribute()
-    {
-        return '# ' . sprintf("%05d", $this->numero_folio);
-    }
-
-    public function getFechaSolicitudFormatAttribute()
-    {
-        $date = date_create($this->fecha_solicitud);
-        return date_format($date,"d/m/Y");
     }
 
 }

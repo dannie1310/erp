@@ -8,6 +8,7 @@
 
 namespace App\Http\Transformers\CADECO\ControlPresupuesto;
 
+use App\Http\Transformers\EstadoLabelTransformer;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\ControlPresupuesto\VariacionVolumen;
@@ -32,7 +33,8 @@ class VariacionVolumenTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
-        'usuario'
+        'usuario',
+        'estado_label'
     ];
 
     public function transform(VariacionVolumen $model) {
@@ -47,9 +49,14 @@ class VariacionVolumenTransformer extends TransformerAbstract
             'id_tipo_orden' => (int) $model->id_tipo_orden,
             'tipo_orden' => $model->tipoOrden->descripcion,
             'importe_afectacion' => $model->importe_afectacion,
+            'importe_original' => $model->importe_original,
             'importe_afectacion_format' => $model->importe_afectacion_format,
+            'importe_original_format' => $model->importe_original_format,
             'fecha_solicitud' => $model->fecha_solicitud,
             'fecha_solicitud_format' => $model->fecha_solicitud_format,
+            'fecha_format' => $model->fecha_solicitud_format,
+            'porcentaje_cambio_format' => $model->porcentaje_cambio_format,
+            'porcentaje_cambio' => $model->porcentaje_cambio,
         ];
     }
 
@@ -77,5 +84,14 @@ class VariacionVolumenTransformer extends TransformerAbstract
             return $this->collection($partidas, new VariacionVolumenPartidasTransformer);
         }
         return null;
+    }
+
+    public function includeEstadoLabel(VariacionVolumen $model)
+    {
+        if ($item = $model->estado_label) {
+            return $this->item($item, new EstadoLabelTransformer);
+        }
+        return null;
+
     }
 }

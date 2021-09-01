@@ -20,7 +20,7 @@ use App\Models\CADECO\ControlPresupuesto\SolicitudCambioPartidaHistorico;
 class VariacionVolumenFormato extends Rotation
 {
     var $encola = '';
-    
+
     const DPI = 96;
     const MM_IN_INCH = 25.4;
     const A4_HEIGHT = 297;
@@ -137,7 +137,7 @@ class VariacionVolumenFormato extends Rotation
             $this->SetX(($this->WidthTotal * .6) + 1);
         }
 
-        
+
     }
 
 
@@ -177,14 +177,14 @@ class VariacionVolumenFormato extends Rotation
 
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Area Solicitante:'), '', 0, 'LB');
+        $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Área Solicitante:'), '', 0, 'LB');
         $this->SetFont('Arial', '', '#'.$this->txtContenidoTam);
         $this->CellFitScale(0.375 * $this->WidthTotal, 0.35, utf8_decode($this->solicitud->area_solicitante), '', 1, 'L');
 
 
         $this->SetFont('Arial', 'B', '#'.$this->txtContenidoTam);
         $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Fecha Solicitud:'), '', 0, 'L');
+        $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Fecha de Solicitud:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.375 * $this->WidthTotal, 0.35, utf8_decode(Carbon::parse($this->solicitud->fecha_solicitud)->format('d-m-Y')), '', 1, 'L');
 
@@ -235,7 +235,7 @@ class VariacionVolumenFormato extends Rotation
             $historico = SolicitudCambioPartidaHistorico::where('id_solicitud_cambio_partida', '=', $partida->id)
                         ->where('nivel', '=', $partida->nivel)
                         ->first();
-                        
+
 
                 $variacion_volumen = $partida->cantidad_presupuestada_nueva - $partida->cantidad_presupuestada_original;
 
@@ -279,14 +279,14 @@ class VariacionVolumenFormato extends Rotation
 
         $concepto_obra = Concepto::where('nivel', '=', $nivel_base)->first();
         $nodo_tipo = NodoTipo::where('id_tipo_nodo', '=', 1)->where('id_concepto_proyecto', '=', $concepto_obra->id_concepto)->first();
-        
+
         if(!$nodo_tipo){
-            dd('La obra no tiene la configuracion de Costo Directo registrada.');
+            dd('La obra no tiene la configuracion de Costo Directo, favor de contactar a Soporte a Aplicaciones.');
         }
         $data_resumen = [
-            'PRESUPUESTO  C. D.' =>  number_format($historico ? $nodo_tipo->concepto->monto_presupuestado -  $estaSolicitudSuma : $nodo_tipo->concepto->monto_presupuestado, 2, '.', ','),
-            'ESTA SOLICITUD' =>  number_format($estaSolicitudSuma, 2, '.', ','),
-            'COSTO DIRECTO ACTUALIZADO' => number_format(($historico ? $nodo_tipo->concepto->monto_presupuestado : $nodo_tipo->concepto->monto_presupuestado + $estaSolicitudSuma), 2, '.', ',')
+            'MONTO DEL COSTO DIRECTO' =>  number_format($historico ? $nodo_tipo->concepto->monto_presupuestado -  $estaSolicitudSuma : $nodo_tipo->concepto->monto_presupuestado, 2, '.', ','),
+            'MONTO DE ESTA SOLICITUD' =>  number_format($estaSolicitudSuma, 2, '.', ','),
+            'MONTO DEL COSTO DIRECTO ACTUALIZADO' => number_format(($historico ? $nodo_tipo->concepto->monto_presupuestado : $nodo_tipo->concepto->monto_presupuestado + $estaSolicitudSuma), 2, '.', ',')
         ];
 
         $this->resumen($data_resumen);
