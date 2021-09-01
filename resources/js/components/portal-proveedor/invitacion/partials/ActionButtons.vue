@@ -3,7 +3,10 @@
         <router-link  :to="{ name: 'cotizacion-proveedor-invitacion', params: {id_invitacion: value.id}}" v-if="value.registrar_cotizacion" type="button" class="btn btn-sm btn-outline-success" title="Cotizar">
             <i class="fa fa-comment-dollar"></i>
         </router-link>
-        <router-link  :to="{ name: 'cotizacion-proveedor-edit', params: {id_invitacion: value.id}}" v-if="value.editar_cotizacion" type="button" class="btn btn-sm btn-outline-primary" title="Editar Cotización">
+        <router-link  :to="{ name: 'cotizacion-proveedor-edit', params: {id: value.id}}" v-if="value.tipo == 17 && value.editar_cotizacion" type="button" class="btn btn-sm btn-outline-primary" title="Editar Cotización">
+            <i class="fa fa-comment-dollar"></i>
+        </router-link>
+        <router-link  :to="{ name: 'presupuesto-proveedor-edit', params: {id: value.id}}" v-if="value.tipo == 49 && value.editar_cotizacion" type="button" class="btn btn-sm btn-outline-primary" title="Editar Cotización">
             <i class="fa fa-comment-dollar"></i>
         </router-link>
         <router-link  :to="{ name: 'invitacion-proveedor-show', params: {id: value.id}}" v-if="$root.can('consultar_invitacion_cotizar_proveedor', 1)" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
