@@ -36,6 +36,7 @@ class VariacionVolumenPartidasTransformer extends TransformerAbstract
             'id_tipo_orden' => (int) $model->id_tipo_orden,
             'tipo_orden' => (string) $model->solicitudcambio->estatus->descripcion,
             'unidad' =>  $model->unidad,
+            'clave_concepto' => (string) $model->concepto->clave_concepto,
             'descripcion' => (string) $model->concepto->descripcion,
             'descripcion_format' => (string) $model->descripcion_format,
             'cantidad_presupuestada_original' => $model->cantidad_presupuestada_original,

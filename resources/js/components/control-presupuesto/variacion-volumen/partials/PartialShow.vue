@@ -17,6 +17,7 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th class="text-center">Clave</th>
                                 <th class="text-center">Descripción</th>
                                 <th class="text-center">Unidad</th>
                                 <th class="text-center">Precio Unitario</th>
@@ -31,6 +32,7 @@
                         <tbody>
                             <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
                                 <td>{{i + 1}}</td>
+                                <td>{{partida.clave_concepto}}</td>
                                 <td :title="partida.descripcion">{{partida.descripcion_format}}</td>
                                 <td>{{partida.unidad}}</td>
                                 <td style="text-align: right">{{partida.precio_unitario_original_format}}</td>

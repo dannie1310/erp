@@ -66,10 +66,8 @@ export default {
                     include: ['partidas'],
                 }
             }).then(data => {
-                this.find();
-            }) .finally(() => {
-                this.cargando = false;
-            })
+                this.$router.push({name: 'variacion-volumen'});
+            });
         },
         regresar() {
             this.$router.push({name: 'variacion-volumen'});

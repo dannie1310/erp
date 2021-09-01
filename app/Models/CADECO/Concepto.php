@@ -15,6 +15,7 @@ use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Scopes\ActivoScope;
 use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Concepto extends Model
 {
@@ -256,5 +257,14 @@ class Concepto extends Model
             }
         }
         return implode(" -> ",$path_corta);
+    }
+
+    public function setHistorico($id_confirmacion_cambio)
+    {
+        $valores = $this->toArray();
+        $arreglo_valores = array_merge(["id_confirmacion_cambio_referente"=>$id_confirmacion_cambio],$valores);
+
+        DB::connection("cadeco")->table("ControlPresupuesto.conceptos_historicos")->insert($arreglo_valores);
+
     }
 }

@@ -45,16 +45,19 @@
                         <table class="table table-striped table-sm">
                             <thead>
                             <tr>
+                                <th class="text-center c150" >Clave</th>
                                 <th class="text-center" >Descripción</th>
                                 <th class="text-center cantidad_input">Unidad</th>
                                 <th class="text-center cantidad_input">Volumen</th>
                                 <th class="text-center cantidad_input">Importe</th>
                                 <th class="text-center cantidad_input">Volumen del Cambio</th>
                                 <th class="text-center cantidad_input">Importe del Cambio</th>
+                                <th class="index_corto"></th>
                             </tr>
                             </thead>
                             <tbody>
-                                <tr v-for="concepto_seleccionado in conceptos_seleccionados">
+                                <tr v-for="(concepto_seleccionado, i) in conceptos_seleccionados">
+                                    <td>{{ concepto_seleccionado.clave_concepto}}</td>
                                     <td>{{ concepto_seleccionado.descripcion}}</td>
                                     <td class="text-center">{{ concepto_seleccionado.unidad}}</td>
                                     <td class="text-center">{{ concepto_seleccionado.cantidad_presupuestada_format}}</td>
@@ -73,12 +76,19 @@
                                         <div class="invalid-feedback" v-show="errors.has(`variacion_volumen`)">{{ errors.first(`variacion_volumen`) }}</div>
                                     </td>
                                     <td style="text-align: right">${{parseFloat(concepto_seleccionado.importe_cambio).formatMoney(2,".",",")}}</td>
+                                    <td >
+                                        <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!conceptos_seleccionados.length > 0" title="Eliminar">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-trash" v-else></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="3" class="text-right"><b>Subtotal:</b></td>
+                                    <td colspan="4" class="text-right"><b>Subtotal:</b></td>
                                     <td class="text-right"><b>${{ suma_importe.formatMoney(2,'.',',') }}</b></td>
                                     <td></td>
                                     <td class="text-right"><b>${{ suma_importe_cambio.formatMoney(2,'.',',')  }}</b></td>
+                                    <td ></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -118,7 +128,7 @@
                 </div>
             </div>
             <div class="card-footer">
-                <button class="btn btn-primary float-right" type="button" @click="validate"  :disabled="errors.count() > 0 || !concepto">
+                <button class="btn btn-primary float-right" type="button" @click="validate"  :disabled="errors.count() > 0 || !conceptos_seleccionados.length>0">
                     <i class="fa fa-save"></i>
                     Guardar
                 </button>
@@ -239,7 +249,10 @@ export default {
                 _self.suma_importe_cambio += concepto_seleccionado.variacion_volumen * concepto_seleccionado.precio_unitario;
                 concepto_seleccionado.importe_cambio = concepto_seleccionado.variacion_volumen * concepto_seleccionado.precio_unitario;
             });
-        }
+        },
+        eliminarPartida(index){
+            this.conceptos_seleccionados.splice(index, 1);
+        },
     },
     computed: {
         total : function () {

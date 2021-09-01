@@ -46,6 +46,15 @@ class SolicitudCambio extends Model
         });
     }
 
+    /**
+     * Relaciones
+     */
+
+    public function confirmacion()
+    {
+        return $this->hasOne(SolicitudCambioConfirmacion::class, "id_solicitud_cambio", "id");
+    }
+
     public function estatus(){
         return $this->belongsTo(Estatus::class, 'id_estatus', 'clave_estado');
     }

@@ -58,64 +58,7 @@ class VariacionVolumenService{
     }
 
     public function autorizar($id){
-        try {
-            DB::connection('cadeco')->beginTransaction();
-            $variacion_volumen = $this->repository->show($id);
-            foreach($variacion_volumen->variacionVolumenPartidas as $partida){
-                $concepto = $partida->concepto;
-
-                $monto_presupuestado_original = $concepto->monto_presupuestado;
-                $cantidad_presupuestada_original = $concepto->cantidad_presupuestada;
-
-                $cantidad_presupuestada_actualizada = $cantidad_presupuestada_original + $partida->variacion_volumen;
-                $dividendo = $cantidad_presupuestada_original > 0?$cantidad_presupuestada_original:1;
-                $factor = $cantidad_presupuestada_actualizada / $dividendo;
-
-                $conceptos_afectables = Concepto::where('nivel', 'like', $concepto->nivel . '%')->where('id_obra', '=', Context::getIdObra())->orderBy('nivel', 'ASC')->get();
-                foreach($conceptos_afectables as $concepto_afectable){
-                    SolicitudCambioPartidaHistorico::create([
-                        'id_solicitud_cambio_partida' => $partida->id,
-                        'nivel' => $concepto_afectable->nivel,
-                        'cantidad_presupuestada_original' => $concepto_afectable->cantidad_presupuestada,
-                        'cantidad_presupuestada_actualizada' => $concepto_afectable->cantidad_presupuestada * $factor,
-                        'monto_presupuestado_original' => $concepto_afectable->monto_presupuestado,
-                        'monto_presupuestado_actualizado' => $concepto_afectable->monto_presupuestado * $factor
-                    ]);
-
-                    $concepto_afectable->cantidad_presupuestada = $concepto_afectable->cantidad_presupuestada * $factor;
-                    $concepto_afectable->monto_presupuestado = $concepto_afectable->monto_presupuestado * $factor;
-                    $concepto_afectable->save();
-                }
-
-                $len_nivel = strlen($concepto->nivel) - 4;
-                while ($len_nivel > 0) {
-                    $concepto_propagado = Concepto::where('id_obra', '=', Context::getIdObra())->where('nivel', '=', substr($concepto->nivel, 0, $len_nivel))->first();
-                    $cantidadMonto = ($concepto_propagado->monto_presupuestado - $monto_presupuestado_original) + $concepto->monto_presupuestado;
-
-                    SolicitudCambioPartidaHistorico::create([
-                        'id_solicitud_cambio_partida' => $partida->id,
-                        'nivel' => $concepto_propagado->nivel,
-                        'monto_presupuestado_original' => $concepto_propagado->monto_presupuestado,
-                        'monto_presupuestado_actualizado' => $cantidadMonto
-                    ]);
-
-                    $concepto_propagado->update(['monto_presupuestado' => $cantidadMonto]);
-                    $concepto_propagado->save();
-                    $len_nivel -= 4;
-                }
-            }
-            $variacion_volumen->id_estatus = 2;
-            $variacion_volumen->id_autoriza = auth()->id();
-            $variacion_volumen->fecha_autorizacion = date('Y-m-d h:i:s');
-            $variacion_volumen->save();
-            DB::connection('cadeco')->commit();
-
-            return $variacion_volumen ;
-        } catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage());
-            throw $e;
-        }
+        return $this->repository->show($id)->autorizar();
     }
 
     public function pdfVariacionVolumen($id)

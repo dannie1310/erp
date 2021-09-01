@@ -29,6 +29,8 @@ class SolicitudCambioConfirmacion extends Model
         'fecha_hora_confirmacion',
     ];
 
+    public $timestamps = false;
+
     public function solicitudCambio()
     {
         return $this->belongsTo(SolicitudCambio::class, 'id_solicitud_cambio', 'id');
