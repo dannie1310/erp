@@ -122,7 +122,7 @@ export default {
                         axios.post(URI + payload.id + '/autorizar', { params: payload.params })
                             .then(r => r.data)
                             .then(data => {
-                                swal("Solicitud de cambio registrado correctamente", {
+                                swal("Solicitud de cambio autorizada correctamente", {
                                     icon: "success",
                                     timer: 1500,
                                     buttons: false
@@ -135,7 +135,7 @@ export default {
                                 reject(error);
                             })
                     }
-                    
+
                 });
             });
         },

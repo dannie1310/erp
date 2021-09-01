@@ -87,6 +87,17 @@ class VariacionVolumen extends SolicitudCambio
                 $dividendo = $cantidad_presupuestada_original > 0?$cantidad_presupuestada_original:1;
                 $factor = $cantidad_presupuestada_actualizada / $dividendo;
 
+
+                if(abs($concepto->cantidad_presupuestada - $partida->cantidad_presupuestada_original) > 0.01)
+                {
+                    throw new \Exception("La cantidad presupuestada actual del concepto ".$concepto->clave_concepto." ".$concepto->descripcion.": ".$concepto->cantidad_presupuestada." no coincide con la cantidad presupuestada que tenía al registrar la solicitud: ". $partida->cantidad_presupuestada_original .". \n \n Debe realizar una nueva solicitud",500);
+                }
+
+                if(abs($concepto->monto_presupuestado - $partida->monto_presupuestado)>0.01)
+                {
+                    throw new \Exception("El monto presupuestado actual del concepto ".$concepto->clave_concepto." ".$concepto->descripcion.": ".$concepto->monto_presupuestado_format." no coincide con el monto presupuestado que tenía al registrar la solicitud: ". $partida->monto_presupuestado_format .". \n \n Debe realizar una nueva solicitud",500);
+                }
+
                 /*Aplicar cambios a concepto y conceptos hijos*/
                 $conceptos_afectables = Concepto::where('nivel', 'like', $concepto->nivel . '%')->where('id_obra', '=', Context::getIdObra())->orderBy('nivel', 'ASC')->get();
                 foreach($conceptos_afectables as $concepto_afectable){
@@ -107,11 +118,14 @@ class VariacionVolumen extends SolicitudCambio
                     $concepto_afectable->save();
                 }
 
+                $conceptoActualizado = Concepto::find($concepto->id_concepto);
+
                 /*Propagar cambios a conceptos padre*/
                 $len_nivel = strlen($concepto->nivel) - 4;
+                $arr_conceptos_propagados = [];
                 while ($len_nivel > 0) {
                     $concepto_propagado = Concepto::where('id_obra', '=', Context::getIdObra())->where('nivel', '=', substr($concepto->nivel, 0, $len_nivel))->first();
-                    $cantidadMonto = ($concepto_propagado->monto_presupuestado - $monto_presupuestado_original) + $concepto->monto_presupuestado;
+                    $cantidadMonto = ($concepto_propagado->monto_presupuestado - $monto_presupuestado_original) + $conceptoActualizado->monto_presupuestado;
 
                     SolicitudCambioPartidaHistorico::create([
                         'id_solicitud_cambio_partida' => $partida->id,
@@ -119,6 +133,8 @@ class VariacionVolumen extends SolicitudCambio
                         'monto_presupuestado_original' => $concepto_propagado->monto_presupuestado,
                         'monto_presupuestado_actualizado' => $cantidadMonto
                     ]);
+
+                    $arr_conceptos_propagados[] = $concepto_propagado;
 
                     $concepto_propagado->setHistorico($confirmacion_cambio->id);
 
@@ -138,7 +154,7 @@ class VariacionVolumen extends SolicitudCambio
             return $variacion_volumen ;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort(400, $e->getMessage(). $e->getFile(). $e->getLine());
+            abort($e->getCode(), $e->getMessage());
             throw $e;
         }
 

@@ -261,10 +261,12 @@ class Concepto extends Model
 
     public function setHistorico($id_confirmacion_cambio)
     {
-        $valores = $this->toArray();
-        $arreglo_valores = array_merge(["id_confirmacion_cambio_referente"=>$id_confirmacion_cambio],$valores);
+        if($id_confirmacion_cambio != $this->id_confirmacion_cambio)
+        {
+            $valores = $this->toArray();
+            $arreglo_valores = array_merge(["id_confirmacion_cambio_referente"=>$id_confirmacion_cambio],$valores);
 
-        DB::connection("cadeco")->table("ControlPresupuesto.conceptos_historicos")->insert($arreglo_valores);
-
+            DB::connection("cadeco")->table("ControlPresupuesto.conceptos_historicos")->insert($arreglo_valores);
+        }
     }
 }

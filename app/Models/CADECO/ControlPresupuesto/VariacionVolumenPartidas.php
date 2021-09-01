@@ -37,19 +37,23 @@ class VariacionVolumenPartidas extends SolicitudCambioPartidas
     }
 
     public function getPrecioUnitarioOriginalFormatAttribute(){
-        return '$ ' . number_format($this->precio_unitario_original, 2, '.',',');
+        return '$' . number_format($this->precio_unitario_original, 2, '.',',');
     }
 
     public function getImporteOriginalFormatAttribute(){
-        return '$ ' . number_format(($this->precio_unitario_original * $this->cantidad_presupuestada_original), 2, '.',',');
+        return '$' . number_format(($this->precio_unitario_original * $this->cantidad_presupuestada_original), 2, '.',',');
+    }
+
+    public function getMontoPresupuestadoFormatAttribute(){
+        return '$' . number_format($this->monto_presupuestado, 2, '.',',');
     }
 
     public function getImporteCambioFormatAttribute(){
-        return '$ ' . number_format(($this->precio_unitario_original * $this->variacion_volumen), 2, '.',',');
+        return '$' . number_format(($this->precio_unitario_original * $this->variacion_volumen), 2, '.',',');
     }
 
     public function getImporteActualizadoFormatAttribute(){
-        return '$ ' . number_format(($this->precio_unitario_original * $this->cantidad_presupuestada_nueva), 2, '.',',');
+        return '$' . number_format(($this->precio_unitario_original * $this->cantidad_presupuestada_nueva), 2, '.',',');
     }
 
     public function getVariacionVolumenFormatAttribute(){
