@@ -428,21 +428,23 @@ class Transaccion extends Model
     public function getTotalPorMonedaPresupuestoAttribute()
     {
         $partida = $this->presupuestos()->cotizadas()->first();
-        switch ($partida->IdMoneda)
-        {
-            case 1:
-                return $this->monto;
-                break;
-            case 2:
-                return $this->monto / $this->TcUSD;
-                break;
-            case 3:
-                return $this->monto / $this->TcEuro;
-                break;
-            case 4:
-                return $this->monto / $this->TcLibra;
-                break;
+        if($partida) {
+            switch ($partida->IdMoneda) {
+                case 1:
+                    return $this->monto;
+                    break;
+                case 2:
+                    return $this->monto / $this->TcUSD;
+                    break;
+                case 3:
+                    return $this->monto / $this->TcEuro;
+                    break;
+                case 4:
+                    return $this->monto / $this->TcLibra;
+                    break;
+            }
         }
+        return 0;
     }
 
     public  function costo(){
