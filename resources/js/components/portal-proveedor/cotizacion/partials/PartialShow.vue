@@ -444,16 +444,6 @@
                     </div>
                 </div>
             </div>
-            <div class="row" v-if="invitacion.cotizacionCompra">
-                <div class="col-md-12">
-                    <label class="col-form-label">Observaciones: </label>
-                </div>
-            </div>
-            <div class="row" v-if="invitacion.cotizacionCompra">
-                <div class="col-md-12">
-                    {{ invitacion.cotizacionCompra.observaciones }}
-                </div>
-            </div>
         </span>
 
 
