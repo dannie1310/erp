@@ -5,7 +5,7 @@
         :load-options="loadOptions"
         v-model="val"
         :loadingText="loadingText"
-        searchPromptText="Escriba al menos 4 carácteres para buscar"
+        searchPromptText="Escriba al menos 5 carácteres para buscar"
         noResultsText="Sin Resultados"
         :placeholder="placeholder ? placeholder : '--Material--'">
         <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName" :title="node.label">
