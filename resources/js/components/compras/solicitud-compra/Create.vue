@@ -134,7 +134,7 @@
                                                 <thead>
                                                 <tr>
                                                     <th class="index_corto">#</th>
-                                                    <th style="width:130px;">No. de Parte</th>
+                                                    <th style="width:100px;">No. de Parte</th>
                                                     <th>Descripción</th>
                                                     <th class="cantidad_input">Cantidad</th>
                                                     <th class="unidad">Unidad</th>
@@ -157,7 +157,7 @@
                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                     <td v-if="partida.material === ''">
                                                     </td>
-                                                    <td style="width:100px;" v-else>{{partida.material.numero_parte}}</td>
+                                                    <td v-else>{{partida.material.numero_parte}}</td>
                                                     <td v-if="partida.material === ''">
                                                         <MaterialSelect
                                                             :id="`id_material_${i}`"
