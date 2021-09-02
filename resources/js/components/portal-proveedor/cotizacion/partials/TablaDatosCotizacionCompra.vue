@@ -107,7 +107,7 @@
 <script>
 export default {
     name: "TablaDatosCotizacionCompraProveedor",
-    components: { },
+    components: {},
     props: ['cotizacion_compra'],
 }
 </script>

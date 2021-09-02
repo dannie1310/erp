@@ -145,6 +145,7 @@
                         buttons: $.extend({}, {
                             invitacion: invitacion,
                             show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
+                            tipo_transaccion: invitacion.tipo_antecedente,
                             id_invitacion: invitacion.id,
                             id_cotizacion: invitacion.cotizacion.id_transaccion,
                             enviar: (self.$root.can('editar_cotizacion_proveedor',true) && invitacion.cotizacion.estado == -1)  ? true : false,
