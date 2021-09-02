@@ -1173,4 +1173,16 @@ class    CotizacionCompra  extends Transaccion
         }
     }
 
+    /**
+     * Elimina las exclusiones
+     */
+    public function eliminarExclusiones()
+    {
+        if($this->exclusiones)
+        {
+            foreach ($this->exclusiones as $exclusion) {
+                $exclusion->delete();
+            }
+        }
+    }
 }
