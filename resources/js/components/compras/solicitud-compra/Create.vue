@@ -157,9 +157,10 @@
                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                     <td v-if="partida.material === ''">
                                                     </td>
-                                                    <td v-else>{{partida.material.numero_parte}}</td>
+                                                    <td style="width:100px;" v-else>{{partida.material.numero_parte}}</td>
                                                     <td v-if="partida.material === ''">
                                                         <MaterialSelect
+                                                            :id="`id_material_${i}`"
                                                             :name="`material[${i}]`"
                                                             :scope="scope"
                                                             sort = "descripcion"
@@ -168,7 +169,7 @@
                                                             v-validate="{required: true}"
                                                             :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
                                                             :class="{'is-invalid': errors.has(`material[${i}]`)}"
-                                                            ref="MaterialSelect"
+                                                            :ref="`MaterialSelect_${i}`"
                                                             :disableBranchNodes="false"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
                                                     </td>
@@ -185,7 +186,7 @@
                                                                v-model="partida.cantidad"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="width:120px;" v-if="partida.material">{{partida.material.unidad}}</td>
+                                                    <td style="width:70px;" v-if="partida.material">{{partida.material.unidad}}</td>
                                                     <td style="width:120px;" v-else></td>
                                                     <td class="fecha">
                                                         <datepicker v-model="partida.fecha"

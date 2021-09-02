@@ -1,5 +1,5 @@
 <template>
-          <treeselect
+    <treeselect
               :class="{error: error}"
               :async="true"
               :load-options="loadOptions"
@@ -7,7 +7,11 @@
               loadingText="Cargando"
               searchPromptText="Escriba para buscar..."
               noResultsText="Sin Resultados"
-              :placeholder="placeholder ? placeholder : '--Material--'" />
+              :placeholder="placeholder ? placeholder : '--Material--'">
+                <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName" :title="node.label">
+                    {{ node.label }}
+                </label>
+          </treeselect>
 </template>
 
 <script>
@@ -52,7 +56,9 @@
                 this.options.filter(x=> x.id === this.val).map(x => {
                     this.material = x;
                 });
-                this.$emit('input', this.material)
+                setTimeout(() => {
+                        this.$emit('input', this.material)
+                    }, 0);
                 }
             },
             value(value) {
