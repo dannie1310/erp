@@ -53,7 +53,7 @@ export default {
                         callback(null, this.options)
                     })
             }else {
-                this.loadingText = "Escriba al menos 4 carácteres para buscar"
+                this.loadingText = "Escriba al menos 5 carácteres para buscar"
             }
         }
 
