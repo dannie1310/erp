@@ -74,6 +74,7 @@
                             ]}
                 }).then(data => {
                     this.$store.commit('padronProveedores/invitacion/SET_INVITACION', data);
+                    console.log("AQUI???")
                 })
                 .finally(()=> {
                     this.cargando = false;
@@ -87,7 +88,28 @@
                     id: this.id_invitacion,
                     params:{}
                 }).then(data => {
-                    this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                    if(this.invitacion.con_cotizacion){
+                        if(this.invitacion.tipo_antecedente == 49){
+                            this.$router.push({name: 'presupuesto-proveedor-edit', params: {id: this.id_invitacion}});
+                        }
+                        if(this.invitacion.tipo_antecedente == 17) {
+                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id: this.id_invitacion}});
+                        }
+                    }else{
+                        console.log(this.invitacion.tipo_antecedente);
+                        if(this.invitacion.tipo_antecedente == 49) {
+                            this.$router.push({
+                                name: 'presupuesto-proveedor-create',
+                                params: {id: this.id_invitacion}
+                            });
+                        }
+                        if(this.invitacion.tipo_antecedente == 17) {
+                            this.$router.push({
+                                name: 'cotizacion-proveedor-create',
+                                params: {id: this.id_invitacion}
+                            });
+                        }
+                    }
                 });
             },
         },

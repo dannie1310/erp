@@ -1098,6 +1098,10 @@ $api->version('v1', function ($api) {
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayout');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@pdf')->where(['id' => '[0-9]+']);
             $api->post('/portal-proveedor','App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@registrarPresupuestoProveedor');
+            $api->patch('{id}/portal-proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@updatePortalProveedor')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayoutProveedor/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayoutProveedor')->where(['id' => '[0-9]+']);
+            $api->post('layoutProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayoutProveedor');
+            $api->delete('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@destroyProveedor')->where(['id' => '[0-9]+']);
         });
 
 

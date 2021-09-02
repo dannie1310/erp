@@ -62,7 +62,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row" v-if="id_invitacion != '' && !pendiente">
+                            <div class="row" v-if="id != '' && !pendiente">
                                 <div  class="col-md-12">
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-sm">
@@ -103,20 +103,20 @@
                                                             :disabled="partida.enable == false"
                                                             class="form-control"
                                                             :name="`precio[${i}]`"
-                                                            data-vv-as="Precio"
-                                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            :data-vv-as="`'Precio ${i + 1}'`"
+                                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                                             :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                             v-model="partida.precio_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="text-align:right;">{{getPrecioTotalAntesDesc(i,partida.precio_cot,partida.cantidad_presupuestada)}}</td>
+                                                    <td style="text-align:right;">{{getPrecioTotalAntesDesc(i)}}</td>
                                                     <td>
                                                         <input type="text" v-on:change="calcular"
                                                             :disabled="partida.enable == false"
                                                             class="form-control"
                                                             :name="`descuento[${i}]`"
-                                                            data-vv-as="Descuento(%)"
-                                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                            :data-vv-as="`'Descuento(%) ${i + 1}'`"
+                                                            v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                                             :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
                                                             v-model="partida.descuento_cot"/>
                                                         <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
@@ -128,7 +128,7 @@
                                                             v-on:change="calcular"
                                                             type="text"
                                                             :name="`moneda[${i}]`"
-                                                            data-vv-as="Moneda"
+                                                            :data-vv-as="`'Moneda ${i + 1}'`"
                                                             :disabled="partida.enable == false"
                                                             v-validate="{required: true}"
                                                             class="form-control"
@@ -144,7 +144,7 @@
                                                     <td style="width:200px;">
                                                         <textarea class="form-control"
                                                                 :name="`observaciones[${i}]`"
-                                                                data-vv-as="Observaciones"
+                                                                :data-vv-as="`'Observaciones ${i + 1}'`"
                                                                 :disabled="partida.enable == false"
                                                                 v-validate="{}"
                                                                 :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
@@ -170,10 +170,11 @@
                                         v-on:change="calcular"
                                         name="descuento_cot"
                                         v-model="contrato.descuento_cot"
-                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d{2})?$/}"
                                         class="col-sm-6 form-control"
                                         id="descuento_cot"
                                         :class="{'is-invalid': errors.has('descuento_cot')}">
+                                    <div class="invalid-feedback" v-show="errors.has('descuento_cot')">{{ errors.first('descuento_cot') }}</div>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Precios Peso (MXN)</label>
@@ -200,10 +201,11 @@
                                         type="text"
                                         name="tc_usd"
                                         v-model="dolar"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0}"
                                         class="col-sm-6 form-control"
                                         id="tc_usd"
                                         :class="{'is-invalid': errors.has('tc_usd')}">
+                                    <div class="invalid-feedback" v-show="errors.has('tc_usd')">{{ errors.first('tc_usd') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">TC EURO:</label>
@@ -214,10 +216,11 @@
                                         type="text"
                                         name="tc_eur"
                                         v-model="euro"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0}"
                                         class="col-sm-6 form-control"
                                         id="tc_eur"
                                         :class="{'is-invalid': errors.has('tc_eur')}">
+                                    <div class="invalid-feedback" v-show="errors.has('tc_eur')">{{ errors.first('tc_eur') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">TC LIBRA:</label>
@@ -228,10 +231,11 @@
                                         type="text"
                                         name="tc_libra"
                                         v-model="libra"
-                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0 }"
                                         class="col-sm-6 form-control"
                                         id="tc_libra"
                                         :class="{'is-invalid': errors.has('tc_libra')}">
+                                    <div class="invalid-feedback" v-show="errors.has('tc_libra')">{{ errors.first('tc_libra') }}</div>
                                 </div>
                                 <div class=" col-md-12" align="right">
                                     <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXN):</label>
@@ -254,10 +258,11 @@
                                         type="text"
                                         name="anticipo"
                                         v-model="contrato.anticipo"
-                                        v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                         class="col-sm-6 form-control"
                                         id="anticipo"
                                         :class="{'is-invalid': errors.has('anticipo')}">
+                                    <div class="invalid-feedback" v-show="errors.has('anticipo')">{{ errors.first('anticipo') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Crédito (días):</label>
@@ -272,6 +277,7 @@
                                         class="col-sm-6 form-control"
                                         id="credito"
                                         :class="{'is-invalid': errors.has('credito')}">
+                                    <div class="invalid-feedback" v-show="errors.has('credito')">{{ errors.first('credito') }}</div>
                                 </div>
                                 <div class=" col-md-10" align="right">
                                     <label class="col-sm-2 col-form-label">Vigencia (días):</label>
@@ -286,6 +292,7 @@
                                         class="col-sm-6 form-control"
                                         id="vigencia"
                                         :class="{'is-invalid': errors.has('vigencia')}">
+                                    <div class="invalid-feedback" v-show="errors.has('vigencia')">{{ errors.first('vigencia') }}</div>
                                 </div>
                             </div>
                             <div class="row">
@@ -332,7 +339,7 @@
     import TablaDatosSolicitud from "../cotizacion/partials/TablaDatosSolicitud";
     export default {
         name: "presupuesto-proveedor-create",
-        props: ['id_invitacion'],
+        props: ['id'],
         components: {Datepicker, TablaDatosSolicitud, es },
         data() {
             return {
@@ -372,7 +379,7 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{}
                 }).then(data => {
                     this.contrato = data
@@ -387,9 +394,9 @@
                     base : base
                 }).then(data => {
                     this.monedas = data.data;
-                    this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
-                    this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
-                    this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(4, '.', '');
+                    this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
+                    this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
+                    this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
                 }).finally(()=>{
                     this.cargando = false;
                 })
@@ -411,20 +418,17 @@
                 this.contrato.conceptos.data[i]['precio_unitario_moneda_conversion'] = precio;
                 return  '$' + parseFloat(precio).formatMoney(2, '.', ',')
             },
-            getPrecioTotalAntesDesc(i)
-            {
+            getPrecioTotalAntesDesc(i){
                 var total = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['cantidad_presupuestada'] : 0;
                 this.contrato.conceptos.data[i]['precio_total_antes_desc'] = total;
                 return  '$' + parseFloat(total).formatMoney(2, '.', ',')
             },
-            getPrecioUnitario(i)
-            {
+            getPrecioUnitario(i){
                 var precio_unitario = this.contrato.conceptos.data[i]['precio_cot'] != undefined ? this.contrato.conceptos.data[i]['precio_cot'] - ((this.contrato.conceptos.data[i]['precio_cot'] * this.contrato.conceptos.data[i]['descuento_cot']) / 100) : 0;
                 this.contrato.conceptos.data[i]['precio_unitario'] = precio_unitario;
                 return  '$' + parseFloat(precio_unitario).formatMoney(2, '.', ',')
             },
-            getPrecioTotal(i)
-            {
+            getPrecioTotal(i){
                 var precio_total = this.contrato.conceptos.data[i]['precio_total_antes_desc'] - ((this.contrato.conceptos.data[i]['precio_total_antes_desc'] * this.contrato.conceptos.data[i]['descuento_cot'])/100);
                 this.contrato.conceptos.data[i]['precio_total'] = precio_total;
                 return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')

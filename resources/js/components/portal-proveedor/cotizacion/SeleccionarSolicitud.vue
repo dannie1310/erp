@@ -123,22 +123,27 @@
                             id: this.id_invitacion,
                             params:{}
                         }).then(data => {
+                            console.log(this.invitacion)
                             if(this.invitacion.con_cotizacion){
-                                this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
+                                if(this.invitacion.tipo_antecedente == 49){
+                                    this.$router.push({name: 'presupuesto-proveedor-edit', params: {id: this.id_invitacion}});
+                                }
+                                if(this.invitacion.tipo_antecedente == 17) {
+                                    this.$router.push({name: 'cotizacion-proveedor-edit', params: {id: this.id_invitacion}});
+                                }
                             }else{
                                 if(this.invitacion.tipo_antecedente == 49) {
                                     this.$router.push({
                                         name: 'presupuesto-proveedor-create',
-                                        params: {id_invitacion: this.id_invitacion}
+                                        params: {id: this.id_invitacion}
                                     });
                                 }
                                 if(this.invitacion.tipo_antecedente == 17) {
                                     this.$router.push({
                                         name: 'cotizacion-proveedor-create',
-                                        params: {id_invitacion: this.id_invitacion}
+                                        params: {id: this.id_invitacion}
                                     });
                                 }
-
                             }
                         });
                     }

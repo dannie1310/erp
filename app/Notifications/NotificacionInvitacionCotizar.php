@@ -92,13 +92,13 @@ class NotificacionInvitacionCotizar extends Notification
                     ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
             }
             //0100
-            else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
-                $pdf = new InvitacionCotizarFormato($this->invitacion);
+            //else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) && !(($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)){
+              /*  $pdf = new InvitacionCotizarFormato($this->invitacion);
                 return (new MailMessage)
                     ->subject("Invitación a Cotizar")
                     ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
                     ->attachData($pdf->Output("S","Invitación a Cotizar ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), 'Invitación a Cotizar '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
-            }
+            }*/
             //0101
             else if(!file_exists($path_carta_terminos)  /*&& (($carta_terminos->tamanio_kb/1024)<$tamanio_mb)*/ && !file_exists($path_formato_cotizacion) /*&& (($formato_cotizacion->tamanio_kb/1024)<$tamanio_mb)*/){
                 $pdf = new InvitacionCotizarFormato($this->invitacion);

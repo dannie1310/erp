@@ -200,7 +200,7 @@
                                                                 class="form-control"
                                                                 id="moneda"
                                                                 v-model="partida.id_moneda"
-                                                                :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                                :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
                                                                     <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
@@ -648,7 +648,7 @@
         components: {
             EncabezadoCotizacionCompraProveedor,
             DatosCotizacionCompra, Datepicker, ModelListSelect},
-        props: ['id_invitacion', 'xls'],
+        props: ['id', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -697,7 +697,7 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidasEdicion'], scope: ['invitadoAutenticado']}
                 }).then(data => {
 
@@ -752,7 +752,7 @@
                             }
                         }).then((value) => {
                             if(value) {
-                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: data.id}});
+                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id: data.id}});
                                 swal.close();
                             }
                         });
