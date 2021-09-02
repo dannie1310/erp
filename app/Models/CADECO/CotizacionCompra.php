@@ -978,6 +978,19 @@ class    CotizacionCompra  extends Transaccion
             $invitacion->update([
                 'id_cotizacion_generada' => $cotizacion->id_transaccion
             ]);
+
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                Exclusion::create([
+                    'id_transaccion' => $cotizacion->id_transaccion,
+                    'descripcion' => $exclusion['descripcion'],
+                    'unidad' => $exclusion['unidad'],
+                    'cantidad' => $exclusion['cantidad'],
+                    'precio_unitario' => $exclusion['precio_unitario'],
+                    'id_moneda' => $exclusion['id_moneda'],
+                ]);
+            }
+
             DB::connection('cadeco')->commit();
             return $cotizacion;
         } catch (\Exception $e) {
@@ -1042,7 +1055,6 @@ class    CotizacionCompra  extends Transaccion
 
                 $item = null;
                 $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
-                $exclusiones_viejas = [];
                 if ($item) {
                     CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                         'precio_unitario' => $partida['enable'] ? $partida['precio_unitario'] : null,
@@ -1069,6 +1081,7 @@ class    CotizacionCompra  extends Transaccion
                 }
             }
 
+            $exclusiones_viejas = [];
             foreach ($data['exclusiones']['data'] as $exclusion)
             {
                 if(array_key_exists('id',$exclusion))

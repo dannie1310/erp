@@ -527,13 +527,12 @@
                                 <hr />
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <div class="card">
-                                            <div class="card-header">
-                                                <h6><i class="fa fa-th-list icon"></i><b>Exclusiones</b></h6>
-                                            </div>
-                                            <div class="card-body table-responsive">
-                                                <table class="table table-striped">
-                                                    <thead>
+                                        <div class="table-responsive">
+                                            <table class="table table-sm" id="tabla-resumen-monedas">
+                                                <thead>
+                                                    <tr>
+                                                        <td class="encabezado" colspan="8"><b>Exclusiones</b></td>
+                                                    </tr>
                                                     <tr>
                                                         <th class="index_corto">#</th>
                                                         <th>Descripción</th>
@@ -550,7 +549,7 @@
                                                         </th>
                                                     </tr>
                                                     </thead>
-                                                    <tbody>
+                                                <tbody>
                                                     <tr v-for="(extension, i) in invitacion.cotizacionCompra.exclusiones.data">
                                                         <td class="index_corto">{{ i + 1 }}</td>
                                                         <td v-if="extension.id == undefined">
@@ -621,14 +620,13 @@
                                                         <td v-else>{{extension.moneda}}</td>
                                                         <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
                                                         <td>
-                                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarExclusion(i)" :disabled="invitacion.cotizacionCompra.exclusiones.data.length == 1" >
+                                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarExclusion(i)">
                                                                 <i class="fa fa-trash"></i>
                                                             </button>
                                                         </td>
                                                     </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </div>
                                 </div>
@@ -1172,6 +1170,11 @@ table .numerico
 
 table tbody td input.text {
     text-align: right;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
 }
 </style>
 
