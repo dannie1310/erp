@@ -78,23 +78,6 @@ class InvitacionService
             $this->repository->where([['razon_social','LIKE', '%' . request( 'razon_social' ). '%' ]]);
         }
 
-        if(isset($data['id_referente']))
-        {
-            $fondos = $this->repository->findFondo(request('id_referente'));
-            $this->repository->whereIn(['id_referente',$fondos]);
-        }
-
-        if(isset($data['id_referente']))
-        {
-            $fondos = $this->repository->findFondo(request('id_referente'));
-            $this->repository->whereIn(['id_referente',$fondos]);
-        }
-
-        if(isset($data['referencia']))
-        {
-            $this->repository->where([['referencia','LIKE', '%' . request( 'referencia') . '%' ]]);
-        }
-
         if(isset($data['descripcion_obra']))
         {
             $this->repository->where([['descripcion_obra','LIKE', '%' . request( 'descripcion_obra') . '%' ]]);
