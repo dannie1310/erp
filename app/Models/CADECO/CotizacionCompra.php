@@ -1042,7 +1042,7 @@ class    CotizacionCompra  extends Transaccion
 
                 $item = null;
                 $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
-
+                $exclusiones_viejas = [];
                 if ($item) {
                     CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                         'precio_unitario' => $partida['enable'] ? $partida['precio_unitario'] : null,
@@ -1069,9 +1069,20 @@ class    CotizacionCompra  extends Transaccion
                 }
             }
 
-            foreach ($this->exclusiones as $exclusion)
+            foreach ($data['exclusiones']['data'] as $exclusion)
             {
-                dd($exclusion);
+                if(array_key_exists('id',$exclusion))
+                {
+                    $exclusiones_viejas[$exclusion['id']] = $exclusion['id'];
+                }
+            }
+
+            foreach ($this->exclusiones as $exc)
+            {
+                if(!array_key_exists($exc->getKey(),$exclusiones_viejas))
+                {
+                    $exc->delete();
+                }
             }
 
             foreach ($data['exclusiones']['data'] as $exclusion)

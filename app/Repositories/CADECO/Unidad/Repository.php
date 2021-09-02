@@ -27,4 +27,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
        return $this->model->where('unidad', '=',$data)->first();
     }
+
+    public function buscarPorBase($data)
+    {
+        return $this->model->buscarPorBase($data);
+    }
 }
