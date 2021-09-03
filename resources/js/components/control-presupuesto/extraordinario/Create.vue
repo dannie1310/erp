@@ -32,7 +32,7 @@
 
                 <br>
 
-                <div class="row">
+                <div class="row" v-if="tipo_costo !=''">
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr >
@@ -99,519 +99,613 @@
                             <tr>
                                 <td style="border:none">&nbsp;</td>
                             </tr>
-                            <!--MATERIALES -->
-                            <tr>
-                                <td colspan="5" style="border:none"><h6>Materiales</h6></td>
-                                <td colspan="2" style="border:none"></td>
-                            </tr>
-                            <tr >
-                                <th class="encabezado icono">
-                                    #
-                                </th>
-                                <th class="encabezado">
-                                    Descripción
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Unidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Cantidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Precio Unitario
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Importe
-                                </th>
-                                <th class="encabezado icono">
-                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMaterial()">
-                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                        <i class="fa fa-plus" v-else></i>
-                                    </button>
-                                </th>
-                            </tr>
-                            <tr v-for="(partida_material, i) in partidas_material">
-                                <td style="text-align: center">
-                                    {{i+1}}
-                                </td>
-                                <td >
-                                    <span v-if="partida_material.material === ''">
-                                        <MaterialSelect
-                                            :name="`material[${i}]`"
-                                            :scope="['materiales']"
-                                            sort = "descripcion"
-                                            v-model="partida_material.material"
-                                            data-vv-as="Material"
-                                            v-validate="{required: true}"
-                                            :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
-                                            :class="{'is-invalid': errors.has(`material[${i}]`)}"
-                                            ref="MaterialSelect"
-                                            :disableBranchNodes="false"/>
-                                        <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
-                                    </span>
-                                    <span v-else>
-                                        {{partida_material.material.descripcion}}
-                                    </span>
-                                </td>
-                                <td >
-                                    {{partida_material.material.unidad}}
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcular"
+                            <template v-if="tipo_costo==1">
+                                <!--MATERIALES -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6>Materiales</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMaterial()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_material, i) in partidas_material">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_material.material === ''">
+                                            <MaterialSelect
+                                                :name="`material[${i}]`"
+                                                :scope="['materiales']"
+                                                sort = "descripcion"
+                                                v-model="partida_material.material"
+                                                data-vv-as="Material"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar material por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`material[${i}]`)}"
+                                                ref="MaterialSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_material.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_material.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcular"
+                                               class="form-control"
+                                               :name="`cantidad_material[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partida_material.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
+                                               :id="`cantidad_material[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcular"
+                                               class="form-control"
+                                               :name="`precio_unitario[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partida_material.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
+                                               :id="`precio_unitario[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_material.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMaterial(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Material:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_material.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+                                <!--MANO DE OBRA -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6>Mano de Obra</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMO()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_mo, i) in partidas_mo">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_mo.material === ''">
+                                            <MaterialSelect
+                                                :name="`mano_obra[${i}]`"
+                                                :scope="['manoObra']"
+                                                sort = "descripcion"
+                                                v-model="partida_mo.material"
+                                                data-vv-as="Material"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`mano_obra[${i}]`)}"
+                                                :ref="`MOSelect_${i}`"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`mano_obra[${i}]`)">{{ errors.first(`mano_obra[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_mo.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_mo.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularMO"
+                                               class="form-control"
+                                               :name="`cantidad_mo[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partida_mo.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_mo[${i}]`)}"
+                                               :id="`cantidad_mo_${i}`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_mo[${i}]`)">{{ errors.first(`cantidad_mo[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularMO"
+                                               class="form-control"
+                                               :name="`precio_unitario_mo[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partida_mo.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_mo[${i}]`)}"
+                                               :id="`precio_unitario_mo[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_mo[${i}]`)">{{ errors.first(`precio_unitario_mo[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_mo.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMO(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Mano de Obra:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_mo.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+
+                                <!-- HERRAMIENTA Y EQUIPO -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6>Herramienta y Equipo</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaHE()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_he, i) in partidas_he">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_he.material === ''">
+                                            <MaterialSelect
+                                                :name="`herramienta[${i}]`"
+                                                :scope="['herramientas']"
+                                                sort = "descripcion"
+                                                v-model="partida_he.material"
+                                                data-vv-as="Material"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`herramienta[${i}]`)}"
+                                                ref="HESelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`herramienta[${i}]`)">{{ errors.first(`herramienta[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_he.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_he.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularHE"
+                                               class="form-control"
+                                               :name="`cantidad_material_he[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partida_he.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_material_he[${i}]`)}"
+                                               :id="`cantidad_material_he[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_material_he[${i}]`)">{{ errors.first(`cantidad_material_he[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularHE"
+                                               class="form-control"
+                                               :name="`precio_unitario_he[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partida_he.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_he[${i}]`)}"
+                                               :id="`precio_unitario_he[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_he[${i}]`)">{{ errors.first(`precio_unitario_he[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_he.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaHE(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Herramienta y Equipo:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_he.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+
+                                <!-- MAQUINARIA -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6>Maquinaria</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMAQ()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_maq, i) in partidas_maq">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_maq.material === ''">
+                                            <MaterialSelect
+                                                :name="`maquinaria[${i}]`"
+                                                :scope="['maquinaria']"
+                                                sort = "descripcion"
+                                                v-model="partida_maq.material"
+                                                data-vv-as="Material"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`maquinaria[${i}]`)}"
+                                                ref="MAQSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`maquinaria[${i}]`)">{{ errors.first(`maquinaria[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_maq.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_maq.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularMAQ"
+                                               class="form-control"
+                                               :name="`cantidad_material_maq[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partida_maq.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_material_maq[${i}]`)}"
+                                               :id="`cantidad_material_maq[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_material_maq[${i}]`)">{{ errors.first(`cantidad_material_maq[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularMAQ"
+                                               class="form-control"
+                                               :name="`precio_unitario_maq[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partida_maq.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_maq[${i}]`)}"
+                                               :id="`precio_unitario_maq[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_maq[${i}]`)">{{ errors.first(`precio_unitario_maq[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_maq.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMAQ(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Maquiaria:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_maq.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+
+                                <!-- SUBCONTRATOS -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6>Subcontratos</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaSUB()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_sub, i) in partidas_sub">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_sub.material === ''">
+                                            <MaterialSelect
+                                                :name="`subcontrato[${i}]`"
+                                                :scope="['subcontrato']"
+                                                sort = "descripcion"
+                                                v-model="partida_sub.material"
+                                                data-vv-as="Subcontrato"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`subcontrato[${i}]`)}"
+                                                ref="MAQSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`subcontrato[${i}]`)">{{ errors.first(`subcontrato[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_sub.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_sub.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularSUB"
+                                               class="form-control"
+                                               :name="`cantidad_material_sub[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partida_sub.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_material_sub[${i}]`)}"
+                                               :id="`cantidad_material_sub[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_material_sub[${i}]`)">{{ errors.first(`cantidad_material_sub[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularSUB"
+                                               class="form-control"
+                                               :name="`precio_unitario_sub[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partida_sub.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_sub[${i}]`)}"
+                                               :id="`precio_unitario_sub[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_sub[${i}]`)">{{ errors.first(`precio_unitario_sub[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_sub.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaSUB(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Subcontratos:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_sub.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+                            </template>
+                            <template v-if="tipo_costo==2">
+                                <!-- GASTOS -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6>Gastos</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaGAS()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_gas, i) in partidas_gas">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_gas.material === ''">
+                                            <MaterialSelect
+                                                :name="`gastos[${i}]`"
+                                                :scope="['subcontrato']"
+                                                sort = "descripcion"
+                                                v-model="partida_gas.material"
+                                                data-vv-as="Gastos"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`gastos[${i}]`)}"
+                                                ref="GASSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`gastos[${i}]`)">{{ errors.first(`gastos[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_gas.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_gas.material.unidad}}
+                                    </td>
+                                    <td style="text-align: right">
+                                        {{partida_gas.cantidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                           v-on:keyup="calcularGAS"
                                            class="form-control"
-                                           :name="`cantidad_material[${i}]`"
-                                           :data-vv-as="`Cantidad Material ${i+1}`"
-                                           v-model="partida_material.cantidad"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
-                                           :id="`cantidad_material[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcular"
-                                           class="form-control"
-                                           :name="`precio_unitario[${i}]`"
+                                           :name="`precio_unitario_gas[${i}]`"
                                            :data-vv-as="`Precio Unitario ${i+1}`"
-                                           v-model="partida_material.precio_unitario"
+                                           v-model="partida_gas.precio_unitario"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
-                                           :id="`precio_unitario[${i}]`"
+                                           :class="{'is-invalid': errors.has(`precio_unitario_gas[${i}]`)}"
+                                           :id="`precio_unitario_gas[${i}]`"
                                            style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_gas[${i}]`)">{{ errors.first(`precio_unitario_gas[${i}]`) }}</div>
 
-                                </td>
-                                <td style="text-align: right">
-                                    ${{partida_material.importe.formatMoney(2)}}
-                                </td>
-                                <td >
-                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMaterial(i)"  ><i class="fa fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Material:</td>
-                                <td style="text-align: right; border: none">${{suma_partidas_material.formatMoney(2)}}</td>
-                                <td style="border: none"></td>
-                            </tr>
-                            <tr>
-                                <td style="border: none">&nbsp;</td>
-                            </tr>
-                            <!--MANO DE OBRA -->
-                            <tr>
-                                <td colspan="5" style="border:none"><h6>Mano de Obra</h6></td>
-                                <td colspan="2" style="border:none"></td>
-                            </tr>
-
-                            <tr >
-                                <th class="encabezado icono">
-                                    #
-                                </th>
-                                <th class="encabezado">
-                                    Descripción
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Unidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Cantidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Precio Unitario
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Importe
-                                </th>
-                                <th class="encabezado icono">
-                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMO()">
-                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                        <i class="fa fa-plus" v-else></i>
-                                    </button>
-                                </th>
-                            </tr>
-                            <tr v-for="(partida_mo, i) in partidas_mo">
-                                <td style="text-align: center">
-                                    {{i+1}}
-                                </td>
-                                <td >
-                                    <span v-if="partida_mo.material === ''">
-                                        <MaterialSelect
-                                            :name="`mano_obra[${i}]`"
-                                            :scope="['manoObra']"
-                                            sort = "descripcion"
-                                            v-model="partida_mo.material"
-                                            data-vv-as="Material"
-                                            v-validate="{required: true}"
-                                            :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
-                                            :class="{'is-invalid': errors.has(`mano_obra[${i}]`)}"
-                                            :ref="`MOSelect_${i}`"
-                                            :disableBranchNodes="false"/>
-                                        <div class="invalid-feedback" v-show="errors.has(`mano_obra[${i}]`)">{{ errors.first(`mano_obra[${i}]`) }}</div>
-                                    </span>
-                                    <span v-else>
-                                        {{partida_mo.material.descripcion}}
-                                    </span>
-                                </td>
-                                <td >
-                                    {{partida_mo.material.unidad}}
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularMO"
-                                           class="form-control"
-                                           :name="`cantidad_mo[${i}]`"
-                                           :data-vv-as="`Cantidad Material ${i+1}`"
-                                           v-model="partida_mo.cantidad"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_mo[${i}]`)}"
-                                           :id="`cantidad_mo_${i}`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_mo[${i}]`)">{{ errors.first(`cantidad_mo[${i}]`) }}</div>
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularMO"
-                                           class="form-control"
-                                           :name="`precio_unitario_mo[${i}]`"
-                                           :data-vv-as="`Precio Unitario ${i+1}`"
-                                           v-model="partida_mo.precio_unitario"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario_mo[${i}]`)}"
-                                           :id="`precio_unitario_mo[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_mo[${i}]`)">{{ errors.first(`precio_unitario_mo[${i}]`) }}</div>
-
-                                </td>
-                                <td style="text-align: right">
-                                    ${{partida_mo.importe.formatMoney(2)}}
-                                </td>
-                                <td >
-                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMO(i)"  ><i class="fa fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Mano de Obra:</td>
-                                <td style="text-align: right; border: none">${{suma_partidas_mo.formatMoney(2)}}</td>
-                                <td style="border: none"></td>
-                            </tr>
-                            <tr>
-                                <td style="border: none">&nbsp;</td>
-                            </tr>
-
-                            <!-- HERRAMIENTA Y EQUIPO -->
-                            <tr>
-                                <td colspan="5" style="border:none"><h6>Herramienta y Equipo</h6></td>
-                                <td colspan="2" style="border:none"></td>
-                            </tr>
-
-                            <tr >
-                                <th class="encabezado icono">
-                                    #
-                                </th>
-                                <th class="encabezado">
-                                    Descripción
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Unidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Cantidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Precio Unitario
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Importe
-                                </th>
-                                <th class="encabezado icono">
-                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaHE()">
-                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                        <i class="fa fa-plus" v-else></i>
-                                    </button>
-                                </th>
-                            </tr>
-                            <tr v-for="(partida_he, i) in partidas_he">
-                                <td style="text-align: center">
-                                    {{i+1}}
-                                </td>
-                                <td >
-                                    <span v-if="partida_he.material === ''">
-                                        <MaterialSelect
-                                            :name="`herramienta[${i}]`"
-                                            :scope="['herramientas']"
-                                            sort = "descripcion"
-                                            v-model="partida_he.material"
-                                            data-vv-as="Material"
-                                            v-validate="{required: true}"
-                                            :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
-                                            :class="{'is-invalid': errors.has(`herramienta[${i}]`)}"
-                                            ref="HESelect"
-                                            :disableBranchNodes="false"/>
-                                        <div class="invalid-feedback" v-show="errors.has(`herramienta[${i}]`)">{{ errors.first(`herramienta[${i}]`) }}</div>
-                                    </span>
-                                    <span v-else>
-                                        {{partida_he.material.descripcion}}
-                                    </span>
-                                </td>
-                                <td >
-                                    {{partida_he.material.unidad}}
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularHE"
-                                           class="form-control"
-                                           :name="`cantidad_material_he[${i}]`"
-                                           :data-vv-as="`Cantidad Material ${i+1}`"
-                                           v-model="partida_he.cantidad"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material_he[${i}]`)}"
-                                           :id="`cantidad_material_he[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material_he[${i}]`)">{{ errors.first(`cantidad_material_he[${i}]`) }}</div>
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularHE"
-                                           class="form-control"
-                                           :name="`precio_unitario_he[${i}]`"
-                                           :data-vv-as="`Precio Unitario ${i+1}`"
-                                           v-model="partida_he.precio_unitario"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario_he[${i}]`)}"
-                                           :id="`precio_unitario_he[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_he[${i}]`)">{{ errors.first(`precio_unitario_he[${i}]`) }}</div>
-
-                                </td>
-                                <td style="text-align: right">
-                                    ${{partida_he.importe.formatMoney(2)}}
-                                </td>
-                                <td >
-                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaHE(i)"  ><i class="fa fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Herramienta y Equipo:</td>
-                                <td style="text-align: right; border: none">${{suma_partidas_he.formatMoney(2)}}</td>
-                                <td style="border: none"></td>
-                            </tr>
-                            <tr>
-                                <td style="border: none">&nbsp;</td>
-                            </tr>
-
-                            <!-- MAQUINARIA -->
-                            <tr>
-                                <td colspan="5" style="border:none"><h6>Maquinaria</h6></td>
-                                <td colspan="2" style="border:none"></td>
-                            </tr>
-
-                            <tr >
-                                <th class="encabezado icono">
-                                    #
-                                </th>
-                                <th class="encabezado">
-                                    Descripción
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Unidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Cantidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Precio Unitario
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Importe
-                                </th>
-                                <th class="encabezado icono">
-                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMAQ()">
-                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                        <i class="fa fa-plus" v-else></i>
-                                    </button>
-                                </th>
-                            </tr>
-                            <tr v-for="(partida_maq, i) in partidas_maq">
-                                <td style="text-align: center">
-                                    {{i+1}}
-                                </td>
-                                <td >
-                                    <span v-if="partida_maq.material === ''">
-                                        <MaterialSelect
-                                            :name="`maquinaria[${i}]`"
-                                            :scope="['maquinaria']"
-                                            sort = "descripcion"
-                                            v-model="partida_maq.material"
-                                            data-vv-as="Material"
-                                            v-validate="{required: true}"
-                                            :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
-                                            :class="{'is-invalid': errors.has(`maquinaria[${i}]`)}"
-                                            ref="MAQSelect"
-                                            :disableBranchNodes="false"/>
-                                        <div class="invalid-feedback" v-show="errors.has(`maquinaria[${i}]`)">{{ errors.first(`maquinaria[${i}]`) }}</div>
-                                    </span>
-                                    <span v-else>
-                                        {{partida_maq.material.descripcion}}
-                                    </span>
-                                </td>
-                                <td >
-                                    {{partida_maq.material.unidad}}
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularMAQ"
-                                           class="form-control"
-                                           :name="`cantidad_material_maq[${i}]`"
-                                           :data-vv-as="`Cantidad Material ${i+1}`"
-                                           v-model="partida_maq.cantidad"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material_maq[${i}]`)}"
-                                           :id="`cantidad_material_maq[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material_maq[${i}]`)">{{ errors.first(`cantidad_material_maq[${i}]`) }}</div>
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularMAQ"
-                                           class="form-control"
-                                           :name="`precio_unitario_maq[${i}]`"
-                                           :data-vv-as="`Precio Unitario ${i+1}`"
-                                           v-model="partida_maq.precio_unitario"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario_maq[${i}]`)}"
-                                           :id="`precio_unitario_maq[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_maq[${i}]`)">{{ errors.first(`precio_unitario_maq[${i}]`) }}</div>
-
-                                </td>
-                                <td style="text-align: right">
-                                    ${{partida_maq.importe.formatMoney(2)}}
-                                </td>
-                                <td >
-                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMAQ(i)"  ><i class="fa fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Maquiaria:</td>
-                                <td style="text-align: right; border: none">${{suma_partidas_maq.formatMoney(2)}}</td>
-                                <td style="border: none"></td>
-                            </tr>
-                            <tr>
-                                <td style="border: none">&nbsp;</td>
-                            </tr>
-
-                            <!-- SUBCONTRATOS -->
-                            <tr>
-                                <td colspan="5" style="border:none"><h6>Subcontratos</h6></td>
-                                <td colspan="2" style="border:none"></td>
-                            </tr>
-
-                            <tr >
-                                <th class="encabezado icono">
-                                    #
-                                </th>
-                                <th class="encabezado">
-                                    Descripción
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Unidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Cantidad
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Precio Unitario
-                                </th>
-                                <th class="encabezado cantidad_input">
-                                    Importe
-                                </th>
-                                <th class="encabezado icono">
-                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaSUB()">
-                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                        <i class="fa fa-plus" v-else></i>
-                                    </button>
-                                </th>
-                            </tr>
-                            <tr v-for="(partida_sub, i) in partidas_sub">
-                                <td style="text-align: center">
-                                    {{i+1}}
-                                </td>
-                                <td >
-                                    <span v-if="partida_sub.material === ''">
-                                        <MaterialSelect
-                                            :name="`subcontrato[${i}]`"
-                                            :scope="['subcontrato']"
-                                            sort = "descripcion"
-                                            v-model="partida_sub.material"
-                                            data-vv-as="Subcontrato"
-                                            v-validate="{required: true}"
-                                            :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
-                                            :class="{'is-invalid': errors.has(`subcontrato[${i}]`)}"
-                                            ref="MAQSelect"
-                                            :disableBranchNodes="false"/>
-                                        <div class="invalid-feedback" v-show="errors.has(`subcontrato[${i}]`)">{{ errors.first(`subcontrato[${i}]`) }}</div>
-                                    </span>
-                                    <span v-else>
-                                        {{partida_sub.material.descripcion}}
-                                    </span>
-                                </td>
-                                <td >
-                                    {{partida_sub.material.unidad}}
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularSUB"
-                                           class="form-control"
-                                           :name="`cantidad_material_sub[${i}]`"
-                                           :data-vv-as="`Cantidad Material ${i+1}`"
-                                           v-model="partida_sub.cantidad"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material_sub[${i}]`)}"
-                                           :id="`cantidad_material_sub[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material_sub[${i}]`)">{{ errors.first(`cantidad_material_sub[${i}]`) }}</div>
-                                </td>
-                                <td >
-                                    <input type="text"
-                                           v-on:keyup="calcularSUB"
-                                           class="form-control"
-                                           :name="`precio_unitario_sub[${i}]`"
-                                           :data-vv-as="`Precio Unitario ${i+1}`"
-                                           v-model="partida_sub.precio_unitario"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario_sub[${i}]`)}"
-                                           :id="`precio_unitario_sub[${i}]`"
-                                           style="text-align: right"
-                                    >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_sub[${i}]`)">{{ errors.first(`precio_unitario_sub[${i}]`) }}</div>
-
-                                </td>
-                                <td style="text-align: right">
-                                    ${{partida_sub.importe.formatMoney(2)}}
-                                </td>
-                                <td >
-                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaSUB(i)"  ><i class="fa fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Subcontratos:</td>
-                                <td style="text-align: right; border: none">${{suma_partidas_sub.formatMoney(2)}}</td>
-                                <td style="border: none"></td>
-                            </tr>
-                            <tr>
-                                <td style="border: none">&nbsp;</td>
-                            </tr>
-
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_gas.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaGAS(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Gastos:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_gas.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+                            </template>
                         </table>
                     </div>
                 </div>
@@ -757,6 +851,18 @@ export default {
                     precio_unitario : 0,
                 }
             ],
+            partidas_gas: [
+                {
+                    i : 0,
+                    material : "",
+                    unidad : "",
+                    numero_parte : "",
+                    descripcion : "",
+                    cantidad : 1,
+                    importe : 0,
+                    precio_unitario : 0,
+                }
+            ],
         }
     },
     methods: {
@@ -790,6 +896,10 @@ export default {
         eliminaPartidaSUB(i){
             this.partidas_sub.splice(i, 1);
             this.calcularSUB();
+        },
+        eliminaPartidaGAS(i){
+            this.partidas_gas.splice(i, 1);
+            this.calcularGAS();
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -938,6 +1048,31 @@ export default {
                 _self.suma_partidas_sub += parseFloat(partida.importe);
             });
         },
+        calcularGAS() {
+            let _self = this;
+            this.suma_partidas_gas = 0;
+            this.partidas_gas.forEach(function (partida, i) {
+                let cantidad = 0;
+                let precio_unitario = 0;
+
+                if(isNaN(parseFloat(partida.cantidad)))
+                {
+                    cantidad = 0;
+                }else{
+                    cantidad = partida.cantidad;
+                }
+
+                if(isNaN(parseFloat(partida.precio_unitario)))
+                {
+                    precio_unitario = 0;
+                }else{
+                    precio_unitario = partida.precio_unitario;
+                }
+
+                partida.importe = parseFloat(cantidad) * parseFloat(precio_unitario);
+                _self.suma_partidas_gas += parseFloat(partida.importe);
+            });
+        },
         addPartidaMaterial(){
             this.partidas_material.splice(this.partidas_material.length + 1, 0, {
                 i : 0,
@@ -998,6 +1133,19 @@ export default {
                 numero_parte : "",
                 descripcion : "",
                 cantidad : "",
+                importe : 0,
+                precio_unitario : 0,
+            });
+            this.index = this.index+1;
+        },
+        addPartidaGAS(){
+            this.partidas_gas.splice(this.partidas_gas.length + 1, 0, {
+                i : 0,
+                material : "",
+                unidad : "",
+                numero_parte : "",
+                descripcion : "",
+                cantidad : 1,
                 importe : 0,
                 precio_unitario : 0,
             });
