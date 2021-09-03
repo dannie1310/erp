@@ -27,7 +27,6 @@
                                         {{ tipo}}
                             </label>
                         </div>
-
                     </div>
                 </div>
 
@@ -140,7 +139,7 @@
                                     <span v-if="partida_material.material === ''">
                                         <MaterialSelect
                                             :name="`material[${i}]`"
-                                            :scope="scopeMaterial"
+                                            :scope="['materiales']"
                                             sort = "descripcion"
                                             v-model="partida_material.material"
                                             data-vv-as="Material"
@@ -200,7 +199,108 @@
                                 <td style="border: none"></td>
                             </tr>
                             <tr>
-                                <td>&nbsp;</td>
+                                <td style="border: none">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border:none"><h6>Mano de Obra</h6></td>
+                                <td colspan="2" style="border:none"></td>
+                            </tr>
+
+                            <tr >
+                                <th class="encabezado icono">
+                                    #
+                                </th>
+                                <th class="encabezado">
+                                    Descripción
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Unidad
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Cantidad
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Precio Unitario
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Importe
+                                </th>
+                                <th class="encabezado icono">
+                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMO()">
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
+                                </th>
+                            </tr>
+                            <tr v-for="(partida_mo, i) in partidas_mo">
+                                <td style="text-align: center">
+                                    {{i+1}}
+                                </td>
+                                <td >
+                                    <span v-if="partida_mo.material === ''">
+                                        <MaterialSelect
+                                            :name="`material[${i}]`"
+                                            :scope="['manoObra']"
+                                            sort = "descripcion"
+                                            v-model="partida_mo.material"
+                                            data-vv-as="Material"
+                                            v-validate="{required: true}"
+                                            :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                            :class="{'is-invalid': errors.has(`material[${i}]`)}"
+                                            ref="MOSelect"
+                                            :disableBranchNodes="false"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`material[${i}]`)">{{ errors.first(`material[${i}]`) }}</div>
+                                    </span>
+                                    <span v-else>
+                                        {{partida_mo.material.descripcion}}
+                                    </span>
+                                </td>
+                                <td >
+                                    {{partida_mo.material.unidad}}
+                                </td>
+                                <td >
+                                    <input type="text"
+                                           v-on:keyup="calcularMO"
+                                           class="form-control"
+                                           :name="`cantidad_material[${i}]`"
+                                           :data-vv-as="`Cantidad Material ${i+1}`"
+                                           v-model="partida_mo.cantidad"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
+                                           :id="`cantidad_material[${i}]`"
+                                           style="text-align: right"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                </td>
+                                <td >
+                                    <input type="text"
+                                           v-on:keyup="calcularMO"
+                                           class="form-control"
+                                           :name="`precio_unitario[${i}]`"
+                                           :data-vv-as="`Precio Unitario ${i+1}`"
+                                           v-model="partida_mo.precio_unitario"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
+                                           :id="`precio_unitario[${i}]`"
+                                           style="text-align: right"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+
+                                </td>
+                                <td style="text-align: right">
+                                    ${{partida_mo.importe.formatMoney(2)}}
+                                </td>
+                                <td >
+                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMO(i)"  ><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Mano de Obra:</td>
+                                <td style="text-align: right; border: none">${{suma_partidas_mo.formatMoney(2)}}</td>
+                                <td style="border: none"></td>
+                            </tr>
+                            <tr>
+                                <td style="border: none">&nbsp;</td>
                             </tr>
                         </table>
                     </div>
@@ -300,6 +400,18 @@ export default {
                     precio_unitario : 0,
                 }
             ],
+            partidas_mo: [
+                {
+                    i : 0,
+                    material : "",
+                    unidad : "",
+                    numero_parte : "",
+                    descripcion : "",
+                    cantidad : "",
+                    importe : 0,
+                    precio_unitario : 0,
+                }
+            ],
         }
     },
     methods: {
@@ -317,6 +429,10 @@ export default {
         eliminaPartidaMaterial(i){
             this.partidas_material.splice(i, 1);
             this.calcular();
+        },
+        eliminaPartidaMO(i){
+            this.partidas_mo.splice(i, 1);
+            this.calcularMO();
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -366,8 +482,45 @@ export default {
                 _self.suma_partidas_material += parseFloat(partida.importe);
             });
         },
+        calcularMO() {
+            let _self = this;
+            this.suma_partidas_mo = 0;
+            this.partidas_mo.forEach(function (partida, i) {
+                let cantidad = 0;
+                let precio_unitario = 0;
+                if(isNaN(parseFloat(partida.cantidad)))
+                {
+                    cantidad = 0;
+                }else{
+                    cantidad = partida.cantidad;
+                }
+
+                if(isNaN(parseFloat(partida.precio_unitario)))
+                {
+                    precio_unitario = 0;
+                }else{
+                    precio_unitario = partida.precio_unitario;
+                }
+
+                partida.importe = parseFloat(cantidad) * parseFloat(precio_unitario);
+                _self.suma_partidas_mo += parseFloat(partida.importe);
+            });
+        },
         addPartidaMaterial(){
             this.partidas_material.splice(this.partidas_material.length + 1, 0, {
+                i : 0,
+                material : "",
+                unidad : "",
+                numero_parte : "",
+                descripcion : "",
+                cantidad : "",
+                importe : 0,
+                precio_unitario : 0,
+            });
+            this.index = this.index+1;
+        },
+        addPartidaMO(){
+            this.partidas_mo.splice(this.partidas_mo.length + 1, 0, {
                 i : 0,
                 material : "",
                 unidad : "",
