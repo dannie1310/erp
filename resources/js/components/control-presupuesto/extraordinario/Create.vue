@@ -37,7 +37,7 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr >
-                                <th class="encabezado">
+                                <th class="encabezado" colspan="2">
                                     Descripción
                                 </th>
                                 <th class="encabezado cantidad_input">
@@ -49,12 +49,12 @@
                                 <th class="encabezado cantidad_input">
                                     Precio Unitario
                                 </th>
-                                <th class="encabezado cantidad_input">
+                                <th class="encabezado cantidad_input" colspan="2">
                                     Monto Presupuestado
                                 </th>
                             </tr>
                             <tr>
-                                <td style="text-align: center">
+                                <td style="text-align: center" colspan="2">
                                     <input type="text"
                                            class="form-control"
                                            name="descipcion"
@@ -84,28 +84,28 @@
                                            name="cantidad"
                                            data-vv-as="Cantidad"
                                            v-model="cantidad"
-                                           v-validate="{required: true}"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
                                            :class="{'is-invalid': errors.has('cantidad')}"
+                                           style="text-align: right"
                                            id="cantidad">
                                     <div class="invalid-feedback" v-show="errors.has('cantidad')">{{ errors.first('cantidad') }}</div>
                                 </td>
                                 <td style="text-align: right">
                                     ${{precio_unitario.formatMoney(2)}}
                                 </td>
-                                <td style="text-align: right">
+                                <td style="text-align: right" colspan="2">
                                     ${{monto_presupuestado.formatMoney(2)}}
                                 </td>
                             </tr>
-                        </table>
-                    </div>
-                </div>
 
-                <br>
+                            <tr>
+                                <td style="border:none">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="border:none"><h6>Materiales</h6></td>
+                                <td colspan="2" style="border:none"></td>
+                            </tr>
 
-                <div class="row">
-                    <div class="col-md-12">
-                        <h6>Materiales</h6>
-                        <table class="table table-sm">
                             <tr >
                                 <th class="encabezado icono">
                                     #
@@ -156,20 +156,51 @@
                                     </span>
                                 </td>
                                 <td >
-
+                                    {{partida_material.material.unidad}}
                                 </td>
                                 <td >
-
+                                    <input type="text"
+                                           v-on:keyup="calcular"
+                                           class="form-control"
+                                           :name="`cantidad_material[${i}]`"
+                                           :data-vv-as="`Cantidad Material ${i+1}`"
+                                           v-model="partida_material.cantidad"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
+                                           :id="`cantidad_material[${i}]`"
+                                           style="text-align: right"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
                                 </td>
                                 <td >
+                                    <input type="text"
+                                           v-on:keyup="calcular"
+                                           class="form-control"
+                                           :name="`precio_unitario[${i}]`"
+                                           :data-vv-as="`Precio Unitario ${i+1}`"
+                                           v-model="partida_material.precio_unitario"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
+                                           :id="`precio_unitario[${i}]`"
+                                           style="text-align: right"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
 
                                 </td>
-                                <td >
-
+                                <td style="text-align: right">
+                                    ${{partida_material.importe.formatMoney(2)}}
                                 </td>
                                 <td >
                                     <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMaterial(i)"  ><i class="fa fa-trash"></i></button>
                                 </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Material:</td>
+                                <td style="text-align: right; border: none">${{suma_partidas_material.formatMoney(2)}}</td>
+                                <td style="border: none"></td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
                             </tr>
                         </table>
                     </div>
@@ -240,9 +271,7 @@ export default {
             descripcion :'',
             unidad : '',
             unidades : [],
-            cantidad : '',
-            precio_unitario : 0,
-            monto_presupuestado : 0,
+            cantidad : 0,
             cargando: false,
             motivo:'',
             area_solicitante:'',
@@ -253,6 +282,12 @@ export default {
                 2: "Costo Indirecto",
                 1: "Costo Directo"
             },
+            suma_partidas_material : 0,
+            suma_partidas_mo : 0,
+            suma_partidas_he : 0,
+            suma_partidas_maq : 0,
+            suma_partidas_sub : 0,
+            suma_partidas_gas : 0,
             partidas_material: [
                 {
                     i : 0,
@@ -261,6 +296,8 @@ export default {
                     numero_parte : "",
                     descripcion : "",
                     cantidad : "",
+                    importe : 0,
+                    precio_unitario : 0,
                 }
             ],
         }
@@ -279,6 +316,7 @@ export default {
         },
         eliminaPartidaMaterial(i){
             this.partidas_material.splice(i, 1);
+            this.calcular();
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -305,11 +343,28 @@ export default {
             })
         },
         calcular() {
+            let _self = this;
+            this.suma_partidas_material = 0;
+            this.partidas_material.forEach(function (partida, i) {
+                let cantidad = 0;
+                let precio_unitario = 0;
+                if(isNaN(parseFloat(partida.cantidad)))
+                {
+                    cantidad = 0;
+                }else{
+                    cantidad = partida.cantidad;
+                }
 
+                if(isNaN(parseFloat(partida.precio_unitario)))
+                {
+                    precio_unitario = 0;
+                }else{
+                    precio_unitario = partida.precio_unitario;
+                }
 
-        },
-        eliminarPartidaMaterial(index){
-
+                partida.importe = parseFloat(cantidad) * parseFloat(precio_unitario);
+                _self.suma_partidas_material += parseFloat(partida.importe);
+            });
         },
         addPartidaMaterial(){
             this.partidas_material.splice(this.partidas_material.length + 1, 0, {
@@ -319,16 +374,27 @@ export default {
                 numero_parte : "",
                 descripcion : "",
                 cantidad : "",
+                importe : 0,
+                precio_unitario : 0,
             });
             this.index = this.index+1;
         }
     },
     computed: {
-
+        precio_unitario() {
+            return this.suma_partidas_material +
+                this.suma_partidas_mo +
+                this.suma_partidas_he +
+                this.suma_partidas_maq +
+                this.suma_partidas_sub +
+                this.suma_partidas_gas;
+        },
+        monto_presupuestado() {
+            return this.precio_unitario * this.cantidad;
+        },
     },
     mounted() {
         this.getUnidades();
-
     },
 }
 </script>

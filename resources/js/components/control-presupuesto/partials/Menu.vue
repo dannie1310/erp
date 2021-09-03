@@ -12,6 +12,13 @@
                     <p>Aditivas / Deductivas</p>
                 </router-link>
             </li>
+
+            <li class="nav-item">
+                <router-link :to="{name: 'extraordinario'}" class="nav-link"  v-if="$root.can(['consultar_extraordinario'])">
+                    <i class="nav-icon fa fa-plus"></i>
+                    <p>Extraordinario</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
     <!-- /.sidebar-menu -->
