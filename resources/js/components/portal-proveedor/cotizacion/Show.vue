@@ -20,11 +20,10 @@
 </template>
 
 <script>
-    import DatosCotizacionCompra from "./partials/DatosCotizacionCompra";
     import CotizacionProveedorPartialShow from "./partials/PartialShow";
     export default {
         name: "cotizacion-proveedor-show",
-        components: {CotizacionProveedorPartialShow, DatosCotizacionCompra},
+        components: {CotizacionProveedorPartialShow},
         props: ['id'],
         data(){
             return{
