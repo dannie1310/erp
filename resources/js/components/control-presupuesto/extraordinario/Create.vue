@@ -406,6 +406,109 @@
                                 <td style="border: none">&nbsp;</td>
                             </tr>
 
+                            <!-- MAQUINARIA -->
+                            <tr>
+                                <td colspan="5" style="border:none"><h6>Maquinaria</h6></td>
+                                <td colspan="2" style="border:none"></td>
+                            </tr>
+
+                            <tr >
+                                <th class="encabezado icono">
+                                    #
+                                </th>
+                                <th class="encabezado">
+                                    Descripción
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Unidad
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Cantidad
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Precio Unitario
+                                </th>
+                                <th class="encabezado cantidad_input">
+                                    Importe
+                                </th>
+                                <th class="encabezado icono">
+                                    <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaMAQ()">
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
+                                </th>
+                            </tr>
+                            <tr v-for="(partida_maq, i) in partidas_maq">
+                                <td style="text-align: center">
+                                    {{i+1}}
+                                </td>
+                                <td >
+                                    <span v-if="partida_maq.material === ''">
+                                        <MaterialSelect
+                                            :name="`maquinaria[${i}]`"
+                                            :scope="['maquinaria']"
+                                            sort = "descripcion"
+                                            v-model="partida_maq.material"
+                                            data-vv-as="Material"
+                                            v-validate="{required: true}"
+                                            :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                            :class="{'is-invalid': errors.has(`maquinaria[${i}]`)}"
+                                            ref="MAQSelect"
+                                            :disableBranchNodes="false"/>
+                                        <div class="invalid-feedback" v-show="errors.has(`maquinaria[${i}]`)">{{ errors.first(`maquinaria[${i}]`) }}</div>
+                                    </span>
+                                    <span v-else>
+                                        {{partida_maq.material.descripcion}}
+                                    </span>
+                                </td>
+                                <td >
+                                    {{partida_maq.material.unidad}}
+                                </td>
+                                <td >
+                                    <input type="text"
+                                           v-on:keyup="calcularMAQ"
+                                           class="form-control"
+                                           :name="`cantidad_material[${i}]`"
+                                           :data-vv-as="`Cantidad Material ${i+1}`"
+                                           v-model="partida_maq.cantidad"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
+                                           :id="`cantidad_material[${i}]`"
+                                           style="text-align: right"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                </td>
+                                <td >
+                                    <input type="text"
+                                           v-on:keyup="calcularMAQ"
+                                           class="form-control"
+                                           :name="`precio_unitario[${i}]`"
+                                           :data-vv-as="`Precio Unitario ${i+1}`"
+                                           v-model="partida_maq.precio_unitario"
+                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
+                                           :id="`precio_unitario[${i}]`"
+                                           style="text-align: right"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+
+                                </td>
+                                <td style="text-align: right">
+                                    ${{partida_maq.importe.formatMoney(2)}}
+                                </td>
+                                <td >
+                                    <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaMAQ(i)"  ><i class="fa fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Maquiaria:</td>
+                                <td style="text-align: right; border: none">${{suma_partidas_maq.formatMoney(2)}}</td>
+                                <td style="border: none"></td>
+                            </tr>
+                            <tr>
+                                <td style="border: none">&nbsp;</td>
+                            </tr>
+
                         </table>
                     </div>
                 </div>
@@ -527,6 +630,18 @@ export default {
                     precio_unitario : 0,
                 }
             ],
+            partidas_maq: [
+                {
+                    i : 0,
+                    material : "",
+                    unidad : "",
+                    numero_parte : "",
+                    descripcion : "",
+                    cantidad : "",
+                    importe : 0,
+                    precio_unitario : 0,
+                }
+            ],
         }
     },
     methods: {
@@ -552,6 +667,10 @@ export default {
         eliminaPartidaHE(i){
             this.partidas_he.splice(i, 1);
             this.calcularHE();
+        },
+        eliminaPartidaMAQ(i){
+            this.partidas_maq.splice(i, 1);
+            this.calcularMAQ();
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -650,6 +769,31 @@ export default {
                 _self.suma_partidas_he += parseFloat(partida.importe);
             });
         },
+        calcularMAQ() {
+            let _self = this;
+            this.suma_partidas_maq = 0;
+            this.partidas_maq.forEach(function (partida, i) {
+                let cantidad = 0;
+                let precio_unitario = 0;
+
+                if(isNaN(parseFloat(partida.cantidad)))
+                {
+                    cantidad = 0;
+                }else{
+                    cantidad = partida.cantidad;
+                }
+
+                if(isNaN(parseFloat(partida.precio_unitario)))
+                {
+                    precio_unitario = 0;
+                }else{
+                    precio_unitario = partida.precio_unitario;
+                }
+
+                partida.importe = parseFloat(cantidad) * parseFloat(precio_unitario);
+                _self.suma_partidas_maq += parseFloat(partida.importe);
+            });
+        },
         addPartidaMaterial(){
             this.partidas_material.splice(this.partidas_material.length + 1, 0, {
                 i : 0,
@@ -678,6 +822,19 @@ export default {
         },
         addPartidaHE(){
             this.partidas_he.splice(this.partidas_he.length + 1, 0, {
+                i : 0,
+                material : "",
+                unidad : "",
+                numero_parte : "",
+                descripcion : "",
+                cantidad : "",
+                importe : 0,
+                precio_unitario : 0,
+            });
+            this.index = this.index+1;
+        },
+        addPartidaMAQ(){
+            this.partidas_maq.splice(this.partidas_maq.length + 1, 0, {
                 i : 0,
                 material : "",
                 unidad : "",

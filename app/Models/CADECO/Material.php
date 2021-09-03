@@ -251,6 +251,10 @@ class Material extends Model
         return $query->where('tipo_material','=',4);
     }
 
+    public function scopeMaquinaria($query){
+        return $query->where('tipo_material','=',8);
+    }
+
     public function scopeSuministrables($query){
 
         return $query->whereIn('tipo_material',[1,2,4])->where('equivalencia', '=', 1);
