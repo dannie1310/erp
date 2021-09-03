@@ -5,6 +5,8 @@ namespace App\Models\CADECO;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Unidad extends Model
 {
@@ -79,5 +81,12 @@ class Unidad extends Model
         }
         $this->where('unidad', '=', $this->unidad)->update(['unidad' => strtoupper($data['unidad']), 'descripcion' => strtoupper($data['descripcion'])]);
         exit;
+    }
+
+    public function buscarPorBase($base)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        return $this->get();
     }
 }

@@ -24,7 +24,8 @@ class CotizacionCompraTransformer extends TransformerAbstract
         'complemento',
         'partidas',
         'partidasEdicion',
-        'relaciones'
+        'relaciones',
+        'exclusiones'
     ];
 
     public function transform(CotizacionCompra $model)
@@ -145,6 +146,19 @@ class CotizacionCompraTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param CotizacionCompra $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeExclusiones(CotizacionCompra $model)
+    {
+        if($exclusiones = $model->exclusiones)
+        {
+            return $this->collection($exclusiones, new ExclusionTransformer);
         }
         return null;
     }
