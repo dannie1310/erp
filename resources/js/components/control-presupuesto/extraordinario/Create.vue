@@ -247,7 +247,7 @@
                                             v-validate="{required: true}"
                                             :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
                                             :class="{'is-invalid': errors.has(`mano_obra[${i}]`)}"
-                                            ref="MOSelect"
+                                            :ref="`MOSelect_${i}`"
                                             :disableBranchNodes="false"/>
                                         <div class="invalid-feedback" v-show="errors.has(`mano_obra[${i}]`)">{{ errors.first(`mano_obra[${i}]`) }}</div>
                                     </span>
@@ -262,29 +262,29 @@
                                     <input type="text"
                                            v-on:keyup="calcularMO"
                                            class="form-control"
-                                           :name="`cantidad_material[${i}]`"
+                                           :name="`cantidad_mo[${i}]`"
                                            :data-vv-as="`Cantidad Material ${i+1}`"
                                            v-model="partida_mo.cantidad"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
-                                           :id="`cantidad_material[${i}]`"
+                                           :class="{'is-invalid': errors.has(`cantidad_mo[${i}]`)}"
+                                           :id="`cantidad_mo_${i}`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_mo[${i}]`)">{{ errors.first(`cantidad_mo[${i}]`) }}</div>
                                 </td>
                                 <td >
                                     <input type="text"
                                            v-on:keyup="calcularMO"
                                            class="form-control"
-                                           :name="`precio_unitario[${i}]`"
+                                           :name="`precio_unitario_mo[${i}]`"
                                            :data-vv-as="`Precio Unitario ${i+1}`"
                                            v-model="partida_mo.precio_unitario"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
-                                           :id="`precio_unitario[${i}]`"
+                                           :class="{'is-invalid': errors.has(`precio_unitario_mo[${i}]`)}"
+                                           :id="`precio_unitario_mo[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_mo[${i}]`)">{{ errors.first(`precio_unitario_mo[${i}]`) }}</div>
 
                                 </td>
                                 <td style="text-align: right">
@@ -365,29 +365,29 @@
                                     <input type="text"
                                            v-on:keyup="calcularHE"
                                            class="form-control"
-                                           :name="`cantidad_material[${i}]`"
+                                           :name="`cantidad_material_he[${i}]`"
                                            :data-vv-as="`Cantidad Material ${i+1}`"
                                            v-model="partida_he.cantidad"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
-                                           :id="`cantidad_material[${i}]`"
+                                           :class="{'is-invalid': errors.has(`cantidad_material_he[${i}]`)}"
+                                           :id="`cantidad_material_he[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material_he[${i}]`)">{{ errors.first(`cantidad_material_he[${i}]`) }}</div>
                                 </td>
                                 <td >
                                     <input type="text"
                                            v-on:keyup="calcularHE"
                                            class="form-control"
-                                           :name="`precio_unitario[${i}]`"
+                                           :name="`precio_unitario_he[${i}]`"
                                            :data-vv-as="`Precio Unitario ${i+1}`"
                                            v-model="partida_he.precio_unitario"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
-                                           :id="`precio_unitario[${i}]`"
+                                           :class="{'is-invalid': errors.has(`precio_unitario_he[${i}]`)}"
+                                           :id="`precio_unitario_he[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_he[${i}]`)">{{ errors.first(`precio_unitario_he[${i}]`) }}</div>
 
                                 </td>
                                 <td style="text-align: right">
@@ -468,29 +468,29 @@
                                     <input type="text"
                                            v-on:keyup="calcularMAQ"
                                            class="form-control"
-                                           :name="`cantidad_material[${i}]`"
+                                           :name="`cantidad_material_maq[${i}]`"
                                            :data-vv-as="`Cantidad Material ${i+1}`"
                                            v-model="partida_maq.cantidad"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
-                                           :id="`cantidad_material[${i}]`"
+                                           :class="{'is-invalid': errors.has(`cantidad_material_maq[${i}]`)}"
+                                           :id="`cantidad_material_maq[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material_maq[${i}]`)">{{ errors.first(`cantidad_material_maq[${i}]`) }}</div>
                                 </td>
                                 <td >
                                     <input type="text"
                                            v-on:keyup="calcularMAQ"
                                            class="form-control"
-                                           :name="`precio_unitario[${i}]`"
+                                           :name="`precio_unitario_maq[${i}]`"
                                            :data-vv-as="`Precio Unitario ${i+1}`"
                                            v-model="partida_maq.precio_unitario"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
-                                           :id="`precio_unitario[${i}]`"
+                                           :class="{'is-invalid': errors.has(`precio_unitario_maq[${i}]`)}"
+                                           :id="`precio_unitario_maq[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_maq[${i}]`)">{{ errors.first(`precio_unitario_maq[${i}]`) }}</div>
 
                                 </td>
                                 <td style="text-align: right">
@@ -571,29 +571,29 @@
                                     <input type="text"
                                            v-on:keyup="calcularSUB"
                                            class="form-control"
-                                           :name="`cantidad_material[${i}]`"
+                                           :name="`cantidad_material_sub[${i}]`"
                                            :data-vv-as="`Cantidad Material ${i+1}`"
                                            v-model="partida_sub.cantidad"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`cantidad_material[${i}]`)}"
-                                           :id="`cantidad_material[${i}]`"
+                                           :class="{'is-invalid': errors.has(`cantidad_material_sub[${i}]`)}"
+                                           :id="`cantidad_material_sub[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material[${i}]`)">{{ errors.first(`cantidad_material[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`cantidad_material_sub[${i}]`)">{{ errors.first(`cantidad_material_sub[${i}]`) }}</div>
                                 </td>
                                 <td >
                                     <input type="text"
                                            v-on:keyup="calcularSUB"
                                            class="form-control"
-                                           :name="`precio_unitario[${i}]`"
+                                           :name="`precio_unitario_sub[${i}]`"
                                            :data-vv-as="`Precio Unitario ${i+1}`"
                                            v-model="partida_sub.precio_unitario"
                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario[${i}]`)}"
-                                           :id="`precio_unitario[${i}]`"
+                                           :class="{'is-invalid': errors.has(`precio_unitario_sub[${i}]`)}"
+                                           :id="`precio_unitario_sub[${i}]`"
                                            style="text-align: right"
                                     >
-                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario[${i}]`)">{{ errors.first(`precio_unitario[${i}]`) }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has(`precio_unitario_sub[${i}]`)">{{ errors.first(`precio_unitario_sub[${i}]`) }}</div>
 
                                 </td>
                                 <td style="text-align: right">
