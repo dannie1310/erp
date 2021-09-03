@@ -12,7 +12,7 @@ use App\Models\CADECO\Concepto;
 
 // use Illuminate\Database\Eloquent\Model;
 
-class VariacionVolumenPartidas extends SolicitudCambioPartidas
+class ExtraordinarioPartidas extends SolicitudCambioPartidas
 {
 
     protected static function boot()
@@ -27,6 +27,8 @@ class VariacionVolumenPartidas extends SolicitudCambioPartidas
     public function concepto(){
         return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
     }
+
+
 
     public function getImporteCambioFormatAttribute(){
         return '$' . number_format(($this->precio_unitario_original * $this->variacion_volumen), 2, '.',',');

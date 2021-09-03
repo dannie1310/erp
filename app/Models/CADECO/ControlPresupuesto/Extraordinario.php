@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ControlPresupuesto\SolicitudCambio;
 use Illuminate\Support\Facades\DB;
 
-class VariacionVolumen extends SolicitudCambio
+class Extraordinario extends SolicitudCambio
 {
 
     /*protected $dates = ['fecha_autorizacion'];
@@ -28,7 +28,7 @@ class VariacionVolumen extends SolicitudCambio
         parent::boot();
 
         static::addGlobalScope(function ($query) {
-            return $query->where('id_tipo_orden', '=', 4);
+            return $query->where('id_tipo_orden', '=', 3);
         });
     }
 
@@ -36,7 +36,7 @@ class VariacionVolumen extends SolicitudCambio
      * Relaciones
      */
 
-    public function variacionVolumenPartidas(){
+    public function partidas(){
         return $this->hasMany(VariacionVolumenPartidas::class, 'id_solicitud_cambio', 'id');
     }
 
@@ -52,7 +52,9 @@ class VariacionVolumen extends SolicitudCambio
      * Metodos
      */
 
-
+    public function genera_folio(){
+        return $this->all()->count() + 1;
+    }
 
     public function rechazar($motivo){
         if($this->id_estatus != 1){

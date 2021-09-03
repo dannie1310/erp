@@ -1193,6 +1193,16 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-variacion-volumen', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@pdfVariacionVolumen')->where(['id' => '[0-9]+']);
         });
 
+        // EXTRAORDINARIO
+        $api->group(['prefix' => 'extraordinario'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@autorizar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-variacion-volumen', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@pdfVariacionVolumen')->where(['id' => '[0-9]+']);
+        });
+
     });
 
     /**

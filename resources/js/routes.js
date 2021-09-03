@@ -4070,7 +4070,7 @@ export const routes = [
                 }
             },
             {
-                path: 'solicitud-cambio',
+                path: 'solicitud-cambio-presupuesto',
                 component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
                 children: [
                     {
@@ -4080,7 +4080,7 @@ export const routes = [
                         meta: {
                             title: 'Control de Cambios al Presupuesto',
                             breadcrumb: {parent: 'control_presupuesto', name: 'CONTROL DE CAMBIOS'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: ['consultar_variacion_volumen','registrar_variacion_volumen']
                         }
                     },
@@ -4097,7 +4097,7 @@ export const routes = [
                         meta: {
                             title: 'Variación de Volumen (Aditivas / Deductivas)',
                             breadcrumb: {parent: 'control_presupuesto', name: 'VARIACIÓN DE VOLUMEN'},
-                            middleware: [auth, context],
+                            middleware: [auth, context, permission],
                             permission: ['consultar_variacion_volumen','registrar_variacion_volumen']
                         }
                     },
@@ -4135,6 +4135,59 @@ export const routes = [
                             breadcrumb: {name: 'VER', parent: 'variacion-volumen'},
                             middleware: [auth, context, permission],
                             permission: ['autorizar_variacion_volumen','rechazar_variacion_volumen']
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'extraordinario',
+                component: require('./components/control-presupuesto/extraordinario/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'extraordinario',
+                        component: require('./components/control-presupuesto/extraordinario/Index').default,
+                        meta: {
+                            title: 'Concepto Extraordinario',
+                            breadcrumb: {parent: 'control_presupuesto', name: 'EXTRAORDINARIO'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_extraordinario','registrar_extraordinario']
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'extraordinario-create',
+                        component: require('./components/control-presupuesto/extraordinario/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Concepto Extraordinario',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'extraordinario'},
+                            middleware: [auth, context, permission],
+                            permission: ['registrar_extraordinario']
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'extraordinario-show',
+                        component: require('./components/control-presupuesto/extraordinario/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Concepto Extraordinario',
+                            breadcrumb: {name: 'VER', parent: 'extraordinario'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_extraordinario']
+                        }
+                    },
+                    {
+                        path: ':id/autorizar',
+                        name: 'extraordinario-autorizar',
+                        component: require('./components/control-presupuesto/extraordinario/Autorizar').default,
+                        props: true,
+                        meta: {
+                            title: 'Autorizar Extraordinario',
+                            breadcrumb: {name: 'VER', parent: 'extraordinario'},
+                            middleware: [auth, context, permission],
+                            permission: ['autorizar_extraordinario','rechazar_extraordinario']
                         }
                     },
                 ]

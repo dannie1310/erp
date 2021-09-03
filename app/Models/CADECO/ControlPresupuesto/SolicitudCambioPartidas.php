@@ -47,4 +47,24 @@ class SolicitudCambioPartidas extends Model
     public function tipoOrden(){
         return $this->belongsTo(TipoOrden::class, 'id_tipo_orden', 'id');
     }
+
+    public function getCantidadPresupuestadaOriginalFormatAttribute(){
+        return number_format($this->cantidad_presupuestada_original, 4, '.','');
+    }
+
+    public function getCantidadPresupuestadaNuevaFormatAttribute(){
+        return number_format($this->cantidad_presupuestada_nueva, 4, '.','');
+    }
+
+    public function getPrecioUnitarioOriginalFormatAttribute(){
+        return '$' . number_format($this->precio_unitario_original, 2, '.',',');
+    }
+
+    public function getImporteOriginalFormatAttribute(){
+        return '$' . number_format(($this->precio_unitario_original * $this->cantidad_presupuestada_original), 2, '.',',');
+    }
+
+    public function getMontoPresupuestadoFormatAttribute(){
+        return '$' . number_format($this->monto_presupuestado, 2, '.',',');
+    }
 }

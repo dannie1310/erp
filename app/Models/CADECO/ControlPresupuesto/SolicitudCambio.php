@@ -134,4 +134,8 @@ class SolicitudCambio extends Model
 
     }
 
+    public function genera_folio(){
+        return $this->all()->count() + 1;
+    }
+
 }
