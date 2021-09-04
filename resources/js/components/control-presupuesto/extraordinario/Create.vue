@@ -757,16 +757,98 @@
                                 data-vv-as="Concepto"
                                 v-validate="{required: true}"
                                 id="nodo_extraordinario"
-                                v-model="nodo_extraordinario"
+                                v-model="id_nodo_extraordinario"
                                 :error="errors.has('nodo_extraordinario')"
                                 ref="conceptoSelect"
                                 :disableBranchNodes="false"
+                                :placeholder="'Seleccione el concepto donde se agregará el nuevo concepto extraordinario'"
                             ></concepto-select>
 
                         </span>
                     </div>
                 </div>
                 <br>
+                <span v-if="tipo_ruta == 2">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <concepto-select
+                                name="nodo_ruta_nueva"
+                                data-vv-as="Concepto"
+                                v-validate="{required: true}"
+                                id="nodo_ruta_nueva"
+                                v-model="id_nodo_ruta_nueva"
+                                :error="errors.has('nodo_ruta_nueva')"
+                                ref="conceptoSelect"
+                                :disableBranchNodes="false"
+                                :placeholder="'Seleccione el concepto que será el nodo para la nueva ruta a generar'"
+                            ></concepto-select>
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row" v-if="id_nodo_ruta_nueva>0" >
+                        <div class="col-md-12">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="index_corto encabezado"></th>
+                                        <th class="c120 encabezado">Clave</th>
+                                        <th class="encabezado" >Descripción</th>
+                                        <th class="icono encabezado">
+                                            <button type="button" class="btn btn-success btn-sm" @click="agregarPartidaRuta('')">
+                                                <i class="fa fa-plus"></i>
+                                            </button>
+                                            <!--<button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaGAS()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>-->
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="(partida, i) in partidas_nueva_ruta">
+                                        <td class="icono">
+                                            <button @click="agregarPartidaRuta(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
+                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <i class="fa fa-plus" v-else></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="form-control"
+                                                   :name="`clave[${i}]`"
+                                                   data-vv-as="Clave"
+                                                   v-model="partida.clave"
+                                                   v-validate="{max:140}"
+                                                   :class="{'is-invalid': errors.has(`clave[${i}]`)}"
+                                                   :id="`clave[${i}]`">
+                                            <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
+                                        </td>
+                                        <td>
+                                             <input type="text" class="form-control"
+                                                    v-model="partida.descripcion"
+                                                    readonly="readonly"
+                                                    @click="habilitar(i, $event)"
+                                                    @focusout="deshabilitar(i, $event)"
+                                                    :name="`descripcion[${i}]`"
+                                                    data-vv-as="Descripción"
+                                                    v-validate="{required: partida.descripcion ===''}"
+                                                    :class="{'is-invalid': errors.has(`descripcion[${i}]`) || partida.error ==1 || partida.descripcion_sin_formato.length > 255}"
+                                                    :id="`descripcion_${i}`">
+                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                            <div class="error-label" v-show="partida.descripcion_sin_formato.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
+                                        </td>
+                                        <td class="icono">
+                                            <button @click="eliminarPartidaRuta(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
+                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <i class="fa fa-trash" v-else></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </span>
 
                 <div class="row">
                     <div class="col-md-12">
@@ -850,9 +932,10 @@ export default {
                 1: "Existente"
             },
             nodo_ruta_nueva : '',
+            id_nodo_ruta_nueva : '',
             ruta_nueva : [],
             nodo_extraordinario : '',
-            nodo_extraordinario_h : '',
+            id_nodo_extraordinario : '',
             suma_partidas_material : 0,
             suma_partidas_mo : 0,
             suma_partidas_he : 0,
@@ -931,6 +1014,7 @@ export default {
                     precio_unitario : '',
                 }
             ],
+            partidas_nueva_ruta : [],
         }
     },
     methods: {
@@ -1218,7 +1302,77 @@ export default {
                 precio_unitario : 0,
             });
             this.index = this.index+1;
-        }
+        },
+        agregarPartidaRuta(index){
+            if(index === ''){
+                this.partidas_nueva_ruta.push({
+                    clave:'',
+                    descripcion:'',
+                    descripcion_sin_formato:'',
+                    nivel: 1,
+                    es_hoja:true,
+                    cantidad_hijos:0,
+                });
+            }else{
+                let temp_index = index + 1;
+                while(temp_index in this.partidas_nueva_ruta && this.partidas_nueva_ruta[temp_index].nivel >= +this.partidas_nueva_ruta[index].nivel + 1){
+                    temp_index= temp_index + 1;
+                }
+                this.partidas_nueva_ruta.splice(temp_index, 0, {
+                    clave:'',
+                    descripcion:'',
+                    descripcion_sin_formato:'',
+                    nivel:this.partidas_nueva_ruta[index].nivel + 1,
+                    es_hoja:true,
+                    cantidad_hijos:0,
+                });
+
+                this.partidas_nueva_ruta[index].es_hoja = false;
+                this.partidas_nueva_ruta[index].es_rama = true;
+                this.partidas_nueva_ruta[index].cantidad_hijos = this.partidas_nueva_ruta[index].cantidad_hijos + 1;
+            }
+
+        },
+        eliminarPartidaRuta(index){
+            if(this.partidas_nueva_ruta[index].nivel === 1){
+                this.partidas_nueva_ruta.splice(index, 1);
+            }else{
+                let temp_index = index - 1;
+                while(temp_index in this.partidas_nueva_ruta && this.partidas_nueva_ruta[temp_index].nivel == +this.partidas_nueva_ruta[index].nivel){
+                    temp_index= temp_index - 1;
+                }
+                this.partidas_nueva_ruta[temp_index].cantidad_hijos = this.partidas_nueva_ruta[temp_index].cantidad_hijos - 1;
+                this.partidas_nueva_ruta.splice(index, 1);
+                if(this.partidas_nueva_ruta[temp_index].cantidad_hijos == 0){
+                    this.partidas_nueva_ruta[temp_index].es_hoja = true;
+                }
+            }
+        },
+        habilitar : function(i, event){
+            let nuevo_valor = this.descripcionSinFormat(i);
+            this.partidas_nueva_ruta[i].descripcion = nuevo_valor;
+            this.partidas_nueva_ruta[i].descripcion_sin_formato = nuevo_valor;
+            $("#" + event.target.id).removeAttr("readonly");
+        },
+        deshabilitar : function(i,event){
+            let isReadOnly = $("#" + event.target.id).attr("readonly");
+            if(isReadOnly !== "readonly"){
+                this.partidas_nueva_ruta[i].descripcion_sin_formato = this.descripcionSinFormat(i);
+                let nuevo_valor = this.descripcionFormat(i);
+                this.partidas_nueva_ruta[i].descripcion = nuevo_valor;
+                $("#" + event.target.id).attr("readonly",true);
+            }
+        },
+        descripcionFormat(i){
+            var len = this.partidas_nueva_ruta[i].descripcion.length + (+this.partidas_nueva_ruta[i].nivel * 3);
+            return this.partidas_nueva_ruta[i].descripcion.padStart(len, "_")
+        },
+        descripcionSinFormat(i){
+            var len = (this.partidas_nueva_ruta[i].nivel * 3);
+            let lineas = '';
+            lineas = lineas.padStart(len, "_");
+            return this.partidas_nueva_ruta[i].descripcion.replace(lineas, '');
+        },
     },
     computed: {
         precio_unitario() {
@@ -1236,6 +1390,35 @@ export default {
     mounted() {
         this.getUnidades();
     },
+    watch:{
+        /*id_nodo_ruta_nueva(value){
+            if(value != ''){
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: value,
+                    params: {
+                    }
+                })
+                .then(data => {
+                    this.nodo_ruta_nueva = data;
+                })
+            }
+        },
+        id_nodo_extraordinario(value){
+            let _self = this;
+            if(value != ''){
+                return this.$store.dispatch('cadeco/concepto/find', {
+                    id: value,
+                    params: {
+                    }
+                })
+                .then(data => {
+                    _self.nodo_extraordinario = data;
+                }).finally(() => {
+                        console.log("fin");
+                    })
+            }
+        },*/
+    }
 }
 </script>
 
