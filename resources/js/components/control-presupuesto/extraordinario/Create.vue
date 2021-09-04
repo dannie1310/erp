@@ -6,7 +6,7 @@
                 <div class="row">
                     <div class="col-md-12">
                         <label>
-                            Indique si el concepto extraordinario pertenecerá al Costo Directo o al Costo Indirecto:
+                            1.-Indique si el concepto extraordinario pertenecerá al Costo Directo o al Costo Indirecto:
                         </label>
                     </div>
                 </div>
@@ -30,13 +30,14 @@
                     </div>
                 </div>
 
-                <br>
                 <span v-if="tipo_costo !=''">
+
+                    <hr style="border-color: #009a43 ">
 
                 <div class="row"  >
                     <div class="col-md-12">
                         <label>
-                            Ingrese los datos del concepto y agregue los insumos deseados.
+                            2.-Ingrese los datos del concepto:
                         </label>
                     </div>
                 </div>
@@ -109,7 +110,16 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:none">&nbsp;</td>
+                                <td style="border:none" colspan="7">
+                                    <hr style="border-color: #009a43 ">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:none" colspan="7">
+                                    <label>
+                                        3.-Agregue los insumos deseados
+                                    </label>
+                                </td>
                             </tr>
                             <template v-if="tipo_costo==1">
                                 <!--MATERIALES -->
@@ -211,7 +221,9 @@
                                     <td style="border: none"></td>
                                 </tr>
                                 <tr>
-                                    <td style="border: none">&nbsp;</td>
+                                    <td style="border: none" colspan="7">
+                                        &nbsp;
+                                    </td>
                                 </tr>
                                 <!--MANO DE OBRA -->
                                 <tr>
@@ -621,9 +633,6 @@
                                     <td style="text-align: right; border: none">${{suma_partidas_sub.formatMoney(2)}}</td>
                                     <td style="border: none"></td>
                                 </tr>
-                                <tr>
-                                    <td style="border: none">&nbsp;</td>
-                                </tr>
                             </template>
                             <template v-if="tipo_costo==2">
                                 <!-- GASTOS -->
@@ -716,9 +725,6 @@
                                     <td style="text-align: right; border: none">${{suma_partidas_gas.formatMoney(2)}}</td>
                                     <td style="border: none"></td>
                                 </tr>
-                                <tr>
-                                    <td style="border: none">&nbsp;</td>
-                                </tr>
                             </template>
                         </table>
                     </div>
@@ -726,15 +732,21 @@
 
                 <div class="row" >
                     <div class="col-md-12">
+                        <hr style="border-color: #009a43 ">
+                    </div>
+                </div>
+
+                <div class="row" >
+                    <div class="col-md-12">
                         <label>
-                            Ruta de presupuesto donde se agregará el extraordinario:
+                            4.-Indique si la ruta de presupuesto donde se agregará el extraordinario ya existe en el presupuesto o generará una nueva:
                         </label>
                     </div>
                 </div>
 
                 <br>
                 <div class="row">
-                    <div class="col-md-2">
+                    <div class="col-md-12">
 
                         <div class="btn-group btn-group-toggle">
                             <label class="btn btn-outline-secondary" :class="tipo_ruta === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos_ruta" :key="llave">
@@ -750,8 +762,24 @@
                             </label>
                         </div>
                     </div>
-                    <div class="col-md-10">
-                        <span v-if="tipo_ruta == 1">
+                </div>
+                <br>
+                <div class="row" >
+                    <div class="col-md-12">
+                        <hr style="border-color: #009a43 ">
+                    </div>
+                </div>
+                <span v-if="tipo_ruta == 1">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <label>
+                                5.-Seleccione el concepto donde se agregará el nuevo concepto extraordinario:
+                            </label>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
                             <concepto-select
                                 name="nodo_extraordinario"
                                 data-vv-as="Concepto"
@@ -763,12 +791,19 @@
                                 :disableBranchNodes="false"
                                 :placeholder="'Seleccione el concepto donde se agregará el nuevo concepto extraordinario'"
                             ></concepto-select>
-
-                        </span>
+                        </div>
                     </div>
-                </div>
-                <br>
+                    <br>
+                </span>
                 <span v-if="tipo_ruta == 2">
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <label>
+                                5.-Seleccione el concepto que será el nodo para la nueva ruta a generar:
+                            </label>
+                        </div>
+                    </div>
+                    <br>
                     <div class="row" >
                         <div class="col-md-12">
                             <concepto-select
@@ -783,9 +818,20 @@
                                 :placeholder="'Seleccione el concepto que será el nodo para la nueva ruta a generar'"
                             ></concepto-select>
                         </div>
-
                     </div>
                     <br>
+                    <div class="row" v-if="id_nodo_ruta_nueva>0">
+                        <div class="col-md-12">
+                            <hr style="border-color: #009a43 ">
+                        </div>
+                    </div>
+                    <div class="row" v-if="id_nodo_ruta_nueva>0">
+                        <div class="col-md-12">
+                            <label>
+                                 6.-Forme la nueva parte de la estructura del presupuesto a generar para el concepto extraordinario:
+                            </label>
+                        </div>
+                    </div>
                     <div class="row" v-if="id_nodo_ruta_nueva>0" >
                         <div class="col-md-12">
                             <table class="table table-sm">
@@ -849,6 +895,12 @@
                         </div>
                     </div>
                 </span>
+
+                <div class="row" >
+                    <div class="col-md-12">
+                        <hr style="border-color: #009a43 ">
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col-md-12">
