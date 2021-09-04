@@ -550,20 +550,20 @@
                                                     </tr>
                                                     </thead>
                                                 <tbody>
-                                                    <tr v-for="(extension, i) in invitacion.cotizacionCompra.exclusiones.data">
+                                                    <tr v-for="(exclusion, i) in invitacion.cotizacionCompra.exclusiones.data">
                                                         <td class="index_corto">{{ i + 1 }}</td>
-                                                        <td v-if="extension.id == undefined">
+                                                        <td v-if="exclusion.id == undefined">
                                                             <input class="form-control"
                                                                    :name="`nombre[${i}]`"
                                                                    :data-vv-as="`'Nombre ${i + 1}'`"
-                                                                   v-model="extension.descripcion"
+                                                                   v-model="exclusion.descripcion"
                                                                    :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
                                                                    v-validate="{ required: true}"
                                                                    :id="`nombre[${i}]`"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else>{{extension.descripcion}}</td>
-                                                        <td v-if="extension.id == undefined">
+                                                        <td v-else>{{exclusion.descripcion}}</td>
+                                                        <td v-if="exclusion.id == undefined">
                                                             <select
                                                                 type="text"
                                                                 :name="`unidad[${i}]`"
@@ -571,27 +571,27 @@
                                                                 v-validate="{required: true}"
                                                                 class="form-control"
                                                                 :id="`unidad[${i}]`"
-                                                                v-model="extension.unidad"
+                                                                v-model="exclusion.unidad"
                                                                 :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
                                                                     <option value>--Unidad--</option>
                                                                     <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else>{{extension.unidad}}</td>
-                                                        <td v-if="extension.id == undefined">
+                                                        <td v-else>{{exclusion.unidad}}</td>
+                                                        <td v-if="exclusion.id == undefined">
                                                             <input class="form-control"
                                                                    :name="`cantidad[${i}]`"
                                                                    :data-vv-as="`'Cantidad ${i + 1}'`"
                                                                    style="text-align: right"
-                                                                   v-model="extension.cantidad"
+                                                                   v-model="exclusion.cantidad"
                                                                    :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                    v-validate="{ required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                                    :id="`cantidad[${i}]`"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                         </td>
-                                                        <td class="cantidad_input" v-else>{{extension.cantidad_format}}</td>
-                                                        <td v-if="extension.id == undefined">
+                                                        <td class="cantidad_input" v-else>{{exclusion.cantidad_format}}</td>
+                                                        <td v-if="exclusion.id == undefined">
                                                             <input type="text"
                                                                    class="form-control"
                                                                    :name="`precio[${i}]`"
@@ -599,11 +599,11 @@
                                                                    :data-vv-as="`'Precio ${i + 1}'`"
                                                                    v-validate="{required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                                   v-model="extension.precio_unitario"/>
+                                                                   v-model="exclusion.precio_unitario"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                         </td>
-                                                        <td class="cantidad_input" v-else>{{extension.precio_format}}</td>
-                                                        <td v-if="extension.id == undefined">
+                                                        <td class="cantidad_input" v-else>{{exclusion.precio_format}}</td>
+                                                        <td v-if="exclusion.id == undefined">
                                                             <select
                                                                 type="text"
                                                                 :name="`moneda[${i}]`"
@@ -611,14 +611,15 @@
                                                                 v-validate="{required: true}"
                                                                 class="form-control"
                                                                 :id="`moneda[${i}]`"
-                                                                v-model="extension.id_moneda"
+                                                                v-model="exclusion.id_moneda"
                                                                 :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
                                                                 <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td v-else>{{extension.moneda}}</td>
-                                                        <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
+                                                        <td v-else>{{exclusion.moneda}}</td>
+                                                        <td style="text-align:right;" v-if="exclusion.id == undefined">{{getTotalExclusion(i)}}</td>
+                                                        <td style="text-align:right;" v-else>{{exclusion.total_format}}</td>
                                                         <td>
                                                             <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarExclusion(i)">
                                                                 <i class="fa fa-trash"></i>

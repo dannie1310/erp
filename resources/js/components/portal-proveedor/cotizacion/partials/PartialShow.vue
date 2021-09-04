@@ -464,14 +464,14 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(extension, i) in invitacion.cotizacionCompra.exclusiones.data">
+                            <tr v-for="(exclusion, i) in invitacion.cotizacionCompra.exclusiones.data">
                                 <td class="index_corto">{{ i + 1 }}</td>
-                                <td>{{extension.descripcion}}</td>
-                                <td>{{extension.unidad}}</td>
-                                <td class="cantidad_input">{{extension.cantidad_format}}</td>
-                                <td class="cantidad_input">{{extension.precio_format}}</td>
-                                <td>{{extension.moneda}}</td>
-                                <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
+                                <td>{{exclusion.descripcion}}</td>
+                                <td>{{exclusion.unidad}}</td>
+                                <td class="cantidad_input">{{exclusion.cantidad_format}}</td>
+                                <td class="cantidad_input">{{exclusion.precio_format}}</td>
+                                <td>{{exclusion.moneda}}</td>
+                                <td style="text-align:right;">{{exclusion.total_format}}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -640,26 +640,6 @@ export default {
                 this.ancho_tabla_detalle += 150;
             }
         },
-        getTotalExclusion(i){
-            var moneda = this.invitacion.cotizacionCompra.exclusiones.data[i]['id_moneda'];
-            var precio_total = 0;
-            if(this.invitacion.cotizacionCompra.exclusiones.data[i]['cantidad'] != 0 && this.invitacion.cotizacionCompra.exclusiones.data[i]['precio_unitario'] != 0) {
-                var precio_total = this.invitacion.cotizacionCompra.exclusiones.data[i]['cantidad'] * this.invitacion.cotizacionCompra.exclusiones.data[i]['precio_unitario']
-                if (moneda == 1) {
-                    return '$' + parseFloat(precio_total).formatMoney(2, '.', ',');
-                }
-                if (moneda == 2) {
-                    return '$' + parseFloat(precio_total * this.dolar).formatMoney(2, '.', ',');
-                }
-                if (moneda == 3) {
-                    return '$' + parseFloat(precio_total * this.euro).formatMoney(2, '.', ',');
-                }
-                if (moneda == 4) {
-                    return '$' + parseFloat(precio_total * this.libra).formatMoney(2, '.', ',');
-                }
-            }
-            return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
-        }
     },
     computed: {
         colspan(){

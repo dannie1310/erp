@@ -489,6 +489,7 @@ class Invitacion extends Model
                 $exclusiones[$key]['precio_format'] = $exclusion->precio_format;
                 $exclusiones[$key]['id_moneda'] = $exclusion->id_moneda;
                 $exclusiones[$key]['moneda'] = $exclusion->nombre_moneda;
+                $exclusiones[$key]['total_format'] = $exclusion->total_format;
             }
             $resp['exclusiones'] =  $exclusiones;
             $conceptos = [];

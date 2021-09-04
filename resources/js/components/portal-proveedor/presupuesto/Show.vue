@@ -147,14 +147,14 @@
                                     </tr>
                                     </thead>
                                 <tbody>
-                                    <tr v-for="(extension, i) in presupuesto.exclusiones">
+                                    <tr v-for="(exclusion, i) in presupuesto.exclusiones">
                                         <td class="index_corto">{{ i + 1 }}</td>
-                                        <td>{{extension.descripcion}}</td>
-                                        <td style="text-align: center">{{extension.unidad}}</td>
-                                        <td style="text-align:right;">{{extension.cantidad_format}}</td>
-                                        <td style="text-align:right;">{{extension.precio_format}}</td>
-                                        <td style="text-align:center;">{{extension.moneda}}</td>
-                                        <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
+                                        <td>{{exclusion.descripcion}}</td>
+                                        <td style="text-align: center">{{exclusion.unidad}}</td>
+                                        <td style="text-align:right;">{{exclusion.cantidad_format}}</td>
+                                        <td style="text-align:right;">{{exclusion.precio_format}}</td>
+                                        <td style="text-align:center;">{{exclusion.moneda}}</td>
+                                        <td style="text-align:right;">{{exclusion.total_format}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -205,26 +205,6 @@
             salir() {
                     this.$router.push({name: 'cotizacion-proveedor'});
             },
-            getTotalExclusion(i){
-                var moneda = this.presupuesto.exclusiones[i]['id_moneda'];
-                var precio_total = 0;
-                if(this.presupuesto.exclusiones[i]['cantidad'] != 0 && this.presupuesto.exclusiones[i]['precio_unitario'] != 0) {
-                    var precio_total = this.presupuesto.exclusiones[i]['cantidad'] * this.presupuesto.exclusiones[i]['precio_unitario']
-                    if (moneda == 1) {
-                        return '$' + parseFloat(precio_total).formatMoney(2, '.', ',');
-                    }
-                    if (moneda == 2) {
-                        return '$' + parseFloat(precio_total * this.dolar).formatMoney(2, '.', ',');
-                    }
-                    if (moneda == 3) {
-                        return '$' + parseFloat(precio_total * this.euro).formatMoney(2, '.', ',');
-                    }
-                    if (moneda == 4) {
-                        return '$' + parseFloat(precio_total * this.libra).formatMoney(2, '.', ',');
-                    }
-                }
-                return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
-            }
         },
     }
 </script>
