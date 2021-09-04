@@ -74,6 +74,9 @@ class SalidaAlmacenPartida extends Item
         $importe = 0;
 
         foreach ($inventarios_existencia as $inventario) {
+            if($this->id_almacen == null && $this->id_concepto == null){
+                abort(403, 'Error al Actualizar inventario, una de las partidas no contiene destino.');
+            }
             if ($cantidad >= $inventario->saldo) {
                 if ($this->id_almacen != null) {
                     Inventario::create([
