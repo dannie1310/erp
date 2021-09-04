@@ -277,6 +277,112 @@
                                     <div class="invalid-feedback" v-show="errors.has('vigencia')">{{ errors.first('vigencia') }}</div>
                                 </div>
                             </div>
+                            <hr />
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td style="text-align: center;" colspan="8"><b>Exclusiones</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="index_corto">#</th>
+                                                    <th width="30%">Descripción</th>
+                                                    <th>Unidad</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio Unitario</th>
+                                                    <th class="money" style="text-align:center;">Moneda</th>
+                                                    <th>Precio Total</th>
+                                                    <th class="icono">
+                                                        <button type="button" class="btn btn-sm btn-outline-success" @click="agregarExclusion" :disabled="cargando">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                            <i class="fa fa-plus" v-else></i>
+                                                        </button>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            <tbody v-if="exclusiones">
+                                                <tr v-for="(extension, i) in exclusiones">
+                                                    <td class="index_corto">{{ i + 1 }}</td>
+                                                    <td v-if="extension.id == undefined">
+                                                        <input class="form-control"
+                                                               :name="`nombre[${i}]`"
+                                                               :data-vv-as="`'Nombre ${i + 1}'`"
+                                                               v-model="extension.descripcion"
+                                                               :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
+                                                               v-validate="{ required: true}"
+                                                               :id="`nombre[${i}]`"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                                                    </td>
+                                                    <td v-else>{{extension.descripcion}}</td>
+                                                    <td v-if="extension.id == undefined">
+                                                        <select
+                                                            type="text"
+                                                            :name="`unidad[${i}]`"
+                                                            :data-vv-as="`Unidad[${i}]`"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            :id="`unidad[${i}]`"
+                                                            v-model="extension.unidad"
+                                                            :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                                <option value>--Unidad--</option>
+                                                                <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+                                                    </td>
+                                                    <td style="text-align: center" v-else>{{extension.unidad}}</td>
+                                                    <td v-if="extension.id == undefined">
+                                                        <input class="form-control"
+                                                               :name="`cantidad[${i}]`"
+                                                               :data-vv-as="`'Cantidad ${i + 1}'`"
+                                                               style="text-align: right"
+                                                               v-model="extension.cantidad"
+                                                               :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                               v-validate="{ required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                               :id="`cantidad[${i}]`"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
+                                                    </td>
+                                                    <td style="text-align:right;" v-else>{{extension.cantidad_format}}</td>
+                                                    <td v-if="extension.id == undefined">
+                                                        <input type="text"
+                                                               class="form-control"
+                                                               :name="`precio[${i}]`"
+                                                               style="text-align: right"
+                                                               :data-vv-as="`'Precio ${i + 1}'`"
+                                                               v-validate="{required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                               :class="{'is-invalid': errors.has(`precio[${i}]`)}"
+                                                               v-model="extension.precio_unitario"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
+                                                    </td>
+                                                    <td style="text-align:right;" v-else>{{extension.precio_format}}</td>
+                                                    <td v-if="extension.id == undefined">
+                                                        <select
+                                                            type="text"
+                                                            :name="`moneda[${i}]`"
+                                                            :data-vv-as="`'Moneda ${i + 1}'`"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            :id="`moneda[${i}]`"
+                                                            v-model="extension.id_moneda"
+                                                            :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
+                                                            <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
+                                                    </td>
+                                                    <td style="text-align:center;" v-else>{{extension.moneda}}</td>
+                                                    <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarExclusion(i)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <label for="observaciones" class="col-form-label">Observaciones: </label>
@@ -319,6 +425,7 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import {ModelListSelect} from 'vue-search-select';
     import DatosPresupuesto from "./partials/DatosPresupuesto";
+    import presupuesto from "../../../store/modules/contratos/presupuesto";
     export default {
         name: "presupuesto-edit",
         components: {  Datepicker, ModelListSelect, DatosPresupuesto},
@@ -343,6 +450,7 @@
                 dolar:0,
                 euro:0,
                 libra:0,
+                exclusiones : []
             }
         },
         mounted() {
@@ -363,8 +471,10 @@
                     }
                 }).then(data => {
                     this.presupuesto = data.presupuesto_proveedor
+                    this.exclusiones = data.presupuesto_proveedor.exclusiones
                     this.invitacion = data
                     this.getMonedas(data.base_datos);
+                    this.getUnidades(data.base_datos);
                     this.dolar = parseFloat(this.presupuesto.tc_usd).formatMoney(2, '.', ',')
                     this.euro = parseFloat(this.presupuesto.tc_euro).formatMoney(2, '.', ',')
                     this.libra = parseFloat(this.presupuesto.tc_libra).formatMoney(2, '.', ',')
@@ -515,6 +625,7 @@
                         this.presupuesto.tcUsd = this.dolar;
                         this.presupuesto.tdEuro = this.euro;
                         this.presupuesto.tcLibra = this.libra;
+                        this.presupuesto.exclusiones = this.exclusiones
                         this.save()
                     }
                 });
@@ -535,6 +646,49 @@
                     });
                 }
             },
+            agregarExclusion(){
+                var array = {
+                    'descripcion' : '',
+                    'unidad' : '',
+                    'cantidad' : 0,
+                    'precio_unitario' : 0,
+                    'id_moneda' : 1,
+                    'moneda' : ''
+                }
+                this.exclusiones.push(array);
+            },
+            quitarExclusion(index){
+                this.exclusiones.splice(index, 1);
+            },
+            getUnidades(base) {
+                return this.$store.dispatch('cadeco/unidad/porBase', {
+                    params: {sort: 'unidad',  order: 'asc'},
+                    base : base
+                })
+                    .then(data => {
+                        this.unidades= data.data;
+                    })
+            },
+            getTotalExclusion(i){
+                var moneda = this.exclusiones[i]['id_moneda'];
+                var precio_total = 0;
+                if(this.exclusiones[i]['cantidad'] != 0 && this.exclusiones[i]['precio_unitario'] != 0) {
+                    var precio_total = this.exclusiones[i]['cantidad'] * this.exclusiones[i]['precio_unitario']
+                    if (moneda == 1) {
+                        return '$' + parseFloat(precio_total).formatMoney(2, '.', ',');
+                    }
+                    if (moneda == 2) {
+                        return '$' + parseFloat(precio_total * this.dolar).formatMoney(2, '.', ',');
+                    }
+                    if (moneda == 3) {
+                        return '$' + parseFloat(precio_total * this.euro).formatMoney(2, '.', ',');
+                    }
+                    if (moneda == 4) {
+                        return '$' + parseFloat(precio_total * this.libra).formatMoney(2, '.', ',');
+                    }
+                }
+                return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
+            }
         },
         computed: {
             subtotal(){
