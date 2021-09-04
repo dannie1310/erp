@@ -107,6 +107,16 @@ class Concepto extends Model
         return false;
     }
 
+    public function getDeshabilitadoPadreMedibleAttribute()
+    {
+        if(($this->tiene_hijos == true || $this->tiene_hijos_cobrables == true) && $this->concepto_medible != 3)
+        {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
     public function getTipoAttribute()
     {
         $tipo = '';
@@ -127,6 +137,16 @@ class Concepto extends Model
     public function getTieneHijosAttribute()
     {
         return $this->hijos()->count() ? true : false;
+    }
+
+    public function getTieneHijosCompletosAttribute()
+    {
+        return $this->hijosCompletos()->count() > 0 ? true : false;
+    }
+
+    public function getTieneHijosCobrablesAttribute()
+    {
+        return $this->hijosCobrables()->count() > 0 ? true : false;
     }
 
     public function getConHijosAttribute()
@@ -231,6 +251,15 @@ class Concepto extends Model
         return $this->hasMany(self::class, 'id_obra', 'id_obra')
             ->where('nivel', 'LIKE', $this->nivel . '___.')
             ->whereNull('id_material')
+            ->orderBy('nivel', 'ASC');
+    }
+
+    public function hijosCobrables()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            /*->whereNull('id_material')*/
+            ->where('concepto_medible',"=",3)
             ->orderBy('nivel', 'ASC');
     }
 

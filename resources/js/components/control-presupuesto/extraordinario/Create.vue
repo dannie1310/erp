@@ -31,8 +31,18 @@
                 </div>
 
                 <br>
+                <span v-if="tipo_costo !=''">
 
-                <div class="row" v-if="tipo_costo !=''">
+                <div class="row"  >
+                    <div class="col-md-12">
+                        <label>
+                            Ingrese los datos del concepto y agregue los insumos deseados.
+                        </label>
+                    </div>
+                </div>
+                <br />
+
+                <div class="row" >
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr >
@@ -53,11 +63,11 @@
                                 </th>
                             </tr>
                             <tr>
-                                <td style="text-align: center" colspan="2">
+                                <td colspan="2">
                                     <input type="text"
                                            class="form-control"
-                                           name="descipcion"
-                                           data-vv-as="Descripcion Concepto"
+                                           name="descripcion"
+                                           data-vv-as="Descripcion del Concepto"
                                            v-model="descripcion"
                                            v-validate="{required: true}"
                                            :class="{'is-invalid': errors.has('descripcion')}"
@@ -68,9 +78,11 @@
                                     <model-list-select
                                         :disabled="cargando"
                                         name="id_unidad"
+                                        id="id_unidad"
                                         v-model="unidad"
                                         option-value="unidad"
                                         option-text="unidad"
+                                        v-validate="{required: true}"
                                         :list="unidades"
                                         :placeholder="!cargando?'Seleccionar o buscar':'Cargando...'"
                                         :isError="errors.has(`id_unidad`)">
@@ -83,7 +95,7 @@
                                            name="cantidad"
                                            data-vv-as="Cantidad"
                                            v-model="cantidad"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                           v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
                                            :class="{'is-invalid': errors.has('cantidad')}"
                                            style="text-align: right"
                                            id="cantidad">
@@ -102,7 +114,7 @@
                             <template v-if="tipo_costo==1">
                                 <!--MATERIALES -->
                                 <tr>
-                                    <td colspan="5" style="border:none"><h6>Materiales</h6></td>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-simplybuilt"/>Materiales</h6></td>
                                     <td colspan="2" style="border:none"></td>
                                 </tr>
                                 <tr >
@@ -203,7 +215,7 @@
                                 </tr>
                                 <!--MANO DE OBRA -->
                                 <tr>
-                                    <td colspan="5" style="border:none"><h6>Mano de Obra</h6></td>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-hand-paper"/>Mano de Obra</h6></td>
                                     <td colspan="2" style="border:none"></td>
                                 </tr>
 
@@ -306,7 +318,7 @@
 
                                 <!-- HERRAMIENTA Y EQUIPO -->
                                 <tr>
-                                    <td colspan="5" style="border:none"><h6>Herramienta y Equipo</h6></td>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-tools"/>Herramienta y Equipo</h6></td>
                                     <td colspan="2" style="border:none"></td>
                                 </tr>
 
@@ -409,7 +421,7 @@
 
                                 <!-- MAQUINARIA -->
                                 <tr>
-                                    <td colspan="5" style="border:none"><h6>Maquinaria</h6></td>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-truck"/>Maquinaria</h6></td>
                                     <td colspan="2" style="border:none"></td>
                                 </tr>
 
@@ -512,7 +524,7 @@
 
                                 <!-- SUBCONTRATOS -->
                                 <tr>
-                                    <td colspan="5" style="border:none"><h6>Subcontratos</h6></td>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-building"/>Subcontratos</h6></td>
                                     <td colspan="2" style="border:none"></td>
                                 </tr>
 
@@ -616,7 +628,7 @@
                             <template v-if="tipo_costo==2">
                                 <!-- GASTOS -->
                                 <tr>
-                                    <td colspan="5" style="border:none"><h6>Gastos</h6></td>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-boxes"/>Gastos</h6></td>
                                     <td colspan="2" style="border:none"></td>
                                 </tr>
 
@@ -654,10 +666,12 @@
                                         <span v-if="partida_gas.material === ''">
                                             <MaterialSelect
                                                 :name="`gastos[${i}]`"
+                                                :id="`gastos[${i}]`"
                                                 :scope="['subcontrato']"
                                                 sort = "descripcion"
                                                 v-model="partida_gas.material"
                                                 data-vv-as="Gastos"
+                                                :isError="errors.has(`gastos[${i}]`)"
                                                 v-validate="{required: true}"
                                                 :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
                                                 :class="{'is-invalid': errors.has(`gastos[${i}]`)}"
@@ -710,43 +724,85 @@
                     </div>
                 </div>
 
+                <div class="row" >
+                    <div class="col-md-12">
+                        <label>
+                            Ruta de presupuesto donde se agregará el extraordinario:
+                        </label>
+                    </div>
+                </div>
+
+                <br>
+                <div class="row">
+                    <div class="col-md-2">
+
+                        <div class="btn-group btn-group-toggle">
+                            <label class="btn btn-outline-secondary" :class="tipo_ruta === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos_ruta" :key="llave">
+                                <i :class="llave==1 ?'fa fa-project-diagram':'fa fa-plus'"></i>
+                                <input type="radio"
+                                       class="btn-group-toggle"
+                                       name="id_tipo"
+                                       :id="'tipo' + llave"
+                                       :value="llave"
+                                       autocomplete="on"
+                                       v-model.number="tipo_ruta">
+                                        {{ tipo}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-10">
+                        <span v-if="tipo_ruta == 1">
+                            <concepto-select
+                                name="nodo_extraordinario"
+                                data-vv-as="Concepto"
+                                v-validate="{required: true}"
+                                id="nodo_extraordinario"
+                                v-model="nodo_extraordinario"
+                                :error="errors.has('nodo_extraordinario')"
+                                ref="conceptoSelect"
+                                :disableBranchNodes="false"
+                            ></concepto-select>
+
+                        </span>
+                    </div>
+                </div>
                 <br>
 
-                <span v-if="tipo_costo != ''">
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row error-content">
-                                <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
-                                <textarea
-                                    name="motivo"
-                                    id="motivo"
-                                    class="form-control"
-                                    data-vv-as="Motivo"
-                                    v-model="motivo"
-                                    :class="{'is-invalid': errors.has('motivo')}"
-                                ></textarea>
-                                <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
-                            </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row error-content">
+                            <label for="motivo" class="col-sm-2 col-form-label">Motivo: </label>
+                            <textarea
+                                name="motivo"
+                                id="motivo"
+                                class="form-control"
+                                data-vv-as="Motivo"
+                                v-model="motivo"
+                                v-validate="{required: true}"
+                                :class="{'is-invalid': errors.has('motivo')}"
+                            ></textarea>
+                            <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group row error-content">
-                                <label for="area_solicitante" class="col-form-label">Área Solicitante: </label>
-                                <input type="text"
-                                       class="form-control"
-                                       name="area_solicitante"
-                                       data-vv-as="Area Solicitante"
-                                       v-model="area_solicitante"
-                                       v-validate="{required: true}"
-                                       :class="{'is-invalid': errors.has('area_solicitante')}"
-                                       id="area_solicitante">
-                                <div class="invalid-feedback" v-show="errors.has('area_solicitante')">{{ errors.first('area_solicitante') }}</div>
-                            </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group row error-content">
+                            <label for="area_solicitante" class="col-form-label">Área Solicitante: </label>
+                            <input type="text"
+                                   class="form-control"
+                                   name="area_solicitante"
+                                   data-vv-as="Area Solicitante"
+                                   v-model="area_solicitante"
+                                   v-validate="{required: true}"
+                                   :class="{'is-invalid': errors.has('area_solicitante')}"
+                                   id="area_solicitante">
+                            <div class="invalid-feedback" v-show="errors.has('area_solicitante')">{{ errors.first('area_solicitante') }}</div>
                         </div>
                     </div>
-                </span>
+                </div>
 
+                </span>
 
             </div>
             <div class="card-footer">
@@ -765,26 +821,38 @@ import {ModelListSelect} from 'vue-search-select';
 import CreateConceptoExtaordinario from "../../contratos/solicitud-cambio/partials/CreateConceptoExtaordinario";
 import ExtraordinarioDirectoCreate from "./partials/CreateDirecto";
 import MaterialSelect from "../../cadeco/material/SelectAutocomplete";
+import ConceptoSelect from "../../cadeco/concepto/SelectPadresDeMedibles";
 export default {
     name: "variacion-volumen-create",
-    components: {MaterialSelect, ExtraordinarioDirectoCreate, CreateConceptoExtaordinario, ModelListSelect},
+    components: {
+        ConceptoSelect,
+        MaterialSelect, ExtraordinarioDirectoCreate, CreateConceptoExtaordinario, ModelListSelect},
     props: [],
     data() {
         return {
             descripcion :'',
             unidad : '',
             unidades : [],
-            cantidad : 0,
+            cantidad : '',
             cargando: false,
             motivo:'',
             area_solicitante:'',
             concepto:null,
             suma_importe_cambio : 0,
             tipo_costo : '',
+            tipo_ruta : 1,
             tipos_costo: {
                 2: "Costo Indirecto",
                 1: "Costo Directo"
             },
+            tipos_ruta: {
+                2: "Nueva",
+                1: "Existente"
+            },
+            nodo_ruta_nueva : '',
+            ruta_nueva : [],
+            nodo_extraordinario : '',
+            nodo_extraordinario_h : '',
             suma_partidas_material : 0,
             suma_partidas_mo : 0,
             suma_partidas_he : 0,
@@ -800,7 +868,7 @@ export default {
                     descripcion : "",
                     cantidad : "",
                     importe : 0,
-                    precio_unitario : 0,
+                    precio_unitario : '',
                 }
             ],
             partidas_mo: [
@@ -812,7 +880,7 @@ export default {
                     descripcion : "",
                     cantidad : "",
                     importe : 0,
-                    precio_unitario : 0,
+                    precio_unitario : '',
                 }
             ],
             partidas_he: [
@@ -824,7 +892,7 @@ export default {
                     descripcion : "",
                     cantidad : "",
                     importe : 0,
-                    precio_unitario : 0,
+                    precio_unitario : '',
                 }
             ],
             partidas_maq: [
@@ -836,7 +904,7 @@ export default {
                     descripcion : "",
                     cantidad : "",
                     importe : 0,
-                    precio_unitario : 0,
+                    precio_unitario : '',
                 }
             ],
             partidas_sub: [
@@ -848,7 +916,7 @@ export default {
                     descripcion : "",
                     cantidad : "",
                     importe : 0,
-                    precio_unitario : 0,
+                    precio_unitario : '',
                 }
             ],
             partidas_gas: [
@@ -860,7 +928,7 @@ export default {
                     descripcion : "",
                     cantidad : 1,
                     importe : 0,
-                    precio_unitario : 0,
+                    precio_unitario : '',
                 }
             ],
         }
