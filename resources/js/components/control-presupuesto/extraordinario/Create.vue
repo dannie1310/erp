@@ -161,7 +161,7 @@
                                         <span v-if="partida_material.material === ''">
                                             <MaterialSelect
                                                 :name="`material[${i}]`"
-                                                :scope="['materiales']"
+                                                :scope="['materiales','insumos']"
                                                 sort = "descripcion"
                                                 v-model="partida_material.material"
                                                 data-vv-as="Material"
@@ -265,7 +265,7 @@
                                         <span v-if="partida_mo.material === ''">
                                             <MaterialSelect
                                                 :name="`mano_obra[${i}]`"
-                                                :scope="['manoObra']"
+                                                :scope="['manoObra','insumos']"
                                                 sort = "descripcion"
                                                 v-model="partida_mo.material"
                                                 data-vv-as="Material"
@@ -368,7 +368,7 @@
                                         <span v-if="partida_he.material === ''">
                                             <MaterialSelect
                                                 :name="`herramienta[${i}]`"
-                                                :scope="['herramientas']"
+                                                :scope="['herramientas','insumos']"
                                                 sort = "descripcion"
                                                 v-model="partida_he.material"
                                                 data-vv-as="Material"
@@ -471,7 +471,7 @@
                                         <span v-if="partida_maq.material === ''">
                                             <MaterialSelect
                                                 :name="`maquinaria[${i}]`"
-                                                :scope="['maquinaria']"
+                                                :scope="['maquinaria','insumos']"
                                                 sort = "descripcion"
                                                 v-model="partida_maq.material"
                                                 data-vv-as="Material"
@@ -574,7 +574,7 @@
                                         <span v-if="partida_sub.material === ''">
                                             <MaterialSelect
                                                 :name="`subcontrato[${i}]`"
-                                                :scope="['subcontrato']"
+                                                :scope="['subcontrato','insumos']"
                                                 sort = "descripcion"
                                                 v-model="partida_sub.material"
                                                 data-vv-as="Subcontrato"
@@ -633,6 +633,211 @@
                                     <td style="text-align: right; border: none">${{suma_partidas_sub.formatMoney(2)}}</td>
                                     <td style="border: none"></td>
                                 </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+                                <!-- COMBUSTIBLES Y LUBRICANTES -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-gas-pump"/>Combustibles y Lubricantes</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaCOMB()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partidas_comb, i) in partidas_comb">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partidas_comb.material === ''">
+                                            <MaterialSelect
+                                                :name="`combustible_lubricante[${i}]`"
+                                                :scope="['materiales','insumos']"
+                                                sort = "descripcion"
+                                                v-model="partidas_comb.material"
+                                                data-vv-as="Material Combustibles / Lubricante"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`combustible_lubricante[${i}]`)}"
+                                                ref="COMBSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`combustible_lubricante[${i}]`)">{{ errors.first(`combustible_lubricante[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partidas_comb.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partidas_comb.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularCOMB"
+                                               class="form-control"
+                                               :name="`cantidad_material_comb[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partidas_comb.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_material_comb[${i}]`)}"
+                                               :id="`cantidad_material_comb[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_material_comb[${i}]`)">{{ errors.first(`cantidad_material_comb[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularCOMB"
+                                               class="form-control"
+                                               :name="`precio_unitario_comb[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partidas_comb.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_comb[${i}]`)}"
+                                               :id="`precio_unitario_comb[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_comb[${i}]`)">{{ errors.first(`precio_unitario_comb[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partidas_comb.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaCOMB(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Combustibles y Lubricantes:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_comb.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
+                                <!-- PROVISIONES DE COSTO -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-coins"/>Provisiones de Costo</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Cantidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaPROV()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partidas_prov, i) in partidas_prov">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partidas_prov.material === ''">
+                                            <MaterialSelect
+                                                :name="`provision_costo[${i}]`"
+                                                :scope="['materiales','insumos']"
+                                                sort = "descripcion"
+                                                v-model="partidas_prov.material"
+                                                data-vv-as="Material Combustibles / Lubricante"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`provision_costo[${i}]`)}"
+                                                ref="PROVSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`provision_costo[${i}]`)">{{ errors.first(`provision_costo[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partidas_prov.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partidas_prov.material.unidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularPROV"
+                                               class="form-control"
+                                               :name="`cantidad_material_prov[${i}]`"
+                                               :data-vv-as="`Cantidad Material ${i+1}`"
+                                               v-model="partidas_prov.cantidad"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`cantidad_material_prov[${i}]`)}"
+                                               :id="`cantidad_material_prov[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_material_prov[${i}]`)">{{ errors.first(`cantidad_material_prov[${i}]`) }}</div>
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularPROV"
+                                               class="form-control"
+                                               :name="`precio_unitario_prov[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partidas_prov.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_prov[${i}]`)}"
+                                               :id="`precio_unitario_prov[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_prov[${i}]`)">{{ errors.first(`precio_unitario_prov[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partidas_prov.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaPROV(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Provisión de Costo:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_prov.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+
                             </template>
                             <template v-if="tipo_costo==2">
                                 <!-- GASTOS -->
@@ -676,7 +881,7 @@
                                             <MaterialSelect
                                                 :name="`gastos[${i}]`"
                                                 :id="`gastos[${i}]`"
-                                                :scope="['subcontrato']"
+                                                :scope="['subcontrato','insumos']"
                                                 sort = "descripcion"
                                                 v-model="partida_gas.material"
                                                 data-vv-as="Gastos"
@@ -957,7 +1162,7 @@ import ExtraordinarioDirectoCreate from "./partials/CreateDirecto";
 import MaterialSelect from "../../cadeco/material/SelectAutocomplete";
 import ConceptoSelect from "../../cadeco/concepto/SelectPadresDeMedibles";
 export default {
-    name: "variacion-volumen-create",
+    name: "extraordinario-create",
     components: {
         ConceptoSelect,
         MaterialSelect, ExtraordinarioDirectoCreate, CreateConceptoExtaordinario, ModelListSelect},
@@ -994,6 +1199,8 @@ export default {
             suma_partidas_maq : 0,
             suma_partidas_sub : 0,
             suma_partidas_gas : 0,
+            suma_partidas_comb : 0,
+            suma_partidas_prov : 0,
             partidas_material: [
                 {
                     i : 0,
@@ -1054,6 +1261,30 @@ export default {
                     precio_unitario : '',
                 }
             ],
+            partidas_comb: [
+                {
+                    i : 0,
+                    material : "",
+                    unidad : "",
+                    numero_parte : "",
+                    descripcion : "",
+                    cantidad : "",
+                    importe : 0,
+                    precio_unitario : '',
+                }
+            ],
+            partidas_prov: [
+                {
+                    i : 0,
+                    material : "",
+                    unidad : "",
+                    numero_parte : "",
+                    descripcion : "",
+                    cantidad : "",
+                    importe : 0,
+                    precio_unitario : '',
+                }
+            ],
             partidas_gas: [
                 {
                     i : 0,
@@ -1101,6 +1332,14 @@ export default {
             this.partidas_sub.splice(i, 1);
             this.calcularSUB();
         },
+        eliminaPartidaCOMB(i){
+            this.partidas_comb.splice(i, 1);
+            this.calcularCOMB();
+        },
+        eliminaPartidaPROV(i){
+            this.partidas_prov.splice(i, 1);
+            this.calcularPROV();
+        },
         eliminaPartidaGAS(i){
             this.partidas_gas.splice(i, 1);
             this.calcularGAS();
@@ -1121,9 +1360,9 @@ export default {
                 'concepto' : this.concepto
             }
 
-            return this.$store.dispatch('control-presupuesto/variacion-volumen/store', datos_solicitud_cambio)
+            return this.$store.dispatch('control-presupuesto/extraordinario/store', datos_solicitud_cambio)
             .then(data => {
-                this.$router.push({name: 'variacion-volumen'});
+                this.$router.push({name: 'extraordinario'});
             })
             .finally(() => {
                 this.cargando = false;
@@ -1252,6 +1491,56 @@ export default {
                 _self.suma_partidas_sub += parseFloat(partida.importe);
             });
         },
+        calcularCOMB() {
+            let _self = this;
+            this.suma_partidas_comb = 0;
+            this.partidas_comb.forEach(function (partida, i) {
+                let cantidad = 0;
+                let precio_unitario = 0;
+
+                if(isNaN(parseFloat(partida.cantidad)))
+                {
+                    cantidad = 0;
+                }else{
+                    cantidad = partida.cantidad;
+                }
+
+                if(isNaN(parseFloat(partida.precio_unitario)))
+                {
+                    precio_unitario = 0;
+                }else{
+                    precio_unitario = partida.precio_unitario;
+                }
+
+                partida.importe = parseFloat(cantidad) * parseFloat(precio_unitario);
+                _self.suma_partidas_comb += parseFloat(partida.importe);
+            });
+        },
+        calcularPROV() {
+            let _self = this;
+            this.suma_partidas_prov = 0;
+            this.partidas_prov.forEach(function (partida, i) {
+                let cantidad = 0;
+                let precio_unitario = 0;
+
+                if(isNaN(parseFloat(partida.cantidad)))
+                {
+                    cantidad = 0;
+                }else{
+                    cantidad = partida.cantidad;
+                }
+
+                if(isNaN(parseFloat(partida.precio_unitario)))
+                {
+                    precio_unitario = 0;
+                }else{
+                    precio_unitario = partida.precio_unitario;
+                }
+
+                partida.importe = parseFloat(cantidad) * parseFloat(precio_unitario);
+                _self.suma_partidas_prov += parseFloat(partida.importe);
+            });
+        },
         calcularGAS() {
             let _self = this;
             this.suma_partidas_gas = 0;
@@ -1286,7 +1575,7 @@ export default {
                 descripcion : "",
                 cantidad : "",
                 importe : 0,
-                precio_unitario : 0,
+                precio_unitario : "",
             });
             this.index = this.index+1;
         },
@@ -1299,7 +1588,7 @@ export default {
                 descripcion : "",
                 cantidad : "",
                 importe : 0,
-                precio_unitario : 0,
+                precio_unitario : "",
             });
             this.index = this.index+1;
         },
@@ -1312,7 +1601,7 @@ export default {
                 descripcion : "",
                 cantidad : "",
                 importe : 0,
-                precio_unitario : 0,
+                precio_unitario : "",
             });
             this.index = this.index+1;
         },
@@ -1325,7 +1614,7 @@ export default {
                 descripcion : "",
                 cantidad : "",
                 importe : 0,
-                precio_unitario : 0,
+                precio_unitario : "",
             });
             this.index = this.index+1;
         },
@@ -1338,7 +1627,33 @@ export default {
                 descripcion : "",
                 cantidad : "",
                 importe : 0,
-                precio_unitario : 0,
+                precio_unitario : "",
+            });
+            this.index = this.index+1;
+        },
+        addPartidaCOMB(){
+            this.partidas_comb.splice(this.partidas_comb.length + 1, 0, {
+                i : 0,
+                material : "",
+                unidad : "",
+                numero_parte : "",
+                descripcion : "",
+                cantidad : "",
+                importe : 0,
+                precio_unitario : "",
+            });
+            this.index = this.index+1;
+        },
+        addPartidaPROV(){
+            this.partidas_prov.splice(this.partidas_prov.length + 1, 0, {
+                i : 0,
+                material : "",
+                unidad : "",
+                numero_parte : "",
+                descripcion : "",
+                cantidad : "",
+                importe : 0,
+                precio_unitario : "",
             });
             this.index = this.index+1;
         },
@@ -1351,7 +1666,7 @@ export default {
                 descripcion : "",
                 cantidad : 1,
                 importe : 0,
-                precio_unitario : 0,
+                precio_unitario : "",
             });
             this.index = this.index+1;
         },
@@ -1433,6 +1748,8 @@ export default {
                 this.suma_partidas_he +
                 this.suma_partidas_maq +
                 this.suma_partidas_sub +
+                this.suma_partidas_comb +
+                this.suma_partidas_prov +
                 this.suma_partidas_gas;
         },
         monto_presupuestado() {
