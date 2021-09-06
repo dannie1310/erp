@@ -444,9 +444,41 @@
                     </div>
                 </div>
             </div>
+            <hr v-if="invitacion.cotizacionCompra.exclusiones.data.length > 0" />
+            <div class="row" v-if="invitacion.cotizacionCompra.exclusiones.data.length > 0">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table id="tabla-conceptos">
+                            <thead>
+                            <tr>
+                                <td class="encabezado" colspan="7"><b>Exclusiones</b></td>
+                            </tr>
+                            <tr>
+                                <th class="index_corto">#</th>
+                                <th>Descripción</th>
+                                <th>Unidad</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Moneda</th>
+                                <th class="cantidad_input">Precio Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(extension, i) in invitacion.cotizacionCompra.exclusiones.data">
+                                <td class="index_corto">{{ i + 1 }}</td>
+                                <td>{{extension.descripcion}}</td>
+                                <td>{{extension.unidad}}</td>
+                                <td class="cantidad_input">{{extension.cantidad_format}}</td>
+                                <td class="cantidad_input">{{extension.precio_format}}</td>
+                                <td>{{extension.moneda}}</td>
+                                <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </span>
-
-
     </span>
 </template>
 
@@ -492,12 +524,11 @@ export default {
     },
     methods : {
         find() {
-
             this.cargando = true;
             return this.$store.dispatch('padronProveedores/invitacion/find', {
                 id: this.id_invitacion,
                 params: {
-                    include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas'],
+                    include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas', 'cotizacionCompra.exclusiones'],
                     scope: ['invitadoAutenticado']
                 }
             }).then(data => {
@@ -609,6 +640,26 @@ export default {
                 this.ancho_tabla_detalle += 150;
             }
         },
+        getTotalExclusion(i){
+            var moneda = this.invitacion.cotizacionCompra.exclusiones.data[i]['id_moneda'];
+            var precio_total = 0;
+            if(this.invitacion.cotizacionCompra.exclusiones.data[i]['cantidad'] != 0 && this.invitacion.cotizacionCompra.exclusiones.data[i]['precio_unitario'] != 0) {
+                var precio_total = this.invitacion.cotizacionCompra.exclusiones.data[i]['cantidad'] * this.invitacion.cotizacionCompra.exclusiones.data[i]['precio_unitario']
+                if (moneda == 1) {
+                    return '$' + parseFloat(precio_total).formatMoney(2, '.', ',');
+                }
+                if (moneda == 2) {
+                    return '$' + parseFloat(precio_total * this.dolar).formatMoney(2, '.', ',');
+                }
+                if (moneda == 3) {
+                    return '$' + parseFloat(precio_total * this.euro).formatMoney(2, '.', ',');
+                }
+                if (moneda == 4) {
+                    return '$' + parseFloat(precio_total * this.libra).formatMoney(2, '.', ',');
+                }
+            }
+            return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
+        }
     },
     computed: {
         colspan(){
@@ -695,7 +746,10 @@ table#tabla-conceptos th, table#tabla-conceptos td {
     border: 1px solid #dee2e6;
 }
 
-
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
+}
 
 table thead th
 {
