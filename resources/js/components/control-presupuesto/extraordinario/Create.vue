@@ -1046,7 +1046,7 @@
                                         <th class="c120 encabezado">Clave</th>
                                         <th class="encabezado" >Descripción</th>
                                         <th class="icono encabezado">
-                                            <button type="button" class="btn btn-success btn-sm" @click="agregarPartidaRuta('')">
+                                            <button type="button" class="btn btn-success btn-sm" @click="agregarPartidaRuta('')" v-if="partidas_nueva_ruta.length==0">
                                                 <i class="fa fa-plus"></i>
                                             </button>
                                             <!--<button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaGAS()">
@@ -1059,7 +1059,7 @@
                                 <tbody>
                                     <tr v-for="(partida, i) in partidas_nueva_ruta">
                                         <td class="icono">
-                                            <button @click="agregarPartidaRuta(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
+                                            <button @click="agregarPartidaRuta(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar" v-if="partida.es_hoja && !partida.cantidad_hijos > 0">
                                                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                                                 <i class="fa fa-plus" v-else></i>
                                             </button>
