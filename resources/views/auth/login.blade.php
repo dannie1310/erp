@@ -62,6 +62,11 @@
                             <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <a href="restablecer_contrasena.blade.php">¿Olvidaste tu contraseña?</a>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
