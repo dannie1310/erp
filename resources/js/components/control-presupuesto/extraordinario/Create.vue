@@ -987,8 +987,7 @@
                         <div class="col-md-12">
                             <concepto-select
                                 name="nodo_extraordinario"
-                                data-vv-as="Concepto"
-                                v-validate="{required: true}"
+                                data-vv-as="Ruta extraordinario"
                                 id="nodo_extraordinario"
                                 v-model="id_nodo_extraordinario"
                                 :error="errors.has('nodo_extraordinario')"
@@ -1000,7 +999,7 @@
                     </div>
                     <br>
                 </span>
-                <span v-if="tipo_ruta == 2">
+                <span v-else-if="tipo_ruta == 2">
                     <div class="row" >
                         <div class="col-md-12">
                             <label>
@@ -1013,8 +1012,7 @@
                         <div class="col-md-12">
                             <concepto-select
                                 name="nodo_ruta_nueva"
-                                data-vv-as="Concepto"
-                                v-validate="{required: true}"
+                                data-vv-as="Concepto nueva ruta"
                                 id="nodo_ruta_nueva"
                                 v-model="id_nodo_ruta_nueva"
                                 :error="errors.has('nodo_ruta_nueva')"
@@ -1069,7 +1067,7 @@
                                                    :name="`clave[${i}]`"
                                                    data-vv-as="Clave"
                                                    v-model="partida.clave"
-                                                   v-validate="{max:140}"
+                                                   v-validate="{required:true, max:140}"
                                                    :class="{'is-invalid': errors.has(`clave[${i}]`)}"
                                                    :id="`clave[${i}]`">
                                             <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
@@ -1085,7 +1083,7 @@
                                                     v-validate="{required: partida.descripcion ===''}"
                                                     :class="{'is-invalid': errors.has(`descripcion[${i}]`) || partida.error ==1 || partida.descripcion_sin_formato.length > 255}"
                                                     :id="`descripcion_${i}`">
-                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`) || partida.error ==1 || partida.descripcion_sin_formato.length > 255">{{ errors.first(`descripcion[${i}]`) }}</div>
                                             <div class="error-label" v-show="partida.descripcion_sin_formato.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
                                         </td>
                                         <td class="icono">
@@ -1281,6 +1279,12 @@ export default {
                             swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
 
 
+                        }else if(_self.tipo_ruta == 1 && !_self.id_nodo_extraordinario > 0){
+                            swal('¡Error!', 'Debe seleccionar la ruta de presupuesto donde posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
+                        }else if(_self.tipo_ruta == 2 && !_self.id_nodo_ruta_nueva > 0){
+                            swal('¡Error!', 'Debe seleccionar el concepto que será nodo para la nueva ruta del presupuesto donde se posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
+                        }else if(_self.tipo_ruta == 2 && _self.id_nodo_ruta_nueva > 0 && _self.partidas_nueva_ruta.length == 0){
+                            swal('¡Error!', 'Debe formar la nueva parte de la estructura del presupuesto a generar para el concepto extraordinario  (Paso 6)', 'error')
                         } else{
                             this.store()
                         }
@@ -1289,7 +1293,14 @@ export default {
                         {
                             swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
 
-                        } else{
+                        } else if(_self.tipo_ruta == 1 && !_self.id_nodo_extraordinario > 0){
+                            swal('¡Error!', 'Debe seleccionar la ruta de presupuesto donde posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
+                        }else if(_self.tipo_ruta == 2 && !_self.id_nodo_ruta_nueva > 0){
+                            swal('¡Error!', 'Debe seleccionar el concepto que será nodo para la nueva ruta del presupuesto donde se posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
+                        }else if(_self.tipo_ruta == 2 && _self.id_nodo_ruta_nueva > 0 && _self.partidas_nueva_ruta.length == 0){
+                            swal('¡Error!', 'Debe formar la nueva parte de la estructura del presupuesto a generar para el concepto extraordinario  (Paso 6)', 'error')
+                        }
+                            else{
                             this.store()
                         }
                     }
@@ -1316,7 +1327,7 @@ export default {
                 'partidas_comb' : this.partidas_comb,
                 'partidas_prov' : this.partidas_prov,
                 'partidas_gas' : this.partidas_gas,
-                'partidas_ruta_nueva' : this.partidas_ruta_nueva
+                'partidas_nueva_ruta' : this.partidas_nueva_ruta
             }
 
             return this.$store.dispatch('control-presupuesto/extraordinario/store', datos_solicitud_cambio)
@@ -1719,6 +1730,7 @@ export default {
         this.getUnidades();
     },
     watch:{
+
         /*id_nodo_ruta_nueva(value){
             if(value != ''){
                 return this.$store.dispatch('cadeco/concepto/find', {
