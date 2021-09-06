@@ -1202,100 +1202,20 @@ export default {
             suma_partidas_comb : 0,
             suma_partidas_prov : 0,
             partidas_material: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_mo: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_he: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_maq: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_sub: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_comb: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_prov: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : "",
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_gas: [
-                {
-                    i : 0,
-                    material : "",
-                    unidad : "",
-                    numero_parte : "",
-                    descripcion : "",
-                    cantidad : 1,
-                    importe : 0,
-                    precio_unitario : '',
-                }
             ],
             partidas_nueva_ruta : [],
         }
@@ -1345,9 +1265,35 @@ export default {
             this.calcularGAS();
         },
         validate() {
+            let _self = this;
             this.$validator.validate().then(result => {
                 if (result) {
-                    this.store()
+                    if(_self.tipo_costo == 1){
+                        if(_self.partidas_material.length ==0
+                            && _self.partidas_mo.length ==0
+                            && _self.partidas_he.length ==0
+                            && _self.partidas_maq.length ==0
+                            && _self.partidas_sub.length ==0
+                            && _self.partidas_comb.length ==0
+                            && _self.partidas_prov.length ==0
+                        )
+                        {
+                            swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
+
+
+                        } else{
+                            this.store()
+                        }
+                    } if(_self.tipo_costo == 2){
+                        if(_self.partidas_gas.length ==0)
+                        {
+                            swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
+
+                        } else{
+                            this.store()
+                        }
+                    }
+
                 }
             });
         },
@@ -1355,9 +1301,22 @@ export default {
             this.cargando = true;
 
             var datos_solicitud_cambio = {
+                'descripcion' : this.descripcion,
+                'unidad' : this.unidad,
+                'cantidad' : this.cantidad,
+                'tipo_costo' : this.tipo_costo,
+                'tipo_ruta' : this.tipo_ruta,
                 'motivo' : this.motivo,
                 'area_solicitante' : this.area_solicitante,
-                'concepto' : this.concepto
+                'partidas_material' : this.partidas_material,
+                'partidas_mo' : this.partidas_mo,
+                'partidas_he' : this.partidas_he,
+                'partidas_maq' : this.partidas_maq,
+                'partidas_sub' : this.partidas_sub,
+                'partidas_comb' : this.partidas_comb,
+                'partidas_prov' : this.partidas_prov,
+                'partidas_gas' : this.partidas_gas,
+                'partidas_ruta_nueva' : this.partidas_ruta_nueva
             }
 
             return this.$store.dispatch('control-presupuesto/extraordinario/store', datos_solicitud_cambio)

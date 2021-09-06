@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12"  v-if="$root.can('registrar_variacion_volumen')" :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right" >
+            <button  @click="create" title="Crear" class="btn btn-app float-right" >
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
