@@ -1327,7 +1327,9 @@ export default {
                 'partidas_comb' : this.partidas_comb,
                 'partidas_prov' : this.partidas_prov,
                 'partidas_gas' : this.partidas_gas,
-                'partidas_nueva_ruta' : this.partidas_nueva_ruta
+                'partidas_nueva_ruta' : this.partidas_nueva_ruta,
+                'id_nodo_extraordinario' : this.id_nodo_extraordinario,
+                'id_nodo_ruta_nueva' : this.id_nodo_ruta_nueva
             }
 
             return this.$store.dispatch('control-presupuesto/extraordinario/store', datos_solicitud_cambio)
