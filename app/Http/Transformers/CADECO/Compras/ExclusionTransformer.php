@@ -20,7 +20,8 @@ class ExclusionTransformer extends TransformerAbstract
             'precio_unitario' => $model->precio_unitario,
             'precio_format' => $model->precio_format,
             'id_moneda' => $model->id_moneda,
-            'moneda' => $model->nombre_moneda
+            'moneda' => $model->nombre_moneda,
+            'total_format' => $model->total_format
         ];
     }
 }

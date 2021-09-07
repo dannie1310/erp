@@ -5,6 +5,7 @@ namespace App\Models\CADECO\Compras;
 
 
 use App\Models\CADECO\Moneda;
+use App\Models\CADECO\Transaccion;
 use Illuminate\Database\Eloquent\Model;
 
 class Exclusion extends Model
@@ -31,6 +32,11 @@ class Exclusion extends Model
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
 
+    public function transaccion()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     /**
      * Scope
      */
@@ -55,6 +61,28 @@ class Exclusion extends Model
         }catch (\Exception $e)
         {
             return null;
+        }
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        $precio = $this->cantidad * $this->precio_unitario;
+        switch ($this->id_moneda)
+        {
+            case 1:
+                return '$' . number_format($precio,2,'.',',');
+                break;
+
+            case 2:
+                return '$' . number_format($precio * $this->transaccion->TcUSD,2,'.',',');
+                break;
+
+            case 3:
+                return '$' . number_format($precio * $this->transaccion->TcEuro,2,'.',',');
+                break;
+            case 4:
+                return '$' . number_format($precio * $this->transaccion->TcLibra,2,'.',',');
+                break;
         }
     }
 
