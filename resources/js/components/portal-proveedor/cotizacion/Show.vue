@@ -5,7 +5,7 @@
                 <div class="col-12">
                     <div class="card">
 			            <div class="card-body">
-                            <cotizacion-proveedor-partial-show v-bind:id_invitacion="id"></cotizacion-proveedor-partial-show>
+                            <cotizacion-proveedor-partial-show v-bind:id_invitacion="id" />
                         </div>
                         <div class="card-footer">
                             <div class="pull-right">

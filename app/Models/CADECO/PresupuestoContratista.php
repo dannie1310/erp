@@ -65,7 +65,7 @@ class PresupuestoContratista extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 50)->whereHas('contratoProyectado');
+            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)->whereHas('contratoProyectado');
         });
     }
 
