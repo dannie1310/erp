@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import PdfVariacion from './partials/FormatoVariacionVolumen';
+import PdfVariacion from './partials/Formato';
 import SolicitudCambioPresupuestoPartialShow from "./partials/PartialShow";
 export default {
     name: "variacion-volumen-show",

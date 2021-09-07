@@ -6,15 +6,15 @@
         <router-link  :to="{ name: 'extraordinario-autorizar', params: {id: value.id}}" v-if="($root.can('autorizar_extraordinario') || $root.can('rechazar_extraordinario')) && value.estado == 1" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
             <i class="fa fa-thumbs-o-up"></i>
         </router-link>
-        <PdfVariacion v-bind:id="value.id"></PdfVariacion>
+        <Pdf v-bind:id="value.id"></Pdf>
     </div>
 </template>
 
 <script>
-    import PdfVariacion from './FormatoVariacionVolumen';
+    import Pdf from './Formato';
     export default {
         name: "action-buttons",
-        components: {PdfVariacion},
+        components: {Pdf},
         props: ['value'],
         methods: {
 

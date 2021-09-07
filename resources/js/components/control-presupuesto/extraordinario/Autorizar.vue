@@ -23,7 +23,7 @@
                     Autorizar
                 </button>
                 <Rechazar @created="find()" v-if="solicitud && solicitud.id_estatus == 1" v-bind:id="id" ></Rechazar>
-                <PdfVariacion v-bind:id="id" v-bind:txt="'Formato'"></PdfVariacion>
+                <Pdf v-bind:id="id" v-bind:txt="'Formato'"></Pdf>
                 <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
             </div>
         </div>
@@ -32,12 +32,12 @@
 </template>
 
 <script>
-import PdfVariacion from './partials/FormatoVariacionVolumen';
+import Pdf from './partials/Formato';
 import Rechazar from './partials/Rechazar';
 import SolicitudCambioPresupuestoPartialShow from "./partials/PartialShow";
 export default {
     name: "variacion-volumen-show",
-    components: {SolicitudCambioPresupuestoPartialShow, PdfVariacion, Rechazar},
+    components: {SolicitudCambioPresupuestoPartialShow, Pdf, Rechazar},
     props: ['id'],
     data() {
         return {

@@ -66,7 +66,7 @@ class VariacionVolumenController extends Controller
 
     public function pdfVariacionVolumen($id)
     {
-        if(auth()->user()->can('consultar_variacion_volumen') || true) {
+        if(auth()->user()->can('consultar_variacion_volumen')) {
             return $this->service->pdfVariacionVolumen($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para consultar el formato de variación de volumen.');

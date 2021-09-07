@@ -26,14 +26,14 @@
 
 <script>
     export default {
-        name: "variacion-volumen-pdf",
+        name: "extraordinario-pdf",
         props: ['id', 'txt'],
         methods: {
             init() {
                 this.pdf()
             },
             pdf(){
-                var url = '/api/control-presupuesto/variacion-volumen/' + this.id +'/formato-variacion-volumen?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
+                var url = '/api/control-presupuesto/extraordinario/' + this.id +'/formato?db=' + this.$session.get('db') + '&idobra=' + this.$session.get('id_obra')+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Estimación</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');

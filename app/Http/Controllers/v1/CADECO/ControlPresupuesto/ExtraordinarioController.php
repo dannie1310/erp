@@ -54,10 +54,10 @@ class ExtraordinarioController extends Controller
          return $this->respondWithItem($resp);
     }
 
-    public function pdfVariacionVolumen($id)
+    public function pdf($id)
     {
-        if(auth()->user()->can('consultar_entrada_almacen') || true) {
-            return $this->service->pdfVariacionVolumen($id)->create();
+        if(auth()->user()->can('consultar_extraordinario')) {
+            return $this->service->pdf($id)->create();
         }
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
