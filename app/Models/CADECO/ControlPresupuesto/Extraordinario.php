@@ -170,7 +170,8 @@ class Extraordinario extends SolicitudCambio
             $solicitud_extraordinario = $this->create([
                 'area_solicitante' => $data['area_solicitante'],
                 'motivo' => $data['motivo'],
-                'id_tipo_orden' => 3
+                'id_tipo_orden' => 3,
+                'importe_afectacion'=>$data["monto_presupuestado"]
             ]);
 
             if($data["tipo_ruta"] == 2){
@@ -192,7 +193,7 @@ class Extraordinario extends SolicitudCambio
                 $solicitud_extraordinario->id_concepto_raiz = $data['id_nodo_ruta_nueva'];
                 $solicitud_extraordinario->save();
             } else {
-                $partida_padre = Concepto::where('nivel', 'like',$data['id_nodo_extraordinario'] )->first();
+                $partida_padre = Concepto::find($data['id_nodo_extraordinario']);
                 $nivel_base = $partida_padre->nivel;
                 $cantidad_hijos = $partida_padre->hijos()->count();
                 $solicitud_extraordinario->id_concepto_raiz = $data['id_nodo_extraordinario'];
@@ -204,7 +205,7 @@ class Extraordinario extends SolicitudCambio
         }
 
         try{
-            $partida_extraordinario = $solicitud_extraordinario->solicitudPartidas()->create([
+             $solicitud_extraordinario->solicitudPartidas()->create([
                 'id_tipo_orden' => 3,
                 'nivel' => $nivel_base. str_pad($cantidad_hijos + 1,3,"0", STR_PAD_LEFT) . '.',
                 'unidad' => $data['unidad'],
@@ -218,7 +219,6 @@ class Extraordinario extends SolicitudCambio
             $solicitud_extraordinario->save();
 
             $nivel_base_extraordinario =$nivel_base. str_pad($cantidad_hijos + 1,3,"0", STR_PAD_LEFT) . '.';
-            $cantidad_hijos_extraordinario = 0;
 
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
@@ -226,48 +226,61 @@ class Extraordinario extends SolicitudCambio
         }
 
         try{
-            $solicitud_extraordinario->solicitudPartidas()->create([
-                'id_tipo_orden' => 3,
-                'nivel' => $nivel_base_extraordinario. str_pad($cantidad_hijos_extraordinario + 1,3,"0", STR_PAD_LEFT) . '.',
-                'descripcion' => "MATERIALES",
-            ]);
+            $importe_afectacion = 0;
+            foreach ($agrupador_conceptos as $key_a =>  $agrupador_insumos){
 
-            $nivel_base_agrupador = $nivel_base_extraordinario. str_pad($cantidad_hijos_extraordinario + 1,3,"0", STR_PAD_LEFT) . '.';
-
-            if(count($data["partidas_material"])>0)
-            {
-                foreach($data["partidas_material"] as $key=>$insumo)
-                {
-                    $solicitud_extraordinario->solicitudPartidas()->create([
-                        'id_tipo_orden' => 3,
-                        'tipo_agrupador'=>1,
-                        'nivel' => $nivel_base_agrupador. str_pad($key,3,"0", STR_PAD_LEFT) . '.',
-                        'cantidad_presupuestada_nueva' => $insumo['cantidad'],
-                        'descripcion' => $insumo['material']["label"],
-                        'unidad' => $insumo['material']["unidad"],
-                        'id_material' => $insumo['material']["id"],
-                        'precio_unitario_nuevo' => $insumo['precio_unitario'],
-                        'monto_presupuestado' => $insumo['importe'],
-                    ]);
+                if($agrupador_insumos == 'MANOOBRA'){
+                    $descripcion_agrupador = 'MANO OBRA';
+                }else if($agrupador_insumos == 'HERRAMIENTAYEQUIPO'){
+                    $descripcion_agrupador = 'HERRAMIENTA Y EQUIPO';
+                }else if($agrupador_insumos == 'COMBUSTIBLESYLUBRICANTES'){
+                    $descripcion_agrupador = 'COMBUSTIBLES Y LUBRICANTES';
+                }else if($agrupador_insumos == 'PROVISIONCOSTO'){
+                    $descripcion_agrupador = 'PROVISION DE COSTO';
+                }else {
+                    $descripcion_agrupador = $agrupador_insumos;
                 }
+
+                $nivel_agrupador = $nivel_base_extraordinario. str_pad($key_a,3,"0", STR_PAD_LEFT) . '.';
+
+                $agrupador = $solicitud_extraordinario->solicitudPartidas()->create([
+                    'id_tipo_orden' => 3,
+                    'nivel' => $nivel_agrupador,
+                    'descripcion' => $descripcion_agrupador,
+                ]);
+
+                if(count($data[$agrupador_insumos])>0)
+                {
+                    $monto_presupuestado_agrupador = 0;
+                    foreach($data[$agrupador_insumos] as $key=>$insumo)
+                    {
+                        $solicitud_extraordinario->solicitudPartidas()->create([
+                            'id_tipo_orden' => 3,
+                            'tipo_agrupador'=>$key_a + 1,
+                            'nivel' => $nivel_agrupador. str_pad($key,3,"0", STR_PAD_LEFT) . '.',
+                            'cantidad_presupuestada_nueva' => $insumo['cantidad'],
+                            'descripcion' => $insumo['material']["label"],
+                            'unidad' => $insumo['material']["unidad"],
+                            'id_material' => $insumo['material']["id"],
+                            'precio_unitario_nuevo' => $insumo['precio_unitario'],
+                            'monto_presupuestado' => $insumo['importe'],
+                        ]);
+                        $monto_presupuestado_agrupador += $insumo['importe'];
+                        $importe_afectacion += $insumo['importe'] * $data["cantidad"];
+                    }
+                    $agrupador->monto_presupuestado= $monto_presupuestado_agrupador;
+                    $agrupador->save();
+                }
+            }
+
+            if(abs($importe_afectacion - $solicitud_extraordinario->importe_afectacion) > 0.1){
+                throw new \Exception("Existen incosistencias entre el importe de la solicitud y el importe de los insumos");
             }
 
         } catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(500, $e->getMessage());
         }
-
-        //abort(500,"precius");
-
-
-
-        dd($solicitud_extraordinario->solicitudPartidas);
-
-            if(count($data["conceptos_cambio"]) != $solicitud_extraordinario->solicitudPartidas()->count()){
-                throw new \Exception("Hubo un error al registrar las partidas de la solicitud.");
-            }
-
-
 
         DB::connection('cadeco')->commit();
 

@@ -122,7 +122,12 @@ class SolicitudCambio extends Model
 
     public function getPorcentajeCambioAttribute()
     {
-        return ($this->importe_afectacion / $this->importe_original) * 100;
+        if($this->importe_original>0){
+            return ($this->importe_afectacion / $this->importe_original) * 100;
+        }else {
+            return 0;
+        }
+
     }
 
     public function getPorcentajeCambioFormatAttribute()
