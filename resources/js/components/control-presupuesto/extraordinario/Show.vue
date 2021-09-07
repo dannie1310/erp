@@ -41,20 +41,20 @@ export default {
     methods: {
         find() {
             this.cargando = true;
-            this.$store.commit('control-presupuesto/variacion-volumen/SET_VARIACION', null);
-            return this.$store.dispatch('control-presupuesto/variacion-volumen/find', {
+            this.$store.commit('control-presupuesto/extraordinario/SET_EXTRAORDINARIO', null);
+            return this.$store.dispatch('control-presupuesto/extraordinario/find', {
                 id: this.id,
                 params: {
                     include: ['partidas'],
                 }
             }).then(data => {
-                this.$store.commit('control-presupuesto/variacion-volumen/SET_VARIACION', data);
+                this.$store.commit('control-presupuesto/extraordinario/SET_EXTRAORDINARIO', data);
             }) .finally(() => {
                 this.cargando = false;
             })
         },
         autorizar(){
-            return this.$store.dispatch('control-presupuesto/variacion-volumen/autorizar', {
+            return this.$store.dispatch('control-presupuesto/extraordinario/autorizar', {
                 id: this.id,
                 params: {
                     include: ['partidas'],
@@ -66,12 +66,12 @@ export default {
             })
         },
         regresar() {
-            this.$router.push({name: 'variacion-volumen'});
+            this.$router.push({name: 'extraordinario'});
         },
     },
     computed: {
         solicitud() {
-            return this.$store.getters['control-presupuesto/variacion-volumen/currentVariacion']
+            return this.$store.getters['control-presupuesto/extraordinario/currentExtraordinario']
         },
     },
     mounted() {

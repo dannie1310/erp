@@ -57,6 +57,7 @@ class ExtraordinarioTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_solicitud_format,
             'porcentaje_cambio_format' => $model->porcentaje_cambio_format,
             'porcentaje_cambio' => $model->porcentaje_cambio,
+            'concepto_path' => $model->conceptoRaiz->path,
         ];
     }
 
@@ -79,9 +80,9 @@ class ExtraordinarioTransformer extends TransformerAbstract
      */
     public function includePartidas(Extraordinario $model)
     {
-        if($partidas = $model->partidas)
+        if($partidas = $model->partidas()->orderBy("nivel")->get())
         {
-            return $this->collection($partidas, new ExtraordinarioTransformer);
+            return $this->collection($partidas, new ExtraordinarioPartidasTransformer);
         }
         return null;
     }

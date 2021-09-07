@@ -40,6 +40,10 @@ class Extraordinario extends SolicitudCambio
         return $this->hasMany(VariacionVolumenPartidas::class, 'id_solicitud_cambio', 'id');
     }
 
+    public function conceptoRaiz(){
+        return $this->belongsTo(Concepto::class,"id_concepto_raiz","id_concepto");
+    }
+
     /**
      * Scopes
      */

@@ -138,7 +138,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -242,7 +242,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -345,7 +345,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -448,7 +448,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -551,7 +551,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -653,7 +653,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -755,7 +755,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -857,7 +857,7 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Cantidad
+                                        Rendimiento U.T.
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario

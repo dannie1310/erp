@@ -17,12 +17,6 @@
                         Monto de Solicitud
                     </th>
                     <th class="encabezado">
-                        Monto Original de Concepto(s)
-                    </th>
-                    <th class="encabezado">
-                        % Cambio Solicitud
-                    </th>
-                    <th class="encabezado">
                         Estado de Solicitud
                     </th>
                 </tr>
@@ -39,27 +33,31 @@
                     <td style="text-align: right">
                         {{ solicitud_cambio.importe_afectacion_format }}
                     </td>
-                    <td style="text-align: right">
-                        {{ solicitud_cambio.importe_original_format }}
-                    </td>
-                    <td style="text-align: right">
-                        {{ solicitud_cambio.porcentaje_cambio_format }}
-                    </td>
                     <td style="text-align: center">
                         <EstatusLabelGlobal v-bind:value="solicitud_cambio.estado_label"></EstatusLabelGlobal>
                     </td>
                 </tr>
                 <tr>
-                    <td style="border: none" colspan="7"></td>
+                    <td style="border: none" colspan="5"></td>
                 </tr>
                 <tr >
-                    <th class="encabezado" colspan="7">
+                    <th class="encabezado" colspan="5">
                         Motivo
                     </th>
                 </tr>
                 <tr >
-                    <td  colspan="7">
+                    <td  colspan="5">
                         {{ solicitud_cambio.motivo }}
+                    </td>
+                </tr>
+                <tr >
+                    <th class="encabezado" colspan="5">
+                        Concepto Raíz
+                    </th>
+                </tr>
+                <tr >
+                    <td  colspan="5">
+                        {{ solicitud_cambio.concepto_path }}
                     </td>
                 </tr>
             </table>

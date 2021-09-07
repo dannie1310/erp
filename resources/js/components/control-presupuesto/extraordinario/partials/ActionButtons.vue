@@ -1,7 +1,9 @@
 <template>
     <div class="btn-group">
-        <button @click="show" type="button" class="btn btn-sm btn-outline-secondary" v-if="$root.can('consultar_variacion_volumen')"  title="Consultar"><i class="fa fa-eye"></i></button>
-        <router-link  :to="{ name: 'variacion-volumen-autorizar', params: {id: value.id}}" v-if="($root.can('autorizar_variacion_volumen') || $root.can('rechazar_variacion_volumen')) && value.estado == 1" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
+        <router-link  :to="{ name: 'extraordinario-show', params: {id: value.id}}" v-if="$root.can('consultar_extraordinario')" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
+            <i class="fa fa-eye"></i>
+        </router-link>
+        <router-link  :to="{ name: 'extraordinario-autorizar', params: {id: value.id}}" v-if="($root.can('autorizar_extraordinario') || $root.can('rechazar_extraordinario')) && value.estado == 1" type="button" class="btn btn-sm btn-outline-danger" title="Aplicar">
             <i class="fa fa-thumbs-o-up"></i>
         </router-link>
         <PdfVariacion v-bind:id="value.id"></PdfVariacion>
@@ -15,9 +17,7 @@
         components: {PdfVariacion},
         props: ['value'],
         methods: {
-            show() {
-                this.$router.push({name: 'variacion-volumen-show', params: {id: this.value.id}});
-            },
+
         },
         computed: {
         },

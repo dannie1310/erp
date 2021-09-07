@@ -36,20 +36,15 @@ class ExtraordinarioPartidasTransformer extends TransformerAbstract
             'id_tipo_orden' => (int) $model->id_tipo_orden,
             'tipo_orden' => (string) $model->solicitudcambio->estatus->descripcion,
             'unidad' =>  $model->unidad,
-            'clave_concepto' => (string) $model->concepto->clave_concepto,
-            'descripcion' => (string) $model->concepto->descripcion,
+            'descripcion' => (string) $model->descripcion,
             'descripcion_format' => (string) $model->descripcion_format,
-            'cantidad_presupuestada_original' => $model->cantidad_presupuestada_original,
-            'cantidad_presupuestada_original_format' => $model->cantidad_presupuestada_original_format,
-            'cantidad_presupuestada_nueva' =>  $model->cantidad_presupuestada_nueva,
-            'cantidad_presupuestada_nueva_format' => $model->cantidad_presupuestada_nueva_format,
-            'precio_unitario_original' => $model->precio_unitario_original,
-            'precio_unitario_original_format' => $model->precio_unitario_original_format,
-            'importe_original_format' => $model->importe_original_format,
-            'importe_cambio_format' => $model->importe_cambio_format,
-            'importe_actualizado_format' => $model->importe_actualizado_format,
-            'variacion_volumen' => $model->variacion_volumen,
-            'variacion_volumen_format' => $model->variacion_volumen_format,
+            'cantidad' =>  $model->cantidad_presupuestada_nueva,
+            'cantidad_format' => $model->cantidad_format,
+            'precio_unitario' => $model->precio_unitario_nuevo,
+            'precio_unitario_format' => $model->precio_unitario_format,
+            'importe_format' => $model->importe_format,
+            'longitud_nivel'=>$model->longitud_nivel,
+            'clave'=>$model->clave_concepto
         ];
     }
 }

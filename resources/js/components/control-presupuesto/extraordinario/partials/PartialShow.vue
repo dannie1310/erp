@@ -17,31 +17,21 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th class="text-center">Clave</th>
                                 <th class="text-center">Descripción</th>
                                 <th class="text-center">Unidad</th>
+                                <th class="text-center">Cantidad</th>
                                 <th class="text-center">Precio Unitario</th>
-                                <th class="text-center">Volumen Original</th>
-                                <th class="text-center">Volumen del Cambio</th>
-                                <th class="text-center">Volumen Actualizado</th>
-                                <th class="text-center">Importe Original</th>
-                                <th class="text-center">Importe del Cambio</th>
-                                <th class="text-center">Importe Actualizado</th>
+                                <th class="text-center">Importe</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
                                 <td>{{i + 1}}</td>
-                                <td>{{partida.clave_concepto}}</td>
-                                <td :title="partida.descripcion">{{partida.descripcion_format}}</td>
+                                <td :title="partida.descripcion"><span v-for="n in partida.longitud_nivel*2">-</span>{{partida.descripcion_format}}</td>
                                 <td>{{partida.unidad}}</td>
-                                <td style="text-align: right">{{partida.precio_unitario_original_format}}</td>
-                                <td style="text-align: right">{{partida.cantidad_presupuestada_original_format}}</td>
-                                <td style="text-align: right">{{partida.variacion_volumen_format}}</td>
-                                <td style="text-align: right">{{partida.cantidad_presupuestada_nueva_format}}</td>
-                                <td style="text-align: right">{{partida.importe_original_format}}</td>
-                                <td style="text-align: right">{{partida.importe_cambio_format}}</td>
-                                <td style="text-align: right">{{partida.importe_actualizado_format}}</td>
+                                <td style="text-align: right">{{partida.cantidad_format}}</td>
+                                <td style="text-align: right">{{partida.precio_unitario_format}}</td>
+                                <td style="text-align: right">{{partida.importe_format}}</td>
                              </tr>
                          </tbody>
                      </table>
