@@ -104,19 +104,41 @@
                     </div>
                 </div>
             </div>
-            <div class="row" v-if="cotizacion">
+            <hr v-if="cotizacion.exclusiones.data.length > 0" />
+            <div class="row" v-if="cotizacion.exclusiones.data.length > 0">
                 <div class="col-md-12">
-                    <label class="col-form-label">Observaciones: </label>
-                </div>
-            </div>
-            <div class="row" v-if="cotizacion">
-                <div class="col-md-12">
-                    {{ cotizacion.observaciones }}
+                    <div class="table-responsive">
+                        <table id="tabla-conceptos">
+                            <thead>
+                            <tr>
+                                <td class="encabezado" colspan="7"><b>Exclusiones</b></td>
+                            </tr>
+                            <tr>
+                                <th class="index_corto">#</th>
+                                <th>Descripción</th>
+                                <th>Unidad</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Moneda</th>
+                                <th class="cantidad_input">Precio Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(exclusion, i) in invitacion.cotizacionCompra.exclusiones.data">
+                                <td class="index_corto">{{ i + 1 }}</td>
+                                <td>{{exclusion.descripcion}}</td>
+                                <td>{{exclusion.unidad}}</td>
+                                <td class="cantidad_input">{{exclusion.cantidad_format}}</td>
+                                <td class="cantidad_input">{{exclusion.precio_format}}</td>
+                                <td>{{exclusion.moneda}}</td>
+                                <td style="text-align:right;">{{exclusion.total_format}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </span>
-
-
     </span>
 </template>
 
@@ -157,14 +179,14 @@ export default {
 
             return this.$store.dispatch('compras/cotizacion/find', {
                 id: this.id,
-                params:{include: ['empresa', 'sucursal', 'complemento', 'partidas']}
+                params:{include: ['empresa', 'sucursal', 'complemento', 'partidas', 'exclusiones']}
             }).then(data => {
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
                 this.items = data.partidas.data;
                 this.cotizacion = data;
-                this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;
-                this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
-                this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
+                this.dolar = data.complemento ? parseFloat(data.complemento.tc_usd).formatMoney(4, '.', '') : 0;
+                this.euro = data.complemento ? parseFloat(data.complemento.tc_eur).formatMoney(4, '.', '') : 0;
+                this.libra = data.complemento ? parseFloat(data.complemento.tc_libra).formatMoney(4, '.', '') : 0;
             }).finally(() => {
                 this.cargando = false;
             });
