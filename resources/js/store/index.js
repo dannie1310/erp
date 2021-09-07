@@ -120,6 +120,8 @@ import solicitudMovimientoFG from './modules/contratos/solicitud-movimiento-fg';
 import subcontrato from './modules/contratos/subcontrato';
 import tipoContrato from './modules/contratos/tipo-contrato';
 import solicitudCambio from './modules/contratos/solicitud-cambio';
+import invitacionCotizarContrato from "./modules/contratos/invitacion-cotizar";
+
 
 //ENTREGA CFDI
 
@@ -300,6 +302,7 @@ export default new Vuex.Store({
         'contratos/subcontrato': subcontrato,
         'contratos/tipo-contrato': tipoContrato,
         'contratos/solicitud-cambio': solicitudCambio,
+        'contratos/invitacion' : invitacionCotizarContrato,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,

@@ -6,7 +6,6 @@
 </template>
 
 <script>
-
     import InvitacionCompraEncabezado from "./Encabezado";
     import InvitacionCompraTablaCompletaDatos from "./TablaCompletaDatosInvitacion";
     export default {

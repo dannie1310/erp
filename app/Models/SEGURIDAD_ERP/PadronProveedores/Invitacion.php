@@ -5,18 +5,30 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
 use App\Facades\Context;
-use App\Models\CADECO\CotizacionCompra;
+use App\Http\Transformers\CADECO\Compras\ExclusionTransformer;
+use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Obra;
-use App\Models\CADECO\SolicitudCompra;
+use App\Models\CADECO\PresupuestoContratistaPartida;
+use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
-use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\PDF\Compras\InvitacionCotizarFormato;
+use App\PDF\PortalProveedores\InvitacionCotizarFormato;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\CotizacionCompra;
+use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
+use App\Http\Transformers\CADECO\DestinoTransformer;
+use App\Http\Transformers\CADECO\ConceptoTransformer;
+use App\Http\Transformers\CADECO\ContratoTransformer;
+use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
+use App\Http\Transformers\CADECO\Contrato\ContratoProyectadoTransformer;
 
 class Invitacion extends Model
 {
@@ -62,8 +74,6 @@ class Invitacion extends Model
 
     //protected $dates = ["fecha_cierre_invitacion"];
     //protected $dateFormat = 'M d Y h:i:s A';
-    /*
-     * Relaciones*/
 
     /**
      * Relaciones
@@ -79,7 +89,8 @@ class Invitacion extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
-        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+        return $this->belongsTo(SolicitudCompra::class, "id_transaccion_antecedente", "id_transaccion")
+            ->where("tipo_transaccion","=",17)->withoutGlobalScopes();
     }
 
     public function cotizacionGenerada()
@@ -89,11 +100,25 @@ class Invitacion extends Model
         return $this->hasOne(Transaccion::class, "id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
+    public function contratoProyectado(){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(ContratoProyectado::class, "id_transaccion_antecedente", "id_transaccion")
+            ->where("tipo_transaccion","=",49)->withoutGlobalScopes();
+    }
+
     public function cotizacionCompra()
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
         return $this->hasOne(CotizacionCompra::class,"id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
+    }
+
+    public function presupuesto()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->hasOne(PresupuestoContratista::class,"id_transaccion", "id_cotizacion_generada")->withoutGlobalScopes();
     }
 
     public function usuarioInvito()
@@ -137,6 +162,11 @@ class Invitacion extends Model
         return $this->belongsTo(CtgAreaCompradora::class, 'id_area_compradora','id');
     }
 
+    public function areaContratante()
+    {
+        return $this->belongsTo(TipoAreaSubcontratante::class, 'id_area_contratante','id');
+    }
+
     public function cartaTerminos()
     {
         return $this->hasOne(InvitacionArchivo::class, "id_invitacion", "id")
@@ -174,9 +204,9 @@ class Invitacion extends Model
 
     public function scopeDisponibleCotizar($query)
     {
-        return $query->whereNull("id_cotizacion_generada")
-            ->where("fecha_cierre_invitacion",">=",date("Y-m-d"));
+        return $query->whereNull("id_cotizacion_generada")->whereRaw("fecha_cierre_invitacion >= '".date("Y-m-d")."'");
     }
+
     public function scopePorObra($query)
     {
         if (Context::isEstablished()) {
@@ -191,6 +221,13 @@ class Invitacion extends Model
     public function scopeAreasCompradorasPorUsuario($query)
     {
         return $query->whereHas('areaCompradora', function ($q1) {
+            return $q1->areasPorUsuario();
+        });
+    }
+
+    public function scopeAreasContratantesPorUsuario($query)
+    {
+        return $query->whereHas('areaContratante', function ($q1) {
             return $q1->areasPorUsuario();
         });
     }
@@ -314,10 +351,18 @@ class Invitacion extends Model
     {
         $transacciones = [];
         $solicitudes = self::invitadoAutenticado()->disponibleCotizar()->orderBy('id_transaccion_antecedente','desc')->get();
+
         foreach ($solicitudes as $key =>  $solicitud) {
+            $observaciones = '';
+            if($solicitud->tipo_transaccion_antecedente == 17){
+                $observaciones = $solicitud->transaccionAntecedente->observaciones;
+            }else{
+                $observaciones = $solicitud->transaccionAntecedente->referencia;
+            }
             $transacciones[$key]['id'] = $solicitud->id;
             $transacciones[$key]['numero_folio_format'] = $solicitud->transaccionAntecedente->numero_folio_format;
-            $transacciones[$key]['observaciones'] = $solicitud->transaccionAntecedente->observaciones;
+            $transacciones[$key]['tipo_transaccion'] = $solicitud->tipo_transaccion_antecedente;
+            $transacciones[$key]['observaciones'] = $observaciones;
         }
         return $transacciones;
     }
@@ -330,7 +375,8 @@ class Invitacion extends Model
         {
             abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
         }
-        if($this->tipo_transaccion_antecedente == 17) {
+        if($this->tipo_transaccion_antecedente == 17)
+        {
             return [
                 'id' => $this->solicitud->getKey(),
                 'numero_folio' => $this->solicitud->numero_folio,
@@ -358,7 +404,37 @@ class Invitacion extends Model
                 'partidas' => $this->partidasSolicitud()
             ];
         }
-        // colocar el array para contrato proyectado
+        if($this->tipo_transaccion_antecedente == 49)
+        {
+            $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
+            $transaccionRelacionTransformer = new TransaccionRelacionTransformer;
+
+            $contratosTransformer = new ContratoTransformer;
+
+            $resp = $contratoProyectadoTransformer->transform($this->contratoProyectado);
+            $transaccion = $transaccionRelacionTransformer->transform($this->contratoProyectado);
+
+            $conceptos = [];
+            foreach($this->contratoProyectado->conceptos as $key => $concepto){
+                $conceptos[$key] = $contratosTransformer->transform($concepto);
+                $conceptos[$key]['enable'] = true;
+                $conceptos[$key]['moneda_seleccionada'] = 1;
+            }
+
+            $resp['id_invitacion'] = $this->getKey();
+            $resp['razon_social'] = $this->razon_social;
+            $resp['rfc'] = $this->rfc;
+            $resp['base_datos'] = $this->base_datos;
+            $resp['nombre_usuario_invitado'] = $this->usuarioInvitado->nombre_completo_sin_espacios;
+            $resp['sucursal'] = $this->descripcion_sucursal;
+            $resp['transaccion'] = $transaccion;
+            $resp['conceptos']['data'] = $conceptos;
+            $resp['descuento_cot'] = 0.0;
+            $resp['anticipo'] = 0.0;
+            $resp['vigencia'] = 0.0;
+            $resp['credito'] = 0.0;
+            return $resp;
+        }
     }
 
     public function partidasSolicitud()
@@ -387,6 +463,63 @@ class Invitacion extends Model
             ]);
         }
        return $partidas;
+    }
+
+    public function getPresupuesto()
+    {
+        $resp = [];
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        if($this->tipo_transaccion_antecedente == 49) {
+            $presupuestoTransformer = new PresupuestoContratistaTransformer;
+            $resp = $presupuestoTransformer->transform($this->presupuesto);
+
+            $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
+            $resp['contrato_proyectado'] = $contratoProyectadoTransformer->transform($this->contratoProyectado);
+            $resp['razon_social'] = $this->empresa->razon_social;
+            $exclusiones = [];
+            foreach ($this->presupuesto->exclusiones as $key => $exclusion)
+            {
+                $exclusiones[$key]['id'] = (int)$exclusion->getKey();
+                $exclusiones[$key]['descripcion'] = $exclusion->descripcion;
+                $exclusiones[$key]['unidad'] = $exclusion->unidad;
+                $exclusiones[$key]['cantidad'] = $exclusion->cantidad;
+                $exclusiones[$key]['cantidad_format'] = $exclusion->cantidad_format;
+                $exclusiones[$key]['precio_unitario'] = $exclusion->precio_unitario;
+                $exclusiones[$key]['precio_format'] = $exclusion->precio_format;
+                $exclusiones[$key]['id_moneda'] = $exclusion->id_moneda;
+                $exclusiones[$key]['moneda'] = $exclusion->nombre_moneda;
+                $exclusiones[$key]['total_format'] = $exclusion->total_format;
+            }
+            $resp['exclusiones'] =  $exclusiones;
+            $conceptos = [];
+            foreach( $this->contratoProyectado->contratos as $key => $concepto) {
+                $conceptos[$key] = $concepto->toArray();
+                $conceptos[$key]['cantidad_original_format'] = $concepto->cantidad_original_format;
+                $conceptos[$key]['cantidad_presupuestada_format'] = $concepto->cantidad_presupuestada_format;
+                $partida = PresupuestoContratistaPartida::where('id_concepto', $concepto->id_concepto)->where('id_transaccion', $this->id_cotizacion_generada)->withoutGlobalScopes()->first();
+                $conceptos[$key]['id_transaccion'] = $partida ? $partida->id_transaccion : $concepto->id_transaccion;
+                $conceptos[$key]['precio_unitario_antes_descuento_format'] = $partida ? $partida->precio_unitario_antes_descuento_format : '';
+                $conceptos[$key]['total_antes_descuento_format'] = $partida ? $partida->total_antes_descuento_format : '';
+                $conceptos[$key]['descuento_format'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '0.00';
+                $conceptos[$key]['precio_unitario_despues_descuento_format'] = $partida ? $partida->precio_unitario_despues_descuento_format : '';
+                $conceptos[$key]['total_despues_descuento_format'] = $partida ? $partida->total_despues_descuento_format : '';
+                $conceptos[$key]['moneda'] = $partida ? $partida->moneda ? $partida->moneda->nombre : '' : '';
+                $conceptos[$key]['con_moneda_extranjera'] = $partida ?  $partida->moneda ? $partida->moneda->id_moneda != 1 ? true : false : '': '';
+                $conceptos[$key]['precio_unitario_despues_descuento_partida_mc_format'] = $partida ? $partida->precio_unitario_despues_descuento_partida_mc_format : '';
+                $conceptos[$key]['total_despues_descuento_partida_mc_format'] = $partida ? $partida->total_despues_descuento_partida_mc_format : '';
+                $conceptos[$key]['observaciones'] = $partida ? $partida->Observaciones : '';
+                $destino = $concepto->destino ? $concepto->destino->concepto_sgv : NULL;
+                $conceptos[$key]['path_corta'] = $destino ? $destino->path_corta : '';
+                $conceptos[$key]['path'] = $destino ? $destino->path : '';
+                $conceptos[$key]['partida_activa'] = $partida ? ($partida->no_cotizado == 0) ? true : false : '';
+                $conceptos[$key]['precio_unitario'] = $partida ? number_format($partida->precio_unitario_antes_descuento, "2",".","") : '';
+                $conceptos[$key]['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
+                $conceptos[$key]['IdMoneda'] = $partida ? $partida->IdMoneda : '';
+            }
+            $resp['contratos'] = $conceptos;
+            return $resp;
+        }
     }
 
     public function pdf()

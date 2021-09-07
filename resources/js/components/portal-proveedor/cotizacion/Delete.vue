@@ -95,7 +95,6 @@
                         this.cargando = true;
                         return this.$store.dispatch('padronProveedores/invitacion/paginate', {
                             params: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado']},
-
                     })
                         .then(data => {
                             this.$store.commit('padronProveedores/invitacion/SET_INVITACIONES', data.data);

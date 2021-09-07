@@ -31,9 +31,7 @@
                                     </div>
                                 </div>
                                 <DatosInvitacion v-else v-bind:invitacion="invitacion"></DatosInvitacion>
-
                             </div>
-
                              <div class="card-footer">
                                  <div class="row">
                                      <div class="col-md-6">
@@ -44,7 +42,7 @@
                                              <button type="button" class="btn btn-secondary" v-on:click="salir">
                                                 <i class="fa fa-angle-left"></i>
                                                 Regresar</button>
-                                            <button type="submit" :disabled="solicitud == null" class="btn btn-primary">
+                                            <button type="submit" :disabled="invitacion === null" class="btn btn-primary">
                                                 Continuar
                                                 <i class="fa fa-angle-right"></i>
                                             </button>
@@ -62,8 +60,6 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
-    import DatosSolicitud from './partials/DatosSolicitud';
-    import invitacion from "../../../store/modules/padronProveedores/invitacion";
     import DatosInvitacion from "../invitacion/partials/DatosInvitacion";
     import DocumentosInvitacion from "../invitacion/partials/DocumentosInvitacion";
     export default {
@@ -71,13 +67,12 @@
         components: {
             DocumentosInvitacion,
             DatosInvitacion,
-            DatosSolicitud, ModelListSelect},
+            ModelListSelect},
         data() {
             return {
                 cargando: false,
                 id_invitacion: '',
                 invitaciones : [],
-                solicitud : null,
                 invitacion : null,
             }
         },
@@ -100,10 +95,9 @@
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id_invitacion,
-                    params:{include: ['solicitud_compra_cotizar', "carta_terminos", "formato_cotizacion"]}
+                    params:{include: ["carta_terminos", "formato_cotizacion"]}
                 }).then(data => {
                     this.invitacion = data;
-                    this.solicitud = data.solicitud_compra
                     this.cargando = false;
                 })
             },
@@ -129,10 +123,27 @@
                             id: this.id_invitacion,
                             params:{}
                         }).then(data => {
+                            console.log(this.invitacion)
                             if(this.invitacion.con_cotizacion){
-                                this.$router.push({name: 'cotizacion-proveedor-edit', params: {id_invitacion: this.id_invitacion}});
+                                if(this.invitacion.tipo_antecedente == 49){
+                                    this.$router.push({name: 'presupuesto-proveedor-edit', params: {id: this.id_invitacion}});
+                                }
+                                if(this.invitacion.tipo_antecedente == 17) {
+                                    this.$router.push({name: 'cotizacion-proveedor-edit', params: {id: this.id_invitacion}});
+                                }
                             }else{
-                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                                if(this.invitacion.tipo_antecedente == 49) {
+                                    this.$router.push({
+                                        name: 'presupuesto-proveedor-create',
+                                        params: {id: this.id_invitacion}
+                                    });
+                                }
+                                if(this.invitacion.tipo_antecedente == 17) {
+                                    this.$router.push({
+                                        name: 'cotizacion-proveedor-create',
+                                        params: {id: this.id_invitacion}
+                                    });
+                                }
                             }
                         });
                     }
