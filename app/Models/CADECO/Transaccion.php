@@ -396,7 +396,7 @@ class Transaccion extends Model
         }else {
             if($this->cotizaciones()->activa()->first())
             {
-                return $this->cotizaciones()->first()->moneda->nombre;
+                return $this->cotizaciones()->activa()->first()->moneda->nombre;
             }
             if($this->presupuestos()->cotizadas()->first())
             {
