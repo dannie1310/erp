@@ -11,6 +11,7 @@ use App\Models\CADECO\Compras\CotizacionComplemento;
 use App\Models\CADECO\Compras\CotizacionComplementoPartida;
 use App\Models\CADECO\Compras\CotizacionEliminada;
 use App\Models\CADECO\Compras\CotizacionPartidaEliminada;
+use App\Models\CADECO\Compras\Exclusion;
 use App\Models\CADECO\Compras\SolicitudComplemento;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
@@ -138,6 +139,11 @@ class    CotizacionCompra  extends Transaccion
     public function invitacion()
     {
         return $this->belongsTo(Invitacion::class, "id_referente", "id");
+    }
+
+    public function exclusiones()
+    {
+        return $this->hasMany(Exclusion::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -972,6 +978,19 @@ class    CotizacionCompra  extends Transaccion
             $invitacion->update([
                 'id_cotizacion_generada' => $cotizacion->id_transaccion
             ]);
+
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                Exclusion::create([
+                    'id_transaccion' => $cotizacion->id_transaccion,
+                    'descripcion' => $exclusion['descripcion'],
+                    'unidad' => $exclusion['unidad'],
+                    'cantidad' => $exclusion['cantidad'],
+                    'precio_unitario' => $exclusion['precio_unitario'],
+                    'id_moneda' => $exclusion['id_moneda'],
+                ]);
+            }
+
             DB::connection('cadeco')->commit();
             return $cotizacion;
         } catch (\Exception $e) {
@@ -1032,13 +1051,10 @@ class    CotizacionCompra  extends Transaccion
                 ]);
             }
 
-            //array_pop($data['partidas']['data']);
-
             foreach($data['partidas']['data'] as $key => $partida) {
 
                 $item = null;
                 $item = CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->first();
-
                 if ($item) {
                     CotizacionCompraPartida::where('id_material', '=', $partida['material']['id'])->where('id_transaccion', '=', $this->id_transaccion)->update([
                         'precio_unitario' => $partida['enable'] ? $partida['precio_unitario'] : null,
@@ -1062,6 +1078,38 @@ class    CotizacionCompra  extends Transaccion
                             'estatus' => $partida['enable'] ? 3 : 1
                         ]);
                     }
+                }
+            }
+
+            $exclusiones_viejas = [];
+            foreach ($data['exclusiones']['data'] as $exclusion)
+            {
+                if(array_key_exists('id',$exclusion))
+                {
+                    $exclusiones_viejas[$exclusion['id']] = $exclusion['id'];
+                }
+            }
+
+            foreach ($this->exclusiones as $exc)
+            {
+                if(!array_key_exists($exc->getKey(),$exclusiones_viejas))
+                {
+                    $exc->delete();
+                }
+            }
+
+            foreach ($data['exclusiones']['data'] as $exclusion)
+            {
+                if(!array_key_exists('id',$exclusion))
+                {
+                    Exclusion::create([
+                       'id_transaccion' => $this->id_transaccion,
+                        'descripcion' => $exclusion['descripcion'],
+                        'unidad' => $exclusion['unidad'],
+                        'cantidad' => $exclusion['cantidad'],
+                        'precio_unitario' => $exclusion['precio_unitario'],
+                        'id_moneda' => $exclusion['id_moneda'],
+                    ]);
                 }
             }
 
@@ -1125,4 +1173,16 @@ class    CotizacionCompra  extends Transaccion
         }
     }
 
+    /**
+     * Elimina las exclusiones
+     */
+    public function eliminarExclusiones()
+    {
+        if($this->exclusiones)
+        {
+            foreach ($this->exclusiones as $exclusion) {
+                $exclusion->delete();
+            }
+        }
+    }
 }
