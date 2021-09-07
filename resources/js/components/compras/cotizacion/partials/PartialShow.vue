@@ -124,7 +124,7 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr v-for="(exclusion, i) in invitacion.cotizacionCompra.exclusiones.data">
+                            <tr v-for="(exclusion, i) in cotizacion.exclusiones.data">
                                 <td class="index_corto">{{ i + 1 }}</td>
                                 <td>{{exclusion.descripcion}}</td>
                                 <td>{{exclusion.unidad}}</td>
@@ -276,6 +276,11 @@ table .numerico
 
 .text.is-invalid {
     color: #dc3545;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
 }
 
 table tbody td input.text {
