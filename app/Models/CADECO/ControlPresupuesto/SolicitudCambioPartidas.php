@@ -66,6 +66,11 @@ class SolicitudCambioPartidas extends Model
     }
 
     public function getMontoPresupuestadoFormatAttribute(){
-        return '$' . number_format($this->monto_presupuestado, 2, '.',',');
+        if($this->monto_presupuestado>0){
+            return '$' . number_format($this->monto_presupuestado, 2, '.',',');
+        }else{
+            return "-";
+        }
+
     }
 }

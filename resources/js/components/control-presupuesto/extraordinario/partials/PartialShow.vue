@@ -19,8 +19,8 @@
                                 <th>#</th>
                                 <th class="text-center">Descripción</th>
                                 <th class="text-center">Unidad</th>
-                                <th class="text-center">Cantidad</th>
-                                <th class="text-center">Precio Unitario</th>
+                                <th class="text-center">Volumen</th>
+                                <th class="text-center">Costo</th>
                                 <th class="text-center">Importe</th>
                             </tr>
                         </thead>

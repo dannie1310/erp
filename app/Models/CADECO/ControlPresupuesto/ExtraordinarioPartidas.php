@@ -55,7 +55,7 @@ class ExtraordinarioPartidas extends SolicitudCambioPartidas
     }
 
     public function getDescripcionFormatAttribute(){
-        return substr($this->descripcion, 0, 100);
+        return str_pad($this->descripcion,$this->longitud_nivel + strlen($this->descripcion),"-", STR_PAD_LEFT);
     }
 
     public function getLongitudNivelAttribute(){
