@@ -190,6 +190,7 @@ class Extraordinario extends SolicitudCambio
                         'nivel' => $nivel_base. str_pad($cantidad_hijos + 1,3,"0", STR_PAD_LEFT) . '.',
                         'clave_concepto' => $partida_nueva_ruta['clave'],
                         'descripcion' => $partida_nueva_ruta['descripcion_sin_formato'],
+                        'monto_presupuestado' => $data["monto_presupuestado"]
                     ]);
                     $nivel_base = $nivel_base. str_pad($cantidad_hijos + 1,3,"0", STR_PAD_LEFT) . '.';
                     $cantidad_hijos = 0;
@@ -244,6 +245,11 @@ class Extraordinario extends SolicitudCambio
                 }else {
                     $descripcion_agrupador = $agrupador_insumos;
                 }
+                $factor = $data['cantidad'];
+                if($descripcion_agrupador == "GASTOS")
+                {
+                    $factor = 1;
+                }
 
                 $nivel_agrupador = $nivel_base_extraordinario. str_pad($key_a,3,"0", STR_PAD_LEFT) . '.';
 
@@ -262,15 +268,15 @@ class Extraordinario extends SolicitudCambio
                             'id_tipo_orden' => 3,
                             'tipo_agrupador'=>$key_a + 1,
                             'nivel' => $nivel_agrupador. str_pad($key,3,"0", STR_PAD_LEFT) . '.',
-                            'cantidad_presupuestada_nueva' => $insumo['cantidad'],
+                            'cantidad_presupuestada_nueva' => $insumo['cantidad'] * $factor,
                             'descripcion' => $insumo['material']["label"],
                             'unidad' => $insumo['material']["unidad"],
                             'id_material' => $insumo['material']["id"],
                             'precio_unitario_nuevo' => $insumo['precio_unitario'],
-                            'monto_presupuestado' => $insumo['importe'],
+                            'monto_presupuestado' => $insumo['importe'] * $factor,
                         ]);
-                        $monto_presupuestado_agrupador += $insumo['importe'];
-                        $importe_afectacion += $insumo['importe'] * $data["cantidad"];
+                        $monto_presupuestado_agrupador += ($insumo['importe']* $factor);
+                        $importe_afectacion += ($insumo['importe'] * $factor);
                     }
                     $agrupador->monto_presupuestado= $monto_presupuestado_agrupador;
                     $agrupador->save();

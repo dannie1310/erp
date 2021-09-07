@@ -55,7 +55,7 @@ class VariacionVolumenPartidas extends SolicitudCambioPartidas
     }
 
     public function getDescripcionFormatAttribute(){
-        return substr($this->descripcion, 0, 35);
+        return substr($this->descripcion, 0, 100);
     }
 
     public function getLongitudNivelAttribute(){

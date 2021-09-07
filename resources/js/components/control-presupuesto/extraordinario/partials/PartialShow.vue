@@ -27,7 +27,7 @@
                         <tbody>
                             <tr v-for="(partida, i) in solicitud_cambio.partidas.data">
                                 <td>{{i + 1}}</td>
-                                <td :title="partida.descripcion"><span v-for="n in partida.longitud_nivel*2">-</span>{{partida.descripcion_format}}</td>
+                                <td :title="partida.descripcion"><span v-for="n in partida.longitud_nivel*2">-</span>{{partida.descripcion}}</td>
                                 <td>{{partida.unidad}}</td>
                                 <td style="text-align: right">{{partida.cantidad_format}}</td>
                                 <td style="text-align: right">{{partida.precio_unitario_format}}</td>
