@@ -36,6 +36,7 @@ class SolicitudCambioPartidas extends Model
         'rendimiento_original',
         'rendimiento_nuevo',
         'tipo_agrupador',
+        'clave_concepto'
     ];
 
     public $timestamps = false;

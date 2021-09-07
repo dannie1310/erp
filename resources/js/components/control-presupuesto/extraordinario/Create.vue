@@ -1315,6 +1315,8 @@ export default {
                 'descripcion' : this.descripcion,
                 'unidad' : this.unidad,
                 'cantidad' : this.cantidad,
+                'precio_unitario' : this.precio_unitario,
+                'monto_presupuestado' : this.monto_presupuestado,
                 'tipo_costo' : this.tipo_costo,
                 'tipo_ruta' : this.tipo_ruta,
                 'motivo' : this.motivo,

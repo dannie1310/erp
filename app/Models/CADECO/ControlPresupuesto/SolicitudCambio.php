@@ -35,6 +35,7 @@ class SolicitudCambio extends Model
         'id_obra',
         'id_autoriza',
         'fecha_autorizacion',
+        'id_concepto_raiz'
     ];
 
     protected static function boot()
