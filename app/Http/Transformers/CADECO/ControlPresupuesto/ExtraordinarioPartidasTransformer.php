@@ -8,8 +8,8 @@
 
 namespace App\Http\Transformers\CADECO\ControlPresupuesto;
 
+use App\Models\CADECO\ControlPresupuesto\ExtraordinarioPartidas;
 use League\Fractal\TransformerAbstract;
-use App\Models\CADECO\ControlPresupuesto\VariacionVolumenPartidas;
 
 class ExtraordinarioPartidasTransformer extends TransformerAbstract
 {
@@ -30,7 +30,7 @@ class ExtraordinarioPartidasTransformer extends TransformerAbstract
     protected $defaultIncludes = [
     ];
 
-    public function transform(VariacionVolumenPartidas $model) {
+    public function transform(ExtraordinarioPartidas $model) {
         return [
             'id' => (int) $model->getKey(),
             'id_tipo_orden' => (int) $model->id_tipo_orden,

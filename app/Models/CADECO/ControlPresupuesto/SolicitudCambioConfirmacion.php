@@ -10,6 +10,7 @@ namespace App\Models\CADECO\ControlPresupuesto;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Concepto;
 use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\ControlPresupuesto\Estatus;
@@ -39,6 +40,11 @@ class SolicitudCambioConfirmacion extends Model
     public function usuarioConfirmo()
     {
         return $this->belongsTo(Usuario::class, 'id_usuario_confirmo', 'idusuario');
+    }
+
+    public function conceptos()
+    {
+        return $this->hasMany(Concepto::class, 'id_confirmacion_cambio', 'id');
     }
 
     public function getFechaHoraConfirmacionFormatAttribute()

@@ -36,6 +36,13 @@ class Concepto extends Model
         'activo',
         'clave_concepto',
         'id_confirmacion_cambio',
+        'cosecutivo_extraordinario',
+        "id_material",
+        "nivel",
+        "descripcion",
+        "unidad",
+        "precio_unitario",
+        "concepto_medible",
     ];
 
     protected static function boot()
@@ -297,5 +304,10 @@ class Concepto extends Model
 
             DB::connection("cadeco")->table("ControlPresupuesto.conceptos_historicos")->insert($arreglo_valores);
         }
+    }
+
+    public function calcularConsecutivoExtraordinario(){
+        $con = Concepto::where('consecutivo_extraordinario', '>', 0)->orderBy('consecutivo_extraordinario', 'DESC')->first();
+        return $con ? $con->consecutivo_extraordinario + 1 : 1;
     }
 }

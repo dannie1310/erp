@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\DB;
 class Extraordinario extends SolicitudCambio
 {
 
-    /*protected $dates = ['fecha_autorizacion'];
+    protected $dates = ['fecha_autorizacion'];
 
-    protected $dateFormat = 'Y-m-d H:i:s';*/
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     protected static function boot()
     {
@@ -37,7 +37,7 @@ class Extraordinario extends SolicitudCambio
      */
 
     public function partidas(){
-        return $this->hasMany(VariacionVolumenPartidas::class, 'id_solicitud_cambio', 'id');
+        return $this->hasMany(ExtraordinarioPartidas::class, 'id_solicitud_cambio', 'id');
     }
 
     public function conceptoRaiz(){
@@ -75,92 +75,113 @@ class Extraordinario extends SolicitudCambio
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            $variacion_volumen = $this;
+            $extraordinario = $this;
 
-            $confirmacion_cambio = $variacion_volumen->confirmacion()->create([
+            $confirmacion_cambio = $extraordinario->confirmacion()->create([
                 "id_usuario_confirmo"=>auth()->id(),
                 "fecha_hora_confirmacion"=>date('Y-m-d h:i:s'),
             ]);
-            foreach($variacion_volumen->variacionVolumenPartidas as $partida){
-                $concepto = $partida->concepto;
+            $concepto_raiz = $extraordinario->conceptoRaiz;
 
-                $monto_presupuestado_original = $concepto->monto_presupuestado;
-                $cantidad_presupuestada_original = $concepto->cantidad_presupuestada;
+            $partida_inicial = $extraordinario->partidas()->orderBy("nivel")->first();
+            $concepto_nivel = Concepto::where("nivel","=",$partida_inicial->nivel);
 
-                $cantidad_presupuestada_actualizada = $cantidad_presupuestada_original + $partida->variacion_volumen;
-                $dividendo = $cantidad_presupuestada_original > 0?$cantidad_presupuestada_original:1;
-                $factor = $cantidad_presupuestada_actualizada / $dividendo;
+            $nuevo_nivel = null;
+            if($concepto_nivel){
+                $cantidad_partidas = $concepto_raiz->hijos()->count();
+                $nuevo_nivel = substr($partida_inicial->nivel, 0, strlen($partida_inicial->nivel)-4 ).str_pad($cantidad_partidas + 1,3,"0", STR_PAD_LEFT) . '.';
+            }
 
+            foreach($extraordinario->partidas()->orderBy("nivel")->get() as $key => $partida){
 
-                if(abs($concepto->cantidad_presupuestada - $partida->cantidad_presupuestada_original) > 0.01)
-                {
-                    throw new \Exception("La cantidad presupuestada actual del concepto ".$concepto->clave_concepto." ".$concepto->descripcion.": ".$concepto->cantidad_presupuestada." no coincide con la cantidad presupuestada que tenía al registrar la solicitud: ". $partida->cantidad_presupuestada_original .". \n \n Debe realizar una nueva solicitud",500);
-                }
-
-                if(abs($concepto->monto_presupuestado - $partida->monto_presupuestado)>0.01)
-                {
-                    throw new \Exception("El monto presupuestado actual del concepto ".$concepto->clave_concepto." ".$concepto->descripcion.": ".$concepto->monto_presupuestado_format." no coincide con el monto presupuestado que tenía al registrar la solicitud: ". $partida->monto_presupuestado_format .". \n \n Debe realizar una nueva solicitud",500);
-                }
-
-                /*Aplicar cambios a concepto y conceptos hijos*/
-                $conceptos_afectables = Concepto::where('nivel', 'like', $concepto->nivel . '%')->where('id_obra', '=', Context::getIdObra())->orderBy('nivel', 'ASC')->get();
-                foreach($conceptos_afectables as $concepto_afectable){
-                    SolicitudCambioPartidaHistorico::create([
-                        'id_solicitud_cambio_partida' => $partida->id,
-                        'nivel' => $concepto_afectable->nivel,
-                        'cantidad_presupuestada_original' => $concepto_afectable->cantidad_presupuestada,
-                        'cantidad_presupuestada_actualizada' => $concepto_afectable->cantidad_presupuestada * $factor,
-                        'monto_presupuestado_original' => $concepto_afectable->monto_presupuestado,
-                        'monto_presupuestado_actualizado' => $concepto_afectable->monto_presupuestado * $factor
+                if($key == 0){
+                    $concepto_inicial = Concepto::create([
+                        "id_material" => $partida->id_material,
+                        "nivel" => $nuevo_nivel?substr_replace($partida->nivel, $nuevo_nivel, 0, strlen($nuevo_nivel)):$partida->nivel,
+                        "descripcion" => $partida->descripcion,
+                        "unidad" =>  $partida->unidad,
+                        "cantidad_presupuestada" => $partida->cantidad_presupuestada_nueva,
+                        "monto_presupuestado" => $partida->monto_presupuestado,
+                        "precio_unitario" => $partida->precio_unitario_nuevo,
+                        "concepto_medible" => $partida->unidad != '' && !$partida->id_material >0?3:0,
+                        "clave_concepto" => $partida->clave_concepto,
+                        'id_confirmacion_cambio'=>$confirmacion_cambio->id,
                     ]);
-
-                    $concepto_afectable->setHistorico($confirmacion_cambio->id);
-
-                    $concepto_afectable->cantidad_presupuestada = $concepto_afectable->cantidad_presupuestada * $factor;
-                    $concepto_afectable->monto_presupuestado = $concepto_afectable->monto_presupuestado * $factor;
-                    $concepto_afectable->id_confirmacion_cambio = $confirmacion_cambio->id;
-                    $concepto_afectable->save();
-                }
-
-                $conceptoActualizado = Concepto::find($concepto->id_concepto);
-
-                /*Propagar cambios a conceptos padre*/
-                $len_nivel = strlen($concepto->nivel) - 4;
-                $arr_conceptos_propagados = [];
-                while ($len_nivel > 0) {
-                    $concepto_propagado = Concepto::where('id_obra', '=', Context::getIdObra())->where('nivel', '=', substr($concepto->nivel, 0, $len_nivel))->first();
-                    $cantidadMonto = ($concepto_propagado->monto_presupuestado - $monto_presupuestado_original) + $conceptoActualizado->monto_presupuestado;
 
                     SolicitudCambioPartidaHistorico::create([
                         'id_solicitud_cambio_partida' => $partida->id,
-                        'nivel' => $concepto_propagado->nivel,
-                        'monto_presupuestado_original' => $concepto_propagado->monto_presupuestado,
-                        'monto_presupuestado_actualizado' => $cantidadMonto
+                        'nivel' => $concepto_inicial->nivel,
+                        'monto_presupuestado_original' => 0,
+                        'monto_presupuestado_actualizado' => ($concepto_inicial->monto_presupuestado>0)?$concepto_inicial->monto_presupuestado:0,
+                        'precio_unitario_original' => 0,
+                        'precio_unitario_actualizado' => $concepto_inicial->precio_unitario,
+                        'cantidad_presupuestada_original' => 0,
+                        'cantidad_presupuestada_actualizada' => $concepto_inicial->cantidad_presupuestada
                     ]);
-
-                    $arr_conceptos_propagados[] = $concepto_propagado;
-
-                    $concepto_propagado->setHistorico($confirmacion_cambio->id);
-
-                    $concepto_propagado->update(['monto_presupuestado' => $cantidadMonto]);
-                    $concepto_propagado->id_confirmacion_cambio = $confirmacion_cambio->id;
-                    $concepto_propagado->save();
-                    $len_nivel -= 4;
+                } else {
+                    $concepto = Concepto::create([
+                        "id_material" => $partida->id_material,
+                        "nivel" => $nuevo_nivel?substr_replace($partida->nivel, $nuevo_nivel, 0, strlen($nuevo_nivel)):$partida->nivel,
+                        "descripcion" => $partida->descripcion,
+                        "unidad" =>  $partida->unidad,
+                        "cantidad_presupuestada" => $partida->cantidad_presupuestada_nueva,
+                        "monto_presupuestado" => $partida->monto_presupuestado,
+                        "precio_unitario" => $partida->precio_unitario_nuevo,
+                        "concepto_medible" => $partida->unidad != '' && !$partida->id_material >0?3:0,
+                        "clave_concepto" => $partida->clave_concepto,
+                        'id_confirmacion_cambio'=>$confirmacion_cambio->id,
+                    ]);
+                    SolicitudCambioPartidaHistorico::create([
+                        'id_solicitud_cambio_partida' => $partida->id,
+                        'nivel' => $concepto->nivel,
+                        'monto_presupuestado_original' => 0,
+                        'monto_presupuestado_actualizado' => ($concepto->monto_presupuestado>0)?$concepto->monto_presupuestado:0,
+                        'precio_unitario_original' => 0,
+                        'precio_unitario_actualizado' => $concepto->precio_unitario,
+                        'cantidad_presupuestada_original' => 0,
+                        'cantidad_presupuestada_actualizada' => $concepto->cantidad_presupuestada
+                    ]);
                 }
             }
 
-            $variacion_volumen->id_estatus = 2;
-            $variacion_volumen->id_autoriza = auth()->id();
-            $variacion_volumen->fecha_autorizacion = date('Y-m-d h:i:s');
-            $variacion_volumen->save();
-            DB::connection('cadeco')->commit();
+            /*Propagar cambios a conceptos padre*/
+            $len_nivel = strlen($concepto_inicial->nivel) - 4;
+            $arr_conceptos_propagados = [];
+            while ($len_nivel > 0) {
+                $concepto_propagado = Concepto::where('id_obra', '=', Context::getIdObra())->where('nivel', '=', substr($concepto->nivel, 0, $len_nivel))->first();
+                $cantidadMonto = $concepto_propagado->monto_presupuestado  + $partida_inicial->monto_presupuestado;
 
-            return $variacion_volumen ;
+                SolicitudCambioPartidaHistorico::create([
+                    'id_solicitud_cambio_partida' => $partida->id,
+                    'nivel' => $concepto_propagado->nivel,
+                    'monto_presupuestado_original' => $concepto_propagado->monto_presupuestado,
+                    'monto_presupuestado_actualizado' => $cantidadMonto,
+                ]);
+
+                $arr_conceptos_propagados[] = $concepto_propagado;
+
+                $concepto_propagado->setHistorico($confirmacion_cambio->id);
+
+                $concepto_propagado->update(['monto_presupuestado' => $cantidadMonto]);
+                $concepto_propagado->id_confirmacion_cambio = $confirmacion_cambio->id;
+                $concepto_propagado->save();
+                $len_nivel -= 4;
+            }
+
+            $extraordinario->id_estatus = 2;
+            $extraordinario->id_autoriza = auth()->id();
+            $extraordinario->fecha_autorizacion = date('Y-m-d h:i:s');
+            $extraordinario->save();
+
+
+
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort($e->getCode(), $e->getMessage());
-            throw $e;
+            abort(500, $e->getMessage());
         }
+
+        DB::connection('cadeco')->commit();
+        return $extraordinario ;
 
     }
 
