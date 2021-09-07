@@ -113,7 +113,7 @@ export default {
                                         timer: 2000,
                                         buttons: false
                                     }).then(() => {
-                                        
+
                                         resolve(data);
                                     })
                                 })
@@ -152,7 +152,7 @@ export default {
                                         timer: 1500,
                                         buttons: false
                                     })
-                                        .then(() => {                                            
+                                        .then(() => {
                                             resolve(payload.params);
                                         })
                                 })
@@ -175,8 +175,21 @@ export default {
                         reject(error);
                     })
             })
+        },
+        porBase(context, payload = {}) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI+'porBase', payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
         }
-    },    
+    },
 
     getters: {
         unidades(state) {

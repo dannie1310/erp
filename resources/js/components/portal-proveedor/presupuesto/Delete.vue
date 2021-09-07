@@ -121,7 +121,41 @@
                                     </div>
                                 </div>
                             </div>
-                            <br>
+                            <br />
+                            <div class="row" v-if="presupuesto.exclusiones">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <td style="text-align: center;" colspan="8"><b>Exclusiones</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="index_corto">#</th>
+                                                    <th width="30%">Descripción</th>
+                                                    <th>Unidad</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio Unitario</th>
+                                                    <th class="money" style="text-align:center;">Moneda</th>
+                                                    <th>Precio Total</th>
+                                                </tr>
+                                                </thead>
+                                            <tbody>
+                                                <tr v-for="(exclusion, i) in presupuesto.exclusiones">
+                                                    <td class="index_corto">{{ i + 1 }}</td>
+                                                    <td>{{exclusion.descripcion}}</td>
+                                                    <td style="text-align: center">{{exclusion.unidad}}</td>
+                                                    <td style="text-align:right;">{{exclusion.cantidad_format}}</td>
+                                                    <td style="text-align:right;">{{exclusion.precio_format}}</td>
+                                                    <td style="text-align:center;">{{exclusion.moneda}}</td>
+                                                    <td style="text-align:right;">{{exclusion.total_format}}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">

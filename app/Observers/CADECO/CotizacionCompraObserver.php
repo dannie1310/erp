@@ -88,5 +88,6 @@ class CotizacionCompraObserver extends TransaccionObserver
         {
             $cotizacionCompra->complemento->delete();
         }
+        $cotizacionCompra->eliminarExclusiones();
     }
 }

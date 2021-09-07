@@ -5,6 +5,7 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 
 
 use App\Facades\Context;
+use App\Http\Transformers\CADECO\Compras\ExclusionTransformer;
 use App\Http\Transformers\CADECO\Contrato\PresupuestoContratistaTransformer;
 use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Obra;
@@ -476,6 +477,21 @@ class Invitacion extends Model
             $contratoProyectadoTransformer = new ContratoProyectadoTransformer;
             $resp['contrato_proyectado'] = $contratoProyectadoTransformer->transform($this->contratoProyectado);
             $resp['razon_social'] = $this->empresa->razon_social;
+            $exclusiones = [];
+            foreach ($this->presupuesto->exclusiones as $key => $exclusion)
+            {
+                $exclusiones[$key]['id'] = (int)$exclusion->getKey();
+                $exclusiones[$key]['descripcion'] = $exclusion->descripcion;
+                $exclusiones[$key]['unidad'] = $exclusion->unidad;
+                $exclusiones[$key]['cantidad'] = $exclusion->cantidad;
+                $exclusiones[$key]['cantidad_format'] = $exclusion->cantidad_format;
+                $exclusiones[$key]['precio_unitario'] = $exclusion->precio_unitario;
+                $exclusiones[$key]['precio_format'] = $exclusion->precio_format;
+                $exclusiones[$key]['id_moneda'] = $exclusion->id_moneda;
+                $exclusiones[$key]['moneda'] = $exclusion->nombre_moneda;
+                $exclusiones[$key]['total_format'] = $exclusion->total_format;
+            }
+            $resp['exclusiones'] =  $exclusiones;
             $conceptos = [];
             foreach( $this->contratoProyectado->contratos as $key => $concepto) {
                 $conceptos[$key] = $concepto->toArray();

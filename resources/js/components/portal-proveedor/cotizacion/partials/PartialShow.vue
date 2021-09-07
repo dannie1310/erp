@@ -444,19 +444,41 @@
                     </div>
                 </div>
             </div>
-            <div class="row" v-if="invitacion.cotizacionCompra">
+            <hr v-if="invitacion.cotizacionCompra.exclusiones.data.length > 0" />
+            <div class="row" v-if="invitacion.cotizacionCompra.exclusiones.data.length > 0">
                 <div class="col-md-12">
-                    <label class="col-form-label">Observaciones: </label>
-                </div>
-            </div>
-            <div class="row" v-if="invitacion.cotizacionCompra">
-                <div class="col-md-12">
-                    {{ invitacion.cotizacionCompra.observaciones }}
+                    <div class="table-responsive">
+                        <table id="tabla-conceptos">
+                            <thead>
+                            <tr>
+                                <td class="encabezado" colspan="7"><b>Exclusiones</b></td>
+                            </tr>
+                            <tr>
+                                <th class="index_corto">#</th>
+                                <th>Descripción</th>
+                                <th>Unidad</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unitario</th>
+                                <th>Moneda</th>
+                                <th class="cantidad_input">Precio Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(exclusion, i) in invitacion.cotizacionCompra.exclusiones.data">
+                                <td class="index_corto">{{ i + 1 }}</td>
+                                <td>{{exclusion.descripcion}}</td>
+                                <td>{{exclusion.unidad}}</td>
+                                <td class="cantidad_input">{{exclusion.cantidad_format}}</td>
+                                <td class="cantidad_input">{{exclusion.precio_format}}</td>
+                                <td>{{exclusion.moneda}}</td>
+                                <td style="text-align:right;">{{exclusion.total_format}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </span>
-
-
     </span>
 </template>
 
@@ -502,12 +524,11 @@ export default {
     },
     methods : {
         find() {
-
             this.cargando = true;
             return this.$store.dispatch('padronProveedores/invitacion/find', {
                 id: this.id_invitacion,
                 params: {
-                    include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas'],
+                    include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas', 'cotizacionCompra.exclusiones'],
                     scope: ['invitadoAutenticado']
                 }
             }).then(data => {
@@ -705,7 +726,10 @@ table#tabla-conceptos th, table#tabla-conceptos td {
     border: 1px solid #dee2e6;
 }
 
-
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
+}
 
 table thead th
 {

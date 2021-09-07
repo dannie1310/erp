@@ -30,7 +30,7 @@
                 columns: [
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Proyecto', field: 'descripcion_obra', tdClass: 'td_c250', sortable: true},
-                    { title: 'Folio de Invitación', tdClass: 'td_c100', field: 'numero_folio', sortable: true},
+                    { title: 'Folio de Invitación', tdClass: 'td_c100', field: 'id', sortable: true},
                     { title: 'Fecha de Registro de Invitación', tdClass: 'td_c100', field: 'fecha_hora_invitacion', sortable: true},
                     { title: 'Fecha de Cierre de Invitación', tdClass: 'td_c100', field: 'fecha_cierre_invitacion', sortable: true},
                     { title: 'Folio de Solicitud', tdClass: 'td_c100', field: 'solicitud'},
@@ -129,7 +129,7 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        numero_folio: invitacion.numero_folio_format,
+                        id: invitacion.numero_folio_format,
                         numero_folio_cotizacion: invitacion.cotizacion.numero_folio_format,
                         solicitud: invitacion.transaccion.numero_folio_format,
                         fecha_cotizacion: invitacion.cotizacion.fecha_format,

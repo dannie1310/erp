@@ -2,6 +2,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Models\CADECO\Compras\Exclusion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
 use DateTimeZone;
@@ -109,6 +110,11 @@ class PresupuestoContratista extends Transaccion
     public function invitacion()
     {
         return $this->belongsTo(Invitacion::class, "id_referente", "id");
+    }
+
+    public function exclusiones()
+    {
+        return $this->hasMany(Exclusion::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -922,6 +928,19 @@ class PresupuestoContratista extends Transaccion
                     ]);
                 }
             }
+
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                Exclusion::create([
+                    'id_transaccion' => $presupuesto->id_transaccion,
+                    'descripcion' => $exclusion['descripcion'],
+                    'unidad' => $exclusion['unidad'],
+                    'cantidad' => $exclusion['cantidad'],
+                    'precio_unitario' => $exclusion['precio_unitario'],
+                    'id_moneda' => $exclusion['id_moneda'],
+                ]);
+            }
+
             $invitacion->update([
                 'id_cotizacion_generada' => $presupuesto->id_transaccion
             ]);
@@ -983,6 +1002,38 @@ class PresupuestoContratista extends Transaccion
                         'PorcentajeDescuento' => $partida['partida_activa'] ? $partida['descuento'] : null,
                         'IdMoneda' => $partida['IdMoneda'],
                         'Observaciones' => $partida['observaciones']
+                    ]);
+                }
+            }
+
+            $exclusiones_viejas = [];
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                if(array_key_exists('id',$exclusion))
+                {
+                    $exclusiones_viejas[$exclusion['id']] = $exclusion['id'];
+                }
+            }
+
+            foreach ($this->exclusiones as $exc)
+            {
+                if(!array_key_exists($exc->getKey(),$exclusiones_viejas))
+                {
+                    $exc->delete();
+                }
+            }
+
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                if(!array_key_exists('id',$exclusion))
+                {
+                    Exclusion::create([
+                        'id_transaccion' => $this->id_transaccion,
+                        'descripcion' => $exclusion['descripcion'],
+                        'unidad' => $exclusion['unidad'],
+                        'cantidad' => $exclusion['cantidad'],
+                        'precio_unitario' => $exclusion['precio_unitario'],
+                        'id_moneda' => $exclusion['id_moneda'],
                     ]);
                 }
             }

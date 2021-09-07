@@ -60,6 +60,11 @@ class SalidaAlmacenService
 
     public function store($data)
     {
+        foreach($data['partidas'] as $partida){
+            if($partida['id_destino'] == null){
+                abort(403, 'Ingrese un destino válido en todas las partidas.');
+            }
+        }
         return $this->repository->create($data);
     }
 

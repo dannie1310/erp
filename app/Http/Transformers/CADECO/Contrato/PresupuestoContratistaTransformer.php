@@ -5,6 +5,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
+use App\Http\Transformers\CADECO\Compras\ExclusionTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
 use App\Http\Transformers\CADECO\SucursalTransformer;

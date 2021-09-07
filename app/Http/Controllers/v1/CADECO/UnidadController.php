@@ -9,6 +9,7 @@ use App\Http\Transformers\CADECO\UnidadTransformer;
 use App\Services\CADECO\UnidadService;
 use App\Traits\ControllerTrait;
 use App\Http\Requests\EliminarUnidadRequest;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class UnidadController extends Controller
@@ -41,7 +42,7 @@ class UnidadController extends Controller
     public function __construct(UnidadService $service, UnidadTransformer $transformer, Manager $fractal)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['unidadesGlobal']);
         $this->middleware('permiso:registrar_unidad')->only(['store']);
         $this->middleware('permiso:consultar_unidad')->only(['paginate']);
         $this->middleware('permiso:eliminar_unidad')->only(['destroy']);
@@ -55,5 +56,10 @@ class UnidadController extends Controller
     public function destroy(EliminarUnidadRequest $request, $id)
     {
         return $this->traitDestroy($request, $id);
+    }
+
+    public function unidadesGlobal(Request $request)
+    {
+        return $this->respondWithCollection($this->service->globales($request->all()));
     }
 }
