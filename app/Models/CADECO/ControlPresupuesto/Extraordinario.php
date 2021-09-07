@@ -19,9 +19,9 @@ use Illuminate\Support\Facades\DB;
 class Extraordinario extends SolicitudCambio
 {
 
-    protected $dates = ['fecha_autorizacion'];
+    /*protected $dates = ['fecha_autorizacion'];
 
-    protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d H:i:s';*/
 
     protected static function boot()
     {

@@ -27,11 +27,10 @@
 
 <script>
 import PdfVariacion from './partials/FormatoVariacionVolumen';
-import RechazarVariacionVolumen from './partials/RechazarVariacionVolumen';
 import SolicitudCambioPresupuestoPartialShow from "./partials/PartialShow";
 export default {
     name: "variacion-volumen-show",
-    components: {SolicitudCambioPresupuestoPartialShow, PdfVariacion, RechazarVariacionVolumen},
+    components: {SolicitudCambioPresupuestoPartialShow, PdfVariacion},
     props: ['id'],
     data() {
         return {

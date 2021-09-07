@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init()" v-if="$root.can('rechazar_variacion_volumen')" class="btn btn-warning">
+        <button @click="init()" v-if="$root.can('rechazar_extraordinario')" class="btn btn-warning">
             <i class="fa fa-thumbs-down"></i>
             Rechazar
         </button>
@@ -8,7 +8,7 @@
            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modalCuenta">Rechazar Solicitud de Variación de Volumen</h5>
+                        <h5 class="modal-title" id="modalCuenta">Rechazar Solicitud de Concepto Extraordinario</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -91,7 +91,7 @@
 
 <script>
 export default {
-     name: "rechazar-variacion-volumen",
+     name: "rechazar-extraordinario",
     props: ['id'],
     data() {
         return {
@@ -113,12 +113,12 @@ export default {
             });
         },
         rechazar(){
-            return this.$store.dispatch('control-presupuesto/variacion-volumen/rechazar', {
+            return this.$store.dispatch('control-presupuesto/extraordinario/rechazar', {
                 id: this.id,
                 params: {data:[this.$data.motivo]}
             }).then(data => {
-                this.$emit('created', data);
-                    $(this.$refs.modal).modal('hide');
+                $(this.$refs.modal).modal('hide');
+                this.$router.push({name: 'extraordinario'});
             }) .finally(() => {
                 this.cargando = false;
             })
@@ -127,7 +127,7 @@ export default {
     },
     computed: {
         solicitud() {
-            return this.$store.getters['control-presupuesto/variacion-volumen/currentVariacion']
+            return this.$store.getters['control-presupuesto/extraordinario/currentExtraordinario']
         },
     },
 
