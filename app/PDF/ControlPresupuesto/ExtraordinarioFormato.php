@@ -95,19 +95,19 @@ class ExtraordinarioFormato extends Rotation
         $this->Ln(1);
 
         if($this->encola == 'partidas') {
-            $this->SetFont('Arial', '', 6);
+            $this->SetFont('Arial', '', 8);
             $this->SetStyles(array('DF', 'DF', 'DF', 'FD', 'DF', 'DF'));
             $this->SetFills(array('180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180'));
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
-            $this->SetHeights(array(0.28));
-            $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
+            $this->SetHeights(array(0.5));
+            $this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C'));
             $this->SetWidths(array(0.02 * $this->WidthTotal, 0.6 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
             $this->Row(array('#', utf8_decode("Descripción"), utf8_decode("Unidad"),  utf8_decode("Volumen"), "Costo", utf8_decode("Importe")));
 
             $this->SetFont('Arial', '', 6);
             $this->setFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
             $this->setTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
-            $this->setHeights([0.35]);
+            $this->setHeights([0.5]);
             $this->setAligns(['C','L','C','C','R','R']);
             $this->SetWidths(array(0.02 * $this->WidthTotal, 0.6 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
         }
@@ -201,6 +201,7 @@ class ExtraordinarioFormato extends Rotation
     }
 
     public function partidas(){
+        $this->encola = "partidas";
         $this->SetFont('Arial', 'B', $this->txtSeccionTam);
         $this->SetXY($this->GetX(), $this->GetY());
         $this->Cell($this->WidthTotal, 0.7, utf8_decode('CONCEPTO RAÍZ'), 'TRLB', 1, 'C');
@@ -237,6 +238,7 @@ class ExtraordinarioFormato extends Rotation
         $longitud_nivel_agrupadores = 0;
 
         foreach ($this->solicitud->partidas as $key=>$partida) {
+
             if($partida->unidad != '' && !$partida->id_material){
                 $this->setFills(['200,200,200','200,200,200','200,200,200','200,200,200','200,200,200','200,200,200']);
                 $longitud_nivel_agrupadores = strlen($partida->nivel)+4;
@@ -248,69 +250,28 @@ class ExtraordinarioFormato extends Rotation
                 $this->setFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
             }
 
-            $this->row([
-                $key + 1,
-                utf8_decode($partida->descripcion_format),
-                utf8_decode($partida->unidad),
-                $partida->cantidad_presupuestada_nueva,
-                $partida->precio_unitario_format,
-                $partida->monto_presupuestado_format,
-            ]);
-        }
+            try{
 
+                $this->row([
+                    $key + 1,
+                    utf8_decode($partida->descripcion_format),
+                    utf8_decode($partida->unidad == ""?"-":$partida->unidad),
+                    $partida->cantidad_format,
+                    $partida->precio_unitario_format,
+                    $partida->monto_presupuestado_format
+                ]);
 
-        /*$this->row([
-            '--',
-            utf8_decode($this->solicitud->partidas->descripcion),
-            $this->partidas['unidad'],
-            $this->partidas['agrupadores'][5]['monto_presupuestado'] > 0?'---':number_format($this->partidas['cantidad_presupuestada'],'2','.',','),
-            $this->partidas['agrupadores'][5]['monto_presupuestado'] > 0?'---':'$'.number_format($this->partidas['precio_unitario'],'2','.',','),
-            '$'.number_format($this->partidas['monto_presupuestado'],'2','.',','),
-        ]);*/
-
-        /*$agrupadores = $this->partidas['agrupadores'];
-        try {
-            foreach ($agrupadores as $agrupador) {
-                if (sizeof($agrupador['insumos']) > 0) {
-                    $this->setFont('Arial', '', 6);
-                    $this->SetWidths(array(0.02 * $this->WidthTotal, 0.6 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
-                    $this->setFills(['180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180', '180,180,180']);
-                    $this->setTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-                    $this->setHeights([0.35]);
-                    $this->setAligns(['C', 'L', 'C', 'C', 'R', 'R']);
-                    $this->row([
-                        '---',
-                        utf8_decode($agrupador['descripcion'] == 'HERRAMIENTAYEQUIPO' ? 'HERRAMIENTA Y EQUIPO' : $agrupador['descripcion'] == 'MANOOBRA' ? 'MANO OBRA' : $agrupador['descripcion']),
-                        '---',
-                        '---',
-                        '---',
-                        '$' . number_format($agrupador['monto_presupuestado'], '2', '.', ','),
-                    ]);
-                    $this->encola = 'partidas';
-                    foreach ($agrupador['insumos'] as $key => $insumo) {
-                        $this->setFont('Arial', '', 6);
-                        $this->SetWidths(array(0.02 * $this->WidthTotal, 0.6 * $this->WidthTotal, 0.08 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal, 0.1 * $this->WidthTotal));
-                        $this->setFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-                        $this->setTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
-                        $this->setHeights([0.35]);
-                        $this->setAligns(['C', 'L', 'C', 'C', 'R', 'R']);
-                        $this->row([
-                            $key + 1,
-                            utf8_decode($insumo['descripcion']),
-                            utf8_decode($insumo['unidad']),
-                            $agrupador['descripcion'] == 'GASTOS' ? '---' : number_format($insumo['cantidad_presupuestada_nueva'], '2', '.', ','),
-                            $agrupador['descripcion'] == 'GASTOS' ? '---' : '$' . number_format($insumo['precio_unitario_nuevo'], '2', '.', ','),
-                            '$' . number_format($insumo['monto_presupuestado'], '2', '.', ','),
-                        ]);
-                    }
-                }
+            }catch (\Exception $e){
+                dd($e,[
+                    $key + 1,
+                    utf8_decode($partida->descripcion_format),
+                    utf8_decode($partida->unidad == ""?"-":$partida->unidad),
+                    $partida->cantidad_format,
+                    $partida->precio_unitario_format,
+                    $partida->monto_presupuestado_format,
+                ]);
             }
-            $this->encola = '';
-        }catch (\Exception $e){
-            dd($e, number_format($insumo['monto_presupuestado'], '2', '.', ','));
-        }*/
-
-
+        }
     }
 
     public function resumen($data){
@@ -352,6 +313,7 @@ class ExtraordinarioFormato extends Rotation
     }
 
     public function motivo(){
+        $this->ln(0.5);
 
         $this->encola = "motivo";
         $this->SetWidths(array($this->WidthTotal));
@@ -450,7 +412,7 @@ class ExtraordinarioFormato extends Rotation
         $this->AddPage();
         $this->SetAutoPageBreak(true, 4);
         $this->partidas();
-        $this->Ln(0.75);
+        //$this->Ln(0.75);
         $this->motivo();
 
         try {

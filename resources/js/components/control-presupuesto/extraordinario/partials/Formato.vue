@@ -9,7 +9,7 @@
              <div class="modal-dialog modal-lg" id="mdialTamanio">
                  <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Formato de Solicitud de Variación de Volumen</h4>
+                        <h4 class="modal-title">Formato de Solicitud de Concepto Extraordinario</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
                     <div class="modal-body modal-lg" style="height: 650px" ref="body">
