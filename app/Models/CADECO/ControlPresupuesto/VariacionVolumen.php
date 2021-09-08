@@ -149,12 +149,13 @@ class VariacionVolumen extends SolicitudCambio
             $variacion_volumen->save();
             DB::connection('cadeco')->commit();
 
-            return $variacion_volumen ;
+
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
-            abort($e->getCode(), $e->getMessage());
-            throw $e;
+            abort(500, $e->getMessage());
         }
+
+        return $variacion_volumen ;
 
     }
 

@@ -189,7 +189,7 @@ class Extraordinario extends SolicitudCambio
     {
         DB::connection('cadeco')->beginTransaction();
 
-        $agrupador_conceptos = ['MATERIALES', 'MANOOBRA', 'HERRAMIENTAYEQUIPO', 'MAQUINARIA', 'SUBCONTRATOS', 'GASTOS','COMBUSTIBLESYLUBRICANTES','PROVISIONCOSTO'];
+        $agrupador_conceptos = ['MATERIALES', 'MANOOBRA', 'HERRAMIENTAYEQUIPO', 'MAQUINARIA', 'SUBCONTRATOS', 'GASTOS','COMBUSTIBLESYLUBRICANTES','PROVISIONCOSTO', 'SERVICIOSESPECIALIZADOS'];
 
         try{
             $solicitud_extraordinario = $this->create([
@@ -263,11 +263,13 @@ class Extraordinario extends SolicitudCambio
                     $descripcion_agrupador = 'COMBUSTIBLES Y LUBRICANTES';
                 }else if($agrupador_insumos == 'PROVISIONCOSTO'){
                     $descripcion_agrupador = 'PROVISION DE COSTO';
+                }else if($agrupador_insumos == 'SERVICIOSESPECIALIZADOS'){
+                    $descripcion_agrupador = 'SERVICIOS ESPECIALIZADOS DE PERSONAL';
                 }else {
                     $descripcion_agrupador = $agrupador_insumos;
                 }
                 $factor = $data['cantidad'];
-                if($descripcion_agrupador == "GASTOS")
+                if($descripcion_agrupador == "GASTOS" || $data["tipo_captura"] == 2)
                 {
                     $factor = 1;
                 }
@@ -280,7 +282,7 @@ class Extraordinario extends SolicitudCambio
                     'descripcion' => $descripcion_agrupador,
                 ]);
 
-                if(count($data[$agrupador_insumos])>0)
+                if(key_exists($agrupador_insumos, $data) /*count($data[$agrupador_insumos])>0*/)
                 {
                     $monto_presupuestado_agrupador = 0;
                     foreach($data[$agrupador_insumos] as $key=>$insumo)

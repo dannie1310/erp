@@ -3,45 +3,16 @@
 
         <div class="card">
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-12">
-                        <label>
-                            1.-Indique si el concepto extraordinario pertenecerá al Costo Directo o al Costo Indirecto:
-                        </label>
-                    </div>
-                </div>
-                <br />
-                <div class="row">
-                    <div class="col-md-12">
-
-                        <div class="btn-group btn-group-toggle">
-                            <label class="btn btn-outline-secondary" :class="tipo_costo === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos_costo" :key="llave">
-                                <i :class="llave==1 ?'fa fa-building':'fa fa-boxes'"></i>
-                                <input type="radio"
-                                       class="btn-group-toggle"
-                                       name="id_tipo"
-                                       :id="'tipo' + llave"
-                                       :value="llave"
-                                       autocomplete="on"
-                                       v-model.number="tipo_costo">
-                                        {{ tipo}}
-                            </label>
-                        </div>
-                    </div>
-                </div>
-
-                <span v-if="tipo_costo !=''">
-
-                    <hr style="border-color: #009a43 ">
 
                 <div class="row"  >
                     <div class="col-md-12">
                         <label>
-                            2.-Ingrese los datos del concepto:
+                            1.-Ingrese los datos del concepto:
                         </label>
                     </div>
                 </div>
                 <br />
+
 
                 <div class="row" >
                     <div class="col-md-12">
@@ -114,6 +85,36 @@
                                     <hr style="border-color: #009a43 ">
                                 </td>
                             </tr>
+
+                            <tr>
+                                <td style="border:none" colspan="7">
+                                    <label>
+                                        2.-Indique si ingresará los insumos por unidad de concepto o por el trabajo completo
+                                    </label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:none" colspan="7">
+                                    <div class="btn-group btn-group-toggle">
+                                        <label class="btn btn-outline-secondary" :class="tipo_captura === Number(llave) ? 'active': ''" v-for="(tipo, llave) in tipos_captura" :key="llave">
+                                            <i :class="llave==1 ?'fa fa-box':'fa fa-boxes'"></i>
+                                            <input type="radio"
+                                                   class="btn-group-toggle"
+                                                   name="id_tipo"
+                                                   :id="'tipo' + llave"
+                                                   :value="llave"
+                                                   autocomplete="on"
+                                                   v-model.number="tipo_captura">
+                                                    {{ tipo}}
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="border:none" colspan="7">
+                                    <hr style="border-color: #009a43 ">
+                                </td>
+                            </tr>
                             <tr>
                                 <td style="border:none" colspan="7">
                                     <label>
@@ -121,7 +122,7 @@
                                     </label>
                                 </td>
                             </tr>
-                            <template v-if="tipo_costo==1">
+                            <template v-if="1==1">
                                 <!--MATERIALES -->
                                 <tr>
                                     <td colspan="5" style="border:none"><h6><i class="fa fa-simplybuilt"/>Materiales</h6></td>
@@ -138,7 +139,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -242,7 +244,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -345,7 +348,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -448,7 +452,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -551,7 +556,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -636,6 +642,100 @@
                                 <tr>
                                     <td style="border: none">&nbsp;</td>
                                 </tr>
+                                <!-- GASTOS -->
+                                <tr>
+                                    <td colspan="5" style="border:none"><h6><i class="fa fa-boxes"/>Gastos</h6></td>
+                                    <td colspan="2" style="border:none"></td>
+                                </tr>
+
+                                <tr >
+                                    <th class="encabezado icono">
+                                        #
+                                    </th>
+                                    <th class="encabezado">
+                                        Descripción
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Unidad
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Precio Unitario
+                                    </th>
+                                    <th class="encabezado cantidad_input">
+                                        Importe
+                                    </th>
+                                    <th class="encabezado icono">
+                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaGAS()">
+                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                            <i class="fa fa-plus" v-else></i>
+                                        </button>
+                                    </th>
+                                </tr>
+                                <tr v-for="(partida_gas, i) in partidas_gas">
+                                    <td style="text-align: center">
+                                        {{i+1}}
+                                    </td>
+                                    <td >
+                                        <span v-if="partida_gas.material === ''">
+                                            <MaterialSelect
+                                                :name="`gastos[${i}]`"
+                                                :id="`gastos[${i}]`"
+                                                :scope="['subcontrato','insumos']"
+                                                sort = "descripcion"
+                                                v-model="partida_gas.material"
+                                                data-vv-as="Gastos"
+                                                :isError="errors.has(`gastos[${i}]`)"
+                                                v-validate="{required: true}"
+                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
+                                                :class="{'is-invalid': errors.has(`gastos[${i}]`)}"
+                                                ref="GASSelect"
+                                                :disableBranchNodes="false"/>
+                                            <div class="invalid-feedback" v-show="errors.has(`gastos[${i}]`)">{{ errors.first(`gastos[${i}]`) }}</div>
+                                        </span>
+                                        <span v-else>
+                                            {{partida_gas.material.descripcion}}
+                                        </span>
+                                    </td>
+                                    <td >
+                                        {{partida_gas.material.unidad}}
+                                    </td>
+                                    <td style="text-align: right">
+                                        {{partida_gas.cantidad}}
+                                    </td>
+                                    <td >
+                                        <input type="text"
+                                               v-on:keyup="calcularGAS"
+                                               class="form-control"
+                                               :name="`precio_unitario_gas[${i}]`"
+                                               :data-vv-as="`Precio Unitario ${i+1}`"
+                                               v-model="partida_gas.precio_unitario"
+                                               v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                               :class="{'is-invalid': errors.has(`precio_unitario_gas[${i}]`)}"
+                                               :id="`precio_unitario_gas[${i}]`"
+                                               style="text-align: right"
+                                        >
+                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_gas[${i}]`)">{{ errors.first(`precio_unitario_gas[${i}]`) }}</div>
+
+                                    </td>
+                                    <td style="text-align: right">
+                                        ${{partida_gas.importe.formatMoney(2)}}
+                                    </td>
+                                    <td >
+                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaGAS(i)"  ><i class="fa fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Gastos:</td>
+                                    <td style="text-align: right; border: none">${{suma_partidas_gas.formatMoney(2)}}</td>
+                                    <td style="border: none"></td>
+                                </tr>
+                                <tr>
+                                    <td style="border: none">&nbsp;</td>
+                                </tr>
                                 <!-- COMBUSTIBLES Y LUBRICANTES -->
                                 <tr>
                                     <td colspan="5" style="border:none"><h6><i class="fa fa-gas-pump"/>Combustibles y Lubricantes</h6></td>
@@ -653,7 +753,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -755,7 +856,8 @@
                                         Unidad
                                     </th>
                                     <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
+                                        <span v-if="tipo_captura==1">Rendimiento U.T.</span>
+                                        <span v-else-if="tipo_captura==2">Cantidad</span>
                                     </th>
                                     <th class="encabezado cantidad_input">
                                         Precio Unitario
@@ -838,98 +940,6 @@
                                     <td style="border: none"></td>
                                 </tr>
 
-                            </template>
-                            <template v-if="tipo_costo==2">
-                                <!-- GASTOS -->
-                                <tr>
-                                    <td colspan="5" style="border:none"><h6><i class="fa fa-boxes"/>Gastos</h6></td>
-                                    <td colspan="2" style="border:none"></td>
-                                </tr>
-
-                                <tr >
-                                    <th class="encabezado icono">
-                                        #
-                                    </th>
-                                    <th class="encabezado">
-                                        Descripción
-                                    </th>
-                                    <th class="encabezado cantidad_input">
-                                        Unidad
-                                    </th>
-                                    <th class="encabezado cantidad_input">
-                                        Rendimiento U.T.
-                                    </th>
-                                    <th class="encabezado cantidad_input">
-                                        Precio Unitario
-                                    </th>
-                                    <th class="encabezado cantidad_input">
-                                        Importe
-                                    </th>
-                                    <th class="encabezado icono">
-                                        <button type="button" class="btn btn-success btn-sm"   :title="cargando?'Cargando...':'Agregar Partidas'" :disabled="cargando" @click="addPartidaGAS()">
-                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                            <i class="fa fa-plus" v-else></i>
-                                        </button>
-                                    </th>
-                                </tr>
-                                <tr v-for="(partida_gas, i) in partidas_gas">
-                                    <td style="text-align: center">
-                                        {{i+1}}
-                                    </td>
-                                    <td >
-                                        <span v-if="partida_gas.material === ''">
-                                            <MaterialSelect
-                                                :name="`gastos[${i}]`"
-                                                :id="`gastos[${i}]`"
-                                                :scope="['subcontrato','insumos']"
-                                                sort = "descripcion"
-                                                v-model="partida_gas.material"
-                                                data-vv-as="Gastos"
-                                                :isError="errors.has(`gastos[${i}]`)"
-                                                v-validate="{required: true}"
-                                                :placeholder="!cargando?'Seleccionar o buscar insumo por descripcion':'Cargando...'"
-                                                :class="{'is-invalid': errors.has(`gastos[${i}]`)}"
-                                                ref="GASSelect"
-                                                :disableBranchNodes="false"/>
-                                            <div class="invalid-feedback" v-show="errors.has(`gastos[${i}]`)">{{ errors.first(`gastos[${i}]`) }}</div>
-                                        </span>
-                                        <span v-else>
-                                            {{partida_gas.material.descripcion}}
-                                        </span>
-                                    </td>
-                                    <td >
-                                        {{partida_gas.material.unidad}}
-                                    </td>
-                                    <td style="text-align: right">
-                                        {{partida_gas.cantidad}}
-                                    </td>
-                                    <td >
-                                        <input type="text"
-                                           v-on:keyup="calcularGAS"
-                                           class="form-control"
-                                           :name="`precio_unitario_gas[${i}]`"
-                                           :data-vv-as="`Precio Unitario ${i+1}`"
-                                           v-model="partida_gas.precio_unitario"
-                                           v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                           :class="{'is-invalid': errors.has(`precio_unitario_gas[${i}]`)}"
-                                           :id="`precio_unitario_gas[${i}]`"
-                                           style="text-align: right"
-                                        >
-                                        <div class="invalid-feedback" v-show="errors.has(`precio_unitario_gas[${i}]`)">{{ errors.first(`precio_unitario_gas[${i}]`) }}</div>
-
-                                    </td>
-                                    <td style="text-align: right">
-                                        ${{partida_gas.importe.formatMoney(2)}}
-                                    </td>
-                                    <td >
-                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="eliminaPartidaGAS(i)"  ><i class="fa fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td colspan="5" style="text-align: right; border: none">Suma de Partidas de Gastos:</td>
-                                    <td style="text-align: right; border: none">${{suma_partidas_gas.formatMoney(2)}}</td>
-                                    <td style="border: none"></td>
-                                </tr>
                             </template>
                         </table>
                     </div>
@@ -1139,7 +1149,7 @@
                     </div>
                 </div>
 
-                </span>
+
 
             </div>
             <div class="card-footer">
@@ -1178,6 +1188,7 @@ export default {
             suma_importe_cambio : 0,
             tipo_costo : '',
             tipo_ruta : 1,
+            tipo_captura: 1,
             tipos_costo: {
                 2: "Costo Indirecto",
                 1: "Costo Directo"
@@ -1185,6 +1196,10 @@ export default {
             tipos_ruta: {
                 2: "Nueva",
                 1: "Existente"
+            },
+            tipos_captura: {
+                2: "Por Trabajo Completo",
+                1: "Por Unidad de Concepto"
             },
             nodo_ruta_nueva : '',
             id_nodo_ruta_nueva : '',
@@ -1266,7 +1281,29 @@ export default {
             let _self = this;
             this.$validator.validate().then(result => {
                 if (result) {
-                    if(_self.tipo_costo == 1){
+
+                    if(_self.partidas_material.length ==0
+                        && _self.partidas_mo.length ==0
+                        && _self.partidas_he.length ==0
+                        && _self.partidas_maq.length ==0
+                        && _self.partidas_sub.length ==0
+                        && _self.partidas_comb.length ==0
+                        && _self.partidas_prov.length ==0
+                        && _self.partidas_gas.length ==0
+                    )
+                    {
+                        swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
+                    }else if(_self.tipo_ruta == 1 && !_self.id_nodo_extraordinario > 0){
+                        swal('¡Error!', 'Debe seleccionar la ruta de presupuesto donde posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
+                    }else if(_self.tipo_ruta == 2 && !_self.id_nodo_ruta_nueva > 0){
+                        swal('¡Error!', 'Debe seleccionar el concepto que será nodo para la nueva ruta del presupuesto donde se posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
+                    }else if(_self.tipo_ruta == 2 && _self.id_nodo_ruta_nueva > 0 && _self.partidas_nueva_ruta.length == 0){
+                        swal('¡Error!', 'Debe formar la nueva parte de la estructura del presupuesto a generar para el concepto extraordinario  (Paso 6)', 'error')
+                    } else{
+                        this.store()
+                    }
+
+                    /*if(_self.tipo_costo == 1){
                         if(_self.partidas_material.length ==0
                             && _self.partidas_mo.length ==0
                             && _self.partidas_he.length ==0
@@ -1303,7 +1340,7 @@ export default {
                             else{
                             this.store()
                         }
-                    }
+                    }*/
 
                 }
             });
@@ -1328,10 +1365,12 @@ export default {
                 'SUBCONTRATOS' : this.partidas_sub,
                 'COMBUSTIBLESYLUBRICANTES' : this.partidas_comb,
                 'PROVISIONCOSTO' : this.partidas_prov,
+                'SERVICIOSESPECIALIZADOS' : [],
                 'GASTOS' : this.partidas_gas,
                 'partidas_nueva_ruta' : this.partidas_nueva_ruta,
                 'id_nodo_extraordinario' : this.id_nodo_extraordinario,
-                'id_nodo_ruta_nueva' : this.id_nodo_ruta_nueva
+                'id_nodo_ruta_nueva' : this.id_nodo_ruta_nueva,
+                'tipo_captura' : this.tipo_captura
             }
 
             return this.$store.dispatch('control-presupuesto/extraordinario/store', datos_solicitud_cambio)
@@ -1717,7 +1756,7 @@ export default {
     },
     computed: {
         precio_unitario() {
-            return this.suma_partidas_material +
+            let pu = this.suma_partidas_material +
                 this.suma_partidas_mo +
                 this.suma_partidas_he +
                 this.suma_partidas_maq +
@@ -1725,6 +1764,16 @@ export default {
                 this.suma_partidas_comb +
                 this.suma_partidas_prov +
                 this.suma_partidas_gas;
+
+            if(this.tipo_captura == 1){
+                return pu;
+            }else {
+                if(this.cantidad > 0){
+                    return pu / this.cantidad;
+                }else{
+                    return 0;
+                }
+            }
         },
         monto_presupuestado() {
             return this.precio_unitario * this.cantidad;
@@ -1735,33 +1784,6 @@ export default {
     },
     watch:{
 
-        /*id_nodo_ruta_nueva(value){
-            if(value != ''){
-                return this.$store.dispatch('cadeco/concepto/find', {
-                    id: value,
-                    params: {
-                    }
-                })
-                .then(data => {
-                    this.nodo_ruta_nueva = data;
-                })
-            }
-        },
-        id_nodo_extraordinario(value){
-            let _self = this;
-            if(value != ''){
-                return this.$store.dispatch('cadeco/concepto/find', {
-                    id: value,
-                    params: {
-                    }
-                })
-                .then(data => {
-                    _self.nodo_extraordinario = data;
-                }).finally(() => {
-                        console.log("fin");
-                    })
-            }
-        },*/
     }
 }
 </script>
