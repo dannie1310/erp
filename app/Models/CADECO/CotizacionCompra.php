@@ -608,6 +608,7 @@ class    CotizacionCompra  extends Transaccion
         $partidas = [];
         $cotizaciones = [];
         $precios = [];
+        $exclusiones = [];
 
         foreach ($this->solicitud->items as $key => $item) {
             if (array_key_exists($item->id_material, $partidas)) {
@@ -673,10 +674,15 @@ class    CotizacionCompra  extends Transaccion
             $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
             $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
         }
+        foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
+            $exclusiones[$cont] = $cotizacion->exclusiones->toArray();
+            // dd($cotizacion->exclusiones);
+        }
         return [
             'cotizaciones' => $cotizaciones,
             'partidas' => $partidas,
-            'precios_menores' => $precios
+            'precios_menores' => $precios,
+            'exclusiones' => $exclusiones
         ];
     }
 
