@@ -1076,4 +1076,16 @@ class PresupuestoContratista extends Transaccion
             abort(400, $e->getMessage());
         }
     }
+
+    public function envia(){
+        $this->update([
+            'estado' => 1,
+        ]);
+
+        $this->invitacion->update([
+            "estado"=>3
+        ]);
+
+        return $this->estado;
+    }
 }

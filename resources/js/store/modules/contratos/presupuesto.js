@@ -24,7 +24,6 @@ export default {
 
     actions: {
         paginate (context, payload) {
-
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'paginate', { params: payload.params })
@@ -77,7 +76,6 @@ export default {
             });
         },
         store(context,payload){
-
             return new Promise((resolve, reject) => {
                 swal({
                     title: "Registrar Presupuesto Contratista",
@@ -377,6 +375,45 @@ export default {
                                     }).then(() => {
                                         resolve(data);
                                     })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+        enviarPresupuesto(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Enviar Presupuesto",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Enviar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id+'/portal-proveedor/enviar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("El presupuesto se ha enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
                                 })
                                 .catch(error => {
                                     reject(error);

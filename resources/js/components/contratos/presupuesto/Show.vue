@@ -141,7 +141,7 @@
                             <table class="table table-sm table-bordered">
                                 <thead>
                                     <tr>
-                                        <td style="text-align: center;" colspan="8"><b>Exclusiones</b></td>
+                                        <td class="encabezado" colspan="8"><b>Exclusiones</b></td>
                                     </tr>
                                     <tr>
                                         <th class="index_corto">#</th>
@@ -154,7 +154,7 @@
                                     </tr>
                                     </thead>
                                 <tbody>
-                                    <tr v-for="(exclusion, i) in presupuesto.exclusiones">
+                                    <tr v-for="(exclusion, i) in presupuesto.exclusiones.data">
                                         <td class="index_corto">{{ i + 1 }}</td>
                                         <td>{{exclusion.descripcion}}</td>
                                         <td style="text-align: center">{{exclusion.unidad}}</td>
@@ -301,6 +301,11 @@ table .numerico
 
 .text.is-invalid {
     color: #dc3545;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
 }
 
 table tbody td input.text {

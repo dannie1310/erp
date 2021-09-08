@@ -1,27 +1,17 @@
 <template>
     <span>
-        <button @click="iniciar()" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-            <i class="fa fa-trash" v-if="!cargando"></i>
-            <i class="fa fa-spinner fa-spin" v-else></i>
-        </button>
-        <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-trash"></i> ELIMINAR PRESUPUESTO CONTRATISTA</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
                     <form role="form" @submit.prevent="validate">
-                        <div class="modal-body">
+                        <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <presupuesto-proveedor-partial-show v-bind:id="this.id" />
+                                    <presupuesto-proveedor-partial-show v-bind:id="id"  @created="iniciar" />
                                 </div>
                             </div>
                             <br />
-                            <div class="row" v-if="presupuesto">
+                            <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group row error-content">
                                         <label for="motivo" class="col-md-2 col-form-label">Motivo de eliminación:</label>
@@ -41,9 +31,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0"><i class="fa fa-trash"></i>Eliminar</button>
+                        <div class="card-footer">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                                <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || fin_carga == 0"><i class="fa fa-trash"></i>Eliminar</button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -61,18 +53,16 @@
     data() {
         return {
             cargando: false,
-            presupuesto: [],
-            invitacion: [],
-            motivo: ''
+            motivo: '',
+            fin_carga: 0
         }
     },
     methods: {
         iniciar() {
-            this.cargando = true;
-            this.motivo = '';
-            $(this.$refs.modal).appendTo('body')
-            $(this.$refs.modal).modal('show')
-            this.cargando = false;
+            this.fin_carga = 1
+        },
+        salir() {
+            this.$router.push({name: 'cotizacion-proveedor'});
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -89,13 +79,7 @@
             .then(() => {
                 $(this.$refs.modal).modal('hide');
                 this.cargando = true;
-                return this.$store.dispatch('padronProveedores/invitacion/paginate', {
-                    params: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado']},
-                }).then(data => {
-                    this.$store.commit('padronProveedores/invitacion/SET_INVITACIONES', data.data);
-                    this.$store.commit('padronProveedores/invitacion/SET_META', data.meta);
-                    this.cargando = false;
-                })
+                this.salir();
             })
         },
     }

@@ -192,6 +192,7 @@
                 }).then(data => {
                     this.presupuesto = data.presupuesto_proveedor
                     this.invitacion = data
+                    this.$emit('created', data)
                     this.cargando = false;
                 })
             },
