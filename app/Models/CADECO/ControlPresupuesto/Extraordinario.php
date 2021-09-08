@@ -236,6 +236,7 @@ class Extraordinario extends SolicitudCambio
                 'nivel' => $nivel_base. str_pad($cantidad_hijos + 1,3,"0", STR_PAD_LEFT) . '.',
                 'unidad' => $data['unidad'],
                 'cantidad_presupuestada_nueva' => $data['cantidad'],
+                'clave_concepto' => $data['clave_concepto'],
                 'descripcion' => $data['descripcion'],
                 'precio_unitario_nuevo' => $data['precio_unitario'],
                 'monto_presupuestado' => $data['monto_presupuestado'],

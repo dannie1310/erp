@@ -18,7 +18,10 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr >
-                                <th class="encabezado" colspan="2">
+                                <th class="encabezado c200" >
+                                    Clave
+                                </th>
+                                <th class="encabezado" >
                                     Descripción
                                 </th>
                                 <th class="encabezado cantidad_input">
@@ -30,12 +33,23 @@
                                 <th class="encabezado cantidad_input">
                                     Precio Unitario
                                 </th>
-                                <th class="encabezado cantidad_input" colspan="2">
+                                <th class="encabezado cantidad_input">
                                     Monto Presupuestado
                                 </th>
                             </tr>
                             <tr>
-                                <td colspan="2">
+                                <td >
+                                    <input type="text"
+                                           class="form-control"
+                                           name="clave"
+                                           data-vv-as="Clave del Concepto"
+                                           v-model="clave_concepto"
+                                           v-validate="{required: true}"
+                                           :class="{'is-invalid': errors.has('clave')}"
+                                           id="clave">
+                                    <div class="invalid-feedback" v-show="errors.has('clave')">{{ errors.first('clave') }}</div>
+                                </td>
+                                <td >
                                     <input type="text"
                                            class="form-control"
                                            name="descripcion"
@@ -76,16 +90,17 @@
                                 <td style="text-align: right">
                                     ${{precio_unitario.formatMoney(2)}}
                                 </td>
-                                <td style="text-align: right" colspan="2">
+                                <td style="text-align: right" >
                                     ${{monto_presupuestado.formatMoney(2)}}
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border:none" colspan="7">
+                                <td style="border:none" colspan="6">
                                     <hr style="border-color: #009a43 ">
                                 </td>
                             </tr>
-
+                        </table>
+                        <table class="table table-sm">
                             <tr>
                                 <td style="border:none" colspan="7">
                                     <label>
@@ -1177,6 +1192,7 @@ export default {
     props: [],
     data() {
         return {
+            clave_concepto :'',
             descripcion :'',
             unidad : '',
             unidades : [],
@@ -1302,46 +1318,6 @@ export default {
                     } else{
                         this.store()
                     }
-
-                    /*if(_self.tipo_costo == 1){
-                        if(_self.partidas_material.length ==0
-                            && _self.partidas_mo.length ==0
-                            && _self.partidas_he.length ==0
-                            && _self.partidas_maq.length ==0
-                            && _self.partidas_sub.length ==0
-                            && _self.partidas_comb.length ==0
-                            && _self.partidas_prov.length ==0
-                        )
-                        {
-                            swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
-
-
-                        }else if(_self.tipo_ruta == 1 && !_self.id_nodo_extraordinario > 0){
-                            swal('¡Error!', 'Debe seleccionar la ruta de presupuesto donde posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
-                        }else if(_self.tipo_ruta == 2 && !_self.id_nodo_ruta_nueva > 0){
-                            swal('¡Error!', 'Debe seleccionar el concepto que será nodo para la nueva ruta del presupuesto donde se posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
-                        }else if(_self.tipo_ruta == 2 && _self.id_nodo_ruta_nueva > 0 && _self.partidas_nueva_ruta.length == 0){
-                            swal('¡Error!', 'Debe formar la nueva parte de la estructura del presupuesto a generar para el concepto extraordinario  (Paso 6)', 'error')
-                        } else{
-                            this.store()
-                        }
-                    } if(_self.tipo_costo == 2){
-                        if(_self.partidas_gas.length ==0)
-                        {
-                            swal('¡Error!', 'Debe agregar al menos un insumo al concepto extraordiario', 'error')
-
-                        } else if(_self.tipo_ruta == 1 && !_self.id_nodo_extraordinario > 0){
-                            swal('¡Error!', 'Debe seleccionar la ruta de presupuesto donde posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
-                        }else if(_self.tipo_ruta == 2 && !_self.id_nodo_ruta_nueva > 0){
-                            swal('¡Error!', 'Debe seleccionar el concepto que será nodo para la nueva ruta del presupuesto donde se posicionará el nuevo concepto extraordinario (Paso 5)', 'error')
-                        }else if(_self.tipo_ruta == 2 && _self.id_nodo_ruta_nueva > 0 && _self.partidas_nueva_ruta.length == 0){
-                            swal('¡Error!', 'Debe formar la nueva parte de la estructura del presupuesto a generar para el concepto extraordinario  (Paso 6)', 'error')
-                        }
-                            else{
-                            this.store()
-                        }
-                    }*/
-
                 }
             });
         },
@@ -1349,6 +1325,7 @@ export default {
             this.cargando = true;
 
             var datos_solicitud_cambio = {
+                'clave_concepto' : this.clave_concepto,
                 'descripcion' : this.descripcion,
                 'unidad' : this.unidad,
                 'cantidad' : this.cantidad,
