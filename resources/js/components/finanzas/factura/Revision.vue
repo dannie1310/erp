@@ -758,7 +758,7 @@ export default {
                     this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.total_deductivas_estimacion);
                 }
 
-                let otros_impuestos =  parseFloat(this.resumen.ieps) + parseFloat(this.resumen.ret_isr_10);
+                let otros_impuestos =  parseFloat(this.resumen.ret_isr_10);
                 let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
                 this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.monto_anticipo_aplicado);
 
@@ -775,7 +775,7 @@ export default {
                     this.resumen.subtotal = this.resumen.subtotal - this.resumen.total_deductivas_estimacion;
                 }
 
-                this.resumen.total_documentos = this.resumen.subtotal + parseFloat(this.resumen.imp_hospedaje) + this.resumen.iva_pagar - otros_impuestos - retenciones;
+                this.resumen.total_documentos = this.resumen.subtotal + parseFloat(this.resumen.imp_hospedaje) + parseFloat(this.resumen.ieps) + this.resumen.iva_pagar - otros_impuestos - retenciones;
                 this.actualizar_subtotal_descuentos();
                 this.actualizar_resumen();
             }
@@ -854,7 +854,7 @@ export default {
                 this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.total_deductivas_estimacion);
             }
 
-            let otros_impuestos =  parseFloat(this.resumen.ieps) + parseFloat(this.resumen.ret_isr_10);
+            let otros_impuestos =  parseFloat(this.resumen.ret_isr_10);
             let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
             this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.monto_anticipo_aplicado);
 
@@ -871,15 +871,15 @@ export default {
                 this.resumen.total_documentos = this.resumen.total_documentos - this.resumen.total_deductivas_estimacion;
             }
 
-            this.resumen.total_documentos = this.resumen.subtotal + parseFloat(this.resumen.imp_hospedaje) + this.resumen.iva_pagar - otros_impuestos - retenciones;
+            this.resumen.total_documentos = this.resumen.subtotal + parseFloat(this.resumen.imp_hospedaje) + parseFloat(this.resumen.ieps) + this.resumen.iva_pagar - otros_impuestos - retenciones;
             this.actualizar_subtotal_descuentos();
             this.actualizar_resumen();
         },
         actualizar_resumen(){
             this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
-            let otros_impuestos =  parseFloat(this.resumen.ieps)  +  parseFloat(this.resumen.ret_isr_10);
+            let otros_impuestos =  parseFloat(this.resumen.ret_isr_10);
             let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6);
-            this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + parseFloat(this.resumen.imp_hospedaje)  +  this.resumen.iva_pagar - otros_impuestos - retenciones;
+            this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + parseFloat(this.resumen.imp_hospedaje)  +  parseFloat(this.resumen.ieps)  +  this.resumen.iva_pagar - otros_impuestos - retenciones;
         },
         find(){
             return this.$store.dispatch('finanzas/factura/find', {
