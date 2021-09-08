@@ -42,7 +42,7 @@ class PresupuestoContratistaController extends Controller
      public function __construct(Manager $fractal, PresupuestoContratistaService $service, PresupuestoContratistaTransformer $transformer)
      {
          $this->middleware('auth:api');
-         $this->middleware('context')->except(['registrarPresupuestoProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor','destroyProveedor']);
+         $this->middleware('context')->except(['registrarPresupuestoProveedor','updatePortalProveedor','descargaLayoutProveedor','cargaLayoutProveedor','destroyProveedor','enviar']);
          $this->middleware('permiso:consultar_presupuesto_contratista')->only(['show','paginate','index','find', 'pdf']);
          $this->middleware('permiso:editar_presupuesto_contratista')->only('update');
          $this->middleware('permiso:eliminar_presupuesto_contratista')->only('destroy');
@@ -110,5 +110,11 @@ class PresupuestoContratistaController extends Controller
     {
         $this->service->deleteProveedor($request->all(), $id);
         return response()->json("{}", 200);
+    }
+
+    public function enviar(Request $request, $id)
+    {
+        $this->service->enviar($id, $request->all());
+        return response()->json([], 200);
     }
 }

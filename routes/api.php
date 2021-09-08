@@ -1103,6 +1103,7 @@ $api->version('v1', function ($api) {
             $api->get('descargaLayoutProveedor/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayoutProveedor')->where(['id' => '[0-9]+']);
             $api->post('layoutProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayoutProveedor');
             $api->delete('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@destroyProveedor')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/portal-proveedor/enviar', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@enviar')->where(['id' => '[0-9]+']);
         });
 
 

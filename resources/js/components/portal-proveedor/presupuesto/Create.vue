@@ -134,7 +134,7 @@
                                                             class="form-control"
                                                             id="moneda"
                                                             v-model="partida.moneda_seleccionada"
-                                                            :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                            :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
                                                                 <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.abreviatura }}</option>
                                                         </select>
                                                         <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>

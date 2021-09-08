@@ -1,7 +1,7 @@
 <template>
     <span v-if="presupuesto">
-        <encabezado-presupuesto v-bind:presupuesto="presupuesto"></encabezado-presupuesto>
-        <tabla-datos-presupuesto v-bind:presupuesto="presupuesto"></tabla-datos-presupuesto>
+        <encabezado-presupuesto v-bind:presupuesto="presupuesto" />
+        <tabla-datos-presupuesto v-bind:presupuesto="presupuesto" />
     </span>
 </template>
 

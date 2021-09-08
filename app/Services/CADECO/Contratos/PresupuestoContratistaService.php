@@ -3,9 +3,14 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
+use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 use App\Utils\ValidacionSistema;
 use App\Imports\PresupuestoImport;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\PresupuestoContratista;
@@ -316,5 +321,79 @@ class PresupuestoContratistaService
     {
         $invitacion = $this->validaFechaCierreInvitacion($id);
         return $this->repository->eliminar($invitacion->presupuesto->getKey(),$invitacion->base_datos,$data['data']);
+    }
+
+    public function enviar($id, $data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data["id_invitacion"]);
+        $this->setDB($invitacion->base_datos);
+        $presupuesto = $this->repository->withoutGlobalScopes()->show($id);
+
+        $archivos = $presupuesto->archivos()->where("id_categoria","=",2)->whereIn("id_tipo_archivo",[3,4,5])->get();
+        foreach($archivos as $archivo)
+        {
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+            $archivoService->delete(["base_datos"=>$invitacion->base_datos], $archivo->id);
+        }
+
+        $this->cargaArchivos($id, $data, $presupuesto);
+        $presupuesto->envia();
+    }
+
+    public function cargaArchivos($id, $data, $presupuesto)
+    {
+        $invitacionService = new InvitacionService(new Invitacion());
+        $invitacion = $invitacionService->show($data["id_invitacion"]);
+        if(key_exists("nombres_archivos_fichas_tecnicas", $data)){
+            foreach($data["nombres_archivos_fichas_tecnicas"] as $key=>$nombre)
+            {
+                $archivoService = new ArchivoService(new Archivo());
+                $archivoService->setDB($invitacion->base_datos);
+                $data_archivos["id"] = $id;
+                $data_archivos["id_transaccion"] = $id;
+                $data_archivos["id_tipo_archivo"] = 5;
+                $data_archivos["id_categoria"] = 2;
+                $data_archivos["descripcion"] = 'Ficha técnica asociada a la cotización '.$presupuesto->numero_folio_format;
+                $data_archivos['archivos_nombres'] = \json_encode([$nombre]);
+                $data_archivos['archivos'] = \json_encode([$data["archivos_fichas_tecnicas"][$key]]);
+                $archivoService->cargarArchivosPDF($data_archivos);
+            }
+        }
+
+        if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+
+            $data_archivos["id"] = $id;
+            $data_archivos["id_transaccion"] = $id;
+            $data_archivos["id_tipo_archivo"] = 3;
+            $data_archivos["id_categoria"] = 2;
+            $data_archivos["descripcion"] = 'Carta asociada a la cotización '.$presupuesto->numero_folio_format;
+            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_carta_terminos_condiciones"]]]);
+            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_carta_terminos_condiciones"]]]);
+
+            $archivoService->cargarArchivosPDF($data_archivos);
+        }
+
+        if(key_exists("nombre_archivo_formato_cotizacion", $data)){
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+
+            $data_archivos["id"] = $id;
+            $data_archivos["id_transaccion"] = $id;
+            $data_archivos["id_tipo_archivo"] = 4;
+            $data_archivos["id_categoria"] = 2;
+            $data_archivos["descripcion"] = 'Formato de cotización asociado a la cotización'.$presupuesto->numero_folio_format;
+            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_formato_cotizacion"]]]);
+            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_formato_cotizacion"]]]);
+
+            $archivoService->cargarArchivosPDF($data_archivos);
+        }
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 }

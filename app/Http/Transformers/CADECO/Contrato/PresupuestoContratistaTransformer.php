@@ -32,7 +32,8 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         'contratos',
         'transaccion',
         'subtotales_por_moneda',
-        'partidas_asignadas'
+        'partidas_asignadas',
+        'exclusiones'
     ];
 
     protected $defaultIncludes=["transaccion"];
@@ -201,6 +202,19 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
         if($partidas = $model->getPartidasAsignadas($id_asignacion))
         {
             return $this->collection($partidas, new PresupuestoContratistaPartidaAsignadaTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param PresupuestoContratista $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includeExclusiones(PresupuestoContratista $model)
+    {
+        if($exclusiones = $model->exclusiones)
+        {
+            return $this->collection($exclusiones, new ExclusionTransformer);
         }
         return null;
     }

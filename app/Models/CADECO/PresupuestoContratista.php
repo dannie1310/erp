@@ -65,7 +65,7 @@ class PresupuestoContratista extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 50)->whereHas('contratoProyectado');
+            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)->whereHas('contratoProyectado');
         });
     }
 
@@ -1075,5 +1075,17 @@ class PresupuestoContratista extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public function envia(){
+        $this->update([
+            'estado' => 1,
+        ]);
+
+        $this->invitacion->update([
+            "estado"=>3
+        ]);
+
+        return $this->estado;
     }
 }

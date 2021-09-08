@@ -134,8 +134,41 @@
                         </table>
                     </div>
                 </div>
+                <br />
+                <div class="row" v-if="presupuesto.exclusiones">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered">
+                                <thead>
+                                    <tr>
+                                        <td class="encabezado" colspan="8"><b>Exclusiones</b></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="index_corto">#</th>
+                                        <th width="30%">Descripción</th>
+                                        <th>Unidad</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th class="money" style="text-align:center;">Moneda</th>
+                                        <th>Precio Total</th>
+                                    </tr>
+                                    </thead>
+                                <tbody>
+                                    <tr v-for="(exclusion, i) in presupuesto.exclusiones.data">
+                                        <td class="index_corto">{{ i + 1 }}</td>
+                                        <td>{{exclusion.descripcion}}</td>
+                                        <td style="text-align: center">{{exclusion.unidad}}</td>
+                                        <td style="text-align:right;">{{exclusion.cantidad_format}}</td>
+                                        <td style="text-align:right;">{{exclusion.precio_format}}</td>
+                                        <td style="text-align:center;">{{exclusion.moneda}}</td>
+                                        <td style="text-align:right;">{{exclusion.total_format}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-
         </div>
     </span>
 </template>
@@ -166,7 +199,7 @@
                         'contratos.presupuesto:id_transaccion_presupuesto('+this.id+')',
                         'contratos.destino',
                         'sucursal',
-                        'empresa', 'subtotales_por_moneda']}
+                        'empresa', 'subtotales_por_moneda','exclusiones']}
                 }).then(data => {
                     this.$store.commit('contratos/presupuesto/SET_PRESUPUESTO', data);
                     this.cargando = false;
@@ -268,6 +301,11 @@ table .numerico
 
 .text.is-invalid {
     color: #dc3545;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
 }
 
 table tbody td input.text {

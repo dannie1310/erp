@@ -4125,6 +4125,32 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/delete',
+                        name: 'presupuesto-proveedor-delete',
+                        component: require('./components/portal-proveedor/presupuesto/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: 'eliminar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/enviar',
+                        name: 'presupuesto-proveedor-send',
+                        props: true,
+                        component: require('./components/portal-proveedor/presupuesto/Enviar').default,
+                        meta: {
+                            title: 'Enviar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'ENVIAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
                 ]
             },
         ]
