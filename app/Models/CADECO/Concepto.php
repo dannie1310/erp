@@ -78,9 +78,7 @@ class Concepto extends Model
                 $ancestro .= '->' .$result['descripcion'];
             }
             $first+=4;
-
         }
-
        return $ancestro;
     }
 

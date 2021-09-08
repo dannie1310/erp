@@ -52,6 +52,10 @@ class Extraordinario extends SolicitudCambio
      * Atributos
      */
 
+    public function getImporteActualizadoFormatAttribute(){
+        return '$' . number_format($this->importe_original + $this->importe_afectacion,2,".",",");
+    }
+
     /**
      * Metodos
      */
@@ -192,11 +196,13 @@ class Extraordinario extends SolicitudCambio
         $agrupador_conceptos = ['MATERIALES', 'MANOOBRA', 'HERRAMIENTAYEQUIPO', 'MAQUINARIA', 'SUBCONTRATOS', 'GASTOS','COMBUSTIBLESYLUBRICANTES','PROVISIONCOSTO', 'SERVICIOSESPECIALIZADOS'];
 
         try{
+            $monto_presupuestado_total = Concepto::roots()->orderBy("id_concepto","desc")->first()->monto_presupuestado;
             $solicitud_extraordinario = $this->create([
                 'area_solicitante' => $data['area_solicitante'],
                 'motivo' => $data['motivo'],
                 'id_tipo_orden' => 3,
-                'importe_afectacion'=>$data["monto_presupuestado"]
+                'importe_afectacion'=>$data["monto_presupuestado"],
+                'importe_original'=>$monto_presupuestado_total
             ]);
 
             if($data["tipo_ruta"] == 2){

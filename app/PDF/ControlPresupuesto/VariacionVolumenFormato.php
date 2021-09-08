@@ -165,7 +165,7 @@ class VariacionVolumenFormato extends Rotation
 
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);
-        $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Tipo de solicitud:'), '', 0, 'LB');
+        $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Tipo de Solicitud:'), '', 0, 'LB');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
         $this->CellFitScale(0.375 * $this->WidthTotal, 0.35, utf8_decode($this->solicitud->tipoOrden->descripcion), '', 1, 'L');
 
@@ -192,7 +192,7 @@ class VariacionVolumenFormato extends Rotation
         $this->SetX($x);
         $this->Cell(0.125 * $this->WidthTotal, 0.35, utf8_decode('Persona que Solicita:'), '', 0, 'L');
         $this->SetFont('Arial', '', $this->txtContenidoTam);
-        $this->CellFitScale(0.375 * $this->WidthTotal, 0.35, utf8_decode($this->solicitud->usuario->getNombreCompletoAttribute()), '', 1, 'L');
+        $this->CellFitScale(0.375 * $this->WidthTotal, 0.35, utf8_decode($this->solicitud->usuario->nombre_completo), '', 1, 'L');
 
         $this->SetFont('Arial', 'B', $this->txtContenidoTam);
         $this->SetX($x);
@@ -402,7 +402,7 @@ class VariacionVolumenFormato extends Rotation
     {
         $data = $this->obra->getLogoAttribute();
         $data = pack('H*', hex2bin($data));
-        $file = public_path('/img/logo_hc.png');
+        $file = public_path('/img/logo_temp.png');
         if (file_put_contents($file, $data) !== false) {
             list($width, $height) = $this->resizeToFit($file);
             $this->Image($file, 1, 1, $width-2, $height-1);
