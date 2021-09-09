@@ -35,7 +35,6 @@ class CtgNoLocalizadoRepository extends Repository implements RepositoryInterfac
             CtgNoLocalizado::where("estado","=",1)->update(["estado"=>0]);
 
             $procesamiento =  ProcesamientoListaNoLocalizados::create([
-                'id_usuario' => auth()->id(),
                 'fecha_actualizacion_sat' => date("Y-m-d"),
                 'nombre_archivo' => $datos['file_name'],
                 'hash_file' => $hash_file,
