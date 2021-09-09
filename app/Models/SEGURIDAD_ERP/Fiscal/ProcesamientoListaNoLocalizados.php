@@ -49,4 +49,9 @@ class ProcesamientoListaNoLocalizados extends Model
         }
         return $fecha_actualizacion_txt;
     }
+
+    public function logs()
+    {
+        return $this->hasMany(ProcesamientoListaNoLocalizadosLog::class, "id_procesamiento_no_localizados", "id");
+    }
 }

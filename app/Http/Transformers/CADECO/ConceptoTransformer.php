@@ -37,7 +37,10 @@ class ConceptoTransformer extends TransformerAbstract
             'unidad' => $model->unidad,
             'id_padre' => $model->id_padre,
             'path' => $model->path,
-            'path_corta' => $model->path_corta
+            'path_corta' => $model->path_corta,
+            'deshabilitadoPadreMedibles' => $model->deshabilitado_padre_medible,
+            'tiene_hijos_cobrables' => $model->tiene_hijos_cobrables,
+            'tiene_hijos_completos' => $model->tiene_hijos_completos
         ];
     }
 

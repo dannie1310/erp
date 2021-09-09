@@ -207,10 +207,11 @@
                                     class="form-control"
                                     option-text="descripcion"
                                     v-model="factura.id_costo"
-                                    v-validate="{required: true}"
+                                    v-validate="{required: factura.costo_tipo_gasto == 1 ? true : false }"
                                     :list="tipo_gasto"
                                     :placeholder="!cargando?'Seleccionar':'Cargando...'"
                                     :isError="errors.has(`tipo_gasto_select`)"
+                                    :class="{'is-invalid': errors.has(`tipo_gasto_select`)}"
                                     id="tipo_gasto_select">
                                 </model-list-select>
                                 <div class="invalid-feedback" v-show="errors.has('tipo_gasto_select')">{{ errors.first('tipo_gasto_select') }}</div>
