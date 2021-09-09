@@ -632,63 +632,6 @@ export const routes = [
                 ]
             },
             {
-                path: 'presupuesto',
-                component: require('./components/presupuesto/partials/Layout.vue').default,
-                children: [
-                    {
-                        path: '',
-                        name: 'presupuesto-obra',
-                        component: require('./components/presupuesto/Index').default,
-                        meta: {
-                            title: 'Presupuesto',
-                            breadcrumb: {parent:'home', name: 'PRESUPUESTO'},
-                            middleware: [auth, context, access]
-                        }
-                    },
-                    {
-                        path: 'concepto',
-                        component: require('./components/presupuesto/concepto/Layout').default,
-                        children: [
-                            {
-                                path: '/',
-                                name: 'concepto',
-                                component: require('./components/presupuesto/concepto/Index').default,
-                                meta: {
-                                    title: 'Conceptos',
-                                    breadcrumb: {parent: 'presupuesto-obra', name: 'CONCEPTOS'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['consultar_presupuesto']
-                                }
-                            },
-                            {
-                                path: ':id/editar',
-                                name: 'concepto-edit',
-                                props: true,
-                                component: require('./components/presupuesto/concepto/Edit').default,
-                                meta: {
-                                    title: 'Editar Conceptos',
-                                    breadcrumb: { parent: 'presupuesto-obra', name: 'EDITAR'},
-                                    middleware: [auth, context, permission],
-                                    permission: ['editar_clave_concepto']
-                                }
-                            },
-                            {
-                                path: ':id',
-                                name: 'concepto-show',
-                                component: require('./components/presupuesto/concepto/Show').default,
-                                props: true,
-                                meta: {
-                                    title: 'Consultar Concepto',
-                                    breadcrumb: { parent: 'presupuesto-obra', name: 'VER'},
-                                    middleware: [auth, context, permission],
-                                    permission: 'consultar_presupuesto'
-                                }
-                            },
-                        ]
-                    },
-                ]
-            },
-            {
                 path: 'almacenes',
                 component: require('./components/almacenes/partials/Layout.vue').default,
                 children: [
@@ -1246,7 +1189,6 @@ export const routes = [
                                     title: 'Solicitudes de Cambio a Subcontratos',
                                     breadcrumb: {parent: 'contratos', name: 'SOLICITUDES DE CAMBIO'},
                                     middleware: [auth, context],
-
                                 }
                             },
                             {
@@ -4070,12 +4012,53 @@ export const routes = [
                 }
             },
             {
+                path: 'presupuesto-obra',
+                component: require('./components/presupuesto/concepto/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'presupuesto-obra',
+                        component: require('./components/presupuesto/concepto/Index').default,
+                        meta: {
+                            title: 'Árbol de Presupuesto',
+                            breadcrumb: {parent: 'presupuesto-obra', name: 'CONCEPTOS'},
+                            middleware: [auth, context, permission],
+                            permission: ['consultar_presupuesto']
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'concepto-edit',
+                        props: true,
+                        component: require('./components/presupuesto/concepto/Edit').default,
+                        meta: {
+                            title: 'Editar Conceptos',
+                            breadcrumb: { parent: 'presupuesto-obra', name: 'EDITAR'},
+                            middleware: [auth, context, permission],
+                            permission: ['editar_clave_concepto']
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'concepto-show',
+                        component: require('./components/presupuesto/concepto/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Concepto',
+                            breadcrumb: { parent: 'presupuesto-obra', name: 'VER'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto'
+                        }
+                    },
+                ]
+            },
+            {
                 path: 'solicitud-cambio-presupuesto',
                 component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
                 children: [
                     {
                         path: '/',
-                        name: 'solicitud-cambio',
+                        name: 'solicitud-cambio-presupuesto',
                         component: require('./components/control-presupuesto/solicitud-cambio/Index').default,
                         meta: {
                             title: 'Control de Cambios al Presupuesto',

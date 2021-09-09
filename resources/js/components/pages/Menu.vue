@@ -8,7 +8,6 @@
         <MenuEntregaCfdi></MenuEntregaCfdi>
         <MenuFinanzas></MenuFinanzas>
         <MenuContabilidad></MenuContabilidad>
-        <MenuPresupuesto></MenuPresupuesto>
         <MenuCatalogos></MenuCatalogos>
         <MenuFormatos></MenuFormatos>
     </span>
