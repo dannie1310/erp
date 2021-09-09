@@ -66,9 +66,6 @@
                 cargando : true,
                 invitacion : '',
                 id_presupuesto : '',
-                requiere_fichas_tecnicas : '',
-                archivos_fichas_tecnicas : [],
-                nombres_archivos_fichas_tecnicas : [],
                 post : {},
             }
         },
@@ -83,7 +80,6 @@
                 this.cargando = false;
                 this.invitacion = invitacion;
                 this.id_presupuesto = invitacion.cotizacion.id_transaccion;
-                this.requiere_fichas_tecnicas = invitacion.requiere_fichas_tecnicas;
             },
             onFileChange(e){
                 this.file = null;
@@ -97,13 +93,6 @@
                 }else if(e.target.id == 'formato_cotizacion') {
                     this.nombre_archivo_formato_cotizacion = files[0].name;
                     this.createImage(files[0], e.target.id);
-                }else if(e.target.id == 'fichas_tecnicas') {
-                    for(let i=0; i<files.length; i++) {
-                        this.createImage(files[i], e.target.id);
-                        this.nombres_archivos_fichas_tecnicas[i] = {
-                            nombre: files[i].name,
-                        };
-                    }
                 }
             },
             createImage(file, tipo) {
@@ -116,9 +105,6 @@
                     }else if(tipo == "formato_cotizacion")
                     {
                         vm.archivo_formato_cotizacion = e.target.result;
-                    }else if(tipo == "fichas_tecnicas")
-                    {
-                        vm.archivos_fichas_tecnicas.push({archivo: e.target.result});
                     }
                 };
                 reader.readAsDataURL(file);
@@ -133,8 +119,6 @@
                         _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
                         _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
                         _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
-                        _self.post.archivos_fichas_tecnicas = _self.archivos_fichas_tecnicas;
-                        _self.post.nombres_archivos_fichas_tecnicas = _self.nombres_archivos_fichas_tecnicas;
 
                         return this.$store.dispatch('contratos/presupuesto/enviarPresupuesto', _self.post)
                         .then((data) => {

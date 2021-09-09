@@ -127,7 +127,7 @@
                 </div>
             </div>
             <br />
-            <div class="row" v-if="presupuesto.exclusiones">
+            <div class="row" v-if="presupuesto.exclusiones.length != 0">
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <table id="tabla-conceptos">
@@ -186,7 +186,7 @@
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id,
                     params: {
-                        include: ['presupuesto_proveedor'],
+                        include: ['presupuesto_proveedor','formato_cotizacion'],
                         scope: ['invitadoAutenticado']
                     }
                 }).then(data => {
