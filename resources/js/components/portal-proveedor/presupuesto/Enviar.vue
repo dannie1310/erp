@@ -11,7 +11,7 @@
                 <div class="row" v-if="cargando == false">
                     <div class="col-md-4" v-if="invitacion.formato_cotizacion">
                         <div class="form-group">
-                            <label for="formato_cotizacion">Formato de Cotización:</label>
+                            <label for="formato_cotizacion">Formato de Presupuesto:</label>
                             <input type="file" class="form-control" id="formato_cotizacion"
                                    @change="onFileChange"
                                    v-validate="{required:true, ext: ['pdf'],  size: 10240}"
@@ -35,20 +35,6 @@
                                    :class="{'is-invalid': errors.has('carta_terminos')}"
                             >
                             <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="requiere_fichas_tecnicas">
-                        <div class="form-group">
-                            <label for="carta_terminos">Fichas Técnicas:</label>
-                            <input type="file" class="form-control" id="fichas_tecnicas" multiple="multiple"
-                                   @change="onFileChange"
-                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
-                                   name="fichas_tecnicas"
-                                   data-vv-as="Fichas Técnicas"
-                                   ref="fichas_tecnicas"
-                                   :class="{'is-invalid': errors.has('fichas_tecnicas')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('fichas_tecnicas')">{{ errors.first('fichas_tecnicas') }} (pdf)</div>
                         </div>
                     </div>
                  </div>
