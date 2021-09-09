@@ -181,6 +181,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
@@ -362,6 +363,7 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoNoLocalizadosObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadoraObserver;
@@ -702,6 +704,7 @@ class AppServiceProvider extends ServiceProvider
             FechaInhabilSat::observe(FechaInhabilSatObserver::class);
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
+            ProcesamientoListaNoLocalizados::observe(ProcesamientoNoLocalizadosObserver::class);
 
             /**
              *  PadronProveedores

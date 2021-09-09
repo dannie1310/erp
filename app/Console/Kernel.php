@@ -25,6 +25,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('procesa:listadoEFOS')->everyMinute();
+        $schedule->command('procesa:listadoNoLocalizados')->everyMinute();
+        $schedule->command('procesa:liberaCotizaciones')->everyMinute();
         // $schedule->command('inspire')
         //          ->hourly();
     }
