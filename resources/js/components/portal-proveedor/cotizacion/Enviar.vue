@@ -37,7 +37,7 @@
                             <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
                         </div>
                     </div>
-                    <div class="col-md-4" v-if="requiere_fichas_tecnicas">
+                    <div class="col-md-4" v-if="requiere_fichas_tecnicas == 1">
                         <div class="form-group">
                             <label for="carta_terminos">Fichas Técnicas:</label>
                             <input type="file" class="form-control" id="fichas_tecnicas" multiple="multiple"
@@ -56,7 +56,6 @@
                     <div class="col-md-12">
                         <small><b style="font-style: italic; color: #00b44e">* Adjuntar un archivo en el campo para la carta de términos y condiciones firmada implica la aceptación tácita de los términos y condiciones.</b></small>
                     </div>
-
                 </div>
 			</div>
             <div class="card-footer">
