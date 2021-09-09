@@ -120,18 +120,18 @@
                                 <th>Cantidad</th>
                                 <th>Precio Unitario</th>
                                 <th>Moneda</th>
-                                <th class="cantidad_input">Precio Total</th>
+                                <th>Precio Total</th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr v-for="(exclusion, i) in cotizacion.exclusiones.data">
                                 <td class="index_corto">{{ i + 1 }}</td>
                                 <td>{{exclusion.descripcion}}</td>
-                                <td>{{exclusion.unidad}}</td>
-                                <td class="cantidad_input">{{exclusion.cantidad_format}}</td>
-                                <td class="cantidad_input">{{exclusion.precio_format}}</td>
+                                <td class="unidad">{{exclusion.unidad}}</td>
+                                <td class="cantidad_input" style="text-align:right;">{{exclusion.cantidad_format}}</td>
+                                <td class="cantidad_input" style="text-align:right;">{{exclusion.precio_format}}</td>
                                 <td>{{exclusion.moneda}}</td>
-                                <td style="text-align:right;">{{exclusion.total_format}}</td>
+                                <td class="cantidad_input" style="text-align:right;">{{exclusion.total_format}}</td>
                             </tr>
                             </tbody>
                         </table>
