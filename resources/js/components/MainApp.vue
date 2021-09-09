@@ -5,6 +5,7 @@
     <div v-if="currentUser && $router.currentRoute.name != 'google-2fa' &&  $router.currentRoute.name.indexOf('modal') ===-1" class="wrapper">
         <AppHeader />
         <AppSidebar v-bind:sidebar="sidebar" v-bind:logo = "logo" />
+
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -31,26 +32,24 @@
         </div>
         <!-- /.content-wrapper -->
 
-        <AppFooter v-if="$router.currentRoute.name != 'portal'"/>
+        <AppFooter v-if="$router.currentRoute.name != 'portal'" />
 
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-light ">
-            <div class="p-3"  v-if="$router.currentRoute.name != 'portal'">
+        <aside class="control-sidebar control-sidebar-light" >
+            <div   v-if="$router.currentRoute.name != 'portal'" style="padding-bottom: 40px">
 
                 <MenuCompras></MenuCompras>
                 <MenuAlmacen></MenuAlmacen>
-
-
-                <!--<MenuAlmacen></MenuAlmacen>
                 <MenuAcarreos />
                 <MenuContratos></MenuContratos>
+                <MenuCatalogos></MenuCatalogos>
                 <MenuEntregaCfdi></MenuEntregaCfdi>
                 <MenuFinanzas></MenuFinanzas>
                 <MenuContabilidad></MenuContabilidad>
-                <MenuCatalogos></MenuCatalogos>
-                <MenuFormatos></MenuFormatos>-->
+
             </div>
         </aside>
+
     </div>
     <div v-else>
         <router-view></router-view>
@@ -67,14 +66,14 @@
     import AppFooter from "./pages/partials/Footer";
 
     import MenuCompras from './compras/partials/MenuSideControl';
-    import MenuContratos from './contratos/partials/Menu';
-    import MenuFinanzas from './finanzas/partials/Menu';
-    import MenuContabilidad from './contabilidad/partials/Menu';
+    import MenuContratos from './contratos/partials/MenuSideControl';
+    import MenuFinanzas from './finanzas/partials/MenuSideControl';
+    import MenuContabilidad from './contabilidad/partials/MenuSideControl';
     import MenuAlmacen from './almacenes/partials/MenuSideControl';
-    import MenuCatalogos from './catalogos/partials/Menu';
+    import MenuCatalogos from './catalogos/partials/MenuSideControl';
     import MenuFormatos from './formato/partials/Menu';
-    import MenuAcarreos from './acarreos/partials/Menu';
-    import MenuEntregaCfdi from "./solicitud-recepcion-cfdi/partials/Menu";
+    import MenuAcarreos from './acarreos/partials/MenuSideControl';
+    import MenuEntregaCfdi from "./solicitud-recepcion-cfdi/partials/MenuSideControl";
 
     export default {
         name: 'main-app',

@@ -4,7 +4,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">SISTEMA DE CATÁLOGOS</li>
+            <li class="nav-header" style="text-align: center">
+               <b>CATÁLOGOS</b>
+               <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            </li>
             <li class="nav-item" v-if="catalogo_almacenes">
                 <router-link :to="{name: 'almacen'}" class="nav-link" :class="{active: this.$route.name == 'almacen'}">
                     <i class="fa fa-boxes nav-icon"></i>

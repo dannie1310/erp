@@ -7,7 +7,9 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header" style="text-align: center;">
                 <hr style="margin: 0px">
-                <b>SISTEMA DE COMPRAS</b>
+                <router-link :to="{name: 'compras'}" class="nav-link" :class="{active: this.$route.name == 'compras'}">
+                    <b>SISTEMA DE COMPRAS</b>
+                </router-link>
                 <hr style="margin: 0px">
             </li>
 

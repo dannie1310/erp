@@ -6,7 +6,9 @@
                  with font-awesome or any other icon font library -->
             <li class="nav-header" style="text-align: center;">
                 <hr style="margin: 0px">
+                <router-link :to="{name: 'almacenes'}" class="nav-link" :class="{active: this.$route.name == 'almacenes'}">
                 <b>SISTEMA DE ALMACENES</b>
+                </router-link>
                 <hr style="margin: 0px">
             </li>
             <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
@@ -40,7 +42,7 @@
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_marbetes')">
-                <router-link :to="{name: 'marbete'}" class="nav-link" :class="{active: this.$route.name == 'marbetes'}">
+                <router-link :to="{name: 'marbete'}" class="nav-link" :class="{active: this.$route.name == 'marbete'}">
                     <i class="nav-icon fa fa-tags"></i>
                     Marbetes
                 </router-link>

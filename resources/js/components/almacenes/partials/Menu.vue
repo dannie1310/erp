@@ -39,7 +39,7 @@
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_marbetes')">
-                <router-link :to="{name: 'marbete'}" class="nav-link" :class="{active: this.$route.name == 'marbetes'}">
+                <router-link :to="{name: 'marbete'}" class="nav-link" :class="{active: this.$route.name == 'marbete'}">
                     <i class="nav-icon fa fa-tags"></i>
                     <p>Marbetes</p>
                 </router-link>

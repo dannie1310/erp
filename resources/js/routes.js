@@ -143,7 +143,10 @@ export const routes = [
             },
             {
                 path: 'recepcion-cfdi',
-                component: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/solicitud-recepcion-cfdi/partials/Layout.vue').default,
+                    menu: require('./components/solicitud-recepcion-cfdi/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
