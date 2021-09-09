@@ -646,6 +646,16 @@ class Factura extends Transaccion
         return preg_replace( "/\r|\n/", "", $this->observaciones );
     }
 
+    public function getPorTipoGastoAttribute()
+    {
+        try{
+            return $this->obra->datosContables->costo_en_tipo_gasto;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
     public function revertir()
     {
         DB::connection('cadeco')->update("EXEC [dbo].[sp_revertir_transaccion] {$this->id_transaccion}");

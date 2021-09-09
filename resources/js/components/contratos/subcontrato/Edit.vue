@@ -50,7 +50,7 @@
                                 type="text"
                                 name="referencia"
                                 data-vv-as="Referencia"
-                                v-validate="{required: true}"
+                                v-validate="{required: true, max: 64}"
                                 class="form-control"
                                 id="referencia"
                                 placeholder="Referencia"
@@ -343,6 +343,7 @@
                     }
                 }).finally(()=>{
                     this.getTipoContrato();
+                    this.cargando = false;
                 });
             },
             getTipoContrato(){
