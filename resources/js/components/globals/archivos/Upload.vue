@@ -160,17 +160,16 @@ export default {
             if(this.esZip(this.names)){
                 formData.append('archivo',  this.files[0].archivo);
                 formData.append('archivo_nombre',  this.names[0].nombre);
-                formData.append('base_datos',  this.base_datos);
                 this.uploadZIP(formData);
             }else{
                 formData.append('archivos',  JSON.stringify(this.files));
                 formData.append('archivos_nombres',  JSON.stringify(this.names));
-                formData.append('base_datos',  this.base_datos);
                 this.uploadPDF(formData);
             }
         },
         uploadPDF(data){
             if(this.global){
+                data.append('base_datos',  this.base_datos);
                 return this.$store.dispatch('documentacion/archivo/cargarArchivoSC', {
                     data: data,
                     config: {
