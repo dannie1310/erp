@@ -88,7 +88,7 @@ class Concepto extends Model
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
-            return self::find($this->id_padre)->path . ' -> ' . $this->clave_concepto_select . $this->descripcion;
+            return self::withoutGlobalScopes()->find($this->id_padre)->path . ' -> ' . $this->clave_concepto_select . $this->descripcion;
         }
     }
 
@@ -100,7 +100,7 @@ class Concepto extends Model
     public function getIdPadreAttribute()
     {
         if ($this->nivel_padre != '') {
-            return self::where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+            return self::withoutGlobalScopes()->where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
         }
         return null;
     }
@@ -287,7 +287,7 @@ class Concepto extends Model
             $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
             if($nivel_buscar != "")
             {
-                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
             }
         }
         return implode(" -> ",$path_corta);

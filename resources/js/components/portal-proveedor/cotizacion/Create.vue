@@ -18,7 +18,7 @@
                         <div class="modal-body">
                             <div class="row" v-if="solicitud">
                                 <div class="col-md-12">
-                                    <tabla-datos-solicitud v-bind:solicitud_compra="solicitud"></tabla-datos-solicitud>
+                                    <tabla-datos-solicitud v-bind:solicitud="solicitud"></tabla-datos-solicitud>
                                 </div>
                             </div>
                             <hr />
@@ -618,6 +618,106 @@
                                 </div>
 
                             </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive">
+                                        <table class="table table-sm" id="tabla-resumen-monedas">
+                                            <thead>
+                                                <tr>
+                                                    <td class="encabezado" colspan="8"><b>Exclusiones</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <th class="index_corto">#</th>
+                                                    <th>Descripción</th>
+                                                    <th>Unidad</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Precio Unitario</th>
+                                                    <th>Moneda</th>
+                                                    <th class="cantidad_input">Precio Total</th>
+                                                    <th class="icono">
+                                                        <button type="button" class="btn btn-sm btn-outline-success" @click="agregarExclusion" :disabled="cargando">
+                                                            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                            <i class="fa fa-plus" v-else></i>
+                                                        </button>
+                                                    </th>
+                                                </tr>
+                                                </thead>
+                                            <tbody>
+                                                <tr v-for="(extension, i) in exclusiones">
+                                                    <td class="index_corto">{{ i + 1 }}</td>
+                                                    <td>
+                                                        <input class="form-control"
+                                                               :name="`nombre[${i}]`"
+                                                               :data-vv-as="`'Nombre ${i + 1}'`"
+                                                               v-model="extension.descripcion"
+                                                               :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
+                                                               v-validate="{ required: true}"
+                                                               :id="`nombre[${i}]`"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <select
+                                                            type="text"
+                                                            :name="`unidad[${i}]`"
+                                                            :data-vv-as="`Unidad[${i}]`"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            :id="`unidad[${i}]`"
+                                                            v-model="extension.unidad"
+                                                            :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                                <option value>--Unidad--</option>
+                                                                <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control"
+                                                               :name="`cantidad[${i}]`"
+                                                               :data-vv-as="`'Cantidad ${i + 1}'`"
+                                                               style="text-align: right"
+                                                               v-model="extension.cantidad"
+                                                               :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                               v-validate="{ required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                               :id="`cantidad[${i}]`"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <input type="text"
+                                                               class="form-control"
+                                                               :name="`precio[${i}]`"
+                                                               style="text-align: right"
+                                                               :data-vv-as="`'Precio ${i + 1}'`"
+                                                               v-validate="{required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                               :class="{'is-invalid': errors.has(`precio[${i}]`)}"
+                                                               v-model="extension.precio_unitario"/>
+                                                        <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
+                                                    </td>
+                                                    <td>
+                                                        <select
+                                                            type="text"
+                                                            :name="`moneda[${i}]`"
+                                                            :data-vv-as="`'Moneda ${i + 1}'`"
+                                                            v-validate="{required: true}"
+                                                            class="form-control"
+                                                            :id="`moneda[${i}]`"
+                                                            v-model="extension.id_moneda"
+                                                            :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
+                                                            <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
+                                                        </select>
+                                                        <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
+                                                    </td>
+                                                    <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
+                                                    <td>
+                                                        <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarExclusion(i)">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
 
                             <div class="row">
                                 <div class="col-md-12">
@@ -663,10 +763,8 @@
     import TablaDatosSolicitud from "./partials/TablaDatosSolicitud";
     export default {
         name: "cotizacion-proveedor-create",
-        props: ['id_invitacion'],
-        components: {
-            TablaDatosSolicitud,
-            Datepicker, ModelListSelect},
+        props: ['id'],
+        components: {TablaDatosSolicitud,Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
@@ -701,6 +799,7 @@
                 euro_seleccionado : false,
                 peso_seleccionado : true,
                 ancho_tabla_detalle: '330',
+                exclusiones : []
             }
         },
         mounted() {
@@ -716,12 +815,13 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{}
                 }).then(data => {
                     this.solicitud = data
                     this.cargando = false;
                     this.getMonedas(data.base_datos);
+                    this.getUnidades(data.base_datos);
                 })
             },
             getMonedas(base){
@@ -901,12 +1001,56 @@
                     this.solicitud.tc_eur = this.euro;
                     this.solicitud.tc_usd = this.dolar;
                     this.solicitud.tc_libra = this.libra;
+                    this.solicitud.exclusiones = this.exclusiones;
                     return this.$store.dispatch('compras/cotizacion/registrarCotizacionProveedor', this.solicitud)
                     .then((data) => {
                         this.$router.push({name: 'cotizacion-proveedor'});
                     });
                 }
             },
+            agregarExclusion(){
+                var array = {
+                    'descripcion' : '',
+                    'unidad' : '',
+                    'cantidad' : 0,
+                    'precio_unitario' : 0,
+                    'id_moneda' : 1,
+                    'moneda' : ''
+                }
+                this.exclusiones.push(array);
+            },
+            quitarExclusion(index){
+                this.exclusiones.splice(index, 1);
+            },
+            getUnidades(base) {
+                return this.$store.dispatch('cadeco/unidad/porBase', {
+                    params: {sort: 'unidad',  order: 'asc'},
+                    base : base
+                })
+                    .then(data => {
+                        this.unidades= data.data;
+                    })
+            },
+            getTotalExclusion(i){
+                var moneda = this.exclusiones[i]['id_moneda'];
+                var precio_total = 0;
+                if(this.exclusiones[i]['cantidad'] != 0 && this.exclusiones[i]['precio_unitario'] != 0) {
+                    var precio_total = this.exclusiones[i]['cantidad'] * this.exclusiones[i]['precio_unitario']
+                    if (moneda == 1) {
+                        return '$' + parseFloat(precio_total).formatMoney(2, '.', ',');
+                    }
+                    if (moneda == 2) {
+                        return '$' + parseFloat(precio_total * this.dolar).formatMoney(2, '.', ',');
+                    }
+                    if (moneda == 3) {
+                        return '$' + parseFloat(precio_total * this.euro).formatMoney(2, '.', ',');
+                    }
+                    if (moneda == 4) {
+                        return '$' + parseFloat(precio_total * this.libra).formatMoney(2, '.', ',');
+                    }
+                }
+                return  '$' + parseFloat(precio_total).formatMoney(2, '.', ',')
+            }
         },
         watch: {
             toggleCotizar: {
@@ -1070,5 +1214,10 @@ table .numerico
 
 table tbody td input.text {
     text-align: right;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
 }
 </style>

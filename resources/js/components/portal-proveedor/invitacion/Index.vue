@@ -124,8 +124,9 @@
                             id: invitacion.id,
                             con_cotizacion: invitacion.con_cotizacion,
                             show: true,
-                            editar_cotizacion: (self.$root.can('editar_cotizacion_proveedor',true)  && invitacion.estado < 3 && !invitacion.con_cotizacion == 0) ? true : false,
-                            registrar_cotizacion: (self.$root.can('registrar_cotizacion_proveedor',true) && invitacion.estado < 3 && invitacion.con_cotizacion == 0) ? true : false,
+                            tipo: invitacion.tipo_antecedente,
+                            editar_cotizacion: (self.$root.can('editar_cotizacion_proveedor',true)  && invitacion.estado < 3 && invitacion.con_cotizacion) ? true : false,
+                            registrar_cotizacion: (self.$root.can('registrar_cotizacion_proveedor',true) && invitacion.estado < 3 && !invitacion.con_cotizacion) ? true : false,
                         })
                     }));
                 },

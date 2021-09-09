@@ -2,18 +2,21 @@
 
 namespace App\Models\CADECO;
 
-use App\CSV\PresupuestoLayout;
-use App\Facades\Context;
-use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
-use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
-use App\Models\CADECO\Subcontratos\AsignacionContratista;
-use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
-use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
-use App\Models\IGH\Usuario;
+use App\Models\CADECO\Compras\Exclusion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use DateTime;
 use DateTimeZone;
+use App\Facades\Context;
+use App\Models\IGH\Usuario;
+use App\CSV\PresupuestoLayout;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Config;
+use App\Models\CADECO\Subcontratos\AsignacionContratista;
+use App\Models\CADECO\Subcontratos\AsignacionSubcontrato;
+use App\Models\CADECO\Contratos\AsignacionSubcontratoPartidas;
+use App\Models\CADECO\Contratos\PresupuestoContratistaEliminado;
+use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
 class PresupuestoContratista extends Transaccion
 {
@@ -28,8 +31,10 @@ class PresupuestoContratista extends Transaccion
     protected $fillable = [
         'id_transaccion',
         'id_antecedente',
+        'id_referente',
         'id_empresa',
         'id_sucursal',
+        'id_obra',
         'fecha',
         'monto',
         'impuesto',
@@ -60,7 +65,7 @@ class PresupuestoContratista extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 50)->whereHas('contratoProyectado');
+            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)->whereHas('contratoProyectado');
         });
     }
 
@@ -100,6 +105,16 @@ class PresupuestoContratista extends Transaccion
     public function partidasAsignaciones()
     {
         return $this->hasMany(AsignacionContratistaPartida::class, 'id_transaccion', 'id_transaccion');
+    }
+
+    public function invitacion()
+    {
+        return $this->belongsTo(Invitacion::class, "id_referente", "id");
+    }
+
+    public function exclusiones()
+    {
+        return $this->hasMany(Exclusion::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -309,9 +324,12 @@ class PresupuestoContratista extends Transaccion
 
     public function getConMonedaExtranjeraAttribute()
     {
-        $id_moneda = Obra::find(Context::getIdObra())->id_moneda;
-        $cantidad = $this->partidas()->where("IdMoneda","<>",$id_moneda)->count();
-        return $cantidad>0?true:false;
+        if(Context::getIdObra()){
+            $id_moneda = Obra::find(Context::getIdObra())->id_moneda;
+            $cantidad = $this->partidas()->where("IdMoneda","<>",$id_moneda)->count();
+            return $cantidad>0?true:false;
+        }
+        return false;
     }
 
     public function getConObservacionesPartidasAttribute()
@@ -332,7 +350,10 @@ class PresupuestoContratista extends Transaccion
 
     public function getMonedaConversionAttribute()
     {
-        return Obra::find(Context::getIdObra())->moneda->nombre;
+        if(Context::getIdObra()){
+            return Obra::find(Context::getIdObra())->moneda->nombre;
+        }
+        return 'PESOS';
     }
 
     public function  getSubtotalMcAntesDescuentoGlobalFormatAttribute()
@@ -504,7 +525,8 @@ class PresupuestoContratista extends Transaccion
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
                     'DiasCredito' => $data['credito'],
-                    'DiasVigencia' => $data['vigencia']
+                    'DiasVigencia' => $data['vigencia'],
+                    'estado' => 1,
                 ]);
 
                 foreach($data['partidas'] as $t => $partida)
@@ -589,7 +611,7 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => $data['tcLibra'],
                     'DiasCredito' => $data['credito'],
                     'DiasVigencia' => $data['vigencia']
-                ]);;
+                ]);
                 $x = 0;
                 foreach($data['partidas'] as $partida)
                 {
@@ -621,10 +643,10 @@ class PresupuestoContratista extends Transaccion
         }
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout()
     {
-        $find = $this::find($id);
-        return Excel::download(new PresupuestoLayout($find), str_replace('/', '-',$find->contratoProyectado->referencia).'.xlsx');
+        $folio = str_pad($this->numero_folio, 5, 0, 0);
+        return Excel::download(new PresupuestoLayout($this), '#'.$folio.'.xlsx');
     }
 
     public function datosComparativos()
@@ -810,5 +832,260 @@ class PresupuestoContratista extends Transaccion
             $i++;
         }
         return $salida;
+    }
+
+    /**
+     * Registrar presupuesto desde el portal proveedor
+     * @param $data
+     * @param $invitacion
+     * @return mixed
+     */
+    public function registrarPortalProveedor($data, $invitacion)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->cotizacionGenerada){
+            abort(500, "Esta cotización no puede ser registrada porque ya existe el presupuesto ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
+        }
+
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+            $fecha = new DateTime($data['fecha_cot']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if(!$data['pendiente'])
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $invitacion->id_transaccion_antecedente,
+                    'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_referente'=>$invitacion->id,
+                    'id_obra' => $invitacion->id_obra,
+                    'id_sucursal' => $invitacion->id_sucursal_sao,
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'monto' => $data['total'],
+                    'impuesto' => $data['impuesto'],
+                    'anticipo' => $data['anticipo'],
+                    'observaciones' => $data['observaciones_cot'],
+                    'PorcentajeDescuento' => $data['descuento_cot'],
+                    'estado' => -1,
+                    'TcUSD' => $data['tc_usd'],
+                    'TcEuro' => $data['tc_eur'],
+                    'TcLibra' => $data['tc_libra'],
+                    'DiasCredito' => $data['credito'],
+                    'DiasVigencia' => $data['vigencia']
+                ]);
+
+                foreach($data['conceptos']['data'] as $t => $partida)
+                {
+                    $precio_conversion = ($partida['enable']) ? $presupuesto->precioConversion($partida['precio_cot'], $partida['moneda_seleccionada']) : null;
+                    if($precio_conversion){
+                        $precio_descuento = $precio_conversion -($precio_conversion*$partida['descuento_cot']/100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => $precio_descuento,
+                        'no_cotizado' => $partida['enable'] ? 0 :1,
+                        'PorcentajeDescuento' => $partida['enable'] ? $partida['descuento_cot'] : null,
+                        'IdMoneda' => $partida['moneda_seleccionada'],
+                        'Observaciones' => $partida['enable'] && array_key_exists('observaciones_cot', $partida) ? $partida['observaciones_cot'] : ''
+                    ]);
+                }
+            }else
+            {
+                $presupuesto = $this->create([
+                    'id_antecedente' => $invitacion->id_transaccion_antecedente,
+                    'fecha' => $fecha->format("Y-m-d"),
+                    'id_empresa' => $invitacion->id_proveedor_sao,
+                    'id_obra' => $invitacion->id_obra,
+                    'id_sucursal' => $invitacion->id_sucursal_sao,
+                    'id_referente'=>$invitacion->id,
+                    'monto' => 0,
+                    'impuesto' => 0,
+                    'anticipo' => 0,
+                    'observaciones' => $data['observaciones_cot'],
+                    'PorcentajeDescuento' => null,
+                    'TcUSD' => null,
+                    'TcEuro' => null,
+                    'TcLibra' => null,
+                    'DiasCredito' => null,
+                    'DiasVigencia' => null,
+                    'estado' => -2
+                ]);
+                foreach($data['conceptos']['data'] as $t => $partida)
+                {
+                    $presupuesto->partidas()->create([
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'id_concepto' => $partida['id_concepto'],
+                        'precio_unitario' => 0,
+                        'no_cotizado' => 1,
+                        'PorcentajeDescuento' => null,
+                        'IdMoneda' => null,
+                        'Observaciones' => null
+                    ]);
+                }
+            }
+
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                Exclusion::create([
+                    'id_transaccion' => $presupuesto->id_transaccion,
+                    'descripcion' => $exclusion['descripcion'],
+                    'unidad' => $exclusion['unidad'],
+                    'cantidad' => $exclusion['cantidad'],
+                    'precio_unitario' => $exclusion['precio_unitario'],
+                    'id_moneda' => $exclusion['id_moneda'],
+                ]);
+            }
+
+            $invitacion->update([
+                'id_cotizacion_generada' => $presupuesto->id_transaccion
+            ]);
+
+            DB::connection('cadeco')->commit();
+            return $presupuesto;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+    }
+
+    /**
+     * Editar presupuesto desde el portal proveedor
+     * @param $data
+     * @param $invitacion
+     * @return $this
+     */
+    public function editarPortalProveedor($data, $invitacion)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $invitacion->base_datos);
+        if($invitacion->estado == 3 || $this->estado > 0){
+            abort(500, "Esta cotización no puede ser editada porque ya ha sido enviada como respuesta a la invitación ".$invitacion->numero_folio_format."");
+        }
+
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'fecha' => $fecha->format("Y-m-d"),
+                'monto' => $data['monto'],
+                'impuesto' => $data['impuesto'],
+                'anticipo' => $data['anticipo'],
+                'observaciones' => $data['observaciones'],
+                'PorcentajeDescuento' => number_format($data['descuento'], "2",".",""),
+                'TcUSD' => $data['tcUsd'],
+                'TcEuro' => $data['tdEuro'],
+                'TcLibra' => $data['tcLibra'],
+                'DiasCredito' => $data['dias_credito'],
+                'DiasVigencia' => $data['dias_vigencia']
+            ]);
+
+            foreach($data['contratos'] as $partida)
+            {
+                $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $data['id'])->where('id_concepto', '=', $partida['id_concepto']);
+                if(!is_null($partida['unidad'])) {
+                    $precio_conversion = $partida['partida_activa'] ? $this->precioConversion($partida['precio_unitario'], $partida['IdMoneda']) : null;
+                    if ($precio_conversion) {
+                        $precio_descuento = $precio_conversion - ($precio_conversion * $partida['descuento'] / 100);
+                    } else {
+                        $precio_descuento = null;
+                    }
+                    $item->update([
+                        'precio_unitario' => $precio_descuento,
+                        'no_cotizado' => $partida['partida_activa'] ? 0 : 1,
+                        'PorcentajeDescuento' => $partida['partida_activa'] ? $partida['descuento'] : null,
+                        'IdMoneda' => $partida['IdMoneda'],
+                        'Observaciones' => $partida['observaciones']
+                    ]);
+                }
+            }
+
+            $exclusiones_viejas = [];
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                if(array_key_exists('id',$exclusion))
+                {
+                    $exclusiones_viejas[$exclusion['id']] = $exclusion['id'];
+                }
+            }
+
+            foreach ($this->exclusiones as $exc)
+            {
+                if(!array_key_exists($exc->getKey(),$exclusiones_viejas))
+                {
+                    $exc->delete();
+                }
+            }
+
+            foreach ($data['exclusiones'] as $exclusion)
+            {
+                if(!array_key_exists('id',$exclusion))
+                {
+                    Exclusion::create([
+                        'id_transaccion' => $this->id_transaccion,
+                        'descripcion' => $exclusion['descripcion'],
+                        'unidad' => $exclusion['unidad'],
+                        'cantidad' => $exclusion['cantidad'],
+                        'precio_unitario' => $exclusion['precio_unitario'],
+                        'id_moneda' => $exclusion['id_moneda'],
+                    ]);
+                }
+            }
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    /**
+     * Eliminar cotización de un proveedor
+     * @param $motivo
+     * @return $this
+     */
+    public function eliminarProveedor($motivo, $base)
+    {
+        if ($this->estado > 0 || $this->invitacion->estado == 3 )
+        {
+            abort(500, "Este presupuesto no puede ser eliminada porque ya ha sido enviada como respuesta a la invitación ".$this->invitacion->numero_folio_format."");
+        }
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $base);
+            DB::connection('cadeco')->beginTransaction();
+            $this->delete();
+            $eliminar = PresupuestoContratistaEliminado::find($this->id_transaccion);
+            $eliminar->motivo_elimino = $motivo;
+            $eliminar->save();
+            $this->invitacion->update([
+                "estado" => 0,
+                "id_cotizacion_generada" => null
+            ]);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function envia(){
+        $this->update([
+            'estado' => 1,
+        ]);
+
+        $this->invitacion->update([
+            "estado"=>3
+        ]);
+
+        return $this->estado;
     }
 }
