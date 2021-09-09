@@ -196,7 +196,10 @@ export const routes = [
             },
             {
                 path: 'compras',
-                component: require('./components/compras/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/compras/partials/Layout.vue').default,
+                    menu: require('./components/compras/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -633,7 +636,10 @@ export const routes = [
             },
             {
                 path: 'almacenes',
-                component: require('./components/almacenes/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/almacenes/partials/Layout.vue').default,
+                    menu: require('./components/almacenes/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -816,7 +822,10 @@ export const routes = [
             },
             {
                 path: 'contratos',
-                component: require('./components/contratos/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/contratos/partials/Layout.vue').default,
+                    menu: require('./components/contratos/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -1308,7 +1317,10 @@ export const routes = [
             },
             {
                 path: 'finanzas',
-                component: require('./components/finanzas/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/finanzas/partials/Layout.vue').default,
+                    menu: require('./components/finanzas/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -1916,7 +1928,10 @@ export const routes = [
             },
             {
                 path: 'contabilidad',
-                component: require('./components/contabilidad/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/contabilidad/partials/Layout.vue').default,
+                    menu: require('./components/contabilidad/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -2135,7 +2150,10 @@ export const routes = [
             },
             {
                 path: 'ventas',
-                component:require('./components/ventas/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/ventas/partials/Layout.vue').default,
+                    menu: require('./components/ventas/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -2179,7 +2197,10 @@ export const routes = [
             },
             {
                 path: 'catalogos',
-                component:require('./components/catalogos/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/catalogos/partials/Layout.vue').default,
+                    menu: require('./components/catalogos/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -2494,7 +2515,10 @@ export const routes = [
             },
             {
                 path: 'formatos',
-                component:require('./components/formato/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/formato/partials/Layout.vue').default,
+                    menu: require('./components/formato/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -2543,7 +2567,10 @@ export const routes = [
             },
             {
                 path: 'acarreos',
-                component: require('./components/acarreos/partials/Layout.vue').default,
+                components: {
+                    default: require('./components/acarreos/partials/Layout.vue').default,
+                    menu: require('./components/acarreos/partials/Menu.vue').default
+                },
                 children: [
                     {
                         path: '',
@@ -2712,6 +2739,29 @@ export const routes = [
                         ]
                     },
                 ]
+            },
+            {
+                path: 'configuracion',
+                components: {
+                    default: require('./components/configuracion/Index.vue').default,
+                    menu: require('./components/configuracion/partials/Menu.vue').default
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'configuracion',
+                        component: require('./components/configuracion/Index').default,
+                        meta: {
+                            title: 'CONFIGURACIÓN',
+                            middleware: [auth, context, access],
+                            breadcrumb: {
+                                name: 'CONFIGURACIÓN',
+                                parent: 'home'
+                            },
+                            permission: 'administracion_configuracion_obra'
+                        }
+                    },
+                ],
             },
         ],
     },
@@ -3675,23 +3725,6 @@ export const routes = [
         ]
     },
     {
-        path: '/sao/configuracion',
-        name: 'configuracion',
-        components: {
-            default: require('./components/configuracion/Index.vue').default,
-            menu: require('./components/configuracion/partials/Menu.vue').default
-        },
-        meta: {
-            title: 'CONFIGURACIÓN',
-            middleware: [auth, context, access],
-            breadcrumb: {
-                name: 'CONFIGURACIÓN',
-                parent: 'home'
-            },
-            permission: 'administracion_configuracion_obra'
-        }
-    },
-    {
         path: '/portal-proveedor',
         components:  {
             default: require('./components/portal-proveedor/partials/Layout.vue').default,
@@ -4021,7 +4054,7 @@ export const routes = [
                         component: require('./components/presupuesto/concepto/Index').default,
                         meta: {
                             title: 'Árbol de Presupuesto',
-                            breadcrumb: {parent: 'presupuesto-obra', name: 'CONCEPTOS'},
+                            breadcrumb: {parent: 'control_presupuesto', name: 'ÁRBOL DE PRESUPUESTO'},
                             middleware: [auth, context, permission],
                             permission: ['consultar_presupuesto']
                         }
