@@ -84,7 +84,7 @@ class FacturaTransformer extends TransformerAbstract
             'devoluciones_format' => $model->devoluciones_subcontrato_format,
             'tipo' => $model->tipo->Descripcion,
             'opciones' => $model->opciones,
-
+            'costo_tipo_gasto' => $model->por_tipo_gasto
         ];
     }
 
