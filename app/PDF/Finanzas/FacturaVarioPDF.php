@@ -32,7 +32,7 @@ class FacturaVarioPDF extends Rotation
       } else {
             $this->SetAutoPageBreak(true, 6.3);
       }
-      $this->partidas(); 
+      $this->partidas();
    }
 
    function Header(){
@@ -46,9 +46,9 @@ class FacturaVarioPDF extends Rotation
          $tamanotitle=12.5;
          $xtitle=17;
          $title_proyecto=12;
-         
+
       }
-      
+
       $this->SetTextColor('0,0,0');
       $this->SetFont('Arial', 'B', 12);
       $this->Cell(13.5);
@@ -56,7 +56,7 @@ class FacturaVarioPDF extends Rotation
       $this->CellFitScale(3.7, .5, $this->factura->numero_folio_format, 'RT', 0, 'L');
       $this->Ln(.5);
       $this->SetFont('Arial', 'B', $tamanotitle);
-      
+
       $this->Cell($xtitle, $postTitle, "FACTURA DE VARIOS", 0, 0, 'C', 0);
       $this->SetFont('Arial', 'B', 10);
       if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
@@ -65,9 +65,9 @@ class FacturaVarioPDF extends Rotation
       $this->Cell(2.3, .5, 'FECHA ', 'L B', 0, 'L');
       $this->Cell(3.7, .5, $this->factura->fecha_format, 'R B', 0, 'L');
       $this->Ln(1);
-      
+
       $this->SetFont('Arial', 'B', $title_proyecto);
-      
+
       $this->SetWidths(array(19.5));
       $this->SetRounds(array('1234'));
       $this->SetRadius(array(0.2));
@@ -81,11 +81,11 @@ class FacturaVarioPDF extends Rotation
       $this->Ln(.2);
       $y_inicial = $this->getY();
       ###########################
-      
+
       $this->SetFont('Arial', '', 10);
       $this->Cell(9.5, .7, utf8_decode('DATOS CONTRARECIBO'), 0, 0, 'L');
       $this->Ln(.6);
-      
+
       $this->SetFont('Arial', '', 10);
       $this->CellFitScale(2.5, .5, "Folio:", '', 'J');
       $this->CellFitScale(7, .5, $this->factura->contra_recibo->numero_folio_format, '', 'L');
@@ -98,9 +98,9 @@ class FacturaVarioPDF extends Rotation
       $this->Ln(.5);
       $this->CellFitScale(2.5, .5, "Vencimiento:", '', 'J');
       $this->CellFitScale(7, .5, $this->factura->vencimiento_form, '', 'L');
-      
+
       $y_final_1 = $this->getY();
-      
+
       $this->setY($y_inicial + 0.6);
       ###########################
       $direccion = '';
@@ -142,7 +142,7 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
       $this->Row(array("","",""));
       $this->setY($y_inicial + 0.6);
 
-       //se sobre escribe la información 
+       //se sobre escribe la información
        $this->setX(1);
        $this->SetFont('Arial', 'B', 10);
        $this->CellFitScale(2.5, .5, "Folio:", '', 'J');
@@ -163,8 +163,8 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
        $this->CellFitScale(2.5, .5, "Vencimiento:", '', 'J');
        $this->SetFont('Arial', '', 10);
        $this->CellFitScale(7, .5, $this->factura->vencimiento_form, '', 'L');
-       
-      //se sobre escribe info 
+
+      //se sobre escribe info
       $this->setY($y_inicial + 0.6);
       $this->SetFont('Arial', 'B', 10);
       $this->setX(11);
@@ -174,7 +174,7 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
       $this->SetFont('Arial', '', 10);
       $this->Multicell(9.5, .5, $direccion . ' 
 RFC: ' . $this->factura->empresa->rfc, '', 'J');
-       
+
       $this->Ln(.5);
 
       if ($this->encola == "partida") {
@@ -222,16 +222,18 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
          $this->SetFont('Arial', '', 8);
          $this->SetWidths(array(19.5));
       }else if ($this->encola == ""){
-         $this->Ln();    
+         $this->Ln();
          $this->SetFont('Arial', 'B', 8);
          $this->Cell(3, 0.5, "Concepto:");
          $this->SetFont('Arial', '', 8);
-         $this->MultiCell(15, 0.5, $this->factura->concepto->descripcion);  
+         $this->MultiCell(15, 0.5, $this->factura->concepto->descripcion);
 
-         $this->SetFont('Arial', 'B', 8);
-         $this->Cell(3, 0.5, "Tipo de Gasto:");
-         $this->SetFont('Arial', '', 8);
-         $this->MultiCell(16, 0.5, $this->factura->costo->descripcion);
+         if($this->factura->costo) {
+             $this->SetFont('Arial', 'B', 8);
+             $this->Cell(3, 0.5, "Tipo de Gasto:");
+             $this->SetFont('Arial', '', 8);
+             $this->MultiCell(16, 0.5, $this->factura->costo->descripcion);
+         }
       }
    }
 
@@ -259,23 +261,23 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
             $this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
             $this->SetHeights(array(0.4));
             $this->SetAligns(array('C', 'C', 'L', 'L', 'R', 'R', 'R', 'L'));
-            
+
             if($i == $ultima){
                   $this->SetRounds(array('4', '', '', '', '', '',  '', '3'));
                   $this->SetRadius(array(0.2,  0, 0, 0, 0, 0, 0, 0.2));
             }
-            
+
             $this->SetWidths(array(0.5, 2, 7, 1.5, 1.5, 1.5, 1.5, 4));
             $this->encola = "partida";
             $this->Row(array(
                   $i,
-                  "", 
+                  "",
                   $partida->referencia,
                   $partida->unidad,
                   $partida->cantidad,
                   $partida->importe,
-                  $partida->cantidad * $partida->importe, 
-                  $partida->concepto->descripcion, 
+                  $partida->cantidad * $partida->importe,
+                  $partida->concepto->descripcion,
                   ));
             $i++;
          }
@@ -339,7 +341,7 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
 
    }
 
-   function Footer() { 
+   function Footer() {
       if (!App::environment('production')) {
          $this->SetFont('Arial', 'B', 80);
          $this->SetTextColor(155, 155, 155);
@@ -350,14 +352,14 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
 
       $this->SetFont('Arial', '', 6);
       if (Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41) {
-         $this->SetY(-7);  
+         $this->SetY(-7);
          $this->SetFont('Arial', '', 6);
          $this->SetFillColor(180, 180, 180);
          $this->Cell(4.8, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
          $this->Cell(4.8, .4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
          $this->Cell(10, .4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
          $this->Ln();
-         
+
          $this->Cell(4.8, .4, utf8_decode('Jefe Almacén'), 'TRLB', 0, 'C', 1);
          $this->Cell(4.8, .4, 'Gerente Administrativo', 'TRLB', 0, 'C', 1);
          $this->Cell(5, .4, utf8_decode('Control de Costos'), 'TRLB', 0, 'C', 1);
@@ -369,7 +371,7 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
          $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
          $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
          $this->Ln();
-      
+
          $this->Cell(4.8, .4, 'C.P. HEDGAR GARCIA GAYTAN', 'TRLB', 0, 'C', 1);
          $this->Cell(4.8, .4, 'C.P. JAVIER MENDEZ JOSE', 'TRLB', 0, 'C', 1);
          $this->Cell(5, .4, 'ING. JUAN CARLOS MARTINEZ ANTUNA', 'TRLB', 0, 'C', 1);
@@ -388,11 +390,11 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
          $this->CellFitScale(6, 1, ' ', 1, 0, 'C');
          $this->Cell(.8);
          $this->CellFitScale(6, 1, ' ', 1, 0, 'R');
-      
+
       }
       $this->SetY(23.5);
       $this->image("data:image/png;base64," . base64_encode(QrCode::format('png')->generate($this->generaQr())), $this->GetX(), $this->GetY(), 3.5, 3.5, 'PNG');
-      
+
       $this->SetY(23.7);
       $this->setX(4.5);
       $this->MultiCell(16, 0.4, utf8_decode($this->cadena_qr));
@@ -400,19 +402,19 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
       $this->SetY(26.5);
       $this->setX(4.5);
       $this->Cell(2.5, .3, utf8_decode('* Cantidad Por Comprar'), 0, 0, 'L');
-     
+
       $this->Cell(4, .3, utf8_decode('** Importe Por Comprar'), 0, 0, 'L');
-      
+
       $this->SetFont('Arial', 'B', 6);
       $this->SetTextColor('100,100,100');
       $this->SetY(26.5);
       $this->Cell(19.5, .4, (utf8_decode('Sistema de Administración de Obra')), 0, 0, 'R');
-      
+
       $this->SetFont('Arial', 'BI', 6);
       $this->SetY(27);
       $this->SetTextColor('0,0,0');
       $this->Cell(7, .4, (utf8_decode('Formato generado desde el módulo de ordenes de compra.')), 0, 0, 'L');
-      
+
       $this->Ln(.4);
       $this->SetY(-0.9);
       $this->SetTextColor('0,0,0');
@@ -422,8 +424,8 @@ RFC: ' . $this->factura->empresa->rfc, '', 'J');
 
    function generaQr(){
       $verifica = new ValidacionSistema();
-      $fecha_fac = date_create($this->factura->fecha); 
-      $fecha_cr = date_create($this->factura->contra_recibo->fecha); 
+      $fecha_fac = date_create($this->factura->fecha);
+      $fecha_cr = date_create($this->factura->contra_recibo->fecha);
       $cadena = [
         $this->factura->numero_folio,
         $this->factura->numero_folio_format,
