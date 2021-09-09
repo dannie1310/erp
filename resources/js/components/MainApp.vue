@@ -34,25 +34,21 @@
         <AppFooter v-if="$router.currentRoute.name != 'portal'"/>
 
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <div class="p-3">
-                <h5>Acceso Rápido</h5>
-                <hr class="mb-2">
-                <div class="d-block"   v-for="(sistema, i) in sistemas">
-                    <router-link :to="{name: sistema.url}" class="d-flex flex-wrap mb-3" v-if="!sistema.externo">
-                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i :class="sistema.icon"></i>
-                        </div>
-                        {{sistema.name}}
-                    </router-link>
+        <aside class="control-sidebar control-sidebar-light ">
+            <div class="p-3"  v-if="$router.currentRoute.name != 'portal'">
 
-                    <a :href="`${sistema.url}?origen=${url}`" target="_self" class="d-flex flex-wrap mb-3" v-else>
-                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i :class="sistema.icon"></i>
-                        </div>
-                        {{sistema.name}}
-                    </a>
-                </div>
+                <MenuCompras></MenuCompras>
+                <MenuAlmacen></MenuAlmacen>
+
+
+                <!--<MenuAlmacen></MenuAlmacen>
+                <MenuAcarreos />
+                <MenuContratos></MenuContratos>
+                <MenuEntregaCfdi></MenuEntregaCfdi>
+                <MenuFinanzas></MenuFinanzas>
+                <MenuContabilidad></MenuContabilidad>
+                <MenuCatalogos></MenuCatalogos>
+                <MenuFormatos></MenuFormatos>-->
             </div>
         </aside>
     </div>
@@ -69,9 +65,22 @@
     import AppSidebar from "./pages/partials/Sidebar";
     import AppBreadcrumb from "./pages/partials/Breadcrumb";
     import AppFooter from "./pages/partials/Footer";
+
+    import MenuCompras from './compras/partials/MenuSideControl';
+    import MenuContratos from './contratos/partials/Menu';
+    import MenuFinanzas from './finanzas/partials/Menu';
+    import MenuContabilidad from './contabilidad/partials/Menu';
+    import MenuAlmacen from './almacenes/partials/MenuSideControl';
+    import MenuCatalogos from './catalogos/partials/Menu';
+    import MenuFormatos from './formato/partials/Menu';
+    import MenuAcarreos from './acarreos/partials/Menu';
+    import MenuEntregaCfdi from "./solicitud-recepcion-cfdi/partials/Menu";
+
     export default {
         name: 'main-app',
-        components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
+        components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter, MenuEntregaCfdi,
+
+            MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
         props: ['sidebar', 'logo'],
 
         data() {

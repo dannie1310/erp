@@ -1,52 +1,55 @@
 <template>
-    <!-- Sidebar Menu -->
+    <span>
     <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+          <ul class="nav nav-pills nav-justified control-sidebar-menu flex-column" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header" style="text-align: center">
-              <b>SISTEMA DE COMPRAS</b>
-              <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            <li class="nav-header" style="text-align: center;">
+                <hr style="margin: 0px">
+                <b>SISTEMA DE COMPRAS</b>
+                <hr style="margin: 0px">
             </li>
 
-            <li class="nav-item" v-if="$root.can('consultar_requisicion_compra')">
+            <li class="nav-item" v-if="$root.can('consultar_requisicion_compra')" style="text-align: left">
                 <router-link :to="{name: 'requisicion'}" class="nav-link" :class="{active: this.$route.name == 'requisicion'}">
                     <i class="fa fa-circle nav-icon"></i>
-                    <p>Requisiciones</p>
+                    Requisiciones
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_solicitud_compra')">
+            <li class="nav-item" v-if="$root.can('consultar_solicitud_compra')" style="text-align: left">
                 <router-link :to="{name: 'solicitud-compra'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-compra'}">
                     <i class="fa fa-comment-dots nav-icon"></i>
-                    <p>Solicitudes</p>
+                    Solicitudes
                 </router-link>
             </li>
-            <li class="nav-item" v-if="$root.can('consultar_invitacion_cotizar_compra')">
+            <li class="nav-item" v-if="$root.can('consultar_invitacion_cotizar_compra')" style="text-align: left">
                 <router-link :to="{name: 'invitacion-compra'}" class="nav-link" :class="{active: this.$route.name == 'invitacion-compra'}">
                     <i class="fa fa-envelope-open-text nav-icon"></i>
-                    <p>Invitaciones a Cotizar</p>
+                    Invitaciones a Cotizar
                 </router-link>
             </li>
-             <li class="nav-item" v-if="$root.can('consultar_cotizacion_compra')">
+             <li class="nav-item" v-if="$root.can('consultar_cotizacion_compra')" style="text-align: left">
                  <router-link :to="{name: 'cotizacion'}" class="nav-link" :class="{active: this.$route.name == 'cotizacion'}">
                      <i class="fa fa-comment-dollar nav-icon"></i>
-                     <p>Cotizaciones</p>
+                     Cotizaciones
                  </router-link>
              </li>
-             <li class="nav-item" v-if="$root.can('consultar_asignacion_proveedor')">
+             <li class="nav-item" v-if="$root.can('consultar_asignacion_proveedor')" style="text-align: left">
                  <router-link :to="{name: 'asignacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-proveedor'}">
                      <i class="fa fa-user-check nav-icon"></i>
-                     <p>Asignación de Proveedores</p>
+                     Asignación de Proveedores
                  </router-link>
              </li>
-            <li class="nav-item" v-if="$root.can('consultar_orden_compra')">
+            <li class="nav-item" v-if="$root.can('consultar_orden_compra')" style="text-align: left">
                 <router-link :to="{name: 'orden-compra'}" class="nav-link" :class="{active: this.$route.name == 'orden-compra'}">
                     <i class="fa fa-shopping-cart nav-icon"></i>
-                    <p>Órdenes de Compra</p>
+                    Órdenes de Compra
                 </router-link>
             </li>
          </ul>
      </nav>
+    </span>
      <!-- /.sidebar-menu -->
 </template>
 
