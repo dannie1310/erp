@@ -1177,6 +1177,54 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CONTROL DE CAMBIOS AL PRESUPUESTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'control-presupuesto'], function ($api){
+
+        // TIPOS ORDENES
+        $api->group(['prefix' => 'tipo-orden'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TipoOrdenController@index');
+        });
+
+        // TARJETAS
+        $api->group(['prefix' => 'tarjeta'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TarjetaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\TarjetaController@show')->where(['id' => '[0-9]+']);
+        });
+
+        // CONCEPTOS TARJETAS
+        $api->group(['prefix' => 'concepto-tarjeta'], function ($api){
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ConceptoTarjetaController@conceptosTarjeta')->where(['id' => '[0-9]+']);
+        });
+
+        // SOLICITUD DE CAMBIO
+        $api->group(['prefix' => 'solicitud-cambio'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\SolicitudCambioController@paginate');
+        });
+
+        // VARIACIÓN DE VOLUMEN
+        $api->group(['prefix' => 'variacion-volumen'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@autorizar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato-variacion-volumen', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\VariacionVolumenController@pdfVariacionVolumen')->where(['id' => '[0-9]+']);
+        });
+
+        // EXTRAORDINARIO
+        $api->group(['prefix' => 'extraordinario'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('{id}/autorizar', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@autorizar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\ControlPresupuesto\ExtraordinarioController@pdf')->where(['id' => '[0-9]+']);
+        });
+
+    });
+
+    /**
      * FINANZAS
      */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas'], function ($api) {

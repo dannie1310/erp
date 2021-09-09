@@ -134,6 +134,15 @@ import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
 
 import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
 
+//CONTROL PRESUPUESTO
+import solicitudCambioPresupuesto from './modules/controlPresupuesto/solicitud-cambio';
+import variacionVolumen from './modules/controlPresupuesto/variacion-volumen';
+import tipoOrden from './modules/controlPresupuesto/tipo-orden';
+import tarjeta from './modules/controlPresupuesto/tarjeta';
+import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
+import extraordinario from './modules/controlPresupuesto/extraordinario';
+
+
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
 import ctgTipoFondo from './modules/finanzas/ctg-tipo-fondo';
@@ -303,6 +312,13 @@ export default new Vuex.Store({
         'contratos/tipo-contrato': tipoContrato,
         'contratos/solicitud-cambio': solicitudCambio,
         'contratos/invitacion' : invitacionCotizarContrato,
+
+        'control-presupuesto/solicitud-cambio': solicitudCambioPresupuesto,
+        'control-presupuesto/variacion-volumen': variacionVolumen,
+        'control-presupuesto/tipo-orden': tipoOrden,
+        'control-presupuesto/tarjeta': tarjeta,
+        'control-presupuesto/concepto-tarjeta': conceptoTarjeta,
+        'control-presupuesto/extraordinario': extraordinario,
 
         'finanzas/carga-masiva-pago' : cargaMasivaPago,
         'finanzas/comprobante-fondo' : comprobanteFondo,

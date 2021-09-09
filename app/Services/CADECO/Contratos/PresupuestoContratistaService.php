@@ -345,21 +345,6 @@ class PresupuestoContratistaService
     {
         $invitacionService = new InvitacionService(new Invitacion());
         $invitacion = $invitacionService->show($data["id_invitacion"]);
-        if(key_exists("nombres_archivos_fichas_tecnicas", $data)){
-            foreach($data["nombres_archivos_fichas_tecnicas"] as $key=>$nombre)
-            {
-                $archivoService = new ArchivoService(new Archivo());
-                $archivoService->setDB($invitacion->base_datos);
-                $data_archivos["id"] = $id;
-                $data_archivos["id_transaccion"] = $id;
-                $data_archivos["id_tipo_archivo"] = 5;
-                $data_archivos["id_categoria"] = 2;
-                $data_archivos["descripcion"] = 'Ficha técnica asociada a la cotización '.$presupuesto->numero_folio_format;
-                $data_archivos['archivos_nombres'] = \json_encode([$nombre]);
-                $data_archivos['archivos'] = \json_encode([$data["archivos_fichas_tecnicas"][$key]]);
-                $archivoService->cargarArchivosPDF($data_archivos);
-            }
-        }
 
         if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
             $archivoService = new ArchivoService(new Archivo());

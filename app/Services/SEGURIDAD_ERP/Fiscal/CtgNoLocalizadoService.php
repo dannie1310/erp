@@ -70,6 +70,22 @@ class CtgNoLocalizadoService
         return $this->cargarCatalogo($paths["path_csv"], $hash);
     }
 
+    public function procesaURLCSV()
+    {
+        $url = config('app.env_variables.URL_NO_LOCALIZADOS');
+
+        $resp = $this->getCatalogoCSVData($url);
+        $hash_file = hash_file('sha1', $url);
+
+        $procesamiento = $this->repository->cargaListado($hash_file, $resp);
+        $procesamiento->load("altasNoLocalizados");
+        $procesamiento->load("bajasNoLocalizados");
+        if(count($procesamiento->altasNoLocalizados)>0 || count($procesamiento->bajasNoLocalizados)>0){
+            event(new CambioNoLocalizados($procesamiento->altasNoLocalizados, $procesamiento->bajasNoLocalizados));
+        }
+        return $procesamiento;
+    }
+
     public function cargarCsv($data){
         $name = $data['file_name'];
         $paths = $this->generaDirectorios('csv');
