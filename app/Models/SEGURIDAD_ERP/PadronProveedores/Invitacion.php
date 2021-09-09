@@ -62,8 +62,6 @@ class Invitacion extends Model
 
     //protected $dates = ["fecha_cierre_invitacion"];
     //protected $dateFormat = 'M d Y h:i:s A';
-    /*
-     * Relaciones*/
 
     /**
      * Relaciones
