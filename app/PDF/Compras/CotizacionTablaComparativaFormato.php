@@ -9,6 +9,7 @@ use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Obra;
 use App\Utils\ValidacionSistema;
 use Ghidev\Fpdf\Rotation;
+use Hamcrest\Type\IsNumeric;
 use Illuminate\Support\Facades\App;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
@@ -417,66 +418,90 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->y_fin_og = array_pop($this->y_fin_og_arr);
             $this->SetY($this->y_fin_og);
             $i_e += $cotizacinesXFila;
-            if(count($datos_partidas['exclusiones']) > 0){
-                dd($datos_partidas['exclusiones']);
-                $this->Ln();
-                $this->SetFillColor(100, 100, 100);
-                $this->SetTextColor(255, 255, 255);
-                $this->SetFont('Arial', 'B', $font);
-                $this->Cell(26,0.3, "EXCLUSIONES",1,1,"C",1);
+        }
+        if(count($datos_partidas['exclusiones']) > 0){
+            $this->Ln();
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', 'B', $font);
+            $this->Cell(26,0.3, "EXCLUSIONES",1,1,"C",1);
+            $this->SetFillColor(255, 255, 255);
+            $this->SetTextColor(0, 0, 0);
+            $this->SetFont('Arial', 'B', $font);
+            foreach($datos_partidas['exclusiones'] as $esp => $exclusion){
+                foreach($exclusion as $index => $exc){
+                    if(!is_numeric($index)){
+                        continue;
+                    }
+                    $this->SetFillColor(255, 255, 255);
+                    $this->SetTextColor(0, 0, 0);
+                    $this->SetFont('Arial', 'B', $font2);
+                    $this->CellFitScale($anchos["des"], $heigth, utf8_decode($exc['descripcion']) . ' ', 1, 0, 'L', 0, '');
+                    $this->Cell($anchos["c"], $heigth, $exc['unidad'], 1, 0, 'L', 0, '');
+                    $this->Cell($anchos["u"], $heigth, number_format($exc['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
+                    for ($i = 0; $i < $inc_ie; $i++) {
+                        if($i == $esp ){
+                            $this->SetFillColor(255, 255, 255);
+                            $this->SetTextColor(0, 0, 0);
+                            $this->SetFont('Arial', 'B', $font2);
+                            $this->Cell($anchos["pu"], $heigth,  number_format($exc['precio_unitario'], '2', '.', ','), "T B L", 0, "R", 1);
+                            $this->CellFitScale($anchos["d"], $heigth, '', "T B L", 0, "R", 1);
+                            $this->Cell($anchos["it"], $heigth, number_format($exc['precio_unitario'] * $exc['cantidad'], '2', '.', ','), "T B L", 0, "R", 1);
+                            $this->CellFitScale($anchos["m"], $heigth, $exc['moneda'], "T B L", 0, "R", 1);
+                            $this->Cell($anchos["ic"], $heigth,number_format($exc['precio_unitario'] * $exc['cantidad'], '2', '.', ','), "B L R T", 0, "R", 1);
+                        }else {
+                            $this->SetTextColor(200, 200, 200);
+                            $this->SetFont('Arial', '', $font2);
+                            $this->Cell($anchos["pu"], $heigth,  '', "T B L", 0, "R", 1);
+                            $this->CellFitScale($anchos["d"], $heigth, '', "T B L", 0, "R", 1);
+                            $this->Cell($anchos["it"], $heigth, '', "T B L", 0, "R", 1);
+                            $this->CellFitScale($anchos["m"], $heigth, '', "T B L", 0, "R", 1);
+                            $this->Cell($anchos["ic"], $heigth,'', "B L R T", 0, "R", 1);
+                        }
+                    }
+                    $this->Ln();
+                }
+                
+                
+            }
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', 'B', $font);
+            $this->Cell($anchos["espacio_detalles_globales"]);
+            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Total Exclusiones:", 1, 0, "R", 1);
+            for ($i = 0; $i < $inc_ie; $i++) {
                 $this->SetFillColor(255, 255, 255);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                foreach($datos_partidas['exclusiones'] as $esp => $exclusion){
-                    foreach($exclusion as $exc){
-                        $this->SetY($this->y_para_descripcion);
-                        $this->SetFillColor(255, 255, 255);
-                        $this->SetTextColor(0, 0, 0);
-                        $this->SetFont('Arial', 'B', $font2);
-                        $this->CellFitScale($anchos["des"], $heigth, utf8_decode($exc['descripcion']) . ' ', 1, 0, 'L', 0, '');
-                        $this->Cell($anchos["c"], $heigth, $exc['unidad'], 1, 0, 'L', 0, '');
-                        $this->Cell($anchos["u"], $heigth, number_format($exc['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
-                        for ($i = 0; $i < $inc_ie; $i++) {
-                            if($i == $esp){
-                                $this->SetFillColor(200, 200, 200);
-                                $this->SetTextColor(200, 200, 200);
-                                // $this->SetFont('Arial', '', $font2);
-                                $this->Cell($anchos["pu"], $heigth,  '', "T B L", 0, "R", 1);
-                                $this->CellFitScale($anchos["d"], $heigth, '', "T B L", 0, "R", 1);
-                                $this->Cell($anchos["it"], $heigth, '', "T B L", 0, "R", 1);
-                                $this->CellFitScale($anchos["m"], $heigth, '', "T B L", 0, "R", 1);
-                                $this->Cell($anchos["ic"], $heigth,'', "B L R T", 0, "R", 1);
-                            }else {
-                                $this->SetFillColor(200, 200, 200);
-                                $this->SetTextColor(200, 200, 200);
-                                $this->SetFont('Arial', '', $font2);
-                                $this->Cell($anchos["pu"], $heigth,  '', "T B L", 0, "R", 1);
-                                $this->CellFitScale($anchos["d"], $heigth, '', "T B L", 0, "R", 1);
-                                $this->Cell($anchos["it"], $heigth, '', "T B L", 0, "R", 1);
-                                $this->CellFitScale($anchos["m"], $heigth, '', "T B L", 0, "R", 1);
-                                $this->Cell($anchos["ic"], $heigth,'', "B L R T", 0, "R", 1);
-                            }
-                        }
-                    }
-                    
-                    
-                }
+                $this->Cell($anchos["pu"] + $anchos['d'] + $anchos["it"], $heigth);
+                $this->Cell($anchos["m"] + $anchos['ic'], $heigth, array_key_exists('importe', $datos_partidas['exclusiones'][$i]) && $datos_partidas['exclusiones'][$i]['importe'] > 0 ? number_format($datos_partidas['exclusiones'][$i]['importe'], 2, '.', ',') : '-', 1, 0, 'R', 1);
             }
-            
-
-
             $this->Ln();
+            $this->SetFillColor(100, 100, 100);
+            $this->SetTextColor(255, 255, 255);
+            $this->SetFont('Arial', 'B', $font);
+            $this->Cell($anchos["espacio_detalles_globales"]);
+            $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Total Comparativa:", 1, 0, "R", 1);
+            for ($i = 0; $i < $inc_ie; $i++) {
+                $this->SetFillColor(255, 255, 255);
+                $this->SetTextColor(0, 0, 0);
+                $this->SetFont('Arial', 'B', $font);
+                $this->Cell($anchos["pu"] + $anchos['d'] + $anchos["it"], $heigth);
+                $this->Cell($anchos["m"] + $anchos['ic'], $heigth, array_key_exists($i, $datos_partidas['cotizaciones']) ? number_format($datos_partidas['cotizaciones'][$i]['total_partidas'] + $datos_partidas['exclusiones'][$i]['importe'], 2, '.', ',') : '', 1, 0, 'R', 1);
+            }
         }
+        $this->Ln();
+        
     }
 
     function Footer() {
-        // if (!App::environment('production')) {
-        //     $this->SetFont('Arial','B',90);
-        //     $this->SetTextColor(155,155,155);
-        //     $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
-        //     $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
-        //     $this->SetTextColor('0,0,0');
-        // }
+        if (!App::environment('production')) {
+            $this->SetFont('Arial','B',90);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(5,15,utf8_decode("MUESTRA"),45);
+            $this->RotatedText(10,20,utf8_decode("SIN VALOR"),45);
+            $this->SetTextColor('0,0,0');
+        }
         $this->SetTextColor(0, 0, 0);
         $this->SetFont('Arial', 'BI', 5.5);
         $this->SetY(-4);
