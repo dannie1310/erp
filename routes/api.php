@@ -214,6 +214,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\UnidadController@store');
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\UnidadController@destroy');
             $api->patch('{id}/update', 'App\Http\Controllers\v1\CADECO\UnidadController@update');
+            $api->post('/porBase', 'App\Http\Controllers\v1\CADECO\UnidadController@unidadesGlobal');
         });
 
     });
