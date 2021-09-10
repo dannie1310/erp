@@ -107,20 +107,20 @@
             <hr v-if="cotizacion.exclusiones.data.length > 0" />
             <div class="row" v-if="cotizacion.exclusiones.data.length > 0">
                 <div class="col-md-12">
-                    <div class="table-responsive">
-                        <table id="tabla-conceptos">
+                    <div >
+                        <table class="table table-sm tabla">
                             <thead>
                             <tr>
-                                <td class="encabezado" colspan="7"><b>Exclusiones</b></td>
+                                <td  colspan="7" style="border: none;text-align: center"><h6><b>Exclusiones</b></h6></td>
                             </tr>
                             <tr>
                                 <th class="index_corto">#</th>
                                 <th>Descripción</th>
-                                <th>Unidad</th>
-                                <th>Cantidad</th>
-                                <th>Precio Unitario</th>
-                                <th>Moneda</th>
-                                <th>Precio Total</th>
+                                <th class="unidad">Unidad</th>
+                                <th class="cantidad_input">Cantidad</th>
+                                <th class="cantidad_input">Precio Unitario</th>
+                                <th class="cantidad_input">Moneda</th>
+                                <th class="cantidad_input">Precio Total</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -199,7 +199,7 @@ export default {
 </script>
 
 <style scoped>
-table#tabla-conceptos {
+table#tabla-resumen-monedas, table.tabla {
     word-wrap: unset;
     width: 100%;
     background-color: white;
@@ -208,11 +208,9 @@ table#tabla-conceptos {
     clear: both;
 }
 
-table#tabla-conceptos th, table#tabla-conceptos td {
+table#tabla-resumen-monedas th, table.tabla th, table#tabla-resumen-monedas td , table.tabla td  {
     border: 1px solid #dee2e6;
 }
-
-
 
 table thead th
 {
@@ -225,7 +223,7 @@ table thead th
     text-align: center;
 }
 
-table#tabla-conceptos td.sin_borde {
+table#tabla-resumen-monedas td.sin_borde, table.tabla td.sin_borde  {
     border: none;
     padding: 2px 5px;
 }
@@ -240,7 +238,7 @@ table tbody tr
     border-color: white #CCCCCC #CCCCCC #CCCCCC;
 }
 table tbody td,
-table#tabla-conceptos table tbody th
+table#tabla-resumen-monedas table tbody th, table.tabla table tbody th
 {
     border-right: 1px solid #ccc;
     color: #242424;
@@ -278,13 +276,13 @@ table .numerico
     color: #dc3545;
 }
 
+table tbody td input.text {
+    text-align: right;
+}
+
 .encabezado{
     text-align: center;
     background-color: #f2f4f5
-}
-
-table tbody td input.text {
-    text-align: right;
 }
 </style>
 
