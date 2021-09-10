@@ -45,7 +45,7 @@
                 data: [],
                 total: 0,
                 query: {
-                    include: ['contra_recibo','empresa'], sort: 'id_transaccion',  order: 'desc'
+                    include: ['contra_recibo','empresa'], scope:'activa', sort: 'id_transaccion',  order: 'desc'
                 },
                 cargando: false
 
