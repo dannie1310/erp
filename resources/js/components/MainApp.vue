@@ -38,14 +38,14 @@
         <aside class="control-sidebar control-sidebar-light" >
             <div   v-if="$router.currentRoute.name != 'portal'" style="padding-bottom: 40px">
 
-                <MenuCompras></MenuCompras>
+                <MenuCompras  v-if="acceso_compras"></MenuCompras>
                 <MenuAlmacen></MenuAlmacen>
-                <MenuAcarreos />
-                <MenuContratos></MenuContratos>
-                <MenuCatalogos></MenuCatalogos>
-                <MenuEntregaCfdi></MenuEntregaCfdi>
-                <MenuFinanzas></MenuFinanzas>
-                <MenuContabilidad></MenuContabilidad>
+                <MenuAcarreos v-if="acceso_acarreos"/>
+                <MenuContratos v-if="acceso_contratos"></MenuContratos>
+                <MenuCatalogos v-if="acceso_catalogos"></MenuCatalogos>
+                <MenuEntregaCfdi v-if="acceso_entrega_cfdi"></MenuEntregaCfdi>
+                <MenuFinanzas v-if="acceso_finanzas"></MenuFinanzas>
+                <MenuContabilidad v-if="acceso_contabilidad"></MenuContabilidad>
 
             </div>
         </aside>
@@ -84,7 +84,41 @@
 
         data() {
             return {
-                loading: false
+                loading: false,
+                acceso_acarreos : false,
+                acceso_compras : false,
+                acceso_contratos : false,
+                acceso_catalogos : false,
+                acceso_contabilidad : false,
+                acceso_finanzas : false,
+                acceso_entrega_cfdi : false,
+
+
+            }
+        },
+
+        mounted() {
+            this.getSistemas();
+        },
+
+        methods: {
+            getSistemas() {
+                let _self = this;
+
+                return this.$store.dispatch('seguridad/sistema/index', {
+                    params: { scope: 'porUsuario'}
+                })
+                    .then(data => {
+                        this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
+                        this.$session.set('sistemas', data);
+                        _self.acceso_compras = data.find(x=>x.url === 'compras') !== undefined ? true : false;
+                        _self.acceso_acarreos = data.find(x=>x.url === 'acarreos') !== undefined ? true : false;
+                        _self.acceso_contratos = data.find(x=>x.url === 'contratos') !== undefined ? true : false;
+                        _self.acceso_catalogos = data.find(x=>x.url === 'catalogos') !== undefined ? true : false;
+                        _self.acceso_finanzas = data.find(x=>x.url === 'finanzas') !== undefined ? true : false;
+                        _self.acceso_contabilidad = data.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
+                        _self.acceso_entrega_cfdi = data.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
+                    })
             }
         },
 

@@ -7,7 +7,7 @@
 
             <li class="nav-header" style="text-align: center;">
                 <hr style="margin: 0px">
-                <router-link :to="{name: 'contabilidad'}" class="nav-link" :class="{active: this.$route.name == 'contabilidad'}">
+                <router-link :to="{name: 'sistema_contable'}" class="nav-link" :class="{active: this.$route.name == 'sistema_contable'}">
                     <b>SISTEMA DE CONTABILIDAD</b>
                 </router-link>
                 <hr style="margin: 0px">
