@@ -67,7 +67,7 @@
             <div   v-if="$router.currentRoute.name != 'portal'" style="padding-bottom: 40px">
 
                 <MenuCompras  v-if="acceso_compras"></MenuCompras>
-                <MenuAlmacen></MenuAlmacen>
+                <MenuAlmacen v-if="acceso_almacenes"></MenuAlmacen>
                 <MenuAcarreos v-if="acceso_acarreos"/>
                 <MenuContratos v-if="acceso_contratos"></MenuContratos>
                 <MenuCatalogos v-if="acceso_catalogos"></MenuCatalogos>
@@ -120,6 +120,7 @@
                 acceso_contabilidad : false,
                 acceso_finanzas : false,
                 acceso_entrega_cfdi : false,
+                acceso_almacenes : false,
             }
         },
 
@@ -128,7 +129,9 @@
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             }
-            this.getSistemas();
+            if(this.$router.currentRoute.name == "sao" ){
+                this.getSistemas();
+            }
         },
 
         methods: {
@@ -141,7 +144,8 @@
                     .then(data => {
                         this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
                         this.$session.set('sistemas', data);
-                        _self.acceso_compras = data.find(x=>x.url === 'compras') !== undefined ? true : false;
+                        _self.acceso_almacenes = data.find(x=>x.url === 'almacenes') !== undefined ? true : false;
+                        //_self.acceso_compras = data.find(x=>x.url === 'compras') !== undefined ? true : false;
                         _self.acceso_acarreos = data.find(x=>x.url === 'acarreos') !== undefined ? true : false;
                         _self.acceso_contratos = data.find(x=>x.url === 'contratos') !== undefined ? true : false;
                         _self.acceso_catalogos = data.find(x=>x.url === 'catalogos') !== undefined ? true : false;
@@ -161,6 +165,18 @@
             }
         },
 
+        watch:{
+            sistemas(){
+                this.acceso_compras = this.sistemas.find(x=>x.url === 'compras') !== undefined ? true : false;
+                this.acceso_almacenes = this.sistemas.find(x=>x.url === 'almacenes') !== undefined ? true : false;
+                this.acceso_acarreos = this.sistemas.find(x=>x.url === 'acarreos') !== undefined ? true : false;
+                this.acceso_contratos = this.sistemas.find(x=>x.url === 'contratos') !== undefined ? true : false;
+                this.acceso_catalogos = this.sistemas.find(x=>x.url === 'catalogos') !== undefined ? true : false;
+                this.acceso_finanzas = this.sistemas.find(x=>x.url === 'finanzas') !== undefined ? true : false;
+                this.acceso_contabilidad = this.sistemas.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
+                this.acceso_entrega_cfdi = this.sistemas.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
+            }
+        },
         computed:{
             currentUser(){
                 return this.$store.getters['auth/currentUser']
@@ -173,7 +189,8 @@
             },
             url() {
                 return process.env.MIX_APP_URL;
-            }
+            },
+
         }
     }
 </script>
