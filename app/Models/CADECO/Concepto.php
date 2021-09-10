@@ -172,18 +172,35 @@ class Concepto extends Model
 
     public function getPrecioUnitarioFormatAttribute()
     {
-        return '$ ' . number_format($this->precio_unitario,2);
+        if($this->precio_unitario>0)
+        {
+            return '$' . number_format($this->precio_unitario,2);
+        } else {
+            return "-";
+        }
+
     }
 
     public function getMontoPresupuestadoFormatAttribute()
     {
-        return '$ ' . number_format($this->monto_presupuestado,2);
+        if($this->monto_presupuestado>0)
+        {
+            return '$' . number_format($this->monto_presupuestado,2);
+        } else {
+            return "-";
+        }
     }
 
     public function getCantidadPresupuestadaFormatAttribute()
     {
-        return number_format($this->cantidad_presupuestada,4);
+        if($this->cantidad_presupuestada>0)
+        {
+            return number_format($this->cantidad_presupuestada,4);
+        } else {
+            return "-";
+        }
     }
+
     public function getClaveConceptoSelectAttribute()
     {
         if($this->clave_concepto != ''){

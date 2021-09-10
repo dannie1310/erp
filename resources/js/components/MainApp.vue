@@ -5,6 +5,7 @@
     <div v-if="currentUser && $router.currentRoute.name != 'google-2fa' &&  $router.currentRoute.name.indexOf('modal') ===-1" class="wrapper">
         <AppHeader />
         <AppSidebar v-bind:sidebar="sidebar" v-bind:logo = "logo" />
+
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -24,6 +25,34 @@
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
+                    <div>
+
+                        <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="AvisosModal">
+                            <div class="modal-dialog modal-lg" id="mdialTamanio">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title"><i class="fa fa-info-circle"></i></h4>
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                                    </div>
+                                    <div class="modal-body modal-lg"  ref="body">
+                                        <img :src="aviso" style="width:100%">
+
+                                        <!--<video width="1024" height="768" controls autoplay>
+                                            <source :src="aviso" type="video/mp4">
+                                        </video>-->
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-success" v-on:click="leerAviso">
+                                            <i class="fa fa-check"  ></i>
+                                            Enterado
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     <router-view></router-view>
                 </div>
             </section>
@@ -31,30 +60,24 @@
         </div>
         <!-- /.content-wrapper -->
 
-        <AppFooter v-if="$router.currentRoute.name != 'portal'"/>
+        <AppFooter v-if="$router.currentRoute.name != 'portal'" />
 
         <!-- Control Sidebar -->
-        <aside class="control-sidebar control-sidebar-dark">
-            <div class="p-3">
-                <h5>Acceso Rápido</h5>
-                <hr class="mb-2">
-                <div class="d-block"   v-for="(sistema, i) in sistemas">
-                    <router-link :to="{name: sistema.url}" class="d-flex flex-wrap mb-3" v-if="!sistema.externo">
-                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i :class="sistema.icon"></i>
-                        </div>
-                        {{sistema.name}}
-                    </router-link>
+        <aside class="control-sidebar control-sidebar-light" >
+            <div   v-if="$router.currentRoute.name != 'portal'" style="padding-bottom: 40px">
 
-                    <a :href="`${sistema.url}?origen=${url}`" target="_self" class="d-flex flex-wrap mb-3" v-else>
-                        <div :class="sistema.color+' elevation-2 text-center'" style="width: 40px; height: 20px; border-radius: 25px; margin-right: 10px; margin-bottom: 10px; opacity: 0.8; cursor: pointer;">
-                            <i :class="sistema.icon"></i>
-                        </div>
-                        {{sistema.name}}
-                    </a>
-                </div>
+                <MenuCompras  v-if="acceso_compras"></MenuCompras>
+                <MenuAlmacen v-if="acceso_almacenes"></MenuAlmacen>
+                <MenuAcarreos v-if="acceso_acarreos"/>
+                <MenuContratos v-if="acceso_contratos"></MenuContratos>
+                <MenuCatalogos v-if="acceso_catalogos"></MenuCatalogos>
+                <MenuEntregaCfdi v-if="acceso_entrega_cfdi"></MenuEntregaCfdi>
+                <MenuFinanzas v-if="acceso_finanzas"></MenuFinanzas>
+                <MenuContabilidad v-if="acceso_contabilidad"></MenuContabilidad>
+
             </div>
         </aside>
+
     </div>
     <div v-else>
         <router-view></router-view>
@@ -69,17 +92,91 @@
     import AppSidebar from "./pages/partials/Sidebar";
     import AppBreadcrumb from "./pages/partials/Breadcrumb";
     import AppFooter from "./pages/partials/Footer";
+
+    import MenuCompras from './compras/partials/MenuSideControl';
+    import MenuContratos from './contratos/partials/MenuSideControl';
+    import MenuFinanzas from './finanzas/partials/MenuSideControl';
+    import MenuContabilidad from './contabilidad/partials/MenuSideControl';
+    import MenuAlmacen from './almacenes/partials/MenuSideControl';
+    import MenuCatalogos from './catalogos/partials/MenuSideControl';
+    import MenuFormatos from './formato/partials/Menu';
+    import MenuAcarreos from './acarreos/partials/MenuSideControl';
+    import MenuEntregaCfdi from "./solicitud-recepcion-cfdi/partials/MenuSideControl";
+
     export default {
         name: 'main-app',
-        components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter},
-        props: ['sidebar', 'logo'],
+        components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter, MenuEntregaCfdi,
+
+            MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
+        props: ['sidebar', 'logo', 'aviso', 'id_aviso'],
 
         data() {
             return {
-                loading: false
+                loading: false,
+                acceso_acarreos : false,
+                acceso_compras : false,
+                acceso_contratos : false,
+                acceso_catalogos : false,
+                acceso_contabilidad : false,
+                acceso_finanzas : false,
+                acceso_entrega_cfdi : false,
+                acceso_almacenes : false,
             }
         },
 
+        mounted() {
+            if(this.aviso){
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            }
+            if(this.$router.currentRoute.name == "sao" ){
+                this.getSistemas();
+            }
+        },
+
+        methods: {
+            getSistemas() {
+                let _self = this;
+
+                return this.$store.dispatch('seguridad/sistema/index', {
+                    params: { scope: 'porUsuario'}
+                })
+                    .then(data => {
+                        this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
+                        this.$session.set('sistemas', data);
+                        _self.acceso_almacenes = data.find(x=>x.url === 'almacenes') !== undefined ? true : false;
+                        //_self.acceso_compras = data.find(x=>x.url === 'compras') !== undefined ? true : false;
+                        _self.acceso_acarreos = data.find(x=>x.url === 'acarreos') !== undefined ? true : false;
+                        _self.acceso_contratos = data.find(x=>x.url === 'contratos') !== undefined ? true : false;
+                        _self.acceso_catalogos = data.find(x=>x.url === 'catalogos') !== undefined ? true : false;
+                        _self.acceso_finanzas = data.find(x=>x.url === 'finanzas') !== undefined ? true : false;
+                        _self.acceso_contabilidad = data.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
+                        _self.acceso_entrega_cfdi = data.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
+                    })
+            },
+            leerAviso(){
+                return this.$store.dispatch('seguridad/sistema/leerAviso', {
+                    id:this.id_aviso
+                })
+                .then(data => {
+                }).finally( ()=>{
+                    $(this.$refs.modal).modal('hide');
+                });
+            }
+        },
+
+        watch:{
+            sistemas(){
+                this.acceso_compras = this.sistemas.find(x=>x.url === 'compras') !== undefined ? true : false;
+                this.acceso_almacenes = this.sistemas.find(x=>x.url === 'almacenes') !== undefined ? true : false;
+                this.acceso_acarreos = this.sistemas.find(x=>x.url === 'acarreos') !== undefined ? true : false;
+                this.acceso_contratos = this.sistemas.find(x=>x.url === 'contratos') !== undefined ? true : false;
+                this.acceso_catalogos = this.sistemas.find(x=>x.url === 'catalogos') !== undefined ? true : false;
+                this.acceso_finanzas = this.sistemas.find(x=>x.url === 'finanzas') !== undefined ? true : false;
+                this.acceso_contabilidad = this.sistemas.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
+                this.acceso_entrega_cfdi = this.sistemas.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
+            }
+        },
         computed:{
             currentUser(){
                 return this.$store.getters['auth/currentUser']
@@ -92,7 +189,8 @@
             },
             url() {
                 return process.env.MIX_APP_URL;
-            }
+            },
+
         }
     }
 </script>
