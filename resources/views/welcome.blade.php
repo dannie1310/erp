@@ -12,7 +12,7 @@
     <link href="{{ mix('css/app.css') }}" rel="stylesheet"/>
 </head>
 <div id="app">
-    <main-app sidebar="{{ $sidebar }}" logo="{{ $logo }}" />
+    <main-app sidebar="{{ $sidebar }}" logo="{{ $logo }}" aviso="{{ $aviso }}" id_aviso="{{ $id_aviso }}" />
 </div>
 <script src="{{ mix('js/app.js') }}"></script>
 </html>

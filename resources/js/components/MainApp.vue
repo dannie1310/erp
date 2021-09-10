@@ -25,6 +25,34 @@
             <!-- Main content -->
             <section class="content">
                 <div class="container-fluid">
+                    <div>
+
+                        <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="AvisosModal">
+                            <div class="modal-dialog modal-lg" id="mdialTamanio">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title"><i class="fa fa-info-circle"></i></h4>
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                                    </div>
+                                    <div class="modal-body modal-lg"  ref="body">
+                                        <img :src="aviso" style="width:100%">
+
+                                        <!--<video width="1024" height="768" controls autoplay>
+                                            <source :src="aviso" type="video/mp4">
+                                        </video>-->
+
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-success" v-on:click="leerAviso">
+                                            <i class="fa fa-check"  ></i>
+                                            Enterado
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
                     <router-view></router-view>
                 </div>
             </section>
@@ -80,7 +108,7 @@
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter, MenuEntregaCfdi,
 
             MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
-        props: ['sidebar', 'logo'],
+        props: ['sidebar', 'logo', 'aviso', 'id_aviso'],
 
         data() {
             return {
@@ -92,12 +120,14 @@
                 acceso_contabilidad : false,
                 acceso_finanzas : false,
                 acceso_entrega_cfdi : false,
-
-
             }
         },
 
         mounted() {
+            if(this.aviso){
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            }
             this.getSistemas();
         },
 
@@ -119,6 +149,15 @@
                         _self.acceso_contabilidad = data.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
                         _self.acceso_entrega_cfdi = data.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
                     })
+            },
+            leerAviso(){
+                return this.$store.dispatch('seguridad/sistema/leerAviso', {
+                    id:this.id_aviso
+                })
+                .then(data => {
+                }).finally( ()=>{
+                    $(this.$refs.modal).modal('hide');
+                });
             }
         },
 
