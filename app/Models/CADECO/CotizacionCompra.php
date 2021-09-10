@@ -674,14 +674,17 @@ class    CotizacionCompra  extends Transaccion
             $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
             $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;
+            $cantidad = 0;
             foreach($cotizacion->exclusiones as $exc => $exclusion){
                 $exclusiones[$cont][$exc] = $exclusion->toArray();
                 $exclusiones[$cont][$exc]['moneda'] = $exclusion->moneda->nombre;
                 $exclusiones[$cont][$exc]['t_cambio'] = $exclusion->moneda->tipo_cambio;
                 $importe += $exclusion->cantidad * $exclusion->precio_unitario * $exclusion->moneda->tipo_cambio;
+                $cantidad ++;
             }
             $exclusiones[$cont]['importe'] = $importe;
         }
+        $exclusiones['cantidad'] = $cantidad;
         return [
             'cotizaciones' => $cotizaciones,
             'partidas' => $partidas,

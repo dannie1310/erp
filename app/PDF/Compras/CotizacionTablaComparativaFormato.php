@@ -419,7 +419,7 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->SetY($this->y_fin_og);
             $i_e += $cotizacinesXFila;
         }
-        if(count($datos_partidas['exclusiones']) > 0){
+        if($datos_partidas['exclusiones']['cantidad'] > 0){
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
@@ -429,6 +429,9 @@ class CotizacionTablaComparativaFormato extends Rotation
             $this->SetTextColor(0, 0, 0);
             $this->SetFont('Arial', 'B', $font);
             foreach($datos_partidas['exclusiones'] as $esp => $exclusion){
+                if(!is_numeric($esp)){
+                    continue;
+                }
                 foreach($exclusion as $index => $exc){
                     if(!is_numeric($index)){
                         continue;
