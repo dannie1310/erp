@@ -620,19 +620,19 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="table-responsive">
-                                        <table class="table table-sm" id="tabla-resumen-monedas">
+                                    <div >
+                                        <table class="table table-sm tabla" >
                                             <thead>
                                                 <tr>
-                                                    <td class="encabezado" colspan="8"><b>Exclusiones</b></td>
+                                                    <td  colspan="8" style="border: none;text-align: center"><h6><b>Exclusiones</b></h6></td>
                                                 </tr>
                                                 <tr>
                                                     <th class="index_corto">#</th>
                                                     <th>Descripción</th>
-                                                    <th>Unidad</th>
-                                                    <th>Cantidad</th>
-                                                    <th>Precio Unitario</th>
-                                                    <th>Moneda</th>
+                                                    <th class="c150">Unidad</th>
+                                                    <th class="cantidad_input">Cantidad</th>
+                                                    <th class="cantidad_input">Precio Unitario</th>
+                                                    <th class="cantidad_input">Moneda</th>
                                                     <th class="cantidad_input">Precio Total</th>
                                                     <th class="icono">
                                                         <button type="button" class="btn btn-sm btn-outline-success" @click="agregarExclusion" :disabled="cargando">
@@ -641,7 +641,7 @@
                                                         </button>
                                                     </th>
                                                 </tr>
-                                                </thead>
+                                            </thead>
                                             <tbody>
                                                 <tr v-for="(extension, i) in exclusiones">
                                                     <td class="index_corto">{{ i + 1 }}</td>
@@ -653,13 +653,13 @@
                                                                :class="{'is-invalid': errors.has(`nombre[${i}]`)}"
                                                                v-validate="{ required: true}"
                                                                :id="`nombre[${i}]`"/>
-                                                        <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">{{ errors.first(`nombre[${i}]`) }}</div>
+                                                        <div class="invalid-feedback" v-show="errors.has(`nombre[${i}]`)">Campo obligatorio</div>
                                                     </td>
                                                     <td>
                                                         <select
                                                             type="text"
                                                             :name="`unidad[${i}]`"
-                                                            :data-vv-as="`Unidad[${i}]`"
+                                                            :data-vv-as="`'Unidad ${i + 1}'`"
                                                             v-validate="{required: true}"
                                                             class="form-control"
                                                             :id="`unidad[${i}]`"
@@ -668,7 +668,7 @@
                                                                 <option value>--Unidad--</option>
                                                                 <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
                                                         </select>
-                                                        <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+                                                        <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">Campo obligatorio</div>
                                                     </td>
                                                     <td>
                                                         <input class="form-control"
@@ -679,18 +679,18 @@
                                                                :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                                v-validate="{ required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                                :id="`cantidad[${i}]`"/>
-                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
+                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">Campo obligatorio</div>
                                                     </td>
                                                     <td>
                                                         <input type="text"
                                                                class="form-control"
-                                                               :name="`precio[${i}]`"
+                                                               :name="`precio_exclusión[${i}]`"
                                                                style="text-align: right"
-                                                               :data-vv-as="`'Precio ${i + 1}'`"
+                                                               :data-vv-as="`'Precio de Exclusión ${i + 1}'`"
                                                                v-validate="{required: true, min_value:0.01, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                               :class="{'is-invalid': errors.has(`precio[${i}]`)}"
+                                                               :class="{'is-invalid': errors.has(`precio_exclusión[${i}]`)}"
                                                                v-model="extension.precio_unitario"/>
-                                                        <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
+                                                        <div class="invalid-feedback" v-show="errors.has(`precio_exclusión[${i}]`)">Campo obligatorio</div>
                                                     </td>
                                                     <td>
                                                         <select
@@ -704,7 +704,7 @@
                                                             :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
                                                             <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
                                                         </select>
-                                                        <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
+                                                        <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">Campo obligatorio</div>
                                                     </td>
                                                     <td style="text-align:right;">{{getTotalExclusion(i)}}</td>
                                                     <td>
@@ -1135,7 +1135,7 @@
 </script>
 
 <style scoped>
-table#tabla-resumen-monedas {
+table#tabla-resumen-monedas, table.tabla {
     word-wrap: unset;
     width: 100%;
     background-color: white;
@@ -1144,7 +1144,7 @@ table#tabla-resumen-monedas {
     clear: both;
 }
 
-table#tabla-resumen-monedas th, table#tabla-resumen-monedas td {
+table#tabla-resumen-monedas th, table.tabla th, table#tabla-resumen-monedas td , table.tabla td  {
     border: 1px solid #dee2e6;
 }
 
@@ -1159,7 +1159,7 @@ table thead th
     text-align: center;
 }
 
-table#tabla-resumen-monedas td.sin_borde {
+table#tabla-resumen-monedas td.sin_borde, table.tabla td.sin_borde  {
     border: none;
     padding: 2px 5px;
 }
@@ -1174,7 +1174,7 @@ table tbody tr
     border-color: white #CCCCCC #CCCCCC #CCCCCC;
 }
 table tbody td,
-table#tabla-resumen-monedas table tbody th
+table#tabla-resumen-monedas table tbody th, table.tabla table tbody th
 {
     border-right: 1px solid #ccc;
     color: #242424;

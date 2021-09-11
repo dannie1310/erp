@@ -152,7 +152,7 @@
 
                         return this.$store.dispatch('compras/cotizacion/enviarCotizacion', _self.post)
                         .then((data) => {
-                            this.$router.go(-1);
+                            this.$router.push({name: 'cotizacion-proveedor'});
                         });
                     }
                 });
