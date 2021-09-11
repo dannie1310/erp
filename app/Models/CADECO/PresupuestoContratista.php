@@ -654,6 +654,7 @@ class PresupuestoContratista extends Transaccion
         $partidas = [];
         $presupuestos = [];
         $precios = [];
+        $exclusiones = [];
 
         foreach ($this->contratoProyectado->conceptos()->orderBy('descripcion', 'asc')->get() as $key => $item) {
             if (array_key_exists($item->id_concepto, $partidas)) {
@@ -702,12 +703,23 @@ class PresupuestoContratista extends Transaccion
                     $partidas[$p->id_concepto]['presupuestos'][$cont]['observaciones'] = $p->observaciones ? $p->observaciones : '';
                 }
             }
+            $importe = 0;
+            $cantidad = 0;
+            foreach($presupuesto->exclusiones as $exc => $exclusion){
+                $exclusiones[$cont][$exc] = $exclusion->toArray();
+                $exclusiones[$cont][$exc]['moneda'] = $exclusion->moneda->nombre;
+                $exclusiones[$cont][$exc]['tipo_cambio'] = $exclusion->moneda->tipo_cambio;
+                $importe += $exclusion->cantidad * $exclusion->precio_unitario * $exclusion->moneda->tipo_cambio;
+                $cantidad ++;
+            }
+            $exclusiones[$cont]['importe'] = $importe;
         }
-        //dd($presupuestos, $partidas, $precios);
+        $exclusiones['cantidad'] = $cantidad;
         return [
             'presupuestos' => $presupuestos,
             'partidas' => $partidas,
-            'precios_menores' => $precios
+            'precios_menores' => $precios,
+            'exclusiones' => $exclusiones
         ];
     }
 
