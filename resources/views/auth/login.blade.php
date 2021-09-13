@@ -62,10 +62,16 @@
                             <button type="submit" class="btn btn-primary btn-block btn-flat">Entrar</button>
                         </div>
                     </div>
+                </form>
+                <form method="POST" action="{{ route('login') }}">
                     <div class="row">
+                        {{ csrf_field() }}
                         <div class="col-md-12">
-                            <a href="restablecer_contrasena.blade.php">¿Olvidaste tu contraseña?</a>
+                            <button type="submit"  class="btn btn-link float-right">¿Olvidaste tu contraseña?
+                                <input type="text" hidden="true" name="restablecer_contrasena" value="true">
+                            </button>
                         </div>
+
                     </div>
                 </form>
             </div>

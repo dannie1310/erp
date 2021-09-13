@@ -38,16 +38,19 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        if (array_key_exists('restablecer_contrasena', $request->all())) {
+            return view('auth.restablecer_contrasena');
+        }
 
-        if(array_key_exists('razon_social', $request->all())){
-            if($this->actualizarEmpresaPassword($request)){
+        if (array_key_exists('razon_social', $request->all())) {
+            if ($this->actualizarEmpresaPassword($request)) {
                 return route('login');
             }
-        }else if(array_key_exists('clave_confirmacion', $request->all())){
-            if($this->actualizarPassword($request)){
+        } else if (array_key_exists('clave_confirmacion', $request->all())) {
+            if ($this->actualizarPassword($request)) {
                 return route('login');
             }
-        }else{
+        } else {
             $this->validateLogin($request);
         }
 
@@ -60,21 +63,21 @@ class LoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-        if($this->validaDatosEmpresaFaltantes($request)){
+        if ($this->validaDatosEmpresaFaltantes($request)) {
             return view('auth.pide_datos_empresa');
         }
-        if($this->validaPasswordGenerico($request)){
+        if ($this->validaPasswordGenerico($request)) {
             return view('auth.cambio_contrasena_temporal');
         }
         if ($this->attemptLogin($request)) {
-            if (! auth()->user()->google2faSecret) {
+            if (!auth()->user()->google2faSecret) {
                 $g = new GoogleAuthenticator();
                 $secret = $g->generateSecret();
                 Google2faSecret::query()->create([
                     'secret' => $secret,
                     'id_user' => auth()->id()
                 ]);
-            return $this->sendLoginResponse($request);
+                return $this->sendLoginResponse($request);
             }
         }
 
