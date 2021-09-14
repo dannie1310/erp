@@ -42,6 +42,14 @@ class LoginController extends Controller
             return view('auth.restablecer_contrasena');
         }
 
+        if(array_key_exists('correo', $request->all()))
+        {
+            $this->validarUsuario($request->all());
+            if($this->restablecerClave($request->all())) {
+                return view('auth.restablecer_contrasena');
+            }
+        }
+
         if (array_key_exists('razon_social', $request->all())) {
             if ($this->actualizarEmpresaPassword($request)) {
                 return route('login');
@@ -121,5 +129,33 @@ class LoginController extends Controller
             return true;
         }
         return false;
+    }
+
+    private function validarUsuario($data)
+    {
+        $usuario = Usuario::where('usuario', '=', $data['usuario'])->first();
+        if(is_null($usuario))
+        {
+            abort(500, 'Por favor verifique el usuario proporcionado, no concuerda con los registros de intranet.');
+        }
+        else if(is_null($usuario->correo))
+        {
+            abort(500, 'Por favor envíe un correo a la dirección: soporte_aplicaciones@desarrollo-hi.atlassian.net para solicitar la configuración de su correo.');
+        }
+        else if($usuario->correo != $data['correo'])
+        {
+            abort(500, "Por favor verifique el correo proporcionado, no concuerda con los registros de intranet.");
+        }
+    }
+
+    private function restablecerClave($data)
+    {
+        $usuario = Usuario::where('usuario', '=', $data['usuario'])->where('correo', '=', $data['correo'])->first();
+        if($usuario)
+        {
+            $usuarioServicio = new UsuarioService(new Usuario());
+            $usuarioServicio->restablecerClave($usuario);
+        }
+        return true;
     }
 }

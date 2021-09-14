@@ -9,6 +9,7 @@
 namespace App\Services\IGH;
 
 
+use App\Events\RegistroUsuarioProveedor;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
@@ -241,5 +242,15 @@ class UsuarioService
         $usuario->fecha_hora_aceptacion_aviso_privacidad = date("Y-m-d h:i:s");
         $usuario->save();
         return $usuario;
+    }
+
+    public function restablecerClave($usuario)
+    {
+        $clave = str_replace(" ","",substr($usuario->nombre,0,2).substr($usuario->apaterno,0,2).substr($usuario->amaterno,0,2).date('His'));
+        $usuario->update([
+            'clave' => $clave,
+            'pide_cambio_contrasenia' => 1
+        ]);
+        event(new RegistroUsuarioProveedor($usuario, $clave, true));
     }
 }

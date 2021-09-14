@@ -44,7 +44,7 @@ class SendCredencialesAccesoNotification
         $usuario = Usuario::suscripcion($suscripciones)->get();
 
         //Notification::send($usuario, new NotificacionCredenciales($event->solicitud));
-        Notification::send($event->usuario, new NotificacionCredenciales($event->usuario, $event->clave));
+        Notification::send($event->usuario, new NotificacionCredenciales($event->usuario, $event->clave, $event->reset));
 
     }
 }
