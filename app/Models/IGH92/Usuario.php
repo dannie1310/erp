@@ -56,10 +56,28 @@ class Usuario extends Model
     ];
 
     /**
-     * @param $value
+     * Relaciones
+     */
+
+    /**
+     * Scopes
+     */
+
+    /**
+     * Atributos
      */
     public function setClaveAttribute($value)
     {
         $this->attributes['clave'] = md5($value);
+    }
+
+    /**
+     * Métodos
+     */
+    public function cambiarClave($clave_nueva)
+    {
+        $this->update([
+            'clave' => $clave_nueva
+        ]);
     }
 }

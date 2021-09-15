@@ -219,6 +219,7 @@ class UsuarioService
             abort(500,"La nueva contraseña debe ser diferente a la contraseña anterior");
         }
         $usuario = Usuario::where('usuario', '=', $credenciales['usuario'])->where('clave', '=', md5($credenciales['clave']))->first();
+        $usuario->cambiarClave92($datos['clave_nueva']);
         $usuario->clave = $datos['clave_nueva'];
         $usuario->pide_cambio_contrasenia = 0;
         $usuario->save();
@@ -230,6 +231,7 @@ class UsuarioService
             abort(500,"La nueva contraseña debe ser diferente a la contraseña anterior");
         }
         $usuario = Usuario::where('usuario', '=', $credenciales['usuario'])->where('clave', '=', md5($credenciales['clave']))->first();
+        $usuario->cambiarClave92($datos['clave_nueva']);
         $usuario->clave = $datos['clave_nueva'];
         $usuario->usuario = $datos['rfc'];
         $usuario->pide_datos_empresa = 0;
