@@ -44,7 +44,7 @@ class Invitacion extends Model
         'id_sucursal_sao',
         'id_transaccion_antecedente',
         'id_area_compradora',
-        'id_area_subcontratante',
+        'id_area_contratante',
         'id_cotizacion_generada',
         'id_obra',
         'nombre_obra',

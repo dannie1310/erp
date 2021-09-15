@@ -8,6 +8,7 @@ use App\Events\EnvioCotizacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
+use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
@@ -20,6 +21,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
+use App\Services\CADECO\Contratos\ContratoProyectadoService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -174,6 +176,14 @@ class InvitacionService
             $solicitud = $solicitudService->show($transaccion->id_transaccion);
             if($solicitud->complemento){
                 $datos_registro["id_area_compradora"] = $solicitud->id_area_compradora;
+            }
+        }
+
+        if($transaccion->tipo_transaccion == 49){
+            $contratoProyectadoService = new ContratoProyectadoService(new ContratoProyectado());
+            $contrato = $contratoProyectadoService->show($transaccion->id_transaccion);
+            if($contrato->areaSubcontratante){
+                $datos_registro["id_area_contratante"] = $contrato->areaSubcontratante->id_area_subcontratante;
             }
         }
 
