@@ -1505,6 +1505,8 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'sistema'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@index');
+            $api->get('aviso/{id}/leer', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@leerAviso')->where(['user_id' => '[0-9]+']);
+            $api->get('aviso/{ruta}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@getAviso')->where(['user_id' => '[0-9]+']);
             $api->get('sistemas-obra', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@porObra');
             $api->post('asignacion-sistemas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\SistemaController@asignacionSistemas');
         });

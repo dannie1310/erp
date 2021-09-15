@@ -19,16 +19,18 @@
                                             <tr>
                                                 <th class="index_corto"></th>
                                                 <th class="index_corto"></th>
-                                                <th class="th_c200" >Clave Concepto</th>
+                                                <th class="c150" >Clave Concepto</th>
                                                 <th >Descripción</th>
-                                                <th >Cantidad</th>
-                                                <th >Unidad</th>
-                                                <th ></th>
+                                                <th class="c100">Unidad</th>
+                                                <th class="c100">Cantidad</th>
+                                                <th class="c100">Precio</th>
+                                                <th class="c120">Monto</th>
+                                                <th class="index_corto"></th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                         <template v-for="(concepto, i) in conceptos" >
-                                            <tr v-if="concepto.visible==1">
+                                            <tr v-if="concepto.visible==1" :style="concepto.concepto_medible == 3?`background-color : #DDD`:``">
                                                 <td>
                                                     <span v-if="concepto.tiene_hijos">
                                                         <button @click="cargaHijos(concepto.id)" :disabled="cargando_hijos" v-if="concepto.expandido == 0 && concepto.hijos_cargados == 0" type="button" class="btn btn-sm-sp btn-secondary">
@@ -68,10 +70,13 @@
                                                     >
                                                 </td>
                                                 <td>{{concepto.anidacion}}{{concepto.descripcion}}</td>
-                                                <td style="text-align: right">{{concepto.cantidad_presupuestada}}</td>
                                                 <td>{{concepto.unidad}}</td>
+                                                <td style="text-align: right">{{concepto.cantidad_presupuestada_format}}</td>
+                                                <td style="text-align: right">{{concepto.precio_unitario_format}}</td>
+                                                <td style="text-align: right">{{concepto.monto_presupuestado_format}}</td>
+
                                                 <td>
-                                                    <router-link  :to="{ name: 'concepto-edit', params: {id: concepto.id}}" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
+                                                    <router-link  :to="{ name: 'concepto-edit', params: {id: concepto.id}}" type="button" class="btn btn-sm-sp btn-outline-primary" title="Editar">
                                                         <i class="fa fa-pencil"></i>
                                                     </router-link>
                                                 </td>

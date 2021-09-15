@@ -4,7 +4,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">SISTEMA DE CONTRATOS</li>
+            <li class="nav-header" style="text-align: center">
+                <b>SISTEMA DE CONTRATOS</b>
+                <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            </li>
 
             <li class="nav-item" v-if="$root.can(['modificar_area_subcontratante_cp', 'consultar_contrato_proyectado'])">
                 <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
@@ -71,7 +74,7 @@
                     <li class="nav-item" v-if="$root.can('consultar_detalle_fondo_garantia') || $root.can('generar_fondo_garantia') || $root.can('consultar_detalle_fondo_garantia')
             || $root.can('registrar_solicitud_movimiento_fondo_garantia')">
                         <router-link :to="{name: 'fondo-garantia'}" class="nav-link" :class="{active: this.$route.name == 'fondo-garantia'}">
-                            <i class="fa fa-circle-o nav-icon"></i>
+                            <i class="fa fa-piggy-bank nav-icon"></i>
                             <p>Fondos de Garantía</p>
                         </router-link>
                     </li>
@@ -81,7 +84,7 @@
             || $root.can('autorizar_solicitud_movimiento_fondo_garantia') || $root.can('rechazar_solicitud_movimiento_fondo_garantia') || $root.can('revertir_autorizacion_solicitud_movimiento_fondo_garantia')">
 
                             <router-link :to="{name: 'solicitud-movimiento-fg'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-movimiento-fg'}">
-                                <i class="fa fa-circle-o nav-icon"></i>
+                                <i class="fa fa-retweet nav-icon"></i>
                                 <p>Solicitud de Movimiento</p>
                             </router-link>
 

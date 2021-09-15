@@ -58,8 +58,7 @@ class Factura extends Transaccion
     {
         parent::boot();
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 65)
-                /*->where('estado', '!=', -2)*/;
+            return $query->where('tipo_transaccion', '=', 65);
         });
     }
 
@@ -423,6 +422,11 @@ class Factura extends Transaccion
     public function scopeConDocumento($query)
     {
         return $query->has('documento');
+    }
+
+    public function scopeActiva($query)
+    {
+        return $query->where('estado', '!=', -2);
     }
 
     public function getAutorizadoAttribute()

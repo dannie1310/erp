@@ -64,5 +64,13 @@ class SistemaController extends Controller
         $response = $this->service->asignacionSistemas($request->all());
         return response()->json($response, 200);
     }
+    public function leerAviso($id)
+    {
+        return $this->service->leerAviso($id);
+    }
+    public function getAviso($ruta)
+    {
+        return $this->service->getAviso($ruta);
+    }
 
 }

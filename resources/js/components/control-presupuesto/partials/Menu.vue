@@ -5,6 +5,14 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
+            <li class="nav-item" v-if="$root.can('consultar_presupuesto')">
+                <router-link :to="{name: 'presupuesto-obra'}" class="nav-link" :class="{active: this.$route.name == 'presupuesto-obra'}">
+                    <i class="fa fa-pencil nav-icon"></i>
+                    <p>Editar Conceptos</p>
+                </router-link>
+            </li>
+
+            <li class="nav-header">SOLICITUDES DE CAMBIO</li>
 
             <li class="nav-item">
                 <router-link :to="{name: 'variacion-volumen'}" class="nav-link"  v-if="$root.can(['consultar_variacion_volumen'])">
