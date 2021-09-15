@@ -68,5 +68,9 @@ class SistemaController extends Controller
     {
         return $this->service->leerAviso($id);
     }
+    public function getAviso($ruta)
+    {
+        return $this->service->getAviso($ruta);
+    }
 
 }
