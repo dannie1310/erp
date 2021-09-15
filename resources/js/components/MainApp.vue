@@ -27,12 +27,11 @@
                 <div class="container-fluid">
                     <div>
 
-                        <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="AvisosModal">
+                        <div class="modal fade" data-backdrop="static" data-keyboard="false" ref="modal" tabindex="-1" role="dialog" aria-labelledby="AvisosModal">
                             <div class="modal-dialog modal-lg" id="mdialTamanio">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h4 class="modal-title"><i class="fa fa-info-circle"></i></h4>
-                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                                     </div>
                                     <div class="modal-body modal-lg"  ref="body">
                                         <img :src="aviso" style="width:100%">
@@ -43,9 +42,16 @@
 
                                     </div>
                                     <div class="modal-footer">
-                                        <button type="button" class="btn btn-success" v-on:click="leerAviso">
-                                            <i class="fa fa-check"  ></i>
-                                            Enterado
+                                        <button type="button" class="btn btn-success" v-on:click="leerAviso" :disabled="leyendo || enviar_bloqueado" >
+                                            <span v-if="!enviar_bloqueado">
+                                                <i class="fa fa-check"  ></i>
+                                                Enterado
+                                            </span>
+                                            <span v-else>
+                                                <i class="fa fa-spinner" ></i>
+                                                Leyendo Aviso...
+                                            </span>
+
                                         </button>
                                     </div>
                                 </div>
@@ -108,7 +114,7 @@
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter, MenuEntregaCfdi,
 
             MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
-        props: ['sidebar', 'logo', 'aviso', 'id_aviso'],
+        props: ['sidebar', 'logo'],
 
         data() {
             return {
@@ -121,47 +127,48 @@
                 acceso_finanzas : false,
                 acceso_entrega_cfdi : false,
                 acceso_almacenes : false,
+                aviso : '',
+                id_aviso : '',
+                leyendo: false,
+                enviar_bloqueado : true,
+                duracion:0,
             }
         },
 
         mounted() {
-            if(this.aviso){
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
-            }
-            if(this.$router.currentRoute.name == "sao" ){
-                this.getSistemas();
-            }
+            this.getAviso();
         },
 
         methods: {
-            getSistemas() {
-                let _self = this;
-
-                return this.$store.dispatch('seguridad/sistema/index', {
-                    params: { scope: 'porUsuario'}
-                })
-                    .then(data => {
-                        this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
-                        this.$session.set('sistemas', data);
-                        _self.acceso_almacenes = data.find(x=>x.url === 'almacenes') !== undefined ? true : false;
-                        //_self.acceso_compras = data.find(x=>x.url === 'compras') !== undefined ? true : false;
-                        _self.acceso_acarreos = data.find(x=>x.url === 'acarreos') !== undefined ? true : false;
-                        _self.acceso_contratos = data.find(x=>x.url === 'contratos') !== undefined ? true : false;
-                        _self.acceso_catalogos = data.find(x=>x.url === 'catalogos') !== undefined ? true : false;
-                        _self.acceso_finanzas = data.find(x=>x.url === 'finanzas') !== undefined ? true : false;
-                        _self.acceso_contabilidad = data.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
-                        _self.acceso_entrega_cfdi = data.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
-                    })
-            },
             leerAviso(){
+                this.leyendo = true;
                 return this.$store.dispatch('seguridad/sistema/leerAviso', {
                     id:this.id_aviso
                 })
                 .then(data => {
                 }).finally( ()=>{
                     $(this.$refs.modal).modal('hide');
+                    this.leyendo = false;
                 });
+            },
+            getAviso(){
+                let _self = this;
+                return this.$store.dispatch('seguridad/sistema/getAviso', {
+                    ruta:this.$router.currentRoute.name
+                })
+                    .then(data => {
+                        this.aviso = data.ruta_aviso;
+                        this.id_aviso = data.id;
+                        this.duracion = 1000*data.duracion;
+                    }).finally( ()=>{
+                        if(this.aviso){
+                            $(this.$refs.modal).appendTo('body')
+                            $(this.$refs.modal).modal('show');
+                            setTimeout(function(){
+                               _self.enviar_bloqueado = false;
+                            }, _self.duracion);
+                        }
+                    });
             }
         },
 
@@ -175,6 +182,9 @@
                 this.acceso_finanzas = this.sistemas.find(x=>x.url === 'finanzas') !== undefined ? true : false;
                 this.acceso_contabilidad = this.sistemas.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
                 this.acceso_entrega_cfdi = this.sistemas.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
+            },
+            $route (to, from){
+                this.getAviso();
             }
         },
         computed:{

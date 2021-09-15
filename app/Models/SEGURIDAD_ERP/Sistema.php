@@ -23,7 +23,8 @@ class Sistema extends Model
 
     public function permisos()
     {
-        return $this->belongsToMany(Permiso::class, 'dbo.sistemas_permisos', 'sistema_id', 'permission_id');
+        return $this->hasMany(Permiso::class, 'sistema_id', 'id');
+        //return $this->belongsToMany(Permiso::class, 'dbo.sistemas_permisos', 'sistema_id', 'permission_id');
     }
 
     public function proyectos()

@@ -14,24 +14,16 @@
 use App\Models\SEGURIDAD_ERP\Aviso;
 
 Route::get('/portal-proveedor', function () {
-    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores", "aviso"=>"", "id_aviso"=>""]);
+    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores"]);
 })->middleware('auth');
 
 Route::get('/portal-proveedor/{any}', function () {
-    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores",  "aviso"=>"", "id_aviso"=>""]);
+    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores"]);
 })->middleware('auth')
     ->where('any', '.*');
 
 Route::get('/', function () {
-    $aviso = Aviso::getAvisoSAO();
-    $ruta = null;
-    $id = null;
-    if($aviso)
-    {
-        $ruta =  $aviso->ruta_aviso;
-        $id =  $aviso->id;
-    }
-    return view('welcome',["sidebar"=>"SAO ERP", "logo"=>"sao",  "aviso"=>$ruta, "id_aviso"=>$id]);
+    return view('welcome',["sidebar"=>"SAO ERP", "logo"=>"sao"]);
 })->middleware('auth');
 
 Auth::routes(['register' => false]);
@@ -40,15 +32,7 @@ Route::get('formatos/estimacion/{id}/orden-pago', 'v1\CADECO\Contratos\Estimacio
 Route::get('finanzas/distribuir-recurso-remesa/{id}/layoutManual', 'v1\CADECO\Finanzas\DistribucionRecursoRemesaController@descargaLayoutManual')->where(['id' => '[0-9]+']);
 
 Route::get('{any}', function () {
-    $aviso = Aviso::getAvisoSAO();
-    $ruta = null;
-    $id = null;
-    if($aviso)
-    {
-        $ruta =  $aviso->ruta_aviso;
-        $id =  $aviso->id;
-    }
-    return view('welcome',["sidebar"=>"SAO ERP", "logo"=>"sao",  "aviso"=>$ruta, "id_aviso"=>$id]);
+    return view('welcome',["sidebar"=>"SAO ERP", "logo"=>"sao"]);
 })
     ->middleware('auth')
     ->where('any', '.*');
