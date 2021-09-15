@@ -41,9 +41,18 @@ class Aviso extends Model
         return null;
     }
 
-    public static function getAvisoPortal()
+    public static function getAvisoPortalAplicaciones()
     {
         $aviso = Aviso::noLeidoPorUsuario()->where("tipo","=",2)->where("estatus","=",1)->first();
+        if($aviso){
+            return $aviso;
+        }
+        return null;
+    }
+
+    public static function getAvisoPortalProveedores()
+    {
+        $aviso = Aviso::noLeidoPorUsuario()->where("tipo","=",3)->where("estatus","=",1)->first();
         if($aviso){
             return $aviso;
         }
