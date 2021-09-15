@@ -123,7 +123,7 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        razon_social:invitacion.nombre_usuario_invitado,
+                        razon_social:invitacion.razon_social,
                         id: invitacion.numero_folio_format,
                         numero_folio_contrato: invitacion.transaccion.numero_folio_format,
                         fecha_hora_invitacion: invitacion.fecha_format,
