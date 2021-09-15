@@ -169,7 +169,7 @@
                                                                    :disabled="!partida.enable"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
-                                                                   v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                                   v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{0,6})?$/}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                    style="text-align: right"
                                                                    v-model="partida.precio_unitario"/>
