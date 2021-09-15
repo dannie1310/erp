@@ -14,11 +14,11 @@
 use App\Models\SEGURIDAD_ERP\Aviso;
 
 Route::get('/portal-proveedor', function () {
-    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores", "aviso"=>""]);
+    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores", "aviso"=>"", "id_aviso"=>""]);
 })->middleware('auth');
 
 Route::get('/portal-proveedor/{any}', function () {
-    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores",  "aviso"=>""]);
+    return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores",  "aviso"=>"", "id_aviso"=>""]);
 })->middleware('auth')
     ->where('any', '.*');
 
