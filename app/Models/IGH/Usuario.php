@@ -31,6 +31,7 @@ use App\Traits\IghAuthenticatable;
 use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\MustVerifyEmail;
@@ -598,5 +599,15 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         $this->usuario92->update([
             'clave' => $clave_nueva
         ]);
+    }
+
+    public function cambiarClaveModuloSAO($clave_nueva)
+    {
+        DB::connection('modulosao')->update(DB::raw("
+                        DECLARE	@return_value int
+                        EXECUTE	@return_value = [dbo].[sp_updateclavesDayta]
+                        @usuario = '$this->usuario',
+                        @password = '$clave_nueva'
+                        SELECT	'res' = @return_value"));
     }
 }
