@@ -451,7 +451,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                             $this->CellFitScale($anchos["d"], $heigth, '', "T B L", 0, "R", 1);
                             $this->Cell($anchos["it"], $heigth, number_format($exc['precio_unitario'] * $exc['cantidad'], '2', '.', ','), "T B L", 0, "R", 1);
                             $this->CellFitScale($anchos["m"], $heigth, $exc['moneda'], "T B L", 0, "R", 1);
-                            $this->Cell($anchos["ic"], $heigth,number_format($exc['precio_unitario'] * $exc['cantidad'], '2', '.', ','), "B L R T", 0, "R", 1);
+                            $this->Cell($anchos["ic"], $heigth,number_format($exc['precio_unitario'] * $exc['cantidad'] * $exc['t_cambio'], '2', '.', ','), "B L R T", 0, "R", 1);
                         }else {
                             $this->SetTextColor(200, 200, 200);
                             $this->SetFont('Arial', '', $font2);
