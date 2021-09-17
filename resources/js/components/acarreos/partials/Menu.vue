@@ -4,7 +4,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">SISTEMA DE ACARREOS</li>
+            <li class="nav-header" style="text-align: center">
+                <b>SISTEMA DE ACARREOS</b>
+                <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            </li>
 
             <li class="nav-item" v-if="catalogos">
                 <a href="#" class="nav-link" @click="mostrarMenu($event)">

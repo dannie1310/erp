@@ -14,7 +14,7 @@
                             <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right" /></span>
                         </a>
                         <a :href="`${sistema.manual}`" v-if="sistema.manual" target="_blank">
-                            <span class="info-box-text" align="right" title="Ver manual de usuario"><i class="fa fa-file-pdf-o" /></span>
+                            <span class="info-box-text" align="right" title="Ver manual de usuario">Manual &nbsp; <i class="fa fa-file-pdf-o" /></span>
                         </a>
                     </div>
                     <!-- /.info-box-content -->

@@ -11,6 +11,8 @@
 |
 */
 
+use App\Models\SEGURIDAD_ERP\Aviso;
+
 Route::get('/portal-proveedor', function () {
     return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores"]);
 })->middleware('auth');

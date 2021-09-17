@@ -1,6 +1,17 @@
 <template>
     <span>
-        <nav>
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-if="!cargando">
             <div class="row">
                 <div class="col-12">
                     <div class="invoice p-3 mb-3">
@@ -112,7 +123,7 @@
                                                                    class="form-control"
                                                                    :name="`precio[${i}]`"
                                                                    data-vv-as="Precio"
-                                                                   v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{2})?$/}"
+                                                                   v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{0,6})?$/}"
                                                                    :class="{'is-invalid': errors.has(`precio[${i}]`)}"
                                                                    v-model="precio[i]"
                                                                    style="text-align: right"
@@ -359,7 +370,7 @@
                     </div>
                 </div>
             </div>
-        </nav>
+        </div>
     </span>
 </template>
 
@@ -511,6 +522,7 @@
                         sort:'id_item'}
                 }).then(data => {
                     this.solicitud_editar = data;
+                    this.observaciones = data.observaciones;
                     this.fillMonedaInput();
                     this.cargando = false;
                 }).finally(()=>{

@@ -1,37 +1,17 @@
 <template>
     <!-- Sidebar Menu -->
     <span>
-        <MenuCompras></MenuCompras>
-        <MenuAlmacen></MenuAlmacen>
-        <MenuAcarreos />
-        <MenuContratos></MenuContratos>
-        <MenuEntregaCfdi></MenuEntregaCfdi>
-        <MenuFinanzas></MenuFinanzas>
-        <MenuContabilidad></MenuContabilidad>
-        <MenuPresupuesto></MenuPresupuesto>
-        <MenuCatalogos></MenuCatalogos>
-        <MenuFormatos></MenuFormatos>
+        <router-view name="menu"></router-view>
     </span>
 
 </template>
 
 <script>
-import MenuCompras from '../compras/partials/Menu';
-import MenuContratos from '../contratos/partials/Menu';
-import MenuFinanzas from '../finanzas/partials/Menu';
-import MenuContabilidad from '../contabilidad/partials/Menu';
-import MenuAlmacen from '../almacenes/partials/Menu';
-import MenuCatalogos from '../catalogos/partials/Menu';
-import MenuFormatos from '../formato/partials/Menu';
-import MenuAcarreos from '../acarreos/partials/Menu';
-import MenuPresupuesto from "../presupuesto/partials/Menu";
-import MenuEntregaCfdi from "../solicitud-recepcion-cfdi/partials/Menu";
+
     export default {
         name: "sao-menu",
         components:{
-            MenuEntregaCfdi,
-            MenuPresupuesto,
-            MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
+           },
         computed: {
 
             catalogo(){

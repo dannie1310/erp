@@ -50,12 +50,12 @@ class UnidadService
             'unidad' => $data['unidad'],
             'descripcion' => $data['descripcion']
         ];
-        
+
         return $this->repository->create($datos);
     }
 
     public function update($data, $id)
-    {    
+    {
         $this->show($id)->actualizarUnidad($data['params']);
     }
 
@@ -63,5 +63,10 @@ class UnidadService
     {
         return $this->show($id)->eliminarUnidad();
 
+    }
+
+    public function globales($data)
+    {
+        return $this->repository->buscarPorBase($data['base']);
     }
 }

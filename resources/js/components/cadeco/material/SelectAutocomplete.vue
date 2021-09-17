@@ -1,36 +1,44 @@
 <template>
-          <treeselect
-              :class="{error: error}"
-              :async="true"
-              :load-options="loadOptions"
-              v-model="val"
-              loadingText="Cargando"
-              searchPromptText="Escriba para buscar..."
-              noResultsText="Sin Resultados"
-              :placeholder="placeholder ? placeholder : '--Material--'" />
+    <treeselect
+        :class="{error: error}"
+        :async="true"
+        :load-options="loadOptions"
+        v-model="val"
+        :loadingText="loadingText"
+        searchPromptText="Escriba al menos 5 carácteres para buscar"
+        noResultsText="Sin Resultados"
+        :placeholder="placeholder ? placeholder : '--Material--'">
+        <label slot="option-label" slot-scope="{ node, shouldShowCount, count, labelClassName, countClassName }" :class="labelClassName" :title="node.label">
+            {{ node.label }}
+        </label>
+    </treeselect>
 </template>
 
 <script>
-    export default {
-        name: "SelectAutocomplete",
-        props: ['scope', 'sort', 'value', 'error', 'placeholder'],
-        data(){
-            return {
-                val: null,
-                material: [],
-                options:{},
-                disabled: true
-            }
-        },
-        methods: {
-            loadOptions({actions, searchQuery, callback}) {
+export default {
+    name: "SelectAutocomplete",
+    props: ['scope', 'sort', 'value', 'error', 'placeholder'],
+    data(){
+        return {
+            val: null,
+            material: [],
+            options:{},
+            disabled: true,
+            loadingText: "Cargando"
+        }
+    },
+    methods: {
+        loadOptions({actions, searchQuery, callback}) {
+            if(searchQuery.length>4){
                 return this.$store.dispatch('cadeco/material/index',{
+
                     params: {
                         search: searchQuery,
                         sort: this.sort,
                         scope: this.scope,
-                        limit: 100
+                        limit: 500
                     }
+
                 })
                     .then(data => {
                         this.disabled = false;
@@ -44,28 +52,37 @@
 
                         callback(null, this.options)
                     })
+            }else {
+                this.loadingText = "Escriba al menos 5 carácteres para buscar"
+            }
+        }
+
+    },
+    watch: {
+        val() {
+            if(this.val !== null && this.val !== undefined){
+
+                var material = this.options.find(x=>x.id === this.val);
+                if(material != undefined)
+                {
+                    setTimeout(() => {
+                        this.showSelect = false;
+                        this.$emit('input', material)
+                    }, 0);
+                }
             }
         },
-        watch: {
-            val() {
-                if(this.val !== null && this.val !== undefined){
-                this.options.filter(x=> x.id === this.val).map(x => {
-                    this.material = x;
-                });
-                this.$emit('input', this.material)
-                }
-            },
-            value(value) {
-                if(!value) {
-                    this.val = null;
-                }
+        value(value) {
+            if(!value) {
+                this.val = null;
             }
         }
     }
+}
 </script>
 
 <style>
-    .error > .vue-treeselect__control{
-        border-color: #dc3545
-    }
+.error > .vue-treeselect__control{
+    border-color: #dc3545
+}
 </style>

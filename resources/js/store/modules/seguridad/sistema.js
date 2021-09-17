@@ -29,7 +29,33 @@ export default {
                         reject(error)
                     })
             });
-        }
+        },
+        leerAviso(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + "aviso/"+payload.id+"/leer", { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        getAviso(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + "aviso/"+payload.ruta+"", { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
     },
 
     getters: {

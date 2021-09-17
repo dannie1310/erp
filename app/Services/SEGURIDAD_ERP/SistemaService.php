@@ -5,6 +5,8 @@ namespace App\Services\SEGURIDAD_ERP;
 
 
 use App\Facades\Context;
+use App\Models\SEGURIDAD_ERP\Aviso;
+use App\Models\SEGURIDAD_ERP\AvisoLeido;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Models\SEGURIDAD_ERP\Sistema;
 use App\Repositories\Repository;
@@ -66,6 +68,25 @@ class SistemaService
         }
 
         return true;
+    }
+
+    public function leerAviso($id)
+    {
+        AvisoLeido::create([
+            "id_usuario"=>auth()->id(),
+            "id_aviso"=>$id
+        ]);
+
+        return [];
+    }
+
+    public function getAviso($ruta)
+    {
+        $aviso = Aviso::noLeidoPorUsuario()->where("ruta_sistema","=",$ruta)->where("estatus","=",1)->first();
+        if($aviso){
+            return $aviso;
+        }
+        return null;
     }
 
 }

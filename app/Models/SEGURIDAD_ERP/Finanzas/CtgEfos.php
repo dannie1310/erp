@@ -139,6 +139,7 @@ class CtgEfos extends Model
             EFOS::actualizaEFOS($procesamiento);
 
             DB::connection('seguridad')->commit();
+            $procesamiento->load("cambios");
             if(count($procesamiento->cambios)>0){
                 $this->log[] = ["descripcion"=>'Cambio en EFOS',"tipo"=>1];
                 event(new CambioEFOS($procesamiento->cambios));

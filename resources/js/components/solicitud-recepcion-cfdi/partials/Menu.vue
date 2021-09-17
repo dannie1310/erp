@@ -1,7 +1,10 @@
 <template>
     <nav class="mt-2">
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-header">SOLICITUDES DE REVISIÓN DE CFDI</li>
+            <li class="nav-header" style="text-align: center">
+                <b>SOLICITUDES DE REVISIÓN DE CFDI</b>
+                <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            </li>
             <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
                 <router-link :to="{name: 'seleccionar-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-cfdi'}">
                     <i class="fa fa-plus nav-icon"></i>

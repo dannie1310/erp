@@ -15,6 +15,7 @@ use App\Models\CADECO\PresupuestoObra\Responsable;
 use App\Scopes\ActivoScope;
 use App\Scopes\ObraScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Concepto extends Model
 {
@@ -22,16 +23,27 @@ class Concepto extends Model
     protected $table = 'dbo.conceptos';
     protected $primaryKey = 'id_concepto';
 
-    public $fillable = [
-        'activo',
-        'clave_concepto',
-    ];
     public $searchable = [
         'descripcion',
         'clave_concepto',
     ];
 
     public $timestamps = false;
+
+    protected $fillable = [
+        'cantidad_presupuestada',
+        'monto_presupuestado',
+        'activo',
+        'clave_concepto',
+        'id_confirmacion_cambio',
+        'cosecutivo_extraordinario',
+        "id_material",
+        "nivel",
+        "descripcion",
+        "unidad",
+        "precio_unitario",
+        "concepto_medible",
+    ];
 
     protected static function boot()
     {
@@ -66,14 +78,13 @@ class Concepto extends Model
                 $ancestro .= '->' .$result['descripcion'];
             }
             $first+=4;
-
         }
-
        return $ancestro;
     }
 
     public function getPathAttribute()
     {
+        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
@@ -101,6 +112,16 @@ class Concepto extends Model
         return false;
     }
 
+    public function getDeshabilitadoPadreMedibleAttribute()
+    {
+        if(($this->tiene_hijos == true || $this->tiene_hijos_cobrables == true) && $this->concepto_medible != 3)
+        {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
     public function getTipoAttribute()
     {
         $tipo = '';
@@ -123,6 +144,16 @@ class Concepto extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function getTieneHijosCompletosAttribute()
+    {
+        return $this->hijosCompletos()->count() > 0 ? true : false;
+    }
+
+    public function getTieneHijosCobrablesAttribute()
+    {
+        return $this->hijosCobrables()->count() > 0 ? true : false;
+    }
+
     public function getConHijosAttribute()
     {
         return $this->hijosCompletos()->count() ? true : false;
@@ -141,18 +172,35 @@ class Concepto extends Model
 
     public function getPrecioUnitarioFormatAttribute()
     {
-        return '$ ' . number_format($this->precio_unitario,2);
+        if($this->precio_unitario>0)
+        {
+            return '$' . number_format($this->precio_unitario,2);
+        } else {
+            return "-";
+        }
+
     }
 
     public function getMontoPresupuestadoFormatAttribute()
     {
-        return '$ ' . number_format($this->monto_presupuestado,2);
+        if($this->monto_presupuestado>0)
+        {
+            return '$' . number_format($this->monto_presupuestado,2);
+        } else {
+            return "-";
+        }
     }
 
     public function getCantidadPresupuestadaFormatAttribute()
     {
-        return number_format($this->cantidad_presupuestada,4);
+        if($this->cantidad_presupuestada>0)
+        {
+            return number_format($this->cantidad_presupuestada,4);
+        } else {
+            return "-";
+        }
     }
+
     public function getClaveConceptoSelectAttribute()
     {
         if($this->clave_concepto != ''){
@@ -228,6 +276,15 @@ class Concepto extends Model
             ->orderBy('nivel', 'ASC');
     }
 
+    public function hijosCobrables()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            /*->whereNull('id_material')*/
+            ->where('concepto_medible',"=",3)
+            ->orderBy('nivel', 'ASC');
+    }
+
     public function hijosCompletos()
     {
         return $this->hasMany(self::class, 'id_obra', 'id_obra')
@@ -251,5 +308,21 @@ class Concepto extends Model
             }
         }
         return implode(" -> ",$path_corta);
+    }
+
+    public function setHistorico($id_confirmacion_cambio)
+    {
+        if($id_confirmacion_cambio != $this->id_confirmacion_cambio)
+        {
+            $valores = $this->toArray();
+            $arreglo_valores = array_merge(["id_confirmacion_cambio_referente"=>$id_confirmacion_cambio],$valores);
+
+            DB::connection("cadeco")->table("ControlPresupuesto.conceptos_historicos")->insert($arreglo_valores);
+        }
+    }
+
+    public function calcularConsecutivoExtraordinario(){
+        $con = Concepto::where('consecutivo_extraordinario', '>', 0)->orderBy('consecutivo_extraordinario', 'DESC')->first();
+        return $con ? $con->consecutivo_extraordinario + 1 : 1;
     }
 }

@@ -58,8 +58,7 @@ class Factura extends Transaccion
     {
         parent::boot();
         self::addGlobalScope(function ($query) {
-            return $query->where('tipo_transaccion', '=', 65)
-                /*->where('estado', '!=', -2)*/;
+            return $query->where('tipo_transaccion', '=', 65);
         });
     }
 
@@ -425,6 +424,11 @@ class Factura extends Transaccion
         return $query->has('documento');
     }
 
+    public function scopeActiva($query)
+    {
+        return $query->where('estado', '!=', -2);
+    }
+
     public function getAutorizadoAttribute()
     {
         $pagar = $this->monto * $this->tipo_cambio;
@@ -644,6 +648,16 @@ class Factura extends Transaccion
 
     public function getObservacionesFormatAttribute(){
         return preg_replace( "/\r|\n/", "", $this->observaciones );
+    }
+
+    public function getPorTipoGastoAttribute()
+    {
+        try{
+            return $this->obra->datosContables->costo_en_tipo_gasto;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
     }
 
     public function revertir()

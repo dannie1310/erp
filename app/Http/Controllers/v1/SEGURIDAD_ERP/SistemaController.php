@@ -46,7 +46,7 @@ class SistemaController extends Controller
     public function __construct(Manager $fractal, SistemaService $service, SistemaTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['leerAviso','getAviso']);
         $this->middleware('permiso:habilitar_deshabilitar_sistema')->only('asignacionSistemas');
 
 
@@ -63,6 +63,14 @@ class SistemaController extends Controller
     {
         $response = $this->service->asignacionSistemas($request->all());
         return response()->json($response, 200);
+    }
+    public function leerAviso($id)
+    {
+        return $this->service->leerAviso($id);
+    }
+    public function getAviso($ruta)
+    {
+        return $this->service->getAviso($ruta);
     }
 
 }

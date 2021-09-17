@@ -265,21 +265,38 @@
                             </div>
 
                              <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <label for="otras_condiciones" class="col-sm-2 col-form-label">Otras Condiciones:  </label>
-                                        <div class="col-sm-10">
-                                            <textarea
-                                                name="otras_condiciones"
-                                                id="otras_condiciones"
-                                                class="form-control"
-                                                v-model="orden_compra.complemento.otras_condiciones"
-                                                data-vv-as="Otras Condiciones"
-                                                :class="{'is-invalid': errors.has('otras_condiciones')}">
-                                            </textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('otras_condiciones')">{{ errors.first('otras_condiciones') }}</div>
-                                        </div>
+                                <div class="form-group row error-content">
+                                    <label for="otras_condiciones" class="col-sm-2 col-form-label">Otras Condiciones:  </label>
+                                    <div class="col-sm-10">
+                                        <textarea
+                                            name="otras_condiciones"
+                                            id="otras_condiciones"
+                                            class="form-control"
+                                            v-model="orden_compra.complemento.otras_condiciones"
+                                            data-vv-as="Otras Condiciones"
+                                            :class="{'is-invalid': errors.has('otras_condiciones')}">
+                                        </textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('otras_condiciones')">{{ errors.first('otras_condiciones') }}</div>
                                     </div>
                                 </div>
+                            </div>
+
+                             <div class="col-md-12">
+                                <div class="form-group row error-content">
+                                    <label for="observaciones" class="col-sm-2 col-form-label">Observaciones:  </label>
+                                    <div class="col-sm-10">
+                                        <textarea
+                                            name="observaciones"
+                                            id="observaciones"
+                                            class="form-control"
+                                            v-model="orden_compra.observaciones"
+                                            data-vv-as="Observaciones"
+                                            :class="{'is-invalid': errors.has('observaciones')}">
+                                        </textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>

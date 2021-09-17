@@ -4,7 +4,10 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">SISTEMA DE ALMACENES</li>
+            <li class="nav-header" style="text-align: center">
+                <b>SISTEMA DE ALMACENES</b>
+                <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            </li>
             <li class="nav-item" v-if="$root.can('consultar_entrada_almacen')">
                 <router-link :to="{name: 'entrada-almacen'}" class="nav-link" :class="{active: this.$route.name == 'entrada-almacen'}">
                     <i class="nav-icon fa fa-sign-in"></i>
@@ -36,7 +39,7 @@
                 </router-link>
             </li>
             <li class="nav-item" v-if="$root.can('consultar_marbetes')">
-                <router-link :to="{name: 'marbete'}" class="nav-link" :class="{active: this.$route.name == 'marbetes'}">
+                <router-link :to="{name: 'marbete'}" class="nav-link" :class="{active: this.$route.name == 'marbete'}">
                     <i class="nav-icon fa fa-tags"></i>
                     <p>Marbetes</p>
                 </router-link>

@@ -104,19 +104,41 @@
                     </div>
                 </div>
             </div>
-            <div class="row" v-if="cotizacion">
+            <hr v-if="cotizacion.exclusiones.data.length > 0" />
+            <div class="row" v-if="cotizacion.exclusiones.data.length > 0">
                 <div class="col-md-12">
-                    <label class="col-form-label">Observaciones: </label>
-                </div>
-            </div>
-            <div class="row" v-if="cotizacion">
-                <div class="col-md-12">
-                    {{ cotizacion.observaciones }}
+                    <div >
+                        <table class="table table-sm tabla">
+                            <thead>
+                            <tr>
+                                <td  colspan="7" style="border: none;text-align: center"><h6><b>Exclusiones</b></h6></td>
+                            </tr>
+                            <tr>
+                                <th class="index_corto">#</th>
+                                <th>Descripción</th>
+                                <th class="unidad">Unidad</th>
+                                <th class="cantidad_input">Cantidad</th>
+                                <th class="cantidad_input">Precio Unitario</th>
+                                <th class="cantidad_input">Moneda</th>
+                                <th class="cantidad_input">Precio Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="(exclusion, i) in cotizacion.exclusiones.data">
+                                <td class="index_corto">{{ i + 1 }}</td>
+                                <td>{{exclusion.descripcion}}</td>
+                                <td class="unidad">{{exclusion.unidad}}</td>
+                                <td class="cantidad_input" style="text-align:right;">{{exclusion.cantidad_format}}</td>
+                                <td class="cantidad_input" style="text-align:right;">{{exclusion.precio_format}}</td>
+                                <td>{{exclusion.moneda}}</td>
+                                <td class="cantidad_input" style="text-align:right;">{{exclusion.total_format}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </span>
-
-
     </span>
 </template>
 
@@ -157,14 +179,14 @@ export default {
 
             return this.$store.dispatch('compras/cotizacion/find', {
                 id: this.id,
-                params:{include: ['empresa', 'sucursal', 'complemento', 'partidas']}
+                params:{include: ['empresa', 'sucursal', 'complemento', 'partidas', 'exclusiones']}
             }).then(data => {
                 this.$store.commit('compras/cotizacion/SET_COTIZACION', data);
                 this.items = data.partidas.data;
                 this.cotizacion = data;
-                this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;
-                this.euro = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_eur).formatMoney(4, '.', '') : 0;
-                this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
+                this.dolar = data.complemento ? parseFloat(data.complemento.tc_usd).formatMoney(4, '.', '') : 0;
+                this.euro = data.complemento ? parseFloat(data.complemento.tc_eur).formatMoney(4, '.', '') : 0;
+                this.libra = data.complemento ? parseFloat(data.complemento.tc_libra).formatMoney(4, '.', '') : 0;
             }).finally(() => {
                 this.cargando = false;
             });
@@ -177,7 +199,7 @@ export default {
 </script>
 
 <style scoped>
-table#tabla-conceptos {
+table#tabla-resumen-monedas, table.tabla {
     word-wrap: unset;
     width: 100%;
     background-color: white;
@@ -186,11 +208,9 @@ table#tabla-conceptos {
     clear: both;
 }
 
-table#tabla-conceptos th, table#tabla-conceptos td {
+table#tabla-resumen-monedas th, table.tabla th, table#tabla-resumen-monedas td , table.tabla td  {
     border: 1px solid #dee2e6;
 }
-
-
 
 table thead th
 {
@@ -203,7 +223,7 @@ table thead th
     text-align: center;
 }
 
-table#tabla-conceptos td.sin_borde {
+table#tabla-resumen-monedas td.sin_borde, table.tabla td.sin_borde  {
     border: none;
     padding: 2px 5px;
 }
@@ -218,7 +238,7 @@ table tbody tr
     border-color: white #CCCCCC #CCCCCC #CCCCCC;
 }
 table tbody td,
-table#tabla-conceptos table tbody th
+table#tabla-resumen-monedas table tbody th, table.tabla table tbody th
 {
     border-right: 1px solid #ccc;
     color: #242424;
@@ -258,6 +278,11 @@ table .numerico
 
 table tbody td input.text {
     text-align: right;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5
 }
 </style>
 

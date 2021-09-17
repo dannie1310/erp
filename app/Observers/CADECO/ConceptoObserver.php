@@ -2,14 +2,15 @@
 
 namespace App\Observers\CADECO;
 
+use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 
-class ConceptoObserver extends TransaccionObserver
+class ConceptoObserver
 {
-    public function updating(Concepto $concepto)
+    public function creating(Concepto $concepto)
     {
-        if(!($concepto->getOriginal("clave") !=  $concepto->clave)) {
-
-        }
+        $concepto->id_obra = Context::getIdObra();
+        $concepto->consecutivo_extraordinario = $concepto->calcularConsecutivoExtraordinario();
     }
+
 }

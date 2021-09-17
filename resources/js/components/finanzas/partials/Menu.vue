@@ -4,8 +4,11 @@
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
-            <li class="nav-header">SISTEMA DE FINANZAS</li>
 
+            <li class="nav-header" style="text-align: center">
+                <b>SISTEMA DE FINANZAS</b>
+                <hr style="border-color: #9e9e9e; margin-bottom: 3px">
+            </li>
 
             <li class="nav-item" v-if="$root.can('consultar_banco')">
                 <router-link :to="{name: 'banco'}" class="nav-link" :class="{active: this.$route.name == 'banco'}">
@@ -42,13 +45,13 @@
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_solicitud_alta_cuenta_bancaria_empresa')">
                         <router-link :to="{name: 'solicitud-alta'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-alta'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
+                            &nbsp;<i class="fa fa-plus-square nav-icon"></i>
                             <p>Solicitud de Alta</p>
                         </router-link>
                     </li>
                     <li class="nav-item" v-if="$root.can('consultar_solicitud_baja_cuenta_bancaria_empresa')">
                         <router-link :to="{name: 'solicitud-baja'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-baja'}">
-                            &nbsp;<i class="fa fa-circle-o nav-icon"></i>
+                            &nbsp;<i class="fa fa-minus-square nav-icon"></i>
                             <p>Solicitud de Baja</p>
                         </router-link>
                     </li>
