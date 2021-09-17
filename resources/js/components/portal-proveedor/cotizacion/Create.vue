@@ -774,6 +774,7 @@
                 fecha : '',
                 descuento_cot : '0.00',
                 monedas: [],
+                unidades: [],
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
@@ -806,6 +807,8 @@
             this.find();
             this.fecha = new Date();
             this.$validator.reset();
+            this.fechasDeshabilitadas.from= new Date();
+            this.fechasDeshabilitadas.to= new Date();
         },
         methods : {
             formatoFecha(date){

@@ -420,7 +420,7 @@ class Invitacion extends Model
                 $conceptos[$key]['enable'] = true;
                 $conceptos[$key]['moneda_seleccionada'] = 1;
                 $conceptos[$key]['descuento_cot'] = 0.0;
-                $conceptos[$key]['precio_cot'] = 0;
+                $conceptos[$key]['precio_cot'] = '';
             }
 
             $resp['id_invitacion'] = $this->getKey();

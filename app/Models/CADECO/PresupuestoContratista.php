@@ -857,7 +857,7 @@ class PresupuestoContratista extends Transaccion
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         if($invitacion->cotizacionGenerada){
-            abort(500, "Esta cotización no puede ser registrada porque ya existe el presupuesto ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociada a esta invitación.");
+            abort(500, "Esta cotización no puede ser registrada porque ya existe la cotización ".$invitacion->cotizacionGenerada->numero_folio_format." del proyecto ".$invitacion->descripcion_obra." asociado a esta invitación.");
         }
 
         try
@@ -880,6 +880,7 @@ class PresupuestoContratista extends Transaccion
                     'observaciones' => $data['observaciones_cot'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
                     'estado' => -1,
+                    'opciones' => 10,
                     'TcUSD' => $data['tc_usd'],
                     'TcEuro' => $data['tc_eur'],
                     'TcLibra' => $data['tc_libra'],
