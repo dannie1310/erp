@@ -879,6 +879,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/edit',
+                                name: 'proyectado-edit',
+                                component: require('./components/contratos/proyectado/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Contrato Proyectado',
+                                    breadcrumb: { parent: 'proyectado', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_contrato_proyectado'
+                                }
+                            },
+                            {
                                 path: ':id_contrato/presupuesto/create',
                                 name: 'presupuesto-create',
                                 component: require('./components/contratos/presupuesto/Create').default,
