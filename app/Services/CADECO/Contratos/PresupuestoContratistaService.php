@@ -268,10 +268,6 @@ class PresupuestoContratistaService
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
             $item = $presupuesto->partidas->where('id_concepto', $decodificado)->first();
 
-            if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][8]))
-            {
-                abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
-            }
             if(!$item)
             {
                 abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
