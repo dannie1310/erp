@@ -1099,7 +1099,7 @@ class PresupuestoContratista extends Transaccion
             $eliminar->motivo_elimino = $motivo;
             $eliminar->save();
             $this->invitacion->update([
-                "estado" => 0,
+                "estado" => 1,
                 "id_cotizacion_generada" => null
             ]);
             DB::connection('cadeco')->commit();
