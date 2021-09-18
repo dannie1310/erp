@@ -34,9 +34,9 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
         $this->presupuesto = $presupuesto;
 
         $moneda = Moneda::orderBy('id_moneda', 'ASC')->get();
-        $this->tc_partida_dlls  = ($presupuesto->TcUSD) ? $presupuesto->TcUSD : $moneda[1]->cambio->cambio;
-        $this->tc_partida_euro  = ($presupuesto->TcEuro) ? $presupuesto->TcEuro : $moneda[2]->cambio->cambio;
-        $this->tc_partida_libra = ($presupuesto->TcLibra) ? $presupuesto->TcLibra : $moneda[3]->cambio->cambio;
+        $this->tc_partida_dlls  = ($presupuesto->TcUSD>0) ? $presupuesto->TcUSD : $moneda[1]->cambio->cambio;
+        $this->tc_partida_euro  = ($presupuesto->TcEuro>0) ? $presupuesto->TcEuro : $moneda[2]->cambio->cambio;
+        $this->tc_partida_libra = ($presupuesto->TcLibra>0) ? $presupuesto->TcLibra : $moneda[3]->cambio->cambio;
     }
 
     /**
