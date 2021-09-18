@@ -1179,7 +1179,7 @@ class    CotizacionCompra  extends Transaccion
             $this->delete();
             $this->revisarRespaldos($motivo);
             $this->invitacion->update([
-                "estado" => 0,
+                "estado" => 1,
                 "id_cotizacion_generada" => null
             ]);
             DB::connection('cadeco')->commit();

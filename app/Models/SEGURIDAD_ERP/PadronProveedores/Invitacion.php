@@ -520,7 +520,7 @@ class Invitacion extends Model
                     $adicional['partida_activa'] = $partida ? ($partida->no_cotizado == 0) ? true : false : '';
                     $adicional['precio_unitario'] = $partida && $partida->precio_unitario_antes_descuento>0? number_format($partida->precio_unitario_antes_descuento, "2",".","") : '';
                     $adicional['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
-                    $adicional['moneda_seleccionada'] = $partida ? $partida->IdMoneda : 1;
+                    $adicional['moneda_seleccionada'] = $partida && $partida->IdMoneda>0 ? $partida->IdMoneda : 1;
                     $resp['contratos'][$i] = array_merge($concepto->toArray(),$adicional);
                     $i++;
                 }

@@ -744,6 +744,7 @@
                         this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
                         if(this.xls != null)
                         {
+                            this.descuento_cot = this.xls.descuento_cot;
                             data.cotizacionCompra.complemento.anticipo = this.xls.anticipo;
                             data.cotizacionCompra.complemento.dias_credito = this.xls.credito;
                             data.cotizacionCompra.complemento.descuento = this.xls.descuento_cot;
@@ -769,6 +770,8 @@
                                         if(this.xls.partidas[x].precio_unitario>0)
                                         {
                                             data.cotizacionCompra.partidasEdicion.data[i].enable = 1;
+                                        }else if(this.xls.partidas[x].precio_unitario == null){
+                                            data.cotizacionCompra.partidasEdicion.data[i].enable = 0;
                                         }
                                     }
                                 }
