@@ -33,7 +33,8 @@
                     { title: 'Folio de Invitación', tdClass: 'td_c100', field: 'id', sortable: true},
                     { title: 'Fecha de Registro de Invitación', tdClass: 'td_c100', field: 'fecha_hora_invitacion', sortable: true},
                     { title: 'Fecha de Cierre de Invitación', tdClass: 'td_c100', field: 'fecha_cierre_invitacion', sortable: true},
-                    { title: 'Folio de Solicitud', tdClass: 'td_c100', field: 'solicitud'},
+                    { title: 'Tipo de Antecedente', tdClass: 'td_c100', field: 'tipo_transaccion_str'},
+                    { title: 'Folio de Antecedente', tdClass: 'td_c100', field: 'solicitud'},
                     { title: 'Folio de Cotización', field: 'numero_folio_cotizacion', tdClass: 'td_c100', sortable: false},
                     { title: 'Fecha de Cotización', field: 'fecha_cotizacion', tdClass: 'td_c100', sortable: false },
                     { title: 'Importe', field: 'importe_consulta', tdClass: 'money', sortable: false },
@@ -141,6 +142,7 @@
                         moneda_consulta: invitacion.cotizacion.moneda_consulta_proveedor,
                         estado: this.getEstado(invitacion.cotizacion.estado),
                         descripcion_obra: invitacion.descripcion_obra,
+                        tipo_transaccion_str: invitacion.transaccion.tipo_str,
                         buttons: $.extend({}, {
                             invitacion: invitacion,
                             show: self.$root.can('consultar_cotizacion_proveedor',true) ? true : false,
