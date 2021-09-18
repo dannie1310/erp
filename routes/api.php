@@ -462,6 +462,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}/getSolicitud', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getSolicitud')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@show')->where(['id' => '[0-9]+']);
             $api->post('abrir/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@abrir')->where(['id' => '[0-9]+']);
+            $api->get('{id}/getPresupuestoEdit', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPresupuestoEdit')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@pdf')->where(['id' => '[0-9]+']);
 
         });
     });
@@ -1051,6 +1053,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@index');
             $api->get('getContratos', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getContratos');
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCotizaciones');
+            $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1095,6 +1098,12 @@ $api->version('v1', function ($api) {
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayout');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@pdf')->where(['id' => '[0-9]+']);
+            $api->post('/portal-proveedor','App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@registrarPresupuestoProveedor');
+            $api->patch('{id}/portal-proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@updatePortalProveedor')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayoutProveedor/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@descargaLayoutProveedor')->where(['id' => '[0-9]+']);
+            $api->post('layoutProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@cargaLayoutProveedor');
+            $api->delete('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@destroyProveedor')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/portal-proveedor/enviar', 'App\Http\Controllers\v1\CADECO\Contratos\PresupuestoContratistaController@enviar')->where(['id' => '[0-9]+']);
         });
 
 
@@ -1155,6 +1164,15 @@ $api->version('v1', function ($api) {
                 $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@cancelar')->where(['id' => '[0-9]+']);
                 $api->patch('{id}/revertir-autorizacion', 'App\Http\Controllers\v1\CADECO\Contratos\SolicitudMovimientoFondoGarantiaController@revertirAutorizacion')->where(['id' => '[0-9]+']);
             });
+        });
+
+        $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@abrir')->where(['id' => '[0-9]+']);
         });
     });
 

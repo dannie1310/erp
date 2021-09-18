@@ -13,7 +13,7 @@
         <p style="text-align: justify">
             Se le informa que <b>la invitación {{$invitacion->numero_folio_format}}</b> relacionada con la transacción
             <b>{{$invitacion->transaccionAntecedente->tipo_transaccion_str}} {{$invitacion->transaccionAntecedente->numero_folio_format}}</b>
-            ha sido abierta el <b>{{$invitacion->fecha_apertura_format}}</b> a las <b>{{$invitacion->hora_apertura_format}} hrs.</b>
+            ha sido abierta el <b>{{$invitacion->fecha_apertura_format}}</b> a las <b>{{$invitacion->hora_apertura_format}} hrs.</b> por <b>{{$invitacion->razon_social}}</b>.
         </p>
     </body>
 </html>
