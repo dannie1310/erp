@@ -668,7 +668,7 @@ class PresupuestoContratista extends Transaccion
                 $partidas[$item->id_concepto]['observaciones'] = $item->observaciones ? $item->observaciones : '';
             }
         }
-        
+
         $cantidad = 0;
         foreach ($this->contratoProyectado->presupuestos()->orderBy('id_transaccion', 'desc')->get() as $cont => $presupuesto) {
             $presupuestos[$cont]['id_transaccion'] = $presupuesto->id_transaccion;
@@ -912,6 +912,9 @@ class PresupuestoContratista extends Transaccion
                         'Observaciones' => $partida['enable'] && array_key_exists('observaciones_cot', $partida) ? $partida['observaciones_cot'] : ''
                     ]);
                 }
+                $presupuesto->invitacion->update([
+                    "estado"=>2
+                ]);
             }else
             {
                 $presupuesto = $this->create([
@@ -1020,6 +1023,18 @@ class PresupuestoContratista extends Transaccion
                         'PorcentajeDescuento' => $partida['partida_activa'] ? $partida['descuento'] : null,
                         'IdMoneda' => $partida['moneda_seleccionada'],
                         'Observaciones' => $partida['observaciones']
+                    ]);
+                }
+            }
+
+            if(key_exists('contratos', $data)){
+                if(count($data["contratos"])>0)
+                {
+                    $this->update([
+                        'estado' => -1,
+                    ]);
+                    $this->invitacion->update([
+                        "estado"=>2
                     ]);
                 }
             }
