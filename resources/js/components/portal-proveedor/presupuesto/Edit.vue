@@ -705,7 +705,10 @@
                     }
                 }).then(data => {
                     this.presupuesto = data.presupuesto_proveedor
-                    this.descuento_cot = data.presupuesto_proveedor.descuento
+                    this.descuento_cot = 0;
+                    if(data.presupuesto_proveedor.descuento > 0){
+                        this.descuento_cot = data.presupuesto_proveedor.descuento
+                    }
                     this.exclusiones = data.presupuesto_proveedor.exclusiones
                     this.invitacion = data
                     this.getMonedas(data.base_datos);
