@@ -729,6 +729,7 @@
                         this.presupuesto.descuento = this.xls.descuento;
                         this.presupuesto.observaciones = this.xls.observaciones;
                         this.presupuesto.dias_vigencia = this.xls.vigencia;
+                        this.descuento_cot = this.xls.descuento;
                         this.euro = this.xls.tc_euro;
                         this.libra = this.xls.tc_libra;
                         this.dolar = this.xls.tc_usd;
@@ -758,9 +759,9 @@
                     base : base
                 }).then(data => {
                     this.monedas = data.data;
-                    this.dolar = parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
-                    this.euro = parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
-                    this.libra = parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
+                    this.dolar = (this.dolar>0) ? this.dolar : parseFloat(this.monedas[1].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
+                    this.euro = (this.euro>0) ? this.euro : parseFloat(this.monedas[2].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
+                    this.libra = (this.libra>0) ? this.libra : parseFloat(this.monedas[3].tipo_cambio_cadeco.cambio).formatMoney(2, '.', '');
                 }).finally(()=>{
                     this.cargando = false;
                 })
