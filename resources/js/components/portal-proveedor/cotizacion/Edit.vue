@@ -188,7 +188,7 @@
                                                                    v-model="partida.descuento"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{'$' + parseFloat((partida.cantidad) * partida.precio_unitario).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{'$'+parseFloat(getPrecio(partida)).formatMoney(2,'.',',') }}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
@@ -205,7 +205,7 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;"  v-if="multiples_monedas">{{getPrecioTotal(partida.cantidad * partida.precio_unitario, partida.id_moneda)}}</td>
+                                                        <td style="text-align:right;"  v-if="multiples_monedas">{{getPrecioTotal(getPrecio(partida), partida.id_moneda)}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -519,6 +519,7 @@
                                                             <td style="border: none; text-align: right"></td>
                                                         </tr>
                                                     </template>
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -794,10 +795,16 @@
                     }
                 })
             },
+            getPrecio(partida){
+                if(partida.precio_unitario){
+                    return partida.precio_unitario * partida.cantidad- (partida.precio_unitario * partida.cantidad * (partida.descuento ? partida.descuento : 0) / 100);
+                }
+                return '0.00';
+            },
             getPrecioTotal(precio, moneda) {
                 if(moneda == undefined)
                 {
-                    return '$1.00'
+                    return '$0.00'
                 }
                 if(moneda === 1)
                 {

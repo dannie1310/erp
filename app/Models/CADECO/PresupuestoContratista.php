@@ -1003,7 +1003,7 @@ class PresupuestoContratista extends Transaccion
             {
                 $item = PresupuestoContratistaPartida::where('id_transaccion', '=', $data['id'])->where('id_concepto', '=', $partida['id_concepto']);
                 if(!is_null($partida['unidad'])) {
-                    $precio_conversion = $partida['partida_activa'] ? $this->precioConversion($partida['precio_unitario'], $partida['IdMoneda']) : null;
+                    $precio_conversion = $partida['partida_activa'] ? $this->precioConversion($partida['precio_unitario'], $partida['moneda_seleccionada']) : null;
                     if ($precio_conversion) {
                         $precio_descuento = $precio_conversion - ($precio_conversion * $partida['descuento'] / 100);
                     } else {
@@ -1013,7 +1013,7 @@ class PresupuestoContratista extends Transaccion
                         'precio_unitario' => $precio_descuento,
                         'no_cotizado' => $partida['partida_activa'] ? 0 : 1,
                         'PorcentajeDescuento' => $partida['partida_activa'] ? $partida['descuento'] : null,
-                        'IdMoneda' => $partida['IdMoneda'],
+                        'IdMoneda' => $partida['moneda_seleccionada'],
                         'Observaciones' => $partida['observaciones']
                     ]);
                 }

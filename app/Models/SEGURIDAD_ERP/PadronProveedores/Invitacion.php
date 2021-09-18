@@ -496,31 +496,35 @@ class Invitacion extends Model
             }
             $resp['exclusiones'] =  $exclusiones;
             $conceptos = [];
-            foreach( $this->contratoProyectado->contratos as $key => $concepto) {
-                $conceptos[$key] = $concepto->toArray();
-                $conceptos[$key]['cantidad_original_format'] = $concepto->cantidad_original_format;
-                $conceptos[$key]['cantidad_presupuestada_format'] = $concepto->cantidad_presupuestada_format;
-                $partida = PresupuestoContratistaPartida::where('id_concepto', $concepto->id_concepto)->where('id_transaccion', $this->id_cotizacion_generada)->withoutGlobalScopes()->first();
-                $conceptos[$key]['id_transaccion'] = $partida ? $partida->id_transaccion : $concepto->id_transaccion;
-                $conceptos[$key]['precio_unitario_antes_descuento_format'] = $partida ? $partida->precio_unitario_antes_descuento_format : '';
-                $conceptos[$key]['total_antes_descuento_format'] = $partida ? $partida->total_antes_descuento_format : '';
-                $conceptos[$key]['descuento_format'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '0.00';
-                $conceptos[$key]['precio_unitario_despues_descuento_format'] = $partida ? $partida->precio_unitario_despues_descuento_format : '';
-                $conceptos[$key]['total_despues_descuento_format'] = $partida ? $partida->total_despues_descuento_format : '';
-                $conceptos[$key]['moneda'] = $partida ? $partida->moneda ? $partida->moneda->nombre : '' : '';
-                $conceptos[$key]['con_moneda_extranjera'] = $partida ?  $partida->moneda ? $partida->moneda->id_moneda != 1 ? true : false : '': '';
-                $conceptos[$key]['precio_unitario_despues_descuento_partida_mc_format'] = $partida ? $partida->precio_unitario_despues_descuento_partida_mc_format : '';
-                $conceptos[$key]['total_despues_descuento_partida_mc_format'] = $partida ? $partida->total_despues_descuento_partida_mc_format : '';
-                $conceptos[$key]['observaciones'] = $partida ? $partida->Observaciones : '';
-                $destino = $concepto->destino ? $concepto->destino->concepto_sgv : NULL;
-                $conceptos[$key]['path_corta'] = $destino ? $destino->path_corta : '';
-                $conceptos[$key]['path'] = $destino ? $destino->path : '';
-                $conceptos[$key]['partida_activa'] = $partida ? ($partida->no_cotizado == 0) ? true : false : '';
-                $conceptos[$key]['precio_unitario'] = $partida ? number_format($partida->precio_unitario_antes_descuento, "2",".","") : '';
-                $conceptos[$key]['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
-                $conceptos[$key]['IdMoneda'] = $partida ? $partida->IdMoneda : '';
+            $i = 0;
+            foreach( $this->contratoProyectado->contratos as $concepto) {
+                if($concepto->unidad != ""){
+                    /*$conceptos[$key] = $concepto->toArray();*/
+                    $adicional['cantidad_original_format'] = $concepto->cantidad_original_format;
+                    $adicional['cantidad_presupuestada_format'] = $concepto->cantidad_presupuestada_format;
+                    $partida = PresupuestoContratistaPartida::where('id_concepto', $concepto->id_concepto)->where('id_transaccion', $this->id_cotizacion_generada)->withoutGlobalScopes()->first();
+                    $adicional['id_transaccion'] = $partida ? $partida->id_transaccion : $concepto->id_transaccion;
+                    $adicional['precio_unitario_antes_descuento_format'] = $partida && $partida->precio_unitario_antes_descuento > 0 ? $partida->precio_unitario_antes_descuento_format : '-';
+                    $adicional['total_antes_descuento_format'] = $partida ? $partida->total_antes_descuento_format : '';
+                    $adicional['descuento_format'] = $partida && $partida->PorcentajeDescuento > 0 ? number_format($partida->PorcentajeDescuento, "2",".","") : '-';
+                    $adicional['precio_unitario_despues_descuento_format'] = $partida ? $partida->precio_unitario_despues_descuento_format : '';
+                    $adicional['total_despues_descuento_format'] = $partida && $partida->total_despues_descuento >0 ? $partida->total_despues_descuento_format : '-';
+                    $adicional['moneda'] = $partida ? $partida->moneda ? $partida->moneda->nombre : '' : '';
+                    $adicional['con_moneda_extranjera'] = $partida ?  $partida->moneda ? $partida->moneda->id_moneda != 1 ? true : false : '': '';
+                    $adicional['precio_unitario_despues_descuento_partida_mc_format'] = $partida ? $partida->precio_unitario_despues_descuento_partida_mc_format : '';
+                    $adicional['total_despues_descuento_partida_mc_format'] = $partida && $partida->total_despues_descuento_partida_mc >0 ? $partida->total_despues_descuento_partida_mc_format : '-';
+                    $adicional['observaciones'] = $partida ? $partida->Observaciones : '';
+                    $destino = $concepto->destino ? $concepto->destino->concepto_sgv : NULL;
+                    $adicional['path_corta'] = $destino ? $destino->path_corta : '';
+                    $adicional['path'] = $destino ? $destino->path : '';
+                    $adicional['partida_activa'] = $partida ? ($partida->no_cotizado == 0) ? true : false : '';
+                    $adicional['precio_unitario'] = $partida && $partida->precio_unitario_antes_descuento>0? number_format($partida->precio_unitario_antes_descuento, "2",".","") : '';
+                    $adicional['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
+                    $adicional['moneda_seleccionada'] = $partida ? $partida->IdMoneda : 1;
+                    $resp['contratos'][$i] = array_merge($concepto->toArray(),$adicional);
+                    $i++;
+                }
             }
-            $resp['contratos'] = $conceptos;
             return $resp;
         }
     }
