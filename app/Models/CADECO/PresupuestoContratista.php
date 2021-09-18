@@ -668,6 +668,8 @@ class PresupuestoContratista extends Transaccion
                 $partidas[$item->id_concepto]['observaciones'] = $item->observaciones ? $item->observaciones : '';
             }
         }
+        
+        $cantidad = 0;
         foreach ($this->contratoProyectado->presupuestos()->orderBy('id_transaccion', 'desc')->get() as $cont => $presupuesto) {
             $presupuestos[$cont]['id_transaccion'] = $presupuesto->id_transaccion;
             $presupuestos[$cont]['empresa'] = $presupuesto->empresa->razon_social;
@@ -704,12 +706,15 @@ class PresupuestoContratista extends Transaccion
                 }
             }
             $importe = 0;
-            $cantidad = 0;
             foreach($presupuesto->exclusiones as $exc => $exclusion){
+                $t_cambio = 1;
+                if($exclusion->id_moneda != 1){
+                    $t_cambio = $exclusion->moneda->cambio->cambio;
+                }
                 $exclusiones[$cont][$exc] = $exclusion->toArray();
                 $exclusiones[$cont][$exc]['moneda'] = $exclusion->moneda->nombre;
-                $exclusiones[$cont][$exc]['tipo_cambio'] = $exclusion->moneda->tipo_cambio;
-                $importe += $exclusion->cantidad * $exclusion->precio_unitario * $exclusion->moneda->tipo_cambio;
+                $exclusiones[$cont][$exc]['tipo_cambio'] = $t_cambio;
+                $importe += $exclusion->cantidad * $exclusion->precio_unitario * $t_cambio;
                 $cantidad ++;
             }
             $exclusiones[$cont]['importe'] = $importe;
