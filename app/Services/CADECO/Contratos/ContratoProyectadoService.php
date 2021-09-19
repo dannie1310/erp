@@ -453,4 +453,9 @@ class ContratoProyectadoService
     {
         return $this->repository->show($id)->pdf();
     }
+
+    public function getCuerpoCorreo($id)
+    {
+        return $this->repository->show($id)->getCuerpoCorreoInvitacion();
+    }
 }

@@ -15,6 +15,7 @@ use App\Models\CADECO\Contratos\AreaSubcontratanteEliminada;
 use App\Models\CADECO\Contratos\ContratoEliminado;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
 use App\Models\CADECO\Contratos\DestinoEliminado;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\PDF\Contratos\ContratoProyectadoFormato;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,11 @@ class ContratoProyectado extends Transaccion
         return $this->belongsToMany(TipoAreaSubcontratante::class, Context::getDatabase() . '.Contratos.cp_areas_subcontratantes', 'id_transaccion', 'id_area_subcontratante');
     }
 
+    public function contratoAreaSubcontratante()
+    {
+        return $this->belongsTo(AreaSubcontratante::class, "id_transaccion", "id_transaccion");
+    }
+
     public function conceptosSinOrden()
     {
         return $this->hasMany(Contrato::class, 'id_transaccion', 'id_transaccion')->whereNotNull('unidad');
@@ -133,6 +139,13 @@ class ContratoProyectado extends Transaccion
     public function scopePartida($query)
     {
         return $query->has('hijos');
+    }
+
+    public function scopeAreasContratantesAsignadas($query)
+    {
+        return $query->whereHas('areasSubcontratantes', function ($q) {
+            return $q->areasPorUsuario();
+        });
     }
 
     /**
@@ -339,5 +352,30 @@ class ContratoProyectado extends Transaccion
     {
         $pdf = new ContratoProyectadoFormato($this);
         return $pdf->create();
+    }
+
+    public function getCuerpoCorreoInvitacion()
+    {
+        if($this->contratoAreaSubcontratante){
+            $cuerpo_correo = CuerpoCorreo::where("id_tipo_antecedente", "=", $this->tipo_transaccion)
+                ->where("id_area_compradora","=",$this->contratoAreaSubcontratante->id_area_subcontratante)
+                ->where("estado", "=",1)
+                ->first();
+            if(!$cuerpo_correo)
+            {
+                $area_contratante = TipoAreaSubcontratante::find($this->contratoAreaSubcontratante->id_area_subcontratante);
+                abort(500,"No hay un machote de correo de invitación definido para el área contratante: ".$area_contratante->descripcion.". \n \nPor favor reportelo con el área de Soporte a Aplicaciones Web");
+            }
+            return $cuerpo_correo->cuerpo;
+        }else{
+            $cuerpo_correo = CuerpoCorreo::where("id_tipo_antecedente", "=", $this->tipo_transaccion)
+                ->where("estado", "=",1)
+                ->first();
+            if(!$cuerpo_correo)
+            {
+                abort(500,"No hay un machote de correo de invitación definido para el contrato proyectado. \n \nPor favor reportelo con el área de Soporte a Aplicaciones Web");
+            }
+        }
+
     }
 }
