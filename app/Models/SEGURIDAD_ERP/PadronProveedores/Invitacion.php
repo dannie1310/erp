@@ -281,6 +281,18 @@ class Invitacion extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getFechaHoraEnvioFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_envio_cotizacion);
+        return date_format($date,"d/m/Y H:s");
+    }
+
+    public function getFechaEnvioFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_envio_cotizacion);
+        return date_format($date,"d/m/Y");
+    }
+
     public function getNombreUsuarioAttribute()
     {
         try{

@@ -181,6 +181,16 @@ class    CotizacionCompra  extends Transaccion
         return $suma;
     }
 
+    public function getSumaSubtotalPartidasComparativaAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            $suma += $partida->total_precio_moneda_comparativa;
+        }
+        return $suma;
+    }
+
     public function getIVAPartidasAttribute()
     {
         return $this->suma_subtotal_partidas * 0.16;
@@ -196,9 +206,19 @@ class    CotizacionCompra  extends Transaccion
         return $this->suma_subtotal_partidas * $this->complemento->descuento/100;
     }
 
+    public function getDescuentoComparativaAttribute()
+    {
+        return $this->suma_subtotal_partidas_comparativa * $this->complemento->descuento/100;
+    }
+
     public function getSubtotalConDescuentoAttribute()
     {
         return $this->suma_subtotal_partidas - $this->descuento;
+    }
+
+    public function getSubtotalConDescuentoComparativaAttribute()
+    {
+        return $this->suma_subtotal_partidas_comparativa - $this->descuento_comparativa;
     }
 
     public function getIVAConDescuentoAttribute()
@@ -206,9 +226,19 @@ class    CotizacionCompra  extends Transaccion
         return $this->subtotal_con_descuento * 0.16;
     }
 
+    public function getIVAConDescuentoComparativaAttribute()
+    {
+        return $this->subtotal_con_descuento_comparativa * 0.16;
+    }
+
     public function getTotalConDescuentoAttribute()
     {
         return $this->subtotal_con_descuento + $this->iva_con_descuento;
+    }
+
+    public function getTotalConDescuentoComparativaAttribute()
+    {
+        return $this->subtotal_con_descuento_comparativa + $this->iva_con_descuento_comparativa;
     }
 
     public function getAsignadaAttribute()
@@ -1154,7 +1184,8 @@ class    CotizacionCompra  extends Transaccion
         ]);
 
         $this->invitacion->update([
-            "estado"=>3
+            "estado"=>3,
+            'fecha_hora_envio_cotizacion'=>date("Y-m-d H:i:s")
         ]);
 
         return $this->estado;

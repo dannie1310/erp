@@ -117,6 +117,11 @@ class CotizacionCompraPartida extends Model
         }
     }
 
+    public function getTotalPrecioMonedaComparativaAttribute()
+    {
+        return $this->cantidad * $this->precio_compuesto * $this->tipo_cambio;
+    }
+
     public function getPrecioUnitarioCompuestoAttribute()
     {
         switch ($this->id_moneda)
