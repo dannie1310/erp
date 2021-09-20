@@ -45,6 +45,7 @@ class SubcontratoFormato extends FPDI
 
     function Header(){
         $ln = 0;
+        // dd($this->subcontrato->clasificacionSubcontrato);
         if($this->encola == 'clausulado' &&$this->subcontrato->clasificacionSubcontrato){
             if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
@@ -595,9 +596,13 @@ class SubcontratoFormato extends FPDI
 
     public function agregaPagina()
     {
-        if($this->encola == 'clausulado'){
+        if($this->encola != 'clausulado' && ($this->subcontrato->clasificacionSubcontrato && ($this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 3 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 7 || $this->subcontrato->clasificacionSubcontrato->id_tipo_contrato == 4))){
             $this->AddPageSH($this->CurOrientation, $this->CurPageSize, $this->CurRotation);
-            $this->useTemplate($this->sin_texto, 0, -0.5, 22);
+            $this->SetFont('Arial','B',90);
+            $this->SetTextColor(155,155,155);
+            $this->RotatedText(2,5,utf8_decode("S I N   T E X T O"),315);
+            $this->SetTextColor('0,0,0');
+            $this->SetFont('Arial', '', 9);
             $this->AddPage($this->CurOrientation,  $this->CurPageSize, $this->CurRotation);
         }else{
             $this->AddPage();

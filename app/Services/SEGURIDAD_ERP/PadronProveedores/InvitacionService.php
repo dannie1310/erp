@@ -8,6 +8,7 @@ use App\Events\EnvioCotizacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
+use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
@@ -20,6 +21,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
+use App\Services\CADECO\Contratos\ContratoProyectadoService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -174,6 +176,14 @@ class InvitacionService
             $solicitud = $solicitudService->show($transaccion->id_transaccion);
             if($solicitud->complemento){
                 $datos_registro["id_area_compradora"] = $solicitud->id_area_compradora;
+            }
+        }
+
+        if($transaccion->tipo_transaccion == 49){
+            $contratoProyectadoService = new ContratoProyectadoService(new ContratoProyectado());
+            $contrato = $contratoProyectadoService->show($transaccion->id_transaccion);
+            if($contrato->areaSubcontratante){
+                $datos_registro["id_area_contratante"] = $contrato->areaSubcontratante->id_area_subcontratante;
             }
         }
 
@@ -567,6 +577,16 @@ class InvitacionService
     public function pdf($id)
     {
         return $this->repository->show($id)->pdf();
+    }
+
+    public function getPresupuestoEdit($id){
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $this->repository->show($id)->getPresupuestoEdit();
     }
 
     public function regresaTipoEmpresaPadronPorInvitaciones($id_usuario)

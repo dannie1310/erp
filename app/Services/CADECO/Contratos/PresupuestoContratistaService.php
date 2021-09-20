@@ -3,14 +3,20 @@
 
 namespace App\Services\CADECO\Contratos;
 
-use App\Imports\PresupuestoImport;
-use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\PresupuestoContratista;
-use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
-use App\Repositories\CADECO\PresupuestoContratista\Repository;
+use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 use App\Utils\ValidacionSistema;
+use App\Imports\PresupuestoImport;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
+use App\Repositories\CADECO\PresupuestoContratista\Repository;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 
 class PresupuestoContratistaService
 {
@@ -202,5 +208,173 @@ class PresupuestoContratistaService
     {
         $pdf = new PresupuestoContratistaTablaComparativaFormato($this->repository->show($id));
         return $pdf;
+    }
+
+    public function validaFechaCierreInvitacion($id, $codigo = 400)
+    {
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id', $id)->where('fecha_cierre_invitacion', '>=', date('Y-m-d'))->first();
+        if (is_null($invitacion)) {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $invitacion;
+    }
+
+    public function storePortalProveedor($data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
+        return $this->repository->registrar($data, $invitacion);
+    }
+
+    public function updatePortalProveedor($data, $id)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data['id_invitacion']);
+        return $this->repository->editarPortalProveedor($id, $data, $invitacion);
+    }
+
+    public function descargaLayoutProveedor($id, $data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id);
+        return $this->repository->descargaLayoutProveedor($data['id_presupuesto'], $invitacion);
+    }
+
+    public function cargaLayoutProveedor($file, $id_invitacion, $name, $id_presupuesto)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id_invitacion);
+        $file_xls = $this->getFileXls($file, $name);
+        $celdas = $this->getDatosPartidas($file_xls);
+        $this->verifica = new ValidacionSistema();
+        $presupuesto = $this->repository->findProveedor($id_presupuesto, $invitacion->base_datos);
+        $x = 2;
+        $partidas = array();
+        if(count($celdas[0]) != 15)
+        {
+            abort(400,'Archivo XLS no compatible');
+        }
+
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_cotizacion_validar = $cadena_validacion_exp[2];
+
+        if($base_datos != $invitacion->base_datos || $id_obra != $invitacion->id_obra || $id_presupuesto != $id_cotizacion_validar)
+        {
+            abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
+        }
+        while($x < count($presupuesto->partidas) + 2)
+        {
+            $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
+            $item = $presupuesto->partidas->where('id_concepto', $decodificado)->first();
+
+            if(!$item)
+            {
+                abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
+            }
+            $id_moneda = 0;
+            switch ($celdas[$x][11]){
+                case 'PESO MXN':
+                    $id_moneda = 1;
+                    break;
+                case 'DOLAR USD':
+                    $id_moneda = 2;
+                    break;
+                case 'EURO':
+                    $id_moneda = 3;
+                    break;
+                case 'LIBRA':
+                    $id_moneda = 4;
+                    break;
+            }
+            $partidas[] = array(
+                'precio_unitario' => $celdas[$x][6],
+                'descuento' => $celdas[$x][8],
+                'id_moneda' => $id_moneda,
+                'observaciones' => $celdas[$x][14],
+                'id_concepto' => (int) $item->id_concepto,
+                'partida_activa' => ($item->no_cotizado == 0) ? true : false
+            );
+            $x++;
+        }
+
+        $respuesta = [
+            'descuento' => $celdas[$x][6],
+            'tc_usd' => $celdas[$x + 5][6],
+            'tc_euro' => $celdas[$x + 6][6],
+            'tc_libra' => $celdas[$x + 7][6],
+            'anticipo' => $celdas[$x + 13][6],
+            'credito' => $celdas[$x + 14][6],
+            'vigencia' => $celdas[$x + 15][6],
+            'observaciones' => $celdas[$x + 16][6],
+            'contratos' => $partidas
+        ];
+
+        return $respuesta;
+    }
+
+    public function deleteProveedor(array $data, $id)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($id);
+        return $this->repository->eliminar($invitacion->presupuesto->getKey(),$invitacion->base_datos,$data['data']);
+    }
+
+    public function enviar($id, $data)
+    {
+        $invitacion = $this->validaFechaCierreInvitacion($data["id_invitacion"]);
+        $this->setDB($invitacion->base_datos);
+        $presupuesto = $this->repository->withoutGlobalScopes()->show($id);
+
+        $archivos = $presupuesto->archivos()->where("id_categoria","=",2)->whereIn("id_tipo_archivo",[3,4,5])->get();
+        foreach($archivos as $archivo)
+        {
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+            $archivoService->delete(["base_datos"=>$invitacion->base_datos], $archivo->id);
+        }
+
+        $this->cargaArchivos($id, $data, $presupuesto);
+        $presupuesto->envia();
+    }
+
+    public function cargaArchivos($id, $data, $presupuesto)
+    {
+        $invitacionService = new InvitacionService(new Invitacion());
+        $invitacion = $invitacionService->show($data["id_invitacion"]);
+
+        if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+
+            $data_archivos["id"] = $id;
+            $data_archivos["id_transaccion"] = $id;
+            $data_archivos["id_tipo_archivo"] = 3;
+            $data_archivos["id_categoria"] = 2;
+            $data_archivos["descripcion"] = 'Carta asociada a la cotización '.$presupuesto->numero_folio_format;
+            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_carta_terminos_condiciones"]]]);
+            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_carta_terminos_condiciones"]]]);
+
+            $archivoService->cargarArchivosPDF($data_archivos);
+        }
+
+        if(key_exists("nombre_archivo_formato_cotizacion", $data)){
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+
+            $data_archivos["id"] = $id;
+            $data_archivos["id_transaccion"] = $id;
+            $data_archivos["id_tipo_archivo"] = 4;
+            $data_archivos["id_categoria"] = 2;
+            $data_archivos["descripcion"] = 'Formato de cotización asociado a la cotización'.$presupuesto->numero_folio_format;
+            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_formato_cotizacion"]]]);
+            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_formato_cotizacion"]]]);
+
+            $archivoService->cargarArchivosPDF($data_archivos);
+        }
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 }
