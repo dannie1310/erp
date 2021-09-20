@@ -67,7 +67,11 @@ class InvitacionTransformer extends TransformerAbstract
             'cuerpo_correo' => ($model->cuerpo_correo),
             'con_cotizacion' => $model->con_cotizacion,
             'estado' => $model->estado,
-            'requiere_fichas_tecnicas' => $model->requiere_fichas_tecnicas
+            'requiere_fichas_tecnicas' => $model->requiere_fichas_tecnicas,
+            'tipo_str' => $model->tipo == 1 ? 'Cotizar' : 'Contraofertar',
+            'tipo' => $model->tipo,
+            'folio_cotizacion_antecedente' => ($model->cotizacionAntecedente)?$model->cotizacionAntecedente->numero_folio_format : '',
+            'folio_presupuesto_antecedente' => ($model->presupuestoAntecedente)?$model->presupuestoAntecedente->numero_folio_format : '',
         ];
     }
 

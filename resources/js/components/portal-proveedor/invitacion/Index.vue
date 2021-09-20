@@ -24,6 +24,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
+                    { title: 'Tipo de Invitación', field: 'tipo_str', tdClass: 'td_c100', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Folio de Invitación', field: 'id', tdClass: 'td_c100', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha de Invitación', field: 'fecha_hora_invitacion', tdClass: 'td_c100', thComp: require('../../globals/th-Date').default, sortable: true },
                     { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c100', sortable: true, thComp: require('../../globals/th-Date').default },
@@ -120,11 +121,14 @@
                         usuario_invito: invitacion.nombre_usuario_invito,
                         descripcion_obra: invitacion.descripcion_obra,
                         estado: this.getEstado(invitacion.estado),
+                        tipo_str: invitacion.tipo_str,
+                        tipo: invitacion.tipo,
                         buttons: $.extend({}, {
                             id: invitacion.id,
                             con_cotizacion: invitacion.con_cotizacion,
                             show: true,
-                            tipo: invitacion.tipo_antecedente,
+                            tipo_antecedente: invitacion.tipo_antecedente,
+                            tipo: invitacion.tipo,
                             editar_cotizacion: (self.$root.can('editar_cotizacion_proveedor',true)  && invitacion.estado < 3 && invitacion.con_cotizacion) ? true : false,
                             registrar_cotizacion: (self.$root.can('registrar_cotizacion_proveedor',true) && invitacion.estado < 3 && !invitacion.con_cotizacion) ? true : false,
                         })

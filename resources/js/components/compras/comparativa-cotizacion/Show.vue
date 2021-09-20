@@ -296,7 +296,7 @@
             <div class="card-footer">
                 <div class="pull-right">
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
-                    <button type="button" class="btn btn-primary" v-on:click="pedirContraOferta"><i class="fa fa-hand-holding-usd"></i>Pedir Contraoferta</button>
+                    <button type="button" class="btn btn-primary" v-on:click="pedirContraOferta"><i class="fa fa-comments-dollar"></i>Pedir Contraoferta</button>
                 </div>
             </div>
         </div>

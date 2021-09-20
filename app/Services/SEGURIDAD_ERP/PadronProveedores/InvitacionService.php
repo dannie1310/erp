@@ -231,6 +231,21 @@ class InvitacionService
             'ubicacion_entrega_plataforma_digital'=>$this->preparaURLUbicacion($data["ubicacion_entrega_plataforma_digital"]),
         ];
 
+        if(key_exists("id_cotizacion_antecedente", $data))
+        {
+            $datos_registro["id_cotizacion_antecedente"] = $data["id_cotizacion_antecedente"];
+        }
+
+        if(key_exists("tipo", $data))
+        {
+            $datos_registro["tipo"] = $data["tipo"];
+        }
+
+        if(key_exists("id_revire", $data))
+        {
+            $datos_registro["id_revire"] = $data["id_revire"];
+        }
+
         if($transaccion->tipo_transaccion == 17){
             $solicitudService = new SolicitudCompraService(new SolicitudCompra());
             $solicitud = $solicitudService->show($transaccion->id_transaccion);
@@ -576,11 +591,11 @@ class InvitacionService
         $cuerpo = str_replace("[%email_comprador%]",$invitacion->usuarioInvito->correo,$cuerpo);
         if($invitacion->cotizacionAntecedente)
         {
-            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->cotizacionAntecedente->numero_folio,$cuerpo);
+            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->cotizacionAntecedente->numero_folio_format,$cuerpo);
         }
         if($invitacion->presupuestoAntecedente)
         {
-            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->presupuestoAntecedente->numero_folio,$cuerpo);
+            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->presupuestoAntecedente->numero_folio_format,$cuerpo);
         }
 
         return $cuerpo;
