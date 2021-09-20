@@ -737,7 +737,7 @@ class SolicitudCompra extends Transaccion
         $cotizaciones = [];
         $precios = [];
         $exclusiones = [];
-        $precios_menores = [];
+        $proveedores = [];
 
         foreach ($this->items()->orderBy("id_material")->get() as $key => $item) {
 
@@ -754,7 +754,19 @@ class SolicitudCompra extends Transaccion
         }
 
         foreach ($this->cotizaciones as $cont => $cotizacion) {
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id"]=$cotizacion->id_empresa;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_sucursal"]=$cotizacion->id_sucursal;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["razon_social"]=$cotizacion->empresa->razon_social;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["sucursal"]=$cotizacion->sucursal->descripcion;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["sucursal_correo"]=$cotizacion->sucursal->email;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["sucursal_contacto"]=$cotizacion->sucursal->contacto;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["usuario_correo"]=($cotizacion->empresa->usuarioIntranet)? $cotizacion->empresa->usuarioIntranet->correo:'';
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_usuario"] = ($cotizacion->empresa->usuarioIntranet)? $cotizacion->empresa->usuarioIntranet->idusuario:'';;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["seleccionado_contraoferta"]=1;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_cotizacion"]=$cotizacion->id_transaccion;
+
             $cotizaciones[$cotizacion->id_transaccion]['id_transaccion'] = $cotizacion->id_transaccion;
+            $cotizaciones[$cotizacion->id_transaccion]['numero_folio'] = $cotizacion->numero_folio_format;
             $cotizaciones[$cotizacion->id_transaccion]['empresa'] = $cotizacion->empresa->razon_social;
             $cotizaciones[$cotizacion->id_transaccion]['fecha'] = $cotizacion->fecha_format;
             $cotizaciones[$cotizacion->id_transaccion]['fecha_hora_envio'] = ($cotizacion->invitacion) ? $cotizacion->invitacion->fecha_hora_envio_format : 'N/A';
@@ -838,7 +850,8 @@ class SolicitudCompra extends Transaccion
             'cantidad_partidas' => count($partidas),
             'cantidad_cotizaciones' => count($cotizaciones),
             'precios_menores' => $precios,
-            'exclusiones' => $exclusiones
+            'exclusiones' => $exclusiones,
+            'proveedores' => $proveedores
         ];
     }
 

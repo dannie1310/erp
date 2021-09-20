@@ -1009,6 +1009,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@paginate');
             $api->post('/','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@store');
+            $api->post('/contraoferta','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@storeContraoferta');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Compras\InvitacionController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\InvitacionController@pdf')->where(['id' => '[0-9]+']);

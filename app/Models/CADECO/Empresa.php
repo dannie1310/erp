@@ -111,6 +111,11 @@ class Empresa extends Model
         return $this->belongsTo(ProveedorSAT::class, "rfc", "rfc");
     }
 
+    public function usuarioIntranet ()
+    {
+        return $this->hasOne(Usuario::class, 'usuario', 'rfc');
+    }
+
     public function scopeConCuentas($query)
     {
         return $query->has('cuentasEmpresa');

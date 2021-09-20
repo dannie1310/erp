@@ -19,6 +19,7 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\SolicitudContraoferta;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\Contratos\ContratoProyectadoService;
@@ -138,6 +139,65 @@ class InvitacionService
 
         return $invitaciones;
 
+    }
+
+    public function storeContraoferta($data){
+        $invitaciones = [];
+
+        $seleccionados = 0;
+
+        foreach ($data["destinatarios"] as $destinatario){
+            if($destinatario["seleccionado_contraoferta"] == 1) {
+                $seleccionados++;
+            }
+        }
+
+        if($seleccionados == 0){
+            abort(500, "Debe seleccionar al menos a un proveedor para invitar a contraofertar");
+        }
+
+        $obra = Obra::find(Context::getIdObra());
+
+        $solicitud_contraoferta = SolicitudContraoferta::create(
+            [
+                'base_datos'=>Context::getDatabase(),
+                'id_obra'=>Context::getIdObra(),
+                'nombre_obra'=>$obra->nombre,
+                'id_usuario'=>auth()->id(),
+            ]
+        );
+
+        foreach ($data["destinatarios"] as $destinatario)
+        {
+            if($destinatario["seleccionado_contraoferta"] == 1){
+
+                $datos_registro["id_transaccion"] = $data["id_transaccion"];
+                $datos_registro["observaciones"] = '';
+                $datos_registro["fecha_cierre"] = $data["fecha_cierre"];
+                $datos_registro["requiere_fichas_tecnicas"] = 0;
+                $datos_registro["direccion_entrega"] = '';
+                $datos_registro["ubicacion_entrega_plataforma_digital"] = '';
+                $datos_registro["direccion_entrega"] = '';
+                $datos_registro["cuerpo_correo"] = $data["cuerpo_correo"];
+                $datos_registro["archivo_carta_terminos_condiciones"] = '';
+                $datos_registro["nombre_archivo_carta_terminos_condiciones"] = '';
+                $datos_registro["archivo_formato_cotizacion"] = '';
+                $datos_registro["nombre_archivo_formato_cotizacion"] = '';
+                $datos_registro["id_proveedor"] = $destinatario["id"];
+                $datos_registro["id_sucursal"] = $destinatario["id_sucursal"];
+                $datos_registro["correo"] = $destinatario["id_usuario"] > 0 ? $destinatario["usuario_correo"] : $destinatario["sucursal_correo"];
+                $datos_registro["contacto"] = $destinatario["sucursal_contacto"];
+                $datos_registro["id_cotizacion_antecedente"] = $destinatario["id_cotizacion"];
+                $datos_registro["tipo"] = 2;
+                $datos_registro["proveedor_en_catalogo"] = 1;
+                $datos_registro["id_usuario"] = $destinatario["id_usuario"];
+                $datos_registro["id_revire"] = $solicitud_contraoferta->id;
+
+                $invitaciones[] = $this->storeIndividual($datos_registro);
+            }
+        }
+
+        return $invitaciones;
     }
 
     public function storeIndividual($data)
@@ -514,6 +574,15 @@ class InvitacionService
         $cuerpo = str_replace("[%direccion_entrega%]",$invitacion->direccion_entrega,$cuerpo);
         $cuerpo = str_replace("[%enlace_ubicacion%]",$invitacion->ubicacion_entrega_plataforma_digital,$cuerpo);
         $cuerpo = str_replace("[%email_comprador%]",$invitacion->usuarioInvito->correo,$cuerpo);
+        if($invitacion->cotizacionAntecedente)
+        {
+            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->cotizacionAntecedente->numero_folio,$cuerpo);
+        }
+        if($invitacion->presupuestoAntecedente)
+        {
+            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->presupuestoAntecedente->numero_folio,$cuerpo);
+        }
+
         return $cuerpo;
     }
 
