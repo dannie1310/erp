@@ -809,7 +809,7 @@ class SolicitudCompra extends Transaccion
                     $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_unitario'] = $p->precio_unitario;
                     $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['id_moneda'] = $p->id_moneda;
                     $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['cantidad_format'] = $p->cantidad_format;
-                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_total_moneda'] = $p->total_precio_moneda_comparativa;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_total_moneda'] = $p->total_precio_descuento_partida_moneda_comparativa;
                     $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_con_descuento'] = $p->precio_compuesto;
                     $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_total_compuesto'] = $p->precio_compuesto_total;
                     $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_unitario_compuesto'] = $p->precio_unitario_compuesto;
