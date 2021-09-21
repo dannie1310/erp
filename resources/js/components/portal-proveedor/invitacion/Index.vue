@@ -24,7 +24,7 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
-                    { title: 'Tipo de Invitación', field: 'tipo_str', tdClass: 'td_c100', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Tipo de Invitación', field: 'tipo_str', tdClass: 'td_c100' },
                     { title: 'Folio de Invitación', field: 'id', tdClass: 'td_c100', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha de Invitación', field: 'fecha_hora_invitacion', tdClass: 'td_c100', thComp: require('../../globals/th-Date').default, sortable: true },
                     { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c100', sortable: true, thComp: require('../../globals/th-Date').default },
