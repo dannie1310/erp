@@ -332,7 +332,7 @@
                                         </div>
                                     </td>
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal <span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                    <td style="border: none; text-align: right">{{ invitacion.cotizacionCompra.subtotal_consulta_proveedor }}</td>
+                                    <td style="border: none; text-align: right">${{ subtotal_antes_descuento.formatMoney(2,'.',',') }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global (%):</b></td>

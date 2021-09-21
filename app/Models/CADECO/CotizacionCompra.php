@@ -361,7 +361,7 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $this->partidas()->create([
                             'id_transaccion' => $this->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'cantidad' => ($this->solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'cantidad' => $partida['cantidad'],
                             'precio_unitario' => $data['precio'][$i],
                             'descuento' => ($data['descuento_cot'] + $data['descuento'][$i] - (($data['descuento_cot'] * $data['descuento'][$i]) / 100)),
                             'anticipo' => $data['anticipo'],
@@ -436,7 +436,7 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'cantidad' => $partida['cantidad'],
                             'precio_unitario' => $data['precio'][$key],
                             'descuento' => ($data['descuento_cot'] + $partida['descuento'] - (($data['descuento_cot'] * $partida['descuento']) / 100)),
                             'anticipo' => $data['anticipo'],
@@ -499,7 +499,7 @@ class    CotizacionCompra  extends Transaccion
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['material']['id'],
-                        'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                        'cantidad' => $partida['cantidad'],
                     ]);
 
                     #------- Compras.cotizacion_partidas_complemento
@@ -877,7 +877,7 @@ class    CotizacionCompra  extends Transaccion
         {
             DB::connection('cadeco')->beginTransaction();
             $solicitud = SolicitudCompra::withoutGlobalScopes()->find($data['id']);
-            $fecha =New DateTime($data['fecha']);
+            $fecha =New DateTime($data['fecha_cot']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
             {
@@ -918,15 +918,15 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['id_material'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
-                            'precio_unitario' => $partida['precio_cotizacion'],
+                            'cantidad' => $partida['cantidad'],
+                            'precio_unitario' => key_exists("precio_cotizacion", $partida) ? $partida['precio_cotizacion']:$partida["precio_unitario"],
                             'descuento' => ($data['descuento_cot'] + $partida['descuento'] - (($data['descuento_cot'] * $partida['descuento']) / 100)),
                             'anticipo' => $data['anticipo'],
                             'dias_credito' => $data['credito'],
                             'dias_entrega' => $data['tiempo'],
                             'no_cotizado' => !$partida['enable'],
                             'disponibles' => 1,
-                            'id_moneda' => $partida['moneda_seleccionada']
+                            'id_moneda' =>  key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
                         ]);
                         #------- Compras.cotizacion_partidas_complemento
                         $cotizaciones->partida()->create([
@@ -940,7 +940,7 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['id_material'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'cantidad' => $partida['cantidad'],
                             'precio_unitario' => null,
                             'descuento' => 0,
                             'anticipo' => $data['anticipo'],
@@ -948,7 +948,7 @@ class    CotizacionCompra  extends Transaccion
                             'dias_entrega' => $data['tiempo'],
                             'no_cotizado' => !$partida['enable'],
                             'disponibles' => 1,
-                            'id_moneda' => $partida['moneda_seleccionada']
+                            'id_moneda' => key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
                         ]);
                         #------- Compras.cotizacion_partidas_complemento
                         $cotizaciones->partida()->create([
@@ -1007,8 +1007,8 @@ class    CotizacionCompra  extends Transaccion
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['id_material'],
-                        'id_moneda' => $partida['moneda_seleccionada'],
-                        'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                        'id_moneda' => key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
+                        'cantidad' => $partida['cantidad'],
                     ]);
 
                     #------- Compras.cotizacion_partidas_complemento
