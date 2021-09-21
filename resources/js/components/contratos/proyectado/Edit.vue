@@ -163,23 +163,26 @@
                                                    :name="`cantidad[${i}]`"
                                                    data-vv-as="Cantidad"
                                                    step="any"
-                                                   v-model="partida.cantidad"
+                                                   v-model="partida.cantidad_original"
                                                    v-validate="{required: partida.es_hoja, decimal:4}"
                                                    :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
                                                    :id="`cantidad[${i}]`">
                                             <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                         </td>
-                                        <td>
+                                        <td v-if="partida.destino">
                                             <input type="text" class="form-control"
                                                    readonly="readonly"
                                                    :title="partida.destino_path"
                                                    :name="`destino_path[${i}]`"
                                                    data-vv-as="Destino"
-                                                   v-model="partida.destino_path"
+                                                   v-model="partida.destino"
                                                    v-validate="{required: partida.es_hoja}"
                                                    :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
                                                    :id="`destino_path[${i}]`">
                                             <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                        </td>
+                                        <td v-else>
+                                            {{partida.destino.concepto.path_corta}}
                                         </td>
                                         <td class="icono">
                                             <small class="badge badge-secondary">

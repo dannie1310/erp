@@ -114,6 +114,11 @@ class Contrato extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function getEsHojaAttribute()
+    {
+        return $this->unidad ? true : false;
+    }
+
     public function registrarDestino(){
         if($this->cantidad_original > 0){
             Destino::create([
