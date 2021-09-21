@@ -52,6 +52,11 @@ class InvitacionController extends Controller
         return $this->respondWithCollection($invitaciones);
     }
 
+    public function storeContraoferta(Request $request){
+        $invitaciones = $this->service->storeContraoferta($request->all());
+        return $this->respondWithCollection($invitaciones);
+    }
+
     public function abrir($id)
     {
         $obj = $this->service->show($id);

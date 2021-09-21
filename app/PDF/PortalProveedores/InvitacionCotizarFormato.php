@@ -58,7 +58,7 @@ class InvitacionCotizarFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->encabezado_pdf = "INVITACIÓN A COTIZAR";
+        $this->encabezado_pdf = ($this->invitacion->tipo == 1) ?"INVITACIÓN A COTIZAR" : "INVITACIÓN A CONTRAOFERTAR";
 
         $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();
@@ -438,7 +438,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
         $this->SetY(-1.3);
         $this->setX(1);
         $this->SetTextColor('0,0,0');
-        $this->Cell(7, .4, utf8_decode('Formato generado desde el SAO ERP. Fecha y hora de registro: ' . $this->invitacion->fecha_hora_registro_format), 0, 0, 'L');
+        $this->Cell(7, .4, utf8_decode('Formato generado desde el SAO ERP. Fecha y hora de registro: ' . $this->invitacion->fecha_hora_format), 0, 0, 'L');
 
         $this->Ln(.5);
         $this->SetY(-0.9);

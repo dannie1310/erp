@@ -69,7 +69,11 @@ class Invitacion extends Model
         'abierta',
         'fecha_hora_cotizacion',
         'fecha_hora_envio_cotizacion',
-        'requiere_fichas_tecnicas'
+        'requiere_fichas_tecnicas',
+        'tipo',
+        'id_revire',
+        'id_cotizacion_antecedente',
+        'id_presupuesto_antecedente'
     ];
 
     //protected $dates = ["fecha_cierre_invitacion"];
@@ -83,6 +87,20 @@ class Invitacion extends Model
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $this->base_datos);
         return $this->belongsTo(Transaccion::class, "id_transaccion_antecedente", "id_transaccion")->withoutGlobalScopes();
+    }
+
+    public function cotizacionAntecedente()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(CotizacionCompra::class, "id_cotizacion_antecedente", "id_transaccion")->withoutGlobalScopes();
+    }
+
+    public function presupuestoAntecedente()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        return $this->belongsTo(PresupuestoContratista::class, "id_presupuesto_antecedente", "id_transaccion")->withoutGlobalScopes();
     }
 
     public function solicitud()
@@ -278,6 +296,18 @@ class Invitacion extends Model
     public function getFechaCierreInvitacionFormatAttribute()
     {
         $date = date_create($this->fecha_cierre_invitacion);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaHoraEnvioFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_envio_cotizacion);
+        return date_format($date,"d/m/Y H:s");
+    }
+
+    public function getFechaEnvioFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_envio_cotizacion);
         return date_format($date,"d/m/Y");
     }
 

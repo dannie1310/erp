@@ -33,6 +33,12 @@
                      <p>Cotizaciones</p>
                  </router-link>
              </li>
+            <li class="nav-item" v-if="$root.can('consultar_cotizacion_compra')">
+                <router-link :to="{name: 'comparativa-cotizacion-compra'}" class="nav-link" :class="{active: this.$route.name == 'comparativa-cotizacion-compra'}">
+                    <i class="fa fa-less-than-equal nav-icon"></i>
+                    <p>Comparativas de Cotización</p>
+                </router-link>
+            </li>
              <li class="nav-item" v-if="$root.can('consultar_asignacion_proveedor')">
                  <router-link :to="{name: 'asignacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-proveedor'}">
                      <i class="fa fa-user-check nav-icon"></i>

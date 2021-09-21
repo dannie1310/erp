@@ -4,6 +4,7 @@
 namespace App\Services\CADECO\Compras;
 
 
+use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Utils\ValidacionSistema;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
@@ -154,9 +155,22 @@ class SolicitudCompraService
         return $this->repository->show($id)->pdfSolicitudCompra();
     }
 
+    public function pdfComparativaCotizaciones($id)
+    {
+        $cotizacion = $this->repository->show($id)->cotizaciones()->first();
+        $pdf = new CotizacionTablaComparativaFormato($cotizacion);
+        return $pdf;
+    }
+
     public function getCuerpoCorreo($id)
     {
         return $this->repository->show($id)->getCuerpoCorreoInvitacion();
+    }
+
+    public function getComparativaCotizaciones($id)
+    {
+        $cotizacion = $this->repository->show($id)->cotizaciones()->first();
+        return $this->repository->show($id)->datosComparativos();
     }
 
     public function getCotizaciones($id){

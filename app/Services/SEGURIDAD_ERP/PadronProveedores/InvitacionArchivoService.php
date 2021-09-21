@@ -47,41 +47,45 @@ class InvitacionArchivoService
     public function agregarArchivo($data){
         $archivo_nombre = $data['archivo_nombre'];
         $archivo = $data['archivo'];
-        $paths = $this->generaDirectorioTemporal();
+        if($archivo_nombre != ""){
+            $paths = $this->generaDirectorioTemporal();
 
-        //1.-SE GUARDAN ARCHIVOS EN DIRECTORIOS TEMPORALES
+            //1.-SE GUARDAN ARCHIVOS EN DIRECTORIOS TEMPORALES
 
-        $nombre_explode = \explode('.', $archivo_nombre);
+            $nombre_explode = \explode('.', $archivo_nombre);
 
-        $exp = explode("base64,", $archivo);
-        $decode = base64_decode($exp[1]);
-        $path = public_path($paths["dir_tempo"]);
-        file_put_contents($path . $archivo_nombre,$decode);
+            $exp = explode("base64,", $archivo);
+            $decode = base64_decode($exp[1]);
+            $path = public_path($paths["dir_tempo"]);
+            file_put_contents($path . $archivo_nombre,$decode);
 
-        //2.-SE OBTIENE UN ARREGLO CON LOS NOMBRES DE ARCHIVOS DEL DIRECTORIO TEMPORAL OMITIENDO LOS ARCHIVOS . .. Y __MACOSX
-        $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
-        //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
-        sort($files, SORT_NUMERIC);
-        //4.-SE GUARDA EL ÚNICO ARCHIVO QUE SE ENVÍA
+            //2.-SE OBTIENE UN ARREGLO CON LOS NOMBRES DE ARCHIVOS DEL DIRECTORIO TEMPORAL OMITIENDO LOS ARCHIVOS . .. Y __MACOSX
+            $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
+            //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
+            sort($files, SORT_NUMERIC);
+            //4.-SE GUARDA EL ÚNICO ARCHIVO QUE SE ENVÍA
 
-        $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
-        $nombre_archivo_exp = explode('.', $files[0]);
+            $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
+            $nombre_archivo_exp = explode('.', $files[0]);
 
 
-        //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
+            //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
 
-        $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
-        $data_registro["id_invitacion"] = $data["id_invitacion"];
-        $data_registro["tamanio_kb"] = filesize($paths["dir_tempo"].$files[0])/1024;
-        $data_registro["hashfile"] = $hashfile;
-        $data_registro["nombre"] = $files[0];
-        $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
+            $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
+            $data_registro["id_invitacion"] = $data["id_invitacion"];
+            $data_registro["tamanio_kb"] = filesize($paths["dir_tempo"].$files[0])/1024;
+            $data_registro["hashfile"] = $hashfile;
+            $data_registro["nombre"] = $files[0];
+            $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
 
-        $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
+            $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
 
-        $archivoObj = $this->store($data_registro);
+            $archivoObj = $this->store($data_registro);
 
-        return $archivoObj;
+            return $archivoObj;
+        } else
+            return null;
+
     }
 
     private function generaDirectorioTemporal()
