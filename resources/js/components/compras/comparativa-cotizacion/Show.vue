@@ -297,6 +297,7 @@
                 <div class="pull-right">
                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
                     <button type="button" class="btn btn-primary" v-on:click="pedirContraOferta"><i class="fa fa-comments-dollar"></i>Pedir Contraoferta</button>
+                    <button type="button" class="btn btn-primary" v-on:click="invitar"><i class="fa fa-envelope"></i>Invitar a Cotizar</button>
                 </div>
             </div>
         </div>
@@ -486,6 +487,9 @@
                 }).finally(()=> {
                     this.cargando = false;
                 })
+            },
+            invitar(){
+                this.$router.push({name: 'invitacion-compra-create', params: {id_solicitud: this.id}});
             },
             salir() {
                 this.$router.push({name: 'comparativa-cotizacion-compra'});
