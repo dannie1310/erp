@@ -18,7 +18,7 @@
                         <div class="modal-body">
                             <div class="row" v-if="solicitud">
                                 <div class="col-md-12">
-                                    <tabla-datos-solicitud v-bind:solicitud_compra="solicitud"></tabla-datos-solicitud>
+                                    <tabla-datos-solicitud v-bind:solicitud="solicitud"></tabla-datos-solicitud>
                                 </div>
                             </div>
                             <hr />
@@ -763,10 +763,8 @@
     import TablaDatosSolicitud from "./partials/TablaDatosSolicitud";
     export default {
         name: "cotizacion-proveedor-create",
-        props: ['id_invitacion'],
-        components: {
-            TablaDatosSolicitud,
-            Datepicker, ModelListSelect},
+        props: ['id'],
+        components: {TablaDatosSolicitud,Datepicker, ModelListSelect},
         data() {
             return {
                 cargando: false,
@@ -776,6 +774,7 @@
                 fecha : '',
                 descuento_cot : '0.00',
                 monedas: [],
+                unidades: [],
                 pesos: 0,
                 dolares: 0,
                 euros: 0,
@@ -808,6 +807,8 @@
             this.find();
             this.fecha = new Date();
             this.$validator.reset();
+            this.fechasDeshabilitadas.from= new Date();
+            this.fechasDeshabilitadas.to= new Date();
         },
         methods : {
             formatoFecha(date){
@@ -817,7 +818,7 @@
                 this.cargando = true;
                 this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
                 return this.$store.dispatch('padronProveedores/invitacion/getSolicitud', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{}
                 }).then(data => {
                     this.solicitud = data
@@ -1026,7 +1027,6 @@
             },
             getUnidades(base) {
                 return this.$store.dispatch('cadeco/unidad/porBase', {
-                    params: {sort: 'unidad',  order: 'asc'},
                     base : base
                 })
                     .then(data => {

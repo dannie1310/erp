@@ -8,6 +8,7 @@ use App\Events\EnvioCotizacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
 use App\Facades\Context;
+use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
@@ -18,8 +19,10 @@ use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\SolicitudContraoferta;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
+use App\Services\CADECO\Contratos\ContratoProyectadoService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -138,6 +141,65 @@ class InvitacionService
 
     }
 
+    public function storeContraoferta($data){
+        $invitaciones = [];
+
+        $seleccionados = 0;
+
+        foreach ($data["destinatarios"] as $destinatario){
+            if($destinatario["seleccionado_contraoferta"] == 1) {
+                $seleccionados++;
+            }
+        }
+
+        if($seleccionados == 0){
+            abort(500, "Debe seleccionar al menos a un proveedor para invitar a contraofertar");
+        }
+
+        $obra = Obra::find(Context::getIdObra());
+
+        $solicitud_contraoferta = SolicitudContraoferta::create(
+            [
+                'base_datos'=>Context::getDatabase(),
+                'id_obra'=>Context::getIdObra(),
+                'nombre_obra'=>$obra->nombre,
+                'id_usuario'=>auth()->id(),
+            ]
+        );
+
+        foreach ($data["destinatarios"] as $destinatario)
+        {
+            if($destinatario["seleccionado_contraoferta"] == 1){
+
+                $datos_registro["id_transaccion"] = $data["id_transaccion"];
+                $datos_registro["observaciones"] = '';
+                $datos_registro["fecha_cierre"] = $data["fecha_cierre"];
+                $datos_registro["requiere_fichas_tecnicas"] = 0;
+                $datos_registro["direccion_entrega"] = '';
+                $datos_registro["ubicacion_entrega_plataforma_digital"] = '';
+                $datos_registro["direccion_entrega"] = '';
+                $datos_registro["cuerpo_correo"] = $data["cuerpo_correo"];
+                $datos_registro["archivo_carta_terminos_condiciones"] = '';
+                $datos_registro["nombre_archivo_carta_terminos_condiciones"] = '';
+                $datos_registro["archivo_formato_cotizacion"] = '';
+                $datos_registro["nombre_archivo_formato_cotizacion"] = '';
+                $datos_registro["id_proveedor"] = $destinatario["id"];
+                $datos_registro["id_sucursal"] = $destinatario["id_sucursal"];
+                $datos_registro["correo"] = $destinatario["id_usuario"] > 0 ? $destinatario["usuario_correo"] : $destinatario["sucursal_correo"];
+                $datos_registro["contacto"] = $destinatario["sucursal_contacto"];
+                $datos_registro["id_cotizacion_antecedente"] = $destinatario["id_cotizacion"];
+                $datos_registro["tipo"] = 2;
+                $datos_registro["proveedor_en_catalogo"] = 1;
+                $datos_registro["id_usuario"] = $destinatario["id_usuario"];
+                $datos_registro["id_revire"] = $solicitud_contraoferta->id;
+
+                $invitaciones[] = $this->storeIndividual($datos_registro);
+            }
+        }
+
+        return $invitaciones;
+    }
+
     public function storeIndividual($data)
     {
         $transaccionService = new TransaccionService(new Transaccion());
@@ -169,11 +231,34 @@ class InvitacionService
             'ubicacion_entrega_plataforma_digital'=>$this->preparaURLUbicacion($data["ubicacion_entrega_plataforma_digital"]),
         ];
 
+        if(key_exists("id_cotizacion_antecedente", $data))
+        {
+            $datos_registro["id_cotizacion_antecedente"] = $data["id_cotizacion_antecedente"];
+        }
+
+        if(key_exists("tipo", $data))
+        {
+            $datos_registro["tipo"] = $data["tipo"];
+        }
+
+        if(key_exists("id_revire", $data))
+        {
+            $datos_registro["id_revire"] = $data["id_revire"];
+        }
+
         if($transaccion->tipo_transaccion == 17){
             $solicitudService = new SolicitudCompraService(new SolicitudCompra());
             $solicitud = $solicitudService->show($transaccion->id_transaccion);
             if($solicitud->complemento){
                 $datos_registro["id_area_compradora"] = $solicitud->id_area_compradora;
+            }
+        }
+
+        if($transaccion->tipo_transaccion == 49){
+            $contratoProyectadoService = new ContratoProyectadoService(new ContratoProyectado());
+            $contrato = $contratoProyectadoService->show($transaccion->id_transaccion);
+            if($contrato->areaSubcontratante){
+                $datos_registro["id_area_contratante"] = $contrato->areaSubcontratante->id_area_subcontratante;
             }
         }
 
@@ -504,6 +589,15 @@ class InvitacionService
         $cuerpo = str_replace("[%direccion_entrega%]",$invitacion->direccion_entrega,$cuerpo);
         $cuerpo = str_replace("[%enlace_ubicacion%]",$invitacion->ubicacion_entrega_plataforma_digital,$cuerpo);
         $cuerpo = str_replace("[%email_comprador%]",$invitacion->usuarioInvito->correo,$cuerpo);
+        if($invitacion->cotizacionAntecedente)
+        {
+            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->cotizacionAntecedente->numero_folio_format,$cuerpo);
+        }
+        if($invitacion->presupuestoAntecedente)
+        {
+            $cuerpo = str_replace("[%folio_cotizacion%]",$invitacion->presupuestoAntecedente->numero_folio_format,$cuerpo);
+        }
+
         return $cuerpo;
     }
 
@@ -567,6 +661,16 @@ class InvitacionService
     public function pdf($id)
     {
         return $this->repository->show($id)->pdf();
+    }
+
+    public function getPresupuestoEdit($id){
+        $invitacion_fl =  Invitacion::where('id',$id)->first();
+        $invitacion = Invitacion::where('id',$id)->whereRaw("fecha_cierre_invitacion >= '".date('Y-m-d')."'")->first();
+        if(is_null($invitacion))
+        {
+            abort(399,"La fecha límite para recibir su cotización ha sido superada. \n \n Fecha límite especificada en la invitación: ".$invitacion_fl->fecha_cierre_invitacion_format);
+        }
+        return $this->repository->show($id)->getPresupuestoEdit();
     }
 
     public function regresaTipoEmpresaPadronPorInvitaciones($id_usuario)

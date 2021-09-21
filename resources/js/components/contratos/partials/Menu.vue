@@ -15,6 +15,12 @@
                     <p>Contrato Proyectado</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_invitacion_cotizar_contrato')">
+                <router-link :to="{name: 'invitacion-cotizar-contrato'}" class="nav-link" :class="{active: this.$route.name == 'invitacion-cotizar-contrato'}">
+                    <i class="fa fa-envelope-open-text nav-icon"></i>
+                    <p>Invitaciones a Cotizar</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="$root.can('consultar_presupuesto_contratista')">
                 <router-link :to="{name: 'presupuesto'}" class="nav-link" :class="{active: this.$route.name == 'presupuesto'}">
                     <i class="fa fa-comments-dollar nav-icon"></i>

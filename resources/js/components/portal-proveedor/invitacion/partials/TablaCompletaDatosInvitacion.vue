@@ -6,24 +6,25 @@
 
                 <tr >
                     <th class="encabezado c120" >
-                      Solicitud de Compra
+                        Tipo de Invitación
                     </th>
                     <th class="encabezado c280" >
                       Proyecto
                     </th>
-
                     <th class="encabezado c120" >
                       Fecha de Cierre de Invitación
                     </th>
-
-                    <th colspan="2" class="encabezado">
-                      Observaciones
+                    <th class="encabezado c120" v-if="invitacion.tipo_antecedente == 17">
+                      Cotización Antecedente
+                    </th>
+                    <th class="encabezado c120" v-if="invitacion.tipo_antecedente == 49">
+                      Presupuesto Antecedente
                     </th>
 
                 </tr>
                 <tr>
                     <td style="text-align: center">
-                       {{invitacion.solicitud_compra.numero_folio_format}}
+                       {{invitacion.tipo_str}}
                     </td>
                     <td>
                         {{invitacion.descripcion_obra}}
@@ -32,34 +33,54 @@
                     <td style="text-align: center">
                         {{invitacion.fecha_cierre_format}}
                     </td>
-                    <td >
-                        {{invitacion.observaciones}}
+                    <td style="text-align: center">
+                        <span v-if="invitacion.folio_cotizacion_antecedente != ''">
+                          {{invitacion.folio_cotizacion_antecedente}}
+                        </span>
+                        <span v-else-if="invitacion.folio_presupuesto_antecedente != ''">
+                           {{invitacion.folio_presupuesto_antecedente}}
+                        </span>
+                        <span v-else >
+                           No Aplica
+                        </span>
+
                     </td>
                 </tr>
                 <tr>
                     <th style="border: none"></th>
                 </tr>
-                <tr>
-                    <th colspan="3" class="encabezado">
+                <tr v-if="invitacion.ubicacion_entrega_plataforma_digital != '' || invitacion.direccion_entrega != ''">
+                    <th colspan="2" class="encabezado">
                         Dirección de Entrega
                     </th>
-                    <th class="encabezado">
+                    <th class="encabezado" colspan="2">
                         Enlace de Ubicación de Entrega
                     </th>
-
                 </tr>
-                <tr>
-                    <td colspan="3">
+                <tr v-if="invitacion.ubicacion_entrega_plataforma_digital != '' || invitacion.direccion_entrega != ''">
+                    <td colspan="2">
                         {{invitacion.direccion_entrega}}
                     </td>
-                    <td>
+                    <td colspan="2">
                         <a :href="invitacion.ubicacion_entrega_plataforma_digital" target="_blank" style="color: #1b1e21; text-decoration: underline">
                             {{invitacion.ubicacion_entrega_plataforma_digital}}</a>
                     </td>
-
                 </tr>
                 <tr>
                     <th style="border: none"></th>
+                </tr>
+                <tr v-if="invitacion.observaciones != ''">
+                    <th colspan="4" class="encabezado">
+                      Observaciones
+                    </th>
+                </tr>
+                <tr>
+                    <td v-if="invitacion.observaciones != ''" colspan="4">
+                      {{invitacion.observaciones}}
+                    </td>
+                </tr>
+                <tr>
+                  <th style="border: none"></th>
                 </tr>
                 <tr>
                     <th colspan="4" class="encabezado">

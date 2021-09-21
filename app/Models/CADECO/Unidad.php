@@ -87,6 +87,6 @@ class Unidad extends Model
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
-        return $this->get();
+        return $this->orderBy('descripcion','asc')->get();
     }
 }

@@ -5,7 +5,6 @@ namespace App\Services\CADECO;
 
 use App\Models\CADECO\Unidad;
 use App\Repositories\CADECO\Unidad\Repository;
-use Illuminate\Support\Facades\DB;
 
 class UnidadService
 {
