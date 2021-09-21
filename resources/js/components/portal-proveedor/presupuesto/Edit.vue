@@ -1032,7 +1032,6 @@
             },
             getUnidades(base) {
                 return this.$store.dispatch('cadeco/unidad/porBase', {
-                    params: {sort: 'unidad',  order: 'asc'},
                     base : base
                 })
                     .then(data => {
