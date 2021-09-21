@@ -783,7 +783,7 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['total'] = $cotizacion->total_con_descuento_comparativa;
             $cotizaciones[$cotizacion->id_transaccion]['total_partidas'] = $cotizacion->total_partidas;
             $cotizaciones[$cotizacion->id_transaccion]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';
-            $cotizaciones[$cotizacion->id_transaccion]['observaciones'] = $cotizacion->complemento && $cotizacion->complemento->observaciones != "" ? $cotizacion->complemento->observaciones : '-';
+            $cotizaciones[$cotizacion->id_transaccion]['observaciones'] = $cotizacion->observaciones;
             $cotizaciones[$cotizacion->id_transaccion]['tc_usd'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_usd ? $cotizacion->complemento->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['tc_eur'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_eur ? $cotizacion->complemento->tc_eur : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['tc_libra'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_libra ? $cotizacion->complemento->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');

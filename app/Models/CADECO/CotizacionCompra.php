@@ -664,7 +664,7 @@ class    CotizacionCompra  extends Transaccion
             $cotizaciones[$cont]['iva_partidas'] = $cotizacion->iva_partidas;
             $cotizaciones[$cont]['total_partidas'] = $cotizacion->total_partidas;
             $cotizaciones[$cont]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';
-            $cotizaciones[$cont]['observaciones'] = $cotizacion->complemento ? $cotizacion->complemento->observaciones : '-';
+            $cotizaciones[$cont]['observaciones'] = $cotizacion->observaciones;
             $cotizaciones[$cont]['tc_usd'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_usd ? $cotizacion->complemento->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
             $cotizaciones[$cont]['tc_eur'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_eur ? $cotizacion->complemento->tc_eur : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
             $cotizaciones[$cont]['tc_libra'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_libra ? $cotizacion->complemento->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
