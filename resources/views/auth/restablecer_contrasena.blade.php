@@ -89,8 +89,8 @@
                             .then(r => r.data)
                             .then(data => {
                                 swal({
-                                    title: "Contraseña Provisional Enviada",
-                                    text: "Se envio por correo la contraseña provisional.",
+                                    title: "Contraseña Provisional Generada",
+                                    text: "Se envió a su correo una contraseña provisional. \n \n Por favor ingrese con ella al portal para que pueda generar una contraseña nueva.",
                                     icon: "success",
                                     buttons: {
                                         confirm: {
