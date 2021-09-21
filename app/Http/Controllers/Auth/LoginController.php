@@ -38,16 +38,27 @@ class LoginController extends Controller
 
     public function login(Request $request)
     {
+        if (array_key_exists('restablecer_contrasena', $request->all())) {
+            return view('auth.restablecer_contrasena');
+        }
 
-        if(array_key_exists('razon_social', $request->all())){
-            if($this->actualizarEmpresaPassword($request)){
+        if(array_key_exists('correo', $request->all()))
+        {
+            $this->validarUsuario($request->all());
+            if($this->restablecerClave($request->all())) {
+                return view('auth.restablecer_contrasena');
+            }
+        }
+
+        if (array_key_exists('razon_social', $request->all())) {
+            if ($this->actualizarEmpresaPassword($request)) {
                 return route('login');
             }
-        }else if(array_key_exists('clave_confirmacion', $request->all())){
-            if($this->actualizarPassword($request)){
+        } else if (array_key_exists('clave_confirmacion', $request->all())) {
+            if ($this->actualizarPassword($request)) {
                 return route('login');
             }
-        }else{
+        } else {
             $this->validateLogin($request);
         }
 
@@ -60,21 +71,21 @@ class LoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
-        if($this->validaDatosEmpresaFaltantes($request)){
+        if ($this->validaDatosEmpresaFaltantes($request)) {
             return view('auth.pide_datos_empresa');
         }
-        if($this->validaPasswordGenerico($request)){
+        if ($this->validaPasswordGenerico($request)) {
             return view('auth.cambio_contrasena_temporal');
         }
         if ($this->attemptLogin($request)) {
-            if (! auth()->user()->google2faSecret) {
+            if (!auth()->user()->google2faSecret) {
                 $g = new GoogleAuthenticator();
                 $secret = $g->generateSecret();
                 Google2faSecret::query()->create([
                     'secret' => $secret,
                     'id_user' => auth()->id()
                 ]);
-            return $this->sendLoginResponse($request);
+                return $this->sendLoginResponse($request);
             }
         }
 
@@ -118,5 +129,33 @@ class LoginController extends Controller
             return true;
         }
         return false;
+    }
+
+    private function validarUsuario($data)
+    {
+        $usuario = Usuario::where('usuario', '=', $data['usuario'])->first();
+        if(is_null($usuario))
+        {
+            abort(500, 'Por favor verifique el usuario proporcionado, no concuerda con los registros de intranet.');
+        }
+        else if(is_null($usuario->correo))
+        {
+            abort(500, 'Por favor envíe un correo a la dirección: soporte_aplicaciones@desarrollo-hi.atlassian.net para solicitar la configuración de su correo.');
+        }
+        else if($usuario->correo != $data['correo'])
+        {
+            abort(500, "Por favor verifique el correo proporcionado, no concuerda con los registros de intranet.");
+        }
+    }
+
+    private function restablecerClave($data)
+    {
+        $usuario = Usuario::where('usuario', '=', $data['usuario'])->where('correo', '=', $data['correo'])->first();
+        if($usuario)
+        {
+            $usuarioServicio = new UsuarioService(new Usuario());
+            $usuarioServicio->restablecerClave($usuario);
+        }
+        return true;
     }
 }
