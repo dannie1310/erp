@@ -539,10 +539,8 @@ export default {
                 this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
 
                 this.calcular()
-            }).finally(()=>{
                 this.$emit('cargaFinalizada', this.invitacion);
             })
-
         },
         calcular(){
             var pesos = 0;

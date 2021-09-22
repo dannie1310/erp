@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="find()" type="button" class="btn btn-sm btn-outline-danger" :disabled="cargando" title="Eliminar">
+        <button @click="open()" type="button" class="btn btn-sm btn-outline-danger" :disabled="cargando" title="Eliminar">
             <i class="fa fa-trash"></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
@@ -8,15 +8,15 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-eye"></i> DETALLES DE LA COTIZACIÓN</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" @click="salir" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <form role="form" @submit.prevent="validate">
-                        <div class="modal-body" v-if="invitacion">
+                        <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <cotizacion-proveedor-partial-show v-bind:id_invitacion="this.id_invitacion" v-on:cargaFinalizada="cargaFinalizada" > </cotizacion-proveedor-partial-show>
+                                    <cotizacion-proveedor-partial-show v-bind:id_invitacion="this.id_invitacion"  @cargaFinalizada="iniciar" />
                                 </div>
                             </div>
                              <div class="row">
@@ -40,10 +40,10 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                            <button type="button" class="btn btn-secondary" @click="salir">
                                 <i class="fa fa-times-circle"></i>
                                 Cerrar</button>
-                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''">
+                            <button type="submit" class="btn btn-danger" :disabled="errors.count() > 0 || fin_carga == 0 || motivo == ''">
                                 <i class="fa fa-trash"></i>
                                 Eliminar
                             </button>
@@ -65,24 +65,25 @@
             return{
                 cargando : false,
                 motivo : '',
-                invitacion : null
+                fin_carga: 0
             }
         },
         methods: {
-            find() {
-                this.motivo = ''
+            open()
+            {
+                this.motivo = '';
                 this.cargando = true;
-                return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id_invitacion,
-                    params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.partidas'], scope: ['invitadoAutenticado']}
-                }).then(data => {
-                    this.invitacion = data;
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show')
-                })
-                    .finally(() => {
-                        this.cargando = false;
-                    })
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show')
+            },
+            iniciar() {
+                this.fin_carga = 1
+                this.cargando = false
+            },
+            salir()
+            {
+                $(this.$refs.modal).modal('hide');
+                this.cargando = false;
             },
             eliminar() {
                 this.cargando = true;
@@ -91,7 +92,7 @@
                     params: {data: this.$data.motivo}
                 })
                     .then(data => {
-                        $(this.$refs.modal).modal('hide');
+                        this.salir();
                         this.cargando = true;
                         return this.$store.dispatch('padronProveedores/invitacion/paginate', {
                             params: {include: ['transaccion','cotizacion'], scope: ['cotizacionRealizada','invitadoAutenticado']},

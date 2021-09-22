@@ -37,6 +37,11 @@ class Exclusion extends Model
         return $this->belongsTo(Transaccion::class, 'id_transaccion', 'id_transaccion')->withoutGlobalScopes();
     }
 
+    public function cotizacionComplemento()
+    {
+        return $this->belongsTo(CotizacionComplemento::class, 'id_transaccion', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     /**
      * Scope
      */
@@ -64,26 +69,31 @@ class Exclusion extends Model
         }
     }
 
-    public function getTotalFormatAttribute()
+    public function getTotalAttribute()
     {
         $precio = $this->cantidad * $this->precio_unitario;
         switch ($this->id_moneda)
         {
             case 1:
-                return '$' . number_format($precio,2,'.',',');
+                return $precio;
                 break;
 
             case 2:
-                return '$' . number_format($precio * $this->transaccion->TcUSD,2,'.',',');
+                return $precio * ($this->cotizacionComplemento ? $this->cotizacionComplemento->tc_usd : $this->transaccion->TcUSD);
                 break;
 
             case 3:
-                return '$' . number_format($precio * $this->transaccion->TcEuro,2,'.',',');
+                return $precio * ($this->cotizacionComplemento ? $this->cotizacionComplemento->tc_eur :$this->transaccion->TcEuro);
                 break;
             case 4:
-                return '$' . number_format($precio * $this->transaccion->TcLibra,2,'.',',');
+                return $precio * ($this->cotizacionComplemento ? $this->cotizacionComplemento->tc_libra :$this->transaccion->TcLibra);
                 break;
         }
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format($this->total,2,'.',',');
     }
 
     /**
