@@ -333,7 +333,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
                 $this->SetWidths([19.5]);
                 $this->SetAligns(['L']);
                 if ($item->entrega->concepto) {
-                    $this->Row([utf8_decode($item->entrega->concepto->path)]);
+                    $this->Row([utf8_decode($item->entrega->concepto->path_sgv)]);
                 }
                 if ($item->entrega->almacen) {
                     $this->Row([utf8_decode($item->entrega->almacen->descripcion)]);
