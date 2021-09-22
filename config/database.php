@@ -162,6 +162,22 @@ return [
             'engine' => null,
         ],
 
+        'igh92' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST_IGH92', '127.0.0.1'),
+            'port' => env('DB_PORT_IGH92', '3306'),
+            'database' => env('DB_DATABASE_IGH92', 'forge'),
+            'username' => env('DB_USERNAME_IGH92', 'forge'),
+            'password' => env('DB_PASSWORD_IGH92', ''),
+            'unix_socket' => env('DB_SOCKET_IGH92', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+        ],
+
         'interfaz' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_INTERFAZ', 'localhost'),

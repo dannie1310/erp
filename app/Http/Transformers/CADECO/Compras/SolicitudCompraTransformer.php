@@ -48,6 +48,8 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'observaciones' => $model->observaciones,
             'concepto' => $model->complemento ? $model->complemento->concepto : '',
             'numero_folio_compuesto' =>$model->complemento ? $model->complemento->folio_compuesto:'',
+            'numero_invitaciones' =>$model->invitaciones()->count(),
+            'numero_cotizaciones' =>$model->cotizaciones()->count(),
             'area_compradora' =>$model->area_compradora,
             'area_solicitante' =>$model->area_solicitante,
             'numero_folio_format'=>(string) $model->numero_folio_format,

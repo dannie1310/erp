@@ -18,16 +18,18 @@ class NotificacionCredenciales extends Notification
     use Queueable;
     public $usuario;
     public $clave;
+    public $reset;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(Usuario $usuario, $clave)
+    public function __construct(Usuario $usuario, $clave, $reset)
     {
         $this->usuario = $usuario;
         $this->clave = $clave;
+        $this->reset = $reset;
     }
 
     /**
@@ -53,8 +55,8 @@ class NotificacionCredenciales extends Notification
         //$pdf = new SolicitudRecepcionCFDIPDF($this->solicitud);
 
         return (new MailMessage)
-            ->subject("Datos de acceso al portal de proveedores de Hermes Infraestructura")
-            ->view('emails.datos_acceso',["usuario"=>$this->usuario->usuario,"clave"=>$this->clave]);
+            ->subject(is_null($this->usuario->id_empresa_invito) ? "Datos de acceso al portal de aplicaciones e intranet" : "Datos de acceso al portal de proveedores de Hermes Infraestructura")
+            ->view('emails.datos_acceso',["usuario"=>$this->usuario->usuario,"clave"=>$this->clave, "reset"=>$this->reset]);
 
         /*if(file_exists($path0)){
             return (new MailMessage)

@@ -1116,7 +1116,8 @@ class PresupuestoContratista extends Transaccion
         ]);
 
         $this->invitacion->update([
-            "estado"=>3
+            "estado"=>3,
+            "fecha_hora_envio_cotizacion"=>date("Y-m-d H:i:s")
         ]);
 
         return $this->estado;

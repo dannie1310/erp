@@ -566,6 +566,18 @@ export const routes = [
                                     permission: 'registrar_invitacion_cotizar_compra'
                                 }
                             },
+                            {
+                                path: ':id/comparativa-cotizaciones',
+                                name: 'comparativa-cotizacion-compra-consultar',
+                                component: require('./components/compras/comparativa-cotizacion/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Comparativa de Cotizaciones',
+                                    breadcrumb: { parent: 'comparativa-cotizacion-compra', name: 'COMPARATIVA COTIZACIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cotizacion_compra'
+                                }
+                            },
                         ]
                     },
                     {
@@ -634,7 +646,24 @@ export const routes = [
                                 }
                             },
                         ]
-                    }
+                    },
+                    {
+                        path: 'comparativa-cotizacion',
+                        component: require('./components/compras/comparativa-cotizacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comparativa-cotizacion-compra',
+                                component: require('./components/compras/comparativa-cotizacion/Index').default,
+                                meta: {
+                                    title: 'Lista de Solicitudes Cotizadas',
+                                    breadcrumb: {parent: 'compras', name: 'SOLICITUDES COTIZADAS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_cotizacion_compra'
+                                }
+                            },
+                        ]
+                    },
                 ]
             },
             {
@@ -3870,6 +3899,19 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Registrar Cotización',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion_antecedente/contraoferta/:id_invitacion/create',
+                        name: 'contraoferta-cotizacion-proveedor-create',
+                        component: require('./components/portal-proveedor/cotizacion/CreateContraoferta').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Contraoferta',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
                             middleware: [auth, permission],
                             permission: ['registrar_cotizacion_proveedor'],

@@ -63,6 +63,17 @@
                         </div>
                     </div>
                 </form>
+                <form method="POST" action="{{ route('login') }}">
+                    <div class="row">
+                        {{ csrf_field() }}
+                        <div class="col-md-12">
+                            <button type="submit"  class="btn btn-link float-right">¿Olvidaste tu contraseña?
+                                <input type="text" hidden="true" name="restablecer_contrasena" value="true">
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
             </div>
         </div>
     </div>
