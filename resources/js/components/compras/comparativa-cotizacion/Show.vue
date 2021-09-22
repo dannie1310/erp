@@ -132,7 +132,7 @@
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
                                     <td style="text-align: right ;"  :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
                                         <span v-if="partida.cotizaciones[c]">
-                                            ${{partida.cotizaciones[c].precio_unitario.formatMoney(2,".",",")}}
+                                            ${{ parseFloat(partida.cotizaciones[c].precio_unitario).formatMoney(2,".",",")}}
                                         </span>
                                     </td>
                                     <td style="text-align: right;" :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
@@ -147,7 +147,7 @@
                                     </td>
                                     <td style="text-align: right" :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
                                         <span v-if="partida.cotizaciones[c]">
-                                            ${{partida.cotizaciones[c].precio_total_moneda.formatMoney(2,".",",")}}
+                                            ${{ parseFloat(partida.cotizaciones[c].precio_total_moneda).formatMoney(2,".",",")}}
                                         </span>
                                     </td>
                                 </template>
@@ -159,7 +159,7 @@
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
                                         <td colspan="3" style="text-align: right;border:none">Subtotal Pesos MXN:</td>
-                                        <td style="text-align: right">${{cotizacion.suma_subtotal_partidas.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{ parseFloat(cotizacion.suma_subtotal_partidas).formatMoney(2,".",",")}}</td>
                                     </template>
 
                                 </tr>
@@ -176,21 +176,21 @@
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
                                         <td colspan="3" style="text-align: right;border:none">Subtotal Pesos MXN:</td>
-                                        <td style="text-align: right">${{cotizacion.subtotal_con_descuento.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{ parseFloat(cotizacion.subtotal_con_descuento).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
                                         <td colspan="3" style="text-align: right;border:none">IVA:</td>
-                                        <td style="text-align: right">${{cotizacion.iva.formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right">${{ parseFloat(cotizacion.iva).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
                                         <td colspan="3" style="text-align: right;border:none">Total:</td>
-                                        <td style="text-align: right"><b>${{cotizacion.total.formatMoney(2,".",",")}}</b></td>
+                                        <td style="text-align: right"><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                     </template>
                                 </tr>
                                 <tr>
@@ -253,9 +253,9 @@
                                             <td >{{exclusion[0].cantidad}}</td>
                                             <template v-for = "(cotizacion, c) in cotizaciones" >
                                                 <template v-if="c == iex">
-                                                    <td style="text-align: right;">${{exclusion[0].precio_unitario.formatMoney(2,".",",")}}</td>
+                                                    <td style="text-align: right;">${{ parseFloat(exclusion[0].precio_unitario).formatMoney(2,".",",")}}</td>
                                                     <td colspan="2">{{exclusion[0].moneda}}</td>
-                                                    <td style="text-align: right;">${{exclusion[0].total.formatMoney(2,".",",")}}</td>
+                                                    <td style="text-align: right;">${{ parseFloat(exclusion[0].total).formatMoney(2,".",",") }}</td>
                                                 </template>
                                                 <template v-else>
                                                     <td >&nbsp;</td>
@@ -269,7 +269,7 @@
                                         <td colspan="4" style="border: none"></td>
                                         <template v-for = "(cotizacion, c) in cotizaciones" >
                                             <td colspan="3" style="text-align: right; border: none">Total Exclusiones:</td>
-                                            <td style="text-align: right" v-if="exclusiones[c] && exclusiones[c].importe>0">${{exclusiones[c].importe.formatMoney(2,".",",")}}</td>
+                                            <td style="text-align: right" v-if="exclusiones[c] && exclusiones[c].importe>0">${{ parseFloat(exclusiones[c].importe).formatMoney(2,".",",")}}</td>
                                             <td style="text-align: right" v-else>-</td>
                                         </template>
                                     </tr>
@@ -282,8 +282,8 @@
                                         <td colspan="4" style="border: none"></td>
                                         <template v-for = "(cotizacion, c) in cotizaciones" >
                                             <td colspan="3" style="text-align: right; border: none">Total Comparativa:</td>
-                                            <td style="text-align: right" v-if="exclusiones[c] && exclusiones[c].importe>0"><b>${{(exclusiones[c].importe + cotizacion.total).formatMoney(2,".",",")}}</b></td>
-                                            <td style="text-align: right" v-else><b>${{cotizacion.total.formatMoney(2,".",",")}}</b></td>
+                                            <td style="text-align: right" v-if="exclusiones[c] && exclusiones[c].importe>0"><b>${{ parseFloat(exclusiones[c].importe + cotizacion.total).formatMoney(2,".",",")}}</b></td>
+                                            <td style="text-align: right" v-else><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                         </template>
                                     </tr>
 
@@ -435,100 +435,100 @@
 </template>
 
 <script>
-    import EncabezadoSolicitudCompra from "../solicitud-compra/partials/Encabezado";
-    import {es} from "vuejs-datepicker/dist/locale";
-    import Datepicker from 'vuejs-datepicker';
-    export default {
-        name: "comparativa-cotizacion-compra-show",
-        components: {EncabezadoSolicitudCompra, Datepicker},
-        props: ['id'],
-        data(){
-            return{
-                cargando: false,
-                es:es,
-                cotizaciones : [],
-                exclusiones : [],
-                partidas : [],
-                precios_menores : [],
-                cantidad_partidas:'',
-                solicitud : '',
-                cantidad_cotizaciones : '',
-                indices_partidas : [],
-                proveedores : [],
-                fecha_cierre : new Date(),
-                fechasDeshabilitadas : {},
-                post : {},
-                cuerpo_correo : '<p><strong>Estimado(a) [%contacto%]</strong></p>\n' +
-                    '\n' +
-                    '<p>[%proveedor%]</p>' +
-                    '<p>Se le invita cordialmente a realizar una contraoferta de la cotización [%folio_cotizacion%] que nos hizo llegar previamente.</p>\n'+
-                    '<p>Se requiere que realice el registro de su contraoferta de cotizaci&oacute;n en el <a href="http://portal-aplicaciones.grupohi.mx/" target="_blank">portal de proveedores</a> a mas tardar el d&iacute;a [%fecha_cierre%].</p>'
-            }
-        },
-        mounted() {
-            this.find();
-            this.fechasDeshabilitadas.to = new Date();
-        },
-        methods: {
-            find() {
-                this.cargando = true;
-                return this.$store.dispatch('compras/solicitud-compra/getComparativaCotizaciones', {
-                    id: this.id,
-                    params:{}
-                }).then(data => {
-                    this.solicitud = data.solicitud
-                    this.cotizaciones = data.cotizaciones
-                    this.exclusiones = data.exclusiones
-                    this.partidas = data.partidas
-                    this.precios_menores = data.precios_menores
-                    this.cantidad_partidas = data.cantidad_partidas;
-                    this.cantidad_cotizaciones = data.cantidad_cotizaciones
-                    this.proveedores = data.proveedores
-                }).finally(()=> {
-                    this.cargando = false;
-                })
-            },
-            invitar(){
-                this.$router.push({name: 'invitacion-compra-create', params: {id_solicitud: this.id}});
-            },
-            salir() {
-                this.$router.push({name: 'comparativa-cotizacion-compra'});
-            },
-            pedirContraOferta() {
-                $(this.$refs.modal_proveedores).modal('show');
-            },
-            cerrarModal()
-            {
-                $(this.$refs.modal_proveedores).modal('hide');
-            },
-            enviar()
-            {
-                let _self = this;
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        _self.post.id_transaccion = _self.id;
-                        _self.post.observaciones = ''
-                        _self.post.fecha_cierre = _self.fecha_cierre;//
-                        _self.post.cuerpo_correo = _self.cuerpo_correo;//
-                        _self.post.destinatarios = _self.proveedores;
-                        _self.post.usuarios = _self.usuarios;
-
-                        return this.$store.dispatch('compras/invitacion/storeInvitacionContraOferta', _self.post)
-                            .then((data) => {
-                                $(this.$refs.modal_proveedores).modal('hide');
-                                this.$router.push({name: 'invitacion-compra'});
-                            });
-                    }
-                });
-            },
-            formatoFecha(date){
-                return moment(date).format('DD/MM/YYYY');
-            },
-        },
-        computed: {
-
+import EncabezadoSolicitudCompra from "../solicitud-compra/partials/Encabezado";
+import {es} from "vuejs-datepicker/dist/locale";
+import Datepicker from 'vuejs-datepicker';
+export default {
+    name: "comparativa-cotizacion-compra-show",
+    components: {EncabezadoSolicitudCompra, Datepicker},
+    props: ['id'],
+    data(){
+        return{
+            cargando: false,
+            es:es,
+            cotizaciones : [],
+            exclusiones : [],
+            partidas : [],
+            precios_menores : [],
+            cantidad_partidas:'',
+            solicitud : '',
+            cantidad_cotizaciones : '',
+            indices_partidas : [],
+            proveedores : [],
+            fecha_cierre : new Date(),
+            fechasDeshabilitadas : {},
+            post : {},
+            cuerpo_correo : '<p><strong>Estimado(a) [%contacto%]</strong></p>\n' +
+                '\n' +
+                '<p>[%proveedor%]</p>' +
+                '<p>Se le invita cordialmente a realizar una contraoferta de la cotización [%folio_cotizacion%] que nos hizo llegar previamente.</p>\n'+
+                '<p>Se requiere que realice el registro de su contraoferta de cotizaci&oacute;n en el <a href="http://portal-aplicaciones.grupohi.mx/" target="_blank">portal de proveedores</a> a mas tardar el d&iacute;a [%fecha_cierre%].</p>'
         }
+    },
+    mounted() {
+        this.find();
+        this.fechasDeshabilitadas.to = new Date();
+    },
+    methods: {
+        find() {
+            this.cargando = true;
+            return this.$store.dispatch('compras/solicitud-compra/getComparativaCotizaciones', {
+                id: this.id,
+                params:{}
+            }).then(data => {
+                this.solicitud = data.solicitud
+                this.cotizaciones = data.cotizaciones
+                this.exclusiones = data.exclusiones
+                this.partidas = data.partidas
+                this.precios_menores = data.precios_menores
+                this.cantidad_partidas = data.cantidad_partidas;
+                this.cantidad_cotizaciones = data.cantidad_cotizaciones
+                this.proveedores = data.proveedores
+            }).finally(()=> {
+                this.cargando = false;
+            })
+        },
+        invitar(){
+            this.$router.push({name: 'invitacion-compra-create', params: {id_solicitud: this.id}});
+        },
+        salir() {
+            this.$router.push({name: 'comparativa-cotizacion-compra'});
+        },
+        pedirContraOferta() {
+            $(this.$refs.modal_proveedores).modal('show');
+        },
+        cerrarModal()
+        {
+            $(this.$refs.modal_proveedores).modal('hide');
+        },
+        enviar()
+        {
+            let _self = this;
+            this.$validator.validate().then(result => {
+                if (result) {
+                    _self.post.id_transaccion = _self.id;
+                    _self.post.observaciones = ''
+                    _self.post.fecha_cierre = _self.fecha_cierre;//
+                    _self.post.cuerpo_correo = _self.cuerpo_correo;//
+                    _self.post.destinatarios = _self.proveedores;
+                    _self.post.usuarios = _self.usuarios;
+
+                    return this.$store.dispatch('compras/invitacion/storeInvitacionContraOferta', _self.post)
+                        .then((data) => {
+                            $(this.$refs.modal_proveedores).modal('hide');
+                            this.$router.push({name: 'invitacion-compra'});
+                        });
+                }
+            });
+        },
+        formatoFecha(date){
+            return moment(date).format('DD/MM/YYYY');
+        },
+    },
+    computed: {
+
     }
+}
 </script>
 
 <style scoped>
