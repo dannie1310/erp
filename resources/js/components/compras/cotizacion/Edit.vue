@@ -459,14 +459,15 @@
                         'empresa',
                         'sucursal',
                         'complemento',
-                        'partidas.material'
+                        'partidasEdicion.material'
                     ]}
                 }).then(data => {
                     this.cotizacion = data;
+                    this.cotizacion.partidas = data.partidasEdicion;
                     this.fecha = data.fecha;
                     this.ordenar();
                     this.cargando = false;
-                    if(data.partidas.data.length === 0)
+                    if(data.partidasEdicion.data.length === 0)
                     {
                         return this.$store.dispatch('compras/solicitud-compra/find', {
                             id: data.solicitud.id,
@@ -526,7 +527,7 @@
                 {
                     if(!this.carga)
                     {
-                        this.enable[this.x] = this.cotizacion.partidas.data[this.x].no_cotizado;
+                        this.enable[this.x] = this.cotizacion.partidas.data[this.x].enable;
                         this.precio[this.x] = this.cotizacion.partidas.data[this.x].precio_unitario;
                         this.moneda_input[this.x] = (this.cotizacion.partidas.data[this.x].id_moneda != 0) ? this.cotizacion.partidas.data[this.x].id_moneda : 1;
                         this.descuento[this.x] = (this.cotizacion.partidas.data[this.x].descuento > 0) ? this.cotizacion.partidas.data[this.x].descuento : 0;
