@@ -13,7 +13,7 @@
         </div>
         <div class="card" v-else>
             <form role="form" @submit.prevent="validate">
-                <div class="card-body">
+                <div class="card-body" v-if="contrato">
                     <div class="row">
                         <div class="col-md-5">
                             <div class="form-group error-content">
@@ -136,11 +136,10 @@
                                                     @focusout="deshabilitar(i, $event)"
                                                     :name="`descripcion[${i}]`"
                                                     data-vv-as="Descripción"
-                                                    v-validate="{required: partida.descripcion ===''}"
-                                                    :class="{'is-invalid': errors.has(`descripcion[${i}]`) || partida.error ==1 || partida.descripcion_sin_formato.length > 255}"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
                                                     :id="`descripcion_${i}`">
                                             <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
-                                            <div class="error-label" v-show="partida.descripcion_sin_formato.length > 255">La longitud del campo Descripción no debe ser mayor a 255 caracteres.</div>
                                         </td>
                                         <td>
                                             <select
@@ -169,20 +168,20 @@
                                                    :id="`cantidad[${i}]`">
                                             <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                         </td>
-                                        <td v-if="partida.destino">
+                                        <td v-if="!partida.es_hoja">
+                                            <input type="text" disabled="true" class="form-control" readonly="readonly">
+                                        </td>
+                                        <td v-else>
                                             <input type="text" class="form-control"
                                                    readonly="readonly"
-                                                   :title="partida.destino_path"
+                                                   :title="partida.destino.concepto.path_corta"
                                                    :name="`destino_path[${i}]`"
                                                    data-vv-as="Destino"
-                                                   v-model="partida.destino"
+                                                   v-model="partida.destino.concepto.path_corta"
                                                    v-validate="{required: partida.es_hoja}"
                                                    :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
                                                    :id="`destino_path[${i}]`">
                                             <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
-                                        </td>
-                                        <td v-else>
-                                            {{partida.destino.concepto.path_corta}}
                                         </td>
                                         <td class="icono">
                                             <small class="badge badge-secondary">
@@ -216,28 +215,72 @@
                 </div>
             </form>
         </div>
+        <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
+                                        <div class="col-sm-10">
+                                            <concepto-select
+                                                name="id_concepto"
+                                                data-vv-as="Concepto"
+                                                id="id_concepto"
+                                                v-model="destino_temp"
+                                                :error="errors.has('id_concepto')"
+                                                ref="conceptoSelect"
+                                                :disableBranchNodes="true"
+                                            ></concepto-select>
+                                            <div class="error-label" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino" :disabled="cargando">
+                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                <i class="fa fa-close" v-else ></i> Cerrar</button>
+                         </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import  ConceptoSelect from "../../cadeco/concepto/Select";
 export default {
     name: "contrato-proyectado-editar",
-    components: {Datepicker, es},
+    components: {Datepicker, es, ConceptoSelect},
     props: ['id'],
     data() {
         return {
             cargando: false,
             es:es,
-            contrato: [],
-            fecha: '',
-            vencimiento: '',
-            cumplimiento: '',
-            referencia: ''
+            contrato : null,
+            fecha : '',
+            vencimiento : '',
+            cumplimiento : '',
+            referencia : '',
+            unidades : [],
+            destino_temp : ''
         }
     },
     mounted() {
         this.find();
+        this.getUnidades();
     },
     methods: {
         salir() {
@@ -269,6 +312,14 @@ export default {
         {
                 return moment(date).format('DD/MM/YYYY');
         },
+        getUnidades() {
+            return this.$store.dispatch('cadeco/unidad/index', {
+                params: {sort: 'unidad',  order: 'asc'}
+            })
+                .then(data => {
+                    this.unidades= data.data;
+                })
+        },
         find()
         {
             this.cargando = true;
@@ -291,6 +342,144 @@ export default {
                     this.save()
                 }
             });
+        },
+        agregarPartida(index){
+            console.log(index)
+            if(index === ''){
+                this.contrato.contratos.data.push({
+                    clave:'',
+                    descripcion:'',
+                    descripcion_sin_formato:'',
+                    unidad:'',
+                    cantidad:'',
+                    destino:'',
+                    destino_path:'',
+                    nivel: 1,
+                    es_hoja:true,
+                    cantidad_hijos:0,
+                });
+            }else{
+                let temp_index = index + 1;
+                while(temp_index in this.contrato.contratos.data && this.contrato.contratos.data[temp_index].nivel_num >= +this.contrato.contratos.data[index].nivel_num + 1){
+                    temp_index= temp_index + 1;
+                }
+                console.log(this.contrato.contratos.data)
+                this.contrato.contratos.data.splice(temp_index, 0, {
+                    clave:'',
+                    descripcion:'',
+                    descripcion_sin_formato:'',
+                    unidad:'',
+                    cantidad:'',
+                    destino:'',
+                    destino_path:'',
+                    nivel_num:this.contratos.data[index].nivel_num + 1,
+                    es_hoja:true,
+                    cantidad_hijos:0,
+                });
+
+                this.contrato.contratos.data[index].es_hoja = false;
+                this.contrato.contratos.data[index].es_rama = true;
+                this.contrato.contratos.data[index].unidad = '';
+                this.contrato.contratos.data[index].cantidad = '';
+                this.contrato.contratos.data[index].destino = '';
+                this.contrato.contratos.data[index].destino_path = '';
+                this.contrato.contratos.data[index].cantidad_hijos = this.contrato.contratos.data[index].cantidad_hijos + 1;
+            }
+
+        },
+        cambiarDestino(){
+            this.contrato.contratos.data[this.edit_destino_index].destino = this.destino_temp;
+            this.edit_destino_index='';
+            this.destino_temp='';
+            $(this.$refs.modalDestino).modal('hide')
+        },
+        cerrarModalDestino(){
+            this.destino_temp = '';
+            $(this.$refs.modal_destino).modal('hide');
+            this.$validator.reset();
+        },
+        copiar_destino(partida){
+            this.partida_copia.destino = partida.destino;
+        },
+        descripcionFormat(i){
+            var len = this.contrato.contratos.data[i].descripcion.length + (+this.contrato.contratos.data[i].nivel_num * 3);
+            return this.contrato.contratos.data[i].descripcion.padStart(len, "_")
+        },
+        descripcionSinFormat(i){
+            var len = (this.contrato.contratos.data[i].nivel_num * 3);
+            let lineas = '';
+            lineas = lineas.padStart(len, "_");
+            return this.contrato.contratos.data[i].descripcion.replace(lineas, '');
+        },
+        habilitar : function(i, event){
+            let nuevo_valor = this.descripcionSinFormat(i);
+            this.contrato.contratos.data[i].descripcion = nuevo_valor;
+            this.contrato.contratos.data[i].descripcion_sin_formato = nuevo_valor;
+            $("#" + event.target.id).removeAttr("readonly");
+        },
+        deshabilitar : function(i,event){
+            let isReadOnly = $("#" + event.target.id).attr("readonly");
+            if(isReadOnly !== "readonly"){
+                this.contrato.contratos.data[i].descripcion_sin_formato = this.descripcionSinFormat(i);
+                let nuevo_valor = this.descripcionFormat(i);
+                this.contrato.contratos.data[i].descripcion = nuevo_valor;
+                $("#" + event.target.id).attr("readonly",true);
+            }
+        },
+        editDestino(index){
+            this.edit_destino_index = index;
+            this.destino_temp = this.contrato.contratos.data[index].destino;
+            $(this.$refs.modalDestino).appendTo('body')
+            $(this.$refs.modalDestino).modal('show')
+        },
+        eliminarPartida(index){
+            if(this.contrato.contratos.data[index].nivel_num === 1){
+                this.contrato.contratos.data.splice(index, 1);
+            }else{
+                let temp_index = index - 1;
+                while(temp_index in this.contrato.contratos.data && this.contrato.contratos.data[temp_index].nivel_num == +this.contrato.contratos.data[index].nivel_num){
+                    temp_index= temp_index - 1;
+                }
+                this.contrato.contratos.data[temp_index].cantidad_hijos = this.contrato.contratos.data[temp_index].cantidad_hijos - 1;
+                this.contrato.contratos.data.splice(index, 1);
+                if(this.contrato.contratos.data[temp_index].cantidad_hijos == 0){
+                    this.contrato.contratos.data[temp_index].es_hoja = true;
+                }
+            }
+        },
+        modalDestino(index) {
+            this.partida_index = index;
+            this.$validator.reset();
+            $(this.$refs.modal_destino).modal('show');
+        },
+        pegar_destino(index){
+            this.contrato.contratos.data[index].destino = this.partida_copia.destino;
+            this.$forceUpdate();
+        },
+        getConcepto(id_concepto) {
+            this.cargando = true;
+            return this.$store.dispatch('cadeco/concepto/find', {
+                id: id_concepto,
+                params: {
+                }
+            })
+                .then(data => {
+                    let path = data.path.split('->');
+                    this.contrato.contratos.data[this.partida_index]['destino']['concepto'] = data;
+                })
+                .finally(()=> {
+                    this.partida_index = '';
+                    this.cargando = false;
+                    $(this.$refs.modal_destino).modal('hide');
+
+                })
+        },
+    },
+    watch: {
+        destino_temp(value) {
+            if (value !== '' && value !== null && value !== undefined) {
+                this.getConcepto(value);
+            }
         },
     }
 }
