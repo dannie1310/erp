@@ -33,7 +33,7 @@ class CotizacionCompraPartidaTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$model->getKey(),
-            'precio_unitario' => $model->precio_unitario,
+            'precio_unitario' => (float) $model->precio_unitario,
             'precio_unitario_format' => $model->precio_unitario_format,
             'cantidad' => $model->cantidad,
             'cantidad_format' => $model->cantidad_format,
