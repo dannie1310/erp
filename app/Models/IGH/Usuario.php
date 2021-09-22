@@ -448,8 +448,8 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         $rolObj = RolSeguridadERP::where('name',"=",$rol)->first();
         if($rolObj){
             $preexistente = RoleUserGlobal::where("user_id","=",$this->idusuario)
-            ->where("role_id","=",$rolObj->id)
-            ->first();
+                ->where("role_id","=",$rolObj->id)
+                ->first();
             if(!$preexistente){
                 $this->rolesUsuarioGlobal()->create([
                     'role_id'=>$rolObj->id
@@ -596,9 +596,12 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
 
     public function cambiarClave92($clave_nueva)
     {
-        $this->usuario92->update([
-            'clave' => $clave_nueva
-        ]);
+        if($this->usuario92)
+        {
+            $this->usuario92->update([
+                'clave' => $clave_nueva
+            ]);
+        }
     }
 
     public function cambiarClaveModuloSAO($clave_nueva)
