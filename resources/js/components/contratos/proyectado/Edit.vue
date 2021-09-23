@@ -95,6 +95,14 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar Partida</button>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
                         <div  class="col-12">
                             <div class="table-responsive">
                                 <table class="table table-striped table-sm">
@@ -110,94 +118,130 @@
                                         <th class="index_corto"></th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <tr v-for="(partida, i) in contrato.contratos.data">
-                                        <td class="icono">
-                                            <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
-                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                <i class="fa fa-plus" v-else></i>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <input type="text" class="form-control"
-                                                   :name="`clave[${i}]`"
-                                                   data-vv-as="Clave"
-                                                   v-model="partida.clave"
-                                                   v-validate="{max:140}"
-                                                   :class="{'is-invalid': errors.has(`clave[${i}]`)}"
-                                                   :id="`clave[${i}]`">
-                                            <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
-                                        </td>
-                                        <td>
-                                             <input type="text" class="form-control"
-                                                    v-model="partida.descripcion"
-                                                    readonly="readonly"
-                                                    @click="habilitar(i, $event)"
-                                                    @focusout="deshabilitar(i, $event)"
-                                                    :name="`descripcion[${i}]`"
-                                                    data-vv-as="Descripción"
-                                                    v-validate="{required: true}"
-                                                    :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
-                                                    :id="`descripcion_${i}`">
-                                            <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
-                                        </td>
-                                        <td>
-                                            <select
-                                                :disabled="!partida.es_hoja"
-                                                type="text"
-                                                :name="`unidad[${i}]`"
-                                                data-vv-as="Unidad"
-                                                v-validate="{required: partida.es_hoja}"
-                                                class="form-control"
-                                                :id="`unidad[${i}]`"
-                                                v-model="partida.unidad"
-                                                :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
-                                                <option value>--Unidad--</option>
-                                                <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
-                                            </select>
-                                            <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
-                                        </td>
-                                        <td>
-                                            <input type="number" class="form-control" :disabled="!partida.es_hoja"
-                                                   :name="`cantidad[${i}]`"
-                                                   data-vv-as="Cantidad"
-                                                   step="any"
-                                                   v-model="partida.cantidad_original"
-                                                   v-validate="{required: partida.es_hoja, decimal:4}"
-                                                   :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                   :id="`cantidad[${i}]`">
-                                            <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
-                                        </td>
-                                        <td v-if="!partida.es_hoja">
-                                            <input type="text" disabled="true" class="form-control" readonly="readonly">
-                                        </td>
-                                        <td v-else>
-                                            <input type="text" class="form-control"
-                                                   readonly="readonly"
-                                                   :title="partida.destino.concepto.path_corta"
-                                                   :name="`destino_path[${i}]`"
-                                                   data-vv-as="Destino"
-                                                   v-model="partida.destino.concepto.path_corta"
-                                                   v-validate="{required: partida.es_hoja}"
-                                                   :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
-                                                   :id="`destino_path[${i}]`">
-                                            <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
-                                        </td>
-                                        <td class="icono">
-                                            <small class="badge badge-secondary">
-                                                <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="partida.es_hoja"></i>
-                                            </small>
-                                            <i class="far fa-copy button" v-on:click="copiar_destino(partida)" v-if="partida.es_hoja"></i>
-                                            <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
-                                        </td>
-                                        <td class="icono">
-                                            <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
-                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                <i class="fa fa-trash" v-else></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
+                                    <tbody  v-if="contrato.puede_editar_partidas" v-for="(partida, i) in contrato.contratos.data">
+                                        <tr>
+                                            <td class="icono">
+                                                <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
+                                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                    <i class="fa fa-plus" v-else></i>
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <input type="text" class="form-control"
+                                                       :name="`clave[${i}]`"
+                                                       data-vv-as="Clave"
+                                                       v-model="partida.clave"
+                                                       v-validate="{max:140}"
+                                                       :class="{'is-invalid': errors.has(`clave[${i}]`)}"
+                                                       :id="`clave[${i}]`">
+                                                <div class="invalid-feedback" v-show="errors.has(`clave[${i}]`)">{{ errors.first(`clave[${i}]`) }}</div>
+                                            </td>
+                                            <td>
+                                                 <input type="text" class="form-control"
+                                                        v-model="partida.descripcion"
+                                                        readonly="readonly"
+                                                        @click="habilitar(i, $event)"
+                                                        @focusout="deshabilitar(i, $event)"
+                                                        :name="`descripcion[${i}]`"
+                                                        data-vv-as="Descripción"
+                                                        v-validate="{required: true}"
+                                                        :class="{'is-invalid': errors.has(`descripcion[${i}]`)}"
+                                                        :id="`descripcion_${i}`">
+                                                <div class="invalid-feedback" v-show="errors.has(`descripcion[${i}]`)">{{ errors.first(`descripcion[${i}]`) }}</div>
+                                            </td>
+                                            <td v-if="partida.es_hoja">
+                                                <select
+                                                    :disabled="!partida.es_hoja"
+                                                    type="text"
+                                                    :name="`unidad[${i}]`"
+                                                    data-vv-as="Unidad"
+                                                    v-validate="{required: partida.es_hoja}"
+                                                    class="form-control"
+                                                    :id="`unidad[${i}]`"
+                                                    v-model="partida.unidad"
+                                                    :class="{'is-invalid': errors.has(`unidad[${i}]`)}">
+                                                    <option value>--Unidad--</option>
+                                                    <option v-for="unidad in unidades" :value="unidad.unidad">{{ unidad.descripcion }}</option>
+                                                </select>
+                                                <div class="invalid-feedback" v-show="errors.has(`unidad[${i}]`)">{{ errors.first(`unidad[${i}]`) }}</div>
+                                            </td>
+                                            <td v-else><input type="text" disabled="true" class="form-control" readonly="readonly"></td>
+                                            <td v-if="partida.es_hoja">
+                                                <input type="number" class="form-control" :disabled="!partida.es_hoja"
+                                                       :name="`cantidad[${i}]`"
+                                                       data-vv-as="Cantidad"
+                                                       step="any"
+                                                       v-model="partida.cantidad_original"
+                                                       v-validate="{required: partida.es_hoja, decimal:4}"
+                                                       :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                       :id="`cantidad[${i}]`">
+                                                <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
+                                            </td>
+                                            <td v-else><input type="text" disabled="true" class="form-control" readonly="readonly"></td>
+                                            <td v-if="!partida.es_hoja">
+                                                <input type="text" disabled="true" class="form-control" readonly="readonly">
+                                            </td>
+                                            <td v-else>
+                                                <input type="text" class="form-control"
+                                                       readonly="readonly"
+                                                       :title="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                       :name="`destino_path[${i}]`"
+                                                       data-vv-as="Destino"
+                                                       v-model="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                       v-validate="{required: partida.es_hoja}"
+                                                       :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                       :id="`destino_path[${i}]`">
+                                                <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                            </td>
+                                            <td class="icono">
+                                                <small class="badge badge-secondary">
+                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="partida.es_hoja"></i>
+                                                </small>
+                                                <i class="far fa-copy button" v-on:click="copiar_destino(partida)" v-if="partida.es_hoja"></i>
+                                                <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="partida.es_hoja"></i>
+                                            </td>
+                                            <td class="icono">
+                                                <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" :disabled="!partida.es_hoja && partida.cantidad_hijos > 0" title="Eliminar">
+                                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                    <i class="fa fa-trash" v-else></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tbody v-else v-for="(concepto, i) in contrato.contratos.data">
+                                        <tr v-if="concepto.unidad == null">
+                                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
+                                            <td :title="concepto.descripcion">
+                                                <span v-for="n in concepto.nivel">-</span>
+                                                <b>{{concepto.descripcion}}</b>
+                                            </td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                        </tr>
+                                        <tr v-else-if="concepto.destino">
+                                            <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                            <td :title="concepto.descripcion">
+                                                <span v-for="n in concepto.nivel">-</span>
+                                                {{concepto.descripcion}}
+                                            </td>
+                                            <td >{{concepto.unidad}}</td>
+                                            <td class="numerico">{{concepto.cantidad_original_format}}</td>
+                                            <td :title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                                {{concepto.destino.concepto.path_corta}}
+                                            </td>
+                                        </tr>
+                                        <tr v-else style="background-color: #ff0000">
+                                            <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                            <td :title="concepto.descripcion">
+                                                <span v-for="n in concepto.nivel">-</span>
+                                                {{concepto.descripcion}}
+                                            </td>
+                                            <td >{{concepto.unidad}}</td>
+                                            <td class="numerico">{{concepto.cantidad_original_format}}</td>
+                                            <td >DESTINO FALTANTE</td>
+                                        </tr>
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -275,7 +319,11 @@ export default {
             cumplimiento : '',
             referencia : '',
             unidades : [],
-            destino_temp : ''
+            destino_temp : '',
+            partida_copia:{
+                destino:'',
+                id_destino:''
+            },
         }
     },
     mounted() {
@@ -287,26 +335,13 @@ export default {
             this.$router.push({name: 'proyectado'});
         },
         save() {
-
-            if(this.contrato.fecha_date == this.fecha && this.contrato.vencimiento == this.vencimiento && this.contrato.cumplimiento == this.cumplimiento && this.contrato.referencia == this.referencia)
-            {
-                swal('¡Error!', 'Favor de ingresar datos actualizados.', 'error')
-            }else{
-
-                return this.$store.dispatch('contratos/contrato-proyectado/update', {
+            return this.$store.dispatch('contratos/contrato-proyectado/update', {
                 id: this.id,
                 data: this.contrato,
-            })
+                })
                 .then(() => {
-                   return this.$store.dispatch('contratos/contrato-proyectado/paginate', { params: {include: 'areasSubcontratantes', sort: 'numero_folio', order: 'DESC'}})
-                    .then(data => {
-                        this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
-                        this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
-                    })
-                   }).finally( ()=>{
-                       $(this.$refs.modal).modal('hide');
-                   });
-            }
+                    this.salir()
+                })
         },
         formatoFecha(date)
         {
@@ -328,6 +363,11 @@ export default {
                 params:{ include: [ 'contratos.destino' ]}
             }).then(data => {
                 this.contrato = data;
+                for (var i = 0; i < data.contratos.data.length; i++)
+                {
+                    var len = this.contrato.contratos.data[i].descripcion.length + (+this.contrato.contratos.data[i].nivel_num * 3);
+                    this.contrato.contratos.data[i].descripcion = this.contrato.contratos.data[i].descripcion.padStart(len, "_")
+                }
                 this.fecha = data.fecha_date;
                 this.referencia = data.referencia;
                 this.cumplimiento = data.cumplimiento;
@@ -344,17 +384,15 @@ export default {
             });
         },
         agregarPartida(index){
-            console.log(index)
             if(index === ''){
                 this.contrato.contratos.data.push({
                     clave:'',
                     descripcion:'',
-                    descripcion_sin_formato:'',
                     unidad:'',
                     cantidad:'',
                     destino:'',
                     destino_path:'',
-                    nivel: 1,
+                    nivel_num: 1,
                     es_hoja:true,
                     cantidad_hijos:0,
                 });
@@ -363,43 +401,29 @@ export default {
                 while(temp_index in this.contrato.contratos.data && this.contrato.contratos.data[temp_index].nivel_num >= +this.contrato.contratos.data[index].nivel_num + 1){
                     temp_index= temp_index + 1;
                 }
-                console.log(this.contrato.contratos.data)
-                this.contrato.contratos.data.splice(temp_index, 0, {
+                this.contrato.contratos['data'].splice(temp_index, 0, {
                     clave:'',
                     descripcion:'',
-                    descripcion_sin_formato:'',
                     unidad:'',
                     cantidad:'',
                     destino:'',
                     destino_path:'',
-                    nivel_num:this.contratos.data[index].nivel_num + 1,
-                    es_hoja:true,
-                    cantidad_hijos:0,
+                    nivel_num: this.contrato.contratos.data[index].nivel_num + 1,
+                    es_hoja: true,
+                    cantidad_hijos:0
                 });
-
                 this.contrato.contratos.data[index].es_hoja = false;
                 this.contrato.contratos.data[index].es_rama = true;
                 this.contrato.contratos.data[index].unidad = '';
                 this.contrato.contratos.data[index].cantidad = '';
                 this.contrato.contratos.data[index].destino = '';
-                this.contrato.contratos.data[index].destino_path = '';
                 this.contrato.contratos.data[index].cantidad_hijos = this.contrato.contratos.data[index].cantidad_hijos + 1;
             }
-
-        },
-        cambiarDestino(){
-            this.contrato.contratos.data[this.edit_destino_index].destino = this.destino_temp;
-            this.edit_destino_index='';
-            this.destino_temp='';
-            $(this.$refs.modalDestino).modal('hide')
         },
         cerrarModalDestino(){
             this.destino_temp = '';
             $(this.$refs.modal_destino).modal('hide');
             this.$validator.reset();
-        },
-        copiar_destino(partida){
-            this.partida_copia.destino = partida.destino;
         },
         descripcionFormat(i){
             var len = this.contrato.contratos.data[i].descripcion.length + (+this.contrato.contratos.data[i].nivel_num * 3);
@@ -414,13 +438,11 @@ export default {
         habilitar : function(i, event){
             let nuevo_valor = this.descripcionSinFormat(i);
             this.contrato.contratos.data[i].descripcion = nuevo_valor;
-            this.contrato.contratos.data[i].descripcion_sin_formato = nuevo_valor;
             $("#" + event.target.id).removeAttr("readonly");
         },
         deshabilitar : function(i,event){
             let isReadOnly = $("#" + event.target.id).attr("readonly");
             if(isReadOnly !== "readonly"){
-                this.contrato.contratos.data[i].descripcion_sin_formato = this.descripcionSinFormat(i);
                 let nuevo_valor = this.descripcionFormat(i);
                 this.contrato.contratos.data[i].descripcion = nuevo_valor;
                 $("#" + event.target.id).attr("readonly",true);
@@ -444,6 +466,7 @@ export default {
                 this.contrato.contratos.data.splice(index, 1);
                 if(this.contrato.contratos.data[temp_index].cantidad_hijos == 0){
                     this.contrato.contratos.data[temp_index].es_hoja = true;
+                    this.contrato.contratos.data[temp_index].destino = '';
                 }
             }
         },
@@ -452,27 +475,40 @@ export default {
             this.$validator.reset();
             $(this.$refs.modal_destino).modal('show');
         },
+        copiar_destino(partida){
+            if(partida.hasOwnProperty('id_destino')) {
+                this.partida_copia.destino = partida.destino;
+                this.partida_copia.id_destino = partida.id_destino;
+            }else{
+                this.partida_copia.destino = partida.destino.concepto.descripcion;
+                this.partida_copia.id_destino = partida.destino.id_concepto;
+            }
+        },
         pegar_destino(index){
-            this.contrato.contratos.data[index].destino = this.partida_copia.destino;
+            if(this.contrato.contratos.data[index].hasOwnProperty('id_destino')) {
+                this.contrato.contratos.data[index].destino = this.partida_copia.destino;
+                this.contrato.contratos.data[index].id_destino = this.partida_copia.id_destino;
+            }else{
+                this.contrato.contratos.data[index].destino = this.partida_copia.destino;
+                this.contrato.contratos.data[index].id_destino = this.partida_copia.id_destino;
+            }
             this.$forceUpdate();
         },
         getConcepto(id_concepto) {
             this.cargando = true;
             return this.$store.dispatch('cadeco/concepto/find', {
-                id: id_concepto,
-                params: {
-                }
+                id: id_concepto
             })
-                .then(data => {
-                    let path = data.path.split('->');
-                    this.contrato.contratos.data[this.partida_index]['destino']['concepto'] = data;
-                })
-                .finally(()=> {
-                    this.partida_index = '';
-                    this.cargando = false;
-                    $(this.$refs.modal_destino).modal('hide');
-
-                })
+            .then(data => {
+                let path = data.path.split('->');
+                this.contrato.contratos.data[this.partida_index].id_destino = data.id;
+                this.contrato.contratos.data[this.partida_index].destino = path[path.length - 2] + ' -> ' + data.path_corta;
+            })
+            .finally(()=> {
+                this.partida_index = '';
+                this.cargando = false;
+                $(this.$refs.modal_destino).modal('hide');
+            })
         },
     },
     watch: {
