@@ -444,20 +444,28 @@ class ContratoProyectado extends Transaccion
                     $datos['nivel'] = $nivel;
                     $datos['descripcion'] = str_replace('_','',$contrato['descripcion']);
                     $datos['clave'] = $contrato['clave'];
-                    $datos['unidad'] = NULL;
                     if($contrato['es_hoja']){
 
                         if(array_key_exists('id_destino', $contrato))
                         {
                             $datos['id_destino'] = $contrato['id_destino'];
+                        }else{
+                            $datos['id_destino'] = $contrato['destino']['id_concepto'];
                         }
                         $datos['unidad'] = $contrato['unidad'];
                         $datos['cantidad_original'] = $contrato['cantidad_original'];
                         $datos['cantidad_presupuestada'] = $contrato['cantidad_original'];
+                    }else{
+                        if (array_key_exists('destino', $contrato) && $contrato['destino'] == '')
+                        {
+                            $datos['id_destino'] = NULL;
+                        }
+                        $datos['unidad'] = NULL;
+                        $datos['cantidad_original'] = NULL;
+                        $datos['cantidad_presupuestada'] = NULL;
                     }
                     if(array_key_exists('id',$contrato))
                     {
-                        $partidas_viejas[$contrato['id']] = $contrato['id'];
                         $con =  Contrato::where('id_concepto',$contrato['id'])->first();
                         $con->update($datos);
                     }else{

@@ -157,13 +157,20 @@ class Contrato extends Model
 
     public function editarDestino()
     {
-        $this->destino->update([
-            'id_transaccion' => $this->id_transaccion,
-            'id_concepto_contrato' => $this->id_concepto,
-            'id_concepto' => $this->id_destino,
-        ]);
-        $this->where('id_concepto', '=', $this->id_concepto)->update([
-            'id_destino' => null
-        ]);
+        $destino = Destino::where('id_transaccion', $this->id_transaccion)->where('id_concepto_contrato', $this->getKey());
+        if($destino) {
+            if (is_null($this->id_destino)) {
+                $destino->delete();
+            }else {
+                $destino->update([
+                    'id_concepto' => $this->id_destino,
+                ]);
+                $this->where('id_concepto', '=', $this->id_concepto)->update([
+                    'id_destino' => null
+                ]);
+            }
+        }else {
+            $this->registrarDestino();
+        }
     }
 }
