@@ -20,7 +20,10 @@ class ContratoObserver
 
     public function updated(Contrato $contrato)
     {
-        $contrato->editarDestino();
+        if($contrato->getOriginal('id_destino') != $contrato->id_destino )
+        {
+            $contrato->editarDestino();
+        }
     }
 
     public function deleting(Contrato $contrato)
