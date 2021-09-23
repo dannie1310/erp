@@ -209,37 +209,20 @@
                                         </tr>
                                     </tbody>
                                     <tbody v-else v-for="(concepto, i) in contrato.contratos.data">
-                                        <tr v-if="concepto.unidad == null">
+                                        <tr>
                                             <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
                                             <td :title="concepto.descripcion">
                                                 <span v-for="n in concepto.nivel">-</span>
                                                 <b>{{concepto.descripcion}}</b>
                                             </td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                        </tr>
-                                        <tr v-else-if="concepto.destino">
-                                            <td :title="concepto.clave">{{ concepto.clave }}</td>
-                                            <td :title="concepto.descripcion">
-                                                <span v-for="n in concepto.nivel">-</span>
-                                                {{concepto.descripcion}}
-                                            </td>
-                                            <td >{{concepto.unidad}}</td>
-                                            <td class="numerico">{{concepto.cantidad_original_format}}</td>
-                                            <td :title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                            <td v-if="concepto.unidad == null"></td>
+                                            <td v-else>{{concepto.unidad}}</td>
+                                            <td v-if="concepto.unidad == null"></td>
+                                            <td v-else class="numerico">{{concepto.cantidad_original_format}}></td>
+                                            <td v-if="concepto.unidad == null"></td>
+                                            <td v-else:title="concepto.destino.concepto.path" style="text-decoration: underline">
                                                 {{concepto.destino.concepto.path_corta}}
                                             </td>
-                                        </tr>
-                                        <tr v-else style="background-color: #ff0000">
-                                            <td :title="concepto.clave">{{ concepto.clave }}</td>
-                                            <td :title="concepto.descripcion">
-                                                <span v-for="n in concepto.nivel">-</span>
-                                                {{concepto.descripcion}}
-                                            </td>
-                                            <td >{{concepto.unidad}}</td>
-                                            <td class="numerico">{{concepto.cantidad_original_format}}</td>
-                                            <td >DESTINO FALTANTE</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -480,7 +463,7 @@ export default {
                 this.partida_copia.destino = partida.destino;
                 this.partida_copia.id_destino = partida.id_destino;
             }else{
-                this.partida_copia.destino = partida.destino.concepto.descripcion;
+                this.partida_copia.destino = partida.destino.concepto.path_corta;
                 this.partida_copia.id_destino = partida.destino.id_concepto;
             }
         },

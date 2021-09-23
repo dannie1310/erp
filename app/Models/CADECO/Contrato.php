@@ -153,6 +153,19 @@ class Contrato extends Model
                 'id_destino' => null
             ]);
         }
+    }
 
+    public function editarDestino()
+    {
+        if($this->id_destino) {
+            $this->destino->update([
+                'id_transaccion' => $this->id_transaccion,
+                'id_concepto_contrato' => $this->id_concepto,
+                'id_concepto' => $this->id_destino,
+            ]);
+            $this->where('id_concepto', '=', $this->id_concepto)->update([
+                'id_destino' => null
+            ]);
+        }
     }
 }

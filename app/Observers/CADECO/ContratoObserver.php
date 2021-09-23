@@ -18,6 +18,11 @@ class ContratoObserver
         $contrato->registrarDestino();
     }
 
+    public function updated(Contrato $contrato)
+    {
+        $contrato->editarDestino();
+    }
+
     public function deleting(Contrato $contrato)
     {
         ContratoEliminado::create([

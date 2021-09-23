@@ -444,7 +444,9 @@ class ContratoProyectado extends Transaccion
                     $datos['nivel'] = $nivel;
                     $datos['descripcion'] = str_replace('_','',$contrato['descripcion']);
                     $datos['clave'] = $contrato['clave'];
+                    $datos['unidad'] = NULL;
                     if($contrato['es_hoja']){
+
                         if(array_key_exists('id_destino', $contrato))
                         {
                             $datos['id_destino'] = $contrato['id_destino'];
@@ -453,7 +455,6 @@ class ContratoProyectado extends Transaccion
                         $datos['cantidad_original'] = $contrato['cantidad_original'];
                         $datos['cantidad_presupuestada'] = $contrato['cantidad_original'];
                     }
-
                     if(array_key_exists('id',$contrato))
                     {
                         $partidas_viejas[$contrato['id']] = $contrato['id'];
