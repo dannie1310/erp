@@ -94,7 +94,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <hr />
+                    <div class="row" v-if="contrato.puede_editar_partidas">
                         <div class="col-md-12">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar Partida</button>
@@ -105,7 +106,7 @@
                     <div class="row">
                         <div  class="col-12">
                             <div class="table-responsive">
-                                <table class="table table-striped table-sm">
+                                <table v-if="contrato.puede_editar_partidas" class="table table-striped table-sm">
                                     <thead>
                                     <tr>
                                         <th class="index_corto"></th>
@@ -118,7 +119,7 @@
                                         <th class="index_corto"></th>
                                     </tr>
                                     </thead>
-                                    <tbody  v-if="contrato.puede_editar_partidas" v-for="(partida, i) in contrato.contratos.data">
+                                    <tbody v-for="(partida, i) in contrato.contratos.data">
                                         <tr>
                                             <td class="icono">
                                                 <button @click="agregarPartida(i)" type="button" class="btn btn-sm btn-outline-success" :disabled="cargando" title="Agregar">
@@ -181,16 +182,29 @@
                                             <td v-if="!partida.es_hoja">
                                                 <input type="text" disabled="true" class="form-control" readonly="readonly">
                                             </td>
-                                            <td v-else>
+                                            <td v-else-if="partida.cantidad_original == 0">
                                                 <input type="text" class="form-control"
+                                                       value=""
                                                        readonly="readonly"
-                                                       :title="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                       :title="partida.destino"
                                                        :name="`destino_path[${i}]`"
                                                        data-vv-as="Destino"
-                                                       v-model="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                       v-model="partida.destino"
                                                        v-validate="{required: partida.es_hoja}"
                                                        :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
                                                        :id="`destino_path[${i}]`">
+                                                <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                            </td>
+                                            <td v-else>
+                                                 <input type="text" class="form-control"
+                                                        readonly="readonly"
+                                                        :title="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                        :name="`destino_path[${i}]`"
+                                                        data-vv-as="Destino"
+                                                        v-model="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                        v-validate="{required: partida.es_hoja}"
+                                                        :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                        :id="`destino_path[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                             </td>
                                             <td class="icono">
@@ -208,19 +222,27 @@
                                             </td>
                                         </tr>
                                     </tbody>
-                                    <tbody v-else v-for="(concepto, i) in contrato.contratos.data">
+                                </table>
+                                <table v-else class="table table-striped table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th class="c120">Clave</th>
+                                        <th >Descripción</th>
+                                        <th class="c150">Unidad</th>
+                                        <th class="cantidad_input">Cantidad</th>
+                                        <th>Destinos</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody v-for="(concepto, i) in contrato.contratos.data">
                                         <tr>
-                                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                                            <td :title="concepto.descripcion">
-                                                <span v-for="n in concepto.nivel">-</span>
-                                                <b>{{concepto.descripcion}}</b>
-                                            </td>
+                                            <td :title="concepto.clave">{{concepto.clave}}</td>
+                                            <td :title="concepto.descripcion">{{concepto.descripcion_guion}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else>{{concepto.unidad}}</td>
+                                            <td v-else class="c150">{{concepto.unidad}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else class="numerico">{{concepto.cantidad_original_format}}></td>
+                                            <td v-else class="cantidad_input">{{concepto.cantidad_original_format}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else:title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                            <td v-else :title="concepto.destino.concepto.path" style="text-decoration: underline">
                                                 {{concepto.destino.concepto.path_corta}}
                                             </td>
                                         </tr>
