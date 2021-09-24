@@ -368,6 +368,15 @@ class Invitacion extends Model
         return false;
     }
 
+    public function getCotizacionCompletaAttribute()
+    {
+        if(is_null($this->cotizacionCompra))
+        {
+            return false;
+        }
+        return $this->cotizacionCompra->partidas->count() == $this->solicitud->partidas->count() ? true : false;
+    }
+
     /**
      * Métodos
      */

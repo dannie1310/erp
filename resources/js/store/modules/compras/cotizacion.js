@@ -355,25 +355,27 @@ export default {
         },
         enviarCotizacion(context, payload) {
             return new Promise((resolve, reject) => {
-                swal({
-                    title: "¿Estás seguro?",
-                    text: "Enviar Cotización",
-                    icon: "warning",
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
-                        },
-                        confirm: {
-                            text: 'Si, Enviar',
-                            closeModal: false,
+                console.log(payload)
+                if (payload.cotizacion_completa == false) {
+                    swal({
+                        title: "Partidas faltantes de cotizar",
+                        text: "¿Está seguro de enviar la cotización con partidas faltantes de cotizar?",
+                        icon: "warning",
+                        closeOnClickOutside: false,
+                        buttons: {
+                            cancel: {
+                                text: 'Cancelar',
+                                visible: true
+                            },
+                            confirm: {
+                                text: 'Si, Enviar',
+                                closeModal: false,
+                            }
                         }
-                    }
-                })
-                    .then((value) => {
+                    }).then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id_cotizacion+'/portal-proveedor/enviar', payload)
+                                .patch(URI + payload.id_cotizacion + '/portal-proveedor/enviar', payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("La cotización se ha enviado correctamente", {
@@ -390,6 +392,43 @@ export default {
                                 })
                         }
                     });
+                }else {
+                    swal({
+                        title: "¿Estás seguro?",
+                        text: "Enviar Cotización",
+                        icon: "warning",
+                        buttons: {
+                            cancel: {
+                                text: 'Cancelar',
+                                visible: true
+                            },
+                            confirm: {
+                                text: 'Si, Enviar',
+                                closeModal: false,
+                            }
+                        }
+                    })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id_cotizacion + '/portal-proveedor/enviar', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("La cotización se ha enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+                }
             });
         },
         eliminarProveedor(context, payload) {

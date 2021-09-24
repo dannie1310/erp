@@ -141,6 +141,7 @@
                 let _self = this;
                 this.$validator.validate().then(result => {
                     if (result) {
+                        console.log(_self.invitacion.cotizacion_completa);
                         _self.post.id_invitacion = _self.id_invitacion;
                         _self.post.id_cotizacion = _self.id_cotizacion;
                         _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;
@@ -149,6 +150,7 @@
                         _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
                         _self.post.archivos_fichas_tecnicas = _self.archivos_fichas_tecnicas;
                         _self.post.nombres_archivos_fichas_tecnicas = _self.nombres_archivos_fichas_tecnicas;
+                        _self.post.cotizacion_completa = _self.invitacion.cotizacion_completa
 
                         return this.$store.dispatch('compras/cotizacion/enviarCotizacion', _self.post)
                         .then((data) => {
