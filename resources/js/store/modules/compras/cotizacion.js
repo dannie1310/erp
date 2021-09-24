@@ -355,7 +355,6 @@ export default {
         },
         enviarCotizacion(context, payload) {
             return new Promise((resolve, reject) => {
-                console.log(payload)
                 if (payload.cotizacion_completa == false) {
                     swal({
                         title: "Partidas faltantes de cotizar",

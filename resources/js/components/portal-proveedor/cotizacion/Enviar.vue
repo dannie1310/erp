@@ -141,7 +141,6 @@
                 let _self = this;
                 this.$validator.validate().then(result => {
                     if (result) {
-                        console.log(_self.invitacion.cotizacion_completa);
                         _self.post.id_invitacion = _self.id_invitacion;
                         _self.post.id_cotizacion = _self.id_cotizacion;
                         _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;

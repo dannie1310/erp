@@ -370,11 +370,10 @@ class Invitacion extends Model
 
     public function getCotizacionCompletaAttribute()
     {
-        if(is_null($this->cotizacionCompra))
-        {
-            return false;
+        if(!is_null($this->cotizacionCompra) && !is_null($this->solicitud)) {
+            return $this->cotizacionCompra->partidas->count() == $this->solicitud->partidas->count() ? true : false;
         }
-        return $this->cotizacionCompra->partidas->count() == $this->solicitud->partidas->count() ? true : false;
+        return null;
     }
 
     /**
