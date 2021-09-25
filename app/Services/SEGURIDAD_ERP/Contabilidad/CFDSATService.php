@@ -9,6 +9,7 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use DateTime;
+use DateTimeZone;
 use App\Utils\CFD;
 use App\Utils\Util;
 use App\Utils\Files;
@@ -1134,13 +1135,31 @@ class CFDSATService
         return null;
     }
 
-    public function obtenerInformeSATLP2020()
+    public function obtenerInformeSATLP2020($data)
     {
-        return $this->repository->obtenerInformeSATLP2020();
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $this->repository->obtenerInformeSATLP2020($data);
     }
 
-    public function obtenerCuentasInformeSATLP2020($id)
+    public function obtenerCuentasInformeSATLP2020($data)
     {
-        return $this->repository->obtenerCuentasInformeSATLP2020($id);
+
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $this->repository->obtenerCuentasInformeSATLP2020($data);
     }
 }
