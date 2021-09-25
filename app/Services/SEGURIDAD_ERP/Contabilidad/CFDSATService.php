@@ -1133,4 +1133,14 @@ class CFDSATService
         }
         return null;
     }
+
+    public function obtenerInformeSATLP2020()
+    {
+        return $this->repository->obtenerInformeSATLP2020();
+    }
+
+    public function obtenerCuentasInformeSATLP2020($id)
+    {
+        return $this->repository->obtenerCuentasInformeSATLP2020($id);
+    }
 }
