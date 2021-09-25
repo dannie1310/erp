@@ -165,15 +165,15 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         $ctgNoLocalizadoRepository->actualizaNoLocalizado($cargaCFDSAT);
     }
 
-    public function obtenerInformeSATLP2020()
+    public function obtenerInformeSATLP2020($data)
     {
-        $informe["informe"] = InformeSATLP::get();
+        $informe["informe"] = InformeSATLP::get($data);
         return $informe;
     }
 
-    public function obtenerCuentasInformeSATLP2020($id)
+    public function obtenerCuentasInformeSATLP2020($data)
     {
-        $informe["informe"] = InformeSATLP::getCuentas($id);
+        $informe["informe"] = InformeSATLP::getCuentas($data);
         return $informe;
     }
 }
