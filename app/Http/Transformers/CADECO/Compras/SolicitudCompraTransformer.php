@@ -57,7 +57,8 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'autorizacion_requerida' => $model->obra->configuracionCompras ? $model->obra->configuracionCompras->con_autorizacion:"0",
             'direccion_entrega' => $model->obra->direccion_proyecto,
             'ubicacion_entrega_plataforma_digital' => $model->obra->direccion_plataforma_digital,
-            "tipo_transaccion" => $model->tipo_transaccion,
+            'tipo_transaccion' => $model->tipo_transaccion,
+            'estados_invitacion_cotizaciones' => $model->estados_invitacion_cotizaciones
         ];
     }
 

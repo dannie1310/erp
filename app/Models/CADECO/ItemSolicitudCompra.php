@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 
 use App\Models\CADECO\Compras\SolicitudPartidaComplemento;
 use App\Models\CADECO\Compras\AsignacionProveedorPartida;
+use App\Models\CADECO\CotizacionCompraPartida;
 
 class ItemSolicitudCompra extends Item
 {
@@ -23,6 +24,9 @@ class ItemSolicitudCompra extends Item
         'cantidad'
     ];
 
+    /**
+     * Relaciones
+     */
     public function complemento()
     {
         return $this->belongsTo(SolicitudPartidaComplemento::class, 'id_item', 'id_item');
@@ -58,6 +62,18 @@ class ItemSolicitudCompra extends Item
         return $this->hasMany(ItemOrdenCompra::class, 'item_antecedente', 'id_item');
     }
 
+    /**
+     * Scopes
+     */
+    public function scopeOrdenarPartidas($query)
+    {
+        return $query->orderBy('id_material', 'asc');
+    }
+
+
+    /**
+     * Atributos
+     */
     public function getCantidadOrdenCompraAttribute()
     {
         return $this->join('transacciones', 'transacciones.id_transaccion', 'items.id_transaccion')
@@ -100,5 +116,18 @@ class ItemSolicitudCompra extends Item
     public function getCantidadFormatAttribute()
     {
         return number_format($this->cantidad, 1, '.', ',');
+    }
+
+    /**
+     * Métodos
+     */
+    public function estaPartidaCotizada($id_cotizacion)
+    {
+        $partida = CotizacionCompraPartida::where('id_transaccion', $id_cotizacion)->where('id_material', $this->id_material)->first();
+        if(!is_null($partida))
+        {
+            return true;
+        }
+        return false;
     }
 }
