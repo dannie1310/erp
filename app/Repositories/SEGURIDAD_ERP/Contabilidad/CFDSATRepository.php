@@ -179,11 +179,8 @@ class CFDSATRepository extends Repository implements RepositoryInterface
 
     public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final)
     {
-        $cfdi = CFDSAT::where("id_proveedor_sat","=", $id_proveedor)
-            ->whereBetween("fecha",[$fecha_inicial->format("Y-m-d")." 00:00:00",$fecha_final->format("Y-m-d")." 23:59:59"])
-            ->where("cancelado","=",0)
-            ->whereIn("tipo_comprobante",["I","E"])
-        ->get();
+
+        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final);
         return $cfdi;
     }
 

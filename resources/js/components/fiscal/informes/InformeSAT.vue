@@ -290,7 +290,7 @@
         </div>
 
         <div class="modal fade" ref="modal_cfdi" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
-                 <div class="modal-dialog modal-lg" id="mdialTamanio">
+                 <div class="modal-dialog modal-xl" id="mdialTamanio">
                      <div class="modal-content">
                         <div class="modal-header">
                             <h4 class="modal-title"><i class="fa fa-file-invoice-dollar"></i> Lista de CFDI</h4>
@@ -303,7 +303,7 @@
                                         <tr>
                                             <td colspan="3" style="border: none"><h6>{{rfc}}</h6></td>
                                             <td colspan="5" style="border: none"><h6>{{razon_social}}</h6></td>
-                                            <td colspan="2" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
+                                            <td colspan="6" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto encabezado">#</th>
@@ -315,6 +315,10 @@
                                             <th class="encabezado">TC</th>
                                             <th class="encabezado">Total</th>
                                             <th class="encabezado">Total MXN</th>
+                                            <th class="encabezado">Fue Reemplazado</th>
+                                            <th class="encabezado">Fecha CFDI Reemplazo</th>
+                                            <th class="encabezado">Es reemplazo</th>
+                                            <th class="encabezado">Fecha CFDI Original</th>
                                             <th class="encabezado"></th>
                                         </tr>
                                         <tr v-for="(cfdi, i) in lista_cfdi">
@@ -334,40 +338,51 @@
                                             </td>
                                             <td style="text-align: right">
                                                 <span v-if="cfdi.total_xls != null">
-                                                    ${{ parseFloat(cfdi.total_xls).formatMoney(2,".",",") }}
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                 </span>
                                                 <span v-else>
-                                                    ${{ parseFloat(cfdi.total).formatMoney(2,".",",") }}
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                 </span>
 
                                             </td>
                                             <template v-if="cfdi.moneda !='MXN'">
                                                  <td style="text-align: right" v-if="cfdi.tc_xls != null">
                                                     <span v-if="cfdi.total_xls != null">
-                                                        ${{ parseFloat(cfdi.total_xls * cfdi.tc_xls).formatMoney(2,".",",") }}
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls * cfdi.tc_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                     </span>
                                                     <span v-else>
-                                                        ${{ parseFloat(cfdi.total * cfdi.tc_xls).formatMoney(2,".",",") }}
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total * cfdi.tc_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                     </span>
                                                 </td>
                                                 <td style="text-align: right" v-else>
                                                     <span v-if="cfdi.total_xls != null">
-                                                        ${{ parseFloat(cfdi.total_xls * cfdi.tipo_cambio).formatMoney(2,".",",") }}
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls * cfdi.tipo_cambio).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                     </span>
                                                     <span v-else>
-                                                        ${{ parseFloat(cfdi.total * cfdi.tipo_cambio).formatMoney(2,".",",") }}
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total * cfdi.tipo_cambio).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                     </span>
                                                 </td>
                                             </template>
                                             <td style="text-align: right" v-else>
                                                 <span v-if="cfdi.total_xls != null">
-                                                    ${{ parseFloat(cfdi.total_xls).formatMoney(2,".",",") }}
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                 </span>
                                                 <span v-else>
-                                                    ${{ parseFloat(cfdi.total).formatMoney(2,".",",") }}
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
                                                 </span>
                                             </td>
-
+                                            <td style="text-align: center">
+                                                <span v-if="cfdi.id_reemplaza>0"><i class="fa fa-check"></i></span>
+                                            </td>
+                                            <td>
+                                                <CFDI v-if="cfdi.id_reemplaza >0" v-bind:txt="cfdi.fecha_reemplaza" v-bind:id="cfdi.id_reemplaza" @click="cfdi.id_reemplaza" ></CFDI>
+                                            </td>
+                                            <td style="text-align: center">
+                                                <span v-if="cfdi.id_reemplazado>0"><i class="fa fa-check"></i></span>
+                                            </td>
+                                            <td>
+                                                <CFDI v-if="cfdi.id_reemplazado >0" v-bind:txt="cfdi.fecha_reemplazado" v-bind:id="cfdi.id_reemplazado" @click="cfdi.id_reemplazado" ></CFDI>
+                                            </td>
                                             <td style="width: 90px">
                                                 <CFDI v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
                                                 <DescargaCFDI v-bind:id="cfdi.id"></DescargaCFDI>
