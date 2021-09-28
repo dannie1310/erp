@@ -8,6 +8,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
 use DateTimeZone;
 use App\Utils\CFD;
@@ -1161,5 +1162,24 @@ class CFDSATService
 
         $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
         return $this->repository->obtenerCuentasInformeSATLP2020($data);
+    }
+
+    public function obtenerListaCFDI($data)
+    {
+
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $cfdiRepository = new CFDSATRepository(new CFDSAT());
+
+        return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"]);
     }
 }
