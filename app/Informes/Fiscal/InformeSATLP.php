@@ -215,8 +215,11 @@ SELECT proveedores_sat.id as id_proveedor_sat,
                     ON (cuentas_movimientos.id_cuenta = Subquery.id_cuenta)
            WHERE     (cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                                     AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                 AND (    (cuentas_movimientos.tipo_movimiento = 'VERDADERO')
-                      AND cuentas_movimientos.tipo_poliza = 3)) Subquery
+                 AND (    (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
+                      AND cuentas_movimientos.tipo_poliza = 3)  OR (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
+                      AND cuentas_movimientos.tipo_poliza = 2))
+
+                      ) Subquery
             ON (Subquery.id_cuenta =
                    tmp_cuentas_contpaq_proveedores_sat.id_cuenta))
         FULL OUTER JOIN
