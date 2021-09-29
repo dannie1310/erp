@@ -115,7 +115,9 @@ class EntradaMaterial extends Transaccion
             if($inventario->movimientos->count()>0){
                 foreach ($inventario->movimientos as $movimiento)
                 {
-                    $salidas_arr[] = $movimiento->salida;
+                    if($movimiento->salida != null){
+                        $salidas_arr[] = $movimiento->salida;
+                    }
                 }
             }
         }

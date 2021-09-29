@@ -157,6 +157,7 @@ class FacturaService
         }*/
 
         $arreglo["total"] = $arreglo_cfd["total"];
+        $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];
         $arreglo["serie"] = $arreglo_cfd["serie"];
         $arreglo["folio"] = $arreglo_cfd["folio"];
@@ -363,6 +364,7 @@ class FacturaService
             "vencimiento" => $vencimiento->format('Y-m-d'),
             'monto' => $data["total"],
             "saldo" => $data["total"],
+            "impuesto" => $data["impuesto"],
             "referencia" => $referencia,
             "observaciones" => $data["observaciones"],
         ];

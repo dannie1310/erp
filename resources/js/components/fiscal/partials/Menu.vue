@@ -100,6 +100,12 @@
                     </li>
                 </ul>
             </li>
+            <li class="nav-item"  >
+                <router-link :to="{name: 'informe-sat'}" class="nav-link" :class="{active: this.$route.name == 'informe-sat'}">
+                    <i class="fa fa-file-alt nav-icon"></i>
+                    <p>Informe SAT LP 2020</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
 </template>

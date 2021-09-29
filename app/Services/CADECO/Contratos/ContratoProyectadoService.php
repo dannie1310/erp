@@ -86,8 +86,8 @@ class ContratoProyectadoService
                         $nivel_contrato_anterior = $nivel;
                         $nivel_anterior = $contrato['nivel'];
                     }else{
-                        $cant = Contrato::where('nivel', 'LIKE', substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . '___.')->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
-                        $nivel = substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
+                        $cant = Contrato::where('nivel', 'LIKE', mb_substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . '___.')->where('id_transaccion', '=', $contrato_proyectado->id_transaccion)->count();
+                        $nivel = mb_substr($nivel_contrato_anterior, 0, (($contrato['nivel'] - 1) * 4)) . str_pad($cant, 3, 0, 0) . '.';
                         $nivel_contrato_anterior = $nivel;
                         $nivel_anterior = $contrato['nivel'];
                     }
@@ -343,9 +343,9 @@ class ContratoProyectadoService
                     $items[$i] = [
                         'id_concepto' => $contrato->id_concepto,
                         'descripcion' => $contrato->descripcion,
-                        'descripcion_corta' => substr($contrato->descripcion, 0, 20),
+                        'descripcion_corta' => mb_substr($contrato->descripcion, 0, 20),
                         'destino' => $contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel),
-                        'destino_corto' => substr($contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel), 0, 20),
+                        'destino_corto' => mb_substr($contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel), 0, 20),
                         'unidad' => $contrato->unidad,
                         'cantidad_solicitada' => number_format($contrato->cantidad_original, 4, '.', ''),
                         'cantidad_aprobada' => number_format($contrato->cantidad_original, 4, '.', ''),
