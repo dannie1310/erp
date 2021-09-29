@@ -23,7 +23,8 @@ class SolicitudCompraTransformer extends TransformerAbstract
         'partidas',
         'usuario',
         'cotizaciones',
-        'relaciones'
+        'relaciones',
+        'detalleEstadoCotizacion'
     ];
 
     /**
@@ -57,8 +58,7 @@ class SolicitudCompraTransformer extends TransformerAbstract
             'autorizacion_requerida' => $model->obra->configuracionCompras ? $model->obra->configuracionCompras->con_autorizacion:"0",
             'direccion_entrega' => $model->obra->direccion_proyecto,
             'ubicacion_entrega_plataforma_digital' => $model->obra->direccion_plataforma_digital,
-            'tipo_transaccion' => $model->tipo_transaccion,
-            'estados_invitacion_cotizaciones' => $model->estados_invitacion_cotizaciones
+            'tipo_transaccion' => $model->tipo_transaccion
         ];
     }
 
@@ -119,6 +119,19 @@ class SolicitudCompraTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param SolicitudCompra $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeDetalleEstadoCotizacion(SolicitudCompra $model)
+    {
+        if($estados = $model->estados_invitacion_cotizaciones)
+        {
+            return $this->item($estados, new DetalleEstadoCotizacionTransformer);
         }
         return null;
     }
