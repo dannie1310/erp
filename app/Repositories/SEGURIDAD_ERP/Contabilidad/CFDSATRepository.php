@@ -10,6 +10,7 @@ namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
 use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
+use App\Informes\Fiscal\InformeSATLP;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
@@ -163,4 +164,24 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         $ctgNoLocalizadoRepository = new CtgNoLocalizadoRepository($ctgNoLocalizadoModel);
         $ctgNoLocalizadoRepository->actualizaNoLocalizado($cargaCFDSAT);
     }
+
+    public function obtenerInformeSATLP2020($data)
+    {
+        $informe["informe"] = InformeSATLP::get($data);
+        return $informe;
+    }
+
+    public function obtenerCuentasInformeSATLP2020($data)
+    {
+        $informe["informe"] = InformeSATLP::getCuentas($data);
+        return $informe;
+    }
+
+    public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final)
+    {
+
+        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final);
+        return $cfdi;
+    }
+
 }

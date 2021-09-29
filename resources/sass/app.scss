@@ -137,12 +137,26 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
     min-width: 120px;
 }
 
+.tc_c130, td.c130, .td_c130,
+{
+    width: 130px;
+    max-width: 130px;
+    min-width: 130px;
+}
+
 .th_c150, th.c150
 {
   width: 150px;
   max-width: 150px;
   min-width: 150px;
   text-align: center;
+}
+
+.tc_c150, td.c150, .td_c150,
+{
+    width: 150px;
+    max-width: 150px;
+    min-width: 150px;
 }
 
 .th_c200, th.c200, .td_c200, td.c200
