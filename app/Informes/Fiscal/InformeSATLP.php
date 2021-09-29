@@ -414,9 +414,9 @@ GROUP BY proveedores_sat.id,
           SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
              ON (cfd_sat.uuid = repositorio_facturas.uuid))
          LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
-            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid))
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
-           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado))
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
        LEFT OUTER JOIN
        SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
           ON     (repositorio_facturas.id_proyecto =
