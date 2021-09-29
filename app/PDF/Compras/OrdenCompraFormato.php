@@ -877,8 +877,8 @@ class OrdenCompraFormato extends FPDI
                 //$this->SetFillColor(180, 180, 180);
                 $this->Cell(5, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 1);
-                $this->Cell(5, .4, utf8_decode('ING.  MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
-                $this->Cell(5, .4, utf8_decode('ING. FLORENCIO MONTIEL MELO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('ING. HORACIO POSADAS HUERTA'), 'TRLB', 0, 'C', 1);
 
             }
             else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra()== 3 && $this->ordenCompra->solicitud->id_area_compradora == 4)

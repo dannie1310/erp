@@ -3485,6 +3485,18 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: 'informe-sat',
+                        name: 'informe-sat',
+                        component: require('./components/fiscal/informes/InformeSAT.vue').default,
+                        meta: {
+                            title: 'Informe SAT',
+                            breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            general: true
+                        }
+                    },
                 ]
             },
             {
