@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
@@ -93,10 +94,14 @@ class Contrato extends Model
 
     public function getCantidadHijosAttribute()
     {
-        $contratos = $this->contrato->contratos()->where("nivel","LIKE",$this->nivel."%")
-            ->where("nivel","!=",$this->nivel)
-            ->get();
-        return count($contratos);
+        if(Context::getIdObra())
+        {
+            $contratos = $this->contrato->contratos()->where("nivel", "LIKE", $this->nivel . "%")
+                ->where("nivel", "!=", $this->nivel)
+                ->get();
+            return count($contratos);
+        }
+        return null;
     }
 
     public function getDescripcionFormatAttribute()

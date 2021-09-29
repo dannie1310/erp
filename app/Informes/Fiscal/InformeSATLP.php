@@ -14,11 +14,17 @@ class InformeSATLP
     public static function  get($data)
     {
         $informe["partidas"] = InformeSATLP::getInforme($data);
+        $informe["empresas"] = InformeSATLP::getEmpresas();
         return $informe;
     }
 
     public static function getCuentas($data)
     {
+        $qry = "";
+        if(count($data["empresas"])>0)
+        {
+            $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
+        }
         $informe = DB::connection("seguridad")->select("SELECT tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat,
        cuentas_movimientos.codigo_cuenta,
        SUM (cuentas_movimientos.importe_movimiento) AS importe_movimiento
@@ -48,6 +54,7 @@ class InformeSATLP
        AND (cuentas_movimientos.tipo_movimiento = 'VERDADERO')
         AND cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                                     AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+                                                    $qry
 GROUP BY tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat,
          cuentas_movimientos.codigo_cuenta");
 
@@ -58,8 +65,34 @@ GROUP BY tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat,
         return $informe;
     }
 
+    public static function getEmpresas()
+    {
+        $informe = DB::connection("seguridad")->select("SELECT DISTINCT
+       informe_sat_lista_empresa.numero as id,
+       cast(informe_sat_lista_empresa.numero as varchar(100)) + ' ' +informe_sat_lista_empresa.descripcion as label,
+                cast(informe_sat_lista_empresa.numero as varchar(100)) + ' ' +informe_sat_lista_empresa.descripcion as customLabel
+  FROM (SEGURIDAD_ERP.Contabilidad.ListaEmpresas ListaEmpresas
+        RIGHT OUTER JOIN
+        SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa informe_sat_lista_empresa
+           ON (ListaEmpresas.NumeroEmpresa = informe_sat_lista_empresa.numero))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
+          ON (cuentas_movimientos.id_empresa_contpaq =
+                 informe_sat_lista_empresa.numero)");
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
     public static function  getInforme($data)
     {
+        $qry = "";
+        if(count($data["empresas"])>0)
+        {
+            $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
+        }
         $informe = DB::connection("seguridad")->select("SELECT tmp_informe_sat.id_proveedor_sat,
        proveedores_sat.razon_social,
        proveedores_sat.rfc,
@@ -215,8 +248,11 @@ SELECT proveedores_sat.id as id_proveedor_sat,
                     ON (cuentas_movimientos.id_cuenta = Subquery.id_cuenta)
            WHERE     (cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                                     AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                 AND (    (cuentas_movimientos.tipo_movimiento = 'VERDADERO')
-                      AND cuentas_movimientos.tipo_poliza = 3)) Subquery
+                 AND (    (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
+                      AND cuentas_movimientos.tipo_poliza = 3)  OR (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
+                      AND cuentas_movimientos.tipo_poliza = 2)) ".$qry."
+
+                      ) Subquery
             ON (Subquery.id_cuenta =
                    tmp_cuentas_contpaq_proveedores_sat.id_cuenta))
         FULL OUTER JOIN
@@ -395,28 +431,39 @@ GROUP BY proveedores_sat.id,
 
     public static function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final){
 
-        $informe = DB::connection("seguridad")->select("SELECT cfd_sat.*,
+        $informe = DB::connection("seguridad")->select("
+      SELECT cfd_sat.*,
        cfd_sat.cfdi_relacionado,
        cfd_sat_1.id AS id_reemplazado,
        cfd_sat_1.serie AS serie_reemplazado,
        cfd_sat_1.folio AS folio_reemplazado,
        cfd_sat_1.fecha AS fecha_reemplazado,
+       cfd_sat.fecha_pago,
+       cfd_sat.moneda_xls,
        cfd_sat_2.id AS id_reemplaza,
        cfd_sat_2.fecha AS fecha_reemplaza,
        cfd_sat_2.serie AS serie_reemplaza,
-       cfd_sat_2.folio AS folio_reemplaza
-  FROM SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-
-       LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
-           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4)
-
-       LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
-          ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4)
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
 where cfd_sat.fecha BETWEEN '".$fecha_inicial->format("Y-m-d")." 00:00:00'
       AND '".$fecha_final->format("Y-m-d")." 23:59:59'
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$id_proveedor."
+      AND cfd_sat.id_empresa_sat = 1
       order by cfd_sat.fecha
       "
 

@@ -2,8 +2,9 @@
 
 namespace App\CSV;
 
-use App\Models\CADECO\Cambio;
+use App\Facades\Context;
 use App\Models\CADECO\Contrato;
+use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\PresupuestoContratista;
 use App\Utils\ValidacionSistema;
@@ -92,7 +93,15 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('O')->setAutoSize(true);
 
                 $i=2;
-                $verificacion_cotizacion = $this->verifica->encripta($this->presupuesto->invitacion->base_datos."|".$this->presupuesto->invitacion->id_obra."|".$this->presupuesto->id_transaccion);
+                $contrato = $this->presupuesto->contratoProyectado;
+                if(is_null($contrato))
+                {
+                    $contrato = ContratoProyectado::where('id_transaccion', $this->presupuesto->id_antecedente)->withoutGlobalScopes()->first();
+                    $verificacion_cotizacion = $this->verifica->encripta($this->presupuesto->invitacion->base_datos."|".$this->presupuesto->invitacion->id_obra."|".$this->presupuesto->id_transaccion);
+                }else{
+                    $verificacion_cotizacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->presupuesto->id_transaccion);
+                }
+
                 $event->sheet->setCellValue("A1", $verificacion_cotizacion);
                 $t_part = count($this->presupuesto->partidas);
                 foreach ($this->presupuesto->partidas as $cot){
