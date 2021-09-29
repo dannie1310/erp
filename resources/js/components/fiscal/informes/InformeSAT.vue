@@ -44,7 +44,17 @@
                                     :disabled-dates="fechasDeshabilitadas"
                                     :class="{'is-invalid': errors.has('fecha_fin')}"
                                 ></datepicker></td>
-                                <td class="sin_borde" style="padding-top: 6px">
+                                <td>
+                                     <treeselect v-model="empresas_seleccionadas"
+                                         :multiple="true"
+                                         :options="empresas"
+                                         data-vv-as="Empresas"
+                                         :flatten-search-results="true"
+                                         placeholder="Seleccione las empresas deseadas">
+                                         <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
+                                    </treeselect>
+                                </td>
+                                <td class="sin_borde" style="padding-top: 6px; width: 100px">
                                     <button type="button" class="btn btn-secondary" v-on:click="getInforme" ><i class="fa fa-filter"></i>Filtrar</button>
                                 </td>
                             </tr>
@@ -441,7 +451,10 @@ export default {
             razon_social : '',
             rfc : '',
             neto_total_sat : '',
-            lista_cfdi : []
+            lista_cfdi : [],
+            empresas_seleccionadas :[],
+            empresas_seleccionadas_filtro :[],
+            empresas : [],
         }
     },
     mounted() {
@@ -455,13 +468,16 @@ export default {
             this.cargando = true;
             this.fecha_inicial = this.fecha_inicial_input;
             this.fecha_final = this.fecha_final_input;
+            this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
             return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
                 id:this.id,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
+                empresas : this.empresas_seleccionadas_filtro
             })
             .then(data => {
                 this.informe = data.informe;
+                this.empresas = data.informe.empresas;
                 //this.getMovimientos(this.informe.data[0])
             })
             .finally(() => {
@@ -496,6 +512,7 @@ export default {
                 id: partida.id_proveedor_sat,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
+                empresas : this.empresas_seleccionadas_filtro
             })
             .then(data => {
                 this.cuentas = data.informe;

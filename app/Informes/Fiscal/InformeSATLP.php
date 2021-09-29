@@ -14,11 +14,17 @@ class InformeSATLP
     public static function  get($data)
     {
         $informe["partidas"] = InformeSATLP::getInforme($data);
+        $informe["empresas"] = InformeSATLP::getEmpresas();
         return $informe;
     }
 
     public static function getCuentas($data)
     {
+        $qry = "";
+        if(count($data["empresas"])>0)
+        {
+            $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
+        }
         $informe = DB::connection("seguridad")->select("SELECT tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat,
        cuentas_movimientos.codigo_cuenta,
        SUM (cuentas_movimientos.importe_movimiento) AS importe_movimiento
@@ -48,6 +54,7 @@ class InformeSATLP
        AND (cuentas_movimientos.tipo_movimiento = 'VERDADERO')
         AND cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                                     AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+                                                    $qry
 GROUP BY tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat,
          cuentas_movimientos.codigo_cuenta");
 
@@ -58,8 +65,34 @@ GROUP BY tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat,
         return $informe;
     }
 
+    public static function getEmpresas()
+    {
+        $informe = DB::connection("seguridad")->select("SELECT DISTINCT
+       informe_sat_lista_empresa.numero as id,
+       cast(informe_sat_lista_empresa.numero as varchar(100)) + ' ' +informe_sat_lista_empresa.descripcion as label,
+                cast(informe_sat_lista_empresa.numero as varchar(100)) + ' ' +informe_sat_lista_empresa.descripcion as customLabel
+  FROM (SEGURIDAD_ERP.Contabilidad.ListaEmpresas ListaEmpresas
+        RIGHT OUTER JOIN
+        SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa informe_sat_lista_empresa
+           ON (ListaEmpresas.NumeroEmpresa = informe_sat_lista_empresa.numero))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
+          ON (cuentas_movimientos.id_empresa_contpaq =
+                 informe_sat_lista_empresa.numero)");
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
     public static function  getInforme($data)
     {
+        $qry = "";
+        if(count($data["empresas"])>0)
+        {
+            $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
+        }
         $informe = DB::connection("seguridad")->select("SELECT tmp_informe_sat.id_proveedor_sat,
        proveedores_sat.razon_social,
        proveedores_sat.rfc,
@@ -217,7 +250,7 @@ SELECT proveedores_sat.id as id_proveedor_sat,
                                                     AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
                  AND (    (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
                       AND cuentas_movimientos.tipo_poliza = 3)  OR (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-                      AND cuentas_movimientos.tipo_poliza = 2))
+                      AND cuentas_movimientos.tipo_poliza = 2)) ".$qry."
 
                       ) Subquery
             ON (Subquery.id_cuenta =
