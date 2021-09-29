@@ -150,7 +150,8 @@ class PresupuestoContratistaService
                 'descuento' => $celdas[$x][8],
                 'id_moneda' => $id_moneda,
                 'observaciones' => $celdas[$x][14],
-                'id_concepto' => (int) $item->id_concepto
+                'id_concepto' => (int) $item->id_concepto,
+                //'partida_activa' => $celdas[$x][6] ? true : false
             );
             $x++;
         }
@@ -293,7 +294,7 @@ class PresupuestoContratistaService
                 'id_moneda' => $id_moneda,
                 'observaciones' => $celdas[$x][14],
                 'id_concepto' => (int) $item->id_concepto,
-                'partida_activa' => ($item->no_cotizado == 0) ? true : false
+                'partida_activa' => $celdas[$x][6] ? true : false,
             );
             $x++;
         }
