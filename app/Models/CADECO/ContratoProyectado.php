@@ -269,7 +269,10 @@ class ContratoProyectado extends Transaccion
 
     public function getPuedeEditarPartidasAttribute()
     {
-        return $this->numero_presupuestos == 0 ? true : false;
+        if(Context::getIdObra()) {
+            return $this->numero_presupuestos == 0 ? true : false;
+        }
+        return false;
     }
 
     /**
