@@ -395,28 +395,39 @@ GROUP BY proveedores_sat.id,
 
     public static function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final){
 
-        $informe = DB::connection("seguridad")->select("SELECT cfd_sat.*,
+        $informe = DB::connection("seguridad")->select("
+      SELECT cfd_sat.*,
        cfd_sat.cfdi_relacionado,
        cfd_sat_1.id AS id_reemplazado,
        cfd_sat_1.serie AS serie_reemplazado,
        cfd_sat_1.folio AS folio_reemplazado,
        cfd_sat_1.fecha AS fecha_reemplazado,
+       cfd_sat.fecha_pago,
+       cfd_sat.moneda_xls,
        cfd_sat_2.id AS id_reemplaza,
        cfd_sat_2.fecha AS fecha_reemplaza,
        cfd_sat_2.serie AS serie_reemplaza,
-       cfd_sat_2.folio AS folio_reemplaza
-  FROM SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-
-       LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
-           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4)
-
-       LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
-          ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4)
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
 where cfd_sat.fecha BETWEEN '".$fecha_inicial->format("Y-m-d")." 00:00:00'
       AND '".$fecha_final->format("Y-m-d")." 23:59:59'
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$id_proveedor."
+      AND cfd_sat.id_empresa_sat = 1
       order by cfd_sat.fecha
       "
 

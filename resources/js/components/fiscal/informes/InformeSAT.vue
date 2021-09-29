@@ -303,7 +303,7 @@
                                         <tr>
                                             <td colspan="3" style="border: none"><h6>{{rfc}}</h6></td>
                                             <td colspan="5" style="border: none"><h6>{{razon_social}}</h6></td>
-                                            <td colspan="6" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
+                                            <td colspan="7" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto encabezado">#</th>
@@ -319,6 +319,7 @@
                                             <th class="encabezado">Fecha CFDI Reemplazo</th>
                                             <th class="encabezado">Es reemplazo</th>
                                             <th class="encabezado">Fecha CFDI Original</th>
+                                            <th class="encabezado">Obra SAO</th>
                                             <th class="encabezado"></th>
                                         </tr>
                                         <tr v-for="(cfdi, i) in lista_cfdi">
@@ -382,6 +383,9 @@
                                             </td>
                                             <td>
                                                 <CFDI v-if="cfdi.id_reemplazado >0" v-bind:txt="cfdi.fecha_reemplazado" v-bind:id="cfdi.id_reemplazado" @click="cfdi.id_reemplazado" ></CFDI>
+                                            </td>
+                                            <td>
+                                                {{cfdi.obra_sao}}
                                             </td>
                                             <td style="width: 90px">
                                                 <CFDI v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
