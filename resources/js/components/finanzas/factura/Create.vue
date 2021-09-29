@@ -324,6 +324,7 @@
                     id_rubro:'',
                     referencia:'',
                     total:0,
+                    impuesto:0,
                     observaciones:'',
                     archivo:null,
                     archivo_name:null,

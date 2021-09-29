@@ -22,11 +22,6 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $this->model = $model;
     }
 
-    public function descargaLayout($id)
-    {
-        return $this->model->descargaLayout($id);
-    }
-
     public function create(array $data)
     {
         return $this->model->crear($data);
