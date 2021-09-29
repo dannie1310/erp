@@ -181,6 +181,16 @@ class    CotizacionCompra  extends Transaccion
         return $suma;
     }
 
+    public function getSumaSubtotalPartidasComparativaAttribute()
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            $suma += $partida->total_precio_moneda_comparativa;
+        }
+        return $suma;
+    }
+
     public function getIVAPartidasAttribute()
     {
         return $this->suma_subtotal_partidas * 0.16;
@@ -196,9 +206,19 @@ class    CotizacionCompra  extends Transaccion
         return $this->suma_subtotal_partidas * $this->complemento->descuento/100;
     }
 
+    public function getDescuentoComparativaAttribute()
+    {
+        return $this->suma_subtotal_partidas_comparativa * $this->complemento->descuento/100;
+    }
+
     public function getSubtotalConDescuentoAttribute()
     {
         return $this->suma_subtotal_partidas - $this->descuento;
+    }
+
+    public function getSubtotalConDescuentoComparativaAttribute()
+    {
+        return $this->suma_subtotal_partidas_comparativa - $this->descuento_comparativa;
     }
 
     public function getIVAConDescuentoAttribute()
@@ -206,9 +226,19 @@ class    CotizacionCompra  extends Transaccion
         return $this->subtotal_con_descuento * 0.16;
     }
 
+    public function getIVAConDescuentoComparativaAttribute()
+    {
+        return $this->subtotal_con_descuento_comparativa * 0.16;
+    }
+
     public function getTotalConDescuentoAttribute()
     {
         return $this->subtotal_con_descuento + $this->iva_con_descuento;
+    }
+
+    public function getTotalConDescuentoComparativaAttribute()
+    {
+        return $this->subtotal_con_descuento_comparativa + $this->iva_con_descuento_comparativa;
     }
 
     public function getAsignadaAttribute()
@@ -331,7 +361,7 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $this->partidas()->create([
                             'id_transaccion' => $this->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'cantidad' => ($this->solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'cantidad' => $partida['cantidad'],
                             'precio_unitario' => $data['precio'][$i],
                             'descuento' => ($data['descuento_cot'] + $data['descuento'][$i] - (($data['descuento_cot'] * $data['descuento'][$i]) / 100)),
                             'anticipo' => $data['anticipo'],
@@ -406,7 +436,7 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['material']['id'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'cantidad' => $partida['cantidad'],
                             'precio_unitario' => $data['precio'][$key],
                             'descuento' => ($data['descuento_cot'] + $partida['descuento'] - (($data['descuento_cot'] * $partida['descuento']) / 100)),
                             'anticipo' => $data['anticipo'],
@@ -469,7 +499,7 @@ class    CotizacionCompra  extends Transaccion
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['material']['id'],
-                        'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                        'cantidad' => $partida['cantidad'],
                     ]);
 
                     #------- Compras.cotizacion_partidas_complemento
@@ -608,6 +638,7 @@ class    CotizacionCompra  extends Transaccion
         $partidas = [];
         $cotizaciones = [];
         $precios = [];
+        $exclusiones = [];
 
         foreach ($this->solicitud->items as $key => $item) {
             if (array_key_exists($item->id_material, $partidas)) {
@@ -633,7 +664,7 @@ class    CotizacionCompra  extends Transaccion
             $cotizaciones[$cont]['iva_partidas'] = $cotizacion->iva_partidas;
             $cotizaciones[$cont]['total_partidas'] = $cotizacion->total_partidas;
             $cotizaciones[$cont]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';
-            $cotizaciones[$cont]['observaciones'] = $cotizacion->complemento ? $cotizacion->complemento->observaciones : '-';
+            $cotizaciones[$cont]['observaciones'] = $cotizacion->observaciones;
             $cotizaciones[$cont]['tc_usd'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_usd ? $cotizacion->complemento->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
             $cotizaciones[$cont]['tc_eur'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_eur ? $cotizacion->complemento->tc_eur : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
             $cotizaciones[$cont]['tc_libra'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_libra ? $cotizacion->complemento->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
@@ -669,14 +700,30 @@ class    CotizacionCompra  extends Transaccion
                 }
             }
         }
+        $cantidad = 0;
         foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
             $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
             $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
+            $importe = 0;
+            foreach($cotizacion->exclusiones as $exc => $exclusion){
+                $t_cambio = 1;
+                if($exclusion->id_moneda != 1){
+                    $t_cambio = $exclusion->moneda->cambio->cambio;
+                }
+                $exclusiones[$cont][$exc] = $exclusion->toArray();
+                $exclusiones[$cont][$exc]['moneda'] = $exclusion->moneda->nombre;
+                $exclusiones[$cont][$exc]['t_cambio'] = $t_cambio;
+                $importe += $exclusion->cantidad * $exclusion->precio_unitario * $t_cambio;
+                $cantidad ++;
+            }
+            $exclusiones[$cont]['importe'] = $importe;
         }
+        $exclusiones['cantidad'] = $cantidad;
         return [
             'cotizaciones' => $cotizaciones,
             'partidas' => $partidas,
-            'precios_menores' => $precios
+            'precios_menores' => $precios,
+            'exclusiones' => $exclusiones
         ];
     }
 
@@ -830,7 +877,7 @@ class    CotizacionCompra  extends Transaccion
         {
             DB::connection('cadeco')->beginTransaction();
             $solicitud = SolicitudCompra::withoutGlobalScopes()->find($data['id']);
-            $fecha =New DateTime($data['fecha']);
+            $fecha =New DateTime($data['fecha_cot']);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
             if(!$data['pendiente'])
             {
@@ -871,15 +918,15 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['id_material'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
-                            'precio_unitario' => $partida['precio_cotizacion'],
+                            'cantidad' => $partida['cantidad'],
+                            'precio_unitario' => key_exists("precio_cotizacion", $partida) ? $partida['precio_cotizacion']:$partida["precio_unitario"],
                             'descuento' => ($data['descuento_cot'] + $partida['descuento'] - (($data['descuento_cot'] * $partida['descuento']) / 100)),
                             'anticipo' => $data['anticipo'],
                             'dias_credito' => $data['credito'],
                             'dias_entrega' => $data['tiempo'],
                             'no_cotizado' => !$partida['enable'],
                             'disponibles' => 1,
-                            'id_moneda' => $partida['moneda_seleccionada']
+                            'id_moneda' =>  key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
                         ]);
                         #------- Compras.cotizacion_partidas_complemento
                         $cotizaciones->partida()->create([
@@ -893,7 +940,7 @@ class    CotizacionCompra  extends Transaccion
                         $cotizaciones = $cotizacion->partidas()->create([
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['id_material'],
-                            'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                            'cantidad' => $partida['cantidad'],
                             'precio_unitario' => null,
                             'descuento' => 0,
                             'anticipo' => $data['anticipo'],
@@ -901,7 +948,7 @@ class    CotizacionCompra  extends Transaccion
                             'dias_entrega' => $data['tiempo'],
                             'no_cotizado' => !$partida['enable'],
                             'disponibles' => 1,
-                            'id_moneda' => $partida['moneda_seleccionada']
+                            'id_moneda' => key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
                         ]);
                         #------- Compras.cotizacion_partidas_complemento
                         $cotizaciones->partida()->create([
@@ -960,8 +1007,8 @@ class    CotizacionCompra  extends Transaccion
                     $cotizaciones = $cotizacion->partidas()->create([
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['id_material'],
-                        'id_moneda' => $partida['moneda_seleccionada'],
-                        'cantidad' => ($solicitud->estado == 1) ? $partida['cantidad'] : $partida['cantidad_original_num'],
+                        'id_moneda' => key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
+                        'cantidad' => $partida['cantidad'],
                     ]);
 
                     #------- Compras.cotizacion_partidas_complemento
@@ -1137,7 +1184,8 @@ class    CotizacionCompra  extends Transaccion
         ]);
 
         $this->invitacion->update([
-            "estado"=>3
+            "estado"=>3,
+            'fecha_hora_envio_cotizacion'=>date("Y-m-d H:i:s")
         ]);
 
         return $this->estado;
@@ -1162,7 +1210,7 @@ class    CotizacionCompra  extends Transaccion
             $this->delete();
             $this->revisarRespaldos($motivo);
             $this->invitacion->update([
-                "estado" => 0,
+                "estado" => 1,
                 "id_cotizacion_generada" => null
             ]);
             DB::connection('cadeco')->commit();

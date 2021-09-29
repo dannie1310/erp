@@ -127,6 +127,11 @@ class SolicitudCompra extends Transaccion
         return $query->whereHas('complemento');
     }
 
+    public function scopeCotizada($query)
+    {
+        return $query->whereHas("cotizaciones");
+    }
+
     public function scopeAreasCompradorasAsignadas($query)
     {
         return $query->whereHas('complemento', function ($q) {
@@ -724,5 +729,146 @@ class SolicitudCompra extends Transaccion
             }
         }
 
+    }
+
+    public function datosComparativos()
+    {
+        $partidas = [];
+        $cotizaciones = [];
+        $precios = [];
+        $exclusiones = [];
+        $proveedores = [];
+
+        foreach ($this->items()->orderBy("id_material")->get() as $key => $item) {
+
+            if (array_key_exists($item->id_material, $partidas)) {
+                $partidas[$item->id_material]['indice'] = $key+1;
+                $partidas[$item->id_material]['cantidad'] = $partidas[$item->id_material]['cantidad'] + $item->cantidad;
+            } else {
+                $partidas[$item->id_material]['indice'] = $key+1;
+                $partidas[$item->id_material]['material'] = $item->material->descripcion;
+                $partidas[$item->id_material]['unidad'] = $item->unidad;
+                $partidas[$item->id_material]['cantidad'] = $item->cantidad;
+                $partidas[$item->id_material]['observaciones'] = $item->complemento ? $item->complemento->observaciones : '';
+            }
+        }
+
+        foreach ($this->cotizaciones as $cont => $cotizacion) {
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id"]=$cotizacion->id_empresa;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_sucursal"]=$cotizacion->id_sucursal;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["razon_social"]=$cotizacion->empresa->razon_social;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["sucursal"]=$cotizacion->sucursal->descripcion;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["sucursal_correo"]=$cotizacion->sucursal->email;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["sucursal_contacto"]=$cotizacion->sucursal->contacto;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["usuario_correo"]=($cotizacion->empresa->usuarioIntranet)? $cotizacion->empresa->usuarioIntranet->correo:'';
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_usuario"] = ($cotizacion->empresa->usuarioIntranet)? $cotizacion->empresa->usuarioIntranet->idusuario:'';;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["seleccionado_contraoferta"]=1;
+            $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_cotizacion"]=$cotizacion->id_transaccion;
+
+            $cotizaciones[$cotizacion->id_transaccion]['id_transaccion'] = $cotizacion->id_transaccion;
+            $cotizaciones[$cotizacion->id_transaccion]['numero_folio'] = $cotizacion->numero_folio_format;
+            $cotizaciones[$cotizacion->id_transaccion]['empresa'] = $cotizacion->empresa->razon_social;
+            $cotizaciones[$cotizacion->id_transaccion]['fecha'] = $cotizacion->fecha_format;
+            $cotizaciones[$cotizacion->id_transaccion]['fecha_hora_envio'] = ($cotizacion->invitacion) ? $cotizacion->invitacion->fecha_hora_envio_format : 'N/A';
+            $cotizaciones[$cotizacion->id_transaccion]['fecha_envio'] = ($cotizacion->invitacion) ? $cotizacion->invitacion->fecha_envio_format : 'N/A';
+            $cotizaciones[$cotizacion->id_transaccion]['vigencia'] = $cotizacion->complemento ? $cotizacion->complemento->vigencia : '-';
+            $cotizaciones[$cotizacion->id_transaccion]['anticipo'] = $cotizacion->complemento ? $cotizacion->complemento->anticipo : '-';
+            $cotizaciones[$cotizacion->id_transaccion]['dias_credito'] = $cotizacion->complemento ? $cotizacion->complemento->dias_credito : '-';
+            $cotizaciones[$cotizacion->id_transaccion]['plazo_entrega'] = $cotizacion->complemento ? $cotizacion->complemento->plazo_entrega : '-';
+            $cotizaciones[$cotizacion->id_transaccion]['descuento_global'] = ($cotizacion->complemento && $cotizacion->complemento->descuento > 0) ? $cotizacion->complemento->descuento : '-';
+            $cotizaciones[$cotizacion->id_transaccion]['suma_subtotal_partidas'] = $cotizacion->suma_subtotal_partidas_comparativa;
+            $cotizaciones[$cotizacion->id_transaccion]['subtotal_con_descuento'] = $cotizacion->subtotal_con_descuento_comparativa;
+            $cotizaciones[$cotizacion->id_transaccion]['iva_partidas'] = $cotizacion->iva_partidas;
+            $cotizaciones[$cotizacion->id_transaccion]['iva'] = $cotizacion->iva_con_descuento_comparativa;
+            $cotizaciones[$cotizacion->id_transaccion]['total'] = $cotizacion->total_con_descuento_comparativa;
+            $cotizaciones[$cotizacion->id_transaccion]['total_partidas'] = $cotizacion->total_partidas;
+            $cotizaciones[$cotizacion->id_transaccion]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';
+            $cotizaciones[$cotizacion->id_transaccion]['observaciones'] = $cotizacion->observaciones;
+            $cotizaciones[$cotizacion->id_transaccion]['tc_usd'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_usd ? $cotizacion->complemento->tc_usd :Cambio::where('id_moneda','=', 2)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['tc_eur'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_eur ? $cotizacion->complemento->tc_eur : Cambio::where('id_moneda','=', 3)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['tc_libra'] = number_format(($cotizacion->complemento && $cotizacion->complemento->tc_libra ? $cotizacion->complemento->tc_libra : Cambio::where('id_moneda','=', 4)->orderByDesc('fecha')->first()->cambio), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['subtotal_peso'] = $cotizacion->sumaSubtotalPartidas(1) == 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(1), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['subtotal_dolar'] = $cotizacion->sumaSubtotalPartidas(2) == 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(2), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['subtotal_euro'] = $cotizacion->sumaSubtotalPartidas(3) == 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(3), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['subtotal_libra'] = $cotizacion->sumaSubtotalPartidas(4)== 0 ? '-' : number_format($cotizacion->sumaSubtotalPartidas(4), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['suma_total_dolar'] = $cotizacion->sumaPrecioPartidaMoneda(2) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(2), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['suma_total_euro'] = $cotizacion->sumaPrecioPartidaMoneda(3) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(3), 2, '.', ',');
+            $cotizaciones[$cotizacion->id_transaccion]['suma_total_libra'] = $cotizacion->sumaPrecioPartidaMoneda(4)== 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(4), 2, '.', ',');
+            foreach ($cotizacion->partidas as $p) {
+                if (key_exists($p->id_material, $precios)) {
+                    if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
+                        $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                } else {
+                    if($p->precio_unitario_compuesto > 0) {
+                        $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                    }
+                }
+                if (array_key_exists($p->id_material, $partidas)) {
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['id_transaccion'] = $cotizacion->id_transaccion;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['cantidad'] = $p->cantidad;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_unitario'] = $p->precio_unitario;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['id_moneda'] = $p->id_moneda;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['cantidad_format'] = $p->cantidad_format;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_total_moneda'] = $p->total_precio_descuento_partida_moneda_comparativa;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_con_descuento'] = $p->precio_compuesto;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_total_compuesto'] = $p->precio_compuesto_total;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['precio_unitario_compuesto'] = $p->precio_unitario_compuesto;
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['moneda'] = $p->moneda ? $p->moneda->nombre : '';
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['descuento_partida'] = $p->partida ? $p->partida->descuento_partida : '-';
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['descuento_partida_format'] = $p->partida && $p->partida->descuento_partida>0? number_format($p->partida->descuento_partida,2,".",",")."%" : '-';
+                    $partidas[$p->id_material]['cotizaciones'][$cotizacion->id_transaccion]['observaciones'] = $p->partida ? $p->partida->observaciones : '';
+                }
+            }
+        }
+
+        $cantidad = 0;
+        foreach ($this->cotizaciones as $cont => $cotizacion) {
+            $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+            $cotizaciones[$cotizacion->id_transaccion]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cotizacion->id_transaccion]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
+            $importe = 0;
+            foreach($cotizacion->exclusiones as $exc => $exclusion){
+                $t_cambio = 1;
+                if($exclusion->id_moneda != 1){
+                    $t_cambio = $exclusion->moneda->cambio->cambio;
+                }
+                $exclusiones[$cotizacion->id_transaccion][$exc] = $exclusion->toArray();
+                $exclusiones[$cotizacion->id_transaccion]['indice'] = $exc+1;
+                $exclusiones[$cotizacion->id_transaccion][$exc]['moneda'] = $exclusion->moneda->nombre;
+                $exclusiones[$cotizacion->id_transaccion][$exc]['total'] = $exclusion->precio_unitario * $exclusion->cantidad * $t_cambio;
+                $exclusiones[$cotizacion->id_transaccion][$exc]['t_cambio'] = $t_cambio;
+                $importe += $exclusion->cantidad * $exclusion->precio_unitario * $t_cambio;
+                $cantidad ++;
+            }
+            $exclusiones[$cotizacion->id_transaccion]['importe'] = $importe;
+        }
+        $exclusiones['cantidad'] = $cantidad;
+        return [
+            'cotizaciones' => $cotizaciones,
+            'solicitud' => ["numero_folio_format"=>$this->numero_folio_format,"id"=>$this->id_transaccion, "fecha_format"=>$this->fecha_format],
+            'partidas' => $partidas,
+            'cantidad_partidas' => count($partidas),
+            'cantidad_cotizaciones' => count($cotizaciones),
+            'precios_menores' => $precios,
+            'exclusiones' => $exclusiones,
+            'proveedores' => $proveedores
+        ];
+    }
+
+    private function calcular_ivg($precios, $partidas_cotizacion)
+    {
+        $ivg = 0;
+        if ($partidas_cotizacion) {
+            foreach ($partidas_cotizacion as $partida) {
+                $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
+            }
+            return $partidas_cotizacion->count() > 0 ? $ivg : -1;
+        }
+        return -1;
+    }
+
+    public function calcular_ki($precio, $precio_menor)
+    {
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
 }

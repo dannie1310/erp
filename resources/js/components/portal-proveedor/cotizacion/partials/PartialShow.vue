@@ -46,11 +46,11 @@
                                     <td class="numerico">
                                         {{(parseFloat(partida.descuento)).formatMoney(2,'.',',')}}
                                     </td>
-                                    <td style="text-align:right;">{{'$' + parseFloat((partida.cantidad) * partida.precio_unitario).formatMoney(2,'.',',')}}</td>
+                                    <td style="text-align:right;">{{'$'+parseFloat(getPrecio(partida)).formatMoney(2,'.',',') }}</td>
                                     <td style="width:120px;" >
                                         {{ partida.moneda.nombre}}
                                     </td>
-                                    <td style="text-align:right;" v-if="multiples_monedas">{{partida.precio_total_moneda}}</td>
+                                    <td style="text-align:right;"  v-if="multiples_monedas">{{getPrecioTotal(getPrecio(partida), partida.id_moneda)}}</td>
                                     <td style="width:200px;">
                                         {{partida.observacion}}
                                     </td>
@@ -332,7 +332,7 @@
                                         </div>
                                     </td>
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Subtotal <span v-if="multiples_monedas"> Pesos (MXN)</span>:</b></td>
-                                    <td style="border: none; text-align: right">{{ invitacion.cotizacionCompra.subtotal_consulta_proveedor }}</td>
+                                    <td style="border: none; text-align: right">${{ subtotal_antes_descuento.formatMoney(2,'.',',') }}</td>
                                 </tr>
                                 <tr>
                                     <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global (%):</b></td>
@@ -539,10 +539,8 @@ export default {
                 this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
 
                 this.calcular()
-            }).finally(()=>{
                 this.$emit('cargaFinalizada', this.invitacion);
             })
-
         },
         calcular(){
             var pesos = 0;
@@ -638,6 +636,34 @@ export default {
             }
             if(this.libra_seleccionado){
                 this.ancho_tabla_detalle += 150;
+            }
+        },
+        getPrecio(partida){
+            if(partida.precio_unitario){
+                return partida.precio_unitario * partida.cantidad- (partida.precio_unitario * partida.cantidad * (partida.descuento ? partida.descuento : 0) / 100);
+            }
+            return '0.00';
+        },
+        getPrecioTotal(precio, moneda) {
+            if(moneda == undefined)
+            {
+                return '$0.00'
+            }
+            if(moneda === 1)
+            {
+                return '$'+parseFloat(precio != undefined ? precio : 1).formatMoney(2,'.',',')
+            }
+            if(moneda === 2)
+            {
+                return '$'+parseFloat(precio != undefined ? precio * this.dolar : this.dolar).formatMoney(2,'.',',')
+            }
+            if(moneda === 3)
+            {
+                return '$'+parseFloat(precio != undefined ? precio * this.euro : this.euro).formatMoney(2,'.',',')
+            }
+            if(moneda === 4)
+            {
+                return '$'+parseFloat(precio != undefined ? precio * this.libra : this.libra).formatMoney(2,'.',',')
             }
         },
     },

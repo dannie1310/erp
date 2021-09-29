@@ -9,14 +9,15 @@
                                     <tbody>
                                         <tr>
                                             <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
-                                                <b v-if="solicitud_compra.tipo_transaccion == 17">Solicitud de Compra</b>
-                                                <b v-if="solicitud_compra.tipo_transaccion == 50">Contrato Proyectado</b>
+                                                <b>Solicitud de Compra</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td>Folio:</td>
                                             <td style="text-align: right">
-                                                <b><span style="color:black; text-decoration: underline">{{solicitud_compra.numero_folio_format}}</span></b>
+                                                <router-link :to="{name: 'solicitud-show', params:{id : solicitud_compra.id }}" target="_blank">
+                                                    <b><span style="color:black; text-decoration: underline">{{solicitud_compra.numero_folio_format}}</span></b>
+                                                </router-link>
                                             </td>
                                         </tr>
                                         <tr>
@@ -29,6 +30,7 @@
                                 </table>
                             </div>
                         </div>
+
                     </span>
                 </div>
             </div>
@@ -39,7 +41,7 @@
 <script>
 
 export default {
-    name: "EncabezadoSolicitud",
+    name: "EncabezadoSolicitudCompra",
     components: {},
     props: ["solicitud_compra"],
 }

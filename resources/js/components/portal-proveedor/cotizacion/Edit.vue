@@ -155,7 +155,7 @@
                                                         <td>{{(partida.material) ? partida.material.numero_parte : '----'}}</td>
                                                         <td>{{(partida.material) ? partida.material.descripcion : '----'}}</td>
                                                         <td >{{(partida.material) ? partida.material.unidad : '----'}}</td>
-                                                        <td style="text-align:center; vertical-align:inherit;">
+                                                         <td style="text-align:center; vertical-align:inherit;">
                                                             <div class="custom-control custom-switch">
                                                                 <input type="checkbox" class="custom-control-input" :id="`no_cotizado[${i}]`" v-model="partida.enable" v-on:change="calcular" checked>
                                                                 <label class="custom-control-label" :for="`no_cotizado[${i}]`"></label>
@@ -188,7 +188,7 @@
                                                                    v-model="partida.descuento"/>
                                                             <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;">{{'$' + parseFloat((partida.cantidad) * partida.precio_unitario).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{'$'+parseFloat(getPrecio(partida)).formatMoney(2,'.',',') }}</td>
                                                         <td style="width:120px;" >
                                                             <select
                                                                 type="text"
@@ -205,7 +205,7 @@
                                                             </select>
                                                             <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
                                                         </td>
-                                                        <td style="text-align:right;"  v-if="multiples_monedas">{{getPrecioTotal(partida.cantidad * partida.precio_unitario, partida.id_moneda)}}</td>
+                                                        <td style="text-align:right;"  v-if="multiples_monedas">{{getPrecioTotal(getPrecio(partida), partida.id_moneda)}}</td>
                                                         <td style="width:200px;">
                                                             <textarea class="form-control"
                                                                       :name="`observaciones[${i}]`"
@@ -519,6 +519,7 @@
                                                             <td style="border: none; text-align: right"></td>
                                                         </tr>
                                                     </template>
+
                                                 </tbody>
                                             </table>
                                         </div>
@@ -681,7 +682,7 @@
         components: {
             EncabezadoCotizacionCompraProveedor,
             DatosCotizacionCompra, Datepicker, ModelListSelect},
-        props: ['id_invitacion', 'xls'],
+        props: ['id', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -731,9 +732,9 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id_invitacion,
+                    id: this.id,
                     params:{ include: ['cotizacionCompra.complemento','cotizacionCompra.empresa','cotizacionCompra.sucursal','cotizacionCompra.exclusiones','cotizacionCompra.partidasEdicion'], scope: ['invitadoAutenticado']}
-                }).then(data => {
+               }).then(data => {
 
                     if(data.con_cotizacion){
                         this.descuento_cot = data.cotizacionCompra.complemento.descuento;
@@ -743,6 +744,7 @@
                         this.libra = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_libra).formatMoney(4, '.', '') : 0;
                         if(this.xls != null)
                         {
+                            this.descuento_cot = this.xls.descuento_cot;
                             data.cotizacionCompra.complemento.anticipo = this.xls.anticipo;
                             data.cotizacionCompra.complemento.dias_credito = this.xls.credito;
                             data.cotizacionCompra.complemento.descuento = this.xls.descuento_cot;
@@ -768,6 +770,8 @@
                                         if(this.xls.partidas[x].precio_unitario>0)
                                         {
                                             data.cotizacionCompra.partidasEdicion.data[i].enable = 1;
+                                        }else if(this.xls.partidas[x].precio_unitario == null){
+                                            data.cotizacionCompra.partidasEdicion.data[i].enable = 0;
                                         }
                                     }
                                 }
@@ -787,17 +791,23 @@
                             }
                         }).then((value) => {
                             if(value) {
-                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: data.id}});
+                                this.$router.push({name: 'cotizacion-proveedor-create', params: {id: data.id}});
                                 swal.close();
                             }
                         });
                     }
                 })
             },
+            getPrecio(partida){
+                if(partida.precio_unitario){
+                    return partida.precio_unitario * partida.cantidad- (partida.precio_unitario * partida.cantidad * (partida.descuento ? partida.descuento : 0) / 100);
+                }
+                return '0.00';
+            },
             getPrecioTotal(precio, moneda) {
                 if(moneda == undefined)
                 {
-                    return '$1.00'
+                    return '$0.00'
                 }
                 if(moneda === 1)
                 {
@@ -975,7 +985,6 @@
             },
             getUnidades(base) {
                 return this.$store.dispatch('cadeco/unidad/porBase', {
-                    params: {sort: 'unidad',  order: 'asc'},
                     base : base
                 })
                 .then(data => {

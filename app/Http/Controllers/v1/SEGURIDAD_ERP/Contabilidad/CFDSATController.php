@@ -95,5 +95,22 @@ class CFDSATController extends Controller
         $item = $this->service->cargaXMLProveedor($request->all());
         return $this->respondWithItem($item);
     }
-    
+
+    public function obtenerInformeSATLP2020(Request $request)
+    {
+        $respuesta =$this->service->obtenerInformeSATLP2020($request->all());
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerCuentasInformeSATLP2020(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerCuentasInformeSATLP2020($request->all());
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerListaCFDI(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerListaCFDI($request->all());
+        return response()->json($respuesta, 200);
+    }
 }

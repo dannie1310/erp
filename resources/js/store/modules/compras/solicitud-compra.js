@@ -78,6 +78,19 @@ export default {
                     })
             });
         },
+        getComparativaCotizaciones(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/comparativa-cotizaciones', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
         getCuerpoCorreo(context, payload){
             return new Promise((resolve, reject) => {
                 axios

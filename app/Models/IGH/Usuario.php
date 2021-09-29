@@ -31,6 +31,7 @@ use App\Traits\IghAuthenticatable;
 use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Auth\MustVerifyEmail;
@@ -406,6 +407,11 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $this->hasMany(RoleUserGlobal::class, "user_id", "idusuario");
     }
 
+    public function usuario92()
+    {
+        return $this->belongsTo(\App\Models\IGH92\Usuario::class, 'idusuario', 'idusuario');
+    }
+
     public function getNombreCompletoAttribute()
     {
         return $this->nombre." ".$this->apaterno." ".$this->amaterno;
@@ -442,8 +448,8 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         $rolObj = RolSeguridadERP::where('name',"=",$rol)->first();
         if($rolObj){
             $preexistente = RoleUserGlobal::where("user_id","=",$this->idusuario)
-            ->where("role_id","=",$rolObj->id)
-            ->first();
+                ->where("role_id","=",$rolObj->id)
+                ->first();
             if(!$preexistente){
                 $this->rolesUsuarioGlobal()->create([
                     'role_id'=>$rolObj->id
@@ -586,5 +592,25 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
             }
         }
         return $nombreArr;
+    }
+
+    public function cambiarClave92($clave_nueva)
+    {
+        if($this->usuario92)
+        {
+            $this->usuario92->update([
+                'clave' => $clave_nueva
+            ]);
+        }
+    }
+
+    public function cambiarClaveModuloSAO($clave_nueva)
+    {
+        DB::connection('modulosao')->update(DB::raw("
+                        DECLARE	@return_value int
+                        EXECUTE	@return_value = [dbo].[sp_updateclavesDayta]
+                        @usuario = '$this->usuario',
+                        @password = '$clave_nueva'
+                        SELECT	'res' = @return_value"));
     }
 }

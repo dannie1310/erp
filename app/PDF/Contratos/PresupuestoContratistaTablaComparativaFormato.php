@@ -375,6 +375,79 @@ class PresupuestoContratistaTablaComparativaFormato extends Rotation
                 $this->y_fin_og_arr[] = $this->getY();
                 $x_ini += $anchos["og"];
             }
+
+            if($datos_partidas['exclusiones']['cantidad'] > 0){
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->SetFont('Arial', 'B', $font);
+                $this->Cell(26,0.3, "EXCLUSIONES",1,1,"C",1);
+                $this->SetFillColor(255, 255, 255);
+                $this->SetTextColor(0, 0, 0);
+                $this->SetFont('Arial', 'B', $font); 
+                foreach($datos_partidas['exclusiones'] as $esp => $exclusion){
+                    if(!is_numeric($esp)){
+                        continue;
+                    }
+                    foreach($exclusion as $index => $exc){
+                        if(!is_numeric($index)){
+                            continue;
+                        }
+                        $this->SetFillColor(255, 255, 255);
+                        $this->SetTextColor(0, 0, 0);
+                        $this->SetFont('Arial', 'B', $font2);
+                        $this->CellFitScale($anchos["des"], $heigth, utf8_decode($exc['descripcion']) . ' ', 1, 0, 'L', 0, '');
+                        $this->Cell($anchos["c"], $heigth, $exc['unidad'], 1, 0, 'L', 0, '');
+                        $this->Cell($anchos["u"], $heigth, number_format($exc['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
+
+                        for ($i = 0; $i < $inc_ie; $i++) {
+                            if($i == $esp ){
+                                $this->SetFont('Arial', '', $font2);
+                                $this->Cell($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
+                                $this->CellFitScale($anchos["porc"], $heigth, '', "T B L", 0, "R", 1);
+                                $this->Cell($anchos["pu"], $heigth, number_format($exc['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
+                                $this->CellFitScale($anchos["importe"], $heigth, number_format($exc['cantidad'] * $exc['precio_unitario'], 2, '.', ','), "T B L", 0, "R", 1);
+                                $this->Cell($anchos["importe"], $heigth, $exc['moneda'], "B L R T", 0, "R", 1);
+                                $this->Cell($anchos["dias"], $heigth, number_format($exc['cantidad'] * $exc['precio_unitario'] * $exc['tipo_cambio'], 2, '.', ','), "B L R T", 0, "R", 1);
+                            }else{
+                                $this->SetFont('Arial', '', $font2);
+                                $this->Cell($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
+                                $this->CellFitScale($anchos["porc"], $heigth,'', "T B L", 0, "R", 1);
+                                $this->Cell($anchos["pu"], $heigth, '', "T B L", 0, "R", 1);
+                                $this->CellFitScale($anchos["importe"], $heigth, '', "T B L", 0, "R", 1);
+                                $this->Cell($anchos["importe"], $heigth, '', "B L R T", 0, "R", 1);
+                                $this->Cell($anchos["dias"], $heigth, '', "B L R T", 0, "R", 1);
+                            }
+                        }
+                        $this->Ln();
+                    }
+                    
+                }
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->SetFont('Arial', 'B', $font);
+                $this->Cell($anchos["espacio_detalles_globales"]);
+                $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Total Exclusiones:", 1, 0, "R", 1);
+                for ($i = 0; $i <  $inc_ie; $i++) {
+                    $this->SetFillColor(255, 255, 255);
+                    $this->SetTextColor(0, 0, 0);
+                    $this->SetFont('Arial', 'B', $font);
+                    $this->Cell($anchos["desc_g"], $heigth);
+                    $this->Cell($anchos["dias"] + $anchos["importe"], $heigth, array_key_exists('importe', $datos_partidas['exclusiones'][$i]) && $datos_partidas['exclusiones'][$i]['importe'] > 0 ? number_format($datos_partidas['exclusiones'][$i]['importe'], 2, '.', ',') : '-', 1, 0, 'R', 1);
+                }
+                $this->Ln();
+                $this->SetFillColor(100, 100, 100);
+                $this->SetTextColor(255, 255, 255);
+                $this->SetFont('Arial', 'B', $font);
+                $this->Cell($anchos["espacio_detalles_globales"]);
+                $this->Cell($anchos["espacio_detalles_globales"], $heigth, "Total Comparativa:", 1, 0, "R", 1);
+                for ($i = 0; $i <  $inc_ie; $i++) {
+                    $this->SetFillColor(255, 255, 255);
+                    $this->SetTextColor(0, 0, 0);
+                    $this->SetFont('Arial', 'B', $font);
+                    $this->Cell($anchos["desc_g"], $heigth);
+                    $this->Cell($anchos["dias"] + $anchos["importe"], $heigth,array_key_exists($i, $datos_partidas['presupuestos']) && $datos_partidas['presupuestos'][$i]['total'] > 0 && array_key_exists('importe', $datos_partidas['exclusiones'][$i]) && $datos_partidas['exclusiones'][$i]['importe'] > 0 ? number_format($datos_partidas['presupuestos'][$i]['total'] + $datos_partidas['exclusiones'][$i]['importe'], 2, '.', ',') : '-', 1, 0, 'R', 1);
+                }
+            }
             asort($this->y_fin_og_arr);
             $this->y_fin_og = array_pop($this->y_fin_og_arr);
             $this->SetY($this->y_fin_og);

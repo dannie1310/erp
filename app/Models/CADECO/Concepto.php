@@ -9,13 +9,15 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Contabilidad\CuentaConcepto;
-use App\Models\CADECO\PresupuestoObra\DatoConcepto;
-use App\Models\CADECO\PresupuestoObra\Responsable;
-use App\Scopes\ActivoScope;
+use Exception;
+use App\Facades\Context;
 use App\Scopes\ObraScope;
-use Illuminate\Database\Eloquent\Model;
+use App\Scopes\ActivoScope;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\CADECO\Contabilidad\CuentaConcepto;
+use App\Models\CADECO\PresupuestoObra\Responsable;
+use App\Models\CADECO\PresupuestoObra\DatoConcepto;
 
 class Concepto extends Model
 {
@@ -92,6 +94,15 @@ class Concepto extends Model
         }
     }
 
+    public function getPathSgvAttribute()
+    {
+        if ($this->nivel_padre == '') {
+            return $this->clave_concepto_select .$this->descripcion;
+        } else {
+            return self::withoutGlobalScopes()->find($this->id_padre_sgv)->path_sgv . ' -> ' . $this->clave_concepto_select . $this->descripcion;
+        }
+    }
+
     public function getNivelPadreAttribute()
     {
         return substr($this->nivel, 0, strlen($this->nivel) - 4);
@@ -101,6 +112,14 @@ class Concepto extends Model
     {
         if ($this->nivel_padre != '') {
             return self::where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+        }
+        return null;
+    }
+    
+    public function getIdPadreSgvAttribute()
+    {
+        if ($this->nivel_padre != '') {
+            return self::withoutGlobalScopes()->where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
         }
         return null;
     }
@@ -304,7 +323,7 @@ class Concepto extends Model
             $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
             if($nivel_buscar != "")
             {
-                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
             }
         }
         return implode(" -> ",$path_corta);

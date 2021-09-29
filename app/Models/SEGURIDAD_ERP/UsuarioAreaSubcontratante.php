@@ -17,4 +17,12 @@ class UsuarioAreaSubcontratante extends Model
         'id_usuario',
         'id_area_subcontratante',
         ];
+
+    /**
+     * Scopes
+     */
+    public function scopePorUsuario($query)
+    {
+        return $query->where('id_usuario', '=', auth()->id());
+    }
 }

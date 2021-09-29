@@ -59,6 +59,19 @@ class SolicitudCompraController extends Controller
         return $this->service->pdfSolicitudCompra($id);
     }
 
+    public function pdfComparativaCotizaciones($id)
+    {
+        if(auth()->user()->can('consultar_cotizacion_compra')) {
+            return $this->service->pdfComparativaCotizaciones($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+    }
+
+    public function getComparativaCotizaciones($id)
+    {
+        return $this->service->getComparativaCotizaciones($id);
+    }
+
     public function aprobar(Request $request, $id)
     {
         return $this->service->aprobar($request->all(), $id);

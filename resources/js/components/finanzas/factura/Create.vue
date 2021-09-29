@@ -355,6 +355,7 @@
                 this.dato.es_nacional = 1;
                 this.con_nota_credito = 0;
                 this.dato.total = 0;
+                this.dato.impuesto = 0;
                 this.dato.id_empresa = '';
                 this.dato.id_rubro = '';
                 this.$refs.archivo.value='';
@@ -510,6 +511,7 @@
                             if(data.tipo_comprobante === "I"){
 
                                 this.dato.total = (parseFloat(this.dato.total) + parseFloat(data.total)).toFixed(2);
+                                this.dato.impuesto = (parseFloat(this.dato.impuesto) + parseFloat(data.impuesto)).toFixed(2);
                                 this.dato.referencia = data.serie + data.folio;
                                 this.dato.emision = data.fecha;
                                 this.dato.id_empresa = data.empresa_bd.id_empresa;

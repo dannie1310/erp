@@ -29,7 +29,8 @@
                     <div class="col-md-6">
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
-                            <button type="button" class="btn btn-primary" v-on:click="cotizar" :disabled="!invitacion"><i class="fa fa-comment-dollar"></i>Cotizar</button>
+                            <button type="button" class="btn btn-primary" v-on:click="cotizar" :disabled="!invitacion" v-if="invitacion.tipo == 1"><i class="fa fa-comment-dollar"></i>Cotizar</button>
+                            <button type="button" class="btn btn-primary" v-on:click="contraofertar" :disabled="!invitacion" v-if="invitacion.tipo == 2"><i class="fa fa-comments-dollar"></i>Contraofertar</button>
                         </div>
                     </div>
                 </div>
@@ -87,7 +88,55 @@
                     id: this.id_invitacion,
                     params:{}
                 }).then(data => {
-                    this.$router.push({name: 'cotizacion-proveedor-create', params: {id_invitacion: this.id_invitacion}});
+                    if(this.invitacion.con_cotizacion){
+                        if(this.invitacion.tipo_antecedente == 49){
+                            this.$router.push({name: 'presupuesto-proveedor-edit', params: {id: this.id_invitacion}});
+                        }
+                        if(this.invitacion.tipo_antecedente == 17) {
+                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id: this.id_invitacion}});
+                        }
+                    }else{
+                        if(this.invitacion.tipo_antecedente == 49) {
+                            this.$router.push({
+                                name: 'presupuesto-proveedor-create',
+                                params: {id: this.id_invitacion}
+                            });
+                        }
+                        if(this.invitacion.tipo_antecedente == 17) {
+                            this.$router.push({
+                                name: 'cotizacion-proveedor-create',
+                                params: {id: this.id_invitacion}
+                            });
+                        }
+                    }
+                });
+            },
+            contraofertar() {
+                return this.$store.dispatch('padronProveedores/invitacion/abrir', {
+                    id: this.id_invitacion,
+                    params:{}
+                }).then(data => {
+                    if(this.invitacion.con_cotizacion){
+                        if(this.invitacion.tipo_antecedente == 49){
+                            this.$router.push({name: 'presupuesto-proveedor-edit', params: {id: this.id_invitacion}});
+                        } else
+                        if(this.invitacion.tipo_antecedente == 17) {
+                            this.$router.push({name: 'cotizacion-proveedor-edit', params: {id: this.id_invitacion}});
+                        }
+                    }else{
+                        if(this.invitacion.tipo_antecedente == 49) {
+                            this.$router.push({
+                                name: 'presupuesto-proveedor-create',
+                                params: {id: this.id_invitacion}
+                            });
+                        }else
+                        if(this.invitacion.tipo_antecedente == 17) {
+                            this.$router.push({
+                                name: 'contraoferta-cotizacion-proveedor-create',
+                                params: { id_invitacion_antecedente: this.invitacion.id_invitacion_antecedente , id_invitacion: this.invitacion.id }
+                            });
+                        }
+                    }
                 });
             },
         },
