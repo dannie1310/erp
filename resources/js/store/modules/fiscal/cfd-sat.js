@@ -363,7 +363,62 @@ export default {
                         reject(error)
                     })
             });
-        }
+        },
+        obtenerInformeSATLP2020(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'obtener-informe-sat-lp-2020', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
+        obtenerCuentasInformeSATLP2020(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI  + payload.id + '/obtener-cuentas-informe-sat-lp-2020', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
+        obtenerMovimientosCuentasInformeSATLP2020(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI  + payload.id_cuenta + '/obtener-movimientos-cuentas-informe-sat-lp-2020', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
+        getListaCFDI(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI  + payload.id_proveedor_sat + '/obtener-lista-cfdi', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {

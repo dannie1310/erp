@@ -8,7 +8,9 @@
 
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
+use DateTimeZone;
 use App\Utils\CFD;
 use App\Utils\Util;
 use App\Utils\Files;
@@ -271,27 +273,46 @@ class CFDSATService
     {
         ini_set('max_execution_time', '7200');
         ini_set('memory_limit', -1);
-        $cantidad = CFDSAT::count();
+        $cantidad = CFDSAT::where("id_empresa_sat","=",1)
+            ->where("cancelado","=","0")
+            ->whereIn("tipo_comprobante",["I","E"])
+            ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+            ->count();
+
         $take = 1000;
 
-        for ($i = 0; $i <= ($cantidad + 1000); $i + $take) {
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             //dd($i, $cantidad, $take);
-            $cfd = CFDSAT::skip($i)->take($take)->get();
-            //dd(count($cfd));
+            $cfd = CFDSAT::where("id_empresa_sat","=",1)
+                ->where("cancelado","=","0")
+                ->whereIn("tipo_comprobante",["I","E"])
+                ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->get();
             foreach ($cfd as $rcfd) {
-                $xml = base64_decode($rcfd->xml_file);
-                $factura_xml = new \SimpleXMLElement($xml);
-                if ((string)$factura_xml["version"] == "3.2") {
-                    $this->arreglo_factura["version"] = (string)$factura_xml["version"];
-                    $this->setArreglo32($factura_xml);
-                } else if ($factura_xml["Version"] == "3.3") {
-                    $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
-                    $this->setArreglo33($factura_xml);
+                try{
+                    $cfd = new CFD($rcfd->xml);
+                } catch (\Exception $e){
+                    dd("No se cargo el CFDI");
                 }
-                $rcfd->tipo_comprobante = $this->arreglo_factura["tipo_comprobante"];
+
+                $arreglo_cfd = $cfd->getArregloFactura();
+                $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
                 $rcfd->save();
+                if($arreglo_cfd["tipo_relacion"]>0){
+                    $rcfd->tipo_relacion = $arreglo_cfd["tipo_relacion"];
+                    $rcfd->cfdi_relacionado = $arreglo_cfd["cfdi_relacionado"];
+                    $rcfd->save();
+                }else{
+                    $rcfd->tipo_relacion = null;
+                    $rcfd->cfdi_relacionado = null;
+                    $rcfd->save();
+                }
+
+
             }
-            if ($i > 5000) {
+            if ($i > 15000) {
                 break;
             }
         }
@@ -1132,5 +1153,67 @@ class CFDSATService
             return $cfdi;
         }
         return null;
+    }
+
+    public function obtenerInformeSATLP2020($data)
+    {
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $this->repository->obtenerInformeSATLP2020($data);
+    }
+
+    public function obtenerCuentasInformeSATLP2020($data)
+    {
+
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $this->repository->obtenerCuentasInformeSATLP2020($data);
+    }
+
+    public function obtenerMovimientosCuentasInformeSATLP2020($data)
+    {
+
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $this->repository->obtenerMovimientosCuentasInformeSATLP2020($data);
+    }
+
+    public function obtenerListaCFDI($data)
+    {
+
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $cfdiRepository = new CFDSATRepository(new CFDSAT());
+
+        return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"]);
     }
 }

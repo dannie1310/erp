@@ -1,6 +1,7 @@
 <template>
     <span>
-        <button @click="init" type="button" class="btn btn-outline-success btn-sm" title="PDF Póliza">
+        <span v-if="txt" @click="init" style="cursor: pointer; text-decoration: underline; color: #003eff" >{{txt}}</span>
+        <button @click="init" type="button" class="btn btn-outline-success btn-sm" title="PDF Póliza" v-else>
             <i class="fa fa-file-pdf-o"></i>
         </button>
 
@@ -11,7 +12,7 @@
                         <h4 class="modal-title">Impresión de Pólizas (Actual)</h4>
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                     </div>
-                    
+
                     <div class="modal-body modal-lg" id="pdf_frame">
                         <div class="row">
                             <div class="col-md-12">
@@ -38,7 +39,7 @@
 
 <script>
     export default {
-        props: ['id', 'id_empresa'],
+        props: ['id', 'id_empresa', 'txt'],
         data() {
             return {
             }

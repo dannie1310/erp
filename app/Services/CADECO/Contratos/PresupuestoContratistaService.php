@@ -3,6 +3,7 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Facades\Context;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
 use App\Services\CADECO\Documentacion\ArchivoService;
@@ -81,7 +82,7 @@ class PresupuestoContratistaService
 
      public function descargaLayout($id)
      {
-         return $this->repository->descargaLayout($id);
+         return $this->repository->show($id)->descargaLayout($id);
      }
 
      private function getDatosPartidas($file_xls)
@@ -114,15 +115,23 @@ class PresupuestoContratistaService
         {
             abort(400,'Archivo XLS no compatible');
         }
-        if(count($celdas) != count($presupuesto->partidas) + 19)
-        {
-            abort(400,'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
-        }
+         $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+         $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+         $base_datos = $cadena_validacion_exp[0];
+         $id_obra = $cadena_validacion_exp[1];
+         $id_cotizacion_validar = $cadena_validacion_exp[2];
+
+         if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $id != $id_cotizacion_validar)
+         {
+             abort(400, 'El archivo  XLS no corresponde al presupuesto ' . $presupuesto->numero_folio_format);
+         }
+
         while($x < count($presupuesto->partidas) + 2)
         {
             $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][2])), 10);
             $item = $presupuesto->partidas->where('id_concepto', $decodificado)->first();
-            if(!is_numeric($celdas[$x][0]) || !is_numeric($celdas[$x][6]) || !is_numeric($celdas[$x][8]))
+            if(!is_numeric($celdas[$x][0]) || !is_null($celdas[$x][6]) && !is_numeric($celdas[$x][6]))
             {
                 abort(400,'No es posible obtener datos de la partida # '. ($x - 1));
             }
@@ -293,7 +302,7 @@ class PresupuestoContratistaService
                 'id_moneda' => $id_moneda,
                 'observaciones' => $celdas[$x][14],
                 'id_concepto' => (int) $item->id_concepto,
-                'partida_activa' => ($item->no_cotizado == 0) ? true : false
+                'partida_activa' => $celdas[$x][6] ? true : false,
             );
             $x++;
         }
