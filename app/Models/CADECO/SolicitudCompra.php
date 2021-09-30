@@ -883,7 +883,8 @@ class SolicitudCompra extends Transaccion
     private function obtenerPorCotizacion()
     {
         $titulos = [];
-        foreach ($this->cotizaciones()->orderBy('id_transaccion', 'asc')->get() as $key => $cotizacion)
+        $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
+        foreach ($cotizaciones as $key => $cotizacion)
         {
             $invitacion = Invitacion::where('id', $cotizacion->id_referente)->where('base_datos',Context::getDatabase())->where('id_obra', $cotizacion->id_obra)->first();
             $titulos[$key]['id_transaccion'] = $cotizacion->id_transaccion;
@@ -900,14 +901,11 @@ class SolicitudCompra extends Transaccion
         $item = [];
         foreach ($this->partidas()->ordenarPartidas()->get() as $key => $partida)
         {
-            $invitacion = '';
-            $partidas[$key]['id_solicitud'] = $partida->id_transaccion;
-            $partidas[$key]['id_material'] = $partida->id_material;
             $partidas[$key]['material'] = $partida->material->descripcion;
-
-            foreach ($this->cotizaciones()->orderBy('id_transaccion', 'asc')->get() as $k => $cotizacion)
+            $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
+            foreach ($cotizaciones as $k => $cotizacion)
             {
-                $item[$k] = $partida->estaPartidaCotizada($cotizacion->id_transaccion);
+                $item[$k] = $partida->estaPartidaCotizada($cotizacion->id_transaccion, $partida->id_material);
             }
             $partidas[$key]['partidas'] = $item;
         }
