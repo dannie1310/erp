@@ -406,7 +406,7 @@ LEFT JOIN
                  cuentas_movimientos.id_empresa_contpaq)
 
  WHERE     (tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat = ".$data["id"].")
-       AND (cuentas_movimientos.tipo_poliza = 3)
+       AND (cuentas_movimientos.tipo_poliza in(3,2))
        AND (cuentas_movimientos.tipo_movimiento = 'VERDADERO')
         AND cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                                     AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
@@ -473,7 +473,7 @@ LEFT JOIN
 
 
  WHERE     ( cuentas_movimientos.id_cuenta = ".$data["id_cuenta"].")
-       AND (cuentas_movimientos.tipo_poliza = 3)
+       AND (cuentas_movimientos.tipo_poliza  in(3,2) )
        AND (cuentas_movimientos.tipo_movimiento = 'VERDADERO')
        AND cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
