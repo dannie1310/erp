@@ -871,4 +871,46 @@ class SolicitudCompra extends Transaccion
     {
         return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
     }
+
+    public function getEstadosInvitacionCotizacionesAttribute()
+    {
+        return [
+            'titulos' => $this->obtenerPorCotizacion(),
+            'partidas' => $this->estadoCotizada()
+            ];
+    }
+
+    private function obtenerPorCotizacion()
+    {
+        $titulos = [];
+        foreach ($this->cotizaciones()->orderBy('id_transaccion', 'asc')->get() as $key => $cotizacion)
+        {
+            $invitacion = Invitacion::where('id', $cotizacion->id_referente)->where('base_datos',Context::getDatabase())->where('id_obra', $cotizacion->id_obra)->first();
+            $titulos[$key]['id_transaccion'] = $cotizacion->id_transaccion;
+            $titulos[$key]['empresa'] = $cotizacion->empresa->razon_social;
+            $titulos[$key]['numero_folio'] = $cotizacion->numero_folio_format;
+            $titulos[$key]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+        }
+        return $titulos;
+    }
+
+    private function estadoCotizada()
+    {
+        $partidas = [];
+        $item = [];
+        foreach ($this->partidas()->ordenarPartidas()->get() as $key => $partida)
+        {
+            $invitacion = '';
+            $partidas[$key]['id_solicitud'] = $partida->id_transaccion;
+            $partidas[$key]['id_material'] = $partida->id_material;
+            $partidas[$key]['material'] = $partida->material->descripcion;
+
+            foreach ($this->cotizaciones()->orderBy('id_transaccion', 'asc')->get() as $k => $cotizacion)
+            {
+                $item[$k] = $partida->estaPartidaCotizada($cotizacion->id_transaccion);
+            }
+            $partidas[$key]['partidas'] = $item;
+        }
+        return $partidas;
+    }
 }
