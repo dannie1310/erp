@@ -177,6 +177,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
+    public function obtenerMovimientosCuentasInformeSATLP2020($data)
+    {
+        $informe["informe"] = InformeSATLP::getMovimientos($data);
+        return $informe;
+    }
+
     public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final)
     {
 

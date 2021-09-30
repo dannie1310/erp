@@ -392,6 +392,20 @@ export default {
             });
         },
 
+        obtenerMovimientosCuentasInformeSATLP2020(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI  + payload.id_cuenta + '/obtener-movimientos-cuentas-informe-sat-lp-2020', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
         getListaCFDI(context, payload) {
             return new Promise((resolve, reject) => {
                 axios

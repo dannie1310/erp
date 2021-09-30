@@ -252,7 +252,7 @@
             </div>
         </div>
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+            <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">Cuentas</h5>
@@ -267,7 +267,16 @@
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
+                                            <td colspan="3" style="border: none">
+                                                <h6>{{razon_social}}</h6>
+                                            </td>
+                                            <td style="text-align: right; border: none">
+                                                <h6>${{parseFloat(importe_cuentas).formatMoney(2,".",",") }}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
                                             <th class="index_corto">#</th>
+                                            <th>Empresa</th>
                                             <th>Cuenta</th>
                                             <th>Monto</th>
                                         </tr>
@@ -275,13 +284,14 @@
                                         <tbody>
                                             <tr v-for="(cuenta, i ) in cuentas">
                                                 <td>{{i+1}}</td>
-                                                <td>{{cuenta.codigo_cuenta}}</td>
+                                                <td>{{cuenta.empresa_contpaq}}</td>
+                                                <td v-on:click="getMovimientos(cuenta)" style="cursor: pointer; text-decoration: underline">{{cuenta.codigo_cuenta}}</td>
                                                 <td style="text-align: right">${{parseFloat(cuenta.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                              <tr>
-                                                <td style="text-align: right" colspan="2" class="sin_borde"><b>Total:</b></td>
+                                                <td style="text-align: right" colspan="3" class="sin_borde"><b>Total:</b></td>
                                                 <td style="text-align: right" class="sin_borde">${{parseFloat(importe_cuentas).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tfoot>
@@ -299,7 +309,75 @@
             </div>
         </div>
 
-        <div class="modal fade" ref="modal_cfdi" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
+        <div class="modal fade" ref="modal_polizas" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalPolizas">Movimientos</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table table-sm table-fs-sm">
+                                        <thead>
+                                        <tr>
+                                            <td colspan="5" style="border: none">
+                                                <h6>{{razon_social}}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="border: none">
+                                                <h6>{{codigo_cuenta}}</h6>
+                                            </td>
+                                            <td colspan="2" style="border: none">
+                                                <h6>{{empresa_contpaq}}</h6>
+                                            </td>
+                                            <td style="text-align: right; border: none">
+                                                <h6>${{parseFloat(importe_movimientos).formatMoney(2,".",",") }}</h6>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th class="index_corto">#</th>
+                                            <th>Fecha Póliza</th>
+                                            <th>Tipo Póliza</th>
+                                            <th>Folio Póliza</th>
+                                            <th>Monto</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="(movimiento, i ) in movimientos">
+                                                <td>{{i+1}}</td>
+                                                <td>{{movimiento.fecha_poliza}}</td>
+                                                <td>{{movimiento.tipo_poliza}}</td>
+                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa"></PDFPoliza></td>
+                                                <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot>
+                                             <tr>
+                                                <td style="text-align: right" colspan="4" class="sin_borde"><b>Total:</b></td>
+                                                <td style="text-align: right" class="sin_borde">${{parseFloat(importe_movimientos).formatMoney(2,".",",") }}</td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" ref="modal_cfdi" tabindex="-1" role="dialog">
                  <div class="modal-dialog modal-xl" id="mdialTamanio">
                      <div class="modal-content">
                         <div class="modal-header">
@@ -312,8 +390,8 @@
                                     <table class="table table-sm table-fs-sm">
                                         <tr>
                                             <td colspan="3" style="border: none"><h6>{{rfc}}</h6></td>
-                                            <td colspan="5" style="border: none"><h6>{{razon_social}}</h6></td>
-                                            <td colspan="7" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
+                                            <td colspan="10" style="border: none"><h6>{{razon_social}}</h6></td>
+                                            <td colspan="2" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto encabezado">#</th>
@@ -431,10 +509,11 @@ import Datepicker from 'vuejs-datepicker';
 import {es} from "vuejs-datepicker/dist/locale";
 import CFDI from "../cfd/cfd-sat/CFDI";
 import DescargaCFDI from "../cfd/cfd-sat/DescargaCFDI";
+import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
 
 export default {
     name: "Informe",
-    components: {DescargaCFDI, CFDI, Datepicker},
+    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker},
     data() {
         return {
             informe : [],
@@ -455,6 +534,10 @@ export default {
             empresas_seleccionadas :[],
             empresas_seleccionadas_filtro :[],
             empresas : [],
+            movimientos : [],
+            importe_movimientos : 0,
+            codigo_cuenta : '',
+            empresa_contpaq:''
         }
     },
     mounted() {
@@ -502,9 +585,24 @@ export default {
                 $(this.$refs.modal_cfdi).modal('show');
             });
         },
-        getMovimientos(item)
+        getMovimientos(cuenta)
         {
-            this.$router.push({name: 'cuenta-saldo-negativo-detalle-movimientos', params: {aniomes: item.anio+'-'+item.mes}});
+            return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
+                fecha_inicial : this.fecha_inicial,
+                fecha_final : this.fecha_final,
+                empresas : this.empresas_seleccionadas_filtro,
+                id_cuenta : cuenta.id_cuenta
+            })
+                .then(data => {
+                    this.codigo_cuenta = cuenta.codigo_cuenta;
+                    this.movimientos = data.informe;
+                    this.importe_movimientos = cuenta.importe_movimiento;
+                    this.empresa_contpaq = cuenta.empresa_contpaq;
+                })
+                .finally(() => {
+                    $(this.$refs.modal_polizas).appendTo('body')
+                    $(this.$refs.modal_polizas).modal('show');
+                });
         },
         verCuentas(partida)
         {
@@ -515,6 +613,7 @@ export default {
                 empresas : this.empresas_seleccionadas_filtro
             })
             .then(data => {
+                this.razon_social = partida.razon_social;
                 this.cuentas = data.informe;
                 this.importe_cuentas = partida.importe_movimientos_pasivo;
             })
