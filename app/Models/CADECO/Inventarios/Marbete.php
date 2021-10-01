@@ -34,6 +34,15 @@ class Marbete extends  Model
         'folio'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+
+        self::addGlobalScope(function ($query) {
+            return $query->whereHas('invetarioFisico');
+        });
+    }
+
 
     public function conteos()
     {
