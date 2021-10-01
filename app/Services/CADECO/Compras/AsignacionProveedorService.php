@@ -127,6 +127,7 @@ class AsignacionProveedorService
                             'id_transaccion_cotizacion' => $partida['id_transaccion'],
                             'id_material' => $partida['id_material'],
                             'cantidad_asignada' => $partida['cantidad_asignada'],
+                            'justificacion' => $partida['justificacion'],
                         ]);
                         $registradas ++;
                     }

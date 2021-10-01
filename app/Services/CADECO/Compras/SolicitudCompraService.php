@@ -202,6 +202,7 @@ class SolicitudCompraService
                         'razon_social' => $cotizacion->empresa->razon_social,
                         'sucursal' => $cotizacion->sucursal->descripcion,
                         'direccion' => $cotizacion->sucursal->direccion,
+                        'justificar' => false,
                     ];
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
                 }
@@ -222,7 +223,11 @@ class SolicitudCompraService
                         'tipo_cambio' => $t_cambio,
                         'importe' => number_format($importe, 2, '.', ','),
                         'importe_moneda_conversion' =>  number_format($importe * $t_cambio, 2, '.', ','),
+                        'importe_moneda_conversion_sf' =>  $importe * $t_cambio,
                         'descuento' => $descuento,
+                        'mejor_opcion' => $cot->mejor_opcion,
+                        'color' => $cot->color_opcion,
+                        'justificacion' => '',
                     ];
                 }else{
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;
