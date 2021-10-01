@@ -8,6 +8,7 @@ use App\Models\CTPQ\Poliza;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
+use App\Models\CTPQ\Parametro;
 
 class SolicitudAsociacionCFDIPartida extends Model
 {
@@ -82,40 +83,63 @@ class SolicitudAsociacionCFDIPartida extends Model
 
     private function detectaAsociaciones()
     {
-        $query = "SELECT DISTINCT
-db_name() as base_datos_contpaq,
-AsocCFDIs.Id as id_asociacion,
-                Polizas.Id as id_poliza_contpaq,
-                Polizas.Guid as guid_poliza_contpaq,
-                AsocCFDIs.UUID as uuid,
-                null as id_cfdi,
-                Polizas.Ejercicio as ejercicio,
-                Polizas.Periodo as periodo,
-                Polizas.Folio AS folio,
-                Polizas.Fecha AS fecha,
-                Polizas.Cargos AS monto,
-                TiposPolizas.Nombre AS tipo
-  FROM (dbo.Polizas Polizas
-        INNER JOIN dbo.TiposPolizas TiposPolizas
-           ON (Polizas.TipoPol = TiposPolizas.Id))
-       INNER JOIN dbo.AsocCFDIs AsocCFDIs
-          ON (AsocCFDIs.GuidRef = Polizas.Guid)
-ORDER BY fecha ASC, folio ASC";
         $asociaciones =[];
+        $base = null;
 
-        try{
-            $asociaciones = DB::connection("cntpq")->select($query);
-            $asociaciones = array_map(function ($value) {
-                return (array)$value;
-            }, $asociaciones);
-
-        } catch (\Exception $e){
-            $this->sin_acceso = 1;
+        try {
+            $base = Parametro::find(1);
+        }
+        catch (\Exception $e){
+            $this->sin_acceso_parametros = 1;
             $this->save();
+        }
+        if($base){
+            $exp = explode("_", $this->base_datos);
+            if(count($exp)>0){
+                if(is_numeric($exp[count($exp)-1])){
+                    $numero_empresa = $exp[count($exp)-1];
+                }else {
+                    $numero_empresa = "NULL";
+                }
+            } else {
+                $numero_empresa = "NULL";
+            }
 
+            $query = "SELECT
+            '".$this->base_datos."' as base_datos_contpaq,
+            null as id_asociacion,
+            p.Id as id_poliza_contpaq,
+            p.Guid as guid_poliza_contpaq,
+            c.UUID as uuid,
+            null as id_cfdi,
+            p.Ejercicio as ejercicio,
+            p.Periodo as periodo,
+            p.Folio as folio,
+            p.Fecha as fecha,
+            p.Cargos as monto,
+            tp.Nombre as tipo,
+            ".$numero_empresa." as numero_empresa
+        FROM
+            ".$this->base_datos.".dbo.Polizas p
+        INNER JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
+            p.Guid = e.Guid_Relacionado
+        INNER JOIN [document_".$base->GuidDSL."_metadata].dbo.Comprobante c ON
+            e.Guid_Pertenece = c.GuidDocument
+        INNER JOIN ".$this->base_datos.".dbo.TiposPolizas tp ON
+            tp.Id = p.TipoPol where c.UUID is not null;";
+
+            try{
+                $asociaciones = DB::connection("cntpq")->select($query);
+                $asociaciones = array_map(function ($value) {
+                    return (array)$value;
+                }, $asociaciones);
+
+            } catch (\Exception $e){
+                $this->sin_acceso = 1;
+                $this->save();
+            }
         }
         return $asociaciones;
-
     }
 
     private function registraAsociaciones($polizas)
