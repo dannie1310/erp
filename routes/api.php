@@ -1437,6 +1437,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@update')->where(['id' => '[0-9]+']);
             $api->get('descargar', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargar');
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaLayout');
         });
     });
 
