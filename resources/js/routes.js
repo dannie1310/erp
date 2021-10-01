@@ -3440,9 +3440,7 @@ export const routes = [
                 name: 'fiscal',
                 meta: {
                     title: 'FISCAL',
-                    middleware: [auth, permission],
-                    permission: ['consultar_autocorreccion_cfd_efo','consultar_poliza','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_efos_empresa','consultar_informe_listado_efos_vs_cfdi_recibidos','consultar_no_deducido_cfd_efo'],
-                    general: true
+                    middleware: [auth],
                 }
             },
             {
@@ -3481,7 +3479,7 @@ export const routes = [
                             title: 'Informe SAT',
                             breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
                             middleware: [auth, permission],
-                            permission: ['consultar_informe_listado_efos_vs_cfdi_recibidos'],
+                            permission: ['consultar_informe_general_sat_lp_2020'],
                             general: true
                         }
                     },
