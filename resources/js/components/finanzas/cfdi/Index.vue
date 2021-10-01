@@ -4,7 +4,7 @@
             <div class="col-12">
                 <descarga-layout v-bind:query="query" />
                 <button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
-                    <i class="fa fa-download"></i> Descargar
+                    <i class="fa fa-download"></i> Descargar CFDI
                 </button>
             </div>
         </div>
