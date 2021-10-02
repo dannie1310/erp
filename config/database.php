@@ -233,6 +233,9 @@ return [
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
+            /*'options' => [
+                PDO::ATTR_TIMEOUT => 300,
+            ]*/
             /*'options' =>[
                 PDO::DBLIB_ATTR_STRINGIFY_UNIQUEIDENTIFIER => true,
             ],*/

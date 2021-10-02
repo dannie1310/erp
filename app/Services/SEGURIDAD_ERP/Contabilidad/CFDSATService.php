@@ -1214,6 +1214,6 @@ class CFDSATService
 
         $cfdiRepository = new CFDSATRepository(new CFDSAT());
 
-        return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"]);
+        return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"], $data["asociada_contpaq"], $data["empresas"]);
     }
 }

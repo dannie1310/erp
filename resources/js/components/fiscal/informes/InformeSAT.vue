@@ -80,7 +80,7 @@
                                     <th colspan="2">Neto CFDI</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
-                                    <th colspan="3">Contabilidad GHI</th>
+                                    <th colspan="4">Contabilidad GHI</th>
                                 </tr>
                                 <tr>
 
@@ -93,6 +93,7 @@
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
 
+                                    <th class="c80">Cantidad Empresas <br> Póliza-CFDI</th>
                                     <th class="c80">Cantidad Cuentas Relacionadas</th>
                                     <th class="c80">Pasivos Registrados</th>
                                     <th class="c80">Diferencias</th>
@@ -156,6 +157,12 @@
 
                                 <td class="sin_borde">
                                     &nbsp;
+                                </td>
+                                <td style="text-align: right;"   v-if="parseFloat(partida.cantidad_empresas)>0">
+                                     {{parseFloat(partida.cantidad_empresas) }}
+                                </td>
+                                 <td style="text-align: right" v-else>
+                                    -
                                 </td>
                                 <td style="text-align: right; text-decoration: underline" :style="parseFloat(partida.cantidad_cuentas)>0?`cursor : pointer`:``" v-on:click="verCuentas(partida)" v-if="parseFloat(partida.cantidad_cuentas)>0">
                                      {{parseFloat(partida.cantidad_cuentas) }}
@@ -391,7 +398,7 @@
                                         <tr>
                                             <td colspan="3" style="border: none"><h6>{{rfc}}</h6></td>
                                             <td colspan="10" style="border: none"><h6>{{razon_social}}</h6></td>
-                                            <td colspan="2" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
+                                            <td colspan="3" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto encabezado">#</th>
@@ -408,6 +415,7 @@
                                             <th class="encabezado">Es reemplazo</th>
                                             <th class="encabezado">Fecha CFDI Original</th>
                                             <th class="encabezado">Obra SAO</th>
+                                            <th class="encabezado">Empresa Contpaq</th>
                                             <th class="encabezado"></th>
                                         </tr>
                                         <tr v-for="(cfdi, i) in lista_cfdi">
@@ -474,6 +482,9 @@
                                             </td>
                                             <td>
                                                 {{cfdi.obra_sao}}
+                                            </td>
+                                            <td>
+                                                {{cfdi.empresa_contpaq}}
                                             </td>
                                             <td style="width: 90px">
                                                 <CFDI v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
@@ -569,10 +580,13 @@ export default {
         },
         verCFDI(partida)
         {
+            let asociada = partida.cantidad_empresas > 0 ? 1 : 0;
             return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
                 id_proveedor_sat: partida.id_proveedor_sat,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
+                asociada_contpaq : asociada,
+                empresas : this.empresas_seleccionadas_filtro
             })
             .then(data => {
                 this.lista_cfdi = data;
