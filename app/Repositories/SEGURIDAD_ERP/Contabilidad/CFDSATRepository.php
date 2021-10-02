@@ -183,10 +183,10 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
-    public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final)
+    public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas)
     {
 
-        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final);
+        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas);
         return $cfdi;
     }
 
