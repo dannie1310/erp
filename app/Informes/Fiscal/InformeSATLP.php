@@ -48,7 +48,7 @@ class InformeSATLP
         if(count($data["empresas"])>0)
         {
             $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
-            $qry_cfdi = " AND pc.numero_empresa  in(".implode(",", $data["empresas"]).") ";
+            $qry_cfdi = " AND cfd_sat.numero_empresa  in(".implode(",", $data["empresas"]).") ";
         }
 
         $informe_qry = " select reporte.* from (
@@ -83,7 +83,7 @@ INNER JOIN (
             cfd_sat.id_proveedor_sat,
             cfd_sat.subtotal_xls AS subtotal,
             cfd_sat.descuento_xls AS descuento,
-            pc.numero_empresa as numero_empresa,
+            cfd_sat.numero_empresa as numero_empresa,
             CASE
                 WHEN cfd_sat.moneda_xls != 'MXN'
                 AND cfd_sat.tc_xls > 0 THEN
@@ -114,12 +114,7 @@ INNER JOIN (
             cfd_sat.moneda_xls,
             cfd_sat.tc_xls
         FROM
-            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat join
-                (
-                    select uuid, max(numero_empresa) as numero_empresa
-                    from SEGURIDAD_ERP.Contabilidad.polizas_cfdi
-                    group by uuid
-                ) as pc on(pc.uuid = cfd_sat.uuid)
+            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
         WHERE
             (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
@@ -218,8 +213,7 @@ FULL OUTER JOIN (
                     cfd_sat.moneda_xls,
                     cfd_sat.tc_xls
                 FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat join
-                    	SEGURIDAD_ERP.Contabilidad.polizas_cfdi pc on(pc.uuid = cfd_sat.uuid)
+                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                 WHERE
                     (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
@@ -278,8 +272,7 @@ LEFT OUTER JOIN (
                     cfd_sat.moneda_xls,
                     cfd_sat.tc_xls
                 FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat join
-                    	SEGURIDAD_ERP.Contabilidad.polizas_cfdi pc on(pc.uuid = cfd_sat.uuid)
+                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                 WHERE
                     (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
@@ -369,12 +362,11 @@ INNER JOIN (
             cfd_sat.moneda_xls,
             cfd_sat.tc_xls
         FROM
-            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat left join
-                    	SEGURIDAD_ERP.Contabilidad.polizas_cfdi pc on(pc.uuid = cfd_sat.uuid)
+            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
         WHERE
             (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-            AND pc.numero_empresa  is null
+            AND cfd_sat.numero_empresa  is null
             AND (((cfd_sat.cancelado = 0
                 AND cfd_sat.id_empresa_sat = 1)
             AND cfd_sat.tipo_comprobante IN ('E', 'I'))
@@ -469,12 +461,11 @@ FULL OUTER JOIN (
                     cfd_sat.moneda_xls,
                     cfd_sat.tc_xls
                 FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat left join
-                    	SEGURIDAD_ERP.Contabilidad.polizas_cfdi pc on(pc.uuid = cfd_sat.uuid)
+                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                 WHERE
                     (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                    	AND pc.numero_empresa  is null
+                    	AND cfd_sat.numero_empresa  is null
                         AND (((cfd_sat.cancelado = 0
                             AND cfd_sat.id_empresa_sat = 1)
                         AND cfd_sat.tipo_comprobante IN ('E'))
@@ -529,12 +520,11 @@ LEFT OUTER JOIN (
                     cfd_sat.moneda_xls,
                     cfd_sat.tc_xls
                 FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat left join
-                    	SEGURIDAD_ERP.Contabilidad.polizas_cfdi pc on(pc.uuid = cfd_sat.uuid)
+                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
                 WHERE
                     (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                    AND pc.numero_empresa  is null
+                    AND cfd_sat.numero_empresa  is null
                         AND (((cfd_sat.cancelado = 0
                             AND cfd_sat.id_empresa_sat = 1)
                         AND cfd_sat.tipo_comprobante IN ('I'))
@@ -579,7 +569,7 @@ join(	SELECT
 				cfd_sat.id_proveedor_sat,
 				cfd_sat.subtotal_xls AS subtotal,
 				cfd_sat.descuento_xls AS descuento,
-				pc.numero_empresa as numero_empresa,
+				cfd_sat.numero_empresa as numero_empresa,
 				CASE
 					WHEN cfd_sat.moneda_xls != 'MXN'
 					AND cfd_sat.tc_xls > 0 THEN
@@ -816,13 +806,13 @@ order by cuentas_movimientos.importe_movimiento desc");
 
     public static function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas){
 
-        $condicion = " AND polizas_cfdi.uuid is null";
+        $condicion = " AND cfd_sat.numero_empresa is null";
         if($asociada_contpaq == 1){
             if(count($empresas)>0)
             {
-                $condicion = " AND polizas_cfdi.numero_empresa in(".implode(",", $empresas).")";
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $empresas).")";
             } else{
-                $condicion = " AND polizas_cfdi.uuid is not null";
+                $condicion = " AND cfd_sat.numero_empresa is not null";
             }
         }
 
