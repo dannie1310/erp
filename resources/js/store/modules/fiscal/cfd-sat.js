@@ -419,6 +419,20 @@ export default {
                     })
             });
         },
+
+        getNumeroEmpresaContexto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI  + 'obtener-numero-empresa', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {
