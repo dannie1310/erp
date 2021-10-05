@@ -196,7 +196,7 @@
                                                         id="justificacion"
                                                         class="form-control"
                                                         v-model="cotizacion.partidas[i].justificacion"
-                                                        v-validate="{required: true, max:5}"
+                                                        v-validate="{required: true, max:500}"
                                                         data-vv-as="Justificación"
                                                         :class="{'is-invalid': errors.has('justificacion')}"
                                                     ></textarea>
