@@ -137,7 +137,7 @@
                         <div class="modal-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <p><b>Las siguentes partidas no son las mejores opciones cotizadas, favor de describir la justificación de su asignación.</b></p>
+                                    <p><b>Las siguientes partidas no son las mejores opciones cotizadas, favor de describir la justificación de su asignación.</b></p>
                                 </div>
                             </div>
                             <div class="row" v-for="(cotizacion, id_empresa) in data.cotizaciones" v-if="cotizacion.justificar">
