@@ -45,10 +45,12 @@ class InformeSATLP
     {
         $qry = "";
         $qry_cfdi = "";
+        $qry_cfdi_orden = "";
         if(count($data["empresas"])>0)
         {
             $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
             $qry_cfdi = " AND cfd_sat.numero_empresa  in(".implode(",", $data["empresas"]).") ";
+            $qry_cfdi_orden = " AND (cfd_sat.numero_empresa  in(".implode(",", $data["empresas"]).") OR cfd_sat.numero_empresa IS NULL) ";
         }
 
         $informe_qry = " select reporte.* from (
@@ -613,7 +615,7 @@ join(	SELECT
 			WHERE
 				(cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                               AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-				".$qry_cfdi."
+				".$qry_cfdi_orden."
 				AND (((cfd_sat.cancelado = 0
 					AND cfd_sat.id_empresa_sat = 1)
 				AND cfd_sat.tipo_comprobante IN ('E', 'I'))
