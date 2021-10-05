@@ -228,6 +228,27 @@ class CotizacionCompraPartida extends Model
         }
     }
 
+    public function getMejorOpcionAttribute(){
+        $cotizaciones = $this->cotizacion->solicitud->cotizaciones->pluck('id_transaccion')->toArray();
+        if(count($cotizaciones) == 1){
+            return true;
+        }
+        $precio_unitario_base = $this->precio_unitario - ($this->precio_unitario * $this->descuento / 100);
+        unset($cotizaciones[array_search($this->id_transaccion, $cotizaciones)]);
+        $partidas_comparar = self::whereIn('id_transaccion',$cotizaciones)->where('id_material', '=', $this->id_material)->get();
+        foreach($partidas_comparar as $partida){
+            $precio_unitario_partida = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
+            if($precio_unitario_base > $precio_unitario_partida){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function getColorOpcionAttribute(){
+        return $this->mejor_opcion ? 'green':'black';
+    }
+
     public function scopeActiva($query)
     {
         return $query->where("no_cotizado","=",0);
