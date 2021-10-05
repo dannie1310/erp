@@ -121,9 +121,9 @@ class ItemSolicitudCompra extends Item
     /**
      * Métodos
      */
-    public function estaPartidaCotizada($id_cotizacion)
+    public function estaPartidaCotizada($id_cotizacion, $id_material)
     {
-        $partida = CotizacionCompraPartida::where('id_transaccion', $id_cotizacion)->where('id_material', $this->id_material)->first();
+        $partida = CotizacionCompraPartida::where('id_transaccion', $id_cotizacion)->where('id_material', $id_material)->first();
         if(!is_null($partida))
         {
             return true;

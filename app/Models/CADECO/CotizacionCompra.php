@@ -936,28 +936,6 @@ class    CotizacionCompra  extends Transaccion
                             'observaciones' => array_key_exists('observacion_partida', $partida) ? $partida['observacion_partida'] : '',
                             'estatus' => 3
                         ]);
-                    } else {
-                        $cotizaciones = $cotizacion->partidas()->create([
-                            'id_transaccion' => $cotizacion->id_transaccion,
-                            'id_material' => $partida['id_material'],
-                            'cantidad' => $partida['cantidad'],
-                            'precio_unitario' => null,
-                            'descuento' => 0,
-                            'anticipo' => $data['anticipo'],
-                            'dias_credito' => $data['credito'],
-                            'dias_entrega' => $data['tiempo'],
-                            'no_cotizado' => !$partida['enable'],
-                            'disponibles' => 1,
-                            'id_moneda' => key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
-                        ]);
-                        #------- Compras.cotizacion_partidas_complemento
-                        $cotizaciones->partida()->create([
-                            'id_transaccion' => $cotizacion->id_transaccion,
-                            'id_material' => $partida['id_material'],
-                            'descuento_partida' => 0,
-                            'observaciones' => array_key_exists('observacion_partida', $partida) ? $partida['observacion_partida'] : '',
-                            'estatus' => 3
-                        ]);
                     }
                 }
                 if($solicitud->validarCotizada())
