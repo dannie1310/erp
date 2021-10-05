@@ -559,21 +559,22 @@ export default {
             return this.$store.dispatch('fiscal/cfd-sat/getNumeroEmpresaContexto', {})
                 .then(data => {
                     this.empresas_seleccionadas_filtro = [data];
-                })
-                .finally(() => {
                     return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
                         id:this.id,
                         fecha_inicial : this.fecha_inicial,
                         fecha_final : this.fecha_final,
                         empresas : this.empresas_seleccionadas_filtro
                     })
-                    .then(data => {
-                        this.informe = data.informe;
-                        this.empresas = data.informe.empresas;
-                    })
-                    .finally(() => {
-                        this.cargando = false;
-                    });
+                        .then(data => {
+                            this.informe = data.informe;
+                            this.empresas = data.informe.empresas;
+                        })
+                        .finally(() => {
+                            this.cargando = false;
+                        });
+                })
+                .finally(() => {
+                    this.cargando = false;
                 });
 
         },
