@@ -328,7 +328,7 @@ export default {
                                 .post(URI + 'layoutProveedor', payload.data, payload.config)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Archivo cargado correctamente:", {
+                                    swal("Archivo cargado correctamente", {
                                         icon: "success",
                                         timer: 2000,
                                         buttons: false
