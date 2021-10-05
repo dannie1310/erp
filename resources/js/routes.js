@@ -2195,7 +2195,7 @@ export const routes = [
                         component: require('./components/contabilidad/informes/InformeSAT.vue').default,
                         meta: {
                             title: 'Informe SAT',
-                            breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
+                            breadcrumb: {name: 'INFORME SAT LP 2020', parent: 'contabilidad'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_sat_lp_2020'],
                             general: true
