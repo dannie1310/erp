@@ -1216,4 +1216,9 @@ class CFDSATService
 
         return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"], $data["asociada_contpaq"], $data["empresas"]);
     }
+
+    public function obtenerNumeroEmpresa()
+    {
+        return $this->repository->obtenerNumeroEmpresa();
+    }
 }

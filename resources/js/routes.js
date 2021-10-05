@@ -2190,6 +2190,18 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'informe-sat',
+                        name: 'informe-sat',
+                        component: require('./components/contabilidad/informes/InformeSAT.vue').default,
+                        meta: {
+                            title: 'Informe SAT',
+                            breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_sat_lp_2020'],
+                            general: true
+                        }
+                    },
+                    {
                         path: 'poliza',
                         component: require('./components/contabilidad/poliza/Layout.vue').default,
                         children: [
@@ -3472,8 +3484,8 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'informe-sat',
-                        name: 'informe-sat',
+                        path: 'informe-general-sat',
+                        name: 'informe-general-sat',
                         component: require('./components/fiscal/informes/InformeSAT.vue').default,
                         meta: {
                             title: 'Informe SAT',
