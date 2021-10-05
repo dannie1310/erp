@@ -129,7 +129,9 @@ class SolicitudCompra extends Transaccion
 
     public function scopeCotizada($query)
     {
-        return $query->whereHas("cotizaciones");
+        return $query->whereHas("cotizaciones", function ($q) {
+            return $q->withoutGlobalScopes()->where('tipo_transaccion', '=', 18);
+        });
     }
 
     public function scopeAreasCompradorasAsignadas($query)
