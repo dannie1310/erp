@@ -45,6 +45,7 @@ class DatosContablesService
 
             $data['FormatoCuentaRegExp'] = $regExp;
         }
+        $data['estado'] = 1;
         return $this->repository->update($data, $id);
     }
 }
