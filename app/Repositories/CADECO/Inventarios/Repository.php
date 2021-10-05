@@ -410,8 +410,6 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         --FIN AUB
         )
         )  
-  )  
-        )  
         
         ) as significativas_sin_existencia
   
