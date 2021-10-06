@@ -44,19 +44,10 @@
                                     :disabled-dates="fechasDeshabilitadas"
                                     :class="{'is-invalid': errors.has('fecha_fin')}"
                                 ></datepicker></td>
-                                <td>
-                                     <treeselect v-model="empresas_seleccionadas"
-                                         :multiple="true"
-                                         :options="empresas"
-                                         data-vv-as="Empresas"
-                                         :flatten-search-results="true"
-                                         placeholder="Seleccione las empresas deseadas">
-                                         <div slot="value-label" slot-scope="{ node }">{{ node.raw.customLabel }}</div>
-                                    </treeselect>
-                                </td>
                                 <td class="sin_borde" style="padding-top: 6px; width: 100px">
                                     <button type="button" class="btn btn-secondary" v-on:click="getInforme" ><i class="fa fa-filter"></i>Filtrar</button>
                                 </td>
+                                 <td class="sin_borde"></td>
                             </tr>
                         </table>
                     </div>
@@ -518,8 +509,8 @@
 <script>
 import Datepicker from 'vuejs-datepicker';
 import {es} from "vuejs-datepicker/dist/locale";
-import CFDI from "../cfd/cfd-sat/CFDI";
-import DescargaCFDI from "../cfd/cfd-sat/DescargaCFDI";
+import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
+import DescargaCFDI from "../../fiscal/cfd/cfd-sat/DescargaCFDI";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
 
 export default {
@@ -563,20 +554,29 @@ export default {
             this.fecha_inicial = this.fecha_inicial_input;
             this.fecha_final = this.fecha_final_input;
             this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
-                id:this.id,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro
-            })
-            .then(data => {
-                this.informe = data.informe;
-                this.empresas = data.informe.empresas;
-                //this.getMovimientos(this.informe.data[0])
-            })
-            .finally(() => {
-                this.cargando = false;
-            });
+
+            //
+            return this.$store.dispatch('fiscal/cfd-sat/getNumeroEmpresaContexto', {})
+                .then(data => {
+                    this.empresas_seleccionadas_filtro = [data];
+                    return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
+                        id:this.id,
+                        fecha_inicial : this.fecha_inicial,
+                        fecha_final : this.fecha_final,
+                        empresas : this.empresas_seleccionadas_filtro
+                    })
+                        .then(data => {
+                            this.informe = data.informe;
+                            this.empresas = data.informe.empresas;
+                        })
+                        .finally(() => {
+                            this.cargando = false;
+                        });
+                })
+                .finally(() => {
+                    this.cargando = false;
+                });
+
         },
         verCFDI(partida)
         {

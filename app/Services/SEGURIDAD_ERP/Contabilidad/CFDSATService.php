@@ -1183,6 +1183,21 @@ class CFDSATService
         return $this->repository->obtenerCuentasInformeSATLP2020($data);
     }
 
+    public function obtenerMovimientosCuentasInformeSATLP2020($data)
+    {
+
+        $fecha = New DateTime($data["fecha_inicial"]);
+        $fecha_final = New DateTime($data["fecha_final"]);
+        if(!($fecha_final>$fecha)){
+            $fecha = New DateTime($data["fecha_final"]);
+            $fecha_final = New DateTime($data["fecha_inicial"]);
+        }
+        $data["fecha_inicial"]=$fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+
+        $data["fecha_final"]=$fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $this->repository->obtenerMovimientosCuentasInformeSATLP2020($data);
+    }
+
     public function obtenerListaCFDI($data)
     {
 
@@ -1199,6 +1214,11 @@ class CFDSATService
 
         $cfdiRepository = new CFDSATRepository(new CFDSAT());
 
-        return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"]);
+        return $cfdiRepository->getListaCFDI($data["id_proveedor_sat"], $data["fecha_inicial"], $data["fecha_final"], $data["asociada_contpaq"], $data["empresas"]);
+    }
+
+    public function obtenerNumeroEmpresa()
+    {
+        return $this->repository->obtenerNumeroEmpresa();
     }
 }
