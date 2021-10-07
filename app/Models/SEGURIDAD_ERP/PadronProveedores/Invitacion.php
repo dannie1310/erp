@@ -255,6 +255,11 @@ class Invitacion extends Model
         return $query->where('usuario_invitado',  auth()->id());
     }
 
+    public function scopeInvitacionDisponible($query)
+    {
+        return $query->whereNull('id_cotizacion_generada');
+    }
+
     /**
      * Atributos
      */
