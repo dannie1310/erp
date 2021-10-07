@@ -269,7 +269,19 @@ where numero_empresa_contpaq is not null");
 
     private function detectaPolizasCFDIRequerido()
     {
-        $query = "
+        $base = null;
+        $polizas =[];
+
+        try {
+            $base = Parametro::find(1);
+        }
+        catch (\Exception $e){
+            $this->sin_acceso_parametros = 1;
+            $this->save();
+        }
+
+        if($base){
+            $query = "
               select distinct db_name() as base_datos_contpaq, Polizas.Id as id_poliza_contpaq, Polizas.Ejercicio as ejercicio,
               Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo, Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
               Polizas.Cargos AS monto, Polizas.fecha as fecha, ".$this->id_solicitud_asociacion." as solicitud_asociacion_registro
@@ -279,19 +291,21 @@ where numero_empresa_contpaq is not null");
                on(Polizas.Id = MovimientosPoliza.IdPoliza)
                join [dbo].[Cuentas]
                on (Cuentas.Id = MovimientosPoliza.IdCuenta)
-                where Cuentas.Nombre like 'IVA %';";
 
-        $polizas =[];
+               LEFT JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
+               Polizas.Guid = e.Guid_Relacionado
 
-        try{
-            $polizas = DB::connection("cntpq")->select($query);
-            $polizas = array_map(function ($value) {
-                return (array)$value;
-            }, $polizas);
+               where e.Guid_Relacionado is null and (Cuentas.Nombre like 'IVA %' or Cuentas.Codigo like '2120%'
+               or Cuentas.Codigo like '2130%' or Cuentas.Codigo like '2165%');";
+            try{
+                $polizas = DB::connection("cntpq")->select($query);
+                $polizas = array_map(function ($value) {
+                    return (array)$value;
+                }, $polizas);
 
-        } catch (\Exception $e){
+            } catch (\Exception $e){
 
-
+            }
         }
         return $polizas;
     }
