@@ -161,6 +161,25 @@ class SolicitudAsociacionCFDIPartida extends Model
         }
     }
 
+    private function actualizaNumeroEmpresaCFDI()
+    {
+        CFDSAT::whereNotNull("numero_empresa_contpaq")->update(["numero_empresa_contpaq"=>null, "numero_empresa"=>null, "numero_empresa_sao"=>null]);
+
+        DB::connection('seguridad')->update("update cfd_sat set numero_empresa_contpaq  = pc.numero_empresa
+from Contabilidad.cfd_sat join Contabilidad.polizas_cfdi as pc on(pc.uuid = cfd_sat.uuid)
+where cfd_sat.numero_empresa_contpaq is null ");
+
+        DB::connection('seguridad')->update("update cfd_sat set numero_empresa_sao  = co.numero_obra_contpaq
+from Contabilidad.cfd_sat join Finanzas.repositorio_facturas as rf on(rf.uuid = cfd_sat.uuid)
+join dbo.configuracion_obra as co on co.id_proyecto  = rf.id_proyecto and co.id_obra = rf.id_obra
+where co.numero_obra_contpaq is not null");
+
+        DB::connection('seguridad')->update("update Contabilidad.cfd_sat set numero_empresa = numero_empresa_sao
+where numero_empresa_sao is not null");
+
+        DB::connection('seguridad')->update("update Contabilidad.cfd_sat set numero_empresa = numero_empresa_contpaq
+where numero_empresa_contpaq is not null");
+    }
 
     private function registraAsociacionesOriginal($asociaciones)
     {
@@ -244,6 +263,7 @@ class SolicitudAsociacionCFDIPartida extends Model
         $ultima_partida_sin_finalizar = $this->solicitudAsociacion->partidas()->whereNull("fecha_hora_fin")->first();
         if(!$ultima_partida_sin_finalizar){
             $this->solicitudAsociacion->finaliza();
+            $this->actualizaNumeroEmpresaCFDI();
         }
     }
 
