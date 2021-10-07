@@ -120,13 +120,14 @@ class SolicitudAsociacionCFDIPartida extends Model
             tp.Nombre as tipo,
             ".$numero_empresa." as numero_empresa
         FROM
-            ".$this->base_datos.".dbo.Polizas p
-        INNER JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
-            p.Guid = e.Guid_Relacionado
-        INNER JOIN [document_".$base->GuidDSL."_metadata].dbo.Comprobante c ON
-            e.Guid_Pertenece = c.GuidDocument
-        INNER JOIN ".$this->base_datos.".dbo.TiposPolizas tp ON
-            tp.Id = p.TipoPol where c.UUID is not null;";
+            [document_".$base->GuidDSL."_metadata].dbo.Comprobante c
+            LEFT JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
+                e.Guid_Pertenece = c.GuidDocument
+            LEFT JOIN ".$this->base_datos.".dbo.Polizas p ON
+                p.Guid = e.Guid_Relacionado
+            LEFT JOIN ".$this->base_datos.".dbo.TiposPolizas tp ON
+                tp.Id = p.TipoPol
+            where c.UUID is not null;";
 
             try{
                 $asociaciones = DB::connection("cntpq")->select($query);
