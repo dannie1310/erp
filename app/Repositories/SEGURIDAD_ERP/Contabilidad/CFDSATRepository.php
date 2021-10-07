@@ -8,10 +8,12 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 
+use App\Facades\Context;
 use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
 use App\Informes\Fiscal\InformeSATLP;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
@@ -19,6 +21,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use App\Repositories\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoRepository;
@@ -183,11 +186,31 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
-    public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final)
+    public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas)
     {
 
-        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final);
+        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas);
         return $cfdi;
+    }
+
+    public function obtenerNumeroEmpresa()
+    {
+        $id_obra = Context::getIdObra();
+        $base_datos = Context::getDatabase();
+
+        $proyecto = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
+
+        $configuracion = ConfiguracionObra::where('id_proyecto','=',$proyecto->id)
+            ->where('id_obra','=',$id_obra)->first();
+
+        if($configuracion->numero_obra_contpaq)
+        {
+            return $configuracion->numero_obra_contpaq;
+        }else {
+            abort(500, "No se ha configurado el número de empresa contpaq para este proyecto en SAO. \n \n Por favor comuniquese con soporte a aplicaciones enviando un correo a la dirección: soporte_aplicaciones@desarrollo-hi.atlassian.net");
+        }
+
+
     }
 
 }

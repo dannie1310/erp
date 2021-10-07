@@ -378,6 +378,7 @@ $api->version('v1', function ($api) {
             $api->post('{id}/obtener-cuentas-informe-sat-lp-2020', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerCuentasInformeSATLP2020')->where(['id' => '[0-9]+']);
             $api->post('{id}/obtener-movimientos-cuentas-informe-sat-lp-2020', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerMovimientosCuentasInformeSATLP2020')->where(['id' => '[0-9]+']);
             $api->post('{id_proveedor}/obtener-lista-cfdi', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerListaCFDI')->where(['id_proveedor' => '[0-9]+']);
+            $api->post('obtener-numero-empresa', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerNumeroEmpresa');
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
