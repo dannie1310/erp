@@ -120,13 +120,14 @@ class SolicitudAsociacionCFDIPartida extends Model
             tp.Nombre as tipo,
             ".$numero_empresa." as numero_empresa
         FROM
-            ".$this->base_datos.".dbo.Polizas p
-        INNER JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
-            p.Guid = e.Guid_Relacionado
-        INNER JOIN [document_".$base->GuidDSL."_metadata].dbo.Comprobante c ON
-            e.Guid_Pertenece = c.GuidDocument
-        INNER JOIN ".$this->base_datos.".dbo.TiposPolizas tp ON
-            tp.Id = p.TipoPol where c.UUID is not null;";
+            [document_".$base->GuidDSL."_metadata].dbo.Comprobante c
+            LEFT JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
+                e.Guid_Pertenece = c.GuidDocument
+            LEFT JOIN ".$this->base_datos.".dbo.Polizas p ON
+                p.Guid = e.Guid_Relacionado
+            LEFT JOIN ".$this->base_datos.".dbo.TiposPolizas tp ON
+                tp.Id = p.TipoPol
+            where c.UUID is not null;";
 
             try{
                 $asociaciones = DB::connection("cntpq")->select($query);
@@ -160,6 +161,25 @@ class SolicitudAsociacionCFDIPartida extends Model
         }
     }
 
+    private function actualizaNumeroEmpresaCFDI()
+    {
+        CFDSAT::whereNotNull("numero_empresa_contpaq")->update(["numero_empresa_contpaq"=>null, "numero_empresa"=>null, "numero_empresa_sao"=>null]);
+
+        DB::connection('seguridad')->update("update cfd_sat set numero_empresa_contpaq  = pc.numero_empresa
+from Contabilidad.cfd_sat join Contabilidad.polizas_cfdi as pc on(pc.uuid = cfd_sat.uuid)
+where cfd_sat.numero_empresa_contpaq is null ");
+
+        DB::connection('seguridad')->update("update cfd_sat set numero_empresa_sao  = co.numero_obra_contpaq
+from Contabilidad.cfd_sat join Finanzas.repositorio_facturas as rf on(rf.uuid = cfd_sat.uuid)
+join dbo.configuracion_obra as co on co.id_proyecto  = rf.id_proyecto and co.id_obra = rf.id_obra
+where co.numero_obra_contpaq is not null");
+
+        DB::connection('seguridad')->update("update Contabilidad.cfd_sat set numero_empresa = numero_empresa_sao
+where numero_empresa_sao is not null");
+
+        DB::connection('seguridad')->update("update Contabilidad.cfd_sat set numero_empresa = numero_empresa_contpaq
+where numero_empresa_contpaq is not null");
+    }
 
     private function registraAsociacionesOriginal($asociaciones)
     {
@@ -243,12 +263,25 @@ class SolicitudAsociacionCFDIPartida extends Model
         $ultima_partida_sin_finalizar = $this->solicitudAsociacion->partidas()->whereNull("fecha_hora_fin")->first();
         if(!$ultima_partida_sin_finalizar){
             $this->solicitudAsociacion->finaliza();
+            $this->actualizaNumeroEmpresaCFDI();
         }
     }
 
     private function detectaPolizasCFDIRequerido()
     {
-        $query = "
+        $base = null;
+        $polizas =[];
+
+        try {
+            $base = Parametro::find(1);
+        }
+        catch (\Exception $e){
+            $this->sin_acceso_parametros = 1;
+            $this->save();
+        }
+
+        if($base){
+            $query = "
               select distinct db_name() as base_datos_contpaq, Polizas.Id as id_poliza_contpaq, Polizas.Ejercicio as ejercicio,
               Polizas.Periodo as periodo, TiposPolizas.Nombre as tipo, Polizas.Folio as folio, Polizas.Guid as guid_poliza_contpaq,
               Polizas.Cargos AS monto, Polizas.fecha as fecha, ".$this->id_solicitud_asociacion." as solicitud_asociacion_registro
@@ -258,19 +291,21 @@ class SolicitudAsociacionCFDIPartida extends Model
                on(Polizas.Id = MovimientosPoliza.IdPoliza)
                join [dbo].[Cuentas]
                on (Cuentas.Id = MovimientosPoliza.IdCuenta)
-                where Cuentas.Nombre like 'IVA %';";
 
-        $polizas =[];
+               LEFT JOIN [other_".$base->GuidDSL."_metadata].dbo.Expedientes e ON
+               Polizas.Guid = e.Guid_Relacionado
 
-        try{
-            $polizas = DB::connection("cntpq")->select($query);
-            $polizas = array_map(function ($value) {
-                return (array)$value;
-            }, $polizas);
+               where e.Guid_Relacionado is null and (Cuentas.Nombre like 'IVA %' or Cuentas.Codigo like '2120%'
+               or Cuentas.Codigo like '2130%' or Cuentas.Codigo like '2165%');";
+            try{
+                $polizas = DB::connection("cntpq")->select($query);
+                $polizas = array_map(function ($value) {
+                    return (array)$value;
+                }, $polizas);
 
-        } catch (\Exception $e){
+            } catch (\Exception $e){
 
-
+            }
         }
         return $polizas;
     }
