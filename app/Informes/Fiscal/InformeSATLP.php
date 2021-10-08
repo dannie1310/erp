@@ -48,635 +48,157 @@ class InformeSATLP
         $qry_cfdi_orden = "";
         if(count($data["empresas"])>0)
         {
-            $qry = " AND cuentas_movimientos.id_empresa_contpaq IN(".implode(",", $data["empresas"]).")";
-            $qry_cfdi = " AND cfd_sat.numero_empresa  in(".implode(",", $data["empresas"]).") ";
-            $qry_cfdi_orden = " AND (cfd_sat.numero_empresa  in(".implode(",", $data["empresas"]).") OR cfd_sat.numero_empresa IS NULL) ";
+            $qry = " AND IDEmpresa IN(".implode(",", $data["empresas"]).")";
         }
 
-        $informe_qry = " select reporte.* from (
-        SELECT
-    proveedores_sat.id AS id_proveedor_sat,
-    proveedores_sat.rfc,
-    proveedores_sat.razon_social,
-    SUM(Subquery.importe_movimiento) AS importe_movimientos_pasivo,
-    Subquery_2.neto_subtotal_i,
-    Subquery_2.neto_total_i,
-    Subquery_3.neto_subtotal_e,
-    Subquery_3.neto_total_e,
-    Subquery_1.neto_subtotal AS neto_subtotal_sat,
-    Subquery_1.total AS neto_total_sat,
-    COUNT(DISTINCT Subquery.id_cuenta) AS cantidad_cuentas,
-    Subquery_1.total - sum(ISNULL(Subquery.importe_movimiento, 0)) AS diferencia,
-    Subquery_1.cantidad_empresas as cantidad_empresas
-FROM
-    ((((SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat
-INNER JOIN (
-    SELECT
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc,
-        SUM(Subquery.neto_subtotal) AS neto_subtotal,
-        SUM(Subquery.total) AS total,
-        COUNT(DISTINCT Subquery.numero_empresa) as cantidad_empresas
-    FROM
-        SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat
-    INNER JOIN (
-        SELECT
-            cfd_sat.id_proveedor_sat,
-            cfd_sat.subtotal_xls AS subtotal,
-            cfd_sat.descuento_xls AS descuento,
-            cfd_sat.numero_empresa as numero_empresa,
-            CASE
-                WHEN cfd_sat.moneda_xls != 'MXN'
-                AND cfd_sat.tc_xls > 0 THEN
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1) * cfd_sat.tc_xls
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls * cfd_sat.tc_xls
-                END
-                ELSE
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-                END
-            END AS neto_subtotal,
-            cfd_sat.tipo_comprobante,
-            CASE
-                WHEN cfd_sat.moneda_xls != 'MXN'
-                AND cfd_sat.tc_xls > 0 THEN
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN total_xls * (-1) * cfd_sat.tc_xls
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-                END
-                ELSE
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-                END
-            END AS total,
-            cfd_sat.moneda_xls,
-            cfd_sat.tc_xls
-        FROM
-            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-        WHERE
-            (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-            ".$qry_cfdi."
-            AND (((cfd_sat.cancelado = 0
-                AND cfd_sat.id_empresa_sat = 1)
-            AND cfd_sat.tipo_comprobante IN ('E', 'I'))
-                AND year(cfd_sat.fecha) = 2020)) Subquery ON
-        (proveedores_sat.id = Subquery.id_proveedor_sat)
-    GROUP BY
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc) Subquery_1 ON
-    (proveedores_sat.id = Subquery_1.id))
-LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.tmp_cuentas_contpaq_proveedores_sat tmp_cuentas_contpaq_proveedores_sat ON
-    (tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat = proveedores_sat.id))
-LEFT OUTER JOIN (
-    SELECT
-        cuentas_movimientos.periodo,
-        cuentas_movimientos.id_cuenta,
-        cuentas_movimientos.id_poliza,
-        cuentas_movimientos.codigo_cuenta,
-        cuentas_movimientos.tipo_movimiento,
-        cuentas_movimientos.nombre_cuenta,
-        cuentas_movimientos.importe_movimiento,
-        cuentas_movimientos.tipo_poliza,
-        cuentas_movimientos.id_movimiento,
-        cuentas_movimientos.folio_poliza,
-        cuentas_movimientos.fecha
-    FROM
-        SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
-    INNER JOIN (
-        SELECT DISTINCT
-            cuentas_movimientos.id_cuenta,
-            cuentas_movimientos.codigo_cuenta,
-            cuentas_movimientos.nombre_cuenta
-        FROM
-            SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
-        WHERE
-            (cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                AND (cuentas_movimientos.codigo_cuenta LIKE '2120%'
-                    OR cuentas_movimientos.codigo_cuenta LIKE '2130%'
-                    OR cuentas_movimientos.codigo_cuenta LIKE '2165%')
-        ) Subquery ON
-        (cuentas_movimientos.id_cuenta = Subquery.id_cuenta)
-    WHERE
-        (cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-        ".$qry."
-            AND ((cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-                AND cuentas_movimientos.tipo_poliza = 3)
-            OR (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-                AND cuentas_movimientos.tipo_poliza = 2))) Subquery ON
-    (Subquery.id_cuenta = tmp_cuentas_contpaq_proveedores_sat.id_cuenta))
-FULL OUTER JOIN (
-    SELECT
-        proveedores_sat.id,
-        proveedores_sat.rfc,
-        proveedores_sat.razon_social,
-        SUM(Subquery.neto_subtotal) AS neto_subtotal_e,
-        SUM(Subquery.total) AS neto_total_e
-    FROM
-        (
-        SELECT
-            cfd_sat.id_proveedor_sat,
-            cfd_sat.subtotal_xls AS subtotal,
-            cfd_sat.descuento_xls AS descuento,
-            CASE
-                WHEN (cfd_sat.moneda_xls <> 'MXN')
-                    AND (cfd_sat.tc_xls > 0) THEN
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN ((cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)) * cfd_sat.tc_xls
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - (cfd_sat.descuento_xls * cfd_sat.tc_xls)
-                    END
-                    ELSE
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-                    END
-                END AS neto_subtotal,
-                cfd_sat.tipo_comprobante,
-                CASE
-                    WHEN (cfd_sat.moneda_xls <> 'MXN')
-                        AND (cfd_sat.tc_xls > 0) THEN
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN (total_xls * (-1)) * cfd_sat.tc_xls
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-                        END
-                        ELSE
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-                        END
-                    END AS total,
-                    cfd_sat.moneda_xls,
-                    cfd_sat.tc_xls
-                FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-                WHERE
-                    (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                    	".$qry_cfdi."
-                        AND (((cfd_sat.cancelado = 0
-                            AND cfd_sat.id_empresa_sat = 1)
-                        AND cfd_sat.tipo_comprobante IN ('E'))
-                            AND year(cfd_sat.fecha) = 2020)) Subquery
-    INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat ON
-        (Subquery.id_proveedor_sat = proveedores_sat.id)
-    GROUP BY
-        proveedores_sat.id,
-        proveedores_sat.rfc,
-        proveedores_sat.razon_social) Subquery_3 ON
-    (proveedores_sat.id = Subquery_3.id))
-LEFT OUTER JOIN (
-    SELECT
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc,
-        SUM(Subquery.neto_subtotal) AS neto_subtotal_i,
-        SUM(Subquery.total) AS neto_total_i
-    FROM
-        (
-        SELECT
-            cfd_sat.id_proveedor_sat,
-            cfd_sat.subtotal_xls AS subtotal,
-            cfd_sat.descuento_xls AS descuento,
-            CASE
-                WHEN (cfd_sat.moneda_xls <> 'MXN')
-                    AND (cfd_sat.tc_xls > 0) THEN
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN ((cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)) * cfd_sat.tc_xls
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - (cfd_sat.descuento_xls * cfd_sat.tc_xls)
-                    END
-                    ELSE
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-                    END
-                END AS neto_subtotal,
-                cfd_sat.tipo_comprobante,
-                CASE
-                    WHEN (cfd_sat.moneda_xls <> 'MXN')
-                        AND (cfd_sat.tc_xls > 0) THEN
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN (total_xls * (-1)) * cfd_sat.tc_xls
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-                        END
-                        ELSE
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-                        END
-                    END AS total,
-                    cfd_sat.moneda_xls,
-                    cfd_sat.tc_xls
-                FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-                WHERE
-                    (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                    ".$qry_cfdi."
-                        AND (((cfd_sat.cancelado = 0
-                            AND cfd_sat.id_empresa_sat = 1)
-                        AND cfd_sat.tipo_comprobante IN ('I'))
-                            AND year(cfd_sat.fecha) = 2020)) Subquery
-    INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat ON
-        (Subquery.id_proveedor_sat = proveedores_sat.id)
-    GROUP BY
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc) Subquery_2 ON
-    (proveedores_sat.id = Subquery_2.id)
-GROUP BY
-    proveedores_sat.id,
-    proveedores_sat.rfc,
-    proveedores_sat.razon_social,
-    Subquery_1.neto_subtotal,
-    Subquery_1.total,
-    Subquery_1.cantidad_empresas,
-    Subquery_2.neto_subtotal_i,
-    Subquery_2.neto_total_i,
-    Subquery_3.neto_total_e,
-    Subquery_3.neto_subtotal_e
+        $informe_qry = "SELECT proveedores_sat.IDProveedor as id_proveedor_sat,
+       proveedores_sat.Descripcion as razon_social,
+       proveedores_sat.RFC as rfc,
+       case when movimientos_pasivo.Importe is null then '-' when movimientos_pasivo.Importe = 0 then '-'  else format(movimientos_pasivo.Importe,'C') end importe_movimientos_pasivo,
 
-    union
+       cfdi_completos.neto_subtotal_completos,
+       cfdi_completos.total_completos as neto_total_completos,
+       cfdi_divisas.neto_subtotal_divisas,
+       case when cfdi_divisas.total_divisas is null then '-' else format(cfdi_divisas.total_divisas,'C') end neto_total_divisas,
+       case when cfdi_reemplazado.neto_subtotal_reemplazado is null then '-' else format(cfdi_reemplazado.neto_subtotal_reemplazado,'C') end neto_subtotal_reemplazado,
+       case when cfdi_reemplazado.total_remplazado is null then '-' else format(cfdi_reemplazado.total_remplazado,'C') end neto_total_reemplazado,
 
-    SELECT
-    proveedores_sat.id AS id_proveedor_sat,
-    proveedores_sat.rfc,
-    proveedores_sat.razon_social,
-    SUM(Subquery.importe_movimiento) AS importe_movimientos_pasivo,
-    Subquery_2.neto_subtotal_i,
-    Subquery_2.neto_total_i,
-    Subquery_3.neto_subtotal_e,
-    Subquery_3.neto_total_e,
-    Subquery_1.neto_subtotal AS neto_subtotal_sat,
-    Subquery_1.total AS neto_total_sat,
-    COUNT(DISTINCT Subquery.id_cuenta),
-    Subquery_1.total - sum(ISNULL(Subquery.importe_movimiento, 0)) AS diferencia,
-    0 as cantidad_empresas
-FROM
-    ((((SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat
-INNER JOIN (
-    SELECT
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc,
-        SUM(Subquery.neto_subtotal) AS neto_subtotal,
-        SUM(Subquery.total) AS total
-    FROM
-        SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat
-    INNER JOIN (
-        SELECT
-            cfd_sat.id_proveedor_sat,
-            cfd_sat.subtotal_xls AS subtotal,
-            cfd_sat.descuento_xls AS descuento,
-            CASE
-                WHEN cfd_sat.moneda_xls != 'MXN'
-                AND cfd_sat.tc_xls > 0 THEN
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1) * cfd_sat.tc_xls
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls * cfd_sat.tc_xls
-                END
-                ELSE
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-                END
-            END AS neto_subtotal,
-            cfd_sat.tipo_comprobante,
-            CASE
-                WHEN cfd_sat.moneda_xls != 'MXN'
-                AND cfd_sat.tc_xls > 0 THEN
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN total_xls * (-1) * cfd_sat.tc_xls
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-                END
-                ELSE
-                CASE
-                    WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-                    WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-                END
-            END AS total,
-            cfd_sat.moneda_xls,
-            cfd_sat.tc_xls
-        FROM
-            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-        WHERE
-            (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-            AND cfd_sat.numero_empresa  is null
-            AND (((cfd_sat.cancelado = 0
-                AND cfd_sat.id_empresa_sat = 1)
-            AND cfd_sat.tipo_comprobante IN ('E', 'I'))
-                AND year(cfd_sat.fecha) = 2020)) Subquery ON
-        (proveedores_sat.id = Subquery.id_proveedor_sat)
-    GROUP BY
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc) Subquery_1 ON
-    (proveedores_sat.id = Subquery_1.id))
-LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.tmp_cuentas_contpaq_proveedores_sat tmp_cuentas_contpaq_proveedores_sat ON
-    (tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat = proveedores_sat.id))
-LEFT OUTER JOIN (
-    SELECT
-        cuentas_movimientos.periodo,
-        cuentas_movimientos.id_cuenta,
-        cuentas_movimientos.id_poliza,
-        cuentas_movimientos.codigo_cuenta,
-        cuentas_movimientos.tipo_movimiento,
-        cuentas_movimientos.nombre_cuenta,
-        cuentas_movimientos.importe_movimiento,
-        cuentas_movimientos.tipo_poliza,
-        cuentas_movimientos.id_movimiento,
-        cuentas_movimientos.folio_poliza,
-        cuentas_movimientos.fecha
-    FROM
-        SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
-    INNER JOIN (
-        SELECT DISTINCT
-            cuentas_movimientos.id_cuenta,
-            cuentas_movimientos.codigo_cuenta,
-            cuentas_movimientos.nombre_cuenta
-        FROM
-            SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
-        WHERE
-            (cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                AND (cuentas_movimientos.codigo_cuenta LIKE '2120%'
-                    OR cuentas_movimientos.codigo_cuenta LIKE '2130%'
-                     OR cuentas_movimientos.codigo_cuenta LIKE '2165%')
-        ) Subquery ON
-        (cuentas_movimientos.id_cuenta = Subquery.id_cuenta)
-    WHERE
-        (cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-        ".$qry."
-            AND ((cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-                AND cuentas_movimientos.tipo_poliza = 3)
-            OR (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-                AND cuentas_movimientos.tipo_poliza = 2))) Subquery ON
-    (Subquery.id_cuenta = tmp_cuentas_contpaq_proveedores_sat.id_cuenta))
-FULL OUTER JOIN (
-    SELECT
-        proveedores_sat.id,
-        proveedores_sat.rfc,
-        proveedores_sat.razon_social,
-        SUM(Subquery.neto_subtotal) AS neto_subtotal_e,
-        SUM(Subquery.total) AS neto_total_e
-    FROM
-        (
-        SELECT
-            cfd_sat.id_proveedor_sat,
-            cfd_sat.subtotal_xls AS subtotal,
-            cfd_sat.descuento_xls AS descuento,
-            CASE
-                WHEN (cfd_sat.moneda_xls <> 'MXN')
-                    AND (cfd_sat.tc_xls > 0) THEN
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN ((cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)) * cfd_sat.tc_xls
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - (cfd_sat.descuento_xls * cfd_sat.tc_xls)
-                    END
-                    ELSE
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-                    END
-                END AS neto_subtotal,
-                cfd_sat.tipo_comprobante,
-                CASE
-                    WHEN (cfd_sat.moneda_xls <> 'MXN')
-                        AND (cfd_sat.tc_xls > 0) THEN
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN (total_xls * (-1)) * cfd_sat.tc_xls
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-                        END
-                        ELSE
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-                        END
-                    END AS total,
-                    cfd_sat.moneda_xls,
-                    cfd_sat.tc_xls
-                FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-                WHERE
-                    (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                    	AND cfd_sat.numero_empresa  is null
-                        AND (((cfd_sat.cancelado = 0
-                            AND cfd_sat.id_empresa_sat = 1)
-                        AND cfd_sat.tipo_comprobante IN ('E'))
-                            AND year(cfd_sat.fecha) = 2020)) Subquery
-    INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat ON
-        (Subquery.id_proveedor_sat = proveedores_sat.id)
-    GROUP BY
-        proveedores_sat.id,
-        proveedores_sat.rfc,
-        proveedores_sat.razon_social) Subquery_3 ON
-    (proveedores_sat.id = Subquery_3.id))
-LEFT OUTER JOIN (
-    SELECT
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc,
-        SUM(Subquery.neto_subtotal) AS neto_subtotal_i,
-        SUM(Subquery.total) AS neto_total_i
-    FROM
-        (
-        SELECT
-            cfd_sat.id_proveedor_sat,
-            cfd_sat.subtotal_xls AS subtotal,
-            cfd_sat.descuento_xls AS descuento,
-            CASE
-                WHEN (cfd_sat.moneda_xls <> 'MXN')
-                    AND (cfd_sat.tc_xls > 0) THEN
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN ((cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)) * cfd_sat.tc_xls
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - (cfd_sat.descuento_xls * cfd_sat.tc_xls)
-                    END
-                    ELSE
-                    CASE
-                        WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-                        WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-                    END
-                END AS neto_subtotal,
-                cfd_sat.tipo_comprobante,
-                CASE
-                    WHEN (cfd_sat.moneda_xls <> 'MXN')
-                        AND (cfd_sat.tc_xls > 0) THEN
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN (total_xls * (-1)) * cfd_sat.tc_xls
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-                        END
-                        ELSE
-                        CASE
-                            WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-                            WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-                        END
-                    END AS total,
-                    cfd_sat.moneda_xls,
-                    cfd_sat.tc_xls
-                FROM
-                    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-                WHERE
-                    (cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-                    AND cfd_sat.numero_empresa  is null
-                        AND (((cfd_sat.cancelado = 0
-                            AND cfd_sat.id_empresa_sat = 1)
-                        AND cfd_sat.tipo_comprobante IN ('I'))
-                            AND year(cfd_sat.fecha) = 2020)) Subquery
-    INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat ON
-        (Subquery.id_proveedor_sat = proveedores_sat.id)
-    GROUP BY
-        proveedores_sat.id,
-        proveedores_sat.razon_social,
-        proveedores_sat.rfc) Subquery_2 ON
-    (proveedores_sat.id = Subquery_2.id)
-GROUP BY
-    proveedores_sat.id,
-    proveedores_sat.rfc,
-    proveedores_sat.razon_social,
-    Subquery_1.neto_subtotal,
-    Subquery_1.total,
-    Subquery_2.neto_subtotal_i,
-    Subquery_2.neto_total_i,
-    Subquery_3.neto_total_e,
-    Subquery_3.neto_subtotal_e
-) as reporte
+       cfdi_reemplazo.subtotal_neto_reemplazo,
 
-join(	SELECT
-		proveedores_sat.id AS id_proveedor_sat,
-		Subquery_1.total - sum(ISNULL(Subquery.importe_movimiento, 0)) AS diferencia,
-		proveedores_sat.rfc,
-		proveedores_sat.razon_social
-	FROM
-		((((SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat
-	INNER JOIN (
-		SELECT
-			proveedores_sat.id,
-			proveedores_sat.razon_social,
-			proveedores_sat.rfc,
-			SUM(Subquery.neto_subtotal) AS neto_subtotal,
-			SUM(Subquery.total) AS total
-		FROM
-			SEGURIDAD_ERP.Contabilidad.proveedores_sat proveedores_sat
-		INNER JOIN (
-			SELECT
-				cfd_sat.id_proveedor_sat,
-				cfd_sat.subtotal_xls AS subtotal,
-				cfd_sat.descuento_xls AS descuento,
-				cfd_sat.numero_empresa as numero_empresa,
-				CASE
-					WHEN cfd_sat.moneda_xls != 'MXN'
-					AND cfd_sat.tc_xls > 0 THEN
-					CASE
-						WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1) * cfd_sat.tc_xls
-						WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls * cfd_sat.tc_xls
-					END
-					ELSE
-					CASE
-						WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal_xls - cfd_sat.descuento_xls) * (-1)
-						WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.subtotal_xls - cfd_sat.descuento_xls
-					END
-				END AS neto_subtotal,
-				cfd_sat.tipo_comprobante,
-				CASE
-					WHEN cfd_sat.moneda_xls != 'MXN'
-					AND cfd_sat.tc_xls > 0 THEN
-					CASE
-						WHEN cfd_sat.tipo_comprobante = 'E' THEN total_xls * (-1) * cfd_sat.tc_xls
-						WHEN cfd_sat.tipo_comprobante = 'I' THEN total_xls * cfd_sat.tc_xls
-					END
-					ELSE
-					CASE
-						WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total_xls * (-1)
-						WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total_xls
-					END
-				END AS total,
-				cfd_sat.moneda_xls,
-				cfd_sat.tc_xls
-			FROM
-				SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
-			left join (
-				select
-					uuid,
-					max(numero_empresa) as numero_empresa
-				from
-					SEGURIDAD_ERP.Contabilidad.polizas_cfdi
-				group by
-					uuid ) as pc on
-				(pc.uuid = cfd_sat.uuid)
-			WHERE
-				(cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-				".$qry_cfdi_orden."
-				AND (((cfd_sat.cancelado = 0
-					AND cfd_sat.id_empresa_sat = 1)
-				AND cfd_sat.tipo_comprobante IN ('E', 'I'))
-					AND year(cfd_sat.fecha) = 2020)) Subquery ON
-			(proveedores_sat.id = Subquery.id_proveedor_sat)
-		GROUP BY
-			proveedores_sat.id,
-			proveedores_sat.razon_social,
-			proveedores_sat.rfc) Subquery_1 ON
-		(proveedores_sat.id = Subquery_1.id))
-	LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.tmp_cuentas_contpaq_proveedores_sat tmp_cuentas_contpaq_proveedores_sat ON
-		(tmp_cuentas_contpaq_proveedores_sat.id_proveedor_sat = proveedores_sat.id))
-	LEFT OUTER JOIN (
-		SELECT
-			cuentas_movimientos.periodo,
-			cuentas_movimientos.id_cuenta,
-			cuentas_movimientos.id_poliza,
-			cuentas_movimientos.codigo_cuenta,
-			cuentas_movimientos.tipo_movimiento,
-			cuentas_movimientos.nombre_cuenta,
-			cuentas_movimientos.importe_movimiento,
-			cuentas_movimientos.tipo_poliza,
-			cuentas_movimientos.id_movimiento,
-			cuentas_movimientos.folio_poliza,
-			cuentas_movimientos.fecha
-		FROM
-			SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
-		INNER JOIN (
-			SELECT
-				DISTINCT cuentas_movimientos.id_cuenta,
-				cuentas_movimientos.codigo_cuenta,
-				cuentas_movimientos.nombre_cuenta
-			FROM
-				SEGURIDAD_ERP.Contabilidad.cuentas_movimientos cuentas_movimientos
-			WHERE
-				(cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-					AND (cuentas_movimientos.codigo_cuenta LIKE '2120%'
-						OR cuentas_movimientos.codigo_cuenta LIKE '2130%'
-						OR cuentas_movimientos.codigo_cuenta LIKE '2165%') ) Subquery ON
-			(cuentas_movimientos.id_cuenta = Subquery.id_cuenta)
-		WHERE
-			(cuentas_movimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-                                              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59')
-				".$qry."
-					AND ((cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-						AND cuentas_movimientos.tipo_poliza = 3)
-					OR (cuentas_movimientos.tipo_movimiento = 'VERDADERO'
-						AND cuentas_movimientos.tipo_poliza = 2))) Subquery ON
-		(Subquery.id_cuenta = tmp_cuentas_contpaq_proveedores_sat.id_cuenta)))
+       case when cfdi_reemplazo.total_reemplazo is null then '-' else format(cfdi_reemplazo.total_reemplazo,'C') end neto_total_reemplazo,
 
-	GROUP BY
-		proveedores_sat.id,
-		Subquery_1.neto_subtotal,
-		Subquery_1.total,
-		proveedores_sat.rfc,
-		proveedores_sat.razon_social
-) as orden on (orden.id_proveedor_sat = reporte.id_proveedor_sat)
 
-order by orden.diferencia desc, reporte.razon_social asc
-        ";
+       case when cfdi_sin_empresa.cantidad_sin_empresa is null or cfdi_sin_empresa.cantidad_sin_empresa = 0 then '-'
+           else cfdi_sin_empresa.cantidad_sin_empresa end cantidad_sin_empresa,
+       case when cfdi_sin_empresa.total_sin_empresa is null then '-' when cfdi_sin_empresa.total_sin_empresa = 0 then '-'
+           else format(cfdi_sin_empresa.total_sin_empresa,'C') end neto_total_sin_empresa,
+
+
+       case when cfdi_con_empresa.cantidad_con_empresa is null or cfdi_con_empresa.cantidad_con_empresa = 0 then '-'
+           else cfdi_con_empresa.cantidad_con_empresa end cantidad_con_empresa,
+       case when cfdi_con_empresa.total_con_empresa is null then '-' when cfdi_con_empresa.total_con_empresa = 0 then '-'
+           else format(cfdi_con_empresa.total_con_empresa,'C') end neto_total_con_empresa,
+
+       cfdi_i.neto_subtotal_i,
+       cfdi_i.total_i as neto_total_i,
+
+       case when cfdi_e.neto_subtotal_e is null then '-' else format(cfdi_e.neto_subtotal_e,'C') end neto_subtotal_e,
+       case when cfdi_e.total_e is null then '-' else format(cfdi_e.total_e,'C') end neto_total_e,
+
+       cfdi.neto_subtotal as neto_subtotal_sat,
+       cfdi.Total as neto_total_sat,
+
+       movimientos_pasivo.cantidad_cuentas as cantidad_cuentas,
+       null as cantidad_empresas,
+
+       cfdi.Total - movimientos_pasivo.Importe AS diferencia
+
+  FROM ((((((((SEGURIDAD_ERP.InformeSAT.DimProveedores proveedores_sat
+               LEFT OUTER JOIN
+               (SELECT HecCFDISinEmpresa.IDProveedor,
+               COUNT(HecCFDISinEmpresa.IDCFDI) AS cantidad_sin_empresa,
+                       SUM (HecCFDISinEmpresa.SubtotalNeto)
+                          AS neto_subtotal_sin_empresa,
+                       SUM (HecCFDISinEmpresa.Total) AS total_sin_empresa
+                  FROM SEGURIDAD_ERP.InformeSAT.HecCFDISinEmpresa HecCFDISinEmpresa
+               WHERE HecCFDISinEmpresa.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+
+                GROUP BY HecCFDISinEmpresa.IDProveedor) cfdi_sin_empresa
+                  ON (proveedores_sat.IDProveedor = cfdi_sin_empresa.IDProveedor))
+              LEFT OUTER JOIN
+              (SELECT HecCFDIReemplazado.IDProveedor,
+                      SUM (HecCFDIReemplazado.SubtotalNeto)
+                         AS neto_subtotal_reemplazado,
+                      SUM (HecCFDIReemplazado.Total) AS total_remplazado
+                 FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado HecCFDIReemplazado
+              WHERE HecCFDIReemplazado.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+
+               GROUP BY HecCFDIReemplazado.IDProveedor) cfdi_reemplazado
+                 ON (proveedores_sat.IDProveedor = cfdi_reemplazado.IDProveedor))
+             LEFT OUTER JOIN
+             (SELECT count(distinct HecMovimientos.Codigo) as cantidad_cuentas,HecMovimientos.IDProveedor,
+                     SUM (HecMovimientos.Importe) AS Importe
+                FROM SEGURIDAD_ERP.InformeSAT.HecMovimientos HecMovimientos
+             WHERE HecMovimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+              GROUP BY HecMovimientos.IDProveedor) movimientos_pasivo
+                ON (proveedores_sat.IDProveedor = movimientos_pasivo.IDProveedor))
+            LEFT OUTER JOIN
+            (SELECT HecCFDIDivisas.IDProveedor,
+                    SUM (HecCFDIDivisas.SubtotalNeto)
+                       AS neto_subtotal_divisas,
+                    SUM (HecCFDIDivisas.Total) AS total_divisas
+               FROM SEGURIDAD_ERP.InformeSAT.HecCFDIDivisas HecCFDIDivisas
+            WHERE HecCFDIDivisas.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             GROUP BY HecCFDIDivisas.IDProveedor) cfdi_divisas
+               ON (proveedores_sat.IDProveedor = cfdi_divisas.IDProveedor))
+           LEFT OUTER JOIN
+           (SELECT HecCFDII.IDProveedor,
+                   SUM (HecCFDII.SubtotalNeto) AS neto_subtotal_i,
+                   SUM (HecCFDII.Total) AS total_i
+              FROM SEGURIDAD_ERP.InformeSAT.HecCFDII HecCFDII
+           WHERE HecCFDII.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+            GROUP BY HecCFDII.IDProveedor) cfdi_i
+              ON (proveedores_sat.IDProveedor = cfdi_i.IDProveedor))
+          LEFT OUTER JOIN
+          (SELECT HecCFDIE.IDProveedor,
+                  SUM (HecCFDIE.SubtotalNeto) AS neto_subtotal_e,
+                  SUM (HecCFDIE.Total) AS total_e
+             FROM SEGURIDAD_ERP.InformeSAT.HecCFDIE HecCFDIE
+          WHERE HecCFDIE.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+           GROUP BY HecCFDIE.IDProveedor) cfdi_e
+             ON (proveedores_sat.IDProveedor = cfdi_e.IDProveedor))
+         LEFT OUTER JOIN
+         (SELECT HecCFDIReemplazo.IDProveedor,
+                 SUM (HecCFDIReemplazo.SubtotalNeto)
+                    AS subtotal_neto_reemplazo,
+                 SUM (HecCFDIReemplazo.Total) AS total_reemplazo
+            FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazo HecCFDIReemplazo
+         WHERE HecCFDIReemplazo.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+          GROUP BY HecCFDIReemplazo.IDProveedor) cfdi_reemplazo
+            ON (proveedores_sat.IDProveedor = cfdi_reemplazo.IDProveedor))
+        LEFT OUTER JOIN
+        (SELECT HecCFDI.IDProveedor,
+                SUM (HecCFDI.SubtotalNeto) AS neto_subtotal,
+                SUM (HecCFDI.Total) AS total
+           FROM SEGURIDAD_ERP.InformeSAT.HecCFDI HecCFDI
+        WHERE HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+         GROUP BY HecCFDI.IDProveedor) cfdi
+           ON (proveedores_sat.IDProveedor = cfdi.IDProveedor))
+        LEFT JOIN
+       (SELECT HecCFDICompletos.IDProveedor,
+               SUM (HecCFDICompletos.SubtotalNeto) AS neto_subtotal_completos,
+               SUM (HecCFDICompletos.Total) AS total_completos
+          FROM SEGURIDAD_ERP.InformeSAT.HecCFDICompletos HecCFDICompletos
+       WHERE HecCFDICompletos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+
+        GROUP BY HecCFDICompletos.IDProveedor) cfdi_completos
+          ON (proveedores_sat.IDProveedor = cfdi_completos.IDProveedor)
+
+
+          LEFT OUTER JOIN
+        (SELECT HecCFDI.IDProveedor,
+        count(HecCFDI.IDCFDI) as cantidad_con_empresa,
+                SUM (HecCFDI.SubtotalNeto) AS neto_subtotal_con_empresa,
+                SUM (HecCFDI.Total) AS total_con_empresa
+           FROM SEGURIDAD_ERP.InformeSAT.HecCFDI HecCFDI
+           where HecCFDI.IDEmpresa is not null
+             and HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+         GROUP BY HecCFDI.IDProveedor) cfdi_con_empresa
+           ON (proveedores_sat.IDProveedor = cfdi_con_empresa.IDProveedor)
+
+          ORDER BY cfdi.Total - movimientos_pasivo.Importe DESC
+          ";
+
 
         $informe = DB::connection("seguridad")->select($informe_qry);
         $informe = array_map(function ($value) {
@@ -809,6 +331,79 @@ order by cuentas_movimientos.importe_movimiento desc");
     public static function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas){
 
         $condicion = " AND cfd_sat.numero_empresa is null";
+        if(!$asociada_contpaq && count($empresas) == 0){
+            $condicion = "";
+        } else if(!$asociada_contpaq && count($empresas) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $empresas).")";
+        }
+        if($asociada_contpaq == 1){
+            if(count($empresas)>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $empresas).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      SELECT cfd_sat.*,
+       cfd_sat.cfdi_relacionado,
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+       cfd_sat.fecha_pago,
+       cfd_sat.moneda_xls,
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+
+where cfd_sat.fecha BETWEEN '".$fecha_inicial->format("Y-m-d")." 00:00:00'
+      AND '".$fecha_final->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$id_proveedor."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+      order by cfd_sat.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+
+    public static function getListaCFDIOmitidos($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas){
+
+        $condicion = " AND cfd_sat.numero_empresa is null";
+        if(!$asociada_contpaq && count($empresas) == 0){
+            $condicion = "";
+        } else if(!$asociada_contpaq && count($empresas) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $empresas).")";
+        }
         if($asociada_contpaq == 1){
             if(count($empresas)>0)
             {
