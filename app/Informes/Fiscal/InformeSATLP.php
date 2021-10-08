@@ -346,7 +346,7 @@ order by cuentas_movimientos.importe_movimiento desc");
         }
 
         $informe = DB::connection("seguridad")->select("
-      SELECT cfd_sat.*,
+      SELECT distinct cfd_sat.*,
        cfd_sat.cfdi_relacionado,
        cfd_sat_1.id AS id_reemplazado,
        cfd_sat_1.serie AS serie_reemplazado,
