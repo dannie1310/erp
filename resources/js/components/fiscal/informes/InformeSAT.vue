@@ -70,6 +70,13 @@
                                     <th rowspan="2" class="index_corto">#</th>
                                     <th rowspan="2" class="c100">RFC</th>
                                     <th rowspan="2">Razón Social</th>
+
+                                    <th rowspan="2" class="sin_borde"></th>
+                                    <th colspan="2">Neto CFDI</th>
+
+                                    <th rowspan="2" class="sin_borde"></th>
+                                    <th colspan="3">CFDI A Omitir</th>
+
                                     <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="2">CFDI Tipo I</th>
 
@@ -77,12 +84,25 @@
                                     <th colspan="2">CFDI Tipo E</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
-                                    <th colspan="2">Neto CFDI</th>
+                                    <th colspan="2">CFDI Reconocidos</th>
+
+                                    <th rowspan="2" class="sin_borde"></th>
+                                    <th colspan="2">CFDI No Reconocidos</th>
+
+                                    <th rowspan="2" class="sin_borde"></th>
+                                    <th colspan="2">Neto CFDI a Revisar</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="4">Contabilidad GHI</th>
                                 </tr>
                                 <tr>
+
+                                    <th class="c80">Neto CFDI</th>
+                                    <th class="c80">Total Con IVA</th>
+
+                                    <th class="c80">Total Compra Divisas</th>
+                                    <th class="c80">Total Reemplazados</th>
+                                    <th class="c80">Total Reemplazo</th>
 
                                     <th class="c80">Neto Tipo I</th>
                                     <th class="c80">Total Con IVA</th>
@@ -90,11 +110,16 @@
                                     <th class="c80">Neto Tipo E</th>
                                     <th class="c80">Total Con IVA</th>
 
+                                    <th class="c80">Cantidad</th>
+                                    <th class="c80">Total Con IVA</th>
+
+                                    <th class="c80">Cantidad</th>
+                                    <th class="c80">Total Con IVA</th>
+
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Cantidad Empresas <br> Póliza-CFDI</th>
-                                    <th class="c80">Cantidad Cuentas Relacionadas</th>
+                                    <th class="c80">No. Cuentas Relacionadas</th>
                                     <th class="c80">Pasivos Registrados</th>
                                     <th class="c80">Diferencias</th>
 
@@ -116,6 +141,32 @@
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
+
+                                <td style="text-align: right">
+                                    ${{parseFloat(partida.neto_subtotal_completos).formatMoney(2,".",",") }}
+                                </td>
+                                <td style="text-align: right">
+                                    ${{parseFloat(partida.neto_total_completos).formatMoney(2,".",",") }}
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+
+                                <td style="text-align: right">
+                                    {{ partida.neto_total_divisas }}
+                                </td>
+                                <td style="text-align: right">
+                                    {{ partida.neto_total_reemplazado }}
+                                </td>
+                                <td style="text-align: right">
+                                    {{ partida.neto_total_reemplazo }}
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+
                                 <td style="text-align: right">
                                     <span v-if="parseFloat(partida.neto_subtotal_i) != 0">
                                         ${{parseFloat(partida.neto_subtotal_i).formatMoney(2,".",",") }}
@@ -133,16 +184,30 @@
                                     &nbsp;
                                 </td>
                                 <td style="text-align: right">
-                                    <span v-if="parseFloat(partida.neto_subtotal_e) != parseFloat('0')">
-                                        ${{parseFloat(partida.neto_subtotal_e).formatMoney(2,".",",") }}
-                                    </span>
-                                    <span v-else>-</span>
+                                    {{ partida.neto_subtotal_e }}
                                 </td>
                                 <td style="text-align: right">
-                                    <span v-if="parseFloat(partida.neto_total_e) != 0">
-                                        ${{parseFloat(partida.neto_total_e).formatMoney(2,".",",") }}
-                                    </span>
-                                    <span v-else>-</span>
+                                    {{ partida.neto_total_e }}
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    {{partida.cantidad_con_empresa}}
+                                </td>
+                                <td style="text-align: right">
+                                    {{partida.neto_total_con_empresa}}
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    {{partida.cantidad_sin_empresa}}
+                                </td>
+                                <td style="text-align: right">
+                                    {{partida.neto_total_sin_empresa}}
                                 </td>
 
                                 <td class="sin_borde">
@@ -158,12 +223,7 @@
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
-                                <td style="text-align: right;"   v-if="parseFloat(partida.cantidad_empresas)>0">
-                                     {{parseFloat(partida.cantidad_empresas) }}
-                                </td>
-                                 <td style="text-align: right" v-else>
-                                    -
-                                </td>
+
                                 <td style="text-align: right; text-decoration: underline" :style="parseFloat(partida.cantidad_cuentas)>0?`cursor : pointer`:``" v-on:click="verCuentas(partida)" v-if="parseFloat(partida.cantidad_cuentas)>0">
                                      {{parseFloat(partida.cantidad_cuentas) }}
                                 </td>
@@ -171,7 +231,7 @@
                                     -
                                 </td>
                                 <td style="text-align: right">
-                                    ${{parseFloat(partida.importe_movimientos_pasivo).formatMoney(2,".",",") }}
+                                    {{partida.importe_movimientos_pasivo}}
                                 </td>
                                 <td style="text-align: right">
                                     ${{parseFloat(partida.diferencia).formatMoney(2,".",",") }}
@@ -578,9 +638,9 @@ export default {
                 this.cargando = false;
             });
         },
-        verCFDI(partida)
+        verCFDI(partida, asociada = null)
         {
-            let asociada = partida.cantidad_empresas > 0 ? 1 : 0;
+
             return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
                 id_proveedor_sat: partida.id_proveedor_sat,
                 fecha_inicial : this.fecha_inicial,
