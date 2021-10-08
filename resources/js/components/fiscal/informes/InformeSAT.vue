@@ -132,7 +132,7 @@
                                 <td>
                                     {{i + 1}}
                                 </td>
-                                <td  v-on:click="verCFDI(partida)" style="text-decoration: underline; cursor: pointer">
+                                <td  v-on:click="verCFDI(partida,1)" style="text-decoration: underline; cursor: pointer">
                                     {{partida.rfc}}
                                 </td>
                                 <td>
@@ -154,13 +154,28 @@
                                 </td>
 
                                 <td style="text-align: right">
-                                    {{ partida.neto_total_divisas }}
+                                    <span v-if="partida.neto_total_divisas != '-'"  v-on:click="verCFDI(partida,2)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_divisas }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_divisas }}
+                                    </span>
                                 </td>
                                 <td style="text-align: right">
-                                    {{ partida.neto_total_reemplazo }}
+                                    <span v-if="partida.neto_total_reemplazo != '-'"  v-on:click="verCFDI(partida,3)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_reemplazo }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_reemplazo }}
+                                    </span>
                                 </td>
                                 <td style="text-align: right">
-                                    {{ partida.neto_total_reemplazado }}
+                                    <span v-if="partida.neto_total_reemplazado != '-'"  v-on:click="verCFDI(partida,4)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_reemplazado }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_reemplazado }}
+                                    </span>
                                 </td>
 
                                 <td class="sin_borde">
@@ -168,13 +183,13 @@
                                 </td>
 
                                 <td style="text-align: right">
-                                    <span v-if="parseFloat(partida.neto_subtotal_i) != 0">
+                                    <span v-if="parseFloat(partida.neto_subtotal_i) != 0" >
                                         ${{parseFloat(partida.neto_subtotal_i).formatMoney(2,".",",") }}
                                     </span>
                                     <span v-else>-</span>
                                 </td>
                                 <td style="text-align: right">
-                                    <span v-if="parseFloat(partida.neto_total_i) != 0">
+                                    <span v-if="parseFloat(partida.neto_total_i) != 0" style="text-decoration: underline; cursor: pointer"  v-on:click="verCFDI(partida,5)">
                                         ${{parseFloat(partida.neto_total_i).formatMoney(2,".",",") }}
                                     </span>
                                     <span v-else>-</span>
@@ -187,7 +202,13 @@
                                     {{ partida.neto_subtotal_e }}
                                 </td>
                                 <td style="text-align: right">
-                                    {{ partida.neto_total_e }}
+                                    <span v-if="partida.neto_total_e != '-'"  v-on:click="verCFDI(partida,6)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_e }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_e }}
+                                    </span>
+
                                 </td>
 
                                 <td class="sin_borde">
@@ -197,7 +218,12 @@
                                     {{partida.cantidad_con_empresa}}
                                 </td>
                                 <td style="text-align: right">
-                                    {{partida.neto_total_con_empresa}}
+                                    <span v-if="partida.neto_total_con_empresa != '-'"  v-on:click="verCFDI(partida,7)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_con_empresa }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_con_empresa }}
+                                    </span>
                                 </td>
 
                                 <td class="sin_borde">
@@ -207,7 +233,12 @@
                                     {{partida.cantidad_sin_empresa}}
                                 </td>
                                 <td style="text-align: right">
-                                    {{partida.neto_total_sin_empresa}}
+                                    <span v-if="partida.neto_total_sin_empresa != '-'"  v-on:click="verCFDI(partida,8)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_sin_empresa }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_sin_empresa }}
+                                    </span>
                                 </td>
 
                                 <td class="sin_borde">
@@ -217,7 +248,11 @@
                                     ${{parseFloat(partida.neto_subtotal_sat).formatMoney(2,".",",") }}
                                 </td>
                                 <td style="text-align: right">
-                                    ${{parseFloat(partida.neto_total_sat).formatMoney(2,".",",") }}
+                                    <span v-if="parseFloat(partida.neto_total_sat) != 0" style="text-decoration: underline; cursor: pointer"  v-on:click="verCFDI(partida,9)">
+                                        ${{parseFloat(partida.neto_total_sat).formatMoney(2,".",",") }}
+                                    </span>
+                                    <span v-else>-</span>
+
                                 </td>
 
                                 <td class="sin_borde">
@@ -304,7 +339,6 @@
                                     -
                                 </td>
                                 <td style="text-align: right">
-                                    {{partida.importe_movimientos_pasivo}}
                                     ${{parseFloat(partida.importe_movimientos_pasivo).formatMoney(2,".",",") }}
                                 </td>
                                 <td style="text-align: right">
@@ -459,7 +493,7 @@
                                         <tr>
                                             <td colspan="3" style="border: none"><h6>{{rfc}}</h6></td>
                                             <td colspan="10" style="border: none"><h6>{{razon_social}}</h6></td>
-                                            <td colspan="3" style="border: none; text-align: right"><h6>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</h6></td>
+                                            <td colspan="3" style="border: none; text-align: right"><h6>{{ total_cfdi }}</h6></td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto encabezado">#</th>
@@ -557,7 +591,7 @@
 
                                             </td>
                                             <td style="text-align: right; border: none" >
-                                                <b>${{ parseFloat(neto_total_sat).formatMoney(2,".",",") }}</b>
+                                                <b>{{ total_cfdi }}</b>
                                             </td>
                                         </tr>
                                     </table>
@@ -601,7 +635,7 @@ export default {
             es:es,
             razon_social : '',
             rfc : '',
-            neto_total_sat : '',
+            total_cfdi : '',
             lista_cfdi : [],
             empresas_seleccionadas :[],
             empresas_seleccionadas_filtro :[],
@@ -639,21 +673,22 @@ export default {
                 this.cargando = false;
             });
         },
-        verCFDI(partida, asociada = null)
+        verCFDI(partida, tipo = 1)
         {
 
             return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
                 id_proveedor_sat: partida.id_proveedor_sat,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
-                asociada_contpaq : asociada,
+                asociada_contpaq : null,
+                tipo : tipo,
                 empresas : this.empresas_seleccionadas_filtro
             })
             .then(data => {
-                this.lista_cfdi = data;
+                this.lista_cfdi = data.informe;
                 this.razon_social = partida.razon_social;
                 this.rfc = partida.rfc;
-                this.neto_total_sat = partida.neto_total_sat;
+                this.total_cfdi = data.total;
             })
             .finally(() => {
                 $(this.$refs.modal_cfdi).appendTo('body')

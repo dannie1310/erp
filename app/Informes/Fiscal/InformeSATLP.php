@@ -44,8 +44,6 @@ class InformeSATLP
     public static function  getInforme($data)
     {
         $qry = "";
-        $qry_cfdi = "";
-        $qry_cfdi_orden = "";
         if(count($data["empresas"])>0)
         {
             $qry = " AND IDEmpresa IN(".implode(",", $data["empresas"]).")";
@@ -182,8 +180,6 @@ class InformeSATLP
 
         GROUP BY HecCFDICompletos.IDProveedor) cfdi_completos
           ON (proveedores_sat.IDProveedor = cfdi_completos.IDProveedor)
-
-
           LEFT OUTER JOIN
         (SELECT HecCFDI.IDProveedor,
         count(HecCFDI.IDCFDI) as cantidad_con_empresa,
@@ -325,10 +321,17 @@ order by cuentas_movimientos.importe_movimiento desc");
             return (array)$value;
         }, $informe);
 
-        return $informe;
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>$total];
+
     }
 
-    public static function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas){
+    public static function getListaCFDI1($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas){
 
         $condicion = " AND cfd_sat.numero_empresa is null";
         if(!$asociada_contpaq && count($empresas) == 0){
@@ -396,38 +399,40 @@ where cfd_sat.fecha BETWEEN '".$fecha_inicial->format("Y-m-d")." 00:00:00'
     }
 
 
-    public static function getListaCFDIOmitidos($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas){
+    public static function getListaCFDI($data){
 
-        $condicion = " AND cfd_sat.numero_empresa is null";
-        if(!$asociada_contpaq && count($empresas) == 0){
+
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
             $condicion = "";
-        } else if(!$asociada_contpaq && count($empresas) > 0){
-            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $empresas).")";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
         }
-        if($asociada_contpaq == 1){
-            if(count($empresas)>0)
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
             {
-                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $empresas).")";
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
             } else{
                 $condicion = " AND cfd_sat.numero_empresa is not null";
             }
         }
 
         $informe = DB::connection("seguridad")->select("
-      SELECT cfd_sat.*,
-       cfd_sat.cfdi_relacionado,
+      select * from (
+      SELECT distinct cfd_sat.*,
+
        cfd_sat_1.id AS id_reemplazado,
        cfd_sat_1.serie AS serie_reemplazado,
        cfd_sat_1.folio AS folio_reemplazado,
        cfd_sat_1.fecha AS fecha_reemplazado,
-       cfd_sat.fecha_pago,
-       cfd_sat.moneda_xls,
+
        cfd_sat_2.id AS id_reemplaza,
        cfd_sat_2.fecha AS fecha_reemplaza,
        cfd_sat_2.serie AS serie_reemplaza,
        cfd_sat_2.folio AS folio_reemplaza,
        configuracion_obra.nombre AS obra_sao,
-       informe_sat_lista_empresa.descripcion as empresa_contpaq
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDICompletos.Total as total_a_sumar
   FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
           LEFT OUTER JOIN
           SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
@@ -445,22 +450,1032 @@ where cfd_sat.fecha BETWEEN '".$fecha_inicial->format("Y-m-d")." 00:00:00'
       SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
       LEFT OUTER JOIN
       SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
-
-where cfd_sat.fecha BETWEEN '".$fecha_inicial->format("Y-m-d")." 00:00:00'
-      AND '".$fecha_final->format("Y-m-d")." 23:59:59'
+ JOIN SEGURIDAD_ERP.InformeSAT.HecCFDICompletos on(HecCFDICompletos.IDCFDI = cfd_sat.id)
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
-      AND cfd_sat.id_proveedor_sat = ".$id_proveedor."
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
       AND cfd_sat.id_empresa_sat = 1
       ".$condicion."
-      order by cfd_sat.fecha
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDICompletos.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+JOIN SEGURIDAD_ERP.InformeSAT.HecCFDICompletos on(HecCFDICompletos.IDCFDI = cfd_sat.id)
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
  " );
 
         $informe = array_map(function ($value) {
             return (array)$value;
         }, $informe);
 
-        return $informe;
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+    }
+
+    public static function getListaCFDIOmitidosDivisa($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDIDivisas.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIDivisas on(HecCFDIDivisas.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDIDivisas.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIDivisas on(HecCFDIDivisas.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIOmitidosReemplazo($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDIReemplazo.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazo on(HecCFDIReemplazo.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDIReemplazo.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazo on(HecCFDIReemplazo.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIOmitidosReemplazado($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDIReemplazado.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado on(HecCFDIReemplazado.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDIReemplazado.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado on(HecCFDIReemplazado.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIIngresos($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDII.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDII on(HecCFDII.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDII.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDII on(HecCFDII.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIEgresos($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDIE.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIE on(HecCFDIE.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDIE.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIE on(HecCFDIE.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIReconocidos($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDI.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDI on(HecCFDI.IDCFDI = cfd_sat.id and cfd_sat.numero_empresa is not null)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDI.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDI on(HecCFDI.IDCFDI = cfd_sat.id and cfd_sat.numero_empresa is not null)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDINoReconocidos($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDISinEmpresa.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDISinEmpresa on(HecCFDISinEmpresa.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDISinEmpresa.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDISinEmpresa on(HecCFDISinEmpresa.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIARevisar($data)
+    {
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+                      HecCFDI.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDI on(HecCFDI.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDI.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDI on(HecCFDI.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
     }
 
 }
