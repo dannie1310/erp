@@ -75,7 +75,7 @@
                                     <th colspan="2">Neto CFDI</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
-                                    <th colspan="3">CFDI A Omitir</th>
+                                    <th colspan="3">CFDI A Omitir (Total con IVA)</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="2">CFDI Tipo I</th>
@@ -100,9 +100,9 @@
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Total Compra Divisas</th>
-                                    <th class="c80">Total Reemplazados</th>
-                                    <th class="c80">Total Reemplazo</th>
+                                    <th class="c80">Compra de Divisas</th>
+                                    <th class="c80">Reemplazo de Ejercicios Anteriores</th>
+                                    <th class="c80">Reemplazados en Ejercicios Posteriores</th>
 
                                     <th class="c80">Neto Tipo I</th>
                                     <th class="c80">Total Con IVA</th>
@@ -157,10 +157,10 @@
                                     {{ partida.neto_total_divisas }}
                                 </td>
                                 <td style="text-align: right">
-                                    {{ partida.neto_total_reemplazado }}
+                                    {{ partida.neto_total_reemplazo }}
                                 </td>
                                 <td style="text-align: right">
-                                    {{ partida.neto_total_reemplazo }}
+                                    {{ partida.neto_total_reemplazado }}
                                 </td>
 
                                 <td class="sin_borde">
@@ -304,6 +304,7 @@
                                     -
                                 </td>
                                 <td style="text-align: right">
+                                    {{partida.importe_movimientos_pasivo}}
                                     ${{parseFloat(partida.importe_movimientos_pasivo).formatMoney(2,".",",") }}
                                 </td>
                                 <td style="text-align: right">
@@ -338,7 +339,7 @@
                                                 <h6>{{razon_social}}</h6>
                                             </td>
                                             <td style="text-align: right; border: none">
-                                                <h6>${{parseFloat(importe_cuentas).formatMoney(2,".",",") }}</h6>
+                                                <h6>{{importe_cuentas }}</h6>
                                             </td>
                                         </tr>
                                         <tr>
@@ -359,7 +360,7 @@
                                         <tfoot>
                                              <tr>
                                                 <td style="text-align: right" colspan="3" class="sin_borde"><b>Total:</b></td>
-                                                <td style="text-align: right" class="sin_borde">${{parseFloat(importe_cuentas).formatMoney(2,".",",") }}</td>
+                                                <td style="text-align: right" class="sin_borde">{{importe_cuentas }}</td>
                                             </tr>
                                         </tfoot>
                                     </table>
