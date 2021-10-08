@@ -54,6 +54,7 @@ class ViajeNetoService
      */
     public function getCatalogo($data)
     {
+        // dd('pandita',$data);
         /**
          * Buscar usuario con el proyecto ultimo asociado al usuario.
          */
@@ -67,6 +68,8 @@ class ViajeNetoService
         {
             return json_encode(array("error" =>  "Error al obtener los datos del proyecto. Probablemente el usuario no tenga asignado ningun proyecto."));
         }
+
+        // dd($usuario->first()->proyecto->base_datos);
 
         /**
          * Se realiza conexión con la base de datos de acarreos.
@@ -84,11 +87,12 @@ class ViajeNetoService
             return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
         $telefono = $usuario->first()->telefono;
+        // dd(config('app.env_variables.ACARREOS_COMPROBAR_IMEI'), $data['IMEI'] != 'N/A');
         if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A' ) {
             /**
              * Validar telefono asignado al proyecto y al usuario.
              */
-            if ($this->repository->getTelefonoActivo($data['IMEI'])) {
+            if ($this->repository->getTelefonoActivo('imei',$data['IMEI'])) {
                 return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
             }
 
@@ -96,19 +100,39 @@ class ViajeNetoService
             if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
                 return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
             }
-            $telefonos = array([
-                'id' => $telefono->impresora ? $telefono->impresora->id : null,
-                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-                'IMEI' => $telefono->imei
-            ]);
+            // $telefonos = array([
+            //     'id' => $telefono->impresora ? $telefono->impresora->id : null,
+            //     'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+            //     'IMEI' => $telefono->imei
+            // ]);
         }else{
-            $telefonos = array([
-                'id' => $telefono->impresora ? $telefono->impresora->id : null,
-                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-                'IMEI' => $data['IMEI']
-            ]);
+            // dd($telefono->device_id, $telefono);
+            if($telefono->device_id != null){
+                if (strtolower($telefono->marca) != $data['masca'] || strtolower($telefono->modelo) != $data['modelo']) {
+                    return json_encode(array("error" => "El teléfono no es de la marca o modelo asignado al usuario."));
+                }
+                if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
+                    return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
+                }
+                dd(1);
+            }else{
+                $telefono->update(['device_id', $data['deviceId']]);
+                // $telefono->device_id = $data['deviceId'];
+                $telefono->save();
+            }
+            // $telefonos = array([
+            //     'id' => $telefono->impresora ? $telefono->impresora->id : null,
+            //     'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+            //     'IMEI' => $data['IMEI']
+            // ]);
         }
 
+        $telefonos = array([
+            'id' => $telefono->impresora ? $telefono->impresora->id : null,
+            'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+            'IMEI' => $telefono->imei
+        ]);
+// dd('stop');
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
         $tiros = $this->repository->getCatalogoTiros();
@@ -171,7 +195,7 @@ class ViajeNetoService
             /**
              * Verificar si el telefono esta activo
              */
-            if ($this->repository->getTelefonoActivo($data['IMEI']))
+            if ($this->repository->getTelefonoActivo('imei', $data['IMEI']))
             {
                 return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
             }
