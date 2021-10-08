@@ -2859,6 +2859,53 @@ export const routes = [
                     },
                 ],
             },
+            {
+                path: 'control_obra',
+                components: {
+                    default: require('./components/control-obra/partials/Layout.vue').default,
+                    menu: require('./components/control-obra/partials/Menu.vue').default
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'control_obra',
+                        component: require('./components/control-obra/Index').default,
+                        meta: {
+                            title: 'Control de Obra',
+                            breadcrumb: {parent:'home', name: 'CONTROL DE OBRA'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'avance-obra',
+                        component: require('./components/control-obra/avance-obra/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'avance-obra',
+                                component: require('./components/control-obra/avance-obra/Index').default,
+                                meta: {
+                                    title: 'Avance de Obra',
+                                    breadcrumb: {parent: 'control_obra', name: 'AVANCE DE OBRA'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_avance_obra'
+                                }
+                            },
+                            /*{
+                                path: 'create',
+                                name: 'asignacion-proveedor-create',
+                                component: require('./components/compras/asignacion/Create').default,
+                                meta: {
+                                    title: 'Registrar Asignación de Proveedores',
+                                    breadcrumb: {parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_asignacion_proveedor'
+                                }
+                            },*/
+                        ]
+                    }
+                ]
+            },
         ],
     },
     {
