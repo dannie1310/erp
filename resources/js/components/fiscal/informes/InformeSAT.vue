@@ -75,7 +75,7 @@
                                     <th colspan="2">Neto CFDI</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
-                                    <th colspan="3">CFDI A Omitir (Total con IVA)</th>
+                                    <th colspan="4">CFDI A Omitir (Total con IVA)</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="2">CFDI Tipo I</th>
@@ -101,6 +101,7 @@
                                     <th class="c80">Total Con IVA</th>
 
                                     <th class="c80">Compra de Divisas</th>
+                                    <th class="c80">Dispersión Monederos</th>
                                     <th class="c80">Reemplazo de Ejercicios Anteriores</th>
                                     <th class="c80">Reemplazados en Ejercicios Posteriores</th>
 
@@ -159,6 +160,14 @@
                                     </span>
                                     <span v-else>
                                         {{ partida.neto_total_divisas }}
+                                    </span>
+                                </td>
+                                <td style="text-align: right">
+                                    <span v-if="partida.neto_total_dispersion != '-'"  v-on:click="verCFDI(partida,10)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_dispersion }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_dispersion }}
                                     </span>
                                 </td>
                                 <td style="text-align: right">
@@ -269,7 +278,7 @@
                                     {{partida.importe_movimientos_pasivo}}
                                 </td>
                                 <td style="text-align: right">
-                                    ${{parseFloat(partida.diferencia).formatMoney(2,".",",") }}
+                                    {{partida.diferencia }}
                                 </td>
 
                             </tr>
