@@ -5,7 +5,7 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header" style="text-align: center">
-                <b>SISTEMA DE CONTROL DE OBRA</b>
+                <b>SISTEMA CONTROL DE OBRA</b>
                 <hr style="border-color: #9e9e9e; margin-bottom: 3px">
             </li>
 

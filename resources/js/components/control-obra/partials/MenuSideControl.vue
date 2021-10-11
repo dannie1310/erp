@@ -7,7 +7,7 @@
                 <li class="nav-header" style="text-align: center;">
                     <hr style="margin: 0px">
                     <router-link :to="{name: 'control_obra'}" class="nav-link" :class="{active: this.$route.name == 'control_obra'}">
-                        <b>SISTEMA DE CONTROL DE OBRA</b>
+                        <b>SISTEMA CONTROL DE OBRA</b>
                     </router-link>
                     <hr style="margin: 0px">
                 </li>

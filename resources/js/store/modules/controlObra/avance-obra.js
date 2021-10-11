@@ -1,0 +1,50 @@
+const URI = '/api/control-obra/avance/';
+
+export default {
+    namespaced: true,
+    state: {
+        avances: [],
+        currentAvance: null,
+        meta: {},
+    },
+
+    mutations: {
+        SET_AVANCES(state, data) {
+            state.avances = data
+        },
+        SET_AVANCE(state, data) {
+            state.currentAvance = data;
+        },
+        SET_META(state, data) {
+            state.meta = data;
+        },
+    },
+
+    actions: {
+        paginate (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'paginate', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            })
+        },
+    },
+
+    getters: {
+        avances(state) {
+            return state.avances
+        },
+        currentAvance(state) {
+            return state.currentAvance
+        },
+        meta(state) {
+            return state.meta
+        },
+    }
+}
