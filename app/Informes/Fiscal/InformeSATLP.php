@@ -92,7 +92,9 @@ class InformeSATLP
        format(isnull(cfdi.Total,0) - isnull(movimientos_pasivo.Importe,0), 'C') AS diferencia,
 
        case when cfdi_reemplazados_no_cancelados.subtotal_neto is null then '-' else format(cfdi_reemplazados_no_cancelados.subtotal_neto,'C') end neto_subtotal_no_cancelados,
-       case when cfdi_reemplazados_no_cancelados.total_neto is null then '-' else format(cfdi_reemplazados_no_cancelados.total_neto,'C') end neto_total_no_cancelados
+       case when cfdi_reemplazados_no_cancelados.total_neto is null then '-' else format(cfdi_reemplazados_no_cancelados.total_neto,'C') end neto_total_no_cancelados,
+
+       case when cfdi_reemplazados.total_neto is null then '-' else format(cfdi_reemplazados.total_neto,'C') end neto_total_agregar
 
   FROM ((((((((SEGURIDAD_ERP.InformeSAT.DimProveedores proveedores_sat
                LEFT OUTER JOIN
@@ -216,6 +218,17 @@ class InformeSATLP
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
           GROUP BY HecCFDIReemplazadosNoCancelados.IDProveedor) cfdi_reemplazados_no_cancelados
             ON (proveedores_sat.IDProveedor = cfdi_reemplazados_no_cancelados.IDProveedor)
+
+             LEFT OUTER JOIN
+         (SELECT HecCFDIReemplazado.IDProveedor,
+                 SUM (HecCFDIReemplazado.SubtotalNeto)
+                    AS subtotal_neto,
+                 SUM (HecCFDIReemplazado.Total) AS total_neto
+            FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado HecCFDIReemplazado
+         WHERE HecCFDIReemplazado.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+          GROUP BY HecCFDIReemplazado.IDProveedor) cfdi_reemplazados
+            ON (proveedores_sat.IDProveedor = cfdi_reemplazados.IDProveedor)
 
           ORDER BY isnull(cfdi.Total,0) - isnull(movimientos_pasivo.Importe,0) DESC
           ";
@@ -714,7 +727,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
 
     }
 
-    public static function getListaCFDIOmitidosReemplazado($data){
+    public static function getListaCFDIReemplazados($data){
         $condicion = "";
         if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
             $condicion = "";
@@ -766,9 +779,8 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado on(HecCFDIReemplazado.IDCFDI = cfd_sat.id)
 
 
-where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
-      AND cfd_sat.cancelado = 0
+where
+      cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
       AND cfd_sat.id_empresa_sat = 1
