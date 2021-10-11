@@ -209,6 +209,8 @@ class CFDSATRepository extends Repository implements RepositoryInterface
             $cfdi = InformeSATLP::getListaCFDIARevisar($data);
         }else if($data["tipo"] == 10){
             $cfdi = InformeSATLP::getListaCFDIOmitidosDispersion($data);
+        }else if($data["tipo"] == 11){
+            $cfdi = InformeSATLP::getListaCFDIReemplazadosNoCancelados($data);
         }
 
         return $cfdi;
