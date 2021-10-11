@@ -75,6 +75,9 @@
                                     <th colspan="2">Neto CFDI</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
+                                    <th colspan="2">CFDI Pendientes Cancelación</th>
+
+                                    <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="4">CFDI A Omitir (Total con IVA)</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
@@ -98,6 +101,9 @@
                                 <tr>
 
                                     <th class="c80">Neto CFDI</th>
+                                    <th class="c80">Total Con IVA</th>
+
+                                    <th class="c80">Subtotal Neto</th>
                                     <th class="c80">Total Con IVA</th>
 
                                     <th class="c80">Compra de Divisas</th>
@@ -150,10 +156,23 @@
                                     ${{parseFloat(partida.neto_total_completos).formatMoney(2,".",",") }}
                                 </td>
 
-                                <td class="sin_borde">
-                                    &nbsp;
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    {{ partida.neto_subtotal_no_cancelados }}
+                                </td>
+                                <td style="text-align: right">
+                                    <span v-if="partida.neto_total_no_cancelados != '-'"  v-on:click="verCFDI(partida,11)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_no_cancelados }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_no_cancelados }}
+                                    </span>
                                 </td>
 
+
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
                                 <td style="text-align: right">
                                     <span v-if="partida.neto_total_divisas != '-'"  v-on:click="verCFDI(partida,2)" style="text-decoration: underline; cursor: pointer">
                                         {{ partida.neto_total_divisas }}

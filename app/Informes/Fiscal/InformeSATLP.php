@@ -89,7 +89,10 @@ class InformeSATLP
        movimientos_pasivo.cantidad_cuentas as cantidad_cuentas,
        null as cantidad_empresas,
 
-       format(isnull(cfdi.Total,0) - isnull(movimientos_pasivo.Importe,0), 'C') AS diferencia
+       format(isnull(cfdi.Total,0) - isnull(movimientos_pasivo.Importe,0), 'C') AS diferencia,
+
+       case when cfdi_reemplazados_no_cancelados.subtotal_neto is null then '-' else format(cfdi_reemplazados_no_cancelados.subtotal_neto,'C') end neto_subtotal_no_cancelados,
+       case when cfdi_reemplazados_no_cancelados.total_neto is null then '-' else format(cfdi_reemplazados_no_cancelados.total_neto,'C') end neto_total_no_cancelados
 
   FROM ((((((((SEGURIDAD_ERP.InformeSAT.DimProveedores proveedores_sat
                LEFT OUTER JOIN
@@ -202,6 +205,17 @@ class InformeSATLP
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
           GROUP BY HecCFDIDispersion.IDProveedor) cfdi_dispersion
             ON (proveedores_sat.IDProveedor = cfdi_dispersion.IDProveedor)
+
+            LEFT OUTER JOIN
+         (SELECT HecCFDIReemplazadosNoCancelados.IDProveedor,
+                 SUM (HecCFDIReemplazadosNoCancelados.SubtotalNeto)
+                    AS subtotal_neto,
+                 SUM (HecCFDIReemplazadosNoCancelados.Total) AS total_neto
+            FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazadosNoCancelados HecCFDIReemplazadosNoCancelados
+         WHERE HecCFDIReemplazadosNoCancelados.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+          GROUP BY HecCFDIReemplazadosNoCancelados.IDProveedor) cfdi_reemplazados_no_cancelados
+            ON (proveedores_sat.IDProveedor = cfdi_reemplazados_no_cancelados.IDProveedor)
 
           ORDER BY isnull(cfdi.Total,0) - isnull(movimientos_pasivo.Importe,0) DESC
           ";
@@ -1515,6 +1529,126 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       LEFT OUTER JOIN
       SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
     JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIDispersion on(HecCFDIDispersion.IDCFDI = cfd_sat.id)
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.numero_empresa is null) as lista_cfdi
+
+      order by lista_cfdi.fecha
+ " );
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        foreach($informe as $partida_informe)
+        {
+            $total += $partida_informe["total_a_sumar"];
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+
+    }
+
+    public static function getListaCFDIReemplazadosNoCancelados($data){
+        $condicion = "";
+        if(!$data["asociada_contpaq"] && count($data["empresas"]) == 0){
+            $condicion = "";
+        } else if(!$data["asociada_contpaq"] && count($data["empresas"]) > 0){
+            $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+        }
+        if($data["asociada_contpaq"] == 1){
+            if(count($data["empresas"])>0)
+            {
+                $condicion = " AND cfd_sat.numero_empresa in(".implode(",", $data["empresas"]).")";
+            } else{
+                $condicion = " AND cfd_sat.numero_empresa is not null";
+            }
+        }
+
+        $informe = DB::connection("seguridad")->select("
+      select * from (
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDIReemplazadosNoCancelados.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+      JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazadosNoCancelados on(HecCFDIReemplazadosNoCancelados.IDCFDI = cfd_sat.id)
+
+
+where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+      AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+      AND cfd_sat.cancelado = 0
+      AND cfd_sat.tipo_comprobante in('I','E')
+      AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
+      AND cfd_sat.id_empresa_sat = 1
+      ".$condicion."
+
+      union
+
+      SELECT distinct cfd_sat.*,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+       HecCFDIReemplazadosNoCancelados.Total as total_a_sumar
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+                     configuracion_obra.id_proyecto)
+             AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    JOIN SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazadosNoCancelados on(HecCFDIReemplazadosNoCancelados.IDCFDI = cfd_sat.id)
 
 where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
