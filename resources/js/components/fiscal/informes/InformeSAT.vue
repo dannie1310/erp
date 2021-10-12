@@ -96,7 +96,7 @@
                                     <th colspan="2">Neto CFDI a Revisar</th>
 
                                     <th rowspan="2" class="sin_borde"></th>
-                                    <th colspan="4">Contabilidad GHI</th>
+                                    <th colspan="3">Contabilidad GHI</th>
                                 </tr>
                                 <tr>
 
@@ -111,8 +111,6 @@
                                     <th class="c80">Reemplazados en 2021</th>
 
                                     <th class="c80">Neto Tipo I</th>
-                                    <th class="c80">Total Con IVA</th>
-
                                     <th class="c80">Total Con IVA</th>
 
                                     <th class="c80">Neto Tipo E</th>
@@ -236,7 +234,7 @@
                                     </span>
 
                                 </td>
-
+                                <!-- RECONOCIDOS-->
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
@@ -251,7 +249,7 @@
                                         {{ partida.neto_total_con_empresa }}
                                     </span>
                                 </td>
-
+                                <!-- NO RECONOCIDOS-->
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
@@ -266,7 +264,7 @@
                                         {{ partida.neto_total_sin_empresa }}
                                     </span>
                                 </td>
-
+                                <!-- A REVISAR-->
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
@@ -284,7 +282,7 @@
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
-
+                                <!-- A REVISAR-->
                                 <td style="text-align: right; text-decoration: underline" :style="parseFloat(partida.cantidad_cuentas)>0?`cursor : pointer`:``" v-on:click="verCuentas(partida)" v-if="parseFloat(partida.cantidad_cuentas)>0">
                                      {{parseFloat(partida.cantidad_cuentas) }}
                                 </td>
