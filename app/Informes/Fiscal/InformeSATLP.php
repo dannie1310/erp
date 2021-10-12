@@ -359,13 +359,7 @@ order by cuentas_movimientos.importe_movimiento desc");
             return (array)$value;
         }, $informe);
 
-        $total = 0;
-        foreach($informe as $partida_informe)
-        {
-            $total += $partida_informe["total_a_sumar"];
-        }
-
-        return ["informe" => $informe, "total"=>$total];
+        return $informe;
 
     }
 
