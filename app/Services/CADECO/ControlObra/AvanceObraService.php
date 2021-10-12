@@ -25,6 +25,17 @@ class AvanceObraService
 
     public function paginate($data)
     {
+        if(isset($data['numero_folio'])){
+            $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+
+        if(isset($data['observaciones'])){
+            $this->repository->where([['observaciones', 'LIKE', '%'.$data['observaciones'].'%']]);
+        }
         return $this->repository->paginate($data);
     }
 

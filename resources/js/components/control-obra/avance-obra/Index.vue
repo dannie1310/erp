@@ -26,7 +26,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true },
-                    { title: 'Observaciones', field: 'observaciones', sortable: true },
+                    { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c100', tdComp: require('./partials/EstatusLabel').default},
                     //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
