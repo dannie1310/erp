@@ -33,6 +33,8 @@ class SalidaAlmacenTransformer extends TransformerAbstract
             'operacion' => $model->operacion,
             'folio_format' => $model->numero_folio_format,
             'almacen_descripcion' => $model->almacen->descripcion,
+            'id_empresa_entrega' => $model->id_empresa,
+            'tipo_cargo' => $model->tipo_cargo,
         ];
     }
 

@@ -151,6 +151,20 @@ class SalidaAlmacen extends Transaccion
         return $relaciones;
     }
 
+    public function getTipoCargoAttribute(){
+        if($this->partidas[0]->contratista){
+            return $this->partidas[0]->contratista->con_cargo;
+        }
+        return null;
+    }
+
+    public function getEntregaEmpresaAttribute(){
+        if($this->partidas[0]->contratista){
+            return $this->partidas[0]->contratista->id_empresa;
+        }
+        return null;
+    }
+
     public function ordenar($clave)
     {
         return function ($a, $b) use ($clave)
