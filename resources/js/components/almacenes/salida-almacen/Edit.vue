@@ -135,7 +135,7 @@
                                                             <thead>
                                                                 <tr>
                                                                     <th class="th_index">#</th>
-                                                                    <th class="th_c120">No. de Parte</th>
+                                                                    <th class="th_c150">No. de Parte</th>
                                                                     <th>Material</th>
                                                                     <th class="th_unidad">Unidad</th>
                                                                     <th class="th_cantidad">Cantidad</th>
@@ -148,7 +148,7 @@
                                                                     <td>{{partida.material_numero_parte}}</td>
                                                                     <td>{{partida.material_descripcion}}</td>
                                                                     <td>{{partida.unidad}}</td>
-                                                                    <td>{{partida.cantidad_format}}</td>
+                                                                    <td class="money">{{partida.cantidad_format}}</td>
                                                                     <td v-if="partida.destino_path" :title="`${partida.destino_path}`"><u>{{partida.destino_descripcion}}</u></td>
                                                                     <td v-else >{{partida.destino_descripcion}}</td>
                                                                 </tr>
