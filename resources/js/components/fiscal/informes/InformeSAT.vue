@@ -17,7 +17,14 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr>
-                                <td class="c90 sin_borde" style="padding-top: 0.75rem" ><b>Fecha Inicial:</b></td>
+                                <td class="c90 sin_borde"  ><b>Fecha Inicial:</b></td>
+                                <td class="c90 sin_borde" ><b>Fecha Final:</b></td>
+                                <td class="c90 sin_borde" ><b>Incluir 2132:</b></td>
+                                <td class="sin_borde"><b>Empresas:</b></td>
+                                <td class="c100 sin_borde"></td>
+                            </tr>
+                            <tr>
+
                                 <td class="c130 sin_borde"><datepicker
                                     id = "fechaInicial"
                                     v-model = "fecha_inicial_input"
@@ -31,7 +38,7 @@
                                     :disabled-dates="fechasDeshabilitadas"
                                     :class="{'is-invalid': errors.has('fecha_inicio')}"
                                 ></datepicker></td>
-                                <td class="c90 sin_borde" style="padding-top: 0.75rem" ><b>Fecha Final:</b></td>
+
                                 <td class="c130 sin_borde"><datepicker
                                     id = "fechaFinal"
                                     v-model = "fecha_final_input"
@@ -44,7 +51,13 @@
                                     :disabled-dates="fechasDeshabilitadas"
                                     :class="{'is-invalid': errors.has('fecha_fin')}"
                                 ></datepicker></td>
-                                <td>
+                                <td class="sin_borde" style="text-align: center">
+                                     <div class="custom-control custom-checkbox">
+                                         <input type="checkbox" class="custom-control-input" id="con2132" v-model="con2132" >
+                                         <label for="con2132" class="custom-control-label" ></label>
+                                     </div>
+                                </td>
+                                <td class="sin_borde">
                                      <treeselect v-model="empresas_seleccionadas"
                                          :multiple="true"
                                          :options="empresas"
@@ -134,7 +147,7 @@
                             </thead>
                             <tbody>
                             <template v-for="(partida, i) in informe.partidas">
-                                <tr class="sin_borde">
+                                <tr class="sin_borde" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click">
                                 <td>
                                     {{i + 1}}
                                 </td>
@@ -653,6 +666,7 @@ export default {
             fechasDeshabilitadas:{},
             fecha_inicial : new Date("2020/01/01"),
             fecha_final : new Date("2020/12/31"),
+            con2132 : 1,
 
             fecha_inicial_input : new Date("2020/01/01"),
             fecha_final_input : new Date("2020/12/31"),
@@ -686,7 +700,8 @@ export default {
                 id:this.id,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro
+                empresas : this.empresas_seleccionadas_filtro,
+                con2132 : this.con2132,
             })
             .then(data => {
                 this.informe = data.informe;
@@ -725,7 +740,7 @@ export default {
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
                 empresas : this.empresas_seleccionadas_filtro,
-                id_cuenta : cuenta.id_cuenta
+                id_cuenta : cuenta.id_cuenta,
             })
                 .then(data => {
                     this.codigo_cuenta = cuenta.codigo_cuenta;
@@ -744,7 +759,8 @@ export default {
                 id: partida.id_proveedor_sat,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro
+                empresas : this.empresas_seleccionadas_filtro,
+                con2132 : this.con2132,
             })
             .then(data => {
                 this.razon_social = partida.razon_social;
@@ -759,6 +775,23 @@ export default {
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
         },
+        over(e){
+            let tr = $(e.target).parent();
+            tr.addClass("hover");
+        },
+        out(e){
+            let tr = $(e.target).parent();
+            tr.removeClass("hover");
+        },
+        click(e){
+            let tr = $(e.target).parent();
+            if(tr.hasClass("click")){
+                tr.removeClass("click");
+            }else {
+                tr.addClass("click");
+            }
+        }
+
     },
     computed: {
         anio_seleccionado(){
@@ -773,6 +806,14 @@ export default {
 </script>
 
 <style scoped>
+tr.hover td{
+    background-color: #eed092;
+}
+
+tr.click td{
+    background-color: rgba(227, 171, 52, 0.99);
+}
+
 .form-control {
     font-size: 10px !important;
 }

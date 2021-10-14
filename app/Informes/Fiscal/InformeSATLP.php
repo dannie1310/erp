@@ -40,9 +40,15 @@ ORDER BY
     public static function  getInforme($data)
     {
         $qry = "";
+        $qry2132 = "";
         if(count($data["empresas"])>0)
         {
             $qry = " AND (IDEmpresa IN(".implode(",", $data["empresas"]).") OR IDEmpresa is null) ";
+        }
+
+        if($data["con2132"] == 0)
+        {
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3) ";
         }
 
         $informe_qry = "SELECT proveedores_sat.IDProveedor as id_proveedor_sat,
@@ -121,7 +127,7 @@ ORDER BY
                      SUM (HecMovimientos.Importe) AS Importe
                 FROM SEGURIDAD_ERP.InformeSAT.HecMovimientos HecMovimientos
              WHERE HecMovimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry $qry2132
               GROUP BY HecMovimientos.IDProveedor) movimientos_pasivo
                 ON (proveedores_sat.IDProveedor = movimientos_pasivo.IDProveedor))
             LEFT OUTER JOIN
@@ -241,9 +247,15 @@ ORDER BY
     public static function getCuentas($data)
     {
         $qry = "";
+        $qry2132 = "";
         if(count($data["empresas"])>0)
         {
             $qry = " AND hm.IDEmpresa IN(".implode(",", $data["empresas"]).")";
+        }
+
+        if($data["con2132"] == 0)
+        {
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3) ";
         }
 
         $query = "SELECT
@@ -260,7 +272,7 @@ INNER JOIN SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec ON
     hm.IDEmpresa = dec.IDEmpresaContpaq
 WHERE dc.IDProveedor = ".$data["id"]."
 AND hm.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
-AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry $qry2132
 GROUP BY
     dc.IDProveedor,
     dc.Descripcion,
