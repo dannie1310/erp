@@ -26,45 +26,34 @@
                         <div class="row" v-if="hijos">
                             <div  class="col-md-12">
                                 <div class="table-responsive">
-                                    <table class="table table-sm" id="tabla-resumen-monedas">
+                                    <table class="table table-sm table-bordered " id="tabla-resumen-monedas">
                                         <thead>
                                         <tr>
-                                            <th class="index_corto">#</th>
-                                            <th style="width:110px;">No. de Parte</th>
-                                            <th>Descripción</th>
-                                            <th class="unidad">Unidad</th>
-                                            <th class="index">¿Cotizar? No/Si
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input" id="toggleCotizar" v-model="toggleCotizar" checked value="1">
-                                                    <label class="custom-control-label" for="toggleCotizar"></label>
-                                                </div>
-                                            </th>
-                                            <th >Cantidad</th>
-                                            <th class="cantidad_input">Precio Unitario</th>
-                                            <th class="cantidad_input">% Descuento</th>
-                                            <th class="cantidad_input">Precio Total</th>
-                                            <th class="cantidad_input">Moneda</th>
-                                            <th class="cantidad_input" v-if="multiples_monedas">Precio Total Pesos (MXN)</th>
-                                            <th>Observaciones</th>
+                                             <th class="index_corto" rowspan="2">#</th>
+                                            <th rowspan="2">Clave</th>
+                                            <th rowspan="2">Unidad</th>
+                                            <th colspan="3">Cantidad</th>
+                                            <th rowspan="2">Precio Venta</th>
+                                            <th class="cantidad_input" rowspan="2">Monto Avance</th>
+                                            <th class="cantidad_input" rowspan="2">Cantidad Actual</th>
+                                            <th class="cantidad_input" rowspan="2">Monto Actual</th>
+                                            <th rowspan="2">Cumplido</th>
+                                        </tr>
+                                        <tr>
+                                            <th>Presupuesto</th>
+                                            <th>Anterior</th>
+                                            <th>Avance</th>
                                         </tr>
                                         </thead>
-                                        <tbody v-if="Object.keys(hijos).length > 0">
-                                            <tr v-for="(partida, i) in hijos.conceptoHijosMedibles">
+                                        <tbody>
+                                            <tr v-for="(partida, i) in hijos">
                                                 <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                <td style="text-align:center;">{{partida}}</td>
-                                                <td>{{i}}</td>
-                                                <!--<td>{{partida.material}}</td>
+                                                <td style="text-align:center;">{{partida.descripcion}}</td>
                                                 <td style="text-align:center;">{{partida.unidad}}</td>
-                                                <td style="text-align:center; vertical-align:inherit;">
-                                                    <div class="custom-control custom-switch">
-                                                        <input type="checkbox" class="custom-control-input" :id="`enable[${i}]`" v-model="partida.enable" checked v-on:change="calcular">
-                                                        <label class="custom-control-label" :for="`enable[${i}]`"></label>
-                                                    </div>
-                                                </td>
-                                                <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
-                                                <td>
-                                                    <input type="text" v-on:keyup="calcular"
-                                                           :disabled="partida.enable == false"
+                                                <td>{{partida.cantidad_presupuestada}}</td>
+                                                <td>{{partida.cantidad_presupuestada}}</td>
+                                                <td v-if="partida.concepto_medible == 3">
+                                                    <input type="text"
                                                            class="form-control"
                                                            :name="`precio[${i}]`"
                                                            data-vv-as="Precio"
@@ -75,6 +64,8 @@
                                                     />
                                                     <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                 </td>
+                                                <td v-else></td>
+                                                <!--
                                                 <td>
                                                     <input type="text" v-on:keyup="calcular"
                                                            :disabled="partida.enable == false"
@@ -140,7 +131,7 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
-    import ConceptoSelect from "../../cadeco/concepto/SelectPadresDeMedibles";
+    import ConceptoSelect from "../../cadeco/concepto/Select";
     export default {
         name: "create-avance-obra",
         components: {ModelListSelect, ConceptoSelect},

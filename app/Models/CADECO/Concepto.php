@@ -342,6 +342,6 @@ class Concepto extends Model
 
     public function getConceptosHijosMedible()
     {
-       return self::whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
+       return self::whereRaw("nivel like '".$this->nivel."%'")->where('concepto_medible', 3)->orderBy('nivel')->get();
     }
 }
