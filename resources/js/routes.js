@@ -2891,17 +2891,17 @@ export const routes = [
                                     permission: 'consultar_avance_obra'
                                 }
                             },
-                            /*{
+                            {
                                 path: 'create',
-                                name: 'asignacion-proveedor-create',
-                                component: require('./components/compras/asignacion/Create').default,
+                                name: 'create-avance-obra',
+                                component: require('./components/control-obra/avance-obra/Create').default,
                                 meta: {
-                                    title: 'Registrar Asignación de Proveedores',
-                                    breadcrumb: {parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                                    title: 'Registrar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'REGISTRAR AVANCE DE OBRA'},
                                     middleware: [auth, context, permission],
-                                    permission: 'registrar_asignacion_proveedor'
+                                    permission: ['registrar_avance_obra'],
                                 }
-                            },*/
+                            },
                         ]
                     }
                 ]

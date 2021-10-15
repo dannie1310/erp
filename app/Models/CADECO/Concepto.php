@@ -9,8 +9,6 @@
 namespace App\Models\CADECO;
 
 
-use Exception;
-use App\Facades\Context;
 use App\Scopes\ObraScope;
 use App\Scopes\ActivoScope;
 use Illuminate\Support\Facades\DB;
@@ -86,7 +84,6 @@ class Concepto extends Model
 
     public function getPathAttribute()
     {
-        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
@@ -115,7 +112,7 @@ class Concepto extends Model
         }
         return null;
     }
-    
+
     public function getIdPadreSgvAttribute()
     {
         if ($this->nivel_padre != '') {
@@ -197,7 +194,6 @@ class Concepto extends Model
         } else {
             return "-";
         }
-
     }
 
     public function getMontoPresupuestadoFormatAttribute()
@@ -250,7 +246,6 @@ class Concepto extends Model
         {
             return $this->clave_concepto_select . $this->descripcion;
         }
-
     }
 
     public function scopeRoots($query)
@@ -343,5 +338,10 @@ class Concepto extends Model
     public function calcularConsecutivoExtraordinario(){
         $con = Concepto::where('consecutivo_extraordinario', '>', 0)->orderBy('consecutivo_extraordinario', 'DESC')->first();
         return $con ? $con->consecutivo_extraordinario + 1 : 1;
+    }
+
+    public function getConceptosHijosMedible()
+    {
+       return self::whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
     }
 }

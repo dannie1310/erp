@@ -81,6 +81,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ConceptoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/hijosMedibles', 'App\Http\Controllers\v1\CADECO\ConceptoController@conceptosHijosMedible')->where(['id' => '[0-9]+']);
         });
 
         // COSTOS

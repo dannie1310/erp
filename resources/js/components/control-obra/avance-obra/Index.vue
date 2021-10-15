@@ -1,6 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <button @click="create" v-if="$root.can('registrar_avance_obra')" class="btn btn-app pull-right">
+                <i class="fa fa-plus"></i> Registrar
+            </button>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
                 <div class="card-body">
@@ -77,6 +82,9 @@
                             descripcion: '*'
                         }
                 }
+            },
+            create() {
+                this.$router.push({name: 'create-avance-obra'});
             },
         },
         computed: {

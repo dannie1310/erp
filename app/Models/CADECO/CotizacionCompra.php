@@ -866,7 +866,6 @@ class    CotizacionCompra  extends Transaccion
 
     public function registrarPortalProveedor($data, $invitacion)
     {
-
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         if($invitacion->cotizacionGenerada){
