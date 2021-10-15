@@ -476,6 +476,17 @@ class ContratoProyectado extends Transaccion
                         $this->conceptos()->create($datos);
                     }
                 }
+            }else{
+                foreach ($data['contratos']['data'] as $key => $contrato)
+                {
+                    if($contrato['es_hoja'] && array_key_exists('id_destino',$contrato))
+                    {
+                        $con = Contrato::where('id_concepto', $contrato['id'])->first();
+                        $con->update([
+                           'id_destino' => $contrato['id_destino']
+                        ]);
+                    }
+                }
             }
             DB::connection('cadeco')->commit();
             return $this;
