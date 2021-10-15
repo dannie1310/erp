@@ -12,6 +12,11 @@ class Telefono extends Model
     protected $table = 'telefonos';
     public $primaryKey = 'id';
 
+    protected $fillable = [
+        'device_id',
+        'updated_at'
+    ];
+
     /**
      * Relaciones Eloquent
      */
