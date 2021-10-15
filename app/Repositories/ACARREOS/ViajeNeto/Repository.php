@@ -178,9 +178,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
      * @param $imei
      * @return bool
      */
-    public function getTelefonoActivo($imei)
+    public function getTelefonoActivo($column, $value)
     {
-        $telefono = Telefono::activo()->where('imei', $imei)->first();
+        $telefono = Telefono::activo()->where($column, $value)->first();
         return is_null($telefono) ? true : false;
     }
 

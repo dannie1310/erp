@@ -226,15 +226,18 @@
                                 <table v-else class="table table-striped table-sm">
                                     <thead>
                                     <tr>
+                                        <th class="index_corto">#</th>
                                         <th class="c120">Clave</th>
                                         <th >Descripción</th>
                                         <th class="c150">Unidad</th>
                                         <th class="cantidad_input">Cantidad</th>
                                         <th>Destinos</th>
+                                        <th class="c100"></th>
                                     </tr>
                                     </thead>
                                     <tbody v-for="(concepto, i) in contrato.contratos.data">
                                         <tr>
+                                            <td>{{i+1}}</td>
                                             <td :title="concepto.clave">{{concepto.clave}}</td>
                                             <td :title="concepto.descripcion">{{concepto.descripcion_guion}}</td>
                                             <td v-if="concepto.unidad == null"></td>
@@ -242,9 +245,29 @@
                                             <td v-if="concepto.unidad == null"></td>
                                             <td v-else class="cantidad_input">{{concepto.cantidad_original_format}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else :title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                            <td v-else-if="concepto.destino" :title="concepto.destino.concepto.path" style="text-decoration: underline">
                                                 {{concepto.destino.concepto.path_corta}}
+                                            <td v-else>
+                                                <input type="text" class="form-control"
+                                                       value=""
+                                                       readonly="readonly"
+                                                       :title="concepto.destino"
+                                                       :name="`destino_path[${i}]`"
+                                                       data-vv-as="Destino"
+                                                       v-model="concepto.destino"
+                                                       v-validate="{required: concepto.es_hoja}"
+                                                       :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                       :id="`destino_path[${i}]`">
+                                                <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                             </td>
+                                            <td class="icono" v-if="concepto.destino == undefined">
+                                                <small class="badge badge-secondary">
+                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.es_hoja"></i>
+                                                </small>
+                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)" v-if="concepto.es_hoja"></i>
+                                                <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.es_hoja"></i>
+                                            </td>
+                                            <td v-else></td>
                                         </tr>
                                     </tbody>
                                 </table>

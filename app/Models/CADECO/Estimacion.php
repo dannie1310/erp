@@ -966,7 +966,7 @@ class Estimacion extends Transaccion
             $descuento = Descuento::where('id_transaccion', '=', $this->id_transaccion)->where('id_material', '=', $a->id_material)->first();
             $descuento_antertior = Descuento::join('transacciones', 'transacciones.id_transaccion', 'descuento.id_transaccion')
                 ->where('transacciones.id_transaccion', '!=', $this->id_transaccion)
-                ->where('id_antecedente', '=', $this->id_antecedente)
+                //->where('id_antecedente', '=', $this->id_antecedente)
                 ->where('id_empresa', '=', $this->id_empresa)
                 ->where('descuento.id_material', '=', $a->id_material)
                 ->where('id_obra', '=', $this->id_obra)

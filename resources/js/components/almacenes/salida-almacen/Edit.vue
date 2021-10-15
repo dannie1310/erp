@@ -5,7 +5,7 @@
             <i class="fa fa-spinner fa-spin" v-else></i>
         </button>
         <div class="modal fade" ref="modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content" >
                     <div class="modal-header" v-if="salida">
                         <h5 class="modal-title" id="exampleModalLongTitle" v-if="salida.opciones == 1"> <i class="fa fa-sign-out"></i>SALIDA DE  ALMACÉN</h5>
@@ -61,52 +61,59 @@
                                                      <b>Entrega a contratista</b>
                                                 </div>
                                             </div>
-                                            <hr>
                                             <div class="row col-md-12">
-                                                <div class="col-md-2">
-                                                    <div class="form-group error-content">
-                                                        <div class="col-md-6">
-                                                            <div class="input-group-text">
-                                                                <input type="checkbox" aria-label="Checkbox for following text input" class="icono" v-model="con_prestamo">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-7" v-show="con_prestamo">
-                                                    <div class="form-group error-content">
-                                                        <model-list-select
-                                                            name="id_empresa"
-                                                            :disabled="!con_prestamo"
-                                                            placeholder="Seleccionar o buscar por RFC y razón social del contratista"
-                                                            data-vv-as="Empresa"
-                                                            v-validate="{required: true}"
-                                                            v-model="id_empresa"
-                                                            option-value="id"
-                                                            :custom-text="rfcAndRazonSocial"
-                                                            :list="contratistas"
-                                                            :isError="errors.has(`id_empresa`)">
-                                                        </model-list-select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-3" v-show="con_prestamo">
-                                                    <div class="form-group error-content">
-                                                        <div class="form-group">
-                                                            <div class="btn-group btn-group-toggle">
-                                                                <label class="btn btn-outline-primary" :class="tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
-                                                                    <input type="radio"
-                                                                           :disabled="!con_prestamo"
-                                                                           class="btn-group-toggle "
-                                                                           name="tipo_cargo"
-                                                                           :id="'opcion_cargo' + key"
-                                                                           :value="key"
-                                                                           autocomplete="on"
-                                                                           v-validate="{required: true}"
-                                                                           v-model.number="tipo_cargo">
-                                                                    {{ cargo }}
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                    </div>
+                                                <div class="table-responsive col-md-12">
+                                                    <table class="table table-striped">
+                                                        <thead>
+                                                            <tr>
+                                                                <th style="width:5%px">
+                                                                    <div class="form-group error-content">
+                                                                        <div class="input-group-text">
+                                                                            <input type="checkbox" aria-label="Checkbox for following text input" class="icono" v-model="con_prestamo">
+                                                                        </div>
+                                                                    </div>
+                                                                </th>
+                                                                <th v-if="con_prestamo"  style="width:70%">
+                                                                    <div class="form-group error-content">
+                                                                        <model-list-select
+                                                                            name="id_empresa"
+                                                                            :disabled="!con_prestamo"
+                                                                            placeholder="Seleccionar o buscar por RFC y razón social del contratista"
+                                                                            data-vv-as="Empresa"
+                                                                            v-validate="{required: true}"
+                                                                            v-model="id_empresa"
+                                                                            option-value="id"
+                                                                            :custom-text="rfcAndRazonSocial"
+                                                                            :list="contratistas"
+                                                                            :isError="errors.has(`id_empresa`)">
+                                                                        </model-list-select>
+                                                                    </div>
+                                                                </th>
+                                                                <th v-else style="width:70%"></th>
+                                                                <th v-if="con_prestamo"  style="width:25%">
+                                                                     <div class="form-group error-content">
+                                                                        <div class="form-group">
+                                                                            <div class="btn-group btn-group-toggle">
+                                                                                <label class="btn btn-outline-primary" :class="tipo_cargo === Number(key) ? 'active': ''" v-for="(cargo, key) in cargos" :key="key">
+                                                                                    <input type="radio"
+                                                                                        :disabled="!con_prestamo"
+                                                                                        class="btn-group-toggle "
+                                                                                        name="tipo_cargo"
+                                                                                        :id="'opcion_cargo' + key"
+                                                                                        :value="key"
+                                                                                        autocomplete="on"
+                                                                                        v-validate="{required: true}"
+                                                                                        v-model.number="tipo_cargo">
+                                                                                    {{ cargo }}
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </th>
+                                                                <th v-else style="width:25%"></th>
+                                                            </tr>
+                                                        </thead>
+                                                    </table>
                                                 </div>
                                             </div>
                                         </div>
@@ -127,12 +134,12 @@
                                                         <table class="table table-striped">
                                                             <thead>
                                                                 <tr>
-                                                                    <th>#</th>
-                                                                    <th>No. de Parte</th>
+                                                                    <th class="th_index">#</th>
+                                                                    <th class="th_c150">No. de Parte</th>
                                                                     <th>Material</th>
-                                                                    <th>Unidad</th>
-                                                                    <th>Cantidad</th>
-                                                                    <th>Destino</th>
+                                                                    <th class="th_unidad">Unidad</th>
+                                                                    <th class="th_cantidad">Cantidad</th>
+                                                                    <th class="th_cantidad">Destino</th>
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
@@ -141,7 +148,7 @@
                                                                     <td>{{partida.material_numero_parte}}</td>
                                                                     <td>{{partida.material_descripcion}}</td>
                                                                     <td>{{partida.unidad}}</td>
-                                                                    <td>{{partida.cantidad_format}}</td>
+                                                                    <td class="money">{{partida.cantidad_format}}</td>
                                                                     <td v-if="partida.destino_path" :title="`${partida.destino_path}`"><u>{{partida.destino_descripcion}}</u></td>
                                                                     <td v-else >{{partida.destino_descripcion}}</td>
                                                                 </tr>
@@ -239,6 +246,10 @@
                         this.$store.commit('almacenes/salida-almacen/SET_SALIDA', data);
                         this.id_empresa = this.salida.entrega_contratista.id_empresa;
                         this.tipo_cargo = this.salida.entrega_contratista.tipo_cargo;
+                    }else if(this.salida.id_empresa_entrega){
+                        this.con_prestamo = true;
+                        this.id_empresa = parseInt(this.salida.id_empresa_entrega);
+                        this.tipo_cargo = parseInt(this.salida.tipo_cargo);
                     }
 
                 }).finally(() => {
