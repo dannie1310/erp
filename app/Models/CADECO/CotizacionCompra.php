@@ -500,6 +500,7 @@ class    CotizacionCompra  extends Transaccion
                         'id_transaccion' => $cotizacion->id_transaccion,
                         'id_material' => $partida['material']['id'],
                         'cantidad' => $partida['cantidad'],
+                        'id_moneda' => 1
                     ]);
 
                     #------- Compras.cotizacion_partidas_complemento
