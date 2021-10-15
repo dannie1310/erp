@@ -37,6 +37,7 @@ class CFDSATController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware( 'auth:api');
+        $this->middleware('context', ['only' => ['obtenerNumeroEmpresa']]);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -108,9 +109,21 @@ class CFDSATController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function obtenerMovimientosCuentasInformeSATLP2020(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerMovimientosCuentasInformeSATLP2020($request->all());
+        return response()->json($respuesta, 200);
+    }
+
     public function obtenerListaCFDI(Request $request, $id)
     {
         $respuesta =$this->service->obtenerListaCFDI($request->all());
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerNumeroEmpresa()
+    {
+        $respuesta =$this->service->obtenerNumeroEmpresa();
         return response()->json($respuesta, 200);
     }
 }
