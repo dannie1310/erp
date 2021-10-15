@@ -47,7 +47,8 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'usuario_registro' => $model->usuario_registro,
             'direccion_entrega' => $model->obra->direccion_proyecto,
             'ubicacion_entrega_plataforma_digital' => $model->obra->direccion_plataforma_digital,
-            "tipo_transaccion" => $model->tipo_transaccion,
+            'tipo_transaccion' => $model->tipo_transaccion,
+            'puede_editar_partidas' => $model->puede_editar_partidas
         ];
     }
 

@@ -142,13 +142,13 @@
                 })
                     .then(data => {
                         this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', {id: this.id})
-                        $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('contratos/contrato-proyectado/paginate', {
                             params: {
                                 sort: 'numero_folio', order: 'DESC', include:'areasSubcontratantes'
                             }
                         })
                             .then(data => {
+                                $(this.$refs.modal).modal('hide');
                                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
                                 this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                             })
