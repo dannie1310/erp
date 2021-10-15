@@ -245,18 +245,8 @@
                                             <td v-if="concepto.unidad == null"></td>
                                             <td v-else class="cantidad_input">{{concepto.cantidad_original_format}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else-if="concepto.destino">
-                                                <input type="text" class="form-control"
-                                                       readonly="readonly"
-                                                       :title="concepto.destino.concepto ? concepto.destino.concepto.path_corta : concepto.destino"
-                                                       :name="`destino_path[${i}]`"
-                                                       data-vv-as="Destino"
-                                                       v-model="concepto.destino.concepto ? concepto.destino.concepto.path_corta : concepto.destino"
-                                                       v-validate="{required: concepto.es_hoja}"
-                                                       :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
-                                                       :id="`destino_path[${i}]`">
-                                                    <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
-                                            </td>
+                                            <td v-else-if="concepto.destino" :title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                                {{concepto.destino.concepto.path_corta}}
                                             <td v-else>
                                                 <input type="text" class="form-control"
                                                        value=""
@@ -270,13 +260,14 @@
                                                        :id="`destino_path[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                             </td>
-                                            <td class="icono">
+                                            <td class="icono" v-if="concepto.destino == undefined">
                                                 <small class="badge badge-secondary">
                                                     <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.es_hoja"></i>
                                                 </small>
                                                 <i class="far fa-copy button" v-on:click="copiar_destino(concepto)" v-if="concepto.es_hoja"></i>
                                                 <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.es_hoja"></i>
                                             </td>
+                                            <td v-else></td>
                                         </tr>
                                     </tbody>
                                 </table>
