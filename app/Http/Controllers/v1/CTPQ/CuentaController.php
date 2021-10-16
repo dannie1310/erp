@@ -39,9 +39,15 @@ class CuentaController extends Controller
     public function __construct(Manager $fractal, CuentaService $service, CuentaTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permiso:asociar_cuentas_contpaq_con_proveedor')->only(['paginate','asociarCuenta']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+    
+    public function asociarCuenta(Request $request){
+        $resp = $this->service->asociarCuenta($request->all());
+        return $this->respondWithItem($resp);
     }
 }

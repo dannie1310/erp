@@ -8,9 +8,10 @@
 
 namespace App\Models\CTPQ;
 
+use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
 
 class Cuenta extends Model
 {
@@ -34,6 +35,10 @@ class Cuenta extends Model
     {
         return $this->asociacion->cuenta_superior;
 
+    }
+
+    public function cuentaContpaqProvedorSat(){
+        return $this->belongsTo(CuentaContpaqProvedorSat::class, 'Id', 'id_cuenta_contpaq');
     }
 
     public function tipo()
@@ -119,5 +124,14 @@ class Cuenta extends Model
     public function scopeAfectableNumerico($query)
     {
         return $query->where('CtaMayor', 2)->where('Afectable', '!=', 0)->whereRaw('ISNUMERIC(Codigo) <> 0');
+    }
+
+    public function scopeCuentaAfectable($query){
+        return $query->where('Afectable', '=', 1);
+    }
+    
+    public function asociarCuenta($data){
+        $this->cuentaContpaqProvedorSat()->create($data);
+        return $this;
     }
 }

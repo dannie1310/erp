@@ -3262,6 +3262,42 @@ export const routes = [
                         }
                     }
                 ]
+            },
+            {
+                path: 'asociacion-cuenta-proveedor',
+                component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"asociacion-cuenta-proveedor",
+                        component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
+                        meta: {
+                            title: 'Seleccionar Empresa',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
+                            middleware: [auth,permission],
+                            permission:['asociar_cuentas_contpaq_con_proveedor'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: ':id_empresa/cuentas',
+                props:true,
+                component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-proveedor",
+                        component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
+                        meta: {
+                            title: 'Asociación Cuenta Proveedor',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                            middleware: [auth],
+                            general: true
+                        }
+                    }
+                ]
             }
         ]
     },

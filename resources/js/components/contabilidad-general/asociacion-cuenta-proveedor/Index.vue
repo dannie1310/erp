@@ -1,0 +1,136 @@
+<template>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <datatable v-bind="$data" />
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+        <!-- /.col -->
+    </div>
+</template>
+
+<script>
+export default {
+    name: "AsociacionCuentaProveedor",
+    props: ['id_empresa'],
+    data() {
+        return {
+            HeaderSettings: false,
+            columns: [
+                { title: '#', thClass: 'th_index', field: 'index', sortable: false },
+                { title: 'Codigo', field: 'codigo', tdClass: 'td_c150', thClass: 'th_c150', thComp: require('../../globals/th-Filter').default,  sortable: true },
+                { title: 'Nombre', field: 'nombre', thComp: require('../../globals/th-Filter').default, sortable: true },
+                { title: 'RFC', field: 'rfc', tdClass: 'td_c150', sortable: true },
+                { title: 'Razón Social', field: 'razon_social', sortable: true },
+                { title: 'Acciones', field: 'buttons', tdClass: 'td_money_input',  thClass: 'th_money_input',  tdComp: require('./partials/ActionButtons').default},
+            ],
+            data: [],
+            total: 0,
+            query: {scope:'cuentaAfectable'},
+            search: '',
+            cargando: false,
+        }
+    },
+    mounted(){
+       this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
+    },
+
+    methods: {
+        paginate(){
+            this.query.id_empresa = this.id_empresa;
+            this.cargando = true;
+            this.$Progress.start();
+            this.$store.commit('contabilidadGeneral/cuenta/SET_CUENTAS', []);
+            return this.$store.dispatch('contabilidadGeneral/cuenta/paginate',
+                {
+                    params: this.query
+                })
+                .then(data => {
+                    this.$store.commit('contabilidadGeneral/cuenta/SET_CUENTAS', data.data);
+                    this.$store.commit('contabilidadGeneral/cuenta/SET_META', data.meta);
+                }).finally(() => {
+                    this.$Progress.finish();
+                    this.cargando = false;
+                });
+
+        }
+    },
+    computed: {
+        cuentas(){
+            return this.$store.getters['contabilidadGeneral/cuenta/cuentas'];
+        },
+        meta(){
+            return this.$store.getters['contabilidadGeneral/cuenta/meta'];
+        },
+        tbodyStyle() {
+            return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+        }
+    },
+    watch: {
+            cuentas: {
+                handler(cuentas) {
+                    let self = this
+                    self.$data.data = []
+                    self.$data.data = cuentas.map((cuenta, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        codigo: cuenta.cuenta,
+                        nombre: cuenta.descripcion,
+                        rfc: cuenta.cuenta_contpaq_proveedor_sat?cuenta.cuenta_contpaq_proveedor_sat.rfc_proveedor_sat:'',
+                        razon_social: cuenta.cuenta_contpaq_proveedor_sat?cuenta.cuenta_contpaq_proveedor_sat.razon_social_proveedor_sat:'',
+                        buttons: $.extend({}, {
+                            id_cuenta: cuenta.id,
+                            id_empresa: this.id_empresa,
+                            nombre: cuenta.descripcion
+                        })
+                    }));
+                },
+                deep: true
+            },
+            meta: {
+                handler (meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler (query) {
+                   this.paginate()
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        },
+}
+</script>
+
+<style>
+
+</style>
