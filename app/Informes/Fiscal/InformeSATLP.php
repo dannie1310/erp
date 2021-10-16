@@ -1351,9 +1351,8 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       JOIN SEGURIDAD_ERP.InformeSAT.HecCFDI on(HecCFDI.IDCFDI = cfd_sat.id)
 
 
-where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+where HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
-      AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
       AND cfd_sat.id_empresa_sat = 1
@@ -1394,9 +1393,8 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
     JOIN SEGURIDAD_ERP.InformeSAT.HecCFDI on(HecCFDI.IDCFDI = cfd_sat.id)
 
-where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+where HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
-      AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
       AND cfd_sat.id_empresa_sat = 1
