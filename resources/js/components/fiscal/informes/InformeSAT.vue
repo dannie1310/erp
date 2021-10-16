@@ -20,7 +20,7 @@
                                 <td class="c90 sin_borde"  ><b>Fecha Inicial:</b></td>
                                 <td class="c90 sin_borde" ><b>Fecha Final:</b></td>
                                 <td class="c90 sin_borde" ><b>Incluir 2132:</b></td>
-                                <td class="sin_borde"><b>Empresas:</b></td>
+                                <td class="sin_borde"><b>Empresas Contpaq:</b></td>
                                 <td class="c100 sin_borde"></td>
                             </tr>
                             <tr>
@@ -76,13 +76,16 @@
                 </div>
                 <hr />
                 <div class="row" >
-                    <div class="col-md-12 table-responsive">
-                        <table class="table table-sm table-fs-sm">
+                    <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 700px;">
+                        <table class="table table-sm table-fs-sm" id="sticky">
                             <thead >
                                 <tr>
-                                    <th rowspan="2" class="index_corto">#</th>
-                                    <th rowspan="2" class="c100">RFC</th>
-                                    <th rowspan="2">Razón Social</th>
+                                    <th class="index_corto" style="border-bottom-color: #f2f4f5"></th>
+                                    <th class="c100" style="border-bottom-color: #f2f4f5"></th>
+                                    <th style="border-bottom-color: #f2f4f5" ></th>
+
+                                    <th rowspan="2" class="sin_borde" ></th>
+                                    <th style="border-bottom-color: #f2f4f5"></th>
 
                                     <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="2">Neto CFDI</th>
@@ -112,9 +115,15 @@
                                     <th colspan="3">Contabilidad GHI</th>
                                 </tr>
                                 <tr>
+                                    <th class="index_corto">#</th>
+                                    <th class="c100">RFC</th>
+                                    <th >Razón Social</th>
+
+                                    <th >CFDI Cancelados 2020</th>
 
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
+
 
                                     <th class="c80">Compra de Divisas</th>
                                     <th class="c80">Dispersión Monederos</th>
@@ -129,13 +138,13 @@
                                     <th class="c80">Neto Tipo E</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Cantidad</th>
+                                    <th class="c80">Cantidad Reconocidos</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Cantidad</th>
+                                    <th class="c80">Cantidad No Reconocidos</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Neto CFDI</th>
+                                    <th class="c80">Neto CFDI a Revisar</th>
                                     <th class="c80">Total Con IVA</th>
 
                                     <th class="c80">No. Cuentas Relacionadas</th>
@@ -157,6 +166,18 @@
                                 <td>
                                     {{partida.razon_social}}
                                 </td>
+                                <!-- Cancelados-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    <span v-if="partida.neto_total_cancelados != '-'"  v-on:click="verCFDI(partida,13)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_cancelados }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_cancelados }}
+                                    </span>
+                                </td>
+                                <!-- Neto -->
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
@@ -666,7 +687,7 @@ export default {
             fechasDeshabilitadas:{},
             fecha_inicial : new Date("2020/01/01"),
             fecha_final : new Date("2020/12/31"),
-            con2132 : 1,
+            con2132 : 0,
 
             fecha_inicial_input : new Date("2020/01/01"),
             fecha_final_input : new Date("2020/12/31"),
@@ -842,6 +863,11 @@ table thead th
     color: black;
     overflow: hidden;
     text-align: center;
+
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 2;
 }
 
 table thead th.no_negrita
