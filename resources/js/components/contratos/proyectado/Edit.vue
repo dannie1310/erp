@@ -245,9 +245,7 @@
                                             <td v-if="concepto.unidad == null"></td>
                                             <td v-else class="cantidad_input">{{concepto.cantidad_original_format}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else-if="concepto.destino" :title="concepto.destino.concepto.path" style="text-decoration: underline">
-                                                {{concepto.destino.concepto.path_corta}}
-                                            <td v-else>
+                                            <td v-else-if="concepto.destino == undefined || concepto.id_destino">
                                                 <input type="text" class="form-control"
                                                        value=""
                                                        readonly="readonly"
@@ -260,12 +258,15 @@
                                                        :id="`destino_path[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                             </td>
-                                            <td class="icono" v-if="concepto.destino == undefined">
+                                            <td v-else :title="concepto.destino.concepto.path" style="text-decoration: underline">
+                                                {{concepto.destino.concepto.path_corta}}
+                                            </td>
+                                            <td class="icono" v-if="concepto.es_hoja">
                                                 <small class="badge badge-secondary">
-                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.es_hoja"></i>
+                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.destino == undefined"></i>
                                                 </small>
-                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)" v-if="concepto.es_hoja"></i>
-                                                <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.es_hoja"></i>
+                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)"></i>
+                                                <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
                                             </td>
                                             <td v-else></td>
                                         </tr>
