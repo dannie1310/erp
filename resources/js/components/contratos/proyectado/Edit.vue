@@ -263,7 +263,7 @@
                                             </td>
                                             <td class="icono" v-if="concepto.es_hoja">
                                                 <small class="badge badge-secondary">
-                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.destino == undefined"></i>
+                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
                                                 </small>
                                                 <i class="far fa-copy button" v-on:click="copiar_destino(concepto)"></i>
                                                 <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
