@@ -1192,6 +1192,7 @@ $api->version('v1', function ($api) {
          **/
         $api->group(['prefix' => 'avance'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@store');
         });
     });
 

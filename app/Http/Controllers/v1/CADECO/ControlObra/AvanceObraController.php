@@ -41,6 +41,7 @@ class AvanceObraController extends Controller
         $this->middleware('context');
 
         $this->middleware('permiso:consultar_avance_obra')->only(['show','paginate','index','find']);
+        $this->middleware('permiso:registrar_avance_obra')->only(['store']);
 
         $this->fractal = $fractal;
         $this->service = $service;

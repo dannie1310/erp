@@ -50,63 +50,39 @@
                                                 <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                 <td style="text-align:center;">{{partida.descripcion}}</td>
                                                 <td style="text-align:center;">{{partida.unidad}}</td>
-                                                <td>{{partida.cantidad_presupuestada}}</td>
-                                                <td>{{partida.cantidad_presupuestada}}</td>
+                                                <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                <td v-else></td>
+                                                <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                <td v-else></td>
                                                 <td v-if="partida.concepto_medible == 3">
                                                     <input type="text"
                                                            class="form-control"
-                                                           :name="`precio[${i}]`"
+                                                           value="0.0"
+                                                           :name="`avance[${i}]`"
                                                            data-vv-as="Precio"
                                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{0,6})?$/}"
-                                                           :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                           v-model="partida.precio_cotizacion"
+                                                           :class="{'is-invalid': errors.has(`avance[${i}]`)}"
+                                                           v-model="partida.avance"
                                                            style="text-align: right"
                                                     />
-                                                    <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
+                                                    <div class="invalid-feedback" v-show="errors.has(`avanceavance[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                 </td>
                                                 <td v-else></td>
-                                                <!--
-                                                <td>
-                                                    <input type="text" v-on:keyup="calcular"
-                                                           :disabled="partida.enable == false"
-                                                           class="form-control"
-                                                           :name="`descuento[${i}]`"
-                                                           data-vv-as="Descuento(%)"
-                                                           v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                                           :class="{'is-invalid': errors.has(`descuento[${i}]`)}"
-                                                           v-model="partida.descuento"
-                                                           style="text-align: right"
-                                                    />
-                                                    <div class="invalid-feedback" v-show="errors.has(`descuento[${i}]`)">{{ errors.first(`descuento[${i}]`) }}</div>
+                                                <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                <td v-else></td>
+                                                <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                <td v-else></td>
+                                                <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                <td v-else></td>
+                                                <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                <td v-else></td>
+                                                <td v-if="partida.concepto_medible == 3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" value="" id="cumplido" :name="`cumplido[${i}]`" v-model="partida.cumplido">
+                                                        <label class="form-check-label" for="cumplido">Si</label>
+                                                    </div>
                                                 </td>
-                                                <td style="text-align:right;">{{getPrecio(partida)}}</td>
-                                                <td style="width:120px;" >
-                                                    <select
-                                                        v-on:change="calcular"
-                                                        type="text"
-                                                        :name="`moneda[${i}]`"
-                                                        data-vv-as="Moneda"
-                                                        :disabled="partida.enable == false"
-                                                        v-validate="{required: true}"
-                                                        class="form-control"
-                                                        :id="`moneda[${i}]`"
-                                                        v-model="partida.moneda_seleccionada"
-                                                        :class="{'is-invalid': errors.has(`moneda[${i}]`)}">
-                                                            <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
-                                                    </select>
-                                                    <div class="invalid-feedback" v-show="errors.has(`moneda[${i}]`)">{{ errors.first(`moneda[${i}]`) }}</div>
-                                                </td>
-                                                <td style="text-align:right;" v-if="multiples_monedas">{{getPrecioTotal(partida.calculo_precio_total, partida.moneda_seleccionada)}}</td>
-                                                <td style="width:200px;">
-                                                    <textarea class="form-control"
-                                                              :name="`observaciones[${i}]`"
-                                                              data-vv-as="Observaciones"
-                                                              :disabled="partida.enable == false"
-                                                              v-validate="{}"
-                                                              :class="{'is-invalid': errors.has(`observaciones[${i}]`)}"
-                                                              v-model="partida.observacion_partida"/>
-                                                    <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
-                                                </td>-->
+                                                <td v-else></td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -164,6 +140,18 @@
                 .finally(()=>{
                     this.cargando = false;
                 })
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.store()
+                    }
+                });
+            },
+            store() {
+                return this.$store.dispatch('controlObra/avance-obra/store', this.post).then((data) => {
+                    this.salir();
+                });
             },
         },
         watch: {

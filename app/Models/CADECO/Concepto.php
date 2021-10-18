@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Scopes\ObraScope;
 use App\Scopes\ActivoScope;
 use Illuminate\Support\Facades\DB;
@@ -342,6 +343,34 @@ class Concepto extends Model
 
     public function getConceptosHijosMedible()
     {
-       return self::whereRaw("nivel like '".$this->nivel."%'")->where('concepto_medible', 3)->orderBy('nivel')->get();
+        $conceptos = [];
+        $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
+        $num_nivel_anterior = 0;
+        $anterior_concepto_medible = false;
+        $i = 0;
+        foreach ($conceptos_consulta as $concepto)
+        {
+            if($num_nivel_anterior == 0 || $anterior_concepto_medible == false)
+            {
+                $conceptos[$i] = $concepto->toArray();
+                $i++;
+            }else {
+                if (strlen($concepto->nivel) <= $num_nivel_anterior) {
+                    $anterior_concepto_medible = false;
+                    $conceptos[$i] = $concepto->toArray();
+                    $i++;
+                }
+            }
+            if($anterior_concepto_medible == false) {
+                $num_nivel_anterior = strlen($concepto->nivel);
+            }
+            if((int) $concepto->concepto_medible == 3)
+            {
+                $anterior_concepto_medible = true;
+                $conceptos[$i] = $concepto->toArray();
+                $i++;
+            }
+        }
+        return $conceptos;
     }
 }

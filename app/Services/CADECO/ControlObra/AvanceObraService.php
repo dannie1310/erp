@@ -48,4 +48,10 @@ class AvanceObraService
     {
         return $this->repository->show($id);
     }
+
+    public function store($data)
+    {
+        dd($data);
+        return $this->repository->create($data);
+    }
 }
