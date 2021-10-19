@@ -513,7 +513,7 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{movimiento.fecha_poliza}}</td>
                                                 <td>{{movimiento.tipo_poliza}}</td>
-                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa"></PDFPoliza></td>
+                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></PDFPoliza></td>
                                                 <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
