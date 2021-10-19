@@ -55,4 +55,9 @@ class CuentaController extends Controller
         $resp = $this->service->solicitaAsociacionProveedor($request->all());
         return [];
     }
+
+    public function eliminarAsociacion(Request $request){
+        $resp = $this->service->eliminarAsociacion($request->all());
+        return $this->respondWithItem($resp);
+    }
 }

@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
+use Exception;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -221,5 +222,22 @@ class Cuenta extends Model
             }
         }
 
+    }
+
+    public function eliminarAsociacion(){
+        try{
+            DB::connection('seguridad')->beginTransaction();
+            if($this->cuentaContpaqProvedorSat){
+                $this->cuentaContpaqProvedorSat()->delete();
+                $this->save();
+            }
+            DB::connection('seguridad')->commit();
+            return self::where('id', '=',$this->Id)->first();
+        }catch(Exception $e){
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+        
     }
 }
