@@ -354,16 +354,28 @@ class Concepto extends Model
         $num_nivel_anterior = 0;
         $anterior_concepto_medible = false;
         $i = 0;
+        $conc = [];
         foreach ($conceptos_consulta as $concepto)
         {
+            $conc = $concepto->toArray();
+            $conc['precio_venta'] =  $concepto->precioVenta ? number_format($concepto->precioVenta->precio_produccion,2) : 0.0;
+            $conc['cantidad_presupuestada'] = number_format($concepto->cantidad_presupuestada + $concepto->ajuste_cantidad,2);
+            $conc['avance'] = '0.00';
+            $conc['cantidad_anterior'] = '0.00';
+            $conc['monto_avance'] = '0.00';
+            $conc['cantidad_actual'] = '0.00';
+            $conc['monto_actual'] = '0.00';
+
             if($num_nivel_anterior == 0 || $anterior_concepto_medible == false)
             {
-                $conceptos[$i] = $concepto->toArray();
+                $conc['i'] = $i;
+                $conceptos[$concepto->getKey()] = $conc;
                 $i++;
             }else {
                 if (strlen($concepto->nivel) <= $num_nivel_anterior) {
                     $anterior_concepto_medible = false;
-                    $conceptos[$i] = $concepto->toArray();
+                    $conc['i'] = $i;
+                    $conceptos[$concepto->getKey()] = $conc;
                     $i++;
                 }
             }
@@ -373,10 +385,13 @@ class Concepto extends Model
             if((int) $concepto->concepto_medible == 3)
             {
                 $anterior_concepto_medible = true;
-                $conceptos[$i] = $concepto->toArray();
-                $i++;
             }
         }
         return $conceptos;
+    }
+
+    public function cantidadAnteriorAvance($id_concepto)
+    {
+        return ItemAvanceObra::where($id_concepto)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
     }
 }

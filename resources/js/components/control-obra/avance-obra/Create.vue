@@ -122,36 +122,34 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="(partida, i) in hijos">
-                                                        <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                                    <tr v-for="partida in hijos">
+                                                        <td style="text-align:center; vertical-align:inherit;">{{partida.i+1}}</td>
                                                         <td v-if="partida.concepto_medible != 3"><b>{{partida.descripcion}}</b></td>
                                                         <td v-else> {{partida.descripcion}}</td>
                                                         <td style="text-align:center;">{{partida.unidad}}</td>
-                                                        <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                        <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_presupuestada}}</td>
                                                         <td v-else></td>
-                                                        <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                        <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_anterior}}</td>
                                                         <td v-else></td>
                                                         <td v-if="partida.concepto_medible == 3">
                                                             <input type="text"
                                                                    class="form-control"
-                                                                   value="0.0"
                                                                    :name="`avance[${i}]`"
-                                                                   data-vv-as="Precio"
+                                                                   data-vv-as="Avance"
                                                                    v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{0,6})?$/}"
                                                                    :class="{'is-invalid': errors.has(`avance[${i}]`)}"
                                                                    v-model="partida.avance"
-                                                                   style="text-align: right"
-                                                            />
-                                                            <div class="invalid-feedback" v-show="errors.has(`avanceavance[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
+                                                                   style="text-align: right" />
+                                                            <div class="invalid-feedback" v-show="errors.has(`avance[${i}]`)">{{ errors.first(`avance[${i}]`) }}</div>
                                                         </td>
                                                         <td v-else></td>
-                                                        <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                        <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.precio_venta}}</td>
                                                         <td v-else></td>
-                                                        <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                        <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.monto_avance}}</td>
                                                         <td v-else></td>
-                                                        <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                        <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.cantidad_actual}}</td>
                                                         <td v-else></td>
-                                                        <td v-if="partida.concepto_medible == 3">{{partida.cantidad_presupuestada}}</td>
+                                                        <td v-if="partida.concepto_medible == 3" style="text-align:right;">{{partida.monto_actual}}</td>
                                                         <td v-else></td>
                                                         <td v-if="partida.concepto_medible == 3">
                                                             <div class="form-check">

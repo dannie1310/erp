@@ -15,4 +15,21 @@ class ItemAvanceObra extends Item
         'numero'
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        self::addGlobalScope(function ($query)
+        {
+            return $query->whereHas('avanceObra');
+        });
+    }
+
+
+    /**
+     * Relaciones
+     */
+    public function avanceObra()
+    {
+        return $this->belongsTo(AvanceObra::class, 'id_transaccion','id_transaccion');
+    }
 }

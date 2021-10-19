@@ -40,6 +40,10 @@ class AvanceObra extends Transaccion
     /**
      * Relaciones
      */
+    public function partidas()
+    {
+        return $this->hasMany(ItemAvanceObra::class, 'id_transaccion', 'id_transaccion');
+    }
 
     /**
      * Scope
