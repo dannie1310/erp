@@ -318,7 +318,8 @@ GROUP BY
     dec.Descripcion as empresa_contpaq,
     hm.Importe as importe_movimiento,
     hm.IDPoliza as id_poliza,
-    hm.IDEmpresa as id_empresa
+    hm.IDEmpresa as id_empresa,
+    hm.IDEmpresaConsolidada as id_empresa_consolidadora
 FROM
     SEGURIDAD_ERP.InformeSAT.HecMovimientos hm
 INNER JOIN SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec ON
