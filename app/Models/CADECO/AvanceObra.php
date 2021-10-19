@@ -4,6 +4,8 @@
 namespace App\Models\CADECO;
 
 
+use Illuminate\Support\Facades\DB;
+
 class AvanceObra extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
@@ -33,5 +35,47 @@ class AvanceObra extends Transaccion
         {
             return $query->where('tipo_transaccion', self::TIPO)->where('opciones', self::OPCION);
         });
+    }
+
+    /**
+     * Relaciones
+     */
+
+    /**
+     * Scope
+     */
+
+    /**
+     * Attributos
+     */
+
+    /**
+     * Métodos
+     */
+    public function registrar(array $data)
+    {
+        try
+        {
+            DB::connection('cadeco')->beginTransaction();
+
+            $this->create([
+                'fecha' => $data['fecha'],
+                'cumplimiento' => $data['fechaInicio'],
+                'vencimiento' => $data['fechaFin'],
+                'id_concepto' => $data['id_concepto_padre']
+            ]);
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+
+    }
+
+    public function registrarPartidas()
+    {
+
     }
 }

@@ -10,6 +10,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\PresupuestoObra\PrecioVenta;
 use App\Scopes\ObraScope;
 use App\Scopes\ActivoScope;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +62,11 @@ class Concepto extends Model
     public function responsables()
     {
         return $this->hasMany(Responsable::class, 'id_concepto', 'id_concepto');
+    }
+
+    public function precioVenta()
+    {
+        return $this->belongsTo(PrecioVenta::class, 'id_concepto', 'id_concepto');
     }
 
     public function getAncestrosAttribute($nivel)

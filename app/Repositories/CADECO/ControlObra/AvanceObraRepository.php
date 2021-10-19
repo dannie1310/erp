@@ -15,4 +15,9 @@ class AvanceObraRepository extends Repository implements RepositoryInterface
         parent::__construct($model);
         $this->model = $model;
     }
+
+    public function create(array $data)
+    {
+        return $this->model->registrar($data);
+    }
 }

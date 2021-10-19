@@ -51,7 +51,6 @@ class AvanceObraService
 
     public function store($data)
     {
-        dd($data);
         return $this->repository->create($data);
     }
 }
