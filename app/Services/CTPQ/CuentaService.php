@@ -96,4 +96,12 @@ class CuentaService
         }
     }
 
+    public function eliminarAsociacion($data){
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
+        $data['id_empresa_contpaq'] = $empresaLocal->IdEmpresaContpaq;
+        $empresa = Empresa::find($empresaLocal->IdEmpresaContpaq);
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+        return $this->repository->show($data['id_cuenta'])->eliminarAsociacion();
+    }
 }

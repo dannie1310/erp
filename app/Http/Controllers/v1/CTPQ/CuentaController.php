@@ -40,6 +40,7 @@ class CuentaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permiso:asociar_cuentas_contpaq_con_proveedor')->only(['paginate','asociarCuenta']);
+        $this->middleware('permiso:eliminar_asociacion_cuentas_contpaq_con_proveedor')->only(['eliminarAsociacion']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -54,5 +55,10 @@ class CuentaController extends Controller
     public function asociarProveedor(Request $request){
         $resp = $this->service->solicitaAsociacionProveedor($request->all());
         return [];
+    }
+
+    public function eliminarAsociacion(Request $request){
+        $resp = $this->service->eliminarAsociacion($request->all());
+        return $this->respondWithItem($resp);
     }
 }

@@ -23,7 +23,7 @@ export default {
         UPDATE_CUENTA(state, data) {
             state.cuentas = state.cuentas.map(e => {
                 if (e.id === data.id) {
-                    return Object.assign({}, e, data)
+                    return data
                 }
                 return e
             })
@@ -133,7 +133,45 @@ export default {
                     }
                 });
             });
-        }
+        },
+        eliminarAsociacion(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar Asociación Cuenta con Proveedor",
+                    text: "¿Está seguro de que desea eliminar la asociación?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI + 'eliminar-asociacion', payload)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Asociación eliminada correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
+                    }
+                });
+            });
+        },
     },
 
     getters: {

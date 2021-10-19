@@ -114,7 +114,8 @@ export default {
                         buttons: $.extend({}, {
                             id_cuenta: cuenta.id,
                             id_empresa: this.id_empresa,
-                            nombre: cuenta.descripcion
+                            nombre: cuenta.descripcion,
+                            eliminar: cuenta.cuenta_contpaq_proveedor_sat?true:false 
                         })
                     }));
                 },

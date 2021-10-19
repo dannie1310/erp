@@ -245,6 +245,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CTPQ\CuentaController@paginate');
             $api->post('asociar', 'App\Http\Controllers\v1\CTPQ\CuentaController@asociarCuenta');
             $api->post('asociar-proveedor', 'App\Http\Controllers\v1\CTPQ\CuentaController@asociarProveedor');
+            $api->post('eliminar-asociacion', 'App\Http\Controllers\v1\CTPQ\CuentaController@eliminarAsociacion');
         });
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@store');
