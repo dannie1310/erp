@@ -40,6 +40,7 @@ class CuentaController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permiso:asociar_cuentas_contpaq_con_proveedor')->only(['paginate','asociarCuenta']);
+        $this->middleware('permiso:eliminar_asociacion_cuentas_contpaq_con_proveedor')->only(['eliminarAsociacion']);
 
         $this->fractal = $fractal;
         $this->service = $service;

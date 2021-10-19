@@ -154,7 +154,7 @@ export default {
                 .then((value) => {
                     if (value) {
                         axios
-                            .post(URI + 'eliminarAsociacion', payload)
+                            .post(URI + 'eliminar-asociacion', payload)
                             .then(r => r.data)
                             .then(data => {
                                 swal("Asociación eliminada correctamente", {
