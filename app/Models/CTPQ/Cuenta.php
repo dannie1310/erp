@@ -229,7 +229,6 @@ class Cuenta extends Model
             DB::connection('seguridad')->beginTransaction();
             if($this->cuentaContpaqProvedorSat){
                 $this->cuentaContpaqProvedorSat()->delete();
-                $this->save();
             }
             DB::connection('seguridad')->commit();
             return self::where('id', '=',$this->Id)->first();
