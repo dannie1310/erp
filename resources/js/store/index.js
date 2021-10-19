@@ -104,6 +104,7 @@ import empresaContpaq from './modules/contabilidadGeneral/empresa-contpaq';
 import empresaSAT from './modules/contabilidadGeneral/empresa-sat';
 import incidentePoliza from './modules/contabilidadGeneral/incidente-poliza';
 import polizaGeneral from './modules/contabilidadGeneral/poliza';
+import proveedoresSat from './modules/contabilidadGeneral/proveedor-sat';
 import solicitudEdicionPoliza from './modules/contabilidadGeneral/solicitud-edicion-poliza';
 import tipoPoliza from './modules/contabilidadGeneral/tipo-poliza';
 import polizaCFDI from './modules/contabilidadGeneral/poliza-cfdi';
@@ -367,6 +368,7 @@ export default new Vuex.Store({
         'contabilidadGeneral/empresa-contpaq': empresaContpaq,
         'contabilidadGeneral/incidente-poliza' : incidentePoliza,
         'contabilidadGeneral/poliza' :polizaGeneral,
+        'contabilidadGeneral/proveedor-sat' :proveedoresSat,
         'contabilidadGeneral/solicitud-edicion-poliza':solicitudEdicionPoliza,
         'contabilidadGeneral/tipo-poliza' : tipoPoliza,
         'contabilidadGeneral/poliza-cfdi' : polizaCFDI,

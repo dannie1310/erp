@@ -242,6 +242,9 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
         $api->group(['prefix' => 'cuenta'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CTPQ\CuentaController@index');
+            $api->get('paginate', 'App\Http\Controllers\v1\CTPQ\CuentaController@paginate');
+            $api->post('asociar', 'App\Http\Controllers\v1\CTPQ\CuentaController@asociarCuenta');
+            $api->post('asociar-proveedor', 'App\Http\Controllers\v1\CTPQ\CuentaController@asociarProveedor');
         });
         $api->group(['prefix' => 'empresa'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CTPQ\EmpresaController@store');
@@ -267,6 +270,10 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\PolizaCFDIRequeridoController@show')->where(['id' => '[0-9]+']);
         });
+        $api->group(['prefix' => 'proveedor-sat'], function ($api) {
+            $api->get('buscarProveedoresSat', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\ProveedorSATController@buscarProveedorAsociar');
+        });
+
         $api->group(['prefix' => 'incidente-poliza'], function ($api) {//buscar-diferencias
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@store');
             $api->post('buscar-diferencias', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PolizasCtpqIncidentes\DiferenciaController@buscarDiferencias');
