@@ -97,7 +97,7 @@ class ViajeNetoService
                 return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
             }
 
-        }else if(in_array('deviceId', $data)){
+        }else if(array_key_exists('deviceId', $data)){
             if($telefono->device_id != null){
                 if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
                     return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
@@ -111,7 +111,7 @@ class ViajeNetoService
         $telefonos = array([
             'id' => $telefono->impresora ? $telefono->impresora->id : null,
             'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-            'IMEI' => $telefono->imei
+            'IMEI' => $data['IMEI']
         ]);
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
