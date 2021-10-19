@@ -4,6 +4,8 @@
 namespace App\Services\CTPQ;
 
 
+use App\Jobs\ProcessAsociacionCuentasContpaqProveedoresSAT;
+use App\Repositories\CTPQ\CuentaRepository;
 use Exception;
 use App\Models\CTPQ\Cuenta;
 use App\Models\CTPQ\Empresa;
@@ -24,7 +26,7 @@ class CuentaService
      */
     public function __construct(Cuenta $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new CuentaRepository($model);
     }
 
     public function index($data)
@@ -62,7 +64,7 @@ class CuentaService
             throw $e;
         }
     }
-    
+
     public function asociarCuenta($data){
         $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa_contpaq"]);
         $data['id_empresa_contpaq'] = $empresaLocal->IdEmpresaContpaq;
@@ -71,4 +73,27 @@ class CuentaService
         Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
         return $this->repository->show($data['id_cuenta_contpaq'])->asociarCuenta($data);
     }
+
+    public function solicitaAsociacionProveedor($data){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($data["id_empresa"]);
+        $data['id_empresa'] = $empresaLocal->IdEmpresaContpaq;
+        $empresa = \App\Models\CTPQ\Empresa::find($empresaLocal->IdEmpresaContpaq);
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
+
+        $cuentas= $this->repository->getCuentasPasivo($data["id_empresa"]);
+
+        $idistribucion = 0;
+        foreach($cuentas as $cuenta){
+            $cuenta->procesarAsociacionProveedor($empresaLocal->IdEmpresaContpaq);
+            /*ProcessAsociacionCuentasContpaqProveedoresSAT::dispatch($cuenta, $empresaLocal->IdEmpresaContpaq)->onQueue("q".$idistribucion);
+            $idistribucion ++;
+            if($idistribucion==5){
+                $idistribucion=0;
+            }*/
+        }
+    }
+
 }

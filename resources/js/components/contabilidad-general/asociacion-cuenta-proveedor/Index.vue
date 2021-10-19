@@ -1,19 +1,30 @@
 <template>
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <datatable v-bind="$data" />
-                    </div>
-                </div>
-                <!-- /.card-body -->
+    <span>
+        <div class="row">
+            <div class="col-md-9"></div>
+            <div class="col-md-3">
+                <button @click="asociar"  class="btn btn-app pull-right" v-if="$root.can('asociacion_masiva_cuentas_contpaq_proveedores',1)">
+                    <i class="fa fa-share-alt"></i> Asociar
+                </button>
             </div>
-            <!-- /.card -->
         </div>
-        <!-- /.col -->
-    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <datatable v-bind="$data" />
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <!-- /.col -->
+        </div>
+    </span>
+
 </template>
 
 <script>
@@ -33,7 +44,7 @@ export default {
             ],
             data: [],
             total: 0,
-            query: {scope:'cuentaAfectable'},
+            query: {scope:'cuentasPasivo:'+this.id_empresa, sort: 'Codigo', order: 'asc', include:["cuenta_contpaq_proveedor_sat"]},
             search: '',
             cargando: false,
         }
@@ -63,6 +74,18 @@ export default {
                     this.$Progress.finish();
                     this.cargando = false;
                 });
+
+        },
+        asociar()
+        {
+
+            return this.$store.dispatch('contabilidadGeneral/cuenta/asociarProveedor',
+                {id_empresa: this.id_empresa}
+            ).then((data) => {
+                this.$store.commit("contabilidadGeneral/cuenta/SET_CUENTA",data)
+            }).finally(() => {
+
+            });
 
         }
     },

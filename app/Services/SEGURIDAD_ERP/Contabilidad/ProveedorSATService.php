@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Repositories\Repository;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Utils\Util;
 
 class ProveedorSATService{
 
@@ -27,13 +28,36 @@ class ProveedorSATService{
         foreach($hints as $i => $hint){
             if(strlen(trim($hint)) < 3){
                 unset($hints[$i]);
+            } else if($hint == 'SA' || $hint == 'S.A.'){
+                unset($hints[$i]);
+            }else if($hint == 'CV' || $hint == 'C.V.'){
+                unset($hints[$i]);
             }
         }
         $hints = array_values($hints);
         for($j = 0; $j < count($hints); $j++){
             $this->repository->whereOr([['razon_social','like',"%$hints[$j]%"]]);
         }
-        return  $this->repository->all();
+        $resultado = $this->repository->all()->sortBy("razon_social");
+        /*foreach($resultado as $proveedor){
+            $cuenta_nombre = Util::eliminaPalabrasComunes($data['nombre']);
+            $razon_social = Util::eliminaPalabrasComunes($proveedor->razon_social);
+            $cercania = levenshtein($cuenta_nombre, $razon_social);
+            $cercanias[] = [
+                "cercania"=>$cercania
+                , "id_proveedor_sat"=>$proveedor->id
+                , "nombre_cuenta"=>$cuenta_nombre
+                , "razon_social"=>$razon_social
+            ];
+            $proveedor->cercania = $cercania;
+
+        }
+        $orden = array_column($cercanias, 'cercania');
+        array_multisort($cercanias, SORT_ASC, $orden);
+
+        dd($cercanias);*/
+
+        return $resultado;
     }
 
 }

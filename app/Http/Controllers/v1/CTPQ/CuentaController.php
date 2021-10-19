@@ -45,9 +45,14 @@ class CuentaController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
-    
+
     public function asociarCuenta(Request $request){
         $resp = $this->service->asociarCuenta($request->all());
         return $this->respondWithItem($resp);
+    }
+
+    public function asociarProveedor(Request $request){
+        $resp = $this->service->solicitaAsociacionProveedor($request->all());
+        return [];
     }
 }

@@ -8,10 +8,16 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\PrefijosPasivo;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Services\SEGURIDAD_ERP\Contabilidad\ProveedorSATService;
+use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class Cuenta extends Model
 {
@@ -20,6 +26,7 @@ class Cuenta extends Model
     protected $primaryKey = 'Id';
 
     public $timestamps = false;
+
 
     public function getCuentaMayorAttribute()
     {
@@ -38,7 +45,11 @@ class Cuenta extends Model
     }
 
     public function cuentaContpaqProvedorSat(){
-        return $this->belongsTo(CuentaContpaqProvedorSat::class, 'Id', 'id_cuenta_contpaq');
+        $db = Config::get('database.connections.cntpq.database');
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$db)->first();
+
+        return $this->hasOne(CuentaContpaqProvedorSat::class,  'id_cuenta_contpaq','Id')
+            ->where("id_empresa_contpaq",$empresa->IdEmpresaContpaq);
     }
 
     public function tipo()
@@ -129,9 +140,86 @@ class Cuenta extends Model
     public function scopeCuentaAfectable($query){
         return $query->where('Afectable', '=', 1);
     }
-    
+
+    public function scopeCuentasPasivo($query, $id_empresa){
+
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($id_empresa);
+        $prefijos = PrefijosPasivo::where("id_empresa_sat","=", $empresaLocal->IdEmpresaSAT)->pluck("prefijo")->toArray();
+
+        $query->where("Afectable","=",1);
+        $query->where(function ($query) use($prefijos){
+            foreach ($prefijos as $i=>$prefijo)
+            {
+                if($i == 0){
+                    $query->where("Codigo","like",$prefijo."%");
+                }else{
+                    $query->orWhere("Codigo","like",$prefijo."%");
+                }
+            }
+        });
+
+        return $query;
+    }
+
     public function asociarCuenta($data){
-        $this->cuentaContpaqProvedorSat()->create($data);
+        $preexistente = CuentaContpaqProvedorSat::where("id_empresa_contpaq","=",$data["id_empresa_contpaq"])
+            ->where("id_cuenta_contpaq","=",$data["id_cuenta_contpaq"])
+            ->where("id_proveedor_sat","=",$data["id_proveedor_sat"])->first();
+        if($preexistente)
+        {
+            //return $preexistente;
+        } else{
+            $preexistente_actualizar = CuentaContpaqProvedorSat::where("id_empresa_contpaq","=",$data["id_empresa_contpaq"])
+                ->where("id_cuenta_contpaq","=",$data["id_cuenta_contpaq"])
+                ->first();
+            if($preexistente_actualizar)
+            {
+                $preexistente_actualizar->id_proveedor_sat = $data["id_proveedor_sat"];
+                $preexistente_actualizar->save();
+                //return $preexistente_actualizar;
+
+            }else{
+                $this->cuentaContpaqProvedorSat()->create($data);
+            }
+        }
         return $this;
+
+    }
+
+    public function procesarAsociacionProveedor($id_empresa_contpaq)
+    {
+        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("IdEmpresaContpaq","=",$id_empresa_contpaq)->first();
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $empresaLocal->AliasBDD);
+
+        $proveedorSAT = new ProveedorSAT();
+        $proveedorSATService = new ProveedorSATService($proveedorSAT);
+        $coincidencias = $proveedorSATService->buscarProveedorAsociar(["nombre"=>$this->Nombre]);
+        $cercanias = [];
+
+        foreach ($coincidencias as $coincidencia)
+        {
+            $cuenta_nombre = Util::eliminaPalabrasComunes($this->Nombre);
+            $razon_social = Util::eliminaPalabrasComunes($coincidencia->razon_social);
+            $cercania = levenshtein($cuenta_nombre, $razon_social);
+            $cercanias[] = [
+                "id_empresa_contpaq"=>$id_empresa_contpaq
+                , "cercania"=>$cercania
+                , "id_proveedor_sat"=>$coincidencia->id
+                , "nombre_cuenta"=>$this->Nombre
+                , "id_cuenta_contpaq"=>$this->Id
+                , "razon_social"=>$coincidencia->razon_social
+            ];
+        }
+
+        $orden = array_column($cercanias, 'cercania');
+        array_multisort($cercanias, SORT_ASC, $orden);
+
+        if(key_exists("0", $cercanias)){
+            if($cercanias[0]["cercania"]<3){
+                $this->asociarCuenta($cercanias[0]);
+            }
+        }
+
     }
 }

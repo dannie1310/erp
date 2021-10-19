@@ -58,6 +58,44 @@ export default {
                     })
             })
         },
+        asociarProveedor(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Asociar Masivamente Cuentas con Proveedor",
+                    text: "¿Está seguro?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Asociar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'asociar-proveedor', payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Asociación realizada correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+        },
         asociarCuenta(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
