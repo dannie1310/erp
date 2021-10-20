@@ -134,7 +134,7 @@
                                     <th class="c100">RFC</th>
                                     <th >Razón Social</th>
 
-                                    <th >CFDI Cancelados 2020</th>
+                                    <th >CFDI Cancelados</th>
 
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
@@ -725,7 +725,7 @@ export default {
     },
     mounted() {
         this.getInforme();
-        this.fechasDeshabilitadas.to = new Date("2020/01/01");
+        this.fechasDeshabilitadas.to = new Date("2018/01/01");
         this.fechasDeshabilitadas.from = new Date("2020/12/31");
     },
     props: ['id'],
