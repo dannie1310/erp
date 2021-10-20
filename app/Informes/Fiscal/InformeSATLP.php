@@ -206,7 +206,7 @@ ORDER BY
              AND HecCFDI.IDEmpresaSAT = ".$data["empresa_sat"]."
          GROUP BY HecCFDI.IDProveedor) cfdi
            ON (proveedores_sat.IDProveedor = cfdi.IDProveedor))
-        LEFT JOIN
+        JOIN
        (SELECT HecCFDICompletos.IDProveedor,
                SUM (HecCFDICompletos.SubtotalNeto) AS neto_subtotal_completos,
                SUM (HecCFDICompletos.Total) AS total_completos
