@@ -15,16 +15,6 @@ class ItemAvanceObra extends Item
         'numero'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-        self::addGlobalScope(function ($query)
-        {
-            return $query->whereHas('avanceObra');
-        });
-    }
-
-
     /**
      * Relaciones
      */

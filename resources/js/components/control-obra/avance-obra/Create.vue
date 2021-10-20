@@ -81,23 +81,23 @@
                     </div>
                     <hr />
                     <div class="row">
-                                    <div class="col-md-2">
-                                        <label for="id_concepto">Concepto: </label>
-                                    </div>
-                                    <div class="col-md-10">
-                                        <concepto-select
-                                            name="id_concepto"
-                                            data-vv-as="Concepto"
-                                            id="id_concepto"
-                                            v-model="id_concepto"
-                                            :error="errors.has('id_concepto')"
-                                            ref="conceptoSelect"
-                                            :disableBranchNodes="false"
-                                            :placeholder="'Seleccione el concepto'"
-                                        ></concepto-select>
-                                        <div style="display:block" class="invalid-feedback" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
-                                    </div>
-                                </div>
+                        <div class="col-md-2">
+                            <label>Concepto: </label>
+                        </div>
+                        <div class="col-md-10">
+                            <concepto-select
+                                name="id_concepto"
+                                data-vv-as="Concepto"
+                                id="id_concepto"
+                                v-model="id_concepto"
+                                :error="errors.has('id_concepto')"
+                                ref="conceptoSelect"
+                                :disableBranchNodes="false"
+                                :placeholder="'Seleccione el concepto'"
+                            ></concepto-select>
+                            <div style="display:block" class="invalid-feedback" v-show="errors.has('id_concepto')">{{ errors.first('id_concepto') }}</div>
+                        </div>
+                    </div>
                     <br />
                     <div class="row" v-if="hijos">
                                     <div  class="col-md-12">
@@ -253,12 +253,15 @@
                 });
             },
             store() {
-                this.hijos['id_concepto_padre'] = this.id_concepto;
-                this.hijos['fecha'] = this.fecha;
-                this.hijos['fecha_inicio'] = this.fechaInicio;
-                this.hijos['fecha_termino'] = this.fechaTermino;
-                this.hijos['observaciones'] = this.observaciones;
-                return this.$store.dispatch('controlObra/avance-obra/store', this.hijos)
+                var datos = {};
+                datos['id_concepto_padre'] = this.id_concepto;
+                datos['fecha'] = this.fecha;
+                datos['fecha_inicio'] = this.fechaInicio;
+                datos['fecha_termino'] = this.fechaTermino;
+                datos['observaciones'] = this.observaciones;
+                datos['conceptos'] = this.hijos
+                console.log(datos)
+                return this.$store.dispatch('controlObra/avance-obra/store', datos)
                     .then((data) => {
                         this.salir();
                     });

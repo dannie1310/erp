@@ -353,7 +353,7 @@ class Concepto extends Model
         $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
         $num_nivel_anterior = 0;
         $anterior_concepto_medible = false;
-        $i = 0;
+        $i = 1;
         $conc = [];
         foreach ($conceptos_consulta as $concepto)
         {
@@ -365,6 +365,7 @@ class Concepto extends Model
             $conc['monto_avance'] = '0.00';
             $conc['cantidad_actual'] = '0.00';
             $conc['monto_actual'] = '0.00';
+            $conc['cumplido'] = false;
 
             if($num_nivel_anterior == 0 || $anterior_concepto_medible == false)
             {

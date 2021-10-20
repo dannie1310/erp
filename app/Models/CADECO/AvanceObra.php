@@ -4,6 +4,8 @@
 namespace App\Models\CADECO;
 
 
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class AvanceObra extends Transaccion
@@ -61,25 +63,57 @@ class AvanceObra extends Transaccion
         try
         {
             DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $cumplimiento = New DateTime($data['fecha_inicio']);
+            $cumplimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $vencimiento = New DateTime($data['fecha_termino']);
+            $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
 
-            $this->create([
-                'fecha' => $data['fecha'],
-                'cumplimiento' => $data['fechaInicio'],
-                'vencimiento' => $data['fechaFin'],
-                'id_concepto' => $data['id_concepto_padre']
+            $avance = $this->create([
+                'fecha' => $fecha->format("Y-m-d"),
+                'cumplimiento' => $cumplimiento->format("Y-m-d"),
+                'vencimiento' => $vencimiento->format("Y-m-d"),
+                'id_concepto' => $data['id_concepto_padre'],
+                'observaciones' => $data['observaciones']
             ]);
 
+            $avance->registrarPartidas($data['conceptos']);
+            $avance->actualizarTotales();
             DB::connection('cadeco')->commit();
-            return $this;
+            return $avance;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
         }
-
     }
 
-    public function registrarPartidas()
+    public function registrarPartidas($conceptos)
     {
+        foreach ($conceptos as $concepto)
+        {
+            if($concepto['concepto_medible'] == 3 && (float) $concepto['avance'] != 0)
+            {
+                $conc = Concepto::where('id_concepto', $concepto['id_concepto'])->first();
+                $precio_prod = $conc->precioVenta->precio_produccion;
+                $this->partidas()->create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_concepto' => $concepto['id_concepto'],
+                    'cantidad' => $concepto ['avance'],
+                    'precio_unitario' => $precio_prod,
+                    'importe' => $concepto ['avance'] * $precio_prod,
+                    'numero' => $concepto['cumplido']
+                ]);
+            }
+        }
+    }
 
+    public function actualizarTotales()
+    {
+        $subtotal = ItemAvanceObra::where('id_transaccion', $this->id_transaccion)->selectRaw('SUM([importe]) as subtotal')->first()->subtotal;
+        $iva = ($subtotal * $this->obra->iva) / 100;
+        $this->monto = $subtotal + $iva;
+        $this->impuesto = $iva;
+        $this->save();
     }
 }
