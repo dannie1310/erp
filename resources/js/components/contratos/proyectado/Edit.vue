@@ -15,7 +15,7 @@
             <form role="form" @submit.prevent="validate">
                 <div class="card-body" v-if="contrato">
                     <div class="row">
-                        <div class="col-md-5">
+                        <div class="col-md-2">
                             <div class="form-group error-content">
                                 <label class="col-form-label">Fecha</label>
                                 <datepicker v-model="contrato.fecha_date"
@@ -25,33 +25,31 @@
                                             :bootstrap-styling = "true"
                                             class = "form-control"
                                             v-validate="{required: true}"
-                                            :class="{'is-invalid': errors.has('fecha')}"
-                                />
+                                            :class="{'is-invalid': errors.has('fecha')}"/>
                                 <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                             </div>
                         </div>
-                    </div>
-                    <hr>
-                    <div class="row">
-                        <div class="col-12">
-                            <h6><b>Fechas Límite</b></h6>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="form-group row error-content">
+                        <br />
+                        <div class="col-md-6"></div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12" style="height: 10px">
+                                    <label><b>Fechas Límite</b></label>
+                                </div>
+                            </div>
+                            <hr />
+                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group error-content">
                                         <label for="cotizacion">Cotización</label>
                                         <input  v-model="contrato.cumplimiento"
-                                            type="date"
-                                            name="cotizacion"
-                                            id="cotizacion"
-                                            class="form-control"
-                                            v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
-                                            data-vv-as="Cotización"
-                                            :class="{'is-invalid': errors.has('cotizacion')}">
+                                                type="date"
+                                                name="cotizacion"
+                                                id="cotizacion"
+                                                class="form-control"
+                                                v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
+                                                data-vv-as="Cotización"
+                                                :class="{'is-invalid': errors.has('cotizacion')}">
                                         <div class="invalid-feedback" v-show="errors.has('cotizacion')">{{ errors.first('cotizacion') }}</div>
                                     </div>
                                 </div>
@@ -65,8 +63,7 @@
                                                 class="form-control"
                                                 v-validate="{required: true, date_format: 'yyyy-MM-dd'}"
                                                 data-vv-as="Contratación"
-                                                :class="{'is-invalid': errors.has('contratacion')}"
-                                        >
+                                                :class="{'is-invalid': errors.has('contratacion')}">
                                         <div class="invalid-feedback" v-show="errors.has('contratacion')">{{ errors.first('contratacion') }}</div>
                                     </div>
                                 </div>
@@ -302,8 +299,8 @@
                             <div class="row">
                                 <div class="col-12">
                                     <div class="form-group row error-content">
-                                        <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
-                                        <div class="col-sm-10">
+                                        <label for="id_concepto" class="col-md-2 col-form-label">Conceptos:</label>
+                                        <div class="col-md-10">
                                             <concepto-select
                                                 name="id_concepto"
                                                 data-vv-as="Concepto"
