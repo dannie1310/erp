@@ -226,6 +226,19 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
     min-width: 350px;
     text-align: center;
 }
+.td_c400, td.c400
+{
+    width: 400px;
+    max-width: 400px;
+    min-width: 400px;
+}
+
+.td_c500, td.c500
+{
+    width: 500px;
+    max-width: 500px;
+    min-width: 500px;
+}
 
 .td_index, td.index{
   text-align: left;

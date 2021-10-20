@@ -17,13 +17,28 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr>
+                                <td class="sin_borde c400"><b>Empresas:</b></td>
                                 <td class="c90 sin_borde"  ><b>Fecha Inicial:</b></td>
                                 <td class="c90 sin_borde" ><b>Fecha Final:</b></td>
                                 <td class="c90 sin_borde" ><b>Incluir 2132:</b></td>
-                                <td class="sin_borde"><b>Empresas Contpaq:</b></td>
+                                <td class="sin_borde"><b>Empresas Contpaq Individuales:</b></td>
                                 <td class="c100 sin_borde"></td>
                             </tr>
                             <tr>
+                                <td class="sin_borde">
+                                     <model-list-select
+                                        :disabled="cargando"
+                                        name="empresa_sat"
+                                        :placeholder="!cargando?'Seleccionar Empresa':'Cargando...'"
+                                        data-vv-as="Empresa"
+                                        v-model="empresa_sat"
+                                        v-validate="{required: true}"
+                                        option-value="id"
+                                        option-text="label"
+                                        :list="empresas_sat"
+                                        :isError="errors.has(`empresa_sat`)">
+                                    </model-list-select>
+                                </td>
 
                                 <td class="c130 sin_borde"><datepicker
                                     id = "fechaInicial"
@@ -674,10 +689,10 @@ import {es} from "vuejs-datepicker/dist/locale";
 import CFDI from "../cfd/cfd-sat/CFDI";
 import DescargaCFDI from "../cfd/cfd-sat/DescargaCFDI";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
-
+import {ModelListSelect} from 'vue-search-select';
 export default {
     name: "Informe",
-    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker},
+    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
         return {
             informe : [],
@@ -702,7 +717,10 @@ export default {
             movimientos : [],
             importe_movimientos : 0,
             codigo_cuenta : '',
-            empresa_contpaq:''
+            empresa_contpaq:'',
+            empresa_sat : 1,
+            empresas_sat:[],
+            empresa_sat_seleccionada:''
         }
     },
     mounted() {
@@ -717,17 +735,19 @@ export default {
             this.fecha_inicial = this.fecha_inicial_input;
             this.fecha_final = this.fecha_final_input;
             this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+            this.empresa_sat_seleccionada = this.empresa_sat;
             return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
                 id:this.id,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
                 empresas : this.empresas_seleccionadas_filtro,
                 con2132 : this.con2132,
+                empresa_sat : this.empresa_sat_seleccionada,
             })
             .then(data => {
                 this.informe = data.informe;
                 this.empresas = data.informe.empresas;
-                //this.getMovimientos(this.informe.data[0])
+                this.empresas_sat = data.informe.empresas_sat;
             })
             .finally(() => {
                 this.cargando = false;
@@ -742,7 +762,8 @@ export default {
                 fecha_final : this.fecha_final,
                 asociada_contpaq : null,
                 tipo : tipo,
-                empresas : this.empresas_seleccionadas_filtro
+                empresas : this.empresas_seleccionadas_filtro,
+                empresa_sat : this.empresa_sat_seleccionada,
             })
             .then(data => {
                 this.lista_cfdi = data.informe;
@@ -762,6 +783,7 @@ export default {
                 fecha_final : this.fecha_final,
                 empresas : this.empresas_seleccionadas_filtro,
                 id_cuenta : cuenta.id_cuenta,
+                empresa_sat : this.empresa_sat_seleccionada,
             })
                 .then(data => {
                     this.codigo_cuenta = cuenta.codigo_cuenta;
@@ -782,6 +804,7 @@ export default {
                 fecha_final : this.fecha_final,
                 empresas : this.empresas_seleccionadas_filtro,
                 con2132 : this.con2132,
+                empresa_sat : this.empresa_sat_seleccionada,
             })
             .then(data => {
                 this.razon_social = partida.razon_social;
