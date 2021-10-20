@@ -123,7 +123,7 @@
                                                 </thead>
                                                 <tbody>
                                                     <tr v-for="partida in hijos">
-                                                        <td style="text-align:center; vertical-align:inherit;">{{partida.i+1}}</td>
+                                                        <td style="text-align:center; vertical-align:inherit;">{{partida.i}}</td>
                                                         <td v-if="partida.concepto_medible != 3"><b>{{partida.descripcion}}</b></td>
                                                         <td v-else> {{partida.descripcion}}</td>
                                                         <td style="text-align:center;">{{partida.unidad}}</td>

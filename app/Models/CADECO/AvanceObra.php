@@ -47,6 +47,11 @@ class AvanceObra extends Transaccion
         return $this->hasMany(ItemAvanceObra::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function concepto()
+    {
+        return $this->belongsTo(Concepto::class, 'id_concepto', 'id_concepto');
+    }
+
     /**
      * Scope
      */
@@ -54,6 +59,14 @@ class AvanceObra extends Transaccion
     /**
      * Attributos
      */
+    public function getConceptoDescripcionAttribute()
+    {
+        try{
+            return $this->concepto->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
 
     /**
      * Métodos

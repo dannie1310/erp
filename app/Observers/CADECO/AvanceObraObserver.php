@@ -12,6 +12,6 @@ class AvanceObraObserver extends TransaccionObserver
     {
         parent::creating($avance);
         $avance->tipo_transaccion = 98;
-        $avance->opciones = 1;
+        $avance->opciones = 0;
     }
 }

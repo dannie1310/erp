@@ -5,6 +5,7 @@ namespace App\Services\CADECO\ControlObra;
 
 
 use App\Models\CADECO\AvanceObra;
+use App\Models\CADECO\Concepto;
 use App\Repositories\CADECO\ControlObra\AvanceObraRepository as Repository;
 
 class AvanceObraService
@@ -31,6 +32,11 @@ class AvanceObraService
 
         if (isset($data['fecha'])) {
             $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+
+        if(isset($data['id_concepto'])){
+            $conceptos = Concepto::where([['descripcion', 'LIKE', '%'.$data['id_concepto'].'%']])->pluck("id_concepto");
+            $this->repository->whereIn(['id_concepto',  $conceptos]);
         }
 
         if(isset($data['observaciones'])){

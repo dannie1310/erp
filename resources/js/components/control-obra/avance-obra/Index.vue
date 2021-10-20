@@ -31,6 +31,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, sortable: true },
+                    { title: 'Concepto Padre', field: 'id_concepto', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c100', tdComp: require('./partials/EstatusLabel').default},
                     //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
@@ -68,18 +69,18 @@
                 switch (val) {
                     case 0:
                         return {
-                            color: '#ff0000',
+                            color: '#f39c12',
                             descripcion: 'Registrada'
                         }
                     case 1:
                         return {
-                            color: '#f39c12',
-                            descripcion: '-'
+                            color: '#4f9b34',
+                            descripcion: 'Aprobada'
                         }
                     case 2:
                         return {
                             color: '#4f9b34',
-                            descripcion: '*'
+                            descripcion: '-'
                         }
                 }
             },
@@ -111,6 +112,7 @@
                         fecha: avance.fecha_format,
                         observaciones: avance.observaciones,
                         estado: this.getEstado(avance.estado),
+                        id_concepto: avance.concepto_descripcion,
                         buttons: $.extend({}, {
                             id: avance.id,
                             show: true,
