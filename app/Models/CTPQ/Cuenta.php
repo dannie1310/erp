@@ -8,17 +8,18 @@
 
 namespace App\Models\CTPQ;
 
-use App\Models\SEGURIDAD_ERP\Contabilidad\PrefijosPasivo;
-use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
-use App\Services\SEGURIDAD_ERP\Contabilidad\ProveedorSATService;
+use Exception;
 use App\Utils\Util;
+use App\Models\CTPQ\Parametro;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\SEGURIDAD_ERP\Contabilidad\LogEdicion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\TipoCuenta;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\PrefijosPasivo;
+use App\Services\SEGURIDAD_ERP\Contabilidad\ProveedorSATService;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
-use Exception;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\DB;
 
 class Cuenta extends Model
 {
@@ -74,14 +75,12 @@ class Cuenta extends Model
 
     public function getCuentaFormatAttribute()
     {
-        if(strlen($this->Codigo) == 13)
-        {
-            return substr($this->Codigo, 0, 4).'-'.substr($this->Codigo, 4, 3).'-'.substr($this->Codigo, 7, 3).'-'.substr($this->Codigo, 10, 3);
+        $parametros = Parametro::first();
+        $cta = vsprintf(str_replace('X', '%s', $parametros->Mascarilla), str_split($this->Codigo));
+        if(strlen($cta) >16){
+            $cta = substr($cta,0,16).'..';
         }
-        if(strlen($this->Codigo) == 11)
-        {
-            return substr($this->Codigo, 0, 4).'-'.substr($this->Codigo, 4, 2).'-'.substr($this->Codigo, 6, 2).'-'.substr($this->Codigo, 8, 3);
-        }
+        return $cta;
     }
 
     public function getCodigoLongitud($lcodigo_b){
