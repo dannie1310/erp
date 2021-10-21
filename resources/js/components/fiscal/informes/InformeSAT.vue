@@ -841,7 +841,8 @@ export default {
             empresa_sat : 1,
             empresas_sat:[],
             empresa_sat_seleccionada:'',
-            sin_proveedor : {}
+            sin_proveedor : {},
+            abriendo_modal : 0,
         }
     },
     mounted() {
@@ -877,66 +878,77 @@ export default {
         },
         verCFDI(partida, tipo = 1)
         {
-
-            return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
-                id_proveedor_sat: partida.id_proveedor_sat,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                asociada_contpaq : null,
-                tipo : tipo,
-                empresas : this.empresas_seleccionadas_filtro,
-                empresa_sat : this.empresa_sat_seleccionada,
-            })
-            .then(data => {
-                this.lista_cfdi = data.informe;
-                this.razon_social = partida.razon_social;
-                this.rfc = partida.rfc;
-                this.total_cfdi = data.total;
-            })
-            .finally(() => {
-                $(this.$refs.modal_cfdi).appendTo('body')
-                $(this.$refs.modal_cfdi).modal('show');
-            });
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
+                    id_proveedor_sat: partida.id_proveedor_sat,
+                    fecha_inicial: this.fecha_inicial,
+                    fecha_final: this.fecha_final,
+                    asociada_contpaq: null,
+                    tipo: tipo,
+                    empresas: this.empresas_seleccionadas_filtro,
+                    empresa_sat: this.empresa_sat_seleccionada,
+                })
+                .then(data => {
+                    this.lista_cfdi = data.informe;
+                    this.razon_social = partida.razon_social;
+                    this.rfc = partida.rfc;
+                    this.total_cfdi = data.total;
+                })
+                .finally(() => {
+                    $(this.$refs.modal_cfdi).appendTo('body')
+                    $(this.$refs.modal_cfdi).modal('show');
+                    this.abriendo_modal = 0;
+                });
+            }
         },
         getMovimientos(cuenta)
         {
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro,
-                id_cuenta : cuenta.id_cuenta,
-                empresa_sat : this.empresa_sat_seleccionada,
-            })
-                .then(data => {
-                    this.codigo_cuenta = cuenta.codigo_cuenta;
-                    this.movimientos = data.informe;
-                    this.importe_movimientos = cuenta.importe_movimiento;
-                    this.empresa_contpaq = cuenta.empresa_contpaq;
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
+                    fecha_inicial: this.fecha_inicial,
+                    fecha_final: this.fecha_final,
+                    empresas: this.empresas_seleccionadas_filtro,
+                    id_cuenta: cuenta.id_cuenta,
+                    empresa_sat: this.empresa_sat_seleccionada,
                 })
-                .finally(() => {
-                    $(this.$refs.modal_polizas).appendTo('body')
-                    $(this.$refs.modal_polizas).modal('show');
-                });
+                    .then(data => {
+                        this.codigo_cuenta = cuenta.codigo_cuenta;
+                        this.movimientos = data.informe;
+                        this.importe_movimientos = cuenta.importe_movimiento;
+                        this.empresa_contpaq = cuenta.empresa_contpaq;
+                    })
+                    .finally(() => {
+                        $(this.$refs.modal_polizas).appendTo('body')
+                        $(this.$refs.modal_polizas).modal('show');
+                        this.abriendo_modal = 0;
+                    });
+            }
         },
         verCuentas(partida)
         {
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerCuentasInformeSATLP2020', {
-                id: partida.id_proveedor_sat,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro,
-                con2132 : this.con2132,
-                empresa_sat : this.empresa_sat_seleccionada,
-            })
-            .then(data => {
-                this.razon_social = partida.razon_social;
-                this.cuentas = data.informe;
-                this.importe_cuentas = partida.importe_movimientos_pasivo;
-            })
-            .finally(() => {
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
-            });
+            if(this.abriendo_modal == 0){
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerCuentasInformeSATLP2020', {
+                    id: partida.id_proveedor_sat,
+                    fecha_inicial : this.fecha_inicial,
+                    fecha_final : this.fecha_final,
+                    empresas : this.empresas_seleccionadas_filtro,
+                    con2132 : this.con2132,
+                    empresa_sat : this.empresa_sat_seleccionada,
+                })
+                .then(data => {
+                    this.razon_social = partida.razon_social;
+                    this.cuentas = data.informe;
+                    this.importe_cuentas = partida.importe_movimientos_pasivo;
+                })
+                .finally(() => {
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show');
+                    this.abriendo_modal = 0;
+                });
+            }
         },
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
@@ -973,15 +985,15 @@ export default {
 
 <style scoped>
 tr.sin_proveedor td {
-    color: #c35a02;
+    color: #e50c25;
     font-weight: bold;
 }
 tr.hover td{
-    background-color: #eed092;
+    background-color: #b8daa9;
 }
 
 tr.click td{
-    background-color: rgba(227, 171, 52, 0.99);
+    background-color: #50b920;
 }
 
 .form-control {
