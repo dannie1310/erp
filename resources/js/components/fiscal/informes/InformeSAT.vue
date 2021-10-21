@@ -91,7 +91,7 @@
                 </div>
                 <hr />
                 <div class="row" >
-                    <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 700px;">
+                    <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
                         <table class="table table-sm table-fs-sm" id="sticky">
                             <thead >
                                 <tr>
@@ -170,6 +170,126 @@
 
                             </thead>
                             <tbody>
+                            <tr class="sin_borde sin_proveedor" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click" >
+                                <td>
+                                    -
+                                </td>
+                                <td  >
+                                    -
+                                </td>
+                                <td>
+                                    {{sin_proveedor.razon_social}}
+                                </td>
+                                <!-- Cancelados-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                   -
+                                </td>
+                                <!-- Neto -->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <!--Omitir-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <!--Agregar-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!--CFDI I-->
+                                <td class="sin_borde">                                   &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!--CFDI E-->
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                   -
+
+                                </td>
+                                <!-- RECONOCIDOS-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!-- NO RECONOCIDOS-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!-- A REVISAR-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <!-- A REVISAR-->
+                                <td style="text-align: right; text-decoration: underline" :style="parseFloat(sin_proveedor.cantidad_cuentas)>0?`cursor : pointer`:``" v-on:click="verCuentas(sin_proveedor)" v-if="parseFloat(sin_proveedor.cantidad_cuentas)>0">
+                                     {{parseFloat(sin_proveedor.cantidad_cuentas) }}
+                                </td>
+                                 <td style="text-align: right" v-else>
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    {{sin_proveedor.importe_movimientos_pasivo}}
+                                </td>
+                                <td style="text-align: right">
+                                    {{sin_proveedor.diferencia }}
+                                </td>
+
+                            </tr>
                             <template v-for="(partida, i) in informe.partidas">
                                 <tr class="sin_borde" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click">
                                 <td>
@@ -438,7 +558,7 @@
                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="overflow-y: auto;max-height: 600px;">
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
@@ -496,7 +616,7 @@
                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="overflow-y: auto;max-height: 600px;">
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
@@ -720,7 +840,8 @@ export default {
             empresa_contpaq:'',
             empresa_sat : 1,
             empresas_sat:[],
-            empresa_sat_seleccionada:''
+            empresa_sat_seleccionada:'',
+            sin_proveedor : {}
         }
     },
     mounted() {
@@ -748,6 +869,7 @@ export default {
                 this.informe = data.informe;
                 this.empresas = data.informe.empresas;
                 this.empresas_sat = data.informe.empresas_sat;
+                this.sin_proveedor = data.informe.sin_proveedor[0];
             })
             .finally(() => {
                 this.cargando = false;
@@ -850,6 +972,10 @@ export default {
 </script>
 
 <style scoped>
+tr.sin_proveedor td {
+    color: #c35a02;
+    font-weight: bold;
+}
 tr.hover td{
     background-color: #eed092;
 }

@@ -16,6 +16,7 @@ class InformeSATLP
         $informe["partidas"] = InformeSATLP::getInforme($data);
         $informe["empresas"] = InformeSATLP::getEmpresas();
         $informe["empresas_sat"] = InformeSATLP::getEmpresasSAT();
+        $informe["sin_proveedor"] = InformeSATLP::getMovimientosSinProveedor($data);
         return $informe;
     }
 
@@ -55,6 +56,92 @@ ORDER BY
         return collect($informe);
     }
 
+    public static function getMovimientosSinProveedor($data)
+    {
+        $qry = "";
+        $qry2132 = "";
+        if(count($data["empresas"])>0)
+        {
+            $qry = " AND (IDEmpresa IN(".implode(",", $data["empresas"]).") OR IDEmpresa is null) ";
+        }
+
+        if($data["con2132"] == 0)
+        {
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,9,10,11,12) ";
+        }
+        //AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
+
+        $informe_qry = "SELECT proveedores_sat.IDProveedor as id_proveedor_sat,
+       proveedores_sat.Descripcion as razon_social,
+       proveedores_sat.RFC as rfc,
+       case when movimientos_pasivo.Importe is null then '-' when movimientos_pasivo.Importe = 0 then '-'  else format(movimientos_pasivo.Importe,'C') end importe_movimientos_pasivo,
+       '-' as movimientos_pasivo_importe,
+      '-',
+       '-' as neto_total_completos,
+       '-',
+       '-' as neto_total_divisas,
+       '-' as neto_subtotal_reemplazado,
+       '-' as neto_total_reemplazado,
+       '-' as neto_total_dispersion,
+       '-' ,
+
+       '-' as neto_total_reemplazo,
+
+
+       '-' as cantidad_sin_empresa,
+       '-' as neto_total_sin_empresa,
+
+
+       '-' as cantidad_con_empresa,
+       '-' as neto_total_con_empresa,
+
+       '-' ,
+       '-' as neto_total_i,
+
+       '-' as neto_subtotal_e,
+       '-' as neto_total_e,
+
+       0 as neto_subtotal_sat,
+       0 as neto_total_sat,
+
+       movimientos_pasivo.cantidad_cuentas as cantidad_cuentas,
+       null as cantidad_empresas,
+
+       format(0 - isnull(movimientos_pasivo.Importe,0), 'C') AS diferencia,
+
+       '-' as neto_subtotal_no_cancelados,
+       '-' as neto_total_no_cancelados,
+
+       '-' as neto_total_agregar,
+
+      '-' as neto_total_cancelados
+
+  FROM SEGURIDAD_ERP.InformeSAT.DimProveedores proveedores_sat
+
+             LEFT OUTER JOIN
+             (SELECT count(distinct HecMovimientos.Codigo) as cantidad_cuentas,HecMovimientos.IDProveedor,
+                     SUM (HecMovimientos.Importe) AS Importe
+                FROM SEGURIDAD_ERP.InformeSAT.HecMovimientos HecMovimientos
+             WHERE HecMovimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry $qry2132
+             AND HecMovimientos.IDEmpresaSAT = ".$data["empresa_sat"]."
+              GROUP BY HecMovimientos.IDProveedor) movimientos_pasivo
+                ON (proveedores_sat.IDProveedor = movimientos_pasivo.IDProveedor)
+
+                where proveedores_sat.Descripcion ='SIN PROVEEDOR'
+
+          ORDER BY 0 - isnull(movimientos_pasivo.Importe,0) DESC
+          ";
+
+
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
     public static function  getInforme($data)
     {
         $qry = "";
@@ -66,7 +153,7 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,9,10,11,12) ";
         }
         //AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
 
@@ -300,7 +387,7 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,9,10,11,12) ";
         }
 
         $query = "SELECT
@@ -323,7 +410,7 @@ GROUP BY
     dc.IDProveedor,
     dc.Descripcion,
     dc.IdCuenta,
-    dec.Descripcion";
+    dec.Descripcion order by SUM(hm.Importe) desc";
 
         $informe = DB::connection("seguridad")->select($query);
 
