@@ -255,6 +255,26 @@ class Concepto extends Model
         }
     }
 
+    public function getCantidadPresupuestadaCalculadaAttribute()
+    {
+        return $this->cantidad_presupuestada + $this->ajuste_cantidad;
+    }
+
+    public function getCantidadPresupuestadaCalculadaFormatAttribute()
+    {
+        return number_format($this->cantidad_presupuestada_calculada,2);
+    }
+
+    public function getPrecioProduccionAttribute()
+    {
+        return $this->precioVenta ? $this->precioVenta->precio_produccion : 0.0;
+    }
+
+    public function getPrecioProduccionFormatAttribute()
+    {
+        return number_format($this->precio_produccion,2);
+    }
+
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
@@ -358,8 +378,8 @@ class Concepto extends Model
         foreach ($conceptos_consulta as $concepto)
         {
             $conc = $concepto->toArray();
-            $conc['precio_venta'] =  $concepto->precioVenta ? number_format($concepto->precioVenta->precio_produccion,2) : 0.0;
-            $conc['cantidad_presupuestada'] = number_format($concepto->cantidad_presupuestada + $concepto->ajuste_cantidad,2);
+            $conc['precio_venta'] =  $concepto->precio_produccion;
+            $conc['cantidad_presupuestada'] = $concepto->cantidad_presupuestada_calculada;
             $conc['avance'] = '0.00';
             $conc['cantidad_anterior'] = '0.00';
             $conc['monto_avance'] = '0.00';
@@ -389,10 +409,5 @@ class Concepto extends Model
             }
         }
         return $conceptos;
-    }
-
-    public function cantidadAnteriorAvance($id_concepto)
-    {
-        return ItemAvanceObra::where($id_concepto)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
     }
 }

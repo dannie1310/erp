@@ -41,7 +41,9 @@ class ConceptoTransformer extends TransformerAbstract
             'deshabilitadoPadreMedibles' => $model->deshabilitado_padre_medible,
             'tiene_hijos_cobrables' => $model->tiene_hijos_cobrables,
             'tiene_hijos_completos' => $model->tiene_hijos_completos,
-            'medible' => $model->concepto_medible
+            'medible' => $model->concepto_medible,
+            'cantidad_presupuestada_calculada' => $model->cantidad_presupuestada_calculada,
+            'precio_venta' => $model->precio_produccion
         ];
     }
 

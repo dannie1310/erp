@@ -68,6 +68,56 @@ class AvanceObra extends Transaccion
         }
     }
 
+    public function getNombreUsuarioAttribute()
+    {
+        try{
+            return $this->usuario->nombre_completo;
+        }catch (\Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getColorEstadoAttribute()
+    {
+        switch ((int) $this->estado) {
+            case 0:
+                return '#f39c12';
+                break;
+            case 1:
+                return '#4f9b34';
+                break;
+            case 2:
+                return '#4f9b34';
+                break;
+        }
+    }
+
+    public function getDescripcionEstadoAttribute()
+    {
+        switch ((int) $this->estado) {
+            case 0:
+                return 'Registrada';
+                break;
+            case 1:
+                return 'Aprobada';
+                break;
+            case 2:
+                return '#';
+                break;
+        }
+    }
+
+    public function getTotalAttribute()
+    {
+        return $this->subtotal + $this->impuesto;
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        return '$' . number_format($this->total, 2, '.', ',');
+    }
+
     /**
      * Métodos
      */

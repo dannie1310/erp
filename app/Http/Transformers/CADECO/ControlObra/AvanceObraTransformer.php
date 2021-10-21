@@ -15,7 +15,7 @@ class AvanceObraTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-
+        'partidas'
     ];
 
 
@@ -27,11 +27,30 @@ class AvanceObraTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'observaciones' => (string) $model->observaciones,
             'estado' => (int) $model->estado,
-            'estado_format' => $model->estado_format,
+            'color_estado' => $model->color_estado,
+            'descripcion_estado' => $model->descripcion_estado,
             'folio' => $model->numero_folio,
             'numero_folio_format' => $model->numero_folio_format,
-            'usuario_registro' => ($model->id_usuario) ? $model->id_usuario : '--------------',
-            'concepto_descripcion' => $model->concepto_descripcion
+            'nombre_usuario' => $model->nombre_usuario,
+            'concepto_descripcion' => $model->concepto_descripcion,
+            'cumplimiento_format' => $model->cumplimiento_format,
+            'vencimiento_format' => $model->vencimiento_format,
+            'subtotal_format' => $model->subtotal_format,
+            'impuesto_format' => $model->impuesto_format,
+            'total_format' => $model->total_format
         ];
+    }
+
+    /**
+     * @param AvanceObra $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AvanceObra $model)
+    {
+        if($partidas = $model->partidas)
+        {
+            return $this->collection($partidas, new ItemAvanceObraTransformer);
+        }
+        return null;
     }
 }

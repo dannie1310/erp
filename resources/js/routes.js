@@ -2905,13 +2905,25 @@ export const routes = [
                             },
                             {
                                 path: 'create',
-                                name: 'create-avance-obra',
+                                name: 'avance-obra-create',
                                 component: require('./components/control-obra/avance-obra/Create').default,
                                 meta: {
                                     title: 'Registrar Avance de Obra',
-                                    breadcrumb: { parent: 'avance-obra', name: 'REGISTRAR AVANCE DE OBRA'},
+                                    breadcrumb: { parent: 'avance-obra', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
                                     permission: ['registrar_avance_obra'],
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'avance-obra-show',
+                                component: require('./components/control-obra/avance-obra/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_avance_obra'
                                 }
                             },
                         ]

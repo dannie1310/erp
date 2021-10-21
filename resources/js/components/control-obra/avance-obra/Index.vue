@@ -34,7 +34,7 @@
                     { title: 'Concepto Padre', field: 'id_concepto', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Observaciones', field: 'observaciones', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Estatus', field: 'estado', sortable: false, tdClass: 'th_c100', tdComp: require('./partials/EstatusLabel').default},
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -64,28 +64,14 @@
                     this.cargando = false;
                 })
             },
-            getEstado(estado) {
-                let val = parseInt(estado);
-                switch (val) {
-                    case 0:
-                        return {
-                            color: '#f39c12',
-                            descripcion: 'Registrada'
-                        }
-                    case 1:
-                        return {
-                            color: '#4f9b34',
-                            descripcion: 'Aprobada'
-                        }
-                    case 2:
-                        return {
-                            color: '#4f9b34',
-                            descripcion: '-'
-                        }
+            getEstado(color, descripcion) {
+                return {
+                    color: color,
+                    descripcion: descripcion
                 }
             },
             create() {
-                this.$router.push({name: 'create-avance-obra'});
+                this.$router.push({name: 'avance-obra-create'});
             },
         },
         computed: {
@@ -111,7 +97,7 @@
                         numero_folio: avance.numero_folio_format,
                         fecha: avance.fecha_format,
                         observaciones: avance.observaciones,
-                        estado: this.getEstado(avance.estado),
+                        estado: this.getEstado(avance.color_estado, avance.descripcion_estado),
                         id_concepto: avance.concepto_descripcion,
                         buttons: $.extend({}, {
                             id: avance.id,
