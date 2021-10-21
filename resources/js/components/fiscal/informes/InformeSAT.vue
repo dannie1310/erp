@@ -20,8 +20,8 @@
                                 <td class="sin_borde c400"><b>Empresas:</b></td>
                                 <td class="c90 sin_borde"  ><b>Fecha Inicial:</b></td>
                                 <td class="c90 sin_borde" ><b>Fecha Final:</b></td>
-                                <td class="c90 sin_borde" ><b>Incluir 2132:</b></td>
-                                <td class="sin_borde"><b>Empresas Contpaq Individuales:</b></td>
+                                <td class="c90 sin_borde" style="text-align: center"><b>Incluir RFG<br>2132 / 2150:</b></td>
+                                <td class="sin_borde" v-if="this.empresa_sat_seleccionada == this.empresa_sat"><b>Empresas Contpaq Individuales:</b></td>
                                 <td class="c100 sin_borde"></td>
                             </tr>
                             <tr>
@@ -72,7 +72,7 @@
                                          <label for="con2132" class="custom-control-label" ></label>
                                      </div>
                                 </td>
-                                <td class="sin_borde">
+                                <td class="sin_borde" v-if="this.empresa_sat_seleccionada == this.empresa_sat">
                                      <treeselect v-model="empresas_seleccionadas"
                                          :multiple="true"
                                          :options="empresas"
@@ -856,7 +856,14 @@ export default {
             this.cargando = true;
             this.fecha_inicial = this.fecha_inicial_input;
             this.fecha_final = this.fecha_final_input;
-            this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+
+            if( this.empresa_sat_seleccionada == this.empresa_sat){
+                this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+            }else{
+                this.empresas_seleccionadas_filtro = [];
+                this.empresas_seleccionadas = [];
+            }
+
             this.empresa_sat_seleccionada = this.empresa_sat;
             return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
                 id:this.id,

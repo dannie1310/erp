@@ -14,7 +14,7 @@ class InformeSATLP
     public static function  get($data)
     {
         $informe["partidas"] = InformeSATLP::getInforme($data);
-        $informe["empresas"] = InformeSATLP::getEmpresas();
+        $informe["empresas"] = InformeSATLP::getEmpresas($data);
         $informe["empresas_sat"] = InformeSATLP::getEmpresasSAT();
         $informe["sin_proveedor"] = InformeSATLP::getMovimientosSinProveedor($data);
         return $informe;
@@ -22,7 +22,7 @@ class InformeSATLP
 
 
 
-    public static function getEmpresas()
+    public static function getEmpresas($data)
     {
         $informe = DB::connection("seguridad")->select("SELECT
     dec.IDEmpresaContpaq as id,
@@ -30,8 +30,9 @@ class InformeSATLP
     cast(dec.Numero as varchar(100)) + ' ' + dec.Descripcion as customLabel
 FROM
     SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec
+WHERE IDEmpresaSAT = ".$data["empresa_sat"]." or IDEmpresaSAT is null
 ORDER BY
-    dec.Descripcion;");
+    dec.Numero;");
         $informe = array_map(function ($value) {
             return (array)$value;
         }, $informe);
@@ -67,7 +68,7 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,9,10,11,12) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,10,11,12) ";
         }
         //AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
 
@@ -153,7 +154,7 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,9,10,11,12) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,10,11,12) ";
         }
         //AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
 
@@ -387,7 +388,7 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,9,10,11,12) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,10,11,12) ";
         }
 
         $query = "SELECT
