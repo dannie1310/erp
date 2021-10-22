@@ -186,10 +186,37 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
-    public function getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas)
+    public function getListaCFDI($data)
     {
+        if($data["tipo"] == 1){
+            $cfdi = InformeSATLP::getListaCFDI($data);
+        } else if($data["tipo"] == 2){
+            $cfdi = InformeSATLP::getListaCFDIOmitidosDivisa($data);
+        }
+        else if($data["tipo"] == 3){
+            $cfdi = InformeSATLP::getListaCFDIOmitidosReemplazo($data);
+        }else if($data["tipo"] == 4){
+            $cfdi = InformeSATLP::getListaCFDIOmitidosReemplazado($data);
+        }else if($data["tipo"] == 5){
+            $cfdi = InformeSATLP::getListaCFDIIngresos($data);
+        }else if($data["tipo"] == 6){
+            $cfdi = InformeSATLP::getListaCFDIEgresos($data);
+        }else if($data["tipo"] == 7){
+            $cfdi = InformeSATLP::getListaCFDIReconocidos($data);
+        }else if($data["tipo"] == 8){
+            $cfdi = InformeSATLP::getListaCFDINoReconocidos($data);
+        }else if($data["tipo"] == 9){
+            $cfdi = InformeSATLP::getListaCFDIARevisar($data);
+        }else if($data["tipo"] == 10){
+            $cfdi = InformeSATLP::getListaCFDIOmitidosDispersion($data);
+        }else if($data["tipo"] == 11){
+            $cfdi = InformeSATLP::getListaCFDIReemplazadosNoCancelados($data);
+        }else if($data["tipo"] == 12){
+            $cfdi = InformeSATLP::getListaCFDIReemplazados($data);
+        }else if($data["tipo"] == 13){
+            $cfdi = InformeSATLP::getListaCFDICancelados($data);
+        }
 
-        $cfdi = InformeSATLP::getListaCFDI($id_proveedor, $fecha_inicial, $fecha_final, $asociada_contpaq, $empresas);
         return $cfdi;
     }
 

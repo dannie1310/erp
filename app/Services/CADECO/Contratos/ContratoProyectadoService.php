@@ -120,14 +120,7 @@ class ContratoProyectadoService
 
     public function update(array $data, $id)
     {
-        $contrato = $this->repository->show($id);
-        $contrato->update([
-            'fecha' => $data['fecha_date'],
-            'cumplimiento' => $data['cumplimiento'],
-            'vencimiento' => $data['vencimiento'],
-            'referencia' => strtoupper($data['referencia'])
-        ]);
-        return $contrato;
+        return $this->repository->show($id)->editar($data);
     }
 
     public function paginate($data)

@@ -36,7 +36,7 @@
                     { title: 'Proveedor', field: 'id_proveedor_sat', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha_hora_registro', sortable: true},
                     { title: 'Cantidad de CFD', field:'cantidad_partidas',  tdClass: 'td_money', sortable: false},
-                    { title: 'Estatus', field: 'estado', sortable: true, tdComp: require('./partials/EstatusLabel').default, sortable: false},
+                    { title: 'Estatus', field: 'estado', tdComp: require('./partials/EstatusLabel').default, sortable: false},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
