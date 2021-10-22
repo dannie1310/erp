@@ -79,12 +79,18 @@ class Poliza extends Model
         return $this->hasMany(Expediente::class, 'Guid_Relacionado', 'Guid');
     }
 
+
     /**
      * Attributos
      */
     public function getCargosFormatAttribute()
     {
-        return '$ ' . number_format(abs($this->Cargos), 2);
+        return '$' . number_format(abs($this->Cargos), 2);
+    }
+
+    public function getAbonosFormatAttribute()
+    {
+        return '$' . number_format(abs($this->Abonos), 2);
     }
 
     public function getFechaFormatAttribute()
@@ -110,6 +116,15 @@ class Poliza extends Model
         $fecha->add(new \DateInterval('P5D'));
         $fecha = strftime("%d/", $fecha->getTimestamp()) . substr($mes, 0, 3) . strftime("/%Y", $fecha->getTimestamp());
         return $fecha;
+    }
+    public function getEmpresaAttribute()
+    {
+        return Parametro::find(1)->RazonSocial;
+    }
+    public function getBaseDatosAttribute()
+    {
+        $idEmpresa = Parametro::find(1)->pluck("IdEmpresa")->first();
+        return Empresa::find($idEmpresa)->AliasBDD;
     }
 
     /**

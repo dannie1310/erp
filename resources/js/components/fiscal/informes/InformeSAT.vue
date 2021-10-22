@@ -134,7 +134,7 @@
                                     <th class="c100">RFC</th>
                                     <th >Razón Social</th>
 
-                                    <th >CFDI Cancelados</th>
+                                    <th >CFDI Cancelados en Ejercicio</th>
 
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
@@ -145,7 +145,7 @@
                                     <th class="c80">Reemplazo de Ejercicios Anteriores</th>
                                     <th class="c80">Reemplazados No Cancelados</th>
 
-                                    <th class="c80">Reemplazados en 2021</th>
+                                    <th class="c80">Reemplazados en Ejercicio Posterior</th>
 
                                     <th class="c80">Neto Tipo I</th>
                                     <th class="c80">Total Con IVA</th>
@@ -648,7 +648,8 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{movimiento.fecha_poliza}}</td>
                                                 <td>{{movimiento.tipo_poliza}}</td>
-                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></PDFPoliza></td>
+                                                <td>
+                                                    <poliza-show-modal v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></poliza-show-modal>
                                                 <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
@@ -810,9 +811,11 @@ import CFDI from "../cfd/cfd-sat/CFDI";
 import DescargaCFDI from "../cfd/cfd-sat/DescargaCFDI";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
 import {ModelListSelect} from 'vue-search-select';
+import PolizaShowModal from "../../contabilidad-general/poliza/ShowModal";
+
 export default {
     name: "Informe",
-    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
+    components: {PolizaShowModal, PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
         return {
             informe : [],
