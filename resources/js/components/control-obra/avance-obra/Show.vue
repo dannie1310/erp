@@ -141,11 +141,9 @@
                                             {{partida.monto_avance_actual_format}}
                                         </td>
                                         <td v-else></td>
-                                        <td v-if="partida.concepto.medible == 3">
-                                            <div class="form-check">
-                                                <input class="form-check-input" disabled="true" type="checkbox" value="" id="cumplido" :name="`cumplido[${i}]`" v-model="partida.cumplido">
-                                                <label class="form-check-label" for="cumplido">Si</label>
-                                            </div>
+                                        <td v-if="partida.concepto.medible == 3" style="text-align: center">
+                                            <label class="form-check-label" v-if="partida.cumplido"><b>Si</b></label>
+                                            <label class="form-check-label" v-else><b>No</b></label>
                                         </td>
                                         <td v-else></td>
                                     </tr>

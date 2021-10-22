@@ -56,6 +56,16 @@ class ItemAvanceObra extends Item
         return number_format($this->monto_avance_actual,4);
     }
 
+    public function getCantidadAnteriorAvanceAttribute()
+    {
+        return ItemAvanceObra::where('id_concepto', $this->id_concepto)->where('id_transaccion','<', $this->id_transaccion)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
+    }
+
+    public function getCantidadAnteriorAvanceFormatAttribute()
+    {
+        return number_format($this->cantidad_anterior_avance,4);
+    }
+
     public function getMontoAvanceAttribute()
     {
         return (float) $this->cantidad_anterior_avance * (float) $this->concepto->precio_produccion;
@@ -66,13 +76,12 @@ class ItemAvanceObra extends Item
         return number_format($this->monto_avance,4);
     }
 
-    public function getCantidadAnteriorAvanceAttribute()
+    public function getCumplidoAttribute()
     {
-        return ItemAvanceObra::where('id_concepto', $this->id_concepto)->where('id_transaccion','<', $this->id_transaccion)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
+        return $this->numero == 1 ? true : false;
     }
 
-    public function getCantidadAnteriorAvanceFormatAttribute()
-    {
-        return number_format($this->cantidad_anterior_avance,4);
-    }
+    /**
+     * Métodos
+     */
 }

@@ -41,7 +41,8 @@ class ItemAvanceObraTransformer extends TransformerAbstract
             'monto_avance_actual_format' => $model->monto_avance_actual_format,
             'cantidad_anterior_avance' => $model->cantidad_anterior_avance_format,
             'monto_avance' => $model->monto_avance,
-            'monto_avance_format' => $model->monto_avance_format
+            'monto_avance_format' => $model->monto_avance_format,
+            'cumplido' => $model->cumplido
         ];
     }
 

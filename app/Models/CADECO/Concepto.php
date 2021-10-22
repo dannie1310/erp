@@ -275,6 +275,26 @@ class Concepto extends Model
         return number_format($this->precio_produccion,2);
     }
 
+    public function getCantidadAnteriorAvanceAttribute()
+    {
+        return ItemAvanceObra::where('id_concepto', $this->id_concepto)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
+    }
+
+    public function getCantidadAnteriorAvanceFormatAttribute()
+    {
+        return number_format($this->cantidad_anterior_avance,4);
+    }
+
+    public function getMontoAvanceAttribute()
+    {
+        return (float) $this->cantidad_anterior_avance * (float) $this->precio_produccion;
+    }
+
+    public function getMontoAvanceFormatAttribute()
+    {
+        return number_format($this->monto_avance,4);
+    }
+
     public function scopeRoots($query)
     {
         return $query->whereRaw('LEN(nivel) = 4');
@@ -381,8 +401,9 @@ class Concepto extends Model
             $conc['precio_venta'] =  $concepto->precio_produccion;
             $conc['cantidad_presupuestada'] = $concepto->cantidad_presupuestada_calculada;
             $conc['avance'] = '0.00';
-            $conc['cantidad_anterior'] = '0.00';
-            $conc['monto_avance'] = '0.00';
+            $conc['cantidad_anterior_format'] = $concepto->cantidad_anterior_avance_format;
+            $conc['cantidad_anterior'] = (float) $concepto->cantidad_anterior_avance;
+            $conc['monto_avance'] = $concepto->monto_avance_format;
             $conc['cantidad_actual'] = '0.00';
             $conc['monto_actual'] = '0.00';
             $conc['cumplido'] = false;
