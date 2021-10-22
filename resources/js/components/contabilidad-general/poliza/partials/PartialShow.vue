@@ -65,7 +65,7 @@
                                     <tbody>
                                         <tr v-for="(movimiento, i) in poliza.movimientos_poliza.data">
                                             <td>{{ i + 1 }}</td>
-                                            <td>{{movimiento.cuenta.cuenta}}</td>
+                                            <td>{{movimiento.cuenta.cuenta_format}}</td>
                                             <td>{{movimiento.cuenta.descripcion}}</td>
                                             <td style="text-align: right">{{movimiento.cargo_format}}</td>
                                             <td style="text-align: right">{{movimiento.abono_format}}</td>
