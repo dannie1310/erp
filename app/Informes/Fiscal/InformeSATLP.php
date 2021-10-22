@@ -14,13 +14,15 @@ class InformeSATLP
     public static function  get($data)
     {
         $informe["partidas"] = InformeSATLP::getInforme($data);
-        $informe["empresas"] = InformeSATLP::getEmpresas();
+        $informe["empresas"] = InformeSATLP::getEmpresas($data);
+        $informe["empresas_sat"] = InformeSATLP::getEmpresasSAT();
+        $informe["sin_proveedor"] = InformeSATLP::getMovimientosSinProveedor($data);
         return $informe;
     }
 
 
 
-    public static function getEmpresas()
+    public static function getEmpresas($data)
     {
         $informe = DB::connection("seguridad")->select("SELECT
     dec.IDEmpresaContpaq as id,
@@ -28,8 +30,112 @@ class InformeSATLP
     cast(dec.Numero as varchar(100)) + ' ' + dec.Descripcion as customLabel
 FROM
     SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec
+WHERE IDEmpresaSAT = ".$data["empresa_sat"]." or IDEmpresaSAT is null
+ORDER BY
+    dec.Numero;");
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+    public static function getEmpresasSAT()
+    {
+        $informe = DB::connection("seguridad")->select("SELECT
+    dec.IDEmpresaSAT as id,
+    dec.Descripcion as label,
+    dec.Descripcion as customLabel
+FROM
+    SEGURIDAD_ERP.InformeSAT.DimEmpresas dec
 ORDER BY
     dec.Descripcion;");
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return collect($informe);
+    }
+
+    public static function getMovimientosSinProveedor($data)
+    {
+        $qry = "";
+        $qry2132 = "";
+        if(count($data["empresas"])>0)
+        {
+            $qry = " AND (IDEmpresa IN(".implode(",", $data["empresas"]).") OR IDEmpresa is null) ";
+        }
+
+        if($data["con2132"] == 0)
+        {
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,10,11,12) ";
+        }
+        //AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
+
+        $informe_qry = "SELECT proveedores_sat.IDProveedor as id_proveedor_sat,
+       proveedores_sat.Descripcion as razon_social,
+       proveedores_sat.RFC as rfc,
+       case when movimientos_pasivo.Importe is null then '-' when movimientos_pasivo.Importe = 0 then '-'  else format(movimientos_pasivo.Importe,'C') end importe_movimientos_pasivo,
+       '-' as movimientos_pasivo_importe,
+      '-',
+       '-' as neto_total_completos,
+       '-',
+       '-' as neto_total_divisas,
+       '-' as neto_subtotal_reemplazado,
+       '-' as neto_total_reemplazado,
+       '-' as neto_total_dispersion,
+       '-' ,
+
+       '-' as neto_total_reemplazo,
+
+
+       '-' as cantidad_sin_empresa,
+       '-' as neto_total_sin_empresa,
+
+
+       '-' as cantidad_con_empresa,
+       '-' as neto_total_con_empresa,
+
+       '-' ,
+       '-' as neto_total_i,
+
+       '-' as neto_subtotal_e,
+       '-' as neto_total_e,
+
+       0 as neto_subtotal_sat,
+       0 as neto_total_sat,
+
+       movimientos_pasivo.cantidad_cuentas as cantidad_cuentas,
+       null as cantidad_empresas,
+
+       format(0 - isnull(movimientos_pasivo.Importe,0), 'C') AS diferencia,
+
+       '-' as neto_subtotal_no_cancelados,
+       '-' as neto_total_no_cancelados,
+
+       '-' as neto_total_agregar,
+
+      '-' as neto_total_cancelados
+
+  FROM SEGURIDAD_ERP.InformeSAT.DimProveedores proveedores_sat
+
+             LEFT OUTER JOIN
+             (SELECT count(distinct HecMovimientos.Codigo) as cantidad_cuentas,HecMovimientos.IDProveedor,
+                     SUM (HecMovimientos.Importe) AS Importe
+                FROM SEGURIDAD_ERP.InformeSAT.HecMovimientos HecMovimientos
+             WHERE HecMovimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
+             AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry $qry2132
+             AND HecMovimientos.IDEmpresaSAT = ".$data["empresa_sat"]."
+              GROUP BY HecMovimientos.IDProveedor) movimientos_pasivo
+                ON (proveedores_sat.IDProveedor = movimientos_pasivo.IDProveedor)
+
+                where proveedores_sat.Descripcion ='SIN PROVEEDOR'
+
+          ORDER BY 0 - isnull(movimientos_pasivo.Importe,0) DESC
+          ";
+
+
+        $informe = DB::connection("seguridad")->select($informe_qry);
         $informe = array_map(function ($value) {
             return (array)$value;
         }, $informe);
@@ -48,8 +154,9 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,10,11,12) ";
         }
+        //AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
 
         $informe_qry = "SELECT proveedores_sat.IDProveedor as id_proveedor_sat,
        proveedores_sat.Descripcion as razon_social,
@@ -110,6 +217,7 @@ ORDER BY
                   FROM SEGURIDAD_ERP.InformeSAT.HecCFDISinEmpresa HecCFDISinEmpresa
                WHERE HecCFDISinEmpresa.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
+              AND HecCFDISinEmpresa.IDEmpresaSAT = ".$data["empresa_sat"]."
 
                 GROUP BY HecCFDISinEmpresa.IDProveedor) cfdi_sin_empresa
                   ON (proveedores_sat.IDProveedor = cfdi_sin_empresa.IDProveedor))
@@ -121,6 +229,7 @@ ORDER BY
                  FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado HecCFDIReemplazado
               WHERE HecCFDIReemplazado.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIReemplazado.IDEmpresaSAT = ".$data["empresa_sat"]."
 
                GROUP BY HecCFDIReemplazado.IDProveedor) cfdi_reemplazado
                  ON (proveedores_sat.IDProveedor = cfdi_reemplazado.IDProveedor))
@@ -130,6 +239,7 @@ ORDER BY
                 FROM SEGURIDAD_ERP.InformeSAT.HecMovimientos HecMovimientos
              WHERE HecMovimientos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry $qry2132
+             AND HecMovimientos.IDEmpresaSAT = ".$data["empresa_sat"]."
               GROUP BY HecMovimientos.IDProveedor) movimientos_pasivo
                 ON (proveedores_sat.IDProveedor = movimientos_pasivo.IDProveedor))
             LEFT OUTER JOIN
@@ -140,6 +250,7 @@ ORDER BY
                FROM SEGURIDAD_ERP.InformeSAT.HecCFDIDivisas HecCFDIDivisas
             WHERE HecCFDIDivisas.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIDivisas.IDEmpresaSAT = ".$data["empresa_sat"]."
              GROUP BY HecCFDIDivisas.IDProveedor) cfdi_divisas
                ON (proveedores_sat.IDProveedor = cfdi_divisas.IDProveedor))
            LEFT OUTER JOIN
@@ -149,6 +260,7 @@ ORDER BY
               FROM SEGURIDAD_ERP.InformeSAT.HecCFDII HecCFDII
            WHERE HecCFDII.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDII.IDEmpresaSAT = ".$data["empresa_sat"]."
             GROUP BY HecCFDII.IDProveedor) cfdi_i
               ON (proveedores_sat.IDProveedor = cfdi_i.IDProveedor))
           LEFT OUTER JOIN
@@ -158,6 +270,7 @@ ORDER BY
              FROM SEGURIDAD_ERP.InformeSAT.HecCFDIE HecCFDIE
           WHERE HecCFDIE.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIE.IDEmpresaSAT = ".$data["empresa_sat"]."
            GROUP BY HecCFDIE.IDProveedor) cfdi_e
              ON (proveedores_sat.IDProveedor = cfdi_e.IDProveedor))
          LEFT OUTER JOIN
@@ -168,6 +281,7 @@ ORDER BY
             FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazo HecCFDIReemplazo
          WHERE HecCFDIReemplazo.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIReemplazo.IDEmpresaSAT = ".$data["empresa_sat"]."
           GROUP BY HecCFDIReemplazo.IDProveedor) cfdi_reemplazo
             ON (proveedores_sat.IDProveedor = cfdi_reemplazo.IDProveedor))
         LEFT OUTER JOIN
@@ -177,16 +291,17 @@ ORDER BY
            FROM SEGURIDAD_ERP.InformeSAT.HecCFDI HecCFDI
         WHERE HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDI.IDEmpresaSAT = ".$data["empresa_sat"]."
          GROUP BY HecCFDI.IDProveedor) cfdi
            ON (proveedores_sat.IDProveedor = cfdi.IDProveedor))
-        LEFT JOIN
+        JOIN
        (SELECT HecCFDICompletos.IDProveedor,
                SUM (HecCFDICompletos.SubtotalNeto) AS neto_subtotal_completos,
                SUM (HecCFDICompletos.Total) AS total_completos
           FROM SEGURIDAD_ERP.InformeSAT.HecCFDICompletos HecCFDICompletos
        WHERE HecCFDICompletos.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
-
+             AND HecCFDICompletos.IDEmpresaSAT = ".$data["empresa_sat"]."
         GROUP BY HecCFDICompletos.IDProveedor) cfdi_completos
           ON (proveedores_sat.IDProveedor = cfdi_completos.IDProveedor)
           LEFT OUTER JOIN
@@ -198,6 +313,7 @@ ORDER BY
            where HecCFDI.IDEmpresa is not null
              and HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDI.IDEmpresaSAT = ".$data["empresa_sat"]."
          GROUP BY HecCFDI.IDProveedor) cfdi_con_empresa
            ON (proveedores_sat.IDProveedor = cfdi_con_empresa.IDProveedor)
 
@@ -209,6 +325,7 @@ ORDER BY
             FROM SEGURIDAD_ERP.InformeSAT.HecCFDIDispersion HecCFDIDispersion
          WHERE HecCFDIDispersion.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIDispersion.IDEmpresaSAT = ".$data["empresa_sat"]."
           GROUP BY HecCFDIDispersion.IDProveedor) cfdi_dispersion
             ON (proveedores_sat.IDProveedor = cfdi_dispersion.IDProveedor)
 
@@ -220,6 +337,7 @@ ORDER BY
             FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazadosNoCancelados HecCFDIReemplazadosNoCancelados
          WHERE HecCFDIReemplazadosNoCancelados.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIReemplazadosNoCancelados.IDEmpresaSAT = ".$data["empresa_sat"]."
           GROUP BY HecCFDIReemplazadosNoCancelados.IDProveedor) cfdi_reemplazados_no_cancelados
             ON (proveedores_sat.IDProveedor = cfdi_reemplazados_no_cancelados.IDProveedor)
 
@@ -231,6 +349,7 @@ ORDER BY
             FROM SEGURIDAD_ERP.InformeSAT.HecCFDIReemplazado HecCFDIReemplazado
          WHERE HecCFDIReemplazado.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDIReemplazado.IDEmpresaSAT = ".$data["empresa_sat"]."
           GROUP BY HecCFDIReemplazado.IDProveedor) cfdi_reemplazados
             ON (proveedores_sat.IDProveedor = cfdi_reemplazados.IDProveedor)
 
@@ -241,6 +360,7 @@ ORDER BY
           FROM SEGURIDAD_ERP.InformeSAT.HecCFDICancelados HecCFDICancelados
        WHERE HecCFDICancelados.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
              AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry
+             AND HecCFDICancelados.IDEmpresaSAT = ".$data["empresa_sat"]."
 
         GROUP BY HecCFDICancelados.IDProveedor) cfdi_cancelados
           ON (proveedores_sat.IDProveedor = cfdi_cancelados.IDProveedor)
@@ -268,7 +388,7 @@ ORDER BY
 
         if($data["con2132"] == 0)
         {
-            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3) ";
+            $qry2132 = " AND IDCuentaAgrupador IN(1,2,3,5,6,7,8,10,11,12) ";
         }
 
         $query = "SELECT
@@ -286,11 +406,12 @@ INNER JOIN SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec ON
 WHERE dc.IDProveedor = ".$data["id"]."
 AND hm.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
 AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59' $qry $qry2132
+AND hm.IDEmpresaSAT = ".$data["empresa_sat"]."
 GROUP BY
     dc.IDProveedor,
     dc.Descripcion,
     dc.IdCuenta,
-    dec.Descripcion";
+    dec.Descripcion order by SUM(hm.Importe) desc";
 
         $informe = DB::connection("seguridad")->select($query);
 
@@ -318,16 +439,19 @@ GROUP BY
     dec.Descripcion as empresa_contpaq,
     hm.Importe as importe_movimiento,
     hm.IDPoliza as id_poliza,
-    hm.IDEmpresa as id_empresa
+    hm.IDEmpresa as id_empresa,
+    die.IDEmpresa as id_empresa_consolidadora
 FROM
     SEGURIDAD_ERP.InformeSAT.HecMovimientos hm
 INNER JOIN SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec ON
     hm.IDEmpresa = dec.IDEmpresaContpaq
-
+INNER JOIN SEGURIDAD_ERP.InformeSAT.DimEmpresas die ON
+    hm.IDEmpresaSAT = die.IDEmpresaSAT
  WHERE   hm.IDCuenta = ".$data["id_cuenta"]."
        AND hm.Fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:00'
                                       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
         $qry
+        AND hm.IDEmpresaSAT = ".$data["empresa_sat"]."
 order by hm.Importe desc
 ";
 
@@ -398,7 +522,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -440,7 +564,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -516,7 +640,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -559,7 +683,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -636,7 +760,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -679,7 +803,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -755,7 +879,7 @@ where
       cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -798,7 +922,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -875,7 +999,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -918,7 +1042,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -995,7 +1119,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1038,7 +1162,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -1115,7 +1239,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1158,7 +1282,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -1235,7 +1359,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1278,7 +1402,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -1355,7 +1479,7 @@ where HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1397,7 +1521,7 @@ where HecCFDI.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND '".$data["fecha_final"]->format("Y-m-d")." 23:59:59'
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -1474,7 +1598,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1517,7 +1641,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -1594,7 +1718,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1637,7 +1761,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
       AND cfd_sat.cancelado = 0
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha
@@ -1714,7 +1838,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
 
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       ".$condicion."
 
       union
@@ -1757,7 +1881,7 @@ where cfd_sat.fecha BETWEEN '".$data["fecha_inicial"]->format("Y-m-d")." 00:00:0
 
       AND cfd_sat.tipo_comprobante in('I','E')
       AND cfd_sat.id_proveedor_sat = ".$data["id_proveedor_sat"]."
-      AND cfd_sat.id_empresa_sat = 1
+      AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
       AND cfd_sat.numero_empresa is null) as lista_cfdi
 
       order by lista_cfdi.fecha

@@ -17,13 +17,28 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr>
+                                <td class="sin_borde c400"><b>Empresas:</b></td>
                                 <td class="c90 sin_borde"  ><b>Fecha Inicial:</b></td>
                                 <td class="c90 sin_borde" ><b>Fecha Final:</b></td>
-                                <td class="c90 sin_borde" ><b>Incluir 2132:</b></td>
-                                <td class="sin_borde"><b>Empresas Contpaq:</b></td>
+                                <td class="c90 sin_borde" style="text-align: center"><b>Incluir RFG<br>2132 / 2150:</b></td>
+                                <td class="sin_borde" v-if="this.empresa_sat_seleccionada == this.empresa_sat"><b>Empresas Contpaq Individuales:</b></td>
                                 <td class="c100 sin_borde"></td>
                             </tr>
                             <tr>
+                                <td class="sin_borde">
+                                     <model-list-select
+                                        :disabled="cargando"
+                                        name="empresa_sat"
+                                        :placeholder="!cargando?'Seleccionar Empresa':'Cargando...'"
+                                        data-vv-as="Empresa"
+                                        v-model="empresa_sat"
+                                        v-validate="{required: true}"
+                                        option-value="id"
+                                        option-text="label"
+                                        :list="empresas_sat"
+                                        :isError="errors.has(`empresa_sat`)">
+                                    </model-list-select>
+                                </td>
 
                                 <td class="c130 sin_borde"><datepicker
                                     id = "fechaInicial"
@@ -57,7 +72,7 @@
                                          <label for="con2132" class="custom-control-label" ></label>
                                      </div>
                                 </td>
-                                <td class="sin_borde">
+                                <td class="sin_borde" v-if="this.empresa_sat_seleccionada == this.empresa_sat">
                                      <treeselect v-model="empresas_seleccionadas"
                                          :multiple="true"
                                          :options="empresas"
@@ -76,7 +91,7 @@
                 </div>
                 <hr />
                 <div class="row" >
-                    <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 700px;">
+                    <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
                         <table class="table table-sm table-fs-sm" id="sticky">
                             <thead >
                                 <tr>
@@ -119,7 +134,7 @@
                                     <th class="c100">RFC</th>
                                     <th >Razón Social</th>
 
-                                    <th >CFDI Cancelados 2020</th>
+                                    <th >CFDI Cancelados</th>
 
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
@@ -155,6 +170,126 @@
 
                             </thead>
                             <tbody>
+                            <tr class="sin_borde sin_proveedor" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click" >
+                                <td>
+                                    -
+                                </td>
+                                <td  >
+                                    -
+                                </td>
+                                <td>
+                                    {{sin_proveedor.razon_social}}
+                                </td>
+                                <!-- Cancelados-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                   -
+                                </td>
+                                <!-- Neto -->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <!--Omitir-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <!--Agregar-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!--CFDI I-->
+                                <td class="sin_borde">                                   &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!--CFDI E-->
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                   -
+
+                                </td>
+                                <!-- RECONOCIDOS-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!-- NO RECONOCIDOS-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!-- A REVISAR-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <!-- A REVISAR-->
+                                <td style="text-align: right; text-decoration: underline" :style="parseFloat(sin_proveedor.cantidad_cuentas)>0?`cursor : pointer`:``" v-on:click="verCuentas(sin_proveedor)" v-if="parseFloat(sin_proveedor.cantidad_cuentas)>0">
+                                     {{parseFloat(sin_proveedor.cantidad_cuentas) }}
+                                </td>
+                                 <td style="text-align: right" v-else>
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    {{sin_proveedor.importe_movimientos_pasivo}}
+                                </td>
+                                <td style="text-align: right">
+                                    {{sin_proveedor.diferencia }}
+                                </td>
+
+                            </tr>
                             <template v-for="(partida, i) in informe.partidas">
                                 <tr class="sin_borde" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click">
                                 <td>
@@ -423,7 +558,7 @@
                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="overflow-y: auto;max-height: 600px;">
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
@@ -481,7 +616,7 @@
                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="overflow-y: auto;max-height: 600px;">
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
@@ -513,7 +648,7 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{movimiento.fecha_poliza}}</td>
                                                 <td>{{movimiento.tipo_poliza}}</td>
-                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa"></PDFPoliza></td>
+                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></PDFPoliza></td>
                                                 <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
@@ -674,10 +809,10 @@ import {es} from "vuejs-datepicker/dist/locale";
 import CFDI from "../cfd/cfd-sat/CFDI";
 import DescargaCFDI from "../cfd/cfd-sat/DescargaCFDI";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
-
+import {ModelListSelect} from 'vue-search-select';
 export default {
     name: "Informe",
-    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker},
+    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
         return {
             informe : [],
@@ -702,12 +837,17 @@ export default {
             movimientos : [],
             importe_movimientos : 0,
             codigo_cuenta : '',
-            empresa_contpaq:''
+            empresa_contpaq:'',
+            empresa_sat : 1,
+            empresas_sat:[],
+            empresa_sat_seleccionada:'',
+            sin_proveedor : {},
+            abriendo_modal : 0,
         }
     },
     mounted() {
         this.getInforme();
-        this.fechasDeshabilitadas.to = new Date("2020/01/01");
+        this.fechasDeshabilitadas.to = new Date("2018/01/01");
         this.fechasDeshabilitadas.from = new Date("2020/12/31");
     },
     props: ['id'],
@@ -716,18 +856,28 @@ export default {
             this.cargando = true;
             this.fecha_inicial = this.fecha_inicial_input;
             this.fecha_final = this.fecha_final_input;
-            this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+
+            if( this.empresa_sat_seleccionada == this.empresa_sat){
+                this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+            }else{
+                this.empresas_seleccionadas_filtro = [];
+                this.empresas_seleccionadas = [];
+            }
+
+            this.empresa_sat_seleccionada = this.empresa_sat;
             return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
                 id:this.id,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
                 empresas : this.empresas_seleccionadas_filtro,
                 con2132 : this.con2132,
+                empresa_sat : this.empresa_sat_seleccionada,
             })
             .then(data => {
                 this.informe = data.informe;
                 this.empresas = data.informe.empresas;
-                //this.getMovimientos(this.informe.data[0])
+                this.empresas_sat = data.informe.empresas_sat;
+                this.sin_proveedor = data.informe.sin_proveedor[0];
             })
             .finally(() => {
                 this.cargando = false;
@@ -735,63 +885,77 @@ export default {
         },
         verCFDI(partida, tipo = 1)
         {
-
-            return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
-                id_proveedor_sat: partida.id_proveedor_sat,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                asociada_contpaq : null,
-                tipo : tipo,
-                empresas : this.empresas_seleccionadas_filtro
-            })
-            .then(data => {
-                this.lista_cfdi = data.informe;
-                this.razon_social = partida.razon_social;
-                this.rfc = partida.rfc;
-                this.total_cfdi = data.total;
-            })
-            .finally(() => {
-                $(this.$refs.modal_cfdi).appendTo('body')
-                $(this.$refs.modal_cfdi).modal('show');
-            });
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
+                    id_proveedor_sat: partida.id_proveedor_sat,
+                    fecha_inicial: this.fecha_inicial,
+                    fecha_final: this.fecha_final,
+                    asociada_contpaq: null,
+                    tipo: tipo,
+                    empresas: this.empresas_seleccionadas_filtro,
+                    empresa_sat: this.empresa_sat_seleccionada,
+                })
+                .then(data => {
+                    this.lista_cfdi = data.informe;
+                    this.razon_social = partida.razon_social;
+                    this.rfc = partida.rfc;
+                    this.total_cfdi = data.total;
+                })
+                .finally(() => {
+                    $(this.$refs.modal_cfdi).appendTo('body')
+                    $(this.$refs.modal_cfdi).modal('show');
+                    this.abriendo_modal = 0;
+                });
+            }
         },
         getMovimientos(cuenta)
         {
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro,
-                id_cuenta : cuenta.id_cuenta,
-            })
-                .then(data => {
-                    this.codigo_cuenta = cuenta.codigo_cuenta;
-                    this.movimientos = data.informe;
-                    this.importe_movimientos = cuenta.importe_movimiento;
-                    this.empresa_contpaq = cuenta.empresa_contpaq;
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
+                    fecha_inicial: this.fecha_inicial,
+                    fecha_final: this.fecha_final,
+                    empresas: this.empresas_seleccionadas_filtro,
+                    id_cuenta: cuenta.id_cuenta,
+                    empresa_sat: this.empresa_sat_seleccionada,
                 })
-                .finally(() => {
-                    $(this.$refs.modal_polizas).appendTo('body')
-                    $(this.$refs.modal_polizas).modal('show');
-                });
+                    .then(data => {
+                        this.codigo_cuenta = cuenta.codigo_cuenta;
+                        this.movimientos = data.informe;
+                        this.importe_movimientos = cuenta.importe_movimiento;
+                        this.empresa_contpaq = cuenta.empresa_contpaq;
+                    })
+                    .finally(() => {
+                        $(this.$refs.modal_polizas).appendTo('body')
+                        $(this.$refs.modal_polizas).modal('show');
+                        this.abriendo_modal = 0;
+                    });
+            }
         },
         verCuentas(partida)
         {
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerCuentasInformeSATLP2020', {
-                id: partida.id_proveedor_sat,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro,
-                con2132 : this.con2132,
-            })
-            .then(data => {
-                this.razon_social = partida.razon_social;
-                this.cuentas = data.informe;
-                this.importe_cuentas = partida.importe_movimientos_pasivo;
-            })
-            .finally(() => {
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
-            });
+            if(this.abriendo_modal == 0){
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerCuentasInformeSATLP2020', {
+                    id: partida.id_proveedor_sat,
+                    fecha_inicial : this.fecha_inicial,
+                    fecha_final : this.fecha_final,
+                    empresas : this.empresas_seleccionadas_filtro,
+                    con2132 : this.con2132,
+                    empresa_sat : this.empresa_sat_seleccionada,
+                })
+                .then(data => {
+                    this.razon_social = partida.razon_social;
+                    this.cuentas = data.informe;
+                    this.importe_cuentas = partida.importe_movimientos_pasivo;
+                })
+                .finally(() => {
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show');
+                    this.abriendo_modal = 0;
+                });
+            }
         },
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
@@ -827,12 +991,16 @@ export default {
 </script>
 
 <style scoped>
+tr.sin_proveedor td {
+    color: #e50c25;
+    font-weight: bold;
+}
 tr.hover td{
-    background-color: #eed092;
+    background-color: #b8daa9;
 }
 
 tr.click td{
-    background-color: rgba(227, 171, 52, 0.99);
+    background-color: #50b920;
 }
 
 .form-control {

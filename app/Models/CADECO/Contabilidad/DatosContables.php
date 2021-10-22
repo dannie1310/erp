@@ -5,6 +5,7 @@ namespace App\Models\CADECO\Contabilidad;
 use App\Models\CADECO\Obra;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 
 class DatosContables extends Model
 {
@@ -24,10 +25,17 @@ class DatosContables extends Model
         'retencion_antes_iva',
         'deductiva_antes_iva',
         'amortizacion_antes_iva',
+        'estado'
     ];
 
     protected $appends = ['mask'];
     //protected $dateFormat = 'Y-m-d H:i:s';
+
+
+    public function configuracion()
+    {
+        return $this->belongsTo(ConfiguracionObra::class, 'id_obra', 'id_obra');
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo|Obra
