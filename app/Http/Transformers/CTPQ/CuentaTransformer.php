@@ -28,7 +28,8 @@ class CuentaTransformer extends TransformerAbstract
         return [
             'id' => (int) $model->getKey(),
             'cuenta' => $model->Codigo,
-            'descripcion' => $model->Nombre
+            'descripcion' => $model->Nombre,
+            'cuenta_format' =>$model->cuenta_format,
         ];
     }
 
