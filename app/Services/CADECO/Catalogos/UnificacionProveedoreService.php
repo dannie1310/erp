@@ -39,6 +39,7 @@ class UnificacionProveedoreService
     public function store(array $data){
         try {
             DB::connection('cadeco')->beginTransaction();
+            dd($data);
             $unificacion = $this->repository->create(['id_empresa_unificadora' => $data['id_empresa']]);
             if($data['tipo_empresa'] != $data['tipo_empresa_actualizado']){
                 $unificacion->empresa->tipo_empresa = $data['tipo_empresa_actualizado'];
@@ -74,7 +75,7 @@ class UnificacionProveedoreService
                 $empresa->tipo_empresa = 666;
                 $empresa->save();
             }
-
+            dd('stop');
             DB::connection('cadeco')->commit();
 
             return $unificacion;
