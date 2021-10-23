@@ -2209,7 +2209,7 @@ export const routes = [
                             title: 'Informe CFDI vs Pasivos',
                             breadcrumb: {name: 'INFORME CFDI vs Pasivos', parent: 'contabilidad'},
                             middleware: [auth, permission],
-                            permission: ['consultar_informe_sat_lp_2020'],
+                            permission: ['consultar_informe_sat'],
                             general: true
                         }
                     },
@@ -2962,7 +2962,7 @@ export const routes = [
                 name: 'contabilidad-general',
                 meta: {
                     title: 'CONTABILIDAD GENERAL',
-                    middleware: [auth, permission],
+                    middleware: [auth],
                     permission: ['editar_poliza','configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq','consultar_log_edicion_poliza'],
                     general: true
                 }
@@ -3531,19 +3531,19 @@ export const routes = [
                             general: true
                         }
                     },
-                    {
-                        path: 'informe-general-sat',
-                        name: 'informe-general-sat',
-                        component: require('./components/fiscal/informes/InformeSAT.vue').default,
-                        meta: {
-                            title: 'Informe SAT',
-                            breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_informe_general_sat_lp_2020'],
-                            general: true
-                        }
-                    },
                 ]
+            },
+            {
+                path: 'informe-general-sat',
+                name: 'informe-general-sat',
+                component: require('./components/fiscal/informes/InformeSAT.vue').default,
+                meta: {
+                    title: 'Informe SAT',
+                    breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_informe_general_sat'],
+                    general: true
+                }
             },
             {
                 path: 'efos-empresa',

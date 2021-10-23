@@ -100,7 +100,7 @@
                     </li>
                 </ul>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_informe_general_sat_lp_2020',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_informe_general_sat',true)">
                 <router-link :to="{name: 'informe-general-sat'}" class="nav-link" :class="{active: this.$route.name == 'informe-general-sat'}">
                     <i class="fa fa-file-alt nav-icon"></i>
                     <p>Informe CFDI vs Pasivos</p>
