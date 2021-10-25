@@ -2926,6 +2926,18 @@ export const routes = [
                                     permission: 'consultar_avance_obra'
                                 }
                             },
+                            {
+                                path: ':id/aprobar',
+                                name: 'avance-obra-aprobar',
+                                component: require('./components/control-obra/avance-obra/Aprobar').default,
+                                props: true,
+                                meta: {
+                                    title: 'Aprobar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'aprobar_avance_obra'
+                                }
+                            },
                         ]
                     }
                 ]

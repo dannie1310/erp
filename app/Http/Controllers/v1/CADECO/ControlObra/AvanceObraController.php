@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\ControlObra\AvanceObraTransformer;
 use App\Services\CADECO\ControlObra\AvanceObraService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class AvanceObraController extends Controller
@@ -46,5 +47,10 @@ class AvanceObraController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function aprobar(Request $request, $id)
+    {
+        return $this->service->aprobar($id);
     }
 }

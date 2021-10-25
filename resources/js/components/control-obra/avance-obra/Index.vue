@@ -102,6 +102,7 @@
                         buttons: $.extend({}, {
                             id: avance.id,
                             show: true,
+                            aprobar: self.$root.can('eliminar_cotizacion_compra') && avance.estado == 0 ? true : false,
                         })
                     }));
                 },

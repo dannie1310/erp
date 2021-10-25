@@ -59,4 +59,9 @@ class AvanceObraService
     {
         return $this->repository->create($data);
     }
+
+    public function aprobar($id)
+    {
+        return $this->repository->show($id)->aprobar();
+    }
 }

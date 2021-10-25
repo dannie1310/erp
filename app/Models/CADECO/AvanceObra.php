@@ -179,4 +179,9 @@ class AvanceObra extends Transaccion
         $this->impuesto = $iva;
         $this->save();
     }
+
+    public function aprobar()
+    {
+        dd($this);
+    }
 }

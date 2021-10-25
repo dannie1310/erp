@@ -1202,6 +1202,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@aprobar')->where(['id' => '[0-9]+']);
         });
     });
 
