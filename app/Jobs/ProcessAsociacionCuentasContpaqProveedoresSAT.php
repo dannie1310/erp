@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\CTPQ\Cuenta;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CuentaContpaqProvedorSat;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDIPartida;
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCuentaProveedorPartida;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -15,16 +16,16 @@ class ProcessAsociacionCuentasContpaqProveedoresSAT implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $cuenta_proveedor;
+    protected $solicitud_asociacion_partida;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(CuentaContpaqProvedorSat $cuenta_proveedor)
+    public function __construct(SolicitudAsociacionCuentaProveedorPartida $partida)
     {
-        $this->cuenta_proveedor = $cuenta_proveedor;
+        $this->solicitud_asociacion_partida = $partida;
     }
 
     /**
@@ -34,7 +35,7 @@ class ProcessAsociacionCuentasContpaqProveedoresSAT implements ShouldQueue
      */
     public function handle()
     {
-        $this->cuenta_proveedor->cuenta->procesarAsociacionProveedor();
+        $this->solicitud_asociacion_partida->procesarAsociacion();
     }
 
     public function failed($exception)

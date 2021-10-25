@@ -141,6 +141,10 @@ class Cuenta extends Model
         return $query->where('Afectable', '=', 1);
     }
 
+    public function scopeAfectable($query){
+        return $query->where('Afectable', '=', 1);
+    }
+
     public function scopeCuentasPasivo($query, $id_empresa){
 
         $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::find($id_empresa);
@@ -186,11 +190,17 @@ class Cuenta extends Model
 
     }
 
-    public function procesarAsociacionProveedor($id_empresa_contpaq)
+    public function procesarAsociacionProveedor($id_empresa_contpaq = null)
     {
-        $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("IdEmpresaContpaq","=",$id_empresa_contpaq)->first();
-        DB::purge('cntpq');
-        Config::set('database.connections.cntpq.database', $empresaLocal->AliasBDD);
+        if($id_empresa_contpaq){
+            $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("IdEmpresaContpaq","=",$id_empresa_contpaq)->first();
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $empresaLocal->AliasBDD);
+        }else{
+            $alias_bdd = Config::get('database.connections.cntpq.database');
+            $empresaLocal = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$alias_bdd)->first();
+            $id_empresa_contpaq = $empresaLocal->IdEmpresaContpaq;
+        }
 
         $proveedorSAT = new ProveedorSAT();
         $proveedorSATService = new ProveedorSATService($proveedorSAT);
@@ -236,6 +246,6 @@ class Cuenta extends Model
             abort(400, $e->getMessage());
             throw $e;
         }
-        
+
     }
 }

@@ -53,8 +53,8 @@ class CuentaController extends Controller
     }
 
     public function asociarProveedor(Request $request){
-        $resp = $this->service->solicitaAsociacionProveedor($request->all());
-        return [];
+        $respuesta = $this->service->solicitaAsociacionProveedor($request->all());
+        return response()->json($respuesta, 200);
     }
 
     public function eliminarAsociacion(Request $request){
