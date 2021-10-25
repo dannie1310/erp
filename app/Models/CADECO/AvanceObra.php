@@ -103,7 +103,7 @@ class AvanceObra extends Transaccion
                 return 'Aprobada';
                 break;
             case 2:
-                return '#';
+                return 'Aprobada';
                 break;
         }
     }
@@ -182,6 +182,48 @@ class AvanceObra extends Transaccion
 
     public function aprobar()
     {
-        dd($this);
+        $this->validar();
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->cambioAnteriorEstatus();
+            $this->update([
+               'estado' => 1
+            ]);
+            $this->editarCantidadConceptos();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+    }
+
+    public function validar()
+    {
+        if($this->estado != 0)
+        {
+            abort(400, "El avance de obra ya fue aprobada previamente.");
+        }
+    }
+
+    public function cambioAnteriorEstatus()
+    {
+        $avances = self::where('estado', 1)->where('id_transaccion', '<', $this->id_transaccion)->orderBy('id_transaccion','desc')->get();
+        foreach ($avances as $avance) {
+            $avance->update([
+                'estado' => 2
+            ]);
+        }
+    }
+
+    public function editarCantidadConceptos()
+    {
+        foreach ($this->partidas as $partida)
+        {
+            $partida->concepto->update([
+                'cantidad_ejecutada' => $partida->concepto->cantidad_ejecutada + $partida->cantidad,
+                'estado' => $partida->numero == 1 ? 16 : 0
+            ]);
+        }
     }
 }
