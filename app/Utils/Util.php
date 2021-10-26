@@ -14,8 +14,8 @@ class Util
     public static function eliminaPalabrasComunes($string)
     {
         $string = str_replace(
-            array('.',',',' SA', ' DE ', ' CV', ' S RL',' SRL',' SR L',' S C'," SC", " Y "),
-            array('','','', ' ','', '','', '','','',' '),
+            array('.',',',' SA', ' DE ', ' CV', ' S RL',' SRL',' SR L',' S C'," SC", " Y "," S A C V"),
+            array('','','', ' ','', '','', '','','',' ',""),
             $string
         );
         return mb_strtoupper(trim($string));

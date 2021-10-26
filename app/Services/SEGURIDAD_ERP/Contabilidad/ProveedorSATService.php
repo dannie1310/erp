@@ -25,16 +25,9 @@ class ProveedorSATService{
     }
 
     public function buscarProveedorAsociar($data){
-        $hints = explode(' ', $data['nombre']);
-        foreach($hints as $i => $hint){
-            if(strlen(trim($hint)) < 3){
-                unset($hints[$i]);
-            } else if($hint == 'SA' || $hint == 'S.A.'){
-                unset($hints[$i]);
-            }else if($hint == 'CV' || $hint == 'C.V.'){
-                unset($hints[$i]);
-            }
-        }
+
+        $nombre = Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($data['nombre'])));
+        $hints = explode(' ', $nombre);
         $hints = array_values($hints);
         $resultado = $this->repository->buscarProveedorAsociar($hints);
         /*foreach($resultado as $proveedor){
