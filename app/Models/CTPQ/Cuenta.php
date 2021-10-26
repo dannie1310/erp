@@ -8,10 +8,10 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\CTPQ\Parametro;
 use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCuentaProveedorPartida;
 use Exception;
 use App\Utils\Util;
-use App\Models\CTPQ\Parametro;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Database\Eloquent\Model;
@@ -89,6 +89,13 @@ class Cuenta extends Model
         if(strlen($cta) >16){
             $cta = substr($cta,0,16).'..';
         }
+        return $cta;
+    }
+
+    public function getCuentaCompletaFormatAttribute()
+    {
+        $parametros = Parametro::first();
+        $cta = vsprintf(str_replace('X', '%s', $parametros->Mascarilla), str_split($this->Codigo));
         return $cta;
     }
 
