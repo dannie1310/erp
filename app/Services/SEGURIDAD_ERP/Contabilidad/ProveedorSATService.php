@@ -5,6 +5,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\Repositories\Repository;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\ProveedorSATRepository;
 use App\Utils\Util;
 
 class ProveedorSATService{
@@ -20,25 +21,15 @@ class ProveedorSATService{
      */
     public function __construct(ProveedorSAT $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new ProveedorSATRepository($model);
     }
 
     public function buscarProveedorAsociar($data){
-        $hints = explode(' ', $data['nombre']);
-        foreach($hints as $i => $hint){
-            if(strlen(trim($hint)) < 3){
-                unset($hints[$i]);
-            } else if($hint == 'SA' || $hint == 'S.A.'){
-                unset($hints[$i]);
-            }else if($hint == 'CV' || $hint == 'C.V.'){
-                unset($hints[$i]);
-            }
-        }
+
+        $nombre = Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($data['nombre'])));
+        $hints = explode(' ', $nombre);
         $hints = array_values($hints);
-        for($j = 0; $j < count($hints); $j++){
-            $this->repository->whereOr([['razon_social','like',"%$hints[$j]%"]]);
-        }
-        $resultado = $this->repository->all()->sortBy("razon_social");
+        $resultado = $this->repository->buscarProveedorAsociar($hints);
         /*foreach($resultado as $proveedor){
             $cuenta_nombre = Util::eliminaPalabrasComunes($data['nombre']);
             $razon_social = Util::eliminaPalabrasComunes($proveedor->razon_social);

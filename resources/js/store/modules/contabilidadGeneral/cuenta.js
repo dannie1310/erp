@@ -81,9 +81,9 @@ export default {
                                 .post(URI + 'asociar-proveedor', payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Asociación realizada correctamente", {
-                                        icon: "success",
-                                        timer: 2000,
+                                    swal(data.mensaje, {
+                                        icon: data.icon,
+                                        timer: 7000,
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);

@@ -562,17 +562,18 @@
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
-                                            <td colspan="3" style="border: none">
-                                                <h6>{{razon_social}}</h6>
+                                            <td colspan="4" style="border: none">
+                                                <b>{{razon_social}}</b>
                                             </td>
                                             <td style="text-align: right; border: none">
-                                                <h6>{{importe_cuentas }}</h6>
+                                                <b>{{importe_cuentas }}</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto">#</th>
                                             <th>Empresa</th>
                                             <th>Cuenta</th>
+                                            <th>Nombre de la Cuenta</th>
                                             <th>Monto</th>
                                         </tr>
                                         </thead>
@@ -581,12 +582,13 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{cuenta.empresa_contpaq}}</td>
                                                 <td v-on:click="getMovimientos(cuenta)" style="cursor: pointer; text-decoration: underline">{{cuenta.codigo_cuenta}}</td>
+                                                <td>{{cuenta.nombre_cuenta}}</td>
                                                 <td style="text-align: right">${{parseFloat(cuenta.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                              <tr>
-                                                <td style="text-align: right" colspan="3" class="sin_borde"><b>Total:</b></td>
+                                                <td style="text-align: right" colspan="4" class="sin_borde"><b>Total:</b></td>
                                                 <td style="text-align: right" class="sin_borde">{{importe_cuentas }}</td>
                                             </tr>
                                         </tfoot>
@@ -621,18 +623,23 @@
                                         <thead>
                                         <tr>
                                             <td colspan="5" style="border: none">
-                                                <h6>{{razon_social}}</h6>
+                                                <b>{{razon_social}}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" style="border: none">
+                                                <b>{{empresa_contpaq}}</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" style="border: none">
-                                                <h6>{{codigo_cuenta}}</h6>
+                                                <b>{{codigo_cuenta}}</b>
                                             </td>
                                             <td colspan="2" style="border: none">
-                                                <h6>{{empresa_contpaq}}</h6>
+                                                <b>{{nombre_cuenta}}</b>
                                             </td>
                                             <td style="text-align: right; border: none">
-                                                <h6>${{parseFloat(importe_movimientos).formatMoney(2,".",",") }}</h6>
+                                                <b>${{parseFloat(importe_movimientos).formatMoney(2,".",",") }}</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -649,7 +656,7 @@
                                                 <td>{{movimiento.fecha_poliza}}</td>
                                                 <td>{{movimiento.tipo_poliza}}</td>
                                                 <td>
-                                                    <poliza-show-modal v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></poliza-show-modal>
+                                                    <poliza-show-modal :key="movimiento.id_poliza" v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></poliza-show-modal>
                                                 <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
@@ -840,6 +847,7 @@ export default {
             movimientos : [],
             importe_movimientos : 0,
             codigo_cuenta : '',
+            nombre_cuenta : '',
             empresa_contpaq:'',
             empresa_sat : 1,
             empresas_sat:[],
@@ -924,6 +932,7 @@ export default {
                     empresa_sat: this.empresa_sat_seleccionada,
                 })
                     .then(data => {
+                        this.nombre_cuenta = cuenta.nombre_cuenta;
                         this.codigo_cuenta = cuenta.codigo_cuenta;
                         this.movimientos = data.informe;
                         this.importe_movimientos = cuenta.importe_movimiento;
