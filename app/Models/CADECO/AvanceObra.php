@@ -186,9 +186,8 @@ class AvanceObra extends Transaccion
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->cambioAnteriorEstatus();
-            $this->update([
-               'estado' => 1
-            ]);
+            $this->estado = 1;
+            $this->save();
             $this->editarCantidadConceptos();
             DB::connection('cadeco')->commit();
             return $this;
@@ -210,9 +209,8 @@ class AvanceObra extends Transaccion
     {
         $avances = self::where('estado', 1)->where('id_transaccion', '<', $this->id_transaccion)->orderBy('id_transaccion','desc')->get();
         foreach ($avances as $avance) {
-            $avance->update([
-                'estado' => 2
-            ]);
+            $avance->estado = 2;
+            $avance->save();
         }
     }
 
@@ -220,10 +218,9 @@ class AvanceObra extends Transaccion
     {
         foreach ($this->partidas as $partida)
         {
-            $partida->concepto->update([
-                'cantidad_ejecutada' => $partida->concepto->cantidad_ejecutada + $partida->cantidad,
-                'estado' => $partida->numero == 1 ? 16 : 0
-            ]);
+            $partida->concepto->cantidad_ejecutada = $partida->concepto->cantidad_ejecutada + $partida->cantidad;
+            $partida->concepto->estado = $partida->numero == 1 ? 16 : 0;
+            $partida->concepto->save();
         }
     }
 }

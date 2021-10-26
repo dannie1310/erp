@@ -102,7 +102,8 @@
                         buttons: $.extend({}, {
                             id: avance.id,
                             show: true,
-                            aprobar: self.$root.can('eliminar_cotizacion_compra') && avance.estado == 0 ? true : false,
+                            aprobar: self.$root.can('aprobar_avance_obra') && avance.estado == 0 ? true : false,
+                            revertir: self.$root.can('revertir_avance_obra') && avance.estado == 1 ? true : false,
                         })
                     }));
                 },

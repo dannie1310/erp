@@ -6,6 +6,9 @@
         <router-link  :to="{ name: 'avance-obra-aprobar', params: {id: value.id}}" v-if="value.aprobar" type="button" class="btn btn-sm btn-outline-success" title="Aprobar">
             <i class="fa fa-thumbs-o-up" />
         </router-link>
+        <router-link  :to="{ name: 'avance-obra-revertir', params: {id: value.id}}" v-if="value.revertir" type="button" class="btn btn-sm btn-outline-danger" title="Revertir">
+            <i class="fa fa-thumbs-down"></i>
+        </router-link>
     </div>
 </template>
 <script>
