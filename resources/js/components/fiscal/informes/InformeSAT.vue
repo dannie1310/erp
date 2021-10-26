@@ -649,7 +649,7 @@
                                                 <td>{{movimiento.fecha_poliza}}</td>
                                                 <td>{{movimiento.tipo_poliza}}</td>
                                                 <td>
-                                                    <poliza-show-modal v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></poliza-show-modal>
+                                                    <poliza-show-modal :key="movimiento.id_poliza" v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></poliza-show-modal>
                                                 <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
