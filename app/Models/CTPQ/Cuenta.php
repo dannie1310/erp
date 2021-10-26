@@ -8,6 +8,7 @@
 
 namespace App\Models\CTPQ;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCuentaProveedorPartida;
 use Exception;
 use App\Utils\Util;
 use App\Models\CTPQ\Parametro;
@@ -51,6 +52,14 @@ class Cuenta extends Model
         $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$db)->first();
 
         return $this->hasOne(CuentaContpaqProvedorSat::class,  'id_cuenta_contpaq','Id')
+            ->where("id_empresa_contpaq",$empresa->IdEmpresaContpaq);
+    }
+
+    public function solicitudAsociacionProveedorPartidas(){
+        $db = Config::get('database.connections.cntpq.database');
+        $empresa = \App\Models\SEGURIDAD_ERP\Contabilidad\Empresa::where("AliasBDD","=",$db)->first();
+
+        return $this->hasMany(SolicitudAsociacionCuentaProveedorPartida::class,  'id_cuenta_contpaq','Id')
             ->where("id_empresa_contpaq",$empresa->IdEmpresaContpaq);
     }
 
@@ -202,6 +211,8 @@ class Cuenta extends Model
             $id_empresa_contpaq = $empresaLocal->IdEmpresaContpaq;
         }
 
+        $cuenta_nombre = util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($this->Nombre)));
+
         $proveedorSAT = new ProveedorSAT();
         $proveedorSATService = new ProveedorSATService($proveedorSAT);
         $coincidencias = $proveedorSATService->buscarProveedorAsociar(["nombre"=>$this->Nombre]);
@@ -209,16 +220,17 @@ class Cuenta extends Model
 
         foreach ($coincidencias as $coincidencia)
         {
-            $cuenta_nombre = Util::eliminaPalabrasComunes($this->Nombre);
-            $razon_social = Util::eliminaPalabrasComunes($coincidencia->razon_social);
+            $razon_social = Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($coincidencia->razon_social)));
             $cercania = levenshtein($cuenta_nombre, $razon_social);
             $cercanias[] = [
                 "id_empresa_contpaq"=>$id_empresa_contpaq
                 , "cercania"=>$cercania
                 , "id_proveedor_sat"=>$coincidencia->id
-                , "nombre_cuenta"=>$this->Nombre
+                , "nombre_cuenta"=>$cuenta_nombre/*$this->Nombre*/
+                , "nombre_cuenta_original"=>$this->Nombre
                 , "id_cuenta_contpaq"=>$this->Id
-                , "razon_social"=>$coincidencia->razon_social
+                , "razon_social"=>$razon_social/*$coincidencia->razon_social*/
+                , "razon_social_original"=>$coincidencia->razon_social
             ];
         }
 
@@ -229,8 +241,16 @@ class Cuenta extends Model
             if($cercanias[0]["cercania"]<3){
                 $this->asociarCuenta($cercanias[0]);
             }
+            $solicitud_asociacion_partidas = $this->solicitudAsociacionProveedorPartidas()->orderBy("id", "desc")->first();
+            if($solicitud_asociacion_partidas){
+                $solicitud_asociacion_partidas->razon_social_proveedor = $cercanias[0]["razon_social"];
+                $solicitud_asociacion_partidas->razon_social_proveedor_original = $cercanias[0]["razon_social_original"];
+                $solicitud_asociacion_partidas->nombre_cuenta = $cercanias[0]["nombre_cuenta"];
+                $solicitud_asociacion_partidas->id_proveedor_sat = $cercanias[0]["id_proveedor_sat"];
+                $solicitud_asociacion_partidas->cercania = $cercanias[0]["cercania"];
+                $solicitud_asociacion_partidas->save();
+            }
         }
-
     }
 
     public function eliminarAsociacion(){

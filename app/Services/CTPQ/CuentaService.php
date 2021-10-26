@@ -129,13 +129,14 @@ class CuentaService
                 "base_datos" => $solicitud->base_datos,
                 "nombre_empresa" => $solicitud->nombre_empresa,
                 "id_cuenta_contpaq" => $cuenta->Id,
+                "nombre_cuenta_original"=>$cuenta->Nombre,
             ];
             $this->repository->generaPartidasAsociacion($data);
         }
         $idistribucion = 0;
         foreach($solicitud->partidas as $partida){
             ProcessAsociacionCuentasContpaqProveedoresSAT::dispatch($partida)->onQueue("q".$idistribucion);
-            //$partida->procesarAsociacionProveedor();
+            //$partida->procesarAsociacion();
             $idistribucion ++;
             if($idistribucion==5){
                 $idistribucion=0;

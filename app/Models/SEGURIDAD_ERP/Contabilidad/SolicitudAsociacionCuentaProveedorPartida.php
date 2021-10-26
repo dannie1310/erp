@@ -27,6 +27,12 @@ class SolicitudAsociacionCuentaProveedorPartida extends Model
         "cantidad_asociaciones_eliminadas",
         "id_empresa_contpaq",
         "id_cuenta_contpaq",
+        "nombre_cuenta",
+        "razon_social_proveedor",
+        "cercania",
+        "id_proveedor_sat",
+        "nombre_cuenta_original",
+        "razon_social_proveedor_original",
     ];
 
     public function solicitudAsociacion()
@@ -67,8 +73,19 @@ class SolicitudAsociacionCuentaProveedorPartida extends Model
         if($numero_polizas_requiere_cfdi>0){
             $this->registraPolizasCFDIRequerido($polizas_detectadas);
         }*/
-
         $this->cuenta->procesarAsociacionProveedor();
+
+        /*if($this->cuenta->cuentaContpaqProvedorSat){
+            $nombre_cuenta = $this->cuenta->Nombre;
+            $razon_social_proveedor = $this->cuenta->cuentaContpaqProvedorSat->proveedorSat->razon_social;
+
+            $this->id_proveedor_sat = $this->cuenta->cuentaContpaqProvedorSat->id_proveedor_sat;
+            $this->nombre_cuenta = $nombre_cuenta;
+            $this->cercania = $razon_social_proveedor;
+            $this->cercania = levenshtein($nombre_cuenta,$razon_social_proveedor);
+            $this->save();
+        }*/
+
 
         $this->finaliza($this->cuenta->cuentaContpaqProvedorSat()->count(), 0, 0);
     }
