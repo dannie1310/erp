@@ -394,6 +394,7 @@ ORDER BY
         $query = "SELECT
     dc.IDProveedor AS id_proveedor_sat,
     dc.Descripcion AS codigo_cuenta,
+    dc.Nombre AS nombre_cuenta,
     dc.IdCuenta AS id_cuenta,
     dec.Descripcion AS empresa_contpaq,
     SUM(hm.Importe) AS importe_movimiento
@@ -410,6 +411,7 @@ AND hm.IDEmpresaSAT = ".$data["empresa_sat"]."
 GROUP BY
     dc.IDProveedor,
     dc.Descripcion,
+    dc.Nombre,
     dc.IdCuenta,
     dec.Descripcion order by SUM(hm.Importe) desc";
 
