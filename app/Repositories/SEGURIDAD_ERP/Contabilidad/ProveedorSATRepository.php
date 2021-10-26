@@ -24,7 +24,7 @@ class ProveedorSATRepository extends Repository implements RepositoryInterface
     {
         $where_arr = [];
         for($j = 0; $j < count($hints); $j++){
-            $where_arr[] = "razon_social COLLATE Latin1_general_CI_AI like '".$hints[$j]."%'";
+            $where_arr[] = "razon_social COLLATE Latin1_general_CI_AI like '%".$hints[$j]."%'";
         }
         if(count($where_arr)>0){
             $where = implode(" OR ", $where_arr);
