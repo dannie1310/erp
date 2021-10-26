@@ -177,6 +177,7 @@
                     params:{ include: [ 'partidas.concepto' ]}
                 }).then(data => {
                     this.avance = data;
+                    this.$emit('cargaFinalizada', true);
                 }).finally(() => {
                     this.cargando = false;
                 })

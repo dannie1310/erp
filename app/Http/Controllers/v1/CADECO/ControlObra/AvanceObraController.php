@@ -43,6 +43,8 @@ class AvanceObraController extends Controller
 
         $this->middleware('permiso:consultar_avance_obra')->only(['show','paginate','index','find']);
         $this->middleware('permiso:registrar_avance_obra')->only(['store']);
+        $this->middleware('permiso:aprobar_avance_obra')->only(['aprobar']);
+        $this->middleware('permiso:revertir_avance_obra')->only(['revertir']);
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -52,5 +54,10 @@ class AvanceObraController extends Controller
     public function aprobar(Request $request, $id)
     {
         return $this->service->aprobar($id);
+    }
+
+    public function revertir($id)
+    {
+        return $this->service->revertir($id);
     }
 }

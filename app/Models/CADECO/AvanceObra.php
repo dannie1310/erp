@@ -182,7 +182,7 @@ class AvanceObra extends Transaccion
 
     public function aprobar()
     {
-        $this->validar();
+        $this->validar('aprobar');
         try {
             DB::connection('cadeco')->beginTransaction();
             $this->cambioAnteriorEstatus();
@@ -197,11 +197,19 @@ class AvanceObra extends Transaccion
         }
     }
 
-    public function validar()
+    public function validar($tipo_validacion)
     {
-        if($this->estado != 0)
+        if($tipo_validacion == 'aprobar')
         {
-            abort(400, "El avance de obra ya fue aprobada previamente.");
+            if ($this->estado != 0) {
+                abort(400, "El avance de obra ya fue aprobada previamente.");
+            }
+        }
+        if($tipo_validacion == 'revertir')
+        {
+            if ($this->estado == 0) {
+                abort(400, "El avance de obra no esta aprobada previamente.");
+            }
         }
     }
 
@@ -220,6 +228,40 @@ class AvanceObra extends Transaccion
         {
             $partida->concepto->cantidad_ejecutada = $partida->concepto->cantidad_ejecutada + $partida->cantidad;
             $partida->concepto->estado = $partida->numero == 1 ? 16 : 0;
+            $partida->concepto->save();
+        }
+    }
+
+    public function revertir()
+    {
+        $this->validar('revertir');
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->revertirCambioAnteriorEstatus();
+            $this->estado = 0;
+            $this->save();
+            $this->revertirEdicionCantidadConceptos();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+    }
+
+    public function revertirCambioAnteriorEstatus()
+    {
+        $avance = self::where('estado', 2)->where('id_transaccion', '<', $this->id_transaccion)->orderBy('id_transaccion', 'desc')->first();
+        $avance->estado = 1;
+        $avance->save();
+    }
+
+    public function revertirEdicionCantidadConceptos()
+    {
+        foreach ($this->partidas as $partida)
+        {
+            $partida->concepto->cantidad_ejecutada = $partida->concepto->cantidad_ejecutada - $partida->cantidad;
+            $partida->concepto->estado = 0;
             $partida->concepto->save();
         }
     }

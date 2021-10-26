@@ -4,14 +4,14 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-body">
-                        <tabla-datos v-bind:id="id" />
+                        <tabla-datos v-bind:id="id" @cargaFinalizada="iniciar"/>
                     </div>
                     <div class="card-footer">
                         <div class="pull-right">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">
                                 <i class="fa fa-angle-left"></i>Regresar
                             </button>
-                            <button type="submit" class="btn btn-primary" @click="revertir">
+                            <button type="submit" class="btn btn-danger" @click="revertir" :disabled="fin_carga == 0">
                                 <i class="fa fa-thumbs-down"></i>Revertir
                             </button>
                         </div>
@@ -28,7 +28,15 @@
         name: "revertir-avance-obra",
         props: ['id'],
         components: { TablaDatos },
+        data(){
+            return{
+                fin_carga: 0
+            }
+        },
         methods: {
+            iniciar() {
+                this.fin_carga = 1;
+            },
             salir() {
                 this.$router.push({name: 'avance-obra'});
             },

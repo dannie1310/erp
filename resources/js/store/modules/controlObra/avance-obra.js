@@ -136,7 +136,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Aprobar',
+                            text: 'Si, Revertir',
                             closeModal: false,
                         }
                     }

@@ -64,4 +64,9 @@ class AvanceObraService
     {
         return $this->repository->show($id)->aprobar();
     }
+
+    public function revertir($id)
+    {
+        return $this->repository->show($id)->revertir();
+    }
 }

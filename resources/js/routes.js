@@ -2933,9 +2933,21 @@ export const routes = [
                                 props: true,
                                 meta: {
                                     title: 'Aprobar Avance de Obra',
-                                    breadcrumb: { parent: 'avance-obra', name: 'VER'},
+                                    breadcrumb: { parent: 'avance-obra', name: 'APROBAR'},
                                     middleware: [auth, context, permission],
                                     permission: 'aprobar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/revertir',
+                                name: 'avance-obra-revertir',
+                                component: require('./components/control-obra/avance-obra/Revertir').default,
+                                props: true,
+                                meta: {
+                                    title: 'Revertir aprobación Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'REVERTIR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'revertir_avance_obra'
                                 }
                             },
                         ]
