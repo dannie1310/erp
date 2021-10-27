@@ -20,4 +20,10 @@ class AvanceObraRepository extends Repository implements RepositoryInterface
     {
         return $this->model->registrar($data);
     }
+    
+    public function update(array $data, $id)
+    {
+        $item = $this->show($id)->actualizar($data);
+        return $item;
+    }
 }

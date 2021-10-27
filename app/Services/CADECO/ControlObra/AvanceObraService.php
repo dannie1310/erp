@@ -74,4 +74,8 @@ class AvanceObraService
     {
         return $this->show($id)->eliminar($data['data']);
     }
+
+    public function update($data){
+        return $this->repository->update($data, $data['id_transaccion']);
+    }
 }

@@ -8,6 +8,7 @@ use App\Models\CADECO\AvanceObra\AvanceObraEliminado;
 use App\Models\CADECO\AvanceObra\AvanceObraPartidaEliminada;
 use DateTime;
 use DateTimeZone;
+use Exception;
 use Illuminate\Support\Facades\DB;
 
 class AvanceObra extends Transaccion
@@ -198,6 +199,28 @@ class AvanceObra extends Transaccion
             abort(400, $e);
         }
     }
+    
+    public function actualizar($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $cumplimiento = New DateTime($data['fecha_inicio']);
+            $cumplimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $vencimiento = New DateTime($data['fecha_termino']);
+            $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->fecha = $fecha->format("Y-m-d");
+            $this->cumplimiento = $cumplimiento->format("Y-m-d");
+            $this->vencimiento = $vencimiento->format("Y-m-d");
+            $this->save();
+            $this->actualizarPartidas($data['conceptos']);
+            DB::connection('cadeco')->commit();
+            return $this;
+        }catch(Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e);
+        }
+    }
 
     private function validar($tipo_validacion)
     {
@@ -312,6 +335,12 @@ class AvanceObra extends Transaccion
         if (($item = AvanceObraPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
             DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación del avance de obra, no se respaldo las partidas correctamente.');
+        }
+    }
+
+    public function actualizarPartidas($partidas){
+        foreach($partidas as $partida){
+            
         }
     }
 }

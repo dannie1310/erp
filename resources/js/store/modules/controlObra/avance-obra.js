@@ -124,6 +124,46 @@ export default {
                 });
             });
         },
+        edit(context, payload){
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Editar el Avance de Obra",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Editar',
+                            closeModal: false,
+                        }
+                    }
+                }).then((value) => {
+                    if (value) {
+                        axios
+                            .patch(URI + payload.id + '/editar', payload.data)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Edición avance de obra registrado correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        resolve(data);
+                                    })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        },
         revertir(context, payload){
             return new Promise((resolve, reject) => {
                 swal({
