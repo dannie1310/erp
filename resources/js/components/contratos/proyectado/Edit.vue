@@ -14,10 +14,11 @@
         <div class="card" v-else>
             <form role="form" @submit.prevent="validate">
                 <div class="card-body" v-if="contrato">
+                    <encabezado-contrato-proyectado v-bind:contrato_proyectado="contrato"></encabezado-contrato-proyectado>
                     <div class="row">
                         <div class="col-md-2">
                             <div class="form-group error-content">
-                                <label class="col-form-label">Fecha</label>
+                                <label class="col-form-label">Fecha:</label>
                                 <datepicker v-model="contrato.fecha_date"
                                             name = "fecha"
                                             :format = "formatoFecha"
@@ -262,7 +263,7 @@
                                                 <small class="badge badge-secondary">
                                                     <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
                                                 </small>
-                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)"></i>
+                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
                                                 <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
                                             </td>
                                             <td v-else></td>
@@ -331,9 +332,10 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import  ConceptoSelect from "../../cadeco/concepto/Select";
+    import EncabezadoContratoProyectado from "./Encabezado";
 export default {
     name: "contrato-proyectado-editar",
-    components: {Datepicker, es, ConceptoSelect},
+    components: {EncabezadoContratoProyectado, Datepicker, es, ConceptoSelect},
     props: ['id'],
     data() {
         return {
