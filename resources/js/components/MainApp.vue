@@ -71,7 +71,6 @@
         <!-- Control Sidebar -->
         <aside class="control-sidebar control-sidebar-light" >
             <div   v-if="$router.currentRoute.name != 'portal'" style="padding-bottom: 40px">
-
                 <MenuCompras  v-if="acceso_compras"></MenuCompras>
                 <MenuAlmacen v-if="acceso_almacenes"></MenuAlmacen>
                 <MenuAcarreos v-if="acceso_acarreos"/>
@@ -80,7 +79,7 @@
                 <MenuEntregaCfdi v-if="acceso_entrega_cfdi"></MenuEntregaCfdi>
                 <MenuFinanzas v-if="acceso_finanzas"></MenuFinanzas>
                 <MenuContabilidad v-if="acceso_contabilidad"></MenuContabilidad>
-
+                <MenuControlObra v-if="acceso_control_obra" />
             </div>
         </aside>
 
@@ -108,12 +107,13 @@
     import MenuFormatos from './formato/partials/Menu';
     import MenuAcarreos from './acarreos/partials/MenuSideControl';
     import MenuEntregaCfdi from "./solicitud-recepcion-cfdi/partials/MenuSideControl";
+    import MenuControlObra from "./control-obra/partials/MenuSideControl";
 
     export default {
         name: 'main-app',
         components: {AppBreadcrumb, AppSidebar, AppHeader, AppFooter, MenuEntregaCfdi,
 
-            MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos},
+            MenuAlmacen, MenuCatalogos, MenuCompras, MenuContratos, MenuFinanzas, MenuContabilidad, MenuFormatos, MenuAcarreos, MenuControlObra},
         props: ['sidebar', 'logo'],
 
         data() {
@@ -127,6 +127,7 @@
                 acceso_finanzas : false,
                 acceso_entrega_cfdi : false,
                 acceso_almacenes : false,
+                acceso_control_obra : false,
                 aviso : '',
                 id_aviso : '',
                 leyendo: false,
@@ -182,6 +183,7 @@
                 this.acceso_finanzas = this.sistemas.find(x=>x.url === 'finanzas') !== undefined ? true : false;
                 this.acceso_contabilidad = this.sistemas.find(x=>x.url === 'sistema_contable') !== undefined ? true : false;
                 this.acceso_entrega_cfdi = this.sistemas.find(x=>x.url === 'recepcion-cfdi') !== undefined ? true : false;
+                this.acceso_control_obra = this.sistemas.find(x => x.url === 'control_obra') !== undefined ? true :false;
             },
             $route (to, from){
                 this.getAviso();

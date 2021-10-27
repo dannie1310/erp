@@ -9,8 +9,8 @@
 namespace App\Models\CADECO;
 
 
-use Exception;
 use App\Facades\Context;
+use App\Models\CADECO\PresupuestoObra\PrecioVenta;
 use App\Scopes\ObraScope;
 use App\Scopes\ActivoScope;
 use Illuminate\Support\Facades\DB;
@@ -64,6 +64,11 @@ class Concepto extends Model
         return $this->hasMany(Responsable::class, 'id_concepto', 'id_concepto');
     }
 
+    public function precioVenta()
+    {
+        return $this->belongsTo(PrecioVenta::class, 'id_concepto', 'id_concepto');
+    }
+
     public function getAncestrosAttribute($nivel)
     {
         $size = strlen($nivel)/4;
@@ -86,7 +91,6 @@ class Concepto extends Model
 
     public function getPathAttribute()
     {
-        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
@@ -197,7 +201,6 @@ class Concepto extends Model
         } else {
             return "-";
         }
-
     }
 
     public function getMontoPresupuestadoFormatAttribute()
@@ -250,7 +253,46 @@ class Concepto extends Model
         {
             return $this->clave_concepto_select . $this->descripcion;
         }
+    }
 
+    public function getCantidadPresupuestadaCalculadaAttribute()
+    {
+        return $this->cantidad_presupuestada + $this->ajuste_cantidad;
+    }
+
+    public function getCantidadPresupuestadaCalculadaFormatAttribute()
+    {
+        return number_format($this->cantidad_presupuestada_calculada,2);
+    }
+
+    public function getPrecioProduccionAttribute()
+    {
+        return $this->precioVenta ? $this->precioVenta->precio_produccion : 0.0;
+    }
+
+    public function getPrecioProduccionFormatAttribute()
+    {
+        return number_format($this->precio_produccion,2);
+    }
+
+    public function getCantidadAnteriorAvanceAttribute()
+    {
+        return ItemAvanceObra::where('id_concepto', $this->id_concepto)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
+    }
+
+    public function getCantidadAnteriorAvanceFormatAttribute()
+    {
+        return number_format($this->cantidad_anterior_avance,4);
+    }
+
+    public function getMontoAvanceAttribute()
+    {
+        return (float) $this->cantidad_anterior_avance * (float) $this->precio_produccion;
+    }
+
+    public function getMontoAvanceFormatAttribute()
+    {
+        return number_format($this->monto_avance,4);
     }
 
     public function scopeRoots($query)
@@ -348,5 +390,50 @@ class Concepto extends Model
     public function calcularConsecutivoExtraordinario(){
         $con = Concepto::where('consecutivo_extraordinario', '>', 0)->orderBy('consecutivo_extraordinario', 'DESC')->first();
         return $con ? $con->consecutivo_extraordinario + 1 : 1;
+    }
+
+    public function getConceptosHijosMedible()
+    {
+        $conceptos = [];
+        $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
+        $num_nivel_anterior = 0;
+        $anterior_concepto_medible = false;
+        $i = 1;
+        $conc = [];
+        foreach ($conceptos_consulta as $concepto)
+        {
+            $conc = $concepto->toArray();
+            $conc['precio_venta'] =  $concepto->precio_produccion;
+            $conc['cantidad_presupuestada'] = $concepto->cantidad_presupuestada_calculada;
+            $conc['avance'] = '0.00';
+            $conc['cantidad_anterior_format'] = $concepto->cantidad_anterior_avance_format;
+            $conc['cantidad_anterior'] = (float) $concepto->cantidad_anterior_avance;
+            $conc['monto_avance'] = $concepto->monto_avance_format;
+            $conc['cantidad_actual'] = '0.00';
+            $conc['monto_actual'] = '0.00';
+            $conc['cumplido'] = false;
+
+            if($num_nivel_anterior == 0 || $anterior_concepto_medible == false)
+            {
+                $conc['i'] = $i;
+                $conceptos[$concepto->getKey()] = $conc;
+                $i++;
+            }else {
+                if (strlen($concepto->nivel) <= $num_nivel_anterior) {
+                    $anterior_concepto_medible = false;
+                    $conc['i'] = $i;
+                    $conceptos[$concepto->getKey()] = $conc;
+                    $i++;
+                }
+            }
+            if($anterior_concepto_medible == false) {
+                $num_nivel_anterior = strlen($concepto->nivel);
+            }
+            if((int) $concepto->concepto_medible == 3)
+            {
+                $anterior_concepto_medible = true;
+            }
+        }
+        return $conceptos;
     }
 }
