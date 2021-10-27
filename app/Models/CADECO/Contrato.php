@@ -164,15 +164,13 @@ class Contrato extends Model
     {
         $destino = Destino::where('id_transaccion', $this->id_transaccion)->where('id_concepto_contrato', $this->getKey());
         if($destino->first()) {
-            if (is_null($this->id_destino)) {
-                $destino->delete();
-            }else {
+            if($this->id_destino > 0)
+            {
                 $destino->update([
                     'id_concepto' => $this->id_destino,
                 ]);
-                $this->where('id_concepto', '=', $this->id_concepto)->update([
-                    'id_destino' => null
-                ]);
+                $this->id_destino = null;
+                $this->save();
             }
         }else {
             $this->registrarDestino();

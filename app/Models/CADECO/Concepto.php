@@ -115,7 +115,7 @@ class Concepto extends Model
         }
         return null;
     }
-    
+
     public function getIdPadreSgvAttribute()
     {
         if ($this->nivel_padre != '') {
@@ -323,10 +323,15 @@ class Concepto extends Model
             $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
             if($nivel_buscar != "")
             {
-                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
             }
         }
         return implode(" -> ",$path_corta);
+    }
+
+    public function getPathCortaSvgAttribute()
+    {
+        //TODO
     }
 
     public function setHistorico($id_confirmacion_cambio)
