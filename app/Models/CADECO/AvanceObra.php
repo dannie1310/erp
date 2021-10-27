@@ -151,7 +151,7 @@ class AvanceObra extends Transaccion
         }
     }
 
-    public function registrarPartidas($conceptos)
+    private function registrarPartidas($conceptos)
     {
         foreach ($conceptos as $concepto)
         {
@@ -171,7 +171,7 @@ class AvanceObra extends Transaccion
         }
     }
 
-    public function actualizarTotales()
+    private function actualizarTotales()
     {
         $subtotal = ItemAvanceObra::where('id_transaccion', $this->id_transaccion)->selectRaw('SUM([importe]) as subtotal')->first()->subtotal;
         $iva = ($subtotal * $this->obra->iva) / 100;
@@ -197,7 +197,7 @@ class AvanceObra extends Transaccion
         }
     }
 
-    public function validar($tipo_validacion)
+    private function validar($tipo_validacion)
     {
         if($tipo_validacion == 'aprobar')
         {
@@ -211,9 +211,16 @@ class AvanceObra extends Transaccion
                 abort(400, "El avance de obra no esta aprobada previamente.");
             }
         }
+        if($tipo_validacion == 'eliminar')
+        {
+            if($this->estado != 0)
+            {
+                abort(400, "Este avance de obra se encuentra aprobado no se puede eliminar.");
+            }
+        }
     }
 
-    public function cambioAnteriorEstatus()
+    private function cambioAnteriorEstatus()
     {
         $avances = self::where('estado', 1)->where('id_transaccion', '<', $this->id_transaccion)->orderBy('id_transaccion','desc')->get();
         foreach ($avances as $avance) {
@@ -222,7 +229,7 @@ class AvanceObra extends Transaccion
         }
     }
 
-    public function editarCantidadConceptos()
+    private function editarCantidadConceptos()
     {
         foreach ($this->partidas as $partida)
         {
@@ -249,20 +256,36 @@ class AvanceObra extends Transaccion
         }
     }
 
-    public function revertirCambioAnteriorEstatus()
+    private function revertirCambioAnteriorEstatus()
     {
         $avance = self::where('estado', 2)->where('id_transaccion', '<', $this->id_transaccion)->orderBy('id_transaccion', 'desc')->first();
         $avance->estado = 1;
         $avance->save();
     }
 
-    public function revertirEdicionCantidadConceptos()
+    private function revertirEdicionCantidadConceptos()
     {
         foreach ($this->partidas as $partida)
         {
             $partida->concepto->cantidad_ejecutada = $partida->concepto->cantidad_ejecutada - $partida->cantidad;
             $partida->concepto->estado = 0;
             $partida->concepto->save();
+        }
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validar('eliminar');
+            dd($motivo);
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
         }
     }
 }

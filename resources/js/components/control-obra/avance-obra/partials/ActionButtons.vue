@@ -9,6 +9,9 @@
         <router-link  :to="{ name: 'avance-obra-revertir', params: {id: value.id}}" v-if="value.revertir" type="button" class="btn btn-sm btn-outline-danger" title="Revertir">
             <i class="fa fa-thumbs-down"></i>
         </router-link>
+        <router-link  :to="{ name: 'avance-obra-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+            <i class="fa fa-trash"></i>
+        </router-link>
     </div>
 </template>
 <script>

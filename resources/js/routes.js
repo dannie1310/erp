@@ -2950,6 +2950,18 @@ export const routes = [
                                     permission: 'revertir_avance_obra'
                                 }
                             },
+                            {
+                                path: ':id/delete',
+                                name: 'avance-obra-delete',
+                                component: require('./components/control-obra/avance-obra/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'eliminar_avance_obra'
+                                }
+                            },
                         ]
                     }
                 ]

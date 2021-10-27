@@ -104,6 +104,7 @@
                             show: true,
                             aprobar: self.$root.can('aprobar_avance_obra') && avance.estado == 0 ? true : false,
                             revertir: self.$root.can('revertir_avance_obra') && avance.estado == 1 ? true : false,
+                            delete: self.$root.can('eliminar_avance_obra') && avance.estado == 0 ? true : false,
                         })
                     }));
                 },

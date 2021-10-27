@@ -1204,6 +1204,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@aprobar')->where(['id' => '[0-9]+']);
             $api->patch('{id}/revertir', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@revertir')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@destroy')->where(['id' => '[0-9]+']);
         });
     });
 

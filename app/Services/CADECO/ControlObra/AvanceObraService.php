@@ -69,4 +69,9 @@ class AvanceObraService
     {
         return $this->repository->show($id)->revertir();
     }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
 }
