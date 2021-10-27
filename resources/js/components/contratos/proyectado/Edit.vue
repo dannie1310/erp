@@ -195,7 +195,7 @@
                                             <td v-else>
                                                  <input type="text" class="form-control"
                                                         readonly="readonly"
-                                                        :title="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                        :title="partida.destino.concepto ? partida.destino.concepto.path : partida.destino"
                                                         :name="`destino_path[${i}]`"
                                                         data-vv-as="Destino"
                                                         v-model="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
