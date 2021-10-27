@@ -545,8 +545,8 @@ class Invitacion extends Model
                     $adicional['total_despues_descuento_partida_mc_format'] = $partida && $partida->total_despues_descuento_partida_mc >0 ? $partida->total_despues_descuento_partida_mc_format : '-';
                     $adicional['observaciones'] = $partida ? $partida->Observaciones : '';
                     $destino = $concepto->destino ? $concepto->destino->concepto_sgv : NULL;
-                    $adicional['path_corta'] = $destino ? $destino->path_corta : '';
-                    $adicional['path'] = $destino ? $destino->path_sgv : '';
+                    $adicional['path_corta'] = $destino ? $destino->getPathCortaSgv($this->id_obra) : '';
+                    $adicional['path'] = $destino ? $destino->getPathSgv($this->id_obra) : '';
                     $adicional['partida_activa'] = $partida ? ($partida->no_cotizado == 0) ? true : false : '';
                     $adicional['precio_unitario'] = $partida && $partida->precio_unitario_antes_descuento>0? number_format($partida->precio_unitario_antes_descuento, "2",".","") : '';
                     $adicional['descuento'] = $partida ? number_format($partida->PorcentajeDescuento, "2",".","") : '';
