@@ -10,7 +10,6 @@ class DestinoEliminado extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Contratos.destinos_eliminados';
-    protected $primaryKey = 'id_concepto_contrato';
     public $timestamps = false;
 
     protected $fillable = [
