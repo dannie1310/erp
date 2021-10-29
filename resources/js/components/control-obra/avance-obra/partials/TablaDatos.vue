@@ -9,70 +9,89 @@
         </div>
         <div class="row" v-else>
             <div class="col-md-12">
-                <div class="row  justify-content-end">
-                    <div class="col-md-2">
-                    <div class="card">
-                        <div class="card-header">
-                            <h5><b>Folio:</b> {{avance.numero_folio_format}}</h5>
-                        </div>
-                    </div>
+                <div class="row">
+                    <div class="offset-md-8 col-md-4">
+                        <span class="pull-right">
+                            <div class="card">
+                                <div class="card-body">
+                                    <table style="font-size: 1.3em">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
+                                                    <b>Avance de Obra</b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Folio:</td>
+                                                <td style="text-align: right">
+                                                    <b><span style="color:black; text-decoration: underline">{{avance.numero_folio_format}}</span></b>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>Fecha:</td>
+                                                <td style="text-align: right">
+                                                    <b>{{avance.fecha_format}}</b>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </span>
                     </div>
                 </div>
+                <br>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="table-responsive">
                             <table class="table table-bordered table-sm">
                                 <tr>
-                                    <th class="encabezado" colspan="11">
+                                    <th class="encabezado" colspan="7">
                                         {{avance.concepto_descripcion}}
                                     </th>
                                 </tr>
                                 <tr>
-                                    <th class="encabezado">
-                                        Fecha
-                                    </th>
-                                    <th class="encabezado" colspan="4">
+                                    <th class="encabezado" colspan="2">
                                         Periodo de Avance
                                     </th>
-                                    <th class="encabezado">Registró</th>
-                                    <th class="encabezado">
+                                    <th class="encabezado" rowspan="2">Registró</th>
+                                    <th class="encabezado" rowspan="2">
                                         Estado
                                     </th>
-                                    <th class="encabezado" colspan="4">
-                                        Totales
+                                    <th class="encabezado" rowspan="2">
+                                        Subtotal
+                                    </th>
+                                    <th class="encabezado" rowspan="2">
+                                        IVA
+                                    </th>
+                                    <th class="encabezado" rowspan="2">
+                                        Total
                                     </th>
                                 </tr>
                                 <tr>
-                                    <td rowspan="2">
-                                        {{avance.fecha_format}}
-                                    </td>
-                                    <th class="encabezado" rowspan="2">Inicio:</th>
-                                    <td rowspan="2">{{avance.cumplimiento_format}}</td>
-                                    <th class="encabezado" rowspan="2">Término:</th>
-                                    <td rowspan="2">
-                                        {{avance.vencimiento_format}}
-                                    </td>
-                                    <td rowspan="2" style="text-align: center">{{avance.nombre_usuario}}</td>
-                                    <td style="text-align: center" rowspan="2">
-                                        <estado v-bind:value="{color: avance.color_estado, descripcion: avance.descripcion_estado}" />
-                                    </td>
-                                    <th class="encabezado">Subtotal:</th>
-                                    <td>{{avance.subtotal_format}}</td>
-                                    <th class="encabezado">IVA:</th>
-                                    <td>{{avance.impuesto_format}}</td>
+                                    <th class="encabezado">Inicio</th>
+                                    <th class="encabezado">Término</th>
                                 </tr>
                                 <tr>
-                                    <th class="encabezado">Total:</th>
-                                    <td colspan="3">{{avance.total_format}}</td>
+                                    <td>{{avance.cumplimiento_format}}</td>
+                                    <td>{{avance.vencimiento_format}}</td>
+                                    <td style="text-align: center">{{avance.nombre_usuario}}</td>
+                                    <td style="text-align: center">
+                                        <estado v-bind:value="{color: avance.color_estado, descripcion: avance.descripcion_estado}" />
+                                    </td>
+                                    <td>{{avance.subtotal_format}}</td>
+                                    <td>{{avance.impuesto_format}}</td>
+                                    <td>{{avance.total_format}}</td>
                                 </tr>
                                 <template v-if="avance.observaciones!=''">
                                     <tr>
-                                        <th colspan="11" class="encabezado">
+                                        <th colspan="7" class="encabezado">
                                             Observaciones
                                         </th>
                                     </tr>
                                     <tr>
-                                        <td colspan="11">
+                                        <td colspan="7">
                                             {{avance.observaciones}}
                                         </td>
                                     </tr>
