@@ -858,8 +858,8 @@ export default {
     },
     mounted() {
         this.getInforme();
-        this.fechasDeshabilitadas.to = new Date("2018/01/01");
-        this.fechasDeshabilitadas.from = new Date("2020/12/31");
+        this.fechasDeshabilitadas.to = this.fecha_inicial_input;
+        this.fechasDeshabilitadas.from = this.fecha_final_input;
     },
     props: ['id'],
     methods: {
@@ -889,6 +889,8 @@ export default {
                 this.empresas = data.informe.empresas;
                 this.empresas_sat = data.informe.empresas_sat;
                 this.sin_proveedor = data.informe.sin_proveedor[0];
+                this.fecha_inicial = new Date(data.informe.rango_fechas.fecha_inicial);
+                this.fecha_final = new Date(data.informe.rango_fechas.fecha_final);
             })
             .finally(() => {
                 this.cargando = false;
@@ -999,6 +1001,22 @@ export default {
             return this.$store.getters['contabilidadGeneral/cuenta-saldo-negativo/mesSeleccionado'];
         },
     },
+    watch: {
+        empresa_sat(value) {
+            if(value !== '' && value !== null && value !== undefined){
+                var busqueda = this.empresas_sat.find(x=>x.id === value);
+                if(busqueda != undefined)
+                {
+                    this.fecha_inicial = new Date(busqueda.fecha_inicial);
+                    this.fecha_final = new Date(busqueda.fecha_final);
+                    this.fecha_inicial_input = this.fecha_inicial;
+                    this.fecha_final_input = this.fecha_final;
+                    this.fechasDeshabilitadas.to = this.fecha_inicial_input;
+                    this.fechasDeshabilitadas.from = this.fecha_final_input;
+                }
+            }
+        },
+    }
 }
 </script>
 
