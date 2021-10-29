@@ -4,6 +4,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\AvanceObra\AvanceObraEliminado;
+use App\Models\CADECO\AvanceObra\AvanceObraPartidaEliminada;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
@@ -275,10 +277,9 @@ class AvanceObra extends Transaccion
 
     public function eliminar($motivo)
     {
+        $this->validar('eliminar');
         try {
             DB::connection('cadeco')->beginTransaction();
-            $this->validar('eliminar');
-            dd($motivo);
             $this->delete();
             $this->revisarRespaldos($motivo);
             DB::connection('cadeco')->commit();
@@ -286,6 +287,31 @@ class AvanceObra extends Transaccion
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    /**
+     * Elimina las partidas
+     */
+    public function eliminarPartidas()
+    {
+        foreach ($this->partidas()->get() as $item) {
+            $item->delete();
+        }
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($avance = AvanceObraEliminado::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación del avance de obra, no se respaldo el avance de obra correctamente.');
+        } else {
+            $avance->motivo = $motivo;
+            $avance->save();
+        }
+        if (($item = AvanceObraPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación del avance de obra, no se respaldo las partidas correctamente.');
         }
     }
 }

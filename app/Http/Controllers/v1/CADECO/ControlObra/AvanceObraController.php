@@ -45,6 +45,7 @@ class AvanceObraController extends Controller
         $this->middleware('permiso:registrar_avance_obra')->only(['store']);
         $this->middleware('permiso:aprobar_avance_obra')->only(['aprobar']);
         $this->middleware('permiso:revertir_avance_obra')->only(['revertir']);
+        $this->middleware('permiso:eliminar_avance_obra')->only(['destroy']);
 
         $this->fractal = $fractal;
         $this->service = $service;
