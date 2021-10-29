@@ -5,6 +5,7 @@ namespace App\Informes\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
 use Illuminate\Support\Facades\DB;
@@ -17,17 +18,34 @@ class InformeSATLP
         $informe["empresas"] = InformeSATLP::getEmpresas($data);
         $informe["empresas_sat"] = InformeSATLP::getEmpresasSAT();
         $informe["sin_proveedor"] = InformeSATLP::getMovimientosSinProveedor($data);
+        $informe["rango_fechas"] = InformeSATLP::getRangoFechas($data);
+        $informe["empresa"] = InformeSATLP::getEmpresa($data);
         return $informe;
     }
 
+    public static function getEmpresa($data)
+    {
+        return EmpresaSAT::find($data["empresa_sat"])->razon_social;
+    }
 
+    public static function getRangoFechas($data)
+    {
+        $query = "select min(Fecha) as fecha_inicial, max(Fecha) as fecha_final
+from SEGURIDAD_ERP.InformeSAT.HecCFDICompletos where IDEmpresaSAT = ".$data["empresa_sat"];
+        $fechas = DB::connection("seguridad")->select($query);
+        $fechas = array_map(function ($value) {
+            return (array)$value;
+        }, $fechas);
+
+        return $fechas;
+    }
 
     public static function getEmpresas($data)
     {
         $informe = DB::connection("seguridad")->select("SELECT
     dec.IDEmpresaContpaq as id,
     cast(dec.Numero as varchar(100)) + ' ' + dec.Descripcion as label,
-    cast(dec.Numero as varchar(100)) + ' ' + dec.Descripcion as customLabel
+    cast(dec.Numero as varchar(100)) + ' ' + dec.Descripcion as customLabelr
 FROM
     SEGURIDAD_ERP.InformeSAT.DimEmpresasContpaq dec
 WHERE IDEmpresaSAT = ".$data["empresa_sat"]." or IDEmpresaSAT is null
@@ -45,9 +63,12 @@ ORDER BY
         $informe = DB::connection("seguridad")->select("SELECT
     dec.IDEmpresaSAT as id,
     dec.Descripcion as label,
-    dec.Descripcion as customLabel
+    dec.Descripcion as customLabel,
+       min(hc.Fecha) as fecha_inicial,
+       max(hc.Fecha) as fecha_final
 FROM
-    SEGURIDAD_ERP.InformeSAT.DimEmpresas dec
+    SEGURIDAD_ERP.InformeSAT.DimEmpresas dec join SEGURIDAD_ERP.InformeSAT.HecCFDICompletos as hc
+on hc.IDEmpresaSAT = dec.IDEmpresaSAT group by dec.IDEmpresaSAT, dec.Descripcion
 ORDER BY
     dec.Descripcion;");
         $informe = array_map(function ($value) {
@@ -143,7 +164,7 @@ ORDER BY
         return $informe;
     }
 
-    public static function  getInforme($data)
+    public static function getInforme($data)
     {
         $qry = "";
         $qry2132 = "";
