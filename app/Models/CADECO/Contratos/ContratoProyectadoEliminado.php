@@ -10,7 +10,6 @@ class ContratoProyectadoEliminado extends Model
 {
     protected $connection = 'cadeco';
     protected $table = 'Contratos.contratos_proyectados_eliminados';
-    protected $primaryKey = 'id_transaccion';
     public $timestamps = false;
 
     protected $fillable = [
