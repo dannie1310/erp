@@ -5,6 +5,7 @@ namespace App\Informes\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +19,13 @@ class InformeSATLP
         $informe["empresas_sat"] = InformeSATLP::getEmpresasSAT();
         $informe["sin_proveedor"] = InformeSATLP::getMovimientosSinProveedor($data);
         $informe["rango_fechas"] = InformeSATLP::getRangoFechas($data);
+        $informe["empresa"] = InformeSATLP::getEmpresa($data);
         return $informe;
+    }
+
+    public static function getEmpresa($data)
+    {
+        return EmpresaSAT::find($data["empresa_sat"])->razon_social;
     }
 
     public static function getRangoFechas($data)
