@@ -123,17 +123,8 @@ import tipoContrato from './modules/contratos/tipo-contrato';
 import solicitudCambio from './modules/contratos/solicitud-cambio';
 import invitacionCotizarContrato from "./modules/contratos/invitacion-cotizar";
 
-
-//ENTREGA CFDI
-
-import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
-import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
-import archivoCFDI from './modules/entregaCFDI/archivo';
-import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
-
-//RECEPCIÓN CFDI
-
-import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
+//CONTROL DE OBRA
+import avanceObra from './modules/controlObra/avance-obra';
 
 //CONTROL PRESUPUESTO
 import solicitudCambioPresupuesto from './modules/controlPresupuesto/solicitud-cambio';
@@ -143,6 +134,14 @@ import tarjeta from './modules/controlPresupuesto/tarjeta';
 import conceptoTarjeta from './modules/controlPresupuesto/concepto-tarjeta';
 import extraordinario from './modules/controlPresupuesto/extraordinario';
 
+//ENTREGA CFDI
+import solicitudRecepcionCFDI from './modules/entregaCFDI/solicitud-recepcion-cfdi';
+import tipoArchivo from './modules/entregaCFDI/ctg-tipo-archivo';
+import archivoCFDI from './modules/entregaCFDI/archivo';
+import tipoTransaccion from './modules/entregaCFDI/ctg-tipo-transaccion';
+
+//RECEPCIÓN CFDI
+import solicitudRecepcionCFDIProyecto from './modules/recepcionCFDI/solicitud-recepcion-cfdi';
 
 //FINANZAS
 import cargaMasivaPago from './modules/finanzas/carga-masiva-pago';
@@ -313,6 +312,8 @@ export default new Vuex.Store({
         'contratos/tipo-contrato': tipoContrato,
         'contratos/solicitud-cambio': solicitudCambio,
         'contratos/invitacion' : invitacionCotizarContrato,
+
+        'controlObra/avance-obra' : avanceObra,
 
         'control-presupuesto/solicitud-cambio': solicitudCambioPresupuesto,
         'control-presupuesto/variacion-volumen': variacionVolumen,

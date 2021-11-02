@@ -9,8 +9,8 @@
 namespace App\Models\CADECO;
 
 
-use Exception;
 use App\Facades\Context;
+use App\Models\CADECO\PresupuestoObra\PrecioVenta;
 use App\Scopes\ObraScope;
 use App\Scopes\ActivoScope;
 use Illuminate\Support\Facades\DB;
@@ -64,6 +64,11 @@ class Concepto extends Model
         return $this->hasMany(Responsable::class, 'id_concepto', 'id_concepto');
     }
 
+    public function precioVenta()
+    {
+        return $this->belongsTo(PrecioVenta::class, 'id_concepto', 'id_concepto');
+    }
+
     public function getAncestrosAttribute($nivel)
     {
         $size = strlen($nivel)/4;
@@ -86,7 +91,6 @@ class Concepto extends Model
 
     public function getPathAttribute()
     {
-        // dd($this->nivel_padre);
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
@@ -197,7 +201,6 @@ class Concepto extends Model
         } else {
             return "-";
         }
-
     }
 
     public function getMontoPresupuestadoFormatAttribute()
@@ -250,7 +253,46 @@ class Concepto extends Model
         {
             return $this->clave_concepto_select . $this->descripcion;
         }
+    }
 
+    public function getCantidadPresupuestadaCalculadaAttribute()
+    {
+        return $this->cantidad_presupuestada + $this->ajuste_cantidad;
+    }
+
+    public function getCantidadPresupuestadaCalculadaFormatAttribute()
+    {
+        return number_format($this->cantidad_presupuestada_calculada,2);
+    }
+
+    public function getPrecioProduccionAttribute()
+    {
+        return $this->precioVenta ? $this->precioVenta->precio_produccion : 0.0;
+    }
+
+    public function getPrecioProduccionFormatAttribute()
+    {
+        return number_format($this->precio_produccion,2);
+    }
+
+    public function getCantidadAnteriorAvanceAttribute()
+    {
+        return ItemAvanceObra::where('id_concepto', $this->id_concepto)->selectRaw('SUM(cantidad) AS cantidad')->first()->cantidad;
+    }
+
+    public function getCantidadAnteriorAvanceFormatAttribute()
+    {
+        return number_format($this->cantidad_anterior_avance,4);
+    }
+
+    public function getMontoAvanceAttribute()
+    {
+        return (float) $this->cantidad_anterior_avance * (float) $this->precio_produccion;
+    }
+
+    public function getMontoAvanceFormatAttribute()
+    {
+        return number_format($this->monto_avance,4);
     }
 
     public function scopeRoots($query)

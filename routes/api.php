@@ -81,6 +81,7 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\ConceptoController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ConceptoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ConceptoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/hijosMedibles', 'App\Http\Controllers\v1\CADECO\ConceptoController@conceptosHijosMedible')->where(['id' => '[0-9]+']);
         });
 
         // COSTOS
@@ -332,7 +333,6 @@ $api->version('v1', function ($api) {
     /**
      * ENTREGA DE CFDI
      */
-
     $api->group(['middleware' => 'api', 'prefix' => 'entrega-cfdi'], function ($api) {
         $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@index');
         $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDIController@paginate');
@@ -662,7 +662,6 @@ $api->version('v1', function ($api) {
     /**
      * RECEPCION DE CFDI
      */
-
     $api->group(['middleware' => 'api', 'prefix' => 'recepcion-cfdi'], function ($api) {
         $api->get('/', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@index');
         $api->get('paginate', 'App\Http\Controllers\v1\CADECO\RecepcionSolicitudes\SolicitudRecepcionCFDIController@paginate');
@@ -1193,6 +1192,24 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * CONTROL DE OBRA
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'control-obra'], function ($api) {
+        /**
+         * AVANCE OBRA
+         **/
+        $api->group(['prefix' => 'avance'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@aprobar')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/revertir', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@revertir')->where(['id' => '[0-9]+']);
+            $api->delete('{id}','App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@destroy')->where(['id' => '[0-9]+']);
+        });
+    });
+
+
+    /**
      * CONTROL DE CAMBIOS AL PRESUPUESTO
      */
     $api->group(['middleware' => 'api', 'prefix' => 'control-presupuesto'], function ($api){
@@ -1656,7 +1673,6 @@ $api->version('v1', function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\SCI\ModeloController@index');
         });
     });
-
 
     /**
      * REMESAS
