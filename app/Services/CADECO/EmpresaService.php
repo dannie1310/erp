@@ -81,6 +81,9 @@ class EmpresaService
 
     public function detalleUnificacion($data, $id){
         $empresa = $this->repository->show($id);
+        if($empresa->rfc == null){
+            abort(403, 'La empresa unificadora no tiene R.F.C., favor de registrarlo.');
+        }
         $empresas_unificar = $this->repository->getDuplicados($empresa->rfc);
         $datos = [];
         $datos['id_empresa'] = $empresas_unificar[0]->id_empresa;

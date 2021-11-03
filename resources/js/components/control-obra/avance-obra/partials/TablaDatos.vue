@@ -48,7 +48,7 @@
                             <table class="table table-bordered table-sm">
                                 <tr>
                                     <th class="encabezado" colspan="7">
-                                        {{avance.concepto_descripcion}}
+                                       [{{avance.concepto_nivel}}] {{avance.concepto_descripcion}}
                                     </th>
                                 </tr>
                                 <tr>
@@ -80,9 +80,9 @@
                                     <td style="text-align: center">
                                         <estado v-bind:value="{color: avance.color_estado, descripcion: avance.descripcion_estado}" />
                                     </td>
-                                    <td>{{avance.subtotal_format}}</td>
-                                    <td>{{avance.impuesto_format}}</td>
-                                    <td>{{avance.total_format}}</td>
+                                    <td style="text-align:right;">{{avance.subtotal_format}}</td>
+                                    <td style="text-align:right;">{{avance.impuesto_format}}</td>
+                                    <td style="text-align:right;">{{avance.total_format}}</td>
                                 </tr>
                                 <template v-if="avance.observaciones!=''">
                                     <tr>
@@ -108,6 +108,7 @@
                                     <tr>
                                         <th class="index_corto encabezado" rowspan="2">#</th>
                                         <th class="encabezado" rowspan="2">Clave</th>
+                                        <th class="encabezado" rowspan="2">Concepto</th>
                                         <th class="encabezado" rowspan="2">Unidad</th>
                                         <th class="encabezado" colspan="3">Cantidad</th>
                                         <th class="encabezado" rowspan="2">Precio Venta</th>
@@ -125,6 +126,7 @@
                                 <tbody>
                                     <tr v-for="(partida,i) in avance.partidas.data">
                                         <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                        <td> {{partida.concepto.nivel}}</td>
                                         <td v-if="partida.concepto.medible != 3"><b>{{partida.concepto.descripcion}}</b></td>
                                         <td v-else> {{partida.concepto.descripcion}}</td>
                                         <td style="text-align:center;">{{partida.concepto.unidad}}</td>

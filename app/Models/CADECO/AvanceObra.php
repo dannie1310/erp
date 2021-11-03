@@ -70,6 +70,15 @@ class AvanceObra extends Transaccion
         }
     }
 
+    public function getConceptoNivelAttribute()
+    {
+        try{
+            return $this->concepto->nivel;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
     public function getNombreUsuarioAttribute()
     {
         try{
@@ -90,7 +99,7 @@ class AvanceObra extends Transaccion
                 return '#4f9b34';
                 break;
             case 2:
-                return '#4f9b34';
+                return '#2C6AA4';
                 break;
         }
     }
@@ -105,7 +114,7 @@ class AvanceObra extends Transaccion
                 return 'Aprobada';
                 break;
             case 2:
-                return 'Aprobada';
+                return 'Cerrada';
                 break;
         }
     }

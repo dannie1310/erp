@@ -98,12 +98,12 @@ class Concepto extends Model
         }
     }
 
-    public function getPathSgvAttribute()
+    public function getPathSgv($idObra)
     {
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
-            return self::withoutGlobalScopes()->find($this->id_padre_sgv)->path_sgv . ' -> ' . $this->clave_concepto_select . $this->descripcion;
+            return self::withoutGlobalScopes()->where('id_obra', $idObra)->find($this->getIdPadreSgv($idObra))->getPathSgv($idObra) . ' -> ' . $this->clave_concepto_select . $this->descripcion;
         }
     }
 
@@ -120,10 +120,10 @@ class Concepto extends Model
         return null;
     }
 
-    public function getIdPadreSgvAttribute()
+    public function getIdPadreSgv($idObra)
     {
         if ($this->nivel_padre != '') {
-            return self::withoutGlobalScopes()->where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+            return self::withoutGlobalScopes()->where('id_obra', $idObra)->where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
         }
         return null;
     }
@@ -371,9 +371,18 @@ class Concepto extends Model
         return implode(" -> ",$path_corta);
     }
 
-    public function getPathCortaSvgAttribute()
+    public function getPathCortaSgv($idObra)
     {
-        //TODO
+        $path_corta = [];
+        for($i=2;$i>=0; $i--)
+        {
+            $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
+            if($nivel_buscar != "")
+            {
+                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->where('id_obra', $idObra)->first()->descripcion_clave_recortada;
+            }
+        }
+        return implode(" -> ",$path_corta);
     }
 
     public function setHistorico($id_confirmacion_cambio)
