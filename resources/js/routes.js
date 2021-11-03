@@ -2971,7 +2971,7 @@ export const routes = [
                                     title: 'Editar Avance de Obra',
                                     breadcrumb: { parent: 'avance-obra', name: 'EDITAR'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_avance_obra'
+                                    permission: 'editar_avance_obra'
                                 }
                             },
                         ]
