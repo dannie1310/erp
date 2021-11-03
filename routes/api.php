@@ -1201,6 +1201,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'avance'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@paginate');
             $api->post('/', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@store');
+            $api->patch('{id}/editar', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@update')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/aprobar', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@aprobar')->where(['id' => '[0-9]+']);
             $api->patch('{id}/revertir', 'App\Http\Controllers\v1\CADECO\ControlObra\AvanceObraController@revertir')->where(['id' => '[0-9]+']);

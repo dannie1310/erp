@@ -2962,6 +2962,18 @@ export const routes = [
                                     permission: 'eliminar_avance_obra'
                                 }
                             },
+                            {
+                                path: ':id/editar',
+                                name: 'avance-obra-edit',
+                                component: require('./components/control-obra/avance-obra/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_avance_obra'
+                                }
+                            },
                         ]
                     }
                 ]
