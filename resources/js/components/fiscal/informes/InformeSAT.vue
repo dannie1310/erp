@@ -890,8 +890,8 @@ export default {
                 this.empresas = data.informe.empresas;
                 this.empresas_sat = data.informe.empresas_sat;
                 this.sin_proveedor = data.informe.sin_proveedor[0];
-                this.fecha_inicial = new Date(data.informe.rango_fechas.fecha_inicial);
-                this.fecha_final = new Date(data.informe.rango_fechas.fecha_final);
+                this.fecha_inicial = new Date(data.informe.rango_fechas[0].fecha_inicial);
+                this.fecha_final = new Date(data.informe.rango_fechas[0].fecha_final);
                 this.empresa_sat_razon_social = data.informe.empresa;
             })
             .finally(() => {
