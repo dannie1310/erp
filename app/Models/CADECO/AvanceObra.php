@@ -199,26 +199,26 @@ class AvanceObra extends Transaccion
             abort(400, $e);
         }
     }
-    
+
     public function actualizar($data){
         try{
             DB::connection('cadeco')->beginTransaction();
-            $fecha =New DateTime($data['fecha']);
-            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if($this->estado != 0){
+                throw new Exception("Este avance de obra se encuentra aprobado no se puede editar.");
+            }
             $cumplimiento = New DateTime($data['fecha_inicio']);
             $cumplimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
             $vencimiento = New DateTime($data['fecha_termino']);
             $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $this->fecha = $fecha->format("Y-m-d");
             $this->cumplimiento = $cumplimiento->format("Y-m-d");
             $this->vencimiento = $vencimiento->format("Y-m-d");
             $this->save();
             $this->actualizarPartidas($data['conceptos']);
             DB::connection('cadeco')->commit();
             return $this;
-        }catch(Exception $e){
+        }catch(\Exception $e){
             DB::connection('cadeco')->rollBack();
-            abort(400, $e);
+            abort(400, $e->getMessage());
         }
     }
 
@@ -340,7 +340,13 @@ class AvanceObra extends Transaccion
 
     public function actualizarPartidas($partidas){
         foreach($partidas as $partida){
-            
+            $item = ItemAvanceObra::find($partida['id']);
+            if(($partida['cantidad'] + $item->concepto->cantidad_presupuestada) < 0){
+                throw new Exception("El avance de obra del concepto '" . $item->concepto->descripcion . "' debe ser igual o mayor a " . -$item->concepto->cantidad_presupuestada);
+            }
+            $item->cantidad = $partida['cantidad'];
+            $item->numero = $partida['cumplido']?1:0;
+            $item->save();
         }
     }
 }

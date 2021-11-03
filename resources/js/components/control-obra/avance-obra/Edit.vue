@@ -1,24 +1,47 @@
 <template>
     <span>
-        <div class="card" v-if="!avance">
+        <div class="card">
             <div class="card-body">
-                <div class="row" >
+                <span v-if="!avance">
                     <div class="col-md-12">
                         <div class="spinner-border text-success" role="status">
-                           <span class="sr-only">Cargando...</span>
+                            <span class="sr-only">Cargando...</span>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div class="card" v-else>
-            <form role="form" @submit.prevent="validate">
-                <div class="card-body">
-                    <div class="row  justify-content-end">
-                        <div class="col-md-2">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h5><b>Folio:</b> {{avance.numero_folio_format}}</h5>
+                </span>
+
+                <span v-else>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="offset-md-8 col-md-4">
+                                    <span class="pull-right">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <table style="font-size: 1.3em">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td colspan="2" style="border-bottom: 1px solid #9e9e9e; text-align: center">
+                                                                <b>Avance de Obra</b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Folio:</td>
+                                                            <td style="text-align: right">
+                                                                <b><span style="color:black; text-decoration: underline">{{avance.numero_folio_format}}</span></b>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Fecha:</td>
+                                                            <td style="text-align: right">
+                                                                <b>{{avance.fecha_format}}</b>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -27,23 +50,20 @@
                         <div class="col-md-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <label for="fecha">Fecha:</label>
-                                        </div>
-                                        <div class="col-md-10">
-                                            <datepicker v-model = "avance.fecha"
-                                                        id="fecha"
-                                                        name = "fecha"
-                                                        :format = "formatoFecha"
-                                                        :language = "es"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
-                                            ></datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                        </div>
+                                    <div class="col-md-2">
+                                        <label for="fecha">Fecha:</label>
+                                    </div>
+                                    <div class="col-md-10">
+                                        <datepicker v-model = "avance.fecha" :disabled="true"
+                                                    id="fecha"
+                                                    name = "fecha"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +127,7 @@
                     </div>
                     <br />
                     <div class="row">
-                        <div  class="col-md-12">
+                        <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table table-sm table-bordered " id="tabla-resumen-monedas">
                                     <thead>
@@ -134,14 +154,14 @@
                                             <td> {{partida.concepto.descripcion}}</td>
                                             <td style="text-align:center;">{{partida.concepto.unidad}}</td>
                                             <td style="text-align:right;">{{partida.concepto.cantidad_presupuestada_calculada}}</td>
-                                            <td style="text-align:right;">{{partida.concepto.cantidad_anterior_avance}}</td>
+                                            <td style="text-align:right;">{{partida.cantidad_anterior_avance}}</td>
                                             <td>
                                                 <input type="text"
                                                         class="form-control"
                                                         v-on:keyup="getEditarCantidades(partida)"
                                                         :name="`avance[${i}]`"
                                                         data-vv-as="Avance"
-                                                        v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{0,6})?$/}"
+                                                        v-validate="{required: true, min_value:-(partida.concepto.cantidad_presupuestada_calculada+100), regex: /^[+-]?[0-9]\d*(\.\d{0,6})?$/}"
                                                         :class="{'is-invalid': errors.has(`avance[${i}]`)}"
                                                         v-model="partida.cantidad"
                                                         style="text-align: right" />
@@ -183,17 +203,17 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" v-on:click="salir">
-                        <i class="fa fa-angle-left"></i>
-                        Regresar</button>
-                    <button type="submit" class="btn btn-primary">
-                        Continuar
-                        <i class="fa fa-angle-right"></i>
-                    </button>
-                </div>
-            </form>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" v-on:click="salir">
+                            <i class="fa fa-angle-left"></i>
+                            Regresar</button>
+                        <button type="button" class="btn btn-primary" v-on:click="validate">
+                            Continuar
+                            <i class="fa fa-angle-right"></i>
+                        </button>
+                    </div>
+                </span>
+            </div>
         </div>
     </span>
 </template>
