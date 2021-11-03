@@ -34,6 +34,7 @@ class AvanceObraTransformer extends TransformerAbstract
             'nombre_usuario' => $model->nombre_usuario,
             'concepto_descripcion' => $model->concepto_descripcion,
             'cumplimiento' => $model->getOriginal('cumplimiento'),
+            'concepto_nivel' => $model->concepto_nivel,
             'cumplimiento_format' => $model->cumplimiento_format,
             'vencimiento' => $model->vencimiento,
             'vencimiento_format' => $model->vencimiento_format,
