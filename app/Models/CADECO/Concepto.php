@@ -94,12 +94,12 @@ class Concepto extends Model
         }
     }
 
-    public function getPathSgvAttribute()
+    public function getPathSgv($idObra)
     {
         if ($this->nivel_padre == '') {
             return $this->clave_concepto_select .$this->descripcion;
         } else {
-            return self::withoutGlobalScopes()->find($this->id_padre_sgv)->path_sgv . ' -> ' . $this->clave_concepto_select . $this->descripcion;
+            return self::withoutGlobalScopes()->where('id_obra', $idObra)->find($this->getIdPadreSgv($idObra))->getPathSgv($idObra) . ' -> ' . $this->clave_concepto_select . $this->descripcion;
         }
     }
 
@@ -115,11 +115,11 @@ class Concepto extends Model
         }
         return null;
     }
-    
-    public function getIdPadreSgvAttribute()
+
+    public function getIdPadreSgv($idObra)
     {
         if ($this->nivel_padre != '') {
-            return self::withoutGlobalScopes()->where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+            return self::withoutGlobalScopes()->where('id_obra', $idObra)->where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
         }
         return null;
     }
@@ -323,7 +323,21 @@ class Concepto extends Model
             $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
             if($nivel_buscar != "")
             {
-                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+                $path_corta[]= Concepto::where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+            }
+        }
+        return implode(" -> ",$path_corta);
+    }
+
+    public function getPathCortaSgv($idObra)
+    {
+        $path_corta = [];
+        for($i=2;$i>=0; $i--)
+        {
+            $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
+            if($nivel_buscar != "")
+            {
+                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->where('id_obra', $idObra)->first()->descripcion_clave_recortada;
             }
         }
         return implode(" -> ",$path_corta);
@@ -343,5 +357,50 @@ class Concepto extends Model
     public function calcularConsecutivoExtraordinario(){
         $con = Concepto::where('consecutivo_extraordinario', '>', 0)->orderBy('consecutivo_extraordinario', 'DESC')->first();
         return $con ? $con->consecutivo_extraordinario + 1 : 1;
+    }
+
+    public function getConceptosHijosMedible()
+    {
+        $conceptos = [];
+        $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
+        $num_nivel_anterior = 0;
+        $anterior_concepto_medible = false;
+        $i = 1;
+        $conc = [];
+        foreach ($conceptos_consulta as $concepto)
+        {
+            $conc = $concepto->toArray();
+            $conc['precio_venta'] =  $concepto->precio_produccion;
+            $conc['cantidad_presupuestada'] = $concepto->cantidad_presupuestada_calculada;
+            $conc['avance'] = '0.00';
+            $conc['cantidad_anterior_format'] = $concepto->cantidad_anterior_avance_format;
+            $conc['cantidad_anterior'] = (float) $concepto->cantidad_anterior_avance;
+            $conc['monto_avance'] = $concepto->monto_avance_format;
+            $conc['cantidad_actual'] = '0.00';
+            $conc['monto_actual'] = '0.00';
+            $conc['cumplido'] = false;
+
+            if($num_nivel_anterior == 0 || $anterior_concepto_medible == false)
+            {
+                $conc['i'] = $i;
+                $conceptos[$concepto->getKey()] = $conc;
+                $i++;
+            }else {
+                if (strlen($concepto->nivel) <= $num_nivel_anterior) {
+                    $anterior_concepto_medible = false;
+                    $conc['i'] = $i;
+                    $conceptos[$concepto->getKey()] = $conc;
+                    $i++;
+                }
+            }
+            if($anterior_concepto_medible == false) {
+                $num_nivel_anterior = strlen($concepto->nivel);
+            }
+            if((int) $concepto->concepto_medible == 3)
+            {
+                $anterior_concepto_medible = true;
+            }
+        }
+        return $conceptos;
     }
 }

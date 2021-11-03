@@ -4,6 +4,8 @@
 namespace App\Models\CTPQ;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use Illuminate\Database\Eloquent\Model;
 
 class AsocCFDI extends Model
@@ -20,6 +22,11 @@ class AsocCFDI extends Model
     ];
 
     public $timestamps = false;
+
+    public function CFDI()
+    {
+        return $this->belongsTo(CFDSAT::class, 'UUID', 'uuid');
+    }
 
     public static function getUltimoFolio()
     {

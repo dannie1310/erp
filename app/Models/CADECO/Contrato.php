@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Subcontratos\AsignacionContratistaPartida;
 
@@ -81,12 +82,26 @@ class Contrato extends Model
         return $query->where("nodo_cambio_precio","=",1);
     }
 
+    public function scopeRoots($query)
+    {
+        return $query->whereRaw('LEN(nivel) = 4');
+    }
+
+    public function scopeContrato($query, $id_contrato)
+    {
+        return $query->where('id_transaccion','=', $id_contrato);
+    }
+
     public function getCantidadHijosAttribute()
     {
-        $contratos = $this->contrato->contratos()->where("nivel","LIKE",$this->nivel."%")
-            ->where("nivel","!=",$this->nivel)
-            ->get();
-        return count($contratos);
+        if(Context::getIdObra())
+        {
+            $contratos = $this->contrato->contratos()->where("nivel", "LIKE", $this->nivel . "%")
+                ->where("nivel", "!=", $this->nivel)
+                ->get();
+            return count($contratos);
+        }
+        return null;
     }
 
     public function getDescripcionFormatAttribute()
@@ -114,6 +129,24 @@ class Contrato extends Model
         return $this->hijos()->count() ? true : false;
     }
 
+    public function getEsHojaAttribute()
+    {
+        return $this->unidad ? true : false;
+    }
+
+    public function getClaveContratoSelectAttribute()
+    {
+        if($this->clave != ''){
+            return "[" . $this->clave ."] ";
+        }
+        return "";
+    }
+
+    public function getNivelNumAttribute()
+    {
+        return substr_count($this->nivel, '.');
+    }
+
     public function registrarDestino(){
         if($this->cantidad_original > 0){
             Destino::create([
@@ -125,24 +158,22 @@ class Contrato extends Model
                 'id_destino' => null
             ]);
         }
-
     }
 
-    public function getClaveContratoSelectAttribute()
+    public function editarDestino()
     {
-        if($this->clave != ''){
-            return "[" . $this->clave ."] ";
+        $destino = Destino::where('id_transaccion', $this->id_transaccion)->where('id_concepto_contrato', $this->getKey());
+        if($destino->first()) {
+            if($this->id_destino > 0)
+            {
+                $destino->update([
+                    'id_concepto' => $this->id_destino,
+                ]);
+                $this->id_destino = null;
+                $this->save();
+            }
+        }else {
+            $this->registrarDestino();
         }
-        return "";
-    }
-
-    public function scopeRoots($query)
-    {
-        return $query->whereRaw('LEN(nivel) = 4');
-    }
-
-    public function scopeContrato($query, $id_contrato)
-    {
-        return $query->where('id_transaccion','=', $id_contrato);
     }
 }

@@ -18,6 +18,8 @@ use App\Models\CADECO\Contratos\DestinoEliminado;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\PDF\Contratos\ContratoProyectadoFormato;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class ContratoProyectado extends Transaccion
@@ -265,6 +267,14 @@ class ContratoProyectado extends Transaccion
         return $this->presupuestos->count('id_transaccion');
     }
 
+    public function getPuedeEditarPartidasAttribute()
+    {
+        if(Context::getIdObra()) {
+            return $this->numero_presupuestos == 0 ? true : false;
+        }
+        return false;
+    }
+
     /**
      * Métodos
      */
@@ -377,5 +387,112 @@ class ContratoProyectado extends Transaccion
             }
         }
 
+    }
+
+    public function editar($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha_date']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $this->update([
+                'fecha' => $fecha->format("Y-m-d"),
+                'cumplimiento' => $data['cumplimiento'],
+                'vencimiento' => $data['vencimiento'],
+                'referencia' => strtoupper($data['referencia'])
+            ]);
+
+            if($this->puede_editar_partidas)
+            {
+                $partidas_viejas = [];
+                foreach ($data['contratos']['data'] as $key => $contrato)
+                {
+                    if(array_key_exists('id',$contrato))
+                    {
+                        $partidas_viejas[$contrato['id']] = $contrato['id'];
+                    }
+                }
+
+                foreach ($this->contratos as $contrato)
+                {
+                    if(!array_key_exists($contrato->getKey(), $partidas_viejas))
+                    {
+                        $contrato->delete();
+                    }
+                }
+
+                $nivel_anterior = 0;
+                $nivel_contrato_anterior = '';
+                foreach ($data['contratos']['data'] as $key => $contrato)
+                {
+                    $nivel = '';
+                    if($nivel_contrato_anterior == ''){
+                        $nivel = '000.';
+                        $nivel_contrato_anterior = $nivel;
+                        $nivel_anterior = $contrato['nivel_num'];
+                    }else{
+                        if($nivel_anterior + 1 == $contrato['nivel_num']){
+                            $cant = Contrato::where('nivel', 'LIKE', $nivel_contrato_anterior.'___.')->where('id_transaccion', '=', $data['id'])->count();
+                            $nivel = $nivel_contrato_anterior . str_pad($cant, 3, 0, 0) . '.';
+                            $nivel_contrato_anterior = $nivel;
+                            $nivel_anterior = $contrato['nivel_num'];
+                        }else{
+                            $nivel_nuevo = (int) substr($nivel_contrato_anterior,0,3);
+                            $nivel = substr($nivel_contrato_anterior, 0, (($contrato['nivel_num'] - 1) * 4)) . str_pad($nivel_nuevo+1, 3, 0, 0) . '.';
+                            $nivel_contrato_anterior = $nivel;
+                            $nivel_anterior = $contrato['nivel_num'];
+                        }
+                    }
+                    $datos = array();
+                    $datos['nivel'] = $nivel;
+                    $datos['descripcion'] = str_replace('_','',$contrato['descripcion']);
+                    $datos['clave'] = $contrato['clave'];
+                    if($contrato['es_hoja']){
+
+                        if(array_key_exists('id_destino', $contrato))
+                        {
+                            $datos['id_destino'] = $contrato['id_destino'];
+                        }else{
+                            $datos['id_destino'] = $contrato['destino']['id_concepto'];
+                        }
+                        $datos['unidad'] = $contrato['unidad'];
+                        $datos['cantidad_original'] = $contrato['cantidad_original'];
+                        $datos['cantidad_presupuestada'] = $contrato['cantidad_original'];
+                    }else{
+                        if (array_key_exists('destino', $contrato) && $contrato['destino'] == '')
+                        {
+                            $datos['id_destino'] = NULL;
+                        }
+                        $datos['unidad'] = NULL;
+                        $datos['cantidad_original'] = NULL;
+                        $datos['cantidad_presupuestada'] = NULL;
+                    }
+                    if(array_key_exists('id',$contrato))
+                    {
+                        $con =  Contrato::where('id_concepto',$contrato['id'])->first();
+                        $con->update($datos);
+                    }else{
+                        $datos['id_transaccion'] = $data['id'];
+                        $this->conceptos()->create($datos);
+                    }
+                }
+            }else{
+                foreach ($data['contratos']['data'] as $key => $contrato)
+                {
+                    if($contrato['es_hoja'] && array_key_exists('id_destino',$contrato))
+                    {
+                        $con = Contrato::where('id_concepto', $contrato['id'])->first();
+                        $con->update([
+                           'id_destino' => $contrato['id_destino']
+                        ]);
+                    }
+                }
+            }
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 }

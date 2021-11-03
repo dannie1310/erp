@@ -1,8 +1,8 @@
 <template>
     <span>
-        <span v-if="txt" @click="init" style="cursor: pointer; text-decoration: underline; color: #003eff" >{{txt}}</span>
-        <button @click="init" type="button" class="btn btn-outline-success btn-sm" title="PDF Póliza" v-else>
-            <i class="fa fa-file-pdf-o"></i>
+        <span v-if="txt!='' && (txt_btn =='' || txt_btn == undefined)" @click="init" style="cursor: pointer; text-decoration: underline; color: #003eff" >{{txt}}</span>
+        <button @click="init" type="button" class="btn btn-outline-success" :class="{'btn-sm': txt_btn==''}" title="PDF Póliza" v-else>
+            <i class="fa fa-file-pdf-o"></i>{{txt_btn}}
         </button>
 
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
@@ -29,7 +29,7 @@
 
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
                     </div>
                 </div>
             </div>
@@ -39,7 +39,7 @@
 
 <script>
     export default {
-        props: ['id', 'id_empresa', 'txt'],
+        props: ['id', 'id_empresa', 'txt', 'txt_btn'],
         data() {
             return {
             }

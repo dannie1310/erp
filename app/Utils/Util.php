@@ -11,6 +11,16 @@ namespace App\Utils;
 
 class Util
 {
+    public static function eliminaPalabrasComunes($string)
+    {
+        $string = str_replace(
+            array('.',',',' SAPI',' SA', ' DE ', ' CV', ' S RL',' SRL',' SR L',' S C'," SC", " Y "," S A C V", " D ECV"),
+            array('','','','', ' ','', '','', '','','',' ',"",""),
+            $string
+        );
+        return mb_strtoupper(trim($string));
+    }
+
     function elimina_caracteres_especiales($string){
         //echo $string;
         //$string = trim($string);

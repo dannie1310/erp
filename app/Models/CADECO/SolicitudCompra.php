@@ -335,7 +335,7 @@ class SolicitudCompra extends Transaccion
      */
     private function validar()
     {
-        if($this->estado == 1)
+        if($this->estado == 1 && $this->cotizaciones->count() > 0)
         {
             abort(500, "Esta solicitud de compra se encuentra aprobada.");
         }

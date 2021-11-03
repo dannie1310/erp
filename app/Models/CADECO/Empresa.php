@@ -96,6 +96,11 @@ class Empresa extends Model
         return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa');
     }
 
+    public function transaccionesSgv()
+    {
+        return $this->hasMany(Transaccion::class, 'id_empresa', 'id_empresa')->withoutGlobalScopes();
+    }
+
     public function usuario ()
     {
         return $this->belongsTo(Usuario::class, 'UsuarioRegistro', 'idusuario');
@@ -210,6 +215,10 @@ class Empresa extends Model
     public function scopeResponsableFondoFijo($query)
     {
         return $query->where('tipo_empresa',32);
+    }
+
+    public function scopeConRfc($query){
+        return $query->whereNotNull('rfc');
     }
 
     public function getTipoAttribute()

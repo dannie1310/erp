@@ -1,19 +1,31 @@
 <template>
     <span>
-        <span v-if="encontradas">
+        <div class="card" v-if="buscando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <span v-else>
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
+                        <span style="font-weight: bold;">{{this.empresa}}</span>
                         <button @click="descargarZIP" class="btn btn-primary float-right" style="margin-left:5px">
                             <i class="fa fa-file-excel-o"></i> Descarga Masiva ZIP
                         </button>
                         <button @click="abrir" class="btn btn-primary float-right" :disabled="polizas.length == 0">
-                            <i class="fa fa-download"></i> Descargar Formatos.
+                            <i class="fa fa-download"></i> Descargar Formatos
                         </button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <datatable v-bind="$data" />
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                         </div>
                     </div>
                 </div>
@@ -113,6 +125,7 @@
         props: ['id_empresa'],
         data() {
             return {
+                empresa : '',
                 procesando:false,
                 cargando: false,
                 conectando:false,
@@ -132,7 +145,7 @@
                     { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Monto', field: 'monto', tdClass: 'td_money', thClass: 'th_money', sortable: true},
                     { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
-                    { title: 'Acciones', field: 'buttons', tdClass: 'td_money_input',  thClass: 'th_money_input',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c120',  thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -251,6 +264,7 @@
                         params: this.query
                     })
                     .then(data => {
+                        this.empresa = data.data[0].empresa;
                         this.encontradas = true;
                         this.$store.commit('contabilidadGeneral/poliza/SET_POLIZAS', data.data);
                         this.$store.commit('contabilidadGeneral/poliza/SET_META', data.meta);

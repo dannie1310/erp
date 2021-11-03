@@ -85,6 +85,13 @@
             create() {
                 this.$router.push({name: 'solicitud-compra-create'});
             },
+            validaEstado(solicitud){
+                if(parseInt(solicitud.autorizacion_requerida == 1)){
+                    return solicitud.cotizaciones == 0
+                }else{
+                    return solicitud.cotizaciones == 0
+                }
+            }
         },
         computed: {
             solicitudes(){
@@ -115,7 +122,7 @@
                             solicitud_consulta : false,
                             aprobar: (self.$root.can('aprobar_solicitud_compra') && (solicitud.estado == 0) && (solicitud.autorizacion_requerida == 1)) ? true : false,
                             delete: (self.$root.can('eliminar_solicitud_compra') && (solicitud.estado == 0) && solicitud.complemento) ? true : false,
-                            edit: (self.$root.can('editar_solicitud_compra') && solicitud.estado == 0  && solicitud.complemento) ? true : false,
+                            edit: (self.$root.can('editar_solicitud_compra') && self.validaEstado(solicitud)  && solicitud.complemento) ? true : false,
                             id: solicitud.id,
                             transaccion: {id:solicitud.id, tipo:17},
                         })

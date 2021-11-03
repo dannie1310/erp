@@ -908,6 +908,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/edit',
+                                name: 'proyectado-edit',
+                                component: require('./components/contratos/proyectado/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Contrato Proyectado',
+                                    breadcrumb: { parent: 'proyectado', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_contrato_proyectado'
+                                }
+                            },
+                            {
                                 path: ':id_contrato/presupuesto/create',
                                 name: 'presupuesto-create',
                                 component: require('./components/contratos/presupuesto/Create').default,
@@ -2194,10 +2206,10 @@ export const routes = [
                         name: 'informe-sat',
                         component: require('./components/contabilidad/informes/InformeSAT.vue').default,
                         meta: {
-                            title: 'Informe SAT',
-                            breadcrumb: {name: 'INFORME SAT LP 2020', parent: 'contabilidad'},
+                            title: 'Informe CFDI vs Pasivos',
+                            breadcrumb: {name: 'INFORME CFDI vs Pasivos', parent: 'contabilidad'},
                             middleware: [auth, permission],
-                            permission: ['consultar_informe_sat_lp_2020'],
+                            permission: ['consultar_informe_sat'],
                             general: true
                         }
                     },
@@ -2950,7 +2962,7 @@ export const routes = [
                 name: 'contabilidad-general',
                 meta: {
                     title: 'CONTABILIDAD GENERAL',
-                    middleware: [auth, permission],
+                    middleware: [auth],
                     permission: ['editar_poliza','configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq','consultar_log_edicion_poliza'],
                     general: true
                 }
@@ -3262,6 +3274,42 @@ export const routes = [
                         }
                     }
                 ]
+            },
+            {
+                path: 'asociacion-cuenta-proveedor',
+                component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"asociacion-cuenta-proveedor",
+                        component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/SeleccionarEmpresa.vue').default,
+                        meta: {
+                            title: 'Seleccionar Empresa',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'SELECCIONAR EMPRESA'},
+                            middleware: [auth,permission],
+                            permission:['asociar_cuentas_contpaq_con_proveedor'],
+                            general: true
+                        }
+                    }
+                ]
+            },
+            {
+                path: ':id_empresa/cuentas',
+                props:true,
+                component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"cuentas-proveedor",
+                        component: require('./components/contabilidad-general/asociacion-cuenta-proveedor/Index.vue').default,
+                        meta: {
+                            title: 'Asociación Cuenta Proveedor',
+                            breadcrumb: {parent: 'contabilidad-general', name: 'ASOCIACIÓN CTA PROVEEDOR'},
+                            middleware: [auth],
+                            general: true
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -3483,19 +3531,19 @@ export const routes = [
                             general: true
                         }
                     },
-                    {
-                        path: 'informe-general-sat',
-                        name: 'informe-general-sat',
-                        component: require('./components/fiscal/informes/InformeSAT.vue').default,
-                        meta: {
-                            title: 'Informe SAT',
-                            breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_informe_general_sat_lp_2020'],
-                            general: true
-                        }
-                    },
                 ]
+            },
+            {
+                path: 'informe-general-sat',
+                name: 'informe-general-sat',
+                component: require('./components/fiscal/informes/InformeSAT.vue').default,
+                meta: {
+                    title: 'Informe SAT',
+                    breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_informe_general_sat'],
+                    general: true
+                }
             },
             {
                 path: 'efos-empresa',

@@ -10,7 +10,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group error-content">
                                             <label class="col-form-label">Fecha:</label>
-                                            <datepicker v-model = "solicitud.fecha"
+                                            <datepicker v-model = "solicitud.fecha" :disabled="solicitud.estado == 1"
                                                         name = "fecha"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -43,7 +43,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="id_tipo">Tipo</label>
-                                            <select class="form-control"
+                                            <select class="form-control" :disabled="solicitud.estado == 1"
                                                     data-vv-as="Tipo"
                                                     name="id_tipo"
                                                     :error="errors.has('id_tipo')"
@@ -58,7 +58,7 @@
                                     <div class="col-md-2"  v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
-                                            <select class="form-control"
+                                            <select class="form-control" :disabled="solicitud.estado == 1"
                                                     data-vv-as="Área Solicitante"
                                                     name="id_area_solicitante"
                                                     v-model="solicitud.complemento.id_area_solicitante"
@@ -73,7 +73,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Fecha Requisición Origen:</label>
-                                            <datepicker v-model = "solicitud.complemento.fecha_requisicion_origen"
+                                            <datepicker v-model = "solicitud.complemento.fecha_requisicion_origen" :disabled="solicitud.estado == 1"
                                                         name = "fecha_requisicion"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -89,7 +89,7 @@
                                         <div class="form-group">
                                             <label>Folio Requisición Origen</label>
                                             <input
-                                                type="number"
+                                                type="number" :disabled="solicitud.estado == 1"
                                                 data-vv-as="Folio Requisición"
                                                 class="form-control"
                                                 placeholder="Folio Requisición"
@@ -116,7 +116,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="id_tipo">Tipo</label>
-                                            <select class="form-control"
+                                            <select class="form-control" :disabled="solicitud.estado == 1"
                                                     data-vv-as="Tipo"
                                                     name="id_tipo"
                                                     :error="errors.has('id_tipo')"
@@ -131,7 +131,7 @@
                                     <div class="col-md-2" v-if="configuracion && configuracion.configuracion_area_solicitante == 1">
                                         <div class="form-group">
                                             <label for="id_area_solicitante">Área Solicitante</label>
-                                            <select class="form-control"
+                                            <select class="form-control" :disabled="solicitud.estado == 1"
                                                     data-vv-as="Área Solicitante"
                                                     name="id_area_solicitante"
                                                     v-model="solicitud.id_area_solicitante"
@@ -146,7 +146,7 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Fecha Requisición Origen:</label>
-                                            <datepicker v-model = "solicitud.fecha_requisicion_origen"
+                                            <datepicker v-model = "solicitud.fecha_requisicion_origen" :disabled="solicitud.estado == 1"
                                                         name = "fecha_requisicion"
                                                         :format = "formatoFecha"
                                                         :language = "es"
@@ -162,7 +162,7 @@
                                         <div class="form-group">
                                             <label>Folio Requisición Origen</label>
                                             <input
-                                                type="number"
+                                                type="number" :disabled="solicitud.estado == 1"
                                                 data-vv-as="Folio Requisición"
                                                 class="form-control"
                                                 placeholder="Folio Requisición"
@@ -179,7 +179,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group row error-content" v-if="solicitud.complemento">
                                                 <textarea
-                                                    name="concepto"
+                                                    name="concepto" :disabled="solicitud.estado == 1"
                                                     class="form-control"
                                                     v-model="solicitud.complemento.concepto"
                                                     v-validate="{required: true}"
@@ -190,7 +190,7 @@
                                         </div>
                                         <div class="form-group row error-content" v-else>
                                                 <textarea
-                                                    name="concepto"
+                                                    name="concepto" :disabled="solicitud.estado == 1"
                                                     class="form-control"
                                                     v-model="solicitud.concepto"
                                                     v-validate="{required: true}"
@@ -221,7 +221,7 @@
                                                           <button type="button" class="btn btn-success btn-sm" v-if="cargando" title="Cargando...">
                                                             <i class="fa fa-spin fa-spinner"></i>
                                                         </button>
-                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else>
+                                                        <button type="button" class="btn btn-success btn-sm" @click="addPartidas()" v-else :disabled="solicitud.estado == 1">
                                                             <i class="fa fa-plus"></i>
                                                         </button>
                                                     </th>
@@ -235,6 +235,7 @@
                                                     <td v-if="partida.material">{{partida.material.descripcion}}</td>
                                                     <td v-else>
                                                         <MaterialSelect
+                                                            :disabled="solicitud.estado == 1"
                                                             :name="`material[${i}]`"
                                                             :scope="scope"
                                                             v-model="partida.material"
@@ -258,7 +259,7 @@
                                                         <div class="invalid-feedback" v-show="errors.has('id_material')">{{ errors.first('id_material') }}</div>
                                                     </td>
                                                     <td>
-                                                        <input type="number"
+                                                        <input type="number" :disabled="solicitud.estado == 1"
                                                                min="0.01"
                                                                step=".01"
                                                                class="form-control"
@@ -272,7 +273,7 @@
                                                     <td style="width:120px;" v-if="partida.material">{{partida.material.unidad}}</td>
                                                     <td style="width:120px;" v-else></td>
                                                     <td class="fecha" v-if="partida.entrega">
-                                                        <datepicker v-model="partida.entrega.fecha"
+                                                        <datepicker v-model="partida.entrega.fecha" :disabled="solicitud.estado == 1"
                                                                     :name="`fecha[${i}]`"
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
@@ -284,7 +285,7 @@
                                                         <div class="invalid-feedback" v-show="errors.has(`fecha[${i}]`)">{{ errors.first(`fecha[${i}]`) }}</div>
                                                     </td>
                                                     <td class="fecha" v-else>
-                                                        <datepicker v-model="partida.fecha_entrega"
+                                                        <datepicker v-model="partida.fecha_entrega" :disabled="solicitud.estado == 1"
                                                                     :name="`fecha[${i}]`"
                                                                     :format = "formatoFecha"
                                                                     :language = "es"
@@ -325,7 +326,7 @@
                                                         <i class="fas fa-paste button" v-on:click="pegar_destino(partida)" title="Pegar"></i>
                                                     </td>
                                                     <td style="width:150px;" v-if="partida.complemento">
-                                                        <textarea class="form-control"
+                                                        <textarea class="form-control" :disabled="solicitud.estado == 1"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
                                                                   v-validate="{}"
@@ -334,7 +335,7 @@
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                     </td>
                                                     <td style="width:150px;" v-else>
-                                                        <textarea class="form-control"
+                                                        <textarea class="form-control" :disabled="solicitud.estado == 1"
                                                                   :name="`observaciones[${i}]`"
                                                                   data-vv-as="Observaciones"
                                                                   v-validate="{}"
@@ -343,7 +344,7 @@
                                                         <div class="invalid-feedback" v-show="errors.has(`observaciones[${i}]`)">{{ errors.first(`observaciones[${i}]`) }}</div>
                                                     </td>
                                                     <td>
-                                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
+                                                        <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)" :disabled="solicitud.estado == 1"><i class="fa fa-trash"></i></button>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -360,7 +361,7 @@
                                     <div class="col-md-12">
                                         <div class="form-group row error-content">
                                                 <textarea
-                                                    name="observaciones"
+                                                    name="observaciones" :disabled="solicitud.estado == 1"
                                                     id="observaciones"
                                                     class="form-control"
                                                     v-model="solicitud.observaciones"
@@ -562,6 +563,9 @@
                     })
             },
             modalDestino(i) {
+                if(this.solicitud.estado == 1){
+                    return
+                }
                 this.index_temporal = i;
 
                 if(this.solicitud.partidas.data[this.index_temporal].entrega != undefined)
@@ -609,6 +613,9 @@
                 this.$validator.reset();
             },
             copiar_destino(partida){
+                if(this.solicitud.estado == 1){
+                    return
+                }
                 if(partida.destino != undefined)
                 {
                     this.destino_copiado = partida.destino
@@ -630,6 +637,9 @@
                 }
             },
             pegar_destino(partida){
+                if(this.solicitud.estado == 1){
+                    return
+                }
                 if(partida.entrega != undefined)
                 {
                     if(partida.entrega.almacen != undefined && partida.entrega.almacen != null)
