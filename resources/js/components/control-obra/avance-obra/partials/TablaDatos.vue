@@ -48,7 +48,7 @@
                             <table class="table table-bordered table-sm">
                                 <tr>
                                     <th class="encabezado" colspan="7">
-                                        {{avance.concepto_descripcion}}
+                                       [{{avance.concepto_nivel}}] {{avance.concepto_descripcion}}
                                     </th>
                                 </tr>
                                 <tr>

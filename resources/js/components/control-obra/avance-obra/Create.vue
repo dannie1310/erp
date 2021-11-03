@@ -114,6 +114,7 @@
                                         <tr>
                                              <th class="index_corto" rowspan="2">#</th>
                                             <th rowspan="2">Clave</th>
+                                            <th rowspan="2">Concepto</th>
                                             <th rowspan="2">Unidad</th>
                                             <th colspan="3">Cantidad</th>
                                             <th rowspan="2">Precio Venta</th>
@@ -131,6 +132,7 @@
                                     <tbody>
                                         <tr v-for="(partida,i) in hijos">
                                             <td style="text-align:center; vertical-align:inherit;">{{partida.i}}</td>
+                                            <td> {{partida.nivel}}</td>
                                             <td v-if="partida.concepto_medible != 3"><b>{{partida.descripcion}}</b></td>
                                             <td v-else> {{partida.descripcion}}</td>
                                             <td style="text-align:center;">{{partida.unidad}}</td>

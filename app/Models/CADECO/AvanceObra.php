@@ -70,6 +70,15 @@ class AvanceObra extends Transaccion
         }
     }
 
+    public function getConceptoNivelAttribute()
+    {
+        try{
+            return $this->concepto->nivel;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
+
     public function getNombreUsuarioAttribute()
     {
         try{

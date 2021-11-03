@@ -33,6 +33,7 @@ class AvanceObraTransformer extends TransformerAbstract
             'numero_folio_format' => $model->numero_folio_format,
             'nombre_usuario' => $model->nombre_usuario,
             'concepto_descripcion' => $model->concepto_descripcion,
+            'concepto_nivel' => $model->concepto_nivel,
             'cumplimiento_format' => $model->cumplimiento_format,
             'vencimiento_format' => $model->vencimiento_format,
             'subtotal_format' => $model->subtotal_format,
