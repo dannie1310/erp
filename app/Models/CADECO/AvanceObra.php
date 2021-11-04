@@ -134,6 +134,7 @@ class AvanceObra extends Transaccion
      */
     public function registrar(array $data)
     {
+        $this->validarConceptos($data['conceptos']);
         try
         {
             DB::connection('cadeco')->beginTransaction();
@@ -321,6 +322,16 @@ class AvanceObra extends Transaccion
         if (($item = AvanceObraPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
             DB::connection('cadeco')->rollBack();
             abort(400, 'Error en el proceso de eliminación del avance de obra, no se respaldo las partidas correctamente.');
+        }
+    }
+
+    private function validarConceptos($conceptos)
+    {
+        foreach ($conceptos as $concepto)
+        {
+            if ($concepto['concepto_medible'] == 3 && (float)$concepto['avance'] != 0) {
+                dd($concepto);
+            }
         }
     }
 }

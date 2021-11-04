@@ -280,11 +280,8 @@
             },
             getEditarCantidades(partida)
             {
-               console.log(partida['cantidad_actual'] , partida['precio_venta'])
-                console.log(partida['cantidad_actual'] * partida['precio_venta'])
                 partida['cantidad_actual'] = parseFloat(partida['cantidad_anterior'] + parseFloat(partida['avance'])).formatMoney(4, '.', ',');
                 partida['monto_actual'] =  parseFloat((partida['cantidad_anterior'] + parseFloat(partida['avance'])) * partida['precio_venta']).formatMoney(4, '.', ',');
-                console.log(partida);
             }
         },
         watch: {
