@@ -150,6 +150,10 @@ class ContratoProyectado extends Transaccion
         });
     }
 
+    public function scopeConPresupuestos($query){
+        return $query->whereHas('presupuestos');
+    }
+
     /**
      * Atributos
      */

@@ -90,7 +90,8 @@
                 return this.$store.dispatch('contratos/contrato-proyectado/index', {
                     params: {
                         order: 'DESC',
-                        sort: 'numero_folio'
+                        sort: 'numero_folio',
+                        scope:'conPresupuestos'
                     }
                 })
                     .then(data => {

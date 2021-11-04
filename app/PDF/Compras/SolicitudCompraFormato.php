@@ -460,7 +460,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             $this->Ln();
 
             $this->Cell(4.8, .4, '', 'TRLB', 0, 'C', 0);
-            $this->Cell(4.8, .4, utf8_decode('BRUNO ELIAS MEDINA RODRIGUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.8, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, utf8_decode('ING. JOSE MARTÍN ORTIZ VAZQUEZ'), 'TRLB', 0, 'C', 0);
         }
