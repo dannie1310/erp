@@ -119,6 +119,7 @@
                         _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
                         _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
                         _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
+                        _self.post.cotizacion_completa = _self.invitacion.cotizacion_completa;
 
                         return this.$store.dispatch('contratos/presupuesto/enviarPresupuesto', _self.post)
                         .then((data) => {

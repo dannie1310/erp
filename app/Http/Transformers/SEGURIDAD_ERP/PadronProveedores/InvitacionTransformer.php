@@ -75,6 +75,7 @@ class InvitacionTransformer extends TransformerAbstract
             'id_presupuesto_antecedente' => $model->id_presupuesto_antecedente,
             'folio_cotizacion_antecedente' => ($model->cotizacionAntecedente)?$model->cotizacionAntecedente->numero_folio_format : '',
             'folio_presupuesto_antecedente' => ($model->presupuestoAntecedente)?$model->presupuestoAntecedente->numero_folio_format : '',
+            'cotizacion_completa' => $model->cotizacion_completa
         ];
     }
 
