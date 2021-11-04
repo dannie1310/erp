@@ -17,13 +17,28 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr>
+                                <td class="sin_borde c400"><b>Empresas:</b></td>
                                 <td class="c90 sin_borde"  ><b>Fecha Inicial:</b></td>
                                 <td class="c90 sin_borde" ><b>Fecha Final:</b></td>
-                                <td class="c90 sin_borde" ><b>Incluir 2132:</b></td>
-                                <td class="sin_borde"><b>Empresas:</b></td>
+                                <td class="c90 sin_borde" style="text-align: center"><b>Incluir RFG<br>2132 / 2150:</b></td>
+                                <td class="sin_borde" v-if="this.empresa_sat_seleccionada == this.empresa_sat"><b>Empresas Contpaq Individuales:</b></td>
                                 <td class="c100 sin_borde"></td>
                             </tr>
                             <tr>
+                                <td class="sin_borde">
+                                     <model-list-select
+                                        :disabled="cargando"
+                                        name="empresa_sat"
+                                        :placeholder="!cargando?'Seleccionar Empresa':'Cargando...'"
+                                        data-vv-as="Empresa"
+                                        v-model="empresa_sat"
+                                        v-validate="{required: true}"
+                                        option-value="id"
+                                        option-text="label"
+                                        :list="empresas_sat"
+                                        :isError="errors.has(`empresa_sat`)">
+                                    </model-list-select>
+                                </td>
 
                                 <td class="c130 sin_borde"><datepicker
                                     id = "fechaInicial"
@@ -57,7 +72,7 @@
                                          <label for="con2132" class="custom-control-label" ></label>
                                      </div>
                                 </td>
-                                <td class="sin_borde">
+                                <td class="sin_borde" v-if="this.empresa_sat_seleccionada == this.empresa_sat">
                                      <treeselect v-model="empresas_seleccionadas"
                                          :multiple="true"
                                          :options="empresas"
@@ -76,13 +91,17 @@
                 </div>
                 <hr />
                 <div class="row" >
-                    <div class="col-md-12 table-responsive">
-                        <table class="table table-sm table-fs-sm">
+                    <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
+                        <span><b>{{this.empresa_sat_razon_social}}</b></span>
+                        <table class="table table-sm table-fs-sm" id="sticky">
                             <thead >
                                 <tr>
-                                    <th rowspan="2" class="index_corto">#</th>
-                                    <th rowspan="2" class="c100">RFC</th>
-                                    <th rowspan="2">Razón Social</th>
+                                    <th class="index_corto" style="border-bottom-color: #f2f4f5"></th>
+                                    <th class="c100" style="border-bottom-color: #f2f4f5"></th>
+                                    <th style="border-bottom-color: #f2f4f5" ></th>
+
+                                    <th rowspan="2" class="sin_borde" ></th>
+                                    <th style="border-bottom-color: #f2f4f5"></th>
 
                                     <th rowspan="2" class="sin_borde"></th>
                                     <th colspan="2">Neto CFDI</th>
@@ -112,16 +131,22 @@
                                     <th colspan="3">Contabilidad GHI</th>
                                 </tr>
                                 <tr>
+                                    <th class="index_corto">#</th>
+                                    <th class="c100">RFC</th>
+                                    <th >Razón Social</th>
+
+                                    <th >CFDI Cancelados en Ejercicio</th>
 
                                     <th class="c80">Neto CFDI</th>
                                     <th class="c80">Total Con IVA</th>
+
 
                                     <th class="c80">Compra de Divisas</th>
                                     <th class="c80">Dispersión Monederos</th>
                                     <th class="c80">Reemplazo de Ejercicios Anteriores</th>
                                     <th class="c80">Reemplazados No Cancelados</th>
 
-                                    <th class="c80">Reemplazados en 2021</th>
+                                    <th class="c80">Reemplazados en Ejercicio Posterior</th>
 
                                     <th class="c80">Neto Tipo I</th>
                                     <th class="c80">Total Con IVA</th>
@@ -129,13 +154,13 @@
                                     <th class="c80">Neto Tipo E</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Cantidad</th>
+                                    <th class="c80">Cantidad Reconocidos</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Cantidad</th>
+                                    <th class="c80">Cantidad No Reconocidos</th>
                                     <th class="c80">Total Con IVA</th>
 
-                                    <th class="c80">Neto CFDI</th>
+                                    <th class="c80">Neto CFDI a Revisar</th>
                                     <th class="c80">Total Con IVA</th>
 
                                     <th class="c80">No. Cuentas Relacionadas</th>
@@ -146,6 +171,126 @@
 
                             </thead>
                             <tbody>
+                            <tr class="sin_borde sin_proveedor" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click" >
+                                <td>
+                                    -
+                                </td>
+                                <td  >
+                                    -
+                                </td>
+                                <td>
+                                    {{sin_proveedor.razon_social}}
+                                </td>
+                                <!-- Cancelados-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                   -
+                                </td>
+                                <!-- Neto -->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <!--Omitir-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <!--Agregar-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!--CFDI I-->
+                                <td class="sin_borde">                                   &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!--CFDI E-->
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                   -
+
+                                </td>
+                                <!-- RECONOCIDOS-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!-- NO RECONOCIDOS-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <!-- A REVISAR-->
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    -
+                                </td>
+
+                                <td class="sin_borde">
+                                    &nbsp;
+                                </td>
+                                <!-- A REVISAR-->
+                                <td style="text-align: right; text-decoration: underline" :style="parseFloat(sin_proveedor.cantidad_cuentas)>0?`cursor : pointer`:``" v-on:click="verCuentas(sin_proveedor)" v-if="parseFloat(sin_proveedor.cantidad_cuentas)>0">
+                                     {{parseFloat(sin_proveedor.cantidad_cuentas) }}
+                                </td>
+                                 <td style="text-align: right" v-else>
+                                    -
+                                </td>
+                                <td style="text-align: right">
+                                    {{sin_proveedor.importe_movimientos_pasivo}}
+                                </td>
+                                <td style="text-align: right">
+                                    {{sin_proveedor.diferencia }}
+                                </td>
+
+                            </tr>
                             <template v-for="(partida, i) in informe.partidas">
                                 <tr class="sin_borde" v-on:mouseover="over" v-on:mouseout="out" v-on:click="click">
                                 <td>
@@ -157,6 +302,18 @@
                                 <td>
                                     {{partida.razon_social}}
                                 </td>
+                                <!-- Cancelados-->
+                                <td class="sin_borde">                                    &nbsp;
+                                </td>
+                                <td style="text-align: right">
+                                    <span v-if="partida.neto_total_cancelados != '-'"  v-on:click="verCFDI(partida,13)" style="text-decoration: underline; cursor: pointer">
+                                        {{ partida.neto_total_cancelados }}
+                                    </span>
+                                    <span v-else>
+                                        {{ partida.neto_total_cancelados }}
+                                    </span>
+                                </td>
+                                <!-- Neto -->
                                 <td class="sin_borde">
                                     &nbsp;
                                 </td>
@@ -402,21 +559,22 @@
                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="overflow-y: auto;max-height: 600px;">
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
-                                            <td colspan="3" style="border: none">
-                                                <h6>{{razon_social}}</h6>
+                                            <td colspan="4" style="border: none">
+                                                <b>{{razon_social}}</b>
                                             </td>
                                             <td style="text-align: right; border: none">
-                                                <h6>{{importe_cuentas }}</h6>
+                                                <b>{{importe_cuentas }}</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <th class="index_corto">#</th>
                                             <th>Empresa</th>
                                             <th>Cuenta</th>
+                                            <th>Nombre de la Cuenta</th>
                                             <th>Monto</th>
                                         </tr>
                                         </thead>
@@ -425,12 +583,13 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{cuenta.empresa_contpaq}}</td>
                                                 <td v-on:click="getMovimientos(cuenta)" style="cursor: pointer; text-decoration: underline">{{cuenta.codigo_cuenta}}</td>
+                                                <td>{{cuenta.nombre_cuenta}}</td>
                                                 <td style="text-align: right">${{parseFloat(cuenta.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
                                         <tfoot>
                                              <tr>
-                                                <td style="text-align: right" colspan="3" class="sin_borde"><b>Total:</b></td>
+                                                <td style="text-align: right" colspan="4" class="sin_borde"><b>Total:</b></td>
                                                 <td style="text-align: right" class="sin_borde">{{importe_cuentas }}</td>
                                             </tr>
                                         </tfoot>
@@ -460,23 +619,28 @@
                     <form role="form">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-12" style="overflow-y: auto;max-height: 600px;">
                                     <table class="table table-sm table-fs-sm">
                                         <thead>
                                         <tr>
                                             <td colspan="5" style="border: none">
-                                                <h6>{{razon_social}}</h6>
+                                                <b>{{razon_social}}</b>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="5" style="border: none">
+                                                <b>{{empresa_contpaq}}</b>
                                             </td>
                                         </tr>
                                         <tr>
                                             <td colspan="2" style="border: none">
-                                                <h6>{{codigo_cuenta}}</h6>
+                                                <b>{{codigo_cuenta}}</b>
                                             </td>
                                             <td colspan="2" style="border: none">
-                                                <h6>{{empresa_contpaq}}</h6>
+                                                <b>{{nombre_cuenta}}</b>
                                             </td>
                                             <td style="text-align: right; border: none">
-                                                <h6>${{parseFloat(importe_movimientos).formatMoney(2,".",",") }}</h6>
+                                                <b>${{parseFloat(importe_movimientos).formatMoney(2,".",",") }}</b>
                                             </td>
                                         </tr>
                                         <tr>
@@ -492,7 +656,8 @@
                                                 <td>{{i+1}}</td>
                                                 <td>{{movimiento.fecha_poliza}}</td>
                                                 <td>{{movimiento.tipo_poliza}}</td>
-                                                <td><PDFPoliza v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa"></PDFPoliza></td>
+                                                <td>
+                                                    <poliza-show-modal :key="movimiento.id_poliza" v-bind:txt="movimiento.folio_poliza" v-bind:id = "movimiento.id_poliza" v-bind:id_empresa = "movimiento.id_empresa_consolidadora"></poliza-show-modal>
                                                 <td style="text-align: right">${{parseFloat(movimiento.importe_movimiento).formatMoney(2,".",",") }}</td>
                                             </tr>
                                         </tbody>
@@ -653,10 +818,12 @@ import {es} from "vuejs-datepicker/dist/locale";
 import CFDI from "../cfd/cfd-sat/CFDI";
 import DescargaCFDI from "../cfd/cfd-sat/DescargaCFDI";
 import PDFPoliza from "../../contabilidad-general/poliza/partials/PDFPoliza";
+import {ModelListSelect} from 'vue-search-select';
+import PolizaShowModal from "../../contabilidad-general/poliza/ShowModal";
 
 export default {
     name: "Informe",
-    components: {PDFPoliza, DescargaCFDI, CFDI, Datepicker},
+    components: {PolizaShowModal, PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
         return {
             informe : [],
@@ -666,8 +833,8 @@ export default {
             fechasDeshabilitadas:{},
             fecha_inicial : new Date("2020/01/01"),
             fecha_final : new Date("2020/12/31"),
-            con2132 : 1,
-
+            con2132 : 0,
+            empresa_sat_razon_social : '',
             fecha_inicial_input : new Date("2020/01/01"),
             fecha_final_input : new Date("2020/12/31"),
             es:es,
@@ -681,13 +848,19 @@ export default {
             movimientos : [],
             importe_movimientos : 0,
             codigo_cuenta : '',
-            empresa_contpaq:''
+            nombre_cuenta : '',
+            empresa_contpaq:'',
+            empresa_sat : 1,
+            empresas_sat:[],
+            empresa_sat_seleccionada:'',
+            sin_proveedor : {},
+            abriendo_modal : 0,
         }
     },
     mounted() {
         this.getInforme();
-        this.fechasDeshabilitadas.to = new Date("2020/01/01");
-        this.fechasDeshabilitadas.from = new Date("2020/12/31");
+        this.fechasDeshabilitadas.to = this.fecha_inicial_input;
+        this.fechasDeshabilitadas.from = this.fecha_final_input;
     },
     props: ['id'],
     methods: {
@@ -695,18 +868,31 @@ export default {
             this.cargando = true;
             this.fecha_inicial = this.fecha_inicial_input;
             this.fecha_final = this.fecha_final_input;
-            this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+
+            if( this.empresa_sat_seleccionada == this.empresa_sat){
+                this.empresas_seleccionadas_filtro = this.empresas_seleccionadas;
+            }else{
+                this.empresas_seleccionadas_filtro = [];
+                this.empresas_seleccionadas = [];
+            }
+
+            this.empresa_sat_seleccionada = this.empresa_sat;
             return this.$store.dispatch('fiscal/cfd-sat/obtenerInformeSATLP2020', {
                 id:this.id,
                 fecha_inicial : this.fecha_inicial,
                 fecha_final : this.fecha_final,
                 empresas : this.empresas_seleccionadas_filtro,
                 con2132 : this.con2132,
+                empresa_sat : this.empresa_sat_seleccionada,
             })
             .then(data => {
                 this.informe = data.informe;
                 this.empresas = data.informe.empresas;
-                //this.getMovimientos(this.informe.data[0])
+                this.empresas_sat = data.informe.empresas_sat;
+                this.sin_proveedor = data.informe.sin_proveedor[0];
+                this.fecha_inicial = new Date(data.informe.rango_fechas[0].fecha_inicial);
+                this.fecha_final = new Date(data.informe.rango_fechas[0].fecha_final);
+                this.empresa_sat_razon_social = data.informe.empresa;
             })
             .finally(() => {
                 this.cargando = false;
@@ -714,63 +900,78 @@ export default {
         },
         verCFDI(partida, tipo = 1)
         {
-
-            return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
-                id_proveedor_sat: partida.id_proveedor_sat,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                asociada_contpaq : null,
-                tipo : tipo,
-                empresas : this.empresas_seleccionadas_filtro
-            })
-            .then(data => {
-                this.lista_cfdi = data.informe;
-                this.razon_social = partida.razon_social;
-                this.rfc = partida.rfc;
-                this.total_cfdi = data.total;
-            })
-            .finally(() => {
-                $(this.$refs.modal_cfdi).appendTo('body')
-                $(this.$refs.modal_cfdi).modal('show');
-            });
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/getListaCFDI', {
+                    id_proveedor_sat: partida.id_proveedor_sat,
+                    fecha_inicial: this.fecha_inicial,
+                    fecha_final: this.fecha_final,
+                    asociada_contpaq: null,
+                    tipo: tipo,
+                    empresas: this.empresas_seleccionadas_filtro,
+                    empresa_sat: this.empresa_sat_seleccionada,
+                })
+                .then(data => {
+                    this.lista_cfdi = data.informe;
+                    this.razon_social = partida.razon_social;
+                    this.rfc = partida.rfc;
+                    this.total_cfdi = data.total;
+                })
+                .finally(() => {
+                    $(this.$refs.modal_cfdi).appendTo('body')
+                    $(this.$refs.modal_cfdi).modal('show');
+                    this.abriendo_modal = 0;
+                });
+            }
         },
         getMovimientos(cuenta)
         {
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro,
-                id_cuenta : cuenta.id_cuenta,
-            })
-                .then(data => {
-                    this.codigo_cuenta = cuenta.codigo_cuenta;
-                    this.movimientos = data.informe;
-                    this.importe_movimientos = cuenta.importe_movimiento;
-                    this.empresa_contpaq = cuenta.empresa_contpaq;
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerMovimientosCuentasInformeSATLP2020', {
+                    fecha_inicial: this.fecha_inicial,
+                    fecha_final: this.fecha_final,
+                    empresas: this.empresas_seleccionadas_filtro,
+                    id_cuenta: cuenta.id_cuenta,
+                    empresa_sat: this.empresa_sat_seleccionada,
                 })
-                .finally(() => {
-                    $(this.$refs.modal_polizas).appendTo('body')
-                    $(this.$refs.modal_polizas).modal('show');
-                });
+                    .then(data => {
+                        this.nombre_cuenta = cuenta.nombre_cuenta;
+                        this.codigo_cuenta = cuenta.codigo_cuenta;
+                        this.movimientos = data.informe;
+                        this.importe_movimientos = cuenta.importe_movimiento;
+                        this.empresa_contpaq = cuenta.empresa_contpaq;
+                    })
+                    .finally(() => {
+                        $(this.$refs.modal_polizas).appendTo('body')
+                        $(this.$refs.modal_polizas).modal('show');
+                        this.abriendo_modal = 0;
+                    });
+            }
         },
         verCuentas(partida)
         {
-            return this.$store.dispatch('fiscal/cfd-sat/obtenerCuentasInformeSATLP2020', {
-                id: partida.id_proveedor_sat,
-                fecha_inicial : this.fecha_inicial,
-                fecha_final : this.fecha_final,
-                empresas : this.empresas_seleccionadas_filtro,
-                con2132 : this.con2132,
-            })
-            .then(data => {
-                this.razon_social = partida.razon_social;
-                this.cuentas = data.informe;
-                this.importe_cuentas = partida.importe_movimientos_pasivo;
-            })
-            .finally(() => {
-                $(this.$refs.modal).appendTo('body')
-                $(this.$refs.modal).modal('show');
-            });
+            if(this.abriendo_modal == 0){
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/obtenerCuentasInformeSATLP2020', {
+                    id: partida.id_proveedor_sat,
+                    fecha_inicial : this.fecha_inicial,
+                    fecha_final : this.fecha_final,
+                    empresas : this.empresas_seleccionadas_filtro,
+                    con2132 : this.con2132,
+                    empresa_sat : this.empresa_sat_seleccionada,
+                })
+                .then(data => {
+                    this.razon_social = partida.razon_social;
+                    this.cuentas = data.informe;
+                    this.importe_cuentas = partida.importe_movimientos_pasivo;
+                })
+                .finally(() => {
+                    $(this.$refs.modal).appendTo('body')
+                    $(this.$refs.modal).modal('show');
+                    this.abriendo_modal = 0;
+                });
+            }
         },
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
@@ -802,16 +1003,36 @@ export default {
             return this.$store.getters['contabilidadGeneral/cuenta-saldo-negativo/mesSeleccionado'];
         },
     },
+    watch: {
+        empresa_sat(value) {
+            if(value !== '' && value !== null && value !== undefined){
+                var busqueda = this.empresas_sat.find(x=>x.id === value);
+                if(busqueda != undefined)
+                {
+                    this.fecha_inicial = new Date(busqueda.fecha_inicial);
+                    this.fecha_final = new Date(busqueda.fecha_final);
+                    this.fecha_inicial_input = this.fecha_inicial;
+                    this.fecha_final_input = this.fecha_final;
+                    this.fechasDeshabilitadas.to = this.fecha_inicial_input;
+                    this.fechasDeshabilitadas.from = this.fecha_final_input;
+                }
+            }
+        },
+    }
 }
 </script>
 
 <style scoped>
+tr.sin_proveedor td {
+    color: #e50c25;
+    font-weight: bold;
+}
 tr.hover td{
-    background-color: #eed092;
+    background-color: #b8daa9;
 }
 
 tr.click td{
-    background-color: rgba(227, 171, 52, 0.99);
+    background-color: #50b920;
 }
 
 .form-control {
@@ -842,6 +1063,11 @@ table thead th
     color: black;
     overflow: hidden;
     text-align: center;
+
+    position: sticky;
+    position: -webkit-sticky;
+    top: 0;
+    z-index: 2;
 }
 
 table thead th.no_negrita

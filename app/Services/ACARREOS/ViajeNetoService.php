@@ -88,7 +88,7 @@ class ViajeNetoService
             /**
              * Validar telefono asignado al proyecto y al usuario.
              */
-            if ($this->repository->getTelefonoActivo($data['IMEI'])) {
+            if ($this->repository->getTelefonoActivo('imei',$data['IMEI'])) {
                 return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
             }
 
@@ -96,19 +96,23 @@ class ViajeNetoService
             if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
                 return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
             }
-            $telefonos = array([
-                'id' => $telefono->impresora ? $telefono->impresora->id : null,
-                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-                'IMEI' => $telefono->imei
-            ]);
-        }else{
-            $telefonos = array([
-                'id' => $telefono->impresora ? $telefono->impresora->id : null,
-                'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
-                'IMEI' => $data['IMEI']
-            ]);
+
+        }else if(array_key_exists('deviceId', $data)){
+            if($telefono->device_id != null){
+                if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
+                    return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
+                }
+            }else{
+                $telefono->device_id = $data['deviceId'];
+                $telefono->save();
+            }
         }
 
+        $telefonos = array([
+            'id' => $telefono->impresora ? $telefono->impresora->id : null,
+            'MAC' => $telefono->impresora ? $telefono->impresora->mac : null,
+            'IMEI' => $data['IMEI']
+        ]);
         $configuracion_diaria = $usuario->first()->configuracionDiaria;
         $usuario = $usuario->first();
         $tiros = $this->repository->getCatalogoTiros();
@@ -171,7 +175,7 @@ class ViajeNetoService
             /**
              * Verificar si el telefono esta activo
              */
-            if ($this->repository->getTelefonoActivo($data['IMEI']))
+            if ($this->repository->getTelefonoActivo('imei', $data['IMEI']))
             {
                 return json_encode(array("error" => "El teléfono no tiene autorización para operar imei: " . $data['IMEI'] . "."));
             }

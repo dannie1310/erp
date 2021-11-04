@@ -52,18 +52,20 @@ class UnificacionProveedoreService
                     'id_empresa_unificada' => $empresa_unificada['id_empresa'],
                     'tipo_empresa_unificada' => $empresa_unificada['tipo_empresa'],
                 ];
-                foreach($empresa->transacciones as $transaccion){
+                foreach($empresa->transaccionesSgv as $transaccion){
                     $datos['id_transaccion'] = $transaccion->id_transaccion;
                     $unificacion->cambios()->create($datos);
                     $transaccion->id_empresa =  $data['id_empresa'];
                     $transaccion->save();
                 }
+                unset($datos['id_transaccion']);
                 foreach($empresa->solicitudCBE as $solicitud){
                     $datos['id_solicitud_movimiento'] = $solicitud->id;
                     $unificacion->cambios()->create($datos);
                     $solicitud->id_empresa = $data['id_empresa'];
                     $solicitud->save();
                 }
+                unset($datos['id_solicitud_movimiento']);
                 foreach($empresa->cuentasBancarias as $cuenta){
                     $datos['id_cuenta_bancaria_empresa'] = $cuenta->id;
                     $unificacion->cambios()->create($datos);
@@ -74,7 +76,6 @@ class UnificacionProveedoreService
                 $empresa->tipo_empresa = 666;
                 $empresa->save();
             }
-
             DB::connection('cadeco')->commit();
 
             return $unificacion;

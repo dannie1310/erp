@@ -89,7 +89,7 @@
             </div>
             <div class="form-group row">
                 <div class="col">
-                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="!cambio">
+                    <button type="submit" @click="validate" class="btn btn-outline-primary float-right" :disabled="!cambio || guardadosPreviamente">
                         <i class="fa fa-save"></i>
                     </button>
                 </div>
@@ -151,7 +151,7 @@
                 return JSON.stringify(this.form) != JSON.stringify(this.datosContables);
             },
             guardadosPreviamente() {
-                return Boolean(this.datosContables);
+                return Boolean(parseInt(this.datosContables.estado));
             },
             mensaje() {
                 return this.guardadosPreviamente ? 'Los datos no pueden ser modificados porque ya han sido guardados previamente' : 'Una vez guardados los datos no va a ser posible editarlos';

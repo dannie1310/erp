@@ -106,7 +106,7 @@
                     <p>Pólizas CFDI</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_informe_sat_lp_2020')">
+            <li class="nav-item"  v-if="$root.can('consultar_informe_sat')">
                 <router-link :to="{name: 'informe-sat'}" class="nav-link" :class="{active: this.$route.name == 'informe-sat'}">
                     <i class="fa fa-file-alt nav-icon"></i>
                     <p>Informe SAT LP 2020</p>

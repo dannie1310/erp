@@ -87,8 +87,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="validate">Eliminar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
+                        <button type="button" class="btn btn-danger" :disabled="errors.count() > 0 || motivo == ''" v-on:click="validate"><i class="fa fa-trash"></i>Eliminar</button>
                     </div>
                 </div>
             </div>
@@ -142,13 +142,13 @@
                 })
                     .then(data => {
                         this.$store.commit('contratos/contrato-proyectado/DELETE_CONTRATO', {id: this.id})
-                        $(this.$refs.modal).modal('hide');
                         this.$store.dispatch('contratos/contrato-proyectado/paginate', {
                             params: {
                                 sort: 'numero_folio', order: 'DESC', include:'areasSubcontratantes'
                             }
                         })
                             .then(data => {
+                                $(this.$refs.modal).modal('hide');
                                 this.$store.commit('contratos/contrato-proyectado/SET_CONTRATOS', data.data);
                                 this.$store.commit('contratos/contrato-proyectado/SET_META', data.meta);
                             })

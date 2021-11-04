@@ -400,7 +400,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
                 if( $c->destino){
                     if($c->destino->concepto)
                     {
-                        $path_corta = utf8_decode($c->destino->concepto->path_corta);
+                        $path_corta = utf8_decode($c->destino->concepto->getPathCortaSgv($this->invitacion->id_obra));
                     }
                 }
 
