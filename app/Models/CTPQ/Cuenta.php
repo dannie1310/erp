@@ -229,16 +229,26 @@ class Cuenta extends Model
         $razones_sociales = [];
 
         foreach ($coincidencias as $coincidencia) {
-            $razones_sociales[0] = Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($coincidencia->razon_social)));
+            $razones_sociales[0] = trim(Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($coincidencia->razon_social))));
 
-            $cercania = levenshtein($cuenta_nombre, $razones_sociales[0]);
+            if(strpos($cuenta_nombre,$coincidencia->rfc) !== false){
+                $cercania = 0;
+            }else{
+                $cuenta_nombre = trim(str_replace($coincidencia->rfc, "", $cuenta_nombre));
+                $cercania = levenshtein($cuenta_nombre, $razones_sociales[0]);
+            }
+
             if ($cercania >= 3) {
                 $razones_sociales_nuevas = $this->generaCombinacionesNuevas($razones_sociales[0]);
                 $razones_sociales = $razones_sociales_nuevas;
             }
 
             foreach ($razones_sociales as $razon_social) {
-                $cercania = levenshtein($cuenta_nombre, $razon_social);
+                if(strpos($cuenta_nombre,$coincidencia->rfc) !== false){
+                    $cercania = 0;
+                }else{
+                    $cercania = levenshtein($cuenta_nombre, trim($razon_social));
+                }
                 $cercanias[] = [
                     "id_empresa_contpaq" => $id_empresa_contpaq
                     , "cercania" => $cercania
