@@ -793,7 +793,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(5.2, 1.2, '', 'TRLB', 0, 'C');
 
             $this->Ln();
-            $this->Cell(5.2, .4, utf8_decode('BRUNO ELIAS MEDINA RODRIGUEZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5.2, .4, utf8_decode(''), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('ING. JOSE MARTÍN ORTIZ VAZQUEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 0);
             $this->Cell(5.2, .4, utf8_decode('DIR. CORPORATIVO'), 'TRLB', 0, 'C', 0);
