@@ -389,7 +389,7 @@ class EntradaMaterial extends Transaccion
             
             if ($entrega->surtida != $cant){
                 DB::connection('cadeco')->rollBack();
-                abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se actualizó la cantidad surtida en la entrega.');
+                throw New \Exception('Error en el proceso de eliminación de entrada de almacén, no se actualizó la cantidad surtida en la entrega.');
             }
         }
     }
