@@ -55,4 +55,12 @@ class CFDSATController extends Controller
         return $this->service->pdfCFDI($id)->create();
     }
 
+    /**
+     * Descargar Layout con los CFDISAT
+     * @return mixed
+     */
+    public function descargaLayout(Request $request)
+    {
+        return $this->service->descargaExcel($request->all());
+    }
 }
