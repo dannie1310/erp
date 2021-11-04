@@ -314,6 +314,11 @@ class Concepto extends Model
         return $query->where('id_concepto','=', $id);
     }
 
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 0);
+    }
+
     public function cuentaConcepto()
     {
         return $this->hasOne(CuentaConcepto::class, 'id_concepto')
@@ -404,7 +409,7 @@ class Concepto extends Model
     public function getConceptosHijosMedible()
     {
         $conceptos = [];
-        $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
+        $conceptos_consulta = self::withoutGlobalScopes()->activo()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
         $num_nivel_anterior = 0;
         $anterior_concepto_medible = false;
         $i = 1;
