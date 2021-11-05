@@ -34,7 +34,7 @@ class SolicitudCompraService
 
         if(isset($data['numero_folio']))
         {
-            $solicitudes = $solicitudes->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+            $solicitudes = $solicitudes->where([['numero_folio', '=', $data['numero_folio']]]);
         }
 
         if (isset($data['fecha_registro'])) {

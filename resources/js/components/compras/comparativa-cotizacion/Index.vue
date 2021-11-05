@@ -32,18 +32,18 @@
             return {
                 HeaderSettings: false,
                 columns: [
-                    { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'th_numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true},
+                    { title: '#', field: 'index', thClass:"index_corto", sortable: false },
+                    { title: 'Folio', field: 'numero_folio', thClass: 'th_c120', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Fecha', field: 'fecha', thComp: require('../../globals/th-Date').default, thClass: 'th_fecha', sortable: false },
                     { title: 'No. Invitaciones', tdClass: 'td_money', field: 'numero_invitaciones'},
                     { title: 'No. Cotizaciones', tdClass: 'td_money', field: 'numero_cotizaciones'},
                     { title: 'Concepto', field: 'concepto', sortable: false, thComp: require('../../globals/th-Filter').default },
-                    { title: 'Estatus', field: 'estado_solicitud', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Estatus', field: 'estado_solicitud', sortable: false, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: '', field: 'buttons', thClass: 'icono', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
-                query: {scope: ['areasCompradorasAsignadasParaSolicitudes','cotizada','conAutorizacion'],sort: 'numero_folio', order: 'DESC', include: ['complemento']},
+                query: {scope: ['areasCompradorasAsignadasParaSolicitudes','cotizada','conAutorizacion'], sort: 'numero_folio', order: 'DESC', include: ['complemento']},
                 search: '',
                 cargando: false
             }
