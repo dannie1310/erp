@@ -59,6 +59,7 @@ class AvanceObra extends Transaccion
      * Scope
      */
 
+
     /**
      * Attributos
      */
@@ -135,6 +136,7 @@ class AvanceObra extends Transaccion
      */
     public function registrar(array $data)
     {
+        $this->validarConceptos($data['conceptos']);
         try
         {
             DB::connection('cadeco')->beginTransaction();
@@ -356,6 +358,29 @@ class AvanceObra extends Transaccion
             $item->cantidad = $partida['cantidad'];
             $item->numero = $partida['cumplido']?1:0;
             $item->save();
+        }
+    }
+
+    private function validarConceptos($conceptos)
+    {
+        $mensaje = "";
+        foreach ($conceptos as $concepto)
+        {
+            if ($concepto['concepto_medible'] == 3 && (float)$concepto['avance'] != 0) {
+                if ($concepto['estado'] != 0) {
+                    $mensaje = $mensaje . "-El concepto ".$concepto['descripcion']." se encuentra con estado cumplido.\n";
+                }
+                $avance_item = ItemAvanceObra::where('id_concepto', $concepto['id_concepto'])->get();
+                foreach ($avance_item as $item) {
+                    if ($item->avance_obra_activo) {
+                        $mensaje = $mensaje . "-El concepto " . $item->concepto_descripcion . " existe en el avance de obra registrada con número: " . $item->avanceObra->numero_folio_format . ". \n";
+                    }
+                }
+            }
+        }
+        if ($mensaje != "")
+        {
+            abort(400, "No se puede registrar el avance de obra debido a los siguientes problemas:\n" . $mensaje);
         }
     }
 }
