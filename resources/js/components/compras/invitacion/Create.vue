@@ -392,8 +392,6 @@ export default {
     props: ['id_solicitud'],
     data(){
         return {
-            options:{},
-            loadingText:'',
             cargando : false,
             proveedores : [],
             sucursales: [],
