@@ -314,6 +314,11 @@ class Concepto extends Model
         return $query->where('id_concepto','=', $id);
     }
 
+    public function scopeActivo($query)
+    {
+        return $query->where('estado', '=', 0);
+    }
+
     public function cuentaConcepto()
     {
         return $this->hasOne(CuentaConcepto::class, 'id_concepto')
@@ -404,43 +409,59 @@ class Concepto extends Model
     public function getConceptosHijosMedible()
     {
         $conceptos = [];
-        $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
-        $num_nivel_anterior = 0;
-        $anterior_concepto_medible = false;
         $i = 1;
-        $conc = [];
-        foreach ($conceptos_consulta as $concepto)
-        {
-            $conc = $concepto->toArray();
-            $conc['precio_venta'] =  $concepto->precio_produccion;
-            $conc['cantidad_presupuestada'] = $concepto->cantidad_presupuestada_calculada;
-            $conc['avance'] = '0.00';
-            $conc['cantidad_anterior_format'] = $concepto->cantidad_anterior_avance_format;
-            $conc['cantidad_anterior'] = (float) $concepto->cantidad_anterior_avance;
-            $conc['monto_avance'] = $concepto->monto_avance_format;
-            $conc['cantidad_actual'] = '0.00';
-            $conc['monto_actual'] = '0.00';
-            $conc['cumplido'] = false;
+        if($this->concepto_medible == 3){
+            if($this->estado == 0)
+            {
+                $conceptos[0] = $this->toArray();
+                $conceptos[0]['precio_venta'] = $this->precio_produccion;
+                $conceptos[0]['cantidad_presupuestada'] = $this->cantidad_presupuestada_calculada;
+                $conceptos[0]['avance'] = '0.00';
+                $conceptos[0]['cantidad_anterior_format'] = $this->cantidad_anterior_avance_format;
+                $conceptos[0]['cantidad_anterior'] = (float) $this->cantidad_anterior_avance;
+                $conceptos[0]['monto_avance'] = $this->monto_avance_format;
+                $conceptos[0]['cantidad_actual'] = '0.00';
+                $conceptos[0]['monto_actual'] = '0.00';
+                $conceptos[0]['cumplido'] = false;
+                $conceptos[0]['i'] = $i;
+            }
+        }else {
+            $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
+            $num_nivel_anterior = 0;
+            $anterior_concepto_medible = false;
+            $conc = [];
+            foreach ($conceptos_consulta as $concepto) {
+                $conc = $concepto->toArray();
+                $conc['precio_venta'] = $concepto->precio_produccion;
+                $conc['cantidad_presupuestada'] = $concepto->cantidad_presupuestada_calculada;
+                $conc['avance'] = '0.00';
+                $conc['cantidad_anterior_format'] = $concepto->cantidad_anterior_avance_format;
+                $conc['cantidad_anterior'] = (float)$concepto->cantidad_anterior_avance;
+                $conc['monto_avance'] = $concepto->monto_avance_format;
+                $conc['cantidad_actual'] = '0.00';
+                $conc['monto_actual'] = '0.00';
+                $conc['cumplido'] = false;
 
-            if($num_nivel_anterior == 0 || $anterior_concepto_medible == false)
-            {
-                $conc['i'] = $i;
-                $conceptos[$concepto->getKey()] = $conc;
-                $i++;
-            }else {
-                if (strlen($concepto->nivel) <= $num_nivel_anterior) {
-                    $anterior_concepto_medible = false;
-                    $conc['i'] = $i;
-                    $conceptos[$concepto->getKey()] = $conc;
-                    $i++;
+                if($concepto->estado == 0) {
+                    if ($num_nivel_anterior == 0 || $anterior_concepto_medible == false) {
+                        $conc['i'] = $i;
+                        $conceptos[$concepto->getKey()] = $conc;
+                        $i++;
+                    } else {
+                        if (strlen($concepto->nivel) <= $num_nivel_anterior) {
+                            $anterior_concepto_medible = false;
+                            $conc['i'] = $i;
+                            $conceptos[$concepto->getKey()] = $conc;
+                            $i++;
+                        }
+                    }
                 }
-            }
-            if($anterior_concepto_medible == false) {
-                $num_nivel_anterior = strlen($concepto->nivel);
-            }
-            if((int) $concepto->concepto_medible == 3)
-            {
-                $anterior_concepto_medible = true;
+                if ($anterior_concepto_medible == false) {
+                    $num_nivel_anterior = strlen($concepto->nivel);
+                }
+                if ((int)$concepto->concepto_medible == 3) {
+                    $anterior_concepto_medible = true;
+                }
             }
         }
         return $conceptos;
