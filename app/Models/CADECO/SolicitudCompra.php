@@ -890,20 +890,20 @@ class SolicitudCompra extends Transaccion
     private function obtenerPorCotizacion()
     {
         $titulos = [];
-        $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
+        $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
         $i = 0;
         foreach ($cotizaciones as $key => $cotizacion)
         {
             $invitacion = Invitacion::where('id', $cotizacion->id_referente)->where('base_datos',Context::getDatabase())->where('id_obra', $cotizacion->id_obra)->first();
-            $titulos[$key]['id_transaccion'] = $cotizacion->id_transaccion;
-            $titulos[$key]['empresa'] = $cotizacion->empresa->razon_social;
-            $titulos[$key]['numero_folio'] = $cotizacion->numero_folio_format;
-            $titulos[$key]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $titulos[$i]['id_transaccion'] = $cotizacion->id_transaccion;
+            $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
+            $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
+            $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
             $i++;
         }
         foreach ($this->invitaciones()->paraCotizacionCompra()->invitacionDisponible()->get() as $invitacion) {
             $titulos[$i]['id_transaccion'] = '';
-            $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;;
+            $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = '';
             $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
             $i++;
@@ -915,17 +915,18 @@ class SolicitudCompra extends Transaccion
     {
         $partidas = [];
         $item = [];
-        $i = 0;
         foreach ($this->partidas()->ordenarPartidas()->get() as $key => $partida)
         {
+            $i = 0;
             $partidas[$key]['material'] = $partida->material->descripcion;
-            $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
+            $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
             foreach ($cotizaciones as $k => $cotizacion)
             {
-                $item[$k]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion, $partida->id_material);
-                $item[$k]['pendiente'] = false;
+                $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion, $partida->id_material);
+                $item[$i]['pendiente'] = false;
                 $i++;
             }
+
             foreach ($this->invitaciones()->paraCotizacionCompra()->invitacionDisponible()->get() as $invitacion)
             {
                 $item[$i]['cotizada'] = NULL;
