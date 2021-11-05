@@ -134,6 +134,11 @@ class SolicitudCompra extends Transaccion
         });
     }
 
+    public function scopeCotizadaOConInvitacion($query)
+    {
+        return $query->whereHas("cotizaciones")->orWhereHas("invitaciones");
+    }
+
     public function scopeAreasCompradorasAsignadas($query)
     {
         return $query->whereHas('complemento', function ($q) {

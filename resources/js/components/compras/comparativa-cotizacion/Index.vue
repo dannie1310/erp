@@ -43,7 +43,7 @@
                 ],
                 data: [],
                 total: 0,
-                query: {scope: ['areasCompradorasAsignadasParaSolicitudes','cotizada','conAutorizacion'], sort: 'numero_folio', order: 'DESC', include: ['complemento']},
+                query: {scope: ['areasCompradorasAsignadasParaSolicitudes','cotizadaOConInvitacion'], sort: 'numero_folio', order: 'DESC', include: ['complemento']},
                 search: '',
                 cargando: false
             }

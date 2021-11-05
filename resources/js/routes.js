@@ -656,8 +656,8 @@ export const routes = [
                                 name: 'comparativa-cotizacion-compra',
                                 component: require('./components/compras/comparativa-cotizacion/Index').default,
                                 meta: {
-                                    title: 'Lista de Solicitudes de Compra Cotizadas',
-                                    breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA COTIZADAS'},
+                                    title: 'Lista de Solicitudes de Compra Cotizadas o Con Invitación',
+                                    breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA COTIZADAS O CON INVITACIÓN'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_cotizacion_compra'
                                 }
