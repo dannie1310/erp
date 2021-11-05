@@ -78,6 +78,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendAperturaInvitacionNotification',
         ],
 
+        'App\Events\CambioFechaCierreInvitacion' => [
+            'App\Listeners\SendCambioFechaCierreInvitacionNotification',
+        ],
+
         'Illuminate\Notifications\Events\NotificationSent' => [
             'App\Listeners\LogNotification',
         ],
