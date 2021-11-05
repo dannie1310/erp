@@ -21,22 +21,20 @@
 
                 </div>
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="custom-control custom-switch" >
+                            <input type="checkbox" class="custom-control-input" id="cotizaciones_completas" v-model="cotizaciones_completas" >
+                            <label class="custom-control-label" for="cotizaciones_completas" >Ver todas las cotizaciones</label>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
                     <div class="col-md-12 table-responsive">
                         <table class="table table-sm table-fs-sm">
                             <thead>
                             <tr  >
-                                <th rowspan="2" class="index_corto">
-                                    #
-                                </th>
-                                <th rowspan="2">
-                                    Descripción
-                                </th>
-                                <th class="c70" rowspan="2">
-                                    Unidad
-                                </th>
-                                <th class="c70" rowspan="2">
-                                    Cantidad
-                                </th>
+                                <td colspan="4" class="sin_borde"></td>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
                                     <th class="c300 no_negrita" colspan="4">
                                         <div class="row">
@@ -50,13 +48,30 @@
                                         <hr style="margin: 1px">
                                         <div class="row">
                                             <div class="col-md-3">
-                                                Fecha:
+                                                Fecha
                                             </div>
+                                            <div class="col-md-3">
+                                                Tipo
+                                            </div>
+                                            <div class="col-md-3">
+                                                Folio de Invitación
+                                            </div>
+                                            <div class="col-md-3">
+                                                Fecha de Envío
+                                            </div>
+
+                                        </div>
+                                        <hr style="margin: 1px">
+                                        <div class="row">
+
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.fecha}}</b>
                                             </div>
                                             <div class="col-md-3">
-                                                Fecha de Envío:
+                                                <b>{{cotizacion.tipo_str}}</b>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <b>{{cotizacion.folio_invitacion}}</b>
                                             </div>
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.fecha_envio}}</b>
@@ -98,6 +113,18 @@
 
                             </tr>
                             <tr>
+                                <th  class="index_corto">
+                                    #
+                                </th>
+                                <th >
+                                    Descripción
+                                </th>
+                                <th class="c70" >
+                                    Unidad
+                                </th>
+                                <th class="c70" >
+                                    Cantidad
+                                </th>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
                                     <th>
                                         Precio Unitario
@@ -130,22 +157,22 @@
                                     {{partida.cantidad}}
                                 </td>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
-                                    <td style="text-align: right ;"  :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
+                                    <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             ${{ parseFloat(partida.cotizaciones[c].precio_unitario).formatMoney(2,".",",")}}
                                         </span>
                                     </td>
-                                    <td style="text-align: right;" :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
+                                    <td style="text-align: right;" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             {{partida.cotizaciones[c].descuento_partida_format}}
                                         </span>
                                     </td>
-                                    <td :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
+                                    <td :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             {{partida.cotizaciones[c].moneda}}
                                         </span>
                                     </td>
-                                    <td style="text-align: right" :style="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`background-color : #f2f4f5`:``">
+                                    <td style="text-align: right" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             ${{ parseFloat(partida.cotizaciones[c].precio_total_moneda).formatMoney(2,".",",")}}
                                         </span>
@@ -158,7 +185,7 @@
                                     <td colspan="4" style="border: none"></td>
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none">Subtotal Pesos MXN:</td>
+                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
                                         <td style="text-align: right">${{ parseFloat(cotizacion.suma_subtotal_partidas).formatMoney(2,".",",")}}</td>
                                     </template>
 
@@ -167,7 +194,7 @@
                                     <td colspan="4" style="border: none"></td>
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none">Descuento Global:</td>
+                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Descuento Global:</td>
                                         <td style="text-align: right">{{cotizacion.descuento_global}}</td>
                                     </template>
 
@@ -175,21 +202,21 @@
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none">Subtotal Pesos MXN:</td>
+                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
                                         <td style="text-align: right">${{ parseFloat(cotizacion.subtotal_con_descuento).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none">IVA:</td>
+                                        <td colspan="3" style="text-align: right;border:none" class="titulo">IVA:</td>
                                         <td style="text-align: right">${{ parseFloat(cotizacion.iva).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none">Total:</td>
+                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Total:</td>
                                         <td style="text-align: right"><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                     </template>
                                 </tr>
@@ -444,6 +471,7 @@ export default {
     props: ['id'],
     data(){
         return{
+            cotizaciones_completas : false,
             cargando: false,
             es:es,
             cotizaciones : [],
@@ -474,7 +502,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('compras/solicitud-compra/getComparativaCotizaciones', {
                 id: this.id,
-                params:{}
+                params:{ cotizaciones_completas : this.cotizaciones_completas}
             }).then(data => {
                 this.solicitud = data.solicitud
                 this.cotizaciones = data.cotizaciones
@@ -527,6 +555,14 @@ export default {
     },
     computed: {
 
+    },
+    watch: {
+        cotizaciones_completas(value){
+            setTimeout(() => {
+                this.find();
+            }, 800);
+
+        },
     }
 }
 </script>
@@ -548,31 +584,37 @@ table th,  table td {
     border: 1px solid #dee2e6;
 }
 
+table td.mejor_opcion {
+    background-color: #93ea84;
+}
+
 table thead th
 {
     padding: 0.2em;
 
     background-color: #f2f4f5;
     font-weight: bold;
-    color: black;
+    color: #86888d;
     overflow: hidden;
     text-align: center;
 }
 
 table thead th.no_negrita
 {
-    padding: 0.2em;
-
-    background-color: #f2f4f5;
     font-weight: normal;
-    color: black;
-    overflow: hidden;
-    text-align: center;
 }
 
+table thead th.no_negrita b
+{
+    color: black;
+}
 table td.sin_borde {
     border: none;
     padding: 2px 5px;
+}
+
+table td.titulo {
+    color: #86888d;
 }
 
 table thead th {
@@ -603,6 +645,7 @@ table tbody th
     text-align: center;
     background-color: #f2f4f5;
     font-weight: bold;
+    color: #86888d;
 }
 
 </style>

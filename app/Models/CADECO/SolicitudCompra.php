@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionTransformer;
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\CtgEstadoSolicitud;
@@ -23,6 +24,7 @@ use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
+use League\Fractal\TransformerAbstract;
 
 class SolicitudCompra extends Transaccion
 {
@@ -713,6 +715,13 @@ class SolicitudCompra extends Transaccion
         return $relaciones;
     }
 
+    public function getUltimasCotizacionesAttribute()
+    {
+        //$id = DB::connection("cadeco")->select(DB::raw("select max(id_transaccion) from dbo.Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa"));
+        $cotizaciones = $this->cotizaciones()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
+        return $cotizaciones;
+    }
+
     public function getCuerpoCorreoInvitacion()
     {
         if($this->complemento){
@@ -738,13 +747,19 @@ class SolicitudCompra extends Transaccion
 
     }
 
-    public function datosComparativos()
+    public function datosComparativos($data)
     {
         $partidas = [];
         $cotizaciones = [];
         $precios = [];
         $exclusiones = [];
         $proveedores = [];
+
+        if($data["cotizaciones_completas"] === "true"){
+            $cotizaciones_obj = $this->cotizaciones;
+        }else{
+            $cotizaciones_obj = $this->ultimas_cotizaciones;
+        }
 
         foreach ($this->items()->orderBy("id_material")->get() as $key => $item) {
 
@@ -760,7 +775,7 @@ class SolicitudCompra extends Transaccion
             }
         }
 
-        foreach ($this->cotizaciones as $cont => $cotizacion) {
+        foreach ($cotizaciones_obj as $cont => $cotizacion) {
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id"]=$cotizacion->id_empresa;
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_sucursal"]=$cotizacion->id_sucursal;
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["razon_social"]=$cotizacion->empresa->razon_social;
@@ -801,6 +816,14 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_dolar'] = $cotizacion->sumaPrecioPartidaMoneda(2) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(2), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_euro'] = $cotizacion->sumaPrecioPartidaMoneda(3) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(3), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_libra'] = $cotizacion->sumaPrecioPartidaMoneda(4)== 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(4), 2, '.', ',');
+            $invitacion_transformer = new InvitacionTransformer();
+            if($cotizacion->invitacion){
+                $cotizaciones[$cotizacion->id_transaccion]['folio_invitacion'] = $cotizacion->invitacion->numero_folio_format;
+                $cotizaciones[$cotizacion->id_transaccion]['tipo_str'] = $cotizacion->invitacion->tipo == 1 ? 'Cotización' : 'Contraoferta';
+            }else{
+                $cotizaciones[$cotizacion->id_transaccion]['tipo_str'] = "Cotización";
+                $cotizaciones[$cotizacion->id_transaccion]['folio_invitacion'] = "N/A";
+            }
             foreach ($cotizacion->partidas as $p) {
                 if (key_exists($p->id_material, $precios)) {
                     if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
@@ -830,7 +853,7 @@ class SolicitudCompra extends Transaccion
         }
 
         $cantidad = 0;
-        foreach ($this->cotizaciones as $cont => $cotizacion) {
+        foreach ($cotizaciones_obj as $cont => $cotizacion) {
             $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
             $cotizaciones[$cotizacion->id_transaccion]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cotizacion->id_transaccion]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;

@@ -167,10 +167,10 @@ class SolicitudCompraService
         return $this->repository->show($id)->getCuerpoCorreoInvitacion();
     }
 
-    public function getComparativaCotizaciones($id)
+    public function getComparativaCotizaciones($data,$id)
     {
         $cotizacion = $this->repository->show($id)->cotizaciones()->first();
-        return $this->repository->show($id)->datosComparativos();
+        return $this->repository->show($id)->datosComparativos($data);
     }
 
     public function getCotizaciones($id){
