@@ -1,14 +1,14 @@
 <template>
     <span>
-        <button @click="find" type="button" class="btn btn-sm btn-outline-primary" title="Ver Estados"><i class="fa fa-th-large"></i> </button>
+        <button @click="find" type="button" class="btn btn-sm btn-outline-primary" title="Ver Estados de Cotizaciones"><i class="fa fa-th-large"></i> </button>
         <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="modal">
-             <div class="modal-dialog modal-lg" id="mdialTamanio">
+             <div class="modal-dialog modal-xl" id="mdialTamanio">
                  <div class="modal-content">
                      <div class="modal-header">
                          <h4 class="modal-title"><i class="fa fa-th-large"></i> Consulta de estados de cotización</h4>
                          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
                      </div>
-                     <div class="modal-body modal-lg">
+                     <div class="modal-body">
                          <div v-if="cargando">
                              <div class="card">
                                  <div class="card-body">
@@ -36,35 +36,36 @@
                                                  <tr>
                                                      <th style="border-style: none;" colspan="2"></th>
                                                      <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos"  v-if="cotizacion.id_transaccion != ''">
-                                                         <label v-if="cotizacion.invitacion"><b>Invitación: {{cotizacion.invitacion}}</b></label>
-                                                         <label v-else></label>
+                                                         <span v-if="cotizacion.invitacion">Invitación: <br>{{cotizacion.invitacion}}</span>
+                                                         <span v-else></span>
                                                      </th>
-                                                     <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" class="table-secondary">
-                                                         <label ><b>Invitación: {{cotizacion.invitacion}}</b></label>
+                                                     <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" >
+                                                         Invitación: <br> {{cotizacion.invitacion}}
                                                      </th>
                                                  </tr>
                                                  <tr>
                                                      <th style="border-style: none;" colspan="2"></th>
                                                      <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion != ''">
-                                                         <label><b>Cotización: <b>{{cotizacion.numero_folio}}</b></b></label>
+                                                        Cotización: <br> {{cotizacion.numero_folio}}
                                                      </th>
-                                                     <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" class="table-secondary"></th>
+                                                     <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" ></th>
                                                  </tr>
                                                  <tr>
-                                                     <td style="border-style: none;" colspan="2"></td>
+                                                     <th >#</th>
+                                                     <th >Material</th>
                                                      <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" style="padding: 1px;" v-if="cotizacion.id_transaccion != ''" ><b>{{cotizacion.empresa}}</b></th>
-                                                     <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" style="padding: 1px;" v-if="cotizacion.id_transaccion == ''" class="table-secondary"><b>{{cotizacion.empresa}}</b></th>
+                                                     <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" style="padding: 1px;" v-if="cotizacion.id_transaccion == ''" ><b>{{cotizacion.empresa}}</b></th>
                                                  </tr>
                                              </thead>
                                              <tbody>
                                                  <tr v-for="(partida, i) in solicitud.detalleEstadoCotizacion.partidas">
                                                      <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
-                                                     <th style="text-align: left;">{{partida.material}}</th>
+                                                     <td style="text-align: left;">{{partida.material}}</td>
                                                      <td v-for="p in partida.partidas" style="text-align: center" v-if="p.pendiente === false">
                                                          <i class="fa fa-check" aria-hidden="true" style="color: green" v-if="p.cotizada == true"></i>
                                                          <i class="fa fa-times" aria-hidden="true" style="color: red" v-else></i>
                                                      </td>
-                                                     <td v-for="p in partida.partidas" style="text-align: center" v-if="p.pendiente === true" class="table-secondary">
+                                                     <td v-for="p1 in partida.partidas" style="text-align: center" v-if="p1.pendiente === true" >
                                                          <i class="fa fa-window-minimize" aria-hidden="true" style="color: gray"></i>
                                                      </td>
 
@@ -77,7 +78,7 @@
                          </div>
                      </div>
                      <div class="modal-footer">
-                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
+                         <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
                      </div>
                  </div>
              </div>
