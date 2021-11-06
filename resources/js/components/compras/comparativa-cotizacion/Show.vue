@@ -36,7 +36,7 @@
                             <tr  >
                                 <td colspan="4" class="sin_borde"></td>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
-                                    <th class="c300 no_negrita" colspan="5">
+                                    <th class="c300 no_negrita" colspan="5" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.numero_folio}}</b>
@@ -45,7 +45,7 @@
                                                 <b>{{cotizacion.empresa}}</b>
                                             </div>
                                         </div>
-                                        <hr style="margin: 1px">
+                                        <hr style="margin: 1px" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 Fecha
@@ -61,7 +61,7 @@
                                             </div>
 
                                         </div>
-                                        <hr style="margin: 1px">
+                                        <hr style="margin: 1px" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <div class="row">
 
                                             <div class="col-md-3">
@@ -77,7 +77,7 @@
                                                 <b>{{cotizacion.fecha_envio}}</b>
                                             </div>
                                         </div>
-                                        <hr style="margin: 1px">
+                                        <hr style="margin: 1px" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <div class="row">
                                             <div class="col-md-2">
                                                 % Anticipo
@@ -95,7 +95,7 @@
                                                 IVG
                                             </div>
                                         </div>
-                                        <hr style="margin: 1px">
+                                        <hr style="margin: 1px" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                          <div class="row">
                                             <div class="col-md-2">
                                                 <b>{{cotizacion.anticipo}}</b>
@@ -110,7 +110,7 @@
                                                 <b>{{cotizacion.vigencia}}</b>
                                             </div>
                                              <div class="col-md-2">
-                                                <b>{{cotizacion.ivg}}</b>
+                                                <b :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">{{cotizacion.ivg}}</b>
                                             </div>
                                         </div>
                                     </th>
@@ -132,19 +132,19 @@
                                     Cantidad
                                 </th>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
-                                    <th>
+                                    <th :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         Precio Unitario
                                     </th>
-                                    <th>
+                                    <th :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         IV
                                     </th>
-                                    <th>
+                                    <th :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         Descuento
                                     </th>
-                                    <th >
+                                    <th :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``" >
                                         Moneda
                                     </th>
-                                    <th >
+                                    <th :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         Importe Pesos (MXN)
                                     </th>
                                 </template>
@@ -166,27 +166,27 @@
                                     {{partida.cantidad}}
                                 </td>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
-                                    <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
+                                    <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             ${{ parseFloat(partida.cotizaciones[c].precio_unitario).formatMoney(2,".",",")}}
                                         </span>
                                     </td>
-                                    <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
+                                    <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             {{ partida.cotizaciones[c].iv }}
                                         </span>
                                     </td>
-                                    <td style="text-align: right;" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
+                                    <td style="text-align: right;" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             {{partida.cotizaciones[c].descuento_partida_format}}
                                         </span>
                                     </td>
-                                    <td :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
+                                    <td :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             {{partida.cotizaciones[c].moneda}}
                                         </span>
                                     </td>
-                                    <td style="text-align: right" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
+                                    <td style="text-align: right" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             ${{ parseFloat(partida.cotizaciones[c].precio_total_moneda).formatMoney(2,".",",")}}
                                         </span>
@@ -200,7 +200,7 @@
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
                                         <td colspan="4" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
-                                        <td style="text-align: right">${{ parseFloat(cotizacion.suma_subtotal_partidas).formatMoney(2,".",",")}}</td>
+                                        <td style="text-align: right" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">${{ parseFloat(cotizacion.suma_subtotal_partidas).formatMoney(2,".",",")}}</td>
                                     </template>
 
                                 </tr>
@@ -209,47 +209,47 @@
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
                                         <td colspan="4" style="text-align: right;border:none" class="titulo">Descuento Global:</td>
-                                        <td style="text-align: right">{{cotizacion.descuento_global}}</td>
+                                        <td style="text-align: right" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">{{cotizacion.descuento_global}}</td>
                                     </template>
 
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
-                                        <td style="text-align: right">${{ parseFloat(cotizacion.subtotal_con_descuento).formatMoney(2,".",",")}}</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo" >Subtotal Pesos MXN:</td>
+                                        <td style="text-align: right" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">${{ parseFloat(cotizacion.subtotal_con_descuento).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" style="text-align: right;border:none" class="titulo">IVA:</td>
-                                        <td style="text-align: right">${{ parseFloat(cotizacion.iva).formatMoney(2,".",",")}}</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo" >IVA:</td>
+                                        <td style="text-align: right" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">${{ parseFloat(cotizacion.iva).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" style="text-align: right;border:none" class="titulo">Total:</td>
-                                        <td style="text-align: right"><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo" >Total:</td>
+                                        <td style="text-align: right" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``"><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="5" style="text-align: center;border: none">&nbsp;</td>
+                                        <td colspan="5" style="text-align: center;border: none" >&nbsp;</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="5" style="text-align: center;" class="encabezado"><b>Observaciones</b></td>
+                                        <td colspan="5" style="text-align: center;" class="encabezado" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``"><b>Observaciones</b></td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="5" >{{ cotizacion.observaciones }}</td>
+                                        <td colspan="5" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">{{ cotizacion.observaciones }}</td>
                                     </template>
                                 </tr>
                                 <tr>
@@ -488,6 +488,7 @@ export default {
     props: ['id'],
     data(){
         return{
+            mejor_cotizacion : '',
             cotizaciones_completas : false,
             cargando: false,
             es:es,
@@ -529,6 +530,7 @@ export default {
                 this.cantidad_partidas = data.cantidad_partidas;
                 this.cantidad_cotizaciones = data.cantidad_cotizaciones
                 this.proveedores = data.proveedores
+                this.mejor_cotizacion = data.mejor_cotizacion
             }).finally(()=> {
                 this.cargando = false;
             })
@@ -601,8 +603,22 @@ table th,  table td {
     border: 1px solid #dee2e6;
 }
 
+table th.mejor_cotizacion,  table td.mejor_cotizacion {
+    border: 1px solid #93ea84;
+}
+
+table thead th.no_negrita b.mejor_cotizacion
+{
+    color: #59a153;
+}
+
 table td.mejor_opcion {
     background-color: #93ea84;
+}
+
+hr.mejor_cotizacion
+{
+    border-color: #93ea84;
 }
 
 table thead th

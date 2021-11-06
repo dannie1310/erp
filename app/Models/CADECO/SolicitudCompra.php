@@ -754,6 +754,7 @@ class SolicitudCompra extends Transaccion
         $precios = [];
         $exclusiones = [];
         $proveedores = [];
+        $importes = [];
 
         if($data["cotizaciones_completas"] === "true"){
             $cotizaciones_obj = $this->cotizaciones;
@@ -823,13 +824,17 @@ class SolicitudCompra extends Transaccion
                 $cotizaciones[$cotizacion->id_transaccion]['tipo_str'] = "Cotización";
                 $cotizaciones[$cotizacion->id_transaccion]['folio_invitacion'] = "N/A";
             }
+
+
             foreach ($cotizacion->partidas as $p) {
                 if (key_exists($p->id_material, $precios)) {
                     if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                        $importes[$p->id_material] =  $precios[$p->id_material] * $p->cantidad;
                 } else {
                     if($p->precio_unitario_compuesto > 0) {
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                        $importes[$p->id_material] = $precios[$p->id_material]  * $p->cantidad;
                     }
                 }
                 if (array_key_exists($p->id_material, $partidas)) {
@@ -862,9 +867,13 @@ class SolicitudCompra extends Transaccion
         }
 
         $cantidad = 0;
+        $indices = [] ;
+        $i = 0;
         foreach ($cotizaciones_obj as $cont => $cotizacion) {
-            $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
-            $cotizaciones[$cotizacion->id_transaccion]['ivg'] = $this->ivg_format($precios, $cotizacion->partidas);
+            $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($importes, $cotizacion->partidas);
+            $cotizaciones[$cotizacion->id_transaccion]['ivg'] = $this->ivg_format($importes, $cotizacion->partidas);
+            $indices[$i]["id_cotizacion"] = $cotizacion->id_transaccion;
+            $indices[$i]["indice"] = (float) number_format($cotizaciones[$cotizacion->id_transaccion]['ivg_partida'],3,".","");
 
             $cotizaciones[$cotizacion->id_transaccion]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cotizacion->id_transaccion]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;
@@ -882,7 +891,12 @@ class SolicitudCompra extends Transaccion
                 $cantidad ++;
             }
             $exclusiones[$cotizacion->id_transaccion]['importe'] = $importe;
+            $i++;
         }
+
+        $orden = array_column($indices, 'indice');
+        array_multisort( $orden , SORT_ASC, $indices);
+
         $exclusiones['cantidad'] = $cantidad;
         return [
             'cotizaciones' => $cotizaciones,
@@ -892,24 +906,25 @@ class SolicitudCompra extends Transaccion
             'cantidad_cotizaciones' => count($cotizaciones),
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
-            'proveedores' => $proveedores
+            'proveedores' => $proveedores,
+            'mejor_cotizacion' => $indices[0]["id_cotizacion"]
         ];
     }
 
-    private function calcular_ivg($precios, $partidas_cotizacion)
+    private function calcular_ivg($importes, $partidas_cotizacion)
     {
-        $suma_precios = 0;
-        $suma_precios_bajos = 0;
-        foreach($precios as $precio)
+        $suma_importes = 0;
+        $suma_importes_bajos = 0;
+        foreach($importes as $id_material => $importe)
         {
-            $suma_precios_bajos += $precio;
+            $suma_importes_bajos += $importe;
         }
         foreach($partidas_cotizacion as $partida)
         {
-            $suma_precios += $partida->precio_unitario_compuesto;
+            $suma_importes += $partida->precio_unitario_compuesto * $partida->cantidad;
         }
 
-        return $suma_precios_bajos == 0 ?  ($suma_precios - $suma_precios_bajos) : ($suma_precios - $suma_precios_bajos) / $suma_precios_bajos;
+        return $suma_importes_bajos == 0 ?  ($suma_importes - $suma_importes_bajos) : ($suma_importes - $suma_importes_bajos) / $suma_importes_bajos;
         /*dd($precios, $suma_precios_bajos, $suma_precios);
         if ($partidas_cotizacion) {
             foreach ($partidas_cotizacion as $partida) {
