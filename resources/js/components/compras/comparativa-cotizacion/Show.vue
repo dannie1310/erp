@@ -36,7 +36,7 @@
                             <tr  >
                                 <td colspan="4" class="sin_borde"></td>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
-                                    <th class="c300 no_negrita" colspan="4">
+                                    <th class="c300 no_negrita" colspan="5">
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.numero_folio}}</b>
@@ -79,10 +79,10 @@
                                         </div>
                                         <hr style="margin: 1px">
                                         <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 % Anticipo
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 Crédito (días)
                                             </div>
                                             <div class="col-md-3">
@@ -91,13 +91,16 @@
                                             <div class="col-md-3">
                                                 Vigencia (días)
                                             </div>
+                                            <div class="col-md-2">
+                                                IVG
+                                            </div>
                                         </div>
                                         <hr style="margin: 1px">
                                          <div class="row">
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <b>{{cotizacion.anticipo}}</b>
                                             </div>
-                                            <div class="col-md-3">
+                                            <div class="col-md-2">
                                                 <b>{{cotizacion.dias_credito}}</b>
                                             </div>
                                             <div class="col-md-3">
@@ -105,6 +108,9 @@
                                             </div>
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.vigencia}}</b>
+                                            </div>
+                                             <div class="col-md-2">
+                                                <b>{{cotizacion.ivg}}</b>
                                             </div>
                                         </div>
                                     </th>
@@ -116,7 +122,7 @@
                                 <th  class="index_corto">
                                     #
                                 </th>
-                                <th >
+                                <th class="c500">
                                     Descripción
                                 </th>
                                 <th class="c70" >
@@ -128,6 +134,9 @@
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
                                     <th>
                                         Precio Unitario
+                                    </th>
+                                    <th>
+                                        IV
                                     </th>
                                     <th>
                                         Descuento
@@ -162,6 +171,11 @@
                                             ${{ parseFloat(partida.cotizaciones[c].precio_unitario).formatMoney(2,".",",")}}
                                         </span>
                                     </td>
+                                    <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
+                                        <span v-if="partida.cotizaciones[c]">
+                                            {{ partida.cotizaciones[c].iv }}
+                                        </span>
+                                    </td>
                                     <td style="text-align: right;" :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:``">
                                         <span v-if="partida.cotizaciones[c]">
                                             {{partida.cotizaciones[c].descuento_partida_format}}
@@ -185,7 +199,7 @@
                                     <td colspan="4" style="border: none"></td>
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
                                         <td style="text-align: right">${{ parseFloat(cotizacion.suma_subtotal_partidas).formatMoney(2,".",",")}}</td>
                                     </template>
 
@@ -194,7 +208,7 @@
                                     <td colspan="4" style="border: none"></td>
 
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Descuento Global:</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo">Descuento Global:</td>
                                         <td style="text-align: right">{{cotizacion.descuento_global}}</td>
                                     </template>
 
@@ -202,61 +216,64 @@
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo">Subtotal Pesos MXN:</td>
                                         <td style="text-align: right">${{ parseFloat(cotizacion.subtotal_con_descuento).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none" class="titulo">IVA:</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo">IVA:</td>
                                         <td style="text-align: right">${{ parseFloat(cotizacion.iva).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="3" style="text-align: right;border:none" class="titulo">Total:</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo">Total:</td>
                                         <td style="text-align: right"><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" style="text-align: center;border: none">&nbsp;</td>
+                                        <td colspan="5" style="text-align: center;border: none">&nbsp;</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" style="text-align: center;" class="encabezado"><b>Observaciones</b></td>
+                                        <td colspan="5" style="text-align: center;" class="encabezado"><b>Observaciones</b></td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" >{{ cotizacion.observaciones }}</td>
+                                        <td colspan="5" >{{ cotizacion.observaciones }}</td>
                                     </template>
                                 </tr>
                                 <tr>
                                     <td :colspan="3 + (cantidad_cotizaciones * 4)" style="border: none">&nbsp;</td>
                                 </tr>
+                                </tfoot>
+                        </table>
                                 <template v-if="exclusiones.cantidad > 0">
+                                    <table class="table table-sm table-fs-sm">
                                     <tr>
                                         <td colspan="4" style="border: none"></td>
-                                        <td :colspan="cantidad_cotizaciones * 4" class="encabezado">EXCLUSIONES</td>
+                                        <td :colspan="cantidad_cotizaciones * 3" class="encabezado">EXCLUSIONES</td>
                                     </tr>
                                     <tr>
                                         <th class="encabezado index_corto" >
                                             #
                                         </th>
-                                        <th class="encabezado" >
+                                        <th class="encabezado c500" >
                                             Descripción
                                         </th>
-                                        <th  class="encabezado">
+                                        <th  class="encabezado c70">
                                             Unidad
                                         </th>
-                                        <th class="encabezado">
+                                        <th class="encabezado c70">
                                             Cantidad
                                         </th>
 
@@ -264,10 +281,10 @@
                                             <th class="encabezado">
                                                 Precio Unitario
                                             </th>
-                                            <th colspan="2" class="encabezado">
+                                            <th class="encabezado">
                                                 Moneda
                                             </th>
-                                            <th class="encabezado">
+                                            <th class="encabezado" >
                                                 Importe Pesos (MXN)
                                             </th>
                                         </template>
@@ -281,12 +298,12 @@
                                             <template v-for = "(cotizacion, c) in cotizaciones" >
                                                 <template v-if="c == iex">
                                                     <td style="text-align: right;">${{ parseFloat(exclusion[0].precio_unitario).formatMoney(2,".",",")}}</td>
-                                                    <td colspan="2">{{exclusion[0].moneda}}</td>
-                                                    <td style="text-align: right;">${{ parseFloat(exclusion[0].total).formatMoney(2,".",",") }}</td>
+                                                    <td >{{exclusion[0].moneda}}</td>
+                                                    <td style="text-align: right;" >${{ parseFloat(exclusion[0].total).formatMoney(2,".",",") }}</td>
                                                 </template>
                                                 <template v-else>
                                                     <td >&nbsp;</td>
-                                                    <td colspan="2">&nbsp;</td>
+                                                    <td >&nbsp;</td>
                                                     <td >&nbsp;</td>
                                                 </template>
                                             </template>
@@ -295,9 +312,9 @@
                                     <tr>
                                         <td colspan="4" style="border: none"></td>
                                         <template v-for = "(cotizacion, c) in cotizaciones" >
-                                            <td colspan="3" style="text-align: right; border: none">Total Exclusiones:</td>
+                                            <td colspan="2" style="text-align: right; border: none">Total Exclusiones:</td>
                                             <td style="text-align: right" v-if="exclusiones[c] && exclusiones[c].importe>0">${{ parseFloat(exclusiones[c].importe).formatMoney(2,".",",")}}</td>
-                                            <td style="text-align: right" v-else>-</td>
+                                            <td style="text-align: right" v-else >-</td>
                                         </template>
                                     </tr>
 
@@ -308,15 +325,15 @@
                                     <tr>
                                         <td colspan="4" style="border: none"></td>
                                         <template v-for = "(cotizacion, c) in cotizaciones" >
-                                            <td colspan="3" style="text-align: right; border: none">Total Comparativa:</td>
+                                            <td colspan="2" style="text-align: right; border: none">Total Comparativa:</td>
                                             <td style="text-align: right" v-if="exclusiones[c] && exclusiones[c].importe>0"><b>${{ parseFloat(exclusiones[c].importe + cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                             <td style="text-align: right" v-else><b>${{ parseFloat(cotizacion.total).formatMoney(2,".",",")}}</b></td>
                                         </template>
                                     </tr>
-
+                                    </table>
                                 </template>
-                            </tfoot>
-                        </table>
+
+
                     </div>
                 </div>
             </div>

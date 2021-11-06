@@ -704,6 +704,7 @@ class    CotizacionCompra  extends Transaccion
         $cantidad = 0;
         foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
             $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+            $cotizaciones[$cont]['ivg'] = $this->ivg_format($precios, $cotizacion->partidas);
             $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;
             foreach($cotizacion->exclusiones as $exc => $exclusion){
@@ -728,21 +729,56 @@ class    CotizacionCompra  extends Transaccion
         ];
     }
 
+    public function calcular_ki($precio, $precio_menor)
+    {
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
     private function calcular_ivg($precios, $partidas_cotizacion)
     {
-        $ivg = 0;
+        $suma_precios = 0;
+        $suma_precios_bajos = 0;
+        foreach($precios as $precio)
+        {
+            $suma_precios_bajos += $precio;
+        }
+        foreach($partidas_cotizacion as $partida)
+        {
+            $suma_precios += $partida->precio_unitario_compuesto;
+        }
+
+        return $suma_precios_bajos == 0 ?  ($suma_precios - $suma_precios_bajos) : ($suma_precios - $suma_precios_bajos) / $suma_precios_bajos;
+        /*dd($precios, $suma_precios_bajos, $suma_precios);
         if ($partidas_cotizacion) {
             foreach ($partidas_cotizacion as $partida) {
                 $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
             }
             return $partidas_cotizacion->count() > 0 ? $ivg : -1;
         }
-        return -1;
+
+        return -1;*/
     }
 
-    public function calcular_ki($precio, $precio_menor)
+    public function ki_format($precio, $precio_menor)
     {
-        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+        $ki = $this->calcular_ki($precio, $precio_menor);
+        if($ki >0){
+            return number_format($ki,3);
+        }else
+        {
+            return "-";
+        }
+    }
+
+    public function ivg_format($precios, $partidas_cotizacion)
+    {
+        $ivg = $this->calcular_ivg($precios, $partidas_cotizacion);
+        if($ivg >0){
+            return number_format($ivg,3);
+        }else
+        {
+            return "-";
+        }
     }
 
     public function getRelaciones()

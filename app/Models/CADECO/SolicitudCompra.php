@@ -816,7 +816,6 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_dolar'] = $cotizacion->sumaPrecioPartidaMoneda(2) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(2), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_euro'] = $cotizacion->sumaPrecioPartidaMoneda(3) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(3), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_libra'] = $cotizacion->sumaPrecioPartidaMoneda(4)== 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(4), 2, '.', ',');
-            $invitacion_transformer = new InvitacionTransformer();
             if($cotizacion->invitacion){
                 $cotizaciones[$cotizacion->id_transaccion]['folio_invitacion'] = $cotizacion->invitacion->numero_folio_format;
                 $cotizaciones[$cotizacion->id_transaccion]['tipo_str'] = $cotizacion->invitacion->tipo == 1 ? 'Cotización' : 'Contraoferta';
@@ -852,9 +851,21 @@ class SolicitudCompra extends Transaccion
             }
         }
 
+
+        foreach($partidas as $key=>$partida)
+        {
+            foreach($partida["cotizaciones"] as $key_cto=>$cotizacion)
+            {
+                $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_unitario_compuesto"], $precios[$key]);
+
+            }
+        }
+
         $cantidad = 0;
         foreach ($cotizaciones_obj as $cont => $cotizacion) {
             $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+            $cotizaciones[$cotizacion->id_transaccion]['ivg'] = $this->ivg_format($precios, $cotizacion->partidas);
+
             $cotizaciones[$cotizacion->id_transaccion]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cotizacion->id_transaccion]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;
             foreach($cotizacion->exclusiones as $exc => $exclusion){
@@ -887,19 +898,54 @@ class SolicitudCompra extends Transaccion
 
     private function calcular_ivg($precios, $partidas_cotizacion)
     {
-        $ivg = 0;
+        $suma_precios = 0;
+        $suma_precios_bajos = 0;
+        foreach($precios as $precio)
+        {
+            $suma_precios_bajos += $precio;
+        }
+        foreach($partidas_cotizacion as $partida)
+        {
+            $suma_precios += $partida->precio_unitario_compuesto;
+        }
+
+        return $suma_precios_bajos == 0 ?  ($suma_precios - $suma_precios_bajos) : ($suma_precios - $suma_precios_bajos) / $suma_precios_bajos;
+        /*dd($precios, $suma_precios_bajos, $suma_precios);
         if ($partidas_cotizacion) {
             foreach ($partidas_cotizacion as $partida) {
                 $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
             }
             return $partidas_cotizacion->count() > 0 ? $ivg : -1;
         }
-        return -1;
+
+        return -1;*/
     }
 
     public function calcular_ki($precio, $precio_menor)
     {
         return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
+    public function ki_format($precio, $precio_menor)
+    {
+        $ki = $this->calcular_ki($precio, $precio_menor);
+        if($ki >0){
+            return number_format($ki,3);
+        }else
+        {
+            return "-";
+        }
+    }
+
+    public function ivg_format($precios, $partidas_cotizacion)
+    {
+        $ivg = $this->calcular_ivg($precios, $partidas_cotizacion);
+        if($ivg >0){
+            return number_format($ivg,3);
+        }else
+        {
+            return "-";
+        }
     }
 
     public function getEstadosInvitacionCotizacionesAttribute()
