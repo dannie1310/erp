@@ -161,7 +161,7 @@ class CotizacionTablaComparativaFormato extends Rotation
                 $this->CellFitScale($anchos["ant"], $heigth, $datos_partidas['cotizaciones'][$i]['anticipo'], 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["cre"], $heigth, $datos_partidas['cotizaciones'][$i]['dias_credito'], 1, 0, 'C', 1);
                 $this->CellFitScale($anchos["ent"], $heigth, $datos_partidas['cotizaciones'][$i]['plazo_entrega'], 1, 0, 'C', 1);
-                $this->CellFitScale($anchos["ivg"], $heigth, $datos_partidas['cotizaciones'][$i]['ivg_partida_porcentaje'] > 0 ? number_format($datos_partidas['cotizaciones'][$i]['ivg_partida_porcentaje'] * 100, '2', '.', ',') . '%' : '', 1, 0, 'C', 1);
+                $this->CellFitScale($anchos["ivg"], $heigth, $datos_partidas['cotizaciones'][$i]['ivg'] > 0 ? $datos_partidas['cotizaciones'][$i]['ivg'] : '', 1, 0, 'C', 1);
             }
             $this->Ln();
 
@@ -464,8 +464,8 @@ class CotizacionTablaComparativaFormato extends Rotation
                     }
                     $this->Ln();
                 }
-                
-                
+
+
             }
             $this->SetFillColor(100, 100, 100);
             $this->SetTextColor(255, 255, 255);
@@ -494,7 +494,7 @@ class CotizacionTablaComparativaFormato extends Rotation
             }
         }
         $this->Ln();
-        
+
     }
 
     function Footer() {

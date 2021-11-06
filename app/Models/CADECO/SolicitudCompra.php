@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionTransformer;
 use App\Models\CADECO\Compras\ActivoFijo;
 use App\Models\CADECO\Compras\AsignacionProveedor;
 use App\Models\CADECO\Compras\CtgEstadoSolicitud;
@@ -23,6 +24,7 @@ use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
+use League\Fractal\TransformerAbstract;
 
 class SolicitudCompra extends Transaccion
 {
@@ -713,6 +715,13 @@ class SolicitudCompra extends Transaccion
         return $relaciones;
     }
 
+    public function getUltimasCotizacionesAttribute()
+    {
+        //$id = DB::connection("cadeco")->select(DB::raw("select max(id_transaccion) from dbo.Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa"));
+        $cotizaciones = $this->cotizaciones()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
+        return $cotizaciones;
+    }
+
     public function getCuerpoCorreoInvitacion()
     {
         if($this->complemento){
@@ -738,13 +747,20 @@ class SolicitudCompra extends Transaccion
 
     }
 
-    public function datosComparativos()
+    public function datosComparativos($data)
     {
         $partidas = [];
         $cotizaciones = [];
         $precios = [];
         $exclusiones = [];
         $proveedores = [];
+        $importes = [];
+
+        if($data["cotizaciones_completas"] === "true"){
+            $cotizaciones_obj = $this->cotizaciones;
+        }else{
+            $cotizaciones_obj = $this->ultimas_cotizaciones;
+        }
 
         foreach ($this->items()->orderBy("id_material")->get() as $key => $item) {
 
@@ -760,7 +776,7 @@ class SolicitudCompra extends Transaccion
             }
         }
 
-        foreach ($this->cotizaciones as $cont => $cotizacion) {
+        foreach ($cotizaciones_obj as $cont => $cotizacion) {
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id"]=$cotizacion->id_empresa;
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_sucursal"]=$cotizacion->id_sucursal;
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["razon_social"]=$cotizacion->empresa->razon_social;
@@ -801,13 +817,24 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_dolar'] = $cotizacion->sumaPrecioPartidaMoneda(2) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(2), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_euro'] = $cotizacion->sumaPrecioPartidaMoneda(3) == 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(3), 2, '.', ',');
             $cotizaciones[$cotizacion->id_transaccion]['suma_total_libra'] = $cotizacion->sumaPrecioPartidaMoneda(4)== 0 ? '-' : number_format($cotizacion->sumaPrecioPartidaMoneda(4), 2, '.', ',');
+            if($cotizacion->invitacion){
+                $cotizaciones[$cotizacion->id_transaccion]['folio_invitacion'] = $cotizacion->invitacion->numero_folio_format;
+                $cotizaciones[$cotizacion->id_transaccion]['tipo_str'] = $cotizacion->invitacion->tipo == 1 ? 'Cotización' : 'Contraoferta';
+            }else{
+                $cotizaciones[$cotizacion->id_transaccion]['tipo_str'] = "Cotización";
+                $cotizaciones[$cotizacion->id_transaccion]['folio_invitacion'] = "N/A";
+            }
+
+
             foreach ($cotizacion->partidas as $p) {
                 if (key_exists($p->id_material, $precios)) {
                     if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                        $importes[$p->id_material] =  $precios[$p->id_material] * $p->cantidad;
                 } else {
                     if($p->precio_unitario_compuesto > 0) {
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                        $importes[$p->id_material] = $precios[$p->id_material]  * $p->cantidad;
                     }
                 }
                 if (array_key_exists($p->id_material, $partidas)) {
@@ -829,9 +856,25 @@ class SolicitudCompra extends Transaccion
             }
         }
 
+
+        foreach($partidas as $key=>$partida)
+        {
+            foreach($partida["cotizaciones"] as $key_cto=>$cotizacion)
+            {
+                $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_unitario_compuesto"], $precios[$key]);
+
+            }
+        }
+
         $cantidad = 0;
-        foreach ($this->cotizaciones as $cont => $cotizacion) {
-            $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+        $indices = [] ;
+        $i = 0;
+        foreach ($cotizaciones_obj as $cont => $cotizacion) {
+            $cotizaciones[$cotizacion->id_transaccion]['ivg_partida'] = $this->calcular_ivg($importes, $cotizacion->partidas);
+            $cotizaciones[$cotizacion->id_transaccion]['ivg'] = $this->ivg_format($importes, $cotizacion->partidas);
+            $indices[$i]["id_cotizacion"] = $cotizacion->id_transaccion;
+            $indices[$i]["indice"] = (float) number_format($cotizaciones[$cotizacion->id_transaccion]['ivg_partida'],3,".","");
+
             $cotizaciones[$cotizacion->id_transaccion]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cotizacion->id_transaccion]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;
             foreach($cotizacion->exclusiones as $exc => $exclusion){
@@ -848,7 +891,12 @@ class SolicitudCompra extends Transaccion
                 $cantidad ++;
             }
             $exclusiones[$cotizacion->id_transaccion]['importe'] = $importe;
+            $i++;
         }
+
+        $orden = array_column($indices, 'indice');
+        array_multisort( $orden , SORT_ASC, $indices);
+
         $exclusiones['cantidad'] = $cantidad;
         return [
             'cotizaciones' => $cotizaciones,
@@ -858,25 +906,61 @@ class SolicitudCompra extends Transaccion
             'cantidad_cotizaciones' => count($cotizaciones),
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
-            'proveedores' => $proveedores
+            'proveedores' => $proveedores,
+            'mejor_cotizacion' => $indices[0]["id_cotizacion"]
         ];
     }
 
-    private function calcular_ivg($precios, $partidas_cotizacion)
+    private function calcular_ivg($importes, $partidas_cotizacion)
     {
-        $ivg = 0;
+        $suma_importes = 0;
+        $suma_importes_bajos = 0;
+        foreach($importes as $id_material => $importe)
+        {
+            $suma_importes_bajos += $importe;
+        }
+        foreach($partidas_cotizacion as $partida)
+        {
+            $suma_importes += $partida->precio_unitario_compuesto * $partida->cantidad;
+        }
+
+        return $suma_importes_bajos == 0 ?  ($suma_importes - $suma_importes_bajos) : ($suma_importes - $suma_importes_bajos) / $suma_importes_bajos;
+        /*dd($precios, $suma_precios_bajos, $suma_precios);
         if ($partidas_cotizacion) {
             foreach ($partidas_cotizacion as $partida) {
                 $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
             }
             return $partidas_cotizacion->count() > 0 ? $ivg : -1;
         }
-        return -1;
+
+        return -1;*/
     }
 
     public function calcular_ki($precio, $precio_menor)
     {
         return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
+    public function ki_format($precio, $precio_menor)
+    {
+        $ki = $this->calcular_ki($precio, $precio_menor);
+        if($ki >0){
+            return number_format($ki,3);
+        }else
+        {
+            return "-";
+        }
+    }
+
+    public function ivg_format($precios, $partidas_cotizacion)
+    {
+        $ivg = $this->calcular_ivg($precios, $partidas_cotizacion);
+        if($ivg >0){
+            return number_format($ivg,3);
+        }else
+        {
+            return "-";
+        }
     }
 
     public function getEstadosInvitacionCotizacionesAttribute()
