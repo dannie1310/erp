@@ -60,6 +60,12 @@
                             <p> Orígenes</p>
                         </router-link>
                     </li>
+                    <li class="nav-item" v-if="$root.can('consultar_telefono')">
+                        <router-link :to="{name: 'telefono'}" class="nav-link" :class="{active: this.$route.name == 'telefono'}">
+                            <i class="fa fa-mobile nav-icon"></i>
+                            <p> Teléfonos</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item" v-if="$root.can('consultar_tiro')">
                         <router-link :to="{name: 'tiro'}" class="nav-link" :class="{active: this.$route.name == 'tiro'}">
                             <i class="fa fa-sign-in-alt nav-icon"></i>

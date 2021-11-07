@@ -5,42 +5,17 @@ namespace App\Models\ACARREOS;
 
 
 use App\Models\IGH\Usuario;
-use App\Models\ACARREOS\Impresora;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\ACARREOS\TelefonoHistorico;
 
-class Telefono extends Model
+class TelefonoHistorico extends Model
 {
     protected $connection = 'acarreos';
-    protected $table = 'telefonos';
-    public $primaryKey = 'id';
-
-    protected $fillable = [
-        'imei',
-        'marca',
-        'modelo',
-        'linea',
-        'regitro',
-        'estatus',
-        'elimino',
-        'motivo',
-        'id_checador',
-        'device_id',
-        'updated_at'
-    ];
+    protected $table = 'telefonos_historicos';
+    protected $primaryKey = 'Id_telefono_historico';
 
     /**
      * Relaciones Eloquent
      */
-    public function impresora()
-    {
-        return $this->belongsTo(Impresora::class, 'id_impresora', 'id');
-    }
-
-    public function historicos(){
-        return $this->hasMany(TelefonoHistorico::class, 'id', 'id');
-    }
-
     public function usuarioRegistro()
     {
         return $this->belongsTo(Usuario::class, 'registro', 'idusuario');
@@ -59,10 +34,6 @@ class Telefono extends Model
     /**
      * Scopes
      */
-    public function scopeActivo($query)
-    {
-        return $query->where('estatus',  1);
-    }
 
     /**
      * Attributes
@@ -125,8 +96,8 @@ class Telefono extends Model
                 break;
         }
     }
-    
-    public function getFechaRegistroCompletaFormatAttribute()
+
+    public function getFechaRegistroFormatAttribute()
     {
         $date = date_create($this->created_at);
         return date_format($date,"d/m/Y H:i");
@@ -137,9 +108,4 @@ class Telefono extends Model
         $date = date_create($this->updated_at);
         return date_format($date,"d/m/Y H:i");
     }
-
-
-    /**
-     * Métodos
-     */
 }

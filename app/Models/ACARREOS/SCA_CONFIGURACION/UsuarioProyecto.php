@@ -71,10 +71,28 @@ class UsuarioProyecto extends Model
         });
     }
 
+    public function scopeSinTelefono($query, $id_checador = null){
+        $checadores = Telefono::whereNotNull('id_checador')->where('estatus', 1)->pluck('id_checador')->all();
+        if($id_checador){
+            if (($key = array_search($id_checador, $checadores)) !== false) {
+                unset($checadores[$key]);
+            }
+        }
+        return $query->whereNotIn('id_usuario_intranet', $checadores);
+    }
+
 
     /**
      * Attributes
      */
+    public function getNombreChecadorAttribute()
+    {
+        try{
+            return $this->usuario->nombre_completo;
+        }catch (\Exception $e){
+            return null;
+        }
+    }
 
 
 
