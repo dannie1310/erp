@@ -37,15 +37,16 @@
                     { title: 'Marca', field: 'marca', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Modelo', field: 'modelo', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Asigando a Checador', field: 'checador', sortable: true},
-                    { title: 'Fecha Registro', field: 'created_at', sortable: true, thComp: require('../../../globals/th-Date').default},
-                    { title: 'Registró', field: 'registro', sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Fecha Registro', field: 'created_at', thClass: 'fecha_hora', sortable: true},
+                    { title: 'Registró', field: 'registro', sortable: true},
+                    { title: 'Estado', field: 'estatus', sortable: true, thClass:'th_c100', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default}
                 ],
                 data: [],
                 total: 0,
                 query: {scope:'', sort: 'id', order: 'asc'},
                 estado: "",
+                search: '',
                 cargando: false
             }
         },

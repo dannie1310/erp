@@ -52,6 +52,21 @@ class TelefonoService{
     public function paginate($data)
     {
         $this->conexionAcarreos();
+        if (isset($data['imei'])) {
+            $this->repository->where([['imei', 'LIKE', '%'.$data['imei'].'%']]);
+        }
+        if (isset($data['device_id'])) {
+            $this->repository->where([['device_id', 'LIKE', '%'.$data['device_id'].'%']]);
+        }
+        if (isset($data['linea'])) {
+            $this->repository->where([['linea', 'LIKE', '%'.$data['linea'].'%']]);
+        }
+        if (isset($data['marca'])) {
+            $this->repository->where([['marca', 'LIKE', '%'.$data['marca'].'%']]);
+        }
+        if (isset($data['modelo'])) {
+            $this->repository->where([['modelo', 'LIKE', '%'.$data['modelo'].'%']]);
+        }
         return  $this->repository->paginate($data);
     }
 

@@ -29,6 +29,15 @@ class Telefono extends Model
         'updated_at'
     ];
 
+    
+    public $searchable = [
+        'imei',
+        'device_id',
+        'linea',
+        'marca',
+        'modelo',
+    ];
+
     /**
      * Relaciones Eloquent
      */
