@@ -175,7 +175,7 @@ class AvanceObra extends Transaccion
             if($concepto['concepto_medible'] == 3 && (float) $concepto['avance'] != 0)
             {
                 $conc = Concepto::where('id_concepto', $concepto['id_concepto'])->first();
-                $precio_prod = $conc->precioVenta->precio_produccion;
+                $precio_prod = $conc->precioVenta ? $conc->precioVenta->precio_produccion : 0;
                 $this->partidas()->create([
                     'id_transaccion' => $this->id_transaccion,
                     'id_concepto' => $concepto['id_concepto'],
