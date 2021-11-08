@@ -3645,8 +3645,8 @@ export const routes = [
                 name: 'informe-general-sat',
                 component: require('./components/fiscal/informes/InformeSAT.vue').default,
                 meta: {
-                    title: 'Informe SAT',
-                    breadcrumb: {name: 'INFORME SAT', parent: 'fiscal'},
+                    title: 'Informe CFDI vs. Pasivos',
+                    breadcrumb: {name: 'INFORME CFDI VS. PASIVOS', parent: 'fiscal'},
                     middleware: [auth, permission],
                     permission: ['consultar_informe_general_sat'],
                     general: true
