@@ -353,7 +353,7 @@ class AvanceObra extends Transaccion
             if(($partida['cantidad'] + $item->concepto->cantidad_presupuestada) < 0){
                 throw new Exception("El avance de obra del concepto '" . $item->concepto->descripcion . "' debe ser igual o mayor a " . -$item->concepto->cantidad_presupuestada);
             }
-            $item->cantidad = $partida['cantidad'];
+            $item->cantidad = $partida['cantidad_format'];
             $item->numero = $partida['cumplido']?1:0;
             $item->save();
         }

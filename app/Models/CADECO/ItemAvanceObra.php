@@ -38,7 +38,7 @@ class ItemAvanceObra extends Item
      */
     public function getCantidadAvanceActualAttribute()
     {
-        return $this->cantidad_anterior_avance + $this->cantidad;
+        return number_format($this->cantidad_anterior_avance + $this->cantidad,6, ".","");
     }
 
     public function getCantidadAvanceActualFormatAttribute()
@@ -79,6 +79,10 @@ class ItemAvanceObra extends Item
     public function getCumplidoAttribute()
     {
         return $this->numero == 1 ? true : false;
+    }
+
+    public function getCantidadFormatAttribute(){
+        return number_format($this->cantidad, 6, ".", "");
     }
 
     /**
