@@ -139,7 +139,7 @@ class AvanceObra extends Transaccion
      */
     public function registrar(array $data)
     {
-        $this->validarConceptos($data['conceptos']);
+        $this->validarConceptos($data['conceptos']['data']);
         try
         {
             DB::connection('cadeco')->beginTransaction();
@@ -158,7 +158,7 @@ class AvanceObra extends Transaccion
                 'observaciones' => $data['observaciones']
             ]);
 
-            $avance->registrarPartidas($data['conceptos']);
+            $avance->registrarPartidas($data['conceptos']['data']);
             $avance->actualizarTotales();
             DB::connection('cadeco')->commit();
             return $avance;
