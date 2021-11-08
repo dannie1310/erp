@@ -163,14 +163,14 @@
                                                         data-vv-as="Avance"
                                                         v-validate="{required: true, min_value:-(partida.concepto.cantidad_presupuestada_calculada+100), regex: /^[+-]?[0-9]\d*(\.\d{0,6})?$/}"
                                                         :class="{'is-invalid': errors.has(`avance[${i}]`)}"
-                                                        v-model="partida.cantidad"
+                                                        v-model="partida.cantidad_format"
                                                         style="text-align: right" />
                                                 <div class="invalid-feedback" v-show="errors.has(`avance[${i}]`)">{{ errors.first(`avance[${i}]`) }}</div>
                                             </td>
                                             <td style="text-align:right;">{{partida.precio_unitario_format}}</td>
                                             <td style="text-align:right;">{{partida.monto_avance_format}}</td>
-                                            <td style="text-align:right;">{{partida.cantidad_avance_actual.formatMoney(4, '.', ',')}}</td>
-                                            <td style="text-align:right;">{{partida.monto_avance_actual.formatMoney(4, '.', ',')}}</td>
+                                            <td style="text-align:right;">{{partida.cantidad_avance_actual_format}}</td>
+                                            <td style="text-align:right;">{{partida.monto_avance_actual_format}}</td>
                                             <td>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" value="" id="cumplido" :name="`cumplido[${i}]`" v-model="partida.cumplido">

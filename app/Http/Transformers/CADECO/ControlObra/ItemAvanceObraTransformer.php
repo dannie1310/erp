@@ -31,6 +31,7 @@ class ItemAvanceObraTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'cantidad' => $model->cantidad,
+            'cantidad_format' => $model->cantidad_format,
             'precio_unitario' => $model->precio_unitario,
             'cantidad_format' => $model->cantidad_format,
             'precio_unitario_format' => $model->precio_unitario_format,
