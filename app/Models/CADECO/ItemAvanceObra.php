@@ -20,7 +20,7 @@ class ItemAvanceObra extends Item
      */
     public function avanceObra()
     {
-        return $this->belongsTo(AvanceObra::class, 'id_transaccion','id_transaccion');
+        return $this->hasOne(AvanceObra::class, 'id_transaccion','id_transaccion');
     }
 
     public function concepto()
@@ -31,7 +31,6 @@ class ItemAvanceObra extends Item
     /**
      * Scopes
      */
-
 
     /**
      * Attributos
@@ -83,6 +82,27 @@ class ItemAvanceObra extends Item
 
     public function getCantidadFormatAttribute(){
         return number_format($this->cantidad, 6, ".", "");
+    }
+    
+    public function getAvanceObraActivoAttribute()
+    {
+        if($this->avanceObra)
+        {
+            if($this->avanceObra->estado == 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getConceptoDescripcionAttribute()
+    {
+        try{
+            return $this->concepto->descripcion;
+        }catch (\Exception $e){
+            return null;
+        }
     }
 
     /**
