@@ -69,6 +69,11 @@ class Concepto extends Model
         return $this->belongsTo(PrecioVenta::class, 'id_concepto', 'id_concepto');
     }
 
+    public function avances()
+    {
+        return $this->hasMany(AvanceObra::class, 'id_concepto', 'id_concepto');
+    }
+
     public function getAncestrosAttribute($nivel)
     {
         $size = strlen($nivel)/4;
@@ -116,6 +121,19 @@ class Concepto extends Model
     {
         if ($this->nivel_padre != '') {
             return self::where('nivel', '=', $this->nivel_padre)->first()->id_concepto;
+        }
+        return null;
+    }
+
+    public function getNivelPadreSuperiorAttribute()
+    {
+        return substr($this->nivel, 0, 4);
+    }
+
+    public function getIdPadreSuperiorAttribute()
+    {
+        if ($this->nivel_padre_superior != '') {
+            return self::where('nivel', '=', $this->nivel_padre_superior)->first()->id_concepto;
         }
         return null;
     }
@@ -408,22 +426,23 @@ class Concepto extends Model
 
     public function getConceptosHijosMedible()
     {
-        $conceptos = [];
+        $this->validarConceptoSeleccionado();
+        $conceptos = array();
         $i = 1;
         if($this->concepto_medible == 3){
             if($this->estado == 0)
             {
-                $conceptos[0] = $this->toArray();
-                $conceptos[0]['precio_venta'] = $this->precio_produccion;
-                $conceptos[0]['cantidad_presupuestada'] = $this->cantidad_presupuestada_calculada;
-                $conceptos[0]['avance'] = '0.00';
-                $conceptos[0]['cantidad_anterior_format'] = $this->cantidad_anterior_avance_format;
-                $conceptos[0]['cantidad_anterior'] = (float) $this->cantidad_anterior_avance;
-                $conceptos[0]['monto_avance'] = $this->monto_avance_format;
-                $conceptos[0]['cantidad_actual'] = '0.00';
-                $conceptos[0]['monto_actual'] = '0.00';
-                $conceptos[0]['cumplido'] = false;
-                $conceptos[0]['i'] = $i;
+                $conceptos['data'][0] = $this->toArray();
+                $conceptos['data'][0]['precio_venta'] = $this->precio_produccion;
+                $conceptos['data'][0]['cantidad_presupuestada'] = $this->cantidad_presupuestada_calculada;
+                $conceptos['data'][0]['avance'] = '0.00';
+                $conceptos['data'][0]['cantidad_anterior_format'] = $this->cantidad_anterior_avance_format;
+                $conceptos['data'][0]['cantidad_anterior'] = (float) $this->cantidad_anterior_avance;
+                $conceptos['data'][0]['monto_avance'] = $this->monto_avance_format;
+                $conceptos['data'][0]['cantidad_actual'] = '0.00';
+                $conceptos['data'][0]['monto_actual'] = '0.00';
+                $conceptos['data'][0]['cumplido'] = false;
+                $conceptos['data'][0]['i'] = $i;
             }
         }else {
             $conceptos_consulta = self::withoutGlobalScopes()->where('id_obra', '=', Context::getIdObra())->whereRaw("nivel like '".$this->nivel."%'")->orderBy('nivel')->get();
@@ -445,13 +464,13 @@ class Concepto extends Model
                 if($concepto->estado == 0) {
                     if ($num_nivel_anterior == 0 || $anterior_concepto_medible == false) {
                         $conc['i'] = $i;
-                        $conceptos[$concepto->getKey()] = $conc;
+                        $conceptos['data'][$concepto->getKey()] = $conc;
                         $i++;
                     } else {
                         if (strlen($concepto->nivel) <= $num_nivel_anterior) {
                             $anterior_concepto_medible = false;
                             $conc['i'] = $i;
-                            $conceptos[$concepto->getKey()] = $conc;
+                            $conceptos['data'][$concepto->getKey()] = $conc;
                             $i++;
                         }
                     }
@@ -465,5 +484,40 @@ class Concepto extends Model
             }
         }
         return $conceptos;
+    }
+
+    private function validarConceptoSeleccionado()
+    {
+        if($this->avances()->registrado()->count())
+        {
+            abort(400, "Existen Avances anteriores sin autorizar para este frente.
+             No se pueden cargar nuevas transacciones hasta aprobar las anteriores");
+        }
+
+        $avances = AvanceObra::registrado()->get();
+        $id_concepto = 0;
+        $id_concepto_avance = 0;
+        if($this->nivel_padre_superior == '')
+        {
+            $id_concepto = $this->getKey();
+        }else{
+            $id_concepto = $this->id_padre_superior;
+        }
+        foreach ($avances as $avance)
+        {
+            $id_concepto_avance = 0;
+            if($avance->concepto->nivel_padre_superior == '')
+            {
+                $id_concepto_avance = $avance->concepto->id_concepto;
+            }else{
+                $id_concepto_avance = $avance->concepto->id_padre_superior;
+            }
+            if($id_concepto == $id_concepto_avance)
+            {
+                abort(400, "Existen Avances anteriores sin autorizar para este frente relacionado;
+                                            No se pueden cargar nuevas transacciones hasta aprobar las anteriores");
+
+            }
+        }
     }
 }
