@@ -58,7 +58,10 @@ class AvanceObra extends Transaccion
     /**
      * Scope
      */
-
+    public function scopeRegistrado($query)
+    {
+        return $query->where('estado', 0);
+    }
 
     /**
      * Attributos

@@ -130,7 +130,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(partida,i) in hijos">
+                                        <tr v-for="(partida,i) in hijos.data">
                                             <td style="text-align:center; vertical-align:inherit;">{{partida.i}}</td>
                                             <td> {{partida.nivel}}</td>
                                             <td v-if="partida.concepto_medible != 3"><b>{{partida.descripcion}}</b></td>
@@ -257,11 +257,32 @@
                     this.cargando_hijos = false;
                     this.hijos = data;
                 })
+                    .catch(error => {
+                        this.cargando_hijos = false;
+                    });
             },
             validate() {
+                var partida = false
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.store()
+                        if(this.hijos == null)
+                        {
+                           swal('¡Error!', 'Debe seleccionar otro concepto.', 'error')
+                        }
+                        else {
+                            for (const k in this.hijos.data) {
+                                if (this.hijos['data'][k]['concepto_medible'] == 3) {
+                                    if (parseFloat(this.hijos['data'][k]['avance']) > 0) {
+                                        partida = true;
+                                    }
+                                }
+                            }
+                        }
+                        if(partida) {
+                            this.store()
+                        }else{
+                            swal('¡Error!', 'Debe tener cantidad en algún concepto para generar el avance.', 'error')
+                        }
                     }
                 });
             },
