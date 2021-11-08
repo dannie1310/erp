@@ -146,7 +146,7 @@
                                                        v-on:keyup="getEditarCantidades(partida)"
                                                        :name="`avance[${i}]`"
                                                        data-vv-as="Avance"
-                                                       v-validate="{required: true, min_value:0, regex: /^[0-9]\d*(\.\d{0,6})?$/}"
+                                                       v-validate="{required: true, regex: /^-?[0-9]\d*(\.\d{0,6})?$/}"
                                                        :class="{'is-invalid': errors.has(`avance[${i}]`)}"
                                                        v-model="partida.avance"
                                                        style="text-align: right" />
@@ -272,7 +272,7 @@
                         else {
                             for (const k in this.hijos.data) {
                                 if (this.hijos['data'][k]['concepto_medible'] == 3) {
-                                    if (parseFloat(this.hijos['data'][k]['avance']) > 0) {
+                                    if (parseFloat(this.hijos['data'][k]['avance']) != 0) {
                                         partida = true;
                                     }
                                 }
