@@ -2831,6 +2831,20 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'telefono',
+                                name: 'telefono',
+                                component: require('./components/acarreos/catalogos/telefono/Index').default,
+                                meta: {
+                                    title: 'Teléfonos',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'TELÉFONOS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_telefono']
+                                }
+                            },
+                            {
                                 path: 'tiro',
                                 name: 'tiro',
                                 component: require('./components/acarreos/catalogos/tiro/Index').default,
