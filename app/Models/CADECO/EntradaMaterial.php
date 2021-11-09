@@ -9,17 +9,18 @@
 namespace App\Models\CADECO;
 
 
-use App\Models\CADECO\Compras\EntradaEliminada;
-use App\Models\CADECO\Compras\InventarioEliminado;
-use App\Models\CADECO\Compras\ItemContratista;
-use App\Models\CADECO\Compras\ItemEntradaEliminada;
-use App\Models\CADECO\Compras\MovimientoEliminado;
-use App\Models\CADECO\Contabilidad\HistPoliza;
-use App\Models\CADECO\Contabilidad\Poliza;
-use App\Models\CADECO\Contabilidad\PolizaMovimiento;
-use Illuminate\Support\Facades\DB;
 use DateTime;
 use DateTimeZone;
+use App\Models\CADECO\Entrega;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\Contabilidad\Poliza;
+use App\Models\CADECO\Compras\ItemContratista;
+use App\Models\CADECO\Contabilidad\HistPoliza;
+use App\Models\CADECO\Compras\EntradaEliminada;
+use App\Models\CADECO\Compras\InventarioEliminado;
+use App\Models\CADECO\Compras\MovimientoEliminado;
+use App\Models\CADECO\Compras\ItemEntradaEliminada;
+use App\Models\CADECO\Contabilidad\PolizaMovimiento;
 
 class EntradaMaterial extends Transaccion
 {
@@ -149,6 +150,7 @@ class EntradaMaterial extends Transaccion
             $this->validarParaEliminar();
             $this->delete();
             $this->revisar_respaldos($motivo);
+            $this->validaEntregas();
             $ordenCompra->abrir();
             DB::connection('cadeco')->commit();
         }catch (\Exception $e) {
@@ -374,6 +376,20 @@ class EntradaMaterial extends Transaccion
             {
                 DB::connection('cadeco')->rollBack();
                 abort(400, 'Error en el proceso de eliminación de entrada de almacén, no se respaldo partida.');
+            }
+        }
+    }
+
+    public function validaEntregas(){
+        foreach($this->partidas as $partida){
+            $entrega = Entrega::where('id_item', '=', $partida->item_antecedente)->first();
+            $cant = EntradaMaterialPartida::where('item_antecedente', '=', $partida->item_antecedente)
+                            ->where('id_antecedente', '=', $partida->id_antecedente)
+                            ->where('id_transaccion', '!=', $partida->id_transaccion)->sum('cantidad');
+            
+            if ($entrega->surtida != $cant){
+                DB::connection('cadeco')->rollBack();
+                throw New \Exception('Error en el proceso de eliminación de entrada de almacén, no se actualizó la cantidad surtida en la entrega.');
             }
         }
     }
