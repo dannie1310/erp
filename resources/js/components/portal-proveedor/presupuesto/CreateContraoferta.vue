@@ -649,9 +649,9 @@
     import DatosPresupuesto from "./partials/DatosPresupuesto";
     import presupuesto from "../../../store/modules/contratos/presupuesto";
     export default {
-        name: "presupuesto-edit",
+        name: "contraoferta-presupuesto-proveedor-create",
         components: {  Datepicker, ModelListSelect, DatosPresupuesto},
-        props: ['id', 'xls'],
+        props: ['id_invitacion_antecedente','id_invitacion', 'xls'],
         data() {
             return {
                 cargando: false,
@@ -685,6 +685,7 @@
                 peso_seleccionado : true,
                 ancho_tabla_detalle: '330',
                 descuento_cot : '',
+                contrato : {conceptos:{}},
             }
         },
         mounted() {
@@ -698,7 +699,7 @@
             find() {
                 this.cargando = true;
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
-                    id: this.id,
+                    id: this.id_invitacion_antecedente,
                     params: {
                         include: ['presupuesto_proveedor'],
                         scope: ['invitadoAutenticado']
@@ -988,7 +989,7 @@
 
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.presupuesto.id_invitacion = this.id;
+                        this.presupuesto.id_invitacion = this.id_invitacion;
                         this.presupuesto.subtotal = this.subtotal_mxn;
                         this.presupuesto.monto = this.total_mxn;
                         this.presupuesto.impuesto = this.iva_mxn;
@@ -1003,14 +1004,31 @@
             save() {
                 if(this.total == 0)
                 {
-                    swal('Error', 'No puede ingresar una cotización donde todas las partidas tengan precio $0.00, favor de corregir para continuar', 'error');
+                    swal('Error', 'No puede contraofertar con una cotización donde todas las partidas tengan precio $0.00, favor de corregir para continuar', 'error');
                 }
                 else
                 {
-                    return this.$store.dispatch('contratos/presupuesto/updatePresupuestoProveedor', {
-                        id: this.presupuesto.id,
-                        presupuesto: this.presupuesto
-                        })
+                    this.contrato.conceptos.data = this.presupuesto.contratos;
+                    this.contrato.id_invitacion = this.id_invitacion;
+                    this.contrato.pendiente = 0;
+                    this.contrato.fecha_cot = this.presupuesto.fecha;
+                    this.contrato.descuento_cot = this.descuento_cot;
+                    this.contrato.pesos = this.pesos;
+                    this.contrato.dolares = this.dolares;
+                    this.contrato.euros = this.euros;
+                    this.contrato.libras = this.libras;
+                    this.contrato.anticipo = this.presupuesto.anticipo;
+                    this.contrato.credito = this.presupuesto.dias_credito;
+                    this.contrato.vigencia = this.presupuesto.dias_vigencia;
+                    this.contrato.subtotal = this.subtotal_mxn;
+                    this.contrato.total = this.total_mxn;
+                    this.contrato.impuesto = this.iva_mxn;
+                    this.contrato.tc_eur = this.euro;
+                    this.contrato.tc_usd = this.dolar;
+                    this.contrato.tc_libra = this.libra;
+                    this.contrato.exclusiones = this.exclusiones;
+                    this.contrato.observaciones_cot = this.presupuesto.observaciones
+                    return this.$store.dispatch('contratos/presupuesto/registrarPresupuestoProveedor', this.contrato)
                     .then((data) => {
                         this.salir()
                     });

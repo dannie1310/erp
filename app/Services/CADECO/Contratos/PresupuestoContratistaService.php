@@ -3,6 +3,7 @@
 
 namespace App\Services\CADECO\Contratos;
 
+use App\Events\EnvioCotizacion;
 use App\Facades\Context;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
@@ -385,5 +386,14 @@ class PresupuestoContratistaService
     public function setDB($base_datos){
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database',$base_datos);
+    }
+
+    public function liberaCotizacion($id_transaccion_cotizacion, $base_datos)
+    {
+        $cotizacion =  $this->repository->liberaCotizacion($id_transaccion_cotizacion, $base_datos);
+        if($cotizacion){
+            //event(new EnvioCotizacion($cotizacion->invitacion, $cotizacion));
+        }
+        return $cotizacion;
     }
 }
