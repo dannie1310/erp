@@ -145,6 +145,13 @@
         },
         methods : {
             init() {
+                this.imei = '';
+                this.device_id = '';
+                this.marca = '';
+                this.modelo = '';
+                this.linea = '';
+                this.id_checador = '';
+                this.$validator.reset()
                 this.getChecadores();
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
