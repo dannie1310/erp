@@ -169,7 +169,7 @@ class SolicitudCompraService
 
     public function getComparativaCotizaciones($data,$id)
     {
-        $cotizacion = $this->repository->show($id)->cotizaciones()->first();
+        //$cotizacion = $this->repository->show($id)->cotizaciones()->first();
         return $this->repository->show($id)->datosComparativos($data);
     }
 

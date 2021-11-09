@@ -1070,6 +1070,8 @@ $api->version('v1', function ($api) {
             $api->get('getContratos', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getContratos');
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCotizaciones');
             $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
+            $api->get('{id}/comparativa-cotizaciones', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getComparativaCotizaciones')->where(['id' => '[0-9]+']);
+            $api->get('{id}/comparativa-cotizaciones/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@pdfComparativaCotizaciones')->where(['id' => '[0-9]+']);
         });
 
         /**

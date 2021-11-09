@@ -65,7 +65,7 @@ class PresupuestoContratista extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)->whereHas('contratoProyectado');
+            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1);
         });
     }
 
@@ -734,6 +734,19 @@ class PresupuestoContratista extends Transaccion
         foreach ($this->partidas as $partida) {
             if ($tipo_moneda == $partida->IdMoneda) {
                 $suma += $partida->precio_compuesto_total;
+            }
+        }
+        return $suma;
+    }
+
+    public function sumaSubtotalPartidas($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->IdMoneda)
+            {
+                $suma += $partida->total_precio_moneda;
             }
         }
         return $suma;

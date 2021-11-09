@@ -1080,6 +1080,35 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'comparativa-cotizacion',
+                        component: require('./components/compras/comparativa-cotizacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comparativa-cotizacion-contrato',
+                                component: require('./components/contratos/comparativa-cotizacion/Index').default,
+                                meta: {
+                                    title: 'Lista de Contratos Proyectados Cotizados o Con Invitación',
+                                    breadcrumb: {parent: 'compras', name: 'CONTRATOS PROYECTADOS COTIZADAS O CON INVITACIÓN'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto_contratista'
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: ':id/comparativa-cotizaciones',
+                        name: 'comparativa-cotizacion-contrato-consultar',
+                        component: require('./components/contratos/comparativa-cotizacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Comparativa de Cotizaciones',
+                            breadcrumb: { parent: 'comparativa-cotizacion-contrato', name: 'COMPARATIVA COTIZACIONES'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto_contratista'
+                        }
+                    },
+                    {
                         path: 'asignacion-contratista',
                         component: require('./components/contratos/asignacion-contratista/partials/Layout').default,
                         children: [
