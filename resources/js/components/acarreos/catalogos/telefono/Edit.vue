@@ -177,7 +177,6 @@
                     this.modelo = data.modelo;
                     this.linea = data.linea;
                     this.id_checador = data.id_checador;
-                    console.log(typeof data.id_dispositivo);
                     if(data.id_dispositivo !== null){
                         this.edit_device = true;
                     }
