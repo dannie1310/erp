@@ -22,7 +22,7 @@ class ConceptoTransformer extends TransformerAbstract
      */
     protected $availableIncludes = [
         'hijos',
-        'cuentaConcepto'
+        'cuentaConcepto',
     ];
 
     public function transform(Concepto $model)
@@ -40,10 +40,17 @@ class ConceptoTransformer extends TransformerAbstract
             'path_corta' => $model->path_corta,
             'deshabilitadoPadreMedibles' => $model->deshabilitado_padre_medible,
             'tiene_hijos_cobrables' => $model->tiene_hijos_cobrables,
-            'tiene_hijos_completos' => $model->tiene_hijos_completos
+            'tiene_hijos_completos' => $model->tiene_hijos_completos,
+            'medible' => $model->concepto_medible,
+            'cantidad_presupuestada_calculada' => $model->cantidad_presupuestada_calculada,
+            'precio_venta' => $model->precio_produccion
         ];
     }
 
+    /**
+     * @param Concepto $model
+     * @return \League\Fractal\Resource\Item|null
+     */
     public function includeCuentaConcepto(Concepto $model)
     {
         if ($cuenta = $model->cuentaConcepto) {
@@ -52,6 +59,10 @@ class ConceptoTransformer extends TransformerAbstract
         return null;
     }
 
+    /**
+     * @param Concepto $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
     public function includeHijos(Concepto $model)
     {
         if ($hijos = $model->hijos) {

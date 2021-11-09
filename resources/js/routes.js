@@ -2900,6 +2900,113 @@ export const routes = [
                     },
                 ],
             },
+            {
+                path: 'control_obra',
+                components: {
+                    default: require('./components/control-obra/partials/Layout.vue').default,
+                    menu: require('./components/control-obra/partials/Menu.vue').default
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'control_obra',
+                        component: require('./components/control-obra/Index').default,
+                        meta: {
+                            title: 'Control de Obra',
+                            breadcrumb: {parent:'home', name: 'CONTROL DE OBRA'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'avance-obra',
+                        component: require('./components/control-obra/avance-obra/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'avance-obra',
+                                component: require('./components/control-obra/avance-obra/Index').default,
+                                meta: {
+                                    title: 'Avance de Obra',
+                                    breadcrumb: {parent: 'control_obra', name: 'AVANCE DE OBRA'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_avance_obra'
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'avance-obra-create',
+                                component: require('./components/control-obra/avance-obra/Create').default,
+                                meta: {
+                                    title: 'Registrar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_avance_obra'],
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'avance-obra-show',
+                                component: require('./components/control-obra/avance-obra/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/aprobar',
+                                name: 'avance-obra-aprobar',
+                                component: require('./components/control-obra/avance-obra/Aprobar').default,
+                                props: true,
+                                meta: {
+                                    title: 'Aprobar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'APROBAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'aprobar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/revertir',
+                                name: 'avance-obra-revertir',
+                                component: require('./components/control-obra/avance-obra/Revertir').default,
+                                props: true,
+                                meta: {
+                                    title: 'Revertir aprobación Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'REVERTIR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'revertir_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'avance-obra-delete',
+                                component: require('./components/control-obra/avance-obra/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'eliminar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'avance-obra-edit',
+                                component: require('./components/control-obra/avance-obra/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_avance_obra'
+                                }
+                            },
+                        ]
+                    }
+                ]
+            },
         ],
     },
     {
