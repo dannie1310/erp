@@ -95,4 +95,17 @@ class ContratoProyectadoController extends Controller
     {
         return $this->service->getCuerpoCorreo($id);
     }
+
+    public function pdfComparativaCotizaciones($id)
+    {
+        if(auth()->user()->can('consultar_presupuesto_contratista')) {
+            return $this->service->pdfComparativaCotizaciones($id)->create();
+        }
+        dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
+    }
+
+    public function getComparativaCotizaciones(Request $request, $id)
+    {
+        return $this->service->getComparativaCotizaciones($request->all(),$id);
+    }
 }

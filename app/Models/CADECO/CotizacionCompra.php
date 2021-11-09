@@ -640,6 +640,7 @@ class    CotizacionCompra  extends Transaccion
         $cotizaciones = [];
         $precios = [];
         $exclusiones = [];
+        $importes = [];
 
         foreach ($this->solicitud->items as $key => $item) {
             if (array_key_exists($item->id_material, $partidas)) {
@@ -680,9 +681,11 @@ class    CotizacionCompra  extends Transaccion
                 if (key_exists($p->id_material, $precios)) {
                     if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                        $importes[$p->id_material] =  $precios[$p->id_material] * $p->cantidad;
                 } else {
                     if($p->precio_unitario_compuesto > 0) {
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                        $importes[$p->id_material] = $precios[$p->id_material]  * $p->cantidad;
                     }
                 }
                 if (array_key_exists($p->id_material, $partidas)) {
@@ -703,7 +706,8 @@ class    CotizacionCompra  extends Transaccion
         }
         $cantidad = 0;
         foreach ($this->solicitud->cotizaciones as $cont => $cotizacion) {
-            $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($precios, $cotizacion->partidas);
+            $cotizaciones[$cont]['ivg_partida'] = $this->calcular_ivg($importes, $cotizacion->partidas);
+            $cotizaciones[$cont]['ivg'] = $this->ivg_format($importes, $cotizacion->partidas);
             $cotizaciones[$cont]['ivg_partida_porcentaje'] = $cotizacion->partidas->count() > 0 ? $cotizaciones[$cont]['ivg_partida']/ $cotizacion->partidas->count() : 0 ;
             $importe = 0;
             foreach($cotizacion->exclusiones as $exc => $exclusion){
@@ -728,21 +732,56 @@ class    CotizacionCompra  extends Transaccion
         ];
     }
 
-    private function calcular_ivg($precios, $partidas_cotizacion)
+    public function calcular_ki($precio, $precio_menor)
     {
-        $ivg = 0;
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
+    private function calcular_ivg($importes, $partidas_cotizacion)
+    {
+        $suma_importes = 0;
+        $suma_importes_bajos = 0;
+        foreach($importes as $id_material => $importe)
+        {
+            $suma_importes_bajos += $importe;
+        }
+        foreach($partidas_cotizacion as $partida)
+        {
+            $suma_importes += $partida->precio_unitario_compuesto * $partida->cantidad;
+        }
+
+        return $suma_importes_bajos == 0 ?  ($suma_importes - $suma_importes_bajos) : ($suma_importes - $suma_importes_bajos) / $suma_importes_bajos;
+        /*dd($precios, $suma_precios_bajos, $suma_precios);
         if ($partidas_cotizacion) {
             foreach ($partidas_cotizacion as $partida) {
                 $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
             }
             return $partidas_cotizacion->count() > 0 ? $ivg : -1;
         }
-        return -1;
+
+        return -1;*/
     }
 
-    public function calcular_ki($precio, $precio_menor)
+    public function ki_format($precio, $precio_menor)
     {
-        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+        $ki = $this->calcular_ki($precio, $precio_menor);
+        if($ki >0){
+            return number_format($ki,3);
+        }else
+        {
+            return "-";
+        }
+    }
+
+    public function ivg_format($precios, $partidas_cotizacion)
+    {
+        $ivg = $this->calcular_ivg($precios, $partidas_cotizacion);
+        if($ivg >0){
+            return number_format($ivg,3);
+        }else
+        {
+            return "-";
+        }
     }
 
     public function getRelaciones()
@@ -867,7 +906,6 @@ class    CotizacionCompra  extends Transaccion
 
     public function registrarPortalProveedor($data, $invitacion)
     {
-
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $invitacion->base_datos);
         if($invitacion->cotizacionGenerada){
@@ -934,28 +972,6 @@ class    CotizacionCompra  extends Transaccion
                             'id_transaccion' => $cotizacion->id_transaccion,
                             'id_material' => $partida['id_material'],
                             'descuento_partida' => $partida['descuento'],
-                            'observaciones' => array_key_exists('observacion_partida', $partida) ? $partida['observacion_partida'] : '',
-                            'estatus' => 3
-                        ]);
-                    } else {
-                        $cotizaciones = $cotizacion->partidas()->create([
-                            'id_transaccion' => $cotizacion->id_transaccion,
-                            'id_material' => $partida['id_material'],
-                            'cantidad' => $partida['cantidad'],
-                            'precio_unitario' => null,
-                            'descuento' => 0,
-                            'anticipo' => $data['anticipo'],
-                            'dias_credito' => $data['credito'],
-                            'dias_entrega' => $data['tiempo'],
-                            'no_cotizado' => !$partida['enable'],
-                            'disponibles' => 1,
-                            'id_moneda' => key_exists("moneda_seleccionada", $partida) ? $partida['moneda_seleccionada']:$partida["id_moneda"],
-                        ]);
-                        #------- Compras.cotizacion_partidas_complemento
-                        $cotizaciones->partida()->create([
-                            'id_transaccion' => $cotizacion->id_transaccion,
-                            'id_material' => $partida['id_material'],
-                            'descuento_partida' => 0,
                             'observaciones' => array_key_exists('observacion_partida', $partida) ? $partida['observacion_partida'] : '',
                             'estatus' => 3
                         ]);

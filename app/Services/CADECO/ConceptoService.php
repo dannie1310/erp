@@ -36,4 +36,9 @@ class ConceptoService
     {
         return $this->repository->paginate($data);
     }
+
+    public function conceptosMedible($id)
+    {
+        return $this->show($id)->getConceptosHijosMedible();
+    }
 }

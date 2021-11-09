@@ -67,9 +67,9 @@ class SolicitudCompraController extends Controller
         dd( 'No cuentas con los permisos necesarios para realizar la acción solicitada');
     }
 
-    public function getComparativaCotizaciones($id)
+    public function getComparativaCotizaciones(Request $request, $id)
     {
-        return $this->service->getComparativaCotizaciones($id);
+        return $this->service->getComparativaCotizaciones($request->all(),$id);
     }
 
     public function aprobar(Request $request, $id)

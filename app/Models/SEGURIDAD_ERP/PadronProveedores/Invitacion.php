@@ -255,6 +255,11 @@ class Invitacion extends Model
         return $query->where('usuario_invitado',  auth()->id());
     }
 
+    public function scopeInvitacionDisponible($query)
+    {
+        return $query->whereNull('id_cotizacion_generada');
+    }
+
     /**
      * Atributos
      */
@@ -366,6 +371,17 @@ class Invitacion extends Model
             return true;
         }
         return false;
+    }
+
+    public function getCotizacionCompletaAttribute()
+    {
+        if(!is_null($this->cotizacionCompra) && !is_null($this->solicitud)) {
+            return $this->cotizacionCompra->partidas->count() == $this->solicitud->partidas->count() ? true : false;
+        }
+        if(!is_null($this->presupuesto) && !is_null($this->contratoProyectado)) {
+            return $this->presupuesto->partidas()->whereNotNull('precio_unitario')->count() == $this->contratoProyectado->conceptos->count() ? true : false;
+        }
+        return null;
     }
 
     /**

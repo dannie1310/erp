@@ -43,4 +43,9 @@ class ConceptoController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function conceptosHijosMedible($id)
+    {
+        return $this->service->conceptosMedible($id);
+    }
 }

@@ -12,6 +12,7 @@ namespace App\Services\CADECO\Contratos;
 use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
@@ -450,5 +451,17 @@ class ContratoProyectadoService
     public function getCuerpoCorreo($id)
     {
         return $this->repository->show($id)->getCuerpoCorreoInvitacion();
+    }
+
+    public function getComparativaCotizaciones($data,$id)
+    {
+        return $this->repository->show($id)->datosComparativos($data);
+    }
+
+    public function pdfComparativaCotizaciones($id)
+    {
+        $cotizacion = $this->repository->show($id)->cotizaciones()->first();
+        $pdf = new PresupuestoContratistaTablaComparativaFormato($cotizacion);
+        return $pdf;
     }
 }
