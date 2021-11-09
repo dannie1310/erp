@@ -536,10 +536,10 @@ export default {
             })
         },
         invitar(){
-            this.$router.push({name: 'invitacion-compra-create', params: {id_solicitud: this.id}});
+            this.$router.push({name: 'invitacion-contrato-create', params: {id_contrato: this.id}});
         },
         salir() {
-            this.$router.push({name: 'comparativa-cotizacion-compra'});
+            this.$router.push({name: 'comparativa-cotizacion-contrato'});
         },
         pedirContraOferta() {
             $(this.$refs.modal_proveedores).modal('show');
@@ -560,7 +560,7 @@ export default {
                     _self.post.destinatarios = _self.proveedores;
                     _self.post.usuarios = _self.usuarios;
 
-                    return this.$store.dispatch('compras/invitacion/storeInvitacionContraOferta', _self.post)
+                    return this.$store.dispatch('contratos/invitacion/storeInvitacionContraOferta', _self.post)
                         .then((data) => {
                             $(this.$refs.modal_proveedores).modal('hide');
                             this.$router.push({name: 'invitacion-compra'});

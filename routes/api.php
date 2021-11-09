@@ -1191,6 +1191,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@pdf')->where(['id' => '[0-9]+']);
             $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@abrir')->where(['id' => '[0-9]+']);
+            $api->post('/contraoferta','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@storeContraoferta');
         });
     });
 

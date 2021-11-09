@@ -551,6 +551,18 @@ class ContratoProyectado extends Transaccion
 
         $cantidad = 0;
         foreach ($cotizaciones_obj as $cont => $presupuesto) {
+
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id"]=$presupuesto->id_empresa;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_sucursal"]=$presupuesto->id_sucursal;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["razon_social"]=$presupuesto->empresa->razon_social;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["sucursal"]=$presupuesto->sucursal->descripcion;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["sucursal_correo"]=$presupuesto->sucursal->email;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["sucursal_contacto"]=$presupuesto->sucursal->contacto;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["usuario_correo"]=($presupuesto->empresa->usuarioIntranet)? $presupuesto->empresa->usuarioIntranet->correo:'';
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_usuario"] = ($presupuesto->empresa->usuarioIntranet)? $presupuesto->empresa->usuarioIntranet->idusuario:'';;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["seleccionado_contraoferta"]=1;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_cotizacion"]=$presupuesto->id_transaccion;
+
             $presupuestos[$presupuesto->id_transaccion]['numero_folio'] = $presupuesto->numero_folio_format;
             $presupuestos[$presupuesto->id_transaccion]['id_transaccion'] = $presupuesto->id_transaccion;
             $presupuestos[$presupuesto->id_transaccion]['empresa'] = $presupuesto->empresa->razon_social;
@@ -653,6 +665,7 @@ class ContratoProyectado extends Transaccion
             'partidas' => $partidas,
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
+            'proveedores' => $proveedores,
             'mejor_cotizacion' => $indices[0]["id_cotizacion"]
         ];
     }
