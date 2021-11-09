@@ -722,6 +722,7 @@ export default {
                             destinatario.id_sucursal_seleccionada = destinatario.sucursales[0].id;
                             destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
                         } else if(destinatario.sucursales.length > 1 && (destinatario.sucursales_cargadas == 0 || destinatario.id_proveedor != destinatario.id_proveedor_seleccionado)){
+                            destinatario.id_proveedor = destinatario.proveedor.id;
                             destinatario.correo = '';
                             destinatario.contacto = '';
                             destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
