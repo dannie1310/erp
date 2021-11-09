@@ -93,7 +93,7 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('O')->setAutoSize(true);
 
                 $i=2;
-                $contrato = $this->presupuesto->contratoProyectado;
+                $contrato = $this->presupuesto->contratoProyectadoSgv;
                 if(is_null($contrato))
                 {
                     $contrato = ContratoProyectado::where('id_transaccion', $this->presupuesto->id_antecedente)->withoutGlobalScopes()->first();
