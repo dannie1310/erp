@@ -151,4 +151,15 @@ class Telefono extends Model
     /**
      * Métodos
      */
+    public function validar(){
+        if(self::where('imei', $this->imei)->where('id', '!=', $this->id)->first()){
+            abort(403, 'El IMEI ya fue registrado previamente.');
+        }
+        if(self::where('linea', $this->linea)->where('id', '!=', $this->id)->first()){
+            abort(403, 'La Linea ya fue registrada previamente.');
+        }
+        if(self::where('device_id', $this->device_id)->where('id', '!=', $this->id)->first()){
+            abort(403, 'El Id. del Dispositivo ya fue registrado previemente.');
+        }
+    }
 }
