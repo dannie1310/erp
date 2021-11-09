@@ -4,6 +4,7 @@
 namespace App\Services\CADECO\Contratos;
 
 use App\Events\EnvioCotizacion;
+use App\Events\EnvioPresupuesto;
 use App\Facades\Context;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
@@ -392,7 +393,7 @@ class PresupuestoContratistaService
     {
         $cotizacion =  $this->repository->liberaCotizacion($id_transaccion_cotizacion, $base_datos);
         if($cotizacion){
-            //event(new EnvioCotizacion($cotizacion->invitacion, $cotizacion));
+            event(new EnvioPresupuesto($cotizacion->invitacion, $cotizacion));
         }
         return $cotizacion;
     }
