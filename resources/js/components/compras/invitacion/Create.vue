@@ -726,6 +726,7 @@ export default {
                             destinatario.correo = '';
                             destinatario.contacto = '';
                             destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
+                            destinatario.sucursales_cargadas = 1;
                         } /*else if(destinatario.sucursales.length > 1 &&  destinatario.id_sucursal != destinatario.id_sucursal_seleccionada){
                             var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
                             if(busqueda_sucursal  != undefined){
