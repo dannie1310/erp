@@ -293,7 +293,7 @@ class ContratoProyectado extends Transaccion
     public function getUltimosPresupuestosAttribute()
     {
         //$id = DB::connection("cadeco")->select(DB::raw("select max(id_transaccion) from dbo.Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa"));
-        $cotizaciones = $this->presupuestos()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 50 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
+        $cotizaciones = $this->presupuestos()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 50 and estado = 1 and opciones =  0 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
         return $cotizaciones;
     }
 
@@ -632,8 +632,9 @@ class ContratoProyectado extends Transaccion
         {
             foreach($partida["cotizaciones"] as $key_cto=>$cotizacion)
             {
-                $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_total_moneda"], $precios[$key]);
-
+                if(key_exists("cotizaciones", $partida)) {
+                    $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_con_descuento"], $precios[$key]);
+                }
             }
         }
 
@@ -666,7 +667,7 @@ class ContratoProyectado extends Transaccion
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
             'proveedores' => $proveedores,
-            'mejor_cotizacion' => $indices[0]["id_cotizacion"]
+            'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0,
         ];
     }
 

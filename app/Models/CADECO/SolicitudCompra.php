@@ -718,7 +718,7 @@ class SolicitudCompra extends Transaccion
     public function getUltimasCotizacionesAttribute()
     {
         //$id = DB::connection("cadeco")->select(DB::raw("select max(id_transaccion) from dbo.Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa"));
-        $cotizaciones = $this->cotizaciones()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
+        $cotizaciones = $this->cotizaciones()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 18 and estado = 1 and opciones = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
         return $cotizaciones;
     }
 
@@ -857,12 +857,17 @@ class SolicitudCompra extends Transaccion
         }
 
 
+
+
         foreach($partidas as $key=>$partida)
         {
-            foreach($partida["cotizaciones"] as $key_cto=>$cotizacion)
+            if(key_exists("cotizaciones", $partida))
             {
-                $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_unitario_compuesto"], $precios[$key]);
+                foreach($partida["cotizaciones"] as $key_cto=>$cotizacion)
+                {
+                    $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_unitario_compuesto"], $precios[$key]);
 
+                }
             }
         }
 
@@ -907,7 +912,7 @@ class SolicitudCompra extends Transaccion
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
             'proveedores' => $proveedores,
-            'mejor_cotizacion' => $indices[0]["id_cotizacion"]
+            'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0
         ];
     }
 

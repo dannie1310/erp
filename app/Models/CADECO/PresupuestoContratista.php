@@ -46,6 +46,7 @@ class PresupuestoContratista extends Transaccion
         'TcLibra',
         'DiasCredito',
         'DiasVigencia',
+        'opciones',
         'tipo_transaccion',
         'estado',
         'id_moneda'
@@ -65,7 +66,8 @@ class PresupuestoContratista extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1);
+            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)
+                ->where('opciones','=', 0);
         });
     }
 
@@ -908,6 +910,18 @@ class PresupuestoContratista extends Transaccion
 
                 foreach($data['conceptos']['data'] as $t => $partida)
                 {
+                    if(!key_exists("enable", $partida))
+                    {
+                        $partida["enable"] = $partida["partida_activa"];
+                    }
+                    if(!key_exists("precio_cot", $partida))
+                    {
+                        $partida["precio_cot"] = $partida["precio_unitario"];
+                    }
+                    if(!key_exists("descuento_cot", $partida))
+                    {
+                        $partida["descuento_cot"] = $partida["descuento"];
+                    }
                     $precio_conversion = ($partida['enable']) ? $presupuesto->precioConversion($partida['precio_cot'], $partida['moneda_seleccionada']) : null;
                     if($precio_conversion){
                         $precio_descuento = $precio_conversion -($precio_conversion*$partida['descuento_cot']/100);
@@ -947,7 +961,8 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => null,
                     'DiasCredito' => null,
                     'DiasVigencia' => null,
-                    'estado' => -2
+                    'estado' => -2,
+                    'opciones' => 10,
                 ]);
                 foreach($data['conceptos']['data'] as $t => $partida)
                 {

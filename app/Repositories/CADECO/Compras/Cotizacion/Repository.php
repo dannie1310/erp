@@ -77,7 +77,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
-        $cotizacion = $this->model->where('id_transaccion', $id_cotizacion)->where("estado","=",1)->where("opciones","=",10)->withoutGlobalScopes()->first();
+        $cotizacion = $this->model->where('id_transaccion', $id_cotizacion)
+            ->where("tipo_transaccion","=",18)
+            ->where("estado","=",1)->where("opciones","=",10)
+            ->withoutGlobalScopes()
+            ->first();
         if($cotizacion){
             $cotizacion->opciones = 1;
             $cotizacion->save();

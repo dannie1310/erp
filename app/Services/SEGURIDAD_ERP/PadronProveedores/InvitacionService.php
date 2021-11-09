@@ -13,6 +13,7 @@ use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
@@ -24,6 +25,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\SolicitudContraoferta;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\Contratos\ContratoProyectadoService;
+use App\Services\CADECO\Contratos\PresupuestoContratistaService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -665,8 +667,14 @@ class InvitacionService
         $invitaciones = $this->repository->all();
         foreach($invitaciones as $invitacion)
         {
-            $cotizacionService = new CotizacionService(new CotizacionCompra());
-            $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
+            if($invitacion->tipo_transaccion_antecedente == 17){
+                $cotizacionService = new CotizacionService(new CotizacionCompra());
+                $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
+            } else if($invitacion->tipo_transaccion_antecedente == 49)
+            {
+                $presupuestoService = new PresupuestoContratistaService(new PresupuestoContratista());
+                $presupuestoService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
+            }
         }
     }
 

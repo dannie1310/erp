@@ -276,16 +276,8 @@
                                                     </tr>
                             <tr style="border: none">
                                 <td colspan="2" style="border: none; text-align: right; padding-top: 0.75rem"><b>Descuento Global(%):</b></td>
-                                <td style="border: none"> <input
-                                    :disabled="cargando"
-                                    type="text"
-                                    name="descuento_cot"
-                                    v-model="descuento_cot"
-                                    v-validate="{required: true, min_value:0, max_value:100, regex: /^[0-9]\d*(\.\d+)?$/}"
-                                    class="form-control"
-                                    id="descuento_cot"
-                                    style="text-align: right; padding-right: 4px"
-                                    :class="{'is-invalid': errors.has('descuento_cot')}">
+                                <td style="border: none; text-align: right; padding-top: 0.75rem;">
+                                  ${{(parseFloat(descuento_cot)).formatMoney(2,'.',',')}}
                                 </td>
                             </tr>
                             <tr style="border: none">

@@ -4219,6 +4219,19 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id_invitacion_antecedente/contraoferta/:id_invitacion/create',
+                        name: 'contraoferta-presupuesto-proveedor-create',
+                        component: require('./components/portal-proveedor/presupuesto/CreateContraoferta').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Contraoferta',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
                         path: ':id',
                         name: 'presupuesto-proveedor-show',
                         component: require('./components/portal-proveedor/presupuesto/Show').default,

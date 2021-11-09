@@ -126,8 +126,8 @@
                     }else{
                         if(this.invitacion.tipo_antecedente == 49) {
                             this.$router.push({
-                                name: 'presupuesto-proveedor-create',
-                                params: {id: this.id_invitacion}
+                                name: 'contraoferta-presupuesto-proveedor-create',
+                                params: { id_invitacion_antecedente: this.invitacion.id_invitacion_antecedente , id_invitacion: this.invitacion.id }
                             });
                         }else
                         if(this.invitacion.tipo_antecedente == 17) {
