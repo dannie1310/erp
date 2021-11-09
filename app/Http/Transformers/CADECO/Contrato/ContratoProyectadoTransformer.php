@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
+use App\Http\Transformers\CADECO\Compras\DetalleEstadoCotizacionTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSubcontratanteTransformer;
 use App\Models\CADECO\ContratoProyectado;
@@ -24,7 +25,8 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         'conceptos',
         'relaciones',
         'contratos',
-        'transaccion'
+        'transaccion',
+        'detalleEstadoCotizacion'
     ];
     protected $defaultIncludes=["transaccion"];
     public function transform(ContratoProyectado $model)
@@ -103,5 +105,18 @@ class ContratoProyectadoTransformer extends TransformerAbstract
     public function includeTransaccion(Transaccion $model)
     {
         return $this->item($model, new TransaccionRelacionTransformer);
+    }
+
+    /**
+     * @param ContratoProyectado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeDetalleEstadoCotizacion(ContratoProyectado $model)
+    {
+        if($estados = $model->estados_invitacion_cotizaciones)
+        {
+            return $this->item($estados, new DetalleEstadoCotizacionTransformer);
+        }
+        return null;
     }
 }
