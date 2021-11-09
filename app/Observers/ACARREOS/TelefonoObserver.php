@@ -12,7 +12,12 @@ class TelefonoObserver
      */
     public function creating(Telefono $telefono)
     {
+        $telefono->validar();
         $telefono->estatus = 1;
         $telefono->registro = auth()->id();
+    }
+
+    public function updating(Telefono $telefono){
+        $telefono->validar();
     }
 }
