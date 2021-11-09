@@ -538,6 +538,11 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@descargaLayout');
         });
+        
+        //CHECADOR
+        $api->group(['prefix' => 'checador'], function ($api) {
+            $api->get('getChecadores', 'App\Http\Controllers\v1\ACARREOS\Configuracion\UsuarioProyectoController@getChecadores');
+        });
 
         //EMPRESA
         $api->group(['prefix' => 'empresa'], function ($api) {
@@ -619,6 +624,17 @@ $api->version('v1', function ($api) {
         //SINDICATO
         $api->group(['prefix' => 'sindicato'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\SindicatoController@index');
+        });
+
+        //TELEFONO
+        $api->group(['prefix' => 'telefono'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@paginate');
+            $api->post('/', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@update')->where(['id' => '[0-9]+']);
+            $api->get('{id}/activar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@activar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/desactivar', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@desactivar')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\TelefonoController@descargaLayout');
         });
 
         //TIPOORIGEN

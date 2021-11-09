@@ -4,6 +4,7 @@ import auth from './modules/auth';
 
 //ACARREOS
 import camion from "./modules/acarreos/camion";
+import checador from "./modules/acarreos/checador";
 import empresaAcarreo from "./modules/acarreos/empresa";
 import impresora from "./modules/acarreos/impresora";
 import marcaAcarreo from "./modules/acarreos/marca";
@@ -11,6 +12,7 @@ import materialAcarreo from "./modules/acarreos/material";
 import operador from "./modules/acarreos/operador";
 import origen from './modules/acarreos/origen';
 import sindicato from "./modules/acarreos/sindicato";
+import telefono from './modules/acarreos/telefono';
 import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
 
@@ -237,6 +239,7 @@ export default new Vuex.Store({
     modules: {
         auth,
         'acarreos/camion' : camion,
+        'acarreos/checador' : checador,
         'acarreos/empresa' : empresaAcarreo,
         'acarreos/impresora' : impresora,
         'acarreos/marca' : marcaAcarreo,
@@ -244,6 +247,7 @@ export default new Vuex.Store({
         'acarreos/operador' : operador,
         'acarreos/origen' : origen,
         'acarreos/sindicato' : sindicato,
+        'acarreos/telefono' : telefono,
         'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,
 
