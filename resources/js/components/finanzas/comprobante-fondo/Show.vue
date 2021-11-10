@@ -1,164 +1,207 @@
 <template>
     <span>
-        <div  v-if="!fondo">
-            <div class="row" >
-                <div class="col-md-12">
-                    <div class="spinner-border text-success" role="status">
-                       <span class="sr-only">Cargando...</span>
+        <div class="card" v-if="!cfdi">
+            <div class="card-body">
+                <div >
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-else>
-            <div class="row">
-                <div class="col-12">
-                    <div class="invoice p-3 mb-3">
-                        <div class="row col-md-12">
-                            <div class="col-md-6">
-                                <h5>Folio: &nbsp; <b>{{fondo.numero_folio_format}}</b></h5>
-                            </div>
-                            <div class="col-md-6">
+
+        <div class="card" v-else>
+            <div class="card-header">
+                <h5>Datos del CFDI</h5>
+            </div>
+            <div class="card-body">
+                <span>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label >Emisión:</label>
+                                <input class="form-control" v-model="cfdi.fecha_format" readonly="readonly" />
                             </div>
                         </div>
-                        <div class="table-responsive col-md-12">
-                            <table class="table">
-                                <tbody>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label >Serie y Folio:</label>
+                                <input class="form-control" v-model="cfdi.referencia" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                            <label >Tipo:</label>
+                                <input class="form-control" v-model="cfdi.tipo_comprobante" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                            <label >UUID:</label>
+                                <input class="form-control" v-model="cfdi.uuid" readonly="readonly" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            <label >Emisor:</label>
+                                <input class="form-control" v-model="cfdi.proveedor.razon_social" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >RFC Emisor:</label>
+                                <input class="form-control" v-model="cfdi.proveedor.rfc" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                            <label >Receptor:</label>
+                                <input class="form-control" v-model="cfdi.empresa.razon_social" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >RFC Receptor:</label>
+                                <input class="form-control" v-model="cfdi.empresa.rfc" readonly="readonly" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Descuento:</label>
+                                <input class="form-control" v-model="cfdi.descuento_format" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Impuestos Retenidos:</label>
+                                <input class="form-control" v-model="cfdi.impuestos_retenidos_format" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Impuestos Trasladados:</label>
+                                <input class="form-control" v-model="cfdi.impuestos_trasladados_format" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Total:</label>
+                                <input class="form-control" v-model="cfdi.total_format" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Moneda:</label>
+                                <input class="form-control" v-model="cfdi.moneda" readonly="readonly" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label >Tipo de Cambio:</label>
+                                <input class="form-control" v-model="cfdi.tipo_cambio" readonly="readonly" style="text-align: right" />
+                            </div>
+                        </div>
+                    </div>
+                </span>
+                <div class="row">
+                    <div class="col-md-12">
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
-                                    <td class="bg-gray-light"><b>Fecha:</b></td>
-                                    <td class="bg-gray-light"> {{fondo.fecha_format}} </td>
-                                    <td class="bg-gray-light"><b>Fondo:</b></td>
-                                    <td class="bg-gray-light">{{fondo.fondo.descripcion}}</td>
-                                    <td class="bg-gray-light"><b>Referencia:</b></td>
-                                    <td class="bg-gray-light">{{fondo.referencia}}</td>
+                                    <th class="index_corto">#</th>
+                                    <th class="no_parte">Clave Producto / Servicio</th>
+                                    <th>Descripción</th>
+                                    <th>Clave Unidad</th>
+                                    <th>Unidad</th>
+                                    <th>Cantidad</th>
+                                    <th>Valor Unitario</th>
+                                    <th>Descuento</th>
+                                    <th>Importe</th>
                                 </tr>
-                                <tr>
-                                    <td class="bg-gray-light"><b>Concepto:</b></td>
-                                    <td class="bg-gray-light" colspan="5">{{fondo.concepto ? fondo.concepto.path : '' }}</td>
+                            </thead>
+                            <tbody>
+                            <template v-for="(concepto, i) in cfdi.conceptos.data">
+                                <tr >
+                                    <td>{{i+1}}</td>
+                                    <td>{{concepto.clave_prod_serv}}</td>
+                                    <td>{{concepto.descripcion}}</td>
+                                    <td>{{concepto.clave_unidad}}</td>
+                                    <td>{{concepto.unidad}}</td>
+                                    <td style="text-align: right">{{concepto.cantidad_format}}</td>
+                                    <td style="text-align: right">{{concepto.valor_unitario_format}}</td>
+                                    <td style="text-align: right">{{concepto.descuento_format}}</td>
+                                    <td style="text-align: right">{{concepto.importe_format}}</td>
                                 </tr>
-                                <tr>
-                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
-                                    <td class="bg-gray-light" colspan="3">{{fondo.usuario_registro}}</td>
-                                    <td class="bg-gray-light"><b>Fecha / Hora de Registro:</b></td>
-                                    <td class="bg-gray-light">{{fondo.fecha_registro}}</td>
+                                <tr v-for="(traslado, i) in concepto.traslados.data">
+                                    <td colspan="9">
+                                        <b>Impuesto Trasladado</b> Base: {{traslado.base_format}} Impuesto: {{traslado.impuesto_txt}} Tipo Factor: {{traslado.tipo_factor}} Tasa o Cuota: {{traslado.tasa_o_cuota}} Importe: {{traslado.importe_format}}
+                                    </td>
                                 </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="row">
-                            <div class="col-12">
-                                <h6><b>Detalle de las partidas</b></h6>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="table-responsive col-md-12">
-                                <table class="table table-striped">
-                                    <thead>
-                                    <tr>
-                                        <th class="index_corto">#</th>
-                                        <th>Concepto</th>
-                                        <th class="numerico">Cantidad</th>
-                                        <th class="numerico">Precio</th>
-                                        <th class="numerico">Monto</th>
-                                        <th class="destino">Destino</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr v-for="(partida, i) in fondo.partidas.data">
-                                        <td style="text-align: center" class="index_corto">{{i+1}}</td>
-                                        <td style="text-align: left">{{partida.referencia }}</td>
-                                        <td style="text-align: right" class="numerico">{{ partida.cantidad_format }}</td>
-                                        <td style="text-align: right" class="numerico">{{ partida.importe_format }}</td>
-                                        <td style="text-align: right" class="numerico">$ {{ partida.monto_format }}</td>
-                                        <td style="text-align: left" class="destino">{{ partida.concepto ? partida.concepto.descripcion : '' }}</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-9">
-                                <label class="col-form-label">Observaciones: </label>
-                                <input
-                                    type="text"
-                                    disabled="true"
-                                    v-model="fondo.observaciones"
-                                    class="form-control">
-                            </div>
-                            <div class="col-md-3" align="left">
-                                <div class="table-responsive col-md-12">
-                                    <div class="col-md-12">
-                                        <div class="table-responsive">
-                                            <table class="table table-borderless">
-                                                <tbody>
-                                                    <tr>
-                                                        <th>Subtotal:</th>
-                                                        <td align="right">{{fondo.subtotal_format}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>IVA:</th>
-                                                        <td align="right">{{fondo.impuesto_format}}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total:</th>
-                                                        <td align="right">{{fondo.total_format}}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="salir">Cerrar</button>
-                        </div>
+                            </template>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </span>
+
+
 </template>
 
 <script>
-    export default {
-        name: "comprobante-fondo-show",
-        props: ['id'],
-        data(){
-            return{
-                cargando: false,
-            }
-        },
-        mounted() {
-            this.find();
-        },
-        methods: {
-            find() {
-                this.cargando = true;
-                this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', null);
-                return this.$store.dispatch('finanzas/comprobante-fondo/find', {
-                    id: this.id,
-                    params:{
-                        include: ['fondo', 'partidas.concepto', 'concepto']
-                    }
-                }).then(data => {
-                    this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', data);
-                })
-                    .finally(()=> {
-                        this.cargando = false;
-                    })
-            },
-            salir(){
-                this.$router.push({name: 'comprobante-fondo'});
-            }
-        },
-        computed: {
-            fondo() {
-                return this.$store.getters['finanzas/comprobante-fondo/currentFondo']
-            },
+
+export default {
+    name: "cfdi-show",
+    props: ["cfdi"],
+    data() {
+        return {
+            cargando:true,
+            cargado:false,
         }
+    },
+    mounted() {
+
+    },
+    computed: {
+
+    },
+    methods:{
+        find() {
+
+        },
+        regresar() {
+            this.$router.go(-1);
+        },
     }
+}
 </script>
+<style>
+.dropzone-custom-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
 
-<style scoped>
+.dropzone-custom-title {
+    margin-top: 0;
+    color: #999;
+}
 
+.subtitle {
+    color: #7ac142;
+}
+.vue-dropzone {
+    border: 2px dashed #e5e5e5;
+}
 </style>

@@ -9,6 +9,7 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\CSV\Finanzas\CFDILayout;
+use App\Events\IncidenciaCI;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
 use DateTimeZone;
@@ -301,6 +302,7 @@ class CFDSATService
 
                 $arreglo_cfd = $cfd->getArregloFactura();
                 $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
+                $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
                 $rcfd->save();
                 if($arreglo_cfd["tipo_relacion"]>0){
                     $rcfd->tipo_relacion = $arreglo_cfd["tipo_relacion"];
@@ -1140,12 +1142,15 @@ class CFDSATService
                 }
             } else {
                 $this->validaDisponibilidad($cfdi);
-                if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
+                if(key_exists("id_tipo_transaccion", $arreglo_factura))
                 {
-                    $cfdi->id_tipo_transaccion = $arreglo_factura["id_tipo_transaccion"];
-                    $cfdi->save();
-                    $cfdi->eliminaDocumentos();
-                    $cfdi->actualizaObligatoriedadDocumentos();
+                    if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
+                    {
+                        $cfdi->id_tipo_transaccion = $arreglo_factura["id_tipo_transaccion"];
+                        $cfdi->save();
+                        $cfdi->eliminaDocumentos();
+                        $cfdi->actualizaObligatoriedadDocumentos();
+                    }
                 }
             }
 
@@ -1358,5 +1363,39 @@ class CFDSATService
                 ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
         }
         return Excel::download(new CFDILayout($this->repository->all()), 'cfdi_layout_'. date('Y-m-d H:i:s').'.xlsx');
+    }
+
+    public function cargaXMLComprobacion(array $data)
+    {
+        $archivo_xml = $data["xml"];
+        $cfd = new CFD($archivo_xml);
+        $arreglo_cfd = $cfd->getArregloFactura();
+
+        $this->validaReceptorContexto($arreglo_cfd);
+
+        $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
+        $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
+        $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
+
+        $exp = explode("base64,", $data["xml"]);
+        $contenido_xml = base64_decode($exp[1]);
+        $arreglo_cfd["contenido_xml"] = $contenido_xml;
+        $cfd->validaCFDI33($contenido_xml);
+        $cfdi = $this->registraCFDI($arreglo_cfd);
+        return $cfdi;
+    }
+
+    private function validaReceptorContexto($arreglo_cfd)
+    {
+        $rfc_obra = $this->repository->getRFCObra();
+        if ($arreglo_cfd["receptor"]["rfc"] != $rfc_obra) {
+            event(new IncidenciaCI(
+                [
+                    "id_tipo_incidencia" => 6,
+                    "rfc" => $arreglo_cfd["receptor"]["rfc"],
+                ]
+            ));
+            abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
+        }
     }
 }

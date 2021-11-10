@@ -63,4 +63,10 @@ class CFDSATController extends Controller
     {
         return $this->service->descargaExcel($request->all());
     }
+
+    public function cargaXMLComprobacion(Request $request)
+    {
+        $item = $this->service->cargaXMLComprobacion($request->all());
+        return $this->respondWithItem($item);
+    }
 }

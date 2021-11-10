@@ -12,14 +12,14 @@
                                          <div class="form-group error-content">
                                              <label class="col-form-label">Fecha:</label>
                                              <datepicker v-model = "fecha"
-                                                        name = "fecha"
-                                                        :format = "formatoFecha"
-                                                        :language = "es"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        v-validate="{required: true}"
-                                                        :disabled-dates="fechasDeshabilitadas"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
+                                                         name = "fecha"
+                                                         :format = "formatoFecha"
+                                                         :language = "es"
+                                                         :bootstrap-styling = "true"
+                                                         class = "form-control"
+                                                         v-validate="{required: true}"
+                                                         :disabled-dates="fechasDeshabilitadas"
+                                                         :class="{'is-invalid': errors.has('fecha')}"
                                              />
                                              <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                          </div>
@@ -48,7 +48,7 @@
                                             type="text"
                                             name="referencia"
                                             data-vv-as="Referencia"
-                                            v-validate="{required: true, max:64}"
+                                            v-validate="{required: true}"
                                             class="form-control"
                                             id="referencia"
                                             placeholder="Referencia"
@@ -78,6 +78,14 @@
                                     </div>
                                  </div>
                                  <hr />
+                                 <div class="row">
+                                     <div class="col-md-12">
+                                         <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()" v-if="id_concepto">
+                                             <i class="fa fa-file-code"></i> Cargar x CFDI
+                                         </button>
+                                     </div>
+                                 </div>
+                                 <hr />
                                  <div class="row" v-if="id_concepto">
                                      <div  class="col-md-12 table-responsive-xl">
                                          <div>
@@ -105,38 +113,38 @@
                                                      <td style="text-align:center; vertical-align:inherit; width: 3%">{{i+1}}</td>
                                                      <td style="width: 37%">
                                                          <input type="text"
-                                                               class="form-control"
-                                                               :name="`referencia[${i}]`"
-                                                               data-vv-as="Concepto"
-                                                               v-validate="{required: true, max:64}"
-                                                               :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
-                                                               v-model="partida.referencia"/>
+                                                                class="form-control"
+                                                                :name="`referencia[${i}]`"
+                                                                data-vv-as="Concepto"
+                                                                v-validate="{required: true}"
+                                                                :class="{'is-invalid': errors.has(`referencia[${i}]`)}"
+                                                                v-model="partida.referencia"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{ errors.first(`referencia[${i}]`) }}</div>
                                                      </td>
                                                      <td style="width: 10%">
                                                          <input type="number"
-                                                               min="0.01"
-                                                               step=".01"
-                                                               class="form-control"
-                                                               :name="`cantidad[${i}]`"
-                                                               data-vv-as="Cantidad"
-                                                               style="text-align:right;"
-                                                               v-validate="{required: true}"
-                                                               :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
-                                                               v-model="partida.cantidad"/>
+                                                                min="0.01"
+                                                                step=".01"
+                                                                class="form-control"
+                                                                :name="`cantidad[${i}]`"
+                                                                data-vv-as="Cantidad"
+                                                                style="text-align:right;"
+                                                                v-validate="{required: true}"
+                                                                :class="{'is-invalid': errors.has(`cantidad[${i}]`)}"
+                                                                v-model="partida.cantidad"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                      </td>
                                                      <td style="width: 10%">
                                                          <input type="number"
-                                                               min="0.01"
-                                                               step=".01"
-                                                               class="form-control"
-                                                               :name="`precio[${i}]`"
-                                                               data-vv-as="Precio"
-                                                               style="text-align:right;"
-                                                               v-validate="{required: true}"
-                                                               :class="{'is-invalid': errors.has(`precio[${i}]`)}"
-                                                               v-model="partida.precio"/>
+                                                                min="0.01"
+                                                                step=".01"
+                                                                class="form-control"
+                                                                :name="`precio[${i}]`"
+                                                                data-vv-as="Precio"
+                                                                style="text-align:right;"
+                                                                v-validate="{required: true}"
+                                                                :class="{'is-invalid': errors.has(`precio[${i}]`)}"
+                                                                v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
                                                      <td align="right" style="width: 10%">$ {{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
@@ -193,12 +201,14 @@
                                                              <tr>
                                                                  <th>IVA:</th>
                                                                  <td>
-                                                                     <input type="number"
+                                                                     <input type="number" min="0.01"
                                                                             step=".01"   class="form-control"
                                                                             :name="iva"  data-vv-as="IVA" style="text-align:right;"
                                                                             v-validate="{required: true}"
                                                                             :class="{'is-invalid': errors.has(`iva`)}"
-                                                                            v-model="iva"/>
+                                                                            v-model="iva"
+                                                                            readonly="readonly"
+                                                                     />
                                                                      <div class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div>
                                                                  </td>
                                                              </tr>
@@ -223,144 +233,272 @@
                  </div>
             </div>
         </nav>
+        <div class="modal fade" ref="modal_cfdi" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg" >
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-destino"> <i class="fa fa-file-code"></i> Seleccionar CFDI</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form role="form">
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div >
+                                            <div>
+                                                <label class="col-form-label">Archivo del CFDI (XML):</label>
+                                            </div>
+                                            <div>
+                                                <div class="form-group error-content" >
+                                                    <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                                           row="3"
+                                                           v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                                           name="archivo"
+                                                           data-vv-as="Archivo de CFDI"
+                                                           ref="archivo"
+                                                           :class="{'is-invalid': errors.has('archivo')}"
+                                                    >
+                                                    <div class="invalid-feedback" v-show="errors.has('archivo')">{{ errors.first('archivo') }} (xml)</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
+                                        <div class="card" v-else-if="archivo">
+                                            <div class="card-body">
+                                                <div >
+                                                    <div class="row" >
+                                                        <div class="col-md-12">
+                                                            <div class="spinner-border text-success" role="status">
+                                                               <span class="sr-only">Cargando...</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalCFDI"><i class="fa fa-close"  ></i> Cerrar</button>
+                             </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
     </span>
 </template>
 
 <script>
-    import Datepicker from 'vuejs-datepicker';
-    import {es} from 'vuejs-datepicker/dist/locale';
-    import {ModelListSelect} from 'vue-search-select';
-    import ConceptoSelect from "../../cadeco/concepto/Select";
-    import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
-    export default {
-        name: "comprobante-fondo-create",
-        components: {ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo},
-        data() {
-            return {
-                cargando : false,
-                es : es,
-                fechasDeshabilitadas : {},
-                fecha : '',
-                fecha_hoy : '',
-                id_fondo : '',
-                referencia : '',
-                id_concepto : '',
-                fondos : [],
-                observaciones : '',
-                partidas: [],
-                subtotal : 0,
-                iva : 0,
-                total : 0
-            }
+import Datepicker from 'vuejs-datepicker';
+import {es} from 'vuejs-datepicker/dist/locale';
+import {ModelListSelect} from 'vue-search-select';
+import ConceptoSelect from "../../cadeco/concepto/Select";
+import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
+import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
+export default {
+    name: "comprobante-fondo-create",
+    components: {CfdiShow, ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo},
+    data() {
+        return {
+            cargando : false,
+            es : es,
+            fechasDeshabilitadas : {},
+            fecha : '',
+            fecha_hoy : '',
+            id_fondo : '',
+            referencia : '',
+            id_concepto : '',
+            fondos : [],
+            observaciones : '',
+            partidas: [],
+            subtotal : 0,
+            iva : 0,
+            total : 0,
+            archivo:null,
+            archivo_name:null,
+            cfdi : null,
+        }
+    },
+    computed: {
+        sumaMontos() {
+            let result = 0;
+            this.partidas.forEach(function (doc, i) {
+                result += parseFloat(doc.monto);
+            })
+            this.subtotal = result;
+            return result
         },
-        computed: {
-            sumaMontos() {
-                let result = 0;
-                this.partidas.forEach(function (doc, i) {
-                    result += parseFloat(doc.monto);
-                })
-                this.subtotal = result;
-                return result
-            },
-            sumaTotal() {
-                this.total = parseFloat(this.subtotal) + parseFloat(this.iva)
-                return this.total
-            }
-        },
-        mounted() {
-            this.$validator.reset()
-            this.fecha_hoy = new Date();
+        sumaTotal() {
+            this.total = parseFloat(this.subtotal) + parseFloat(this.iva)
+            return this.total
+        }
+    },
+    mounted() {
+        this.$validator.reset()
+        this.fecha_hoy = new Date();
+        this.fecha = new Date();
+        this.fechasDeshabilitadas.from = new Date();
+        this.id_fondo = ''
+        this.getFondos();
+    },
+    methods : {
+        init() {
             this.fecha = new Date();
-            this.fechasDeshabilitadas.from = new Date();
-            this.id_fondo = ''
-            this.getFondos();
+            this.cargando = true;
         },
-        methods : {
-            init() {
-                this.fecha = new Date();
-                this.cargando = true;
-            },
-            descripcionFondo (item) {
-                return `[${item.descripcion}]`
-            },
-            formatoFecha(date)
-            {
-                return moment(date).format('DD/MM/YYYY');
-            },
-            getFondos() {
-                return this.$store.dispatch('cadeco/fondo/index', {
-                    config: {
-                        params: {
-                            sort: 'descripcion',
-                            order: 'asc'
-                        }
+        descripcionFondo (item) {
+            return `[${item.descripcion}]`
+        },
+        formatoFecha(date)
+        {
+            return moment(date).format('DD/MM/YYYY');
+        },
+        getFondos() {
+            return this.$store.dispatch('cadeco/fondo/index', {
+                config: {
+                    params: {
+                        sort: 'descripcion',
+                        order: 'asc'
                     }
-                }).then(fondos => {
-                    this.fondos = fondos.data;
-                })
-            },
-            addPartidas(){
-                this.partidas.splice(this.partidas.length + 1, 0, {
-                    referencia : "",
-                    cantidad : 0,
-                    precio : 0,
-                    monto : 0,
-                    id_concepto : "",
-                });
-                this.index = this.index+1;
-            },
-            destroy(index){
-                this.partidas.splice(index, 1);
-            },
-            monto(partida, key) {
-                var monto = 0;
-                if(partida.cantidad != 0 && partida.precio != 0) {
-                    monto = parseFloat(partida.cantidad * partida.precio)
-                    this.partidas[key]['monto'] = monto;
                 }
-                return monto;
-            },
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result)
-                    {
-                        if (this.partidas.length <= 0) {
-                            swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
-                        } else {
-                            this.store();
-                        }
-                    }
-                });
-            },
-            store() {
-                var datos = {};
-                datos["fecha"] = this.$data.fecha;
-                datos ["id_fondo"] = this.$data.id_fondo;
-                datos ["referencia"] = this.$data.referencia;
-                datos ["id_concepto"] = this.$data.id_concepto;
-                datos ["observaciones"] = this.$data.observaciones;
-                datos ["subtotal"] = this.$data.subtotal;
-                datos ["iva"] = this.$data.iva;
-                datos ["total"] = this.$data.total;
-                datos ["partidas"] = this.$data.partidas;
-                return this.$store.dispatch('finanzas/comprobante-fondo/store', datos)
-                    .then((data) => {
-                        this.$emit('created', data)
-                        this.salir();
-                    });
-            },
-            salir(){
-                this.$router.push({name: 'comprobante-fondo'});
+            }).then(fondos => {
+                this.fondos = fondos.data;
+            })
+        },
+        addPartidas(){
+            this.partidas.splice(this.partidas.length + 1, 0, {
+                referencia : "",
+                cantidad : 0,
+                precio : 0,
+                monto : 0,
+                iva : 0,
+                id_concepto : "",
+            });
+            this.index = this.index+1;
+        },
+        destroy(index){
+            this.partidas.splice(index, 1);
+        },
+        monto(partida, key) {
+            var monto = 0;
+            if(partida.cantidad != 0 && partida.precio != 0) {
+                monto = parseFloat(partida.cantidad * partida.precio)
+                this.partidas[key]['monto'] = monto;
             }
+            return monto;
         },
-        watch: {
-            subtotal(value){
-                if(value){
-                    this.iva = parseFloat(((value) * 16) / 100).formatMoney(2,'.','')
+        validate() {
+            this.$validator.validate().then(result => {
+                if (result)
+                {
+                    if (this.partidas.length <= 0) {
+                        swal('¡Error!', 'Debe ingresar al menos una partida.', 'error')
+                    } else {
+                        this.store();
+                    }
                 }
+            });
+        },
+        store() {
+            var datos = {};
+            datos["fecha"] = this.$data.fecha;
+            datos ["id_fondo"] = this.$data.id_fondo;
+            datos ["referencia"] = this.$data.referencia;
+            datos ["id_concepto"] = this.$data.id_concepto;
+            datos ["observaciones"] = this.$data.observaciones;
+            datos ["subtotal"] = this.$data.subtotal;
+            datos ["iva"] = this.$data.iva;
+            datos ["total"] = this.$data.total;
+            datos ["partidas"] = this.$data.partidas;
+            return this.$store.dispatch('finanzas/comprobante-fondo/store', datos)
+                .then((data) => {
+                    this.$emit('created', data)
+                    this.salir();
+                });
+        },
+        salir(){
+            this.$router.push({name: 'comprobante-fondo'});
+        },
+        modalCFDI(){
+            $(this.$refs.modal_cfdi).modal('show');
+        },
+        cerrarModalCFDI(){
+            $(this.$refs.modal_cfdi).modal('hide');
+        },
+        onFileChange(e){
+            this.archivo = null;
+            var files = e.target.files || e.dataTransfer.files;
+            if (!files.length)
+                return;
+            this.archivo_name = files[0].name;
+            this.createImage(files[0], 1);
+
+            if(files[0].type == "text/xml")
+            {
+                setTimeout(() => {
+                    this.cargarXML(1)
+                }, 500);
+            } else {
+                swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+            }
+
+        },
+        cargarXML(){
+            this.cargando = true;
+            var formData = new FormData();
+            formData.append('xml',  this.archivo);
+            formData.append('nombre_archivo',  this.archivo_name);
+            return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLComprobacion',
+                {
+                    data: formData,
+                    config: {
+                        params: { _method: 'POST'}
+                    }
+                })
+                .then(data => {
+                    var count = Object.keys(data).length;
+                    if(count > 0 ){
+                        this.cfdi = data;
+                        this.$store.commit('finanzas/cfdi-sat/SET_cCFDSAT', data);
+                        this.cargado = true;
+                    }else{
+                        if(this.$refs.archivo.value !== ''){
+                            this.$refs.archivo.value = '';
+                            this.archivo = null;
+                        }
+                        this.cargado = false;
+                        this.cleanData();
+                        swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
+                    }
+                }).finally(() => {
+                    this.cargando = false;
+                });
+        },
+        createImage(file) {
+            var reader = new FileReader();
+            var vm = this;
+
+            reader.onload = (e) => {
+                vm.archivo = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        },
+    },
+    watch: {
+        subtotal(value){
+            if(value){
+                this.iva = parseFloat(((value) * 16) / 100).formatMoney(2,'.','')
             }
         }
     }
+}
 </script>
 
 <style scoped>

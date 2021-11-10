@@ -12,6 +12,7 @@ use App\Facades\Context;
 use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
 use App\Informes\Fiscal\InformeSATLP;
+use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
@@ -238,6 +239,14 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         }
 
 
+    }
+
+    public function getRFCObra()
+    {
+        $obra = Obra::find(Context::getIdObra());
+        if($obra){
+            return $obra->rfc;
+        }
     }
 
 }
