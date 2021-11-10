@@ -713,4 +713,63 @@ class ContratoProyectado extends Transaccion
             return "-";
         }
     }
+
+    public function getEstadosInvitacionCotizacionesAttribute()
+    {
+        return [
+            'titulos' => $this->obtenerPorCotizacion(),
+            'partidas' => $this->estadoCotizada()
+        ];
+    }
+
+    private function obtenerPorCotizacion()
+    {
+        $titulos = [];
+        $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
+        $i = 0;
+        foreach ($contratos as $key => $cotizacion)
+        {
+            $invitacion = Invitacion::where('id', $cotizacion->id_referente)->where('base_datos',Context::getDatabase())->where('id_obra', $cotizacion->id_obra)->first();
+            $titulos[$i]['id_transaccion'] = $cotizacion->id_transaccion;
+            $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
+            $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
+            $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $i++;
+        }
+        foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get() as $invitacion) {
+            $titulos[$i]['id_transaccion'] = '';
+            $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
+            $titulos[$i]['numero_folio'] = '';
+            $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
+            $i++;
+        }
+        return $titulos;
+    }
+
+    private function estadoCotizada()
+    {
+        $partidas = [];
+        $item = [];
+        foreach ($this->conceptos()->get() as $key => $partida)
+        {
+            $i = 0;
+            $partidas[$key]['nivel'] = $partida->clave;
+            $partidas[$key]['descripcion'] = $partida->descripcion;
+            $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
+            foreach ($contratos as $k => $cotizacion)
+            {
+                $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion);
+                $item[$i]['pendiente'] = false;
+                $i++;
+            }
+            foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get()  as $invitacion)
+            {
+                $item[$i]['cotizada'] = NULL;
+                $item[$i]['pendiente'] = true;
+                $i++;
+            }
+            $partidas[$key]['partidas'] = $item;
+        }
+        return $partidas;
+    }
 }

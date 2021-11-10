@@ -390,5 +390,4 @@ class PresupuestoContratistaPartida extends Model
         $id_conceptos = AsignacionContratista::find($id_asignacion)->partidas()->where("id_transaccion","=", $id_transaccion)->pluck("id_concepto")->unique()->toArray();
         return $query->whereIn('id_concepto', $id_conceptos)->where("id_transaccion","=", $id_transaccion);
     }
-
 }

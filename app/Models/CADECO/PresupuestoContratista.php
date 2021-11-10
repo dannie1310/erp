@@ -390,9 +390,10 @@ class PresupuestoContratista extends Transaccion
             }
         }
         foreach($subtotales as $subtotal){
-            foreach($subtotal as $k=>$v) {
+            foreach($subtotal as $k=>$v){
+                $moneda = Moneda::find($k);
                 $salida[] = [
-                    "moneda" => Moneda::find($k)->nombre,
+                    "moneda" =>$moneda ? $monedas->nombre : '',
                     "subtotal_format" => "$ " . number_format($v, 2)
                 ];
             }
