@@ -754,7 +754,7 @@ class ContratoProyectado extends Transaccion
         {
             $i = 0;
             $partidas[$key]['nivel'] = $partida->clave;
-            $partidas[$key]['descripcion'] = $partida->descripcion_guion_nivel_format;
+            $partidas[$key]['descripcion'] = $partida->descripcion;
             $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
             foreach ($contratos as $k => $cotizacion)
             {
