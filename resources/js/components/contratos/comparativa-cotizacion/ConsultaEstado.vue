@@ -52,7 +52,7 @@
                                                  </tr>
                                                  <tr>
                                                      <th >#</th>
-                                                     <th >Nivel</th>
+                                                     <th >Clave</th>
                                                      <th >Concepto</th>
                                                      <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" style="padding: 1px;" v-if="cotizacion.id_transaccion != ''" ><b>{{cotizacion.empresa}}</b></th>
                                                      <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" style="padding: 1px;" v-if="cotizacion.id_transaccion == ''" ><b>{{cotizacion.empresa}}</b></th>
@@ -70,7 +70,6 @@
                                                      <td v-for="p1 in partida.partidas" style="text-align: center" v-if="p1.pendiente === true" >
                                                          <i class="fa fa-window-minimize" aria-hidden="true" style="color: gray"></i>
                                                      </td>
-
                                                  </tr>
                                              </tbody>
                                          </table>
