@@ -163,7 +163,7 @@
                                     {{partida.unidad}}
                                 </td>
                                 <td style="text-align: right">
-                                    {{partida.cantidad}}
+                                    {{partida.cantidad_presupuestada}}
                                 </td>
                                 <template v-for = "(cotizacion, c) in cotizaciones" >
                                     <td style="text-align: right ;"  :class="partida.cotizaciones[c] && partida.cotizaciones[c].precio_con_descuento == precios_menores[i]?`mejor_opcion`:c == mejor_cotizacion ?`mejor_cotizacion`:``">
