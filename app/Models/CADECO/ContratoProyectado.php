@@ -750,10 +750,10 @@ class ContratoProyectado extends Transaccion
     {
         $partidas = [];
         $item = [];
-        foreach ($this->contratos()->get() as $key => $partida)
+        foreach ($this->conceptos()->get() as $key => $partida)
         {
             $i = 0;
-            $partidas[$key]['nivel'] = $partida->nivel;
+            $partidas[$key]['nivel'] = $partida->clave;
             $partidas[$key]['descripcion'] = $partida->descripcion;
             $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
             foreach ($contratos as $k => $cotizacion)
