@@ -378,10 +378,12 @@ export default {
             Object.values(this.data.cotizaciones).forEach(cotizacion =>{
                 cotizacion.justificar = false;
                 Object.values(cotizacion.partidas).forEach(partida => {
-                    if(parseFloat(partida.cantidad_asignada) > 0 && partida.mejor_opcion == false && (partida.justificacion == '' || partida.justificacion != '')){
-                        console.log(parseFloat(partida.cantidad_asignada));
-                        self.justificar = true;
-                        cotizacion.justificar = true;
+                    if(partida !== null){
+                        if(parseFloat(partida.cantidad_asignada) > 0 && partida.mejor_opcion == false && (partida.justificacion == '' || partida.justificacion != '')){
+                            console.log(parseFloat(partida.cantidad_asignada));
+                            self.justificar = true;
+                            cotizacion.justificar = true;
+                        }
                     }
                 });
             });
