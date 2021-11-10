@@ -525,9 +525,11 @@ class ContratoProyectado extends Transaccion
         $precios = [];
         $exclusiones = [];
         $importes = [];
+        $proveedores = [];
+
 
         if($data["cotizaciones_completas"] === "true"){
-            $cotizaciones_obj = $this->presupuestos;
+            $cotizaciones_obj = $this->presupuestos()->where("estado","=",1)->get();
         }else{
             $cotizaciones_obj = $this->ultimos_presupuestos;
         }
@@ -630,9 +632,8 @@ class ContratoProyectado extends Transaccion
         }
         foreach($partidas as $key=>$partida)
         {
-            foreach($partida["cotizaciones"] as $key_cto=>$cotizacion)
-            {
-                if(key_exists("cotizaciones", $partida)) {
+            if(key_exists("cotizaciones", $partida)) {
+                foreach ($partida["cotizaciones"] as $key_cto => $cotizacion) {
                     $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_con_descuento"], $precios[$key]);
                 }
             }

@@ -1089,7 +1089,7 @@ export const routes = [
                                 component: require('./components/contratos/comparativa-cotizacion/Index').default,
                                 meta: {
                                     title: 'Lista de Contratos Proyectados Cotizados o Con Invitación',
-                                    breadcrumb: {parent: 'compras', name: 'CONTRATOS PROYECTADOS COTIZADAS O CON INVITACIÓN'},
+                                    breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS COTIZADAS O CON INVITACIÓN'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_presupuesto_contratista'
                                 }
