@@ -1382,7 +1382,12 @@ class CFDSATService
         $arreglo_cfd["contenido_xml"] = $contenido_xml;
         $cfd->validaCFDI33($contenido_xml);
         $cfdi = $this->registraCFDI($arreglo_cfd);
-        return $cfdi;
+        $cfdi->conceptos->load("traslados");
+        if($cfdi->tipo_comprobante == "I"){
+            return $cfdi->conceptos;
+        }else {
+            abort(400,"El CFDI debe ser tipo Ingreso, favor de verificar");
+        }
     }
 
     private function validaReceptorContexto($arreglo_cfd)

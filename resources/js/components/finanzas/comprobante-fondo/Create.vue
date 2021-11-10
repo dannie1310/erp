@@ -7,8 +7,7 @@
                          <form role="form" @submit.prevent="validate">
                              <div class="modal-body">
                                  <div class="row">
-                                     <div class="col-md-8"></div>
-                                     <div class="col-md-4">
+                                     <div class="col-md-2">
                                          <div class="form-group error-content">
                                              <label class="col-form-label">Fecha:</label>
                                              <datepicker v-model = "fecha"
@@ -111,8 +110,12 @@
                                                  <tbody>
                                                  <tr v-for="(partida, i) in partidas">
                                                      <td style="text-align:center; vertical-align:inherit; width: 3%">{{i+1}}</td>
-                                                     <td style="width: 37%">
+                                                     <td style="width: 37%;"  v-if="partida.id_concepto_sat>0">
+                                                         <c-f-d-i v-bind:id="partida.id_cfdi" v-bind:txt="partida.referencia" :key="i"></c-f-d-i>
+                                                     </td>
+                                                     <td style="width: 37%" v-else>
                                                          <input type="text"
+                                                                :readonly="partida.id_concepto_sat>0"
                                                                 class="form-control"
                                                                 :name="`referencia[${i}]`"
                                                                 data-vv-as="Concepto"
@@ -121,7 +124,10 @@
                                                                 v-model="partida.referencia"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{ errors.first(`referencia[${i}]`) }}</div>
                                                      </td>
-                                                     <td style="width: 10%">
+                                                     <td style="width: 10%; text-align: right"  v-if="partida.id_concepto_sat>0">
+                                                         {{partida.cantidad}}
+                                                     </td>
+                                                     <td style="width: 10%" v-else>
                                                          <input type="number"
                                                                 min="0.01"
                                                                 step=".01"
@@ -134,8 +140,13 @@
                                                                 v-model="partida.cantidad"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                      </td>
-                                                     <td style="width: 10%">
+                                                     <td style="width: 10%; text-align: right"  v-if="partida.id_concepto_sat>0">
+                                                         ${{parseFloat(partida.precio).formatMoney(2,'.',',')}}
+                                                     </td>
+
+                                                     <td style="width: 10%" v-else>
                                                          <input type="number"
+                                                                :readonly="partida.id_concepto_sat>0"
                                                                 min="0.01"
                                                                 step=".01"
                                                                 class="form-control"
@@ -147,7 +158,7 @@
                                                                 v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
-                                                     <td align="right" style="width: 10%">$ {{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
+                                                     <td align="right" style="width: 10%">${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
                                                      <td style="width: 25%">
                                                         <ConceptoSelectHijo
                                                             :name="`id_concepto[${i}]`"
@@ -196,25 +207,15 @@
                                                          <tbody>
                                                              <tr>
                                                                  <th>Subtotal:</th>
-                                                                 <td align="right">$ {{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</td>
+                                                                 <td style="text-align: right">${{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
                                                              <tr>
-                                                                 <th>IVA:</th>
-                                                                 <td>
-                                                                     <input type="number" min="0.01"
-                                                                            step=".01"   class="form-control"
-                                                                            :name="iva"  data-vv-as="IVA" style="text-align:right;"
-                                                                            v-validate="{required: true}"
-                                                                            :class="{'is-invalid': errors.has(`iva`)}"
-                                                                            v-model="iva"
-                                                                            readonly="readonly"
-                                                                     />
-                                                                     <div class="invalid-feedback" v-show="errors.has('iva')">{{ errors.first('iva') }}</div>
-                                                                 </td>
+                                                                 <th >IVA:</th>
+                                                                 <td style="text-align: right">${{(parseFloat(iva)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
-                                                             <tr align="right">
+                                                             <tr style="text-align: right">
                                                                  <th>Total:</th>
-                                                                  <td>$ {{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</td>
+                                                                  <td>${{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</td>
                                                              </tr>
                                                          </tbody>
                                                      </table>
@@ -269,14 +270,17 @@
                                 <div class="row">
                                     <div class="col-md-12">
                                         <cfdi-show v-bind:cfdi="cfdi" v-if="cfdi"></cfdi-show>
-                                        <div class="card" v-else-if="archivo">
+                                        <div class="card" v-else-if="cargando">
                                             <div class="card-body">
                                                 <div >
                                                     <div class="row" >
-                                                        <div class="col-md-12">
+                                                        <div class="col-md-1">
                                                             <div class="spinner-border text-success" role="status">
                                                                <span class="sr-only">Cargando...</span>
                                                             </div>
+                                                        </div>
+                                                        <div class="col-md-11">
+                                                            <h5>Procesando</h5>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -302,9 +306,10 @@ import {ModelListSelect} from 'vue-search-select';
 import ConceptoSelect from "../../cadeco/concepto/Select";
 import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
 import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
+import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
 export default {
     name: "comprobante-fondo-create",
-    components: {CfdiShow, ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo},
+    components: {CFDI, CfdiShow, ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo},
     data() {
         return {
             cargando : false,
@@ -324,15 +329,19 @@ export default {
             archivo:null,
             archivo_name:null,
             cfdi : null,
+            uuid : []
         }
     },
     computed: {
         sumaMontos() {
+            let iva = 0;
             let result = 0;
             this.partidas.forEach(function (doc, i) {
                 result += parseFloat(doc.monto);
+                iva += parseFloat(doc.iva);
             })
             this.subtotal = result;
+            this.iva = iva;
             return result
         },
         sumaTotal() {
@@ -380,11 +389,36 @@ export default {
                 monto : 0,
                 iva : 0,
                 id_concepto : "",
+                id_concepto_sat : "",
+                id_cfdi : ""
             });
             this.index = this.index+1;
         },
         destroy(index){
-            this.partidas.splice(index, 1);
+            if(this.partidas[index].id_concepto_sat > 0){
+                let id_conceptos_sat_borrar = [];
+                let id_cfdi = this.partidas[index].id_cfdi;
+                let _self = this;
+                this.partidas.forEach(function (partida, i) {
+                    if(partida.id_cfdi == id_cfdi)
+                    {
+                        id_conceptos_sat_borrar.push(partida.id_concepto_sat);
+                    }
+                });
+
+                id_conceptos_sat_borrar.forEach(function (elemento, i){
+                    _self.partidas.forEach(function (partida, i) {
+                        if(partida.id_concepto_sat == elemento)
+                        {
+                            _self.partidas.splice(i, 1);
+                        }
+                    });
+                });
+
+            }else {
+                console.log("else");
+                this.partidas.splice(index, 1);
+            }
         },
         monto(partida, key) {
             var monto = 0;
@@ -450,6 +484,27 @@ export default {
             }
 
         },
+        agregaPartidasConConceptos(conceptos)
+        {
+            let _self = this;
+            conceptos.forEach(function (concepto, i) {
+                var busqueda = _self.partidas.find(x=>x.id_concepto_sat === concepto.id);
+                if(busqueda == undefined)
+                {
+                    _self.partidas.splice(_self.partidas.length + 1, 0, {
+                        referencia : concepto.descripcion,
+                        cantidad : concepto.cantidad,
+                        precio : concepto.valor_unitario,
+                        monto : concepto.importe,
+                        iva : concepto.traslados[0] != undefined ? concepto.traslados[0].impuesto =="002" ? concepto.traslados[0].importe : 0 : 0,
+                        id_concepto_sat : concepto.id,
+                        id_concepto : "",
+                        id_cfdi : concepto.id_cfd_sat,
+                    });
+                    _self.index = _self.index+1;
+                }
+            })
+        },
         cargarXML(){
             this.cargando = true;
             var formData = new FormData();
@@ -464,10 +519,15 @@ export default {
                 })
                 .then(data => {
                     var count = Object.keys(data).length;
-                    if(count > 0 ){
-                        this.cfdi = data;
-                        this.$store.commit('finanzas/cfdi-sat/SET_cCFDSAT', data);
-                        this.cargado = true;
+                    if(count > 0){
+                        this.agregaPartidasConConceptos(data);
+                        $(this.$refs.modal_cfdi).modal('hide');
+                        this.$refs.archivo.value = '';
+                        this.archivo = null;
+                        //this.cfdi = data;
+                        //this.$store.commit('finanzas/cfdi-sat/SET_cCFDSAT', data);
+
+                        //this.cargado = true;
                     }else{
                         if(this.$refs.archivo.value !== ''){
                             this.$refs.archivo.value = '';
@@ -492,11 +552,11 @@ export default {
         },
     },
     watch: {
-        subtotal(value){
+        /*subtotal(value){
             if(value){
                 this.iva = parseFloat(((value) * 16) / 100).formatMoney(2,'.','')
             }
-        }
+        }*/
     }
 }
 </script>

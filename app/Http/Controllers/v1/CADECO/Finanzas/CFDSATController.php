@@ -66,7 +66,7 @@ class CFDSATController extends Controller
 
     public function cargaXMLComprobacion(Request $request)
     {
-        $item = $this->service->cargaXMLComprobacion($request->all());
-        return $this->respondWithItem($item);
+        $conceptos = $this->service->cargaXMLComprobacion($request->all());
+        return response()->json($conceptos, 200);
     }
 }
