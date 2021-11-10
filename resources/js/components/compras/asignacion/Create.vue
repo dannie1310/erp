@@ -171,7 +171,7 @@
                                                     Justificación
                                                 </th>
                                             </tr>
-                                            <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0">
+                                            <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i] !== null && cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0">
                                                 <td>
                                                     {{item.descripcion}}
                                                 </td>
