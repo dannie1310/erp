@@ -496,6 +496,12 @@ class CFDSATService
 
     private function setArreglosFacturas($archivo_txt){
         $this->arreglos_factura = [];
+        /*
+         * TODO: implementar uso de auxiliar CFD para generar el arreglo y contenga traslados y relaciones
+         */
+        /*$cfd = new CFD($archivo_xml);
+        $arreglo_cfd = $cfd->getArregloFactura();*/
+
         try{
             $myfile = fopen($archivo_txt, "r");
         } catch (\Exception $e) {
@@ -1141,6 +1147,7 @@ class CFDSATService
                     Storage::disk('xml_sat')->put($arreglo_factura["uuid"].".xml", $contenido_archivo_xml);
                 }
             } else {
+                $cfdi->complementarDatos($arreglo_factura);
                 $this->validaDisponibilidad($cfdi);
                 if(key_exists("id_tipo_transaccion", $arreglo_factura))
                 {
@@ -1386,14 +1393,11 @@ class CFDSATService
             $cfdi = $this->registraCFDI($arreglo_cfd);
             $cfdi->conceptos->load("traslados");
             if($cfdi->tipo_comprobante == "I"){
-                //dd($cfdi->conceptos);
                 if($conceptos == null){
                     $conceptos = $cfdi->conceptos;
                 }else{
                     $conceptos = $conceptos->merge($cfdi->conceptos);
                 }
-
-                //return $cfdi->conceptos;
             }else {
                 abort(400,"Los CFDI deben ser de tipo Ingreso, favor de verificar");
             }
