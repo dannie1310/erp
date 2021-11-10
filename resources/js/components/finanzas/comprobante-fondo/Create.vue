@@ -253,7 +253,7 @@
                                             </div>
                                             <div>
                                                 <div class="form-group error-content" >
-                                                    <input type="file" class="form-control" id="archivo" @change="onFileChange"
+                                                    <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
                                                            row="3"
                                                            v-validate="{required: true,  ext: ['xml'], size: 3072}"
                                                            name="archivo"
@@ -328,6 +328,8 @@ export default {
             total : 0,
             archivo:null,
             archivo_name:null,
+            files : [],
+            names : [],
             cfdi : null,
             uuid : []
         }
@@ -467,22 +469,27 @@ export default {
             $(this.$refs.modal_cfdi).modal('hide');
         },
         onFileChange(e){
+            this.files = [];
             this.archivo = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
-            this.archivo_name = files[0].name;
-            this.createImage(files[0], 1);
 
-            if(files[0].type == "text/xml")
-            {
-                setTimeout(() => {
-                    this.cargarXML(1)
-                }, 500);
-            } else {
-                swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+            for(let i=0; i<files.length; i++) {
+                this.archivo_name = files[i].name;
+                this.createImage(files[i]);
+                this.names.push(files[i].name);
+                if(files[i].type == "text/xml")
+                {
+
+                } else {
+                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+                }
             }
 
+            setTimeout(() => {
+                this.cargarXML(1)
+            }, 500);
         },
         agregaPartidasConConceptos(conceptos)
         {
@@ -508,8 +515,8 @@ export default {
         cargarXML(){
             this.cargando = true;
             var formData = new FormData();
-            formData.append('xml',  this.archivo);
-            formData.append('nombre_archivo',  this.archivo_name);
+            formData.append('xmls',  JSON.stringify(this.files));
+            formData.append('nombres_archivo',  JSON.stringify(this.names));
             return this.$store.dispatch('finanzas/cfdi-sat/cargarXMLComprobacion',
                 {
                     data: formData,
@@ -547,17 +554,11 @@ export default {
 
             reader.onload = (e) => {
                 vm.archivo = e.target.result;
+                vm.files.push(e.target.result);
             };
             reader.readAsDataURL(file);
         },
     },
-    watch: {
-        /*subtotal(value){
-            if(value){
-                this.iva = parseFloat(((value) * 16) / 100).formatMoney(2,'.','')
-            }
-        }*/
-    }
 }
 </script>
 

@@ -1367,27 +1367,40 @@ class CFDSATService
 
     public function cargaXMLComprobacion(array $data)
     {
-        $archivo_xml = $data["xml"];
-        $cfd = new CFD($archivo_xml);
-        $arreglo_cfd = $cfd->getArregloFactura();
+        $archivos_xml = json_decode($data["xmls"]);
+        $conceptos = null;
+        foreach ($archivos_xml as $archivo_xml){
+            $cfd = new CFD($archivo_xml);
+            $arreglo_cfd = $cfd->getArregloFactura();
 
-        $this->validaReceptorContexto($arreglo_cfd);
+            $this->validaReceptorContexto($arreglo_cfd);
 
-        $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
-        $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
-        $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
+            $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
+            $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
+            $arreglo_cfd["id_proveedor_sat"] = $proveedor["id_proveedor"];
 
-        $exp = explode("base64,", $data["xml"]);
-        $contenido_xml = base64_decode($exp[1]);
-        $arreglo_cfd["contenido_xml"] = $contenido_xml;
-        $cfd->validaCFDI33($contenido_xml);
-        $cfdi = $this->registraCFDI($arreglo_cfd);
-        $cfdi->conceptos->load("traslados");
-        if($cfdi->tipo_comprobante == "I"){
-            return $cfdi->conceptos;
-        }else {
-            abort(400,"El CFDI debe ser tipo Ingreso, favor de verificar");
+            $exp = explode("base64,", $archivo_xml);
+            $contenido_xml = base64_decode($exp[1]);
+            $arreglo_cfd["contenido_xml"] = $contenido_xml;
+            $cfd->validaCFDI33($contenido_xml);
+            $cfdi = $this->registraCFDI($arreglo_cfd);
+            $cfdi->conceptos->load("traslados");
+            if($cfdi->tipo_comprobante == "I"){
+                //dd($cfdi->conceptos);
+                if($conceptos == null){
+                    $conceptos = $cfdi->conceptos;
+                }else{
+                    $conceptos = $conceptos->merge($cfdi->conceptos);
+                }
+
+                //return $cfdi->conceptos;
+            }else {
+                abort(400,"Los CFDI deben ser de tipo Ingreso, favor de verificar");
+            }
         }
+        return $conceptos;
+
+
     }
 
     private function validaReceptorContexto($arreglo_cfd)
