@@ -79,6 +79,11 @@ class PresupuestoContratista extends Transaccion
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function contratoProyectadoSgv()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
     public function partidas()
     {
         return $this->hasMany(PresupuestoContratistaPartida::class, 'id_transaccion', 'id_transaccion');

@@ -757,7 +757,7 @@ class SolicitudCompra extends Transaccion
         $importes = [];
 
         if($data["cotizaciones_completas"] === "true"){
-            $cotizaciones_obj = $this->cotizaciones;
+            $cotizaciones_obj = $this->cotizaciones()->where("estado","=",1)->get();
         }else{
             $cotizaciones_obj = $this->ultimas_cotizaciones;
         }
