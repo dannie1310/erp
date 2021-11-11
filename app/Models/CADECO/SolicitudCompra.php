@@ -1011,8 +1011,14 @@ class SolicitudCompra extends Transaccion
             $cotizaciones = $this->cotizaciones()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 18)->orderBy('id_transaccion', 'asc')->get();
             foreach ($cotizaciones as $k => $cotizacion)
             {
-                $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion, $partida->id_material);
-                $item[$i]['pendiente'] = false;
+                if($cotizacion->estado == 0)
+                {
+                    $item[$i]['cotizada'] = false;
+                    $item[$i]['pendiente'] = true;
+                }else {
+                    $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion, $partida->id_material);
+                    $item[$i]['pendiente'] = false;
+                }
                 $i++;
             }
 

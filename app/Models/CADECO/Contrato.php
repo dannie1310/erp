@@ -179,7 +179,8 @@ class Contrato extends Model
 
     public function estaPartidaCotizada($id_transaccion)
     {
-        $partida = PresupuestoContratistaPartida::where('id_transaccion', $id_transaccion)->where('id_concepto', $this->id_concepto)->whereNotNull('precio_unitario')->first();
+        $partida = PresupuestoContratistaPartida::where('id_transaccion', $id_transaccion)->where('id_concepto', $this->id_concepto)->whereNotNull('precio_unitario')
+                    ->where('precio_unitario', '!=', 0)->first();
         if(!is_null($partida))
         {
             return true;

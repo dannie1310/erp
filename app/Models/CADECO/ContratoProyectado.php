@@ -758,8 +758,14 @@ class ContratoProyectado extends Transaccion
             $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
             foreach ($contratos as $k => $cotizacion)
             {
-                $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion);
-                $item[$i]['pendiente'] = false;
+                if($cotizacion->estado == 0)
+                {
+                    $item[$i]['cotizada'] = false;
+                    $item[$i]['pendiente'] = true;
+                }else {
+                    $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion);
+                    $item[$i]['pendiente'] = false;
+                }
                 $i++;
             }
             foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get()  as $invitacion)
