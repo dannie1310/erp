@@ -123,7 +123,7 @@ class ItemSolicitudCompra extends Item
      */
     public function estaPartidaCotizada($id_cotizacion, $id_material)
     {
-        $partida = CotizacionCompraPartida::where('id_transaccion', $id_cotizacion)->where('id_material', $id_material)->whereNotNull('id_moneda')->first();
+        $partida = CotizacionCompraPartida::where('id_transaccion', $id_cotizacion)->where('id_material', $id_material)->activa()->first();
         if(!is_null($partida))
         {
             return true;
