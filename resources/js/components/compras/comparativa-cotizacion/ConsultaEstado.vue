@@ -61,14 +61,14 @@
                                                  <tr v-for="(partida, i) in solicitud.detalleEstadoCotizacion.partidas">
                                                      <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
                                                      <td style="text-align: left;">{{partida.material}}</td>
-                                                     <td v-for="p in partida.partidas" style="text-align: center" v-if="p.pendiente === false">
-                                                         <i class="fa fa-check" aria-hidden="true" style="color: green" v-if="p.cotizada == true"></i>
+                                                     <td v-for="p in partida.partidas" style="text-align: center" v-if="p.cotizada != null">
+                                                         <i class="fa fa-check" aria-hidden="true" style="color: green" v-if="p.cotizada === true"></i>
+                                                         <i class="fa fa-window-minimize" aria-hidden="true" style="color: gray" v-else-if="p.pendiente === true"></i>
                                                          <i class="fa fa-times" aria-hidden="true" style="color: red" v-else></i>
                                                      </td>
-                                                     <td v-for="p1 in partida.partidas" style="text-align: center" v-if="p1.pendiente === true" >
+                                                     <td v-for="p1 in partida.partidas" style="text-align: center" v-if="p1.cotizada == null">
                                                          <i class="fa fa-window-minimize" aria-hidden="true" style="color: gray"></i>
                                                      </td>
-
                                                  </tr>
                                              </tbody>
                                          </table>
