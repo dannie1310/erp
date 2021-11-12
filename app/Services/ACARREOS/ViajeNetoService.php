@@ -98,6 +98,10 @@ class ViajeNetoService
             }
 
         }else if(array_key_exists('deviceId', $data)){
+            if(is_null($telefono))
+            {
+                return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
+            }
             if($telefono->device_id != null){
                 if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
                     return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
