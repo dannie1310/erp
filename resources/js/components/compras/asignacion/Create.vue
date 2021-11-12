@@ -43,7 +43,7 @@
                                                         class="form-control"
                                                         id="id_empresa"
                                                         v-model="id_empresa">
-                                                        <option v-for="cotizacion in data.cotizaciones" :value="cotizacion.id_transaccion">{{ cotizacion.razon_social }}</option>
+                                                        <option v-for="cotizacion in data.cotizaciones" :value="cotizacion.id_transaccion">[{{cotizacion.folio_format}}] {{ cotizacion.razon_social }}</option>
                                                     </select>
                                                 </th>
                                             </tr>
@@ -63,9 +63,9 @@
 
                                                 <th class="bg-gray-light ">Precio Unitario</th>
                                                 <th class="bg-gray-light">% Descuento</th>
-                                                <th class="bg-gray-light ">Precio Total</th>
+                                                <th class="bg-gray-light ">Importe</th>
                                                 <th class="bg-gray-light">Moneda</th>
-                                                <th class="bg-gray-light ">Precio Total Moneda Conversión</th>
+                                                <th class="bg-gray-light ">Importe Pesos (MXN)</th>
                                                 <th class="bg-gray-light th_money_input">Cantidad Asignada</th>
                                             </tr>
                                         </thead>
@@ -74,14 +74,14 @@
                                                 <td>{{ i+1}}</td>
                                                 <td :title="item.descripcion">{{item.descripcion_corta}}</td>
                                                 <td>{{item.unidad}}</td>
-                                                <td>{{item.cantidad_solicitada}}</td>
-                                                <td>{{item.cantidad_asignada}}</td>
-                                                <td>{{item.cantidad_disponible}}</td>
-                                                <td style="text-align: right" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}" v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario_format}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}">{{data.cotizaciones[id_empresa].partidas[i].descuento}}</td><td v-else></td>
-                                                <td style="text-align: right" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}">{{data.cotizaciones[id_empresa].partidas[i].moneda}}</td><td v-else></td>
-                                                <td style="text-align: right" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
+                                                <td class="align_right">{{item.cantidad_solicitada}}</td>
+                                                <td class="align_right">{{item.cantidad_asignada}}</td>
+                                                <td class="align_right">{{item.cantidad_disponible}}</td>
+                                                <td class="align_right" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario_format}}</td><td v-else></td>
+                                                <td class="align_right" v-if="data.cotizaciones[id_empresa].partidas[i]" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``">{{data.cotizaciones[id_empresa].partidas[i].descuento}}</td><td v-else></td>
+                                                <td class="align_right" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.cotizaciones[id_empresa].partidas[i]">${{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
+                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``">{{data.cotizaciones[id_empresa].partidas[i].moneda}}</td><td v-else></td>
+                                                <td class="align_right" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.cotizaciones[id_empresa].partidas[i]">${{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                                 <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
                                                         <input
@@ -145,7 +145,7 @@
                                         <table class="table table-striped table-sm">
                                             <tr>
                                                 <td colspan="6" style="border:none">
-                                                    <b>{{cotizacion.razon_social}}</b>
+                                                    <b>[{{cotizacion.folio_format}}] {{cotizacion.razon_social}}</b>
                                                 </td>
                                             </tr>
                                             <tr class="encabezado">
@@ -156,10 +156,10 @@
                                                     Unidad
                                                 </th>
                                                 <th class="th_c100">
-                                                    Precio Total Pesos (MXN) (Asignado)
+                                                    Importe Pesos (MXN) (Asignado)
                                                 </th>
                                                 <th class="th_c100">
-                                                    Precio Total Pesos (MXN) (Mejor Opción)
+                                                    Importe Pesos (MXN) (Mejor Opción)
                                                 </th>
                                                 <th class="th_c100">
                                                     Diferencia
@@ -179,13 +179,13 @@
                                                     {{item.unidad}}
                                                 </td>
                                                 <td class="td_money">
-                                                    $ {{cotizacion.partidas[i].importe_moneda_conversion}}
+                                                    ${{getAsignadoPrecioMC(cotizacion.partidas[i].precio_con_descuento_mn, cotizacion.partidas[i].cantidad_asignada)}}
                                                 </td>
                                                 <td class="td_money">
-                                                    $ {{getMejorOpcionPrecioMC(i)}}
+                                                    ${{getMejorOpcionPrecioMC(i, cotizacion.partidas[i].cantidad_asignada)}}
                                                 </td>
                                                 <td class="td_money">
-                                                    {{getPorcentajeDiferencia(i, cotizacion.partidas[i].importe_moneda_conversion_sf)}} %
+                                                    {{getPorcentajeDiferencia(i, cotizacion.partidas[i].precio_con_descuento_mn)}} %
                                                 </td>
                                                 <td class="td_money">
                                                     {{parseFloat(cotizacion.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}}
@@ -380,7 +380,6 @@ export default {
                 Object.values(cotizacion.partidas).forEach(partida => {
                     if(partida !== null){
                         if(parseFloat(partida.cantidad_asignada) > 0 && partida.mejor_opcion == false && (partida.justificacion == '' || partida.justificacion != '')){
-                            console.log(parseFloat(partida.cantidad_asignada));
                             self.justificar = true;
                             cotizacion.justificar = true;
                         }
@@ -393,23 +392,27 @@ export default {
                 $(this.$refs.modalJustificacion).modal('show');
             }
         },
-        getMejorOpcionPrecioMC(i){
+        getMejorOpcionPrecioMC(i, ca_asig){
             let pu_mo = 0;
             Object.values(this.data.cotizaciones).forEach(cotizacion => {
                 if(cotizacion.partidas[i].mejor_opcion){
-                    pu_mo = cotizacion.partidas[i].importe_moneda_conversion;
+                    pu_mo = parseFloat(cotizacion.partidas[i].precio_con_descuento_mn) * parseFloat(ca_asig);
                 }
             });
             return pu_mo;
+        },
+        getAsignadoPrecioMC(p_u, c_a){
+            let pu_asig = parseFloat(p_u) * parseFloat(c_a);
+            return parseFloat(pu_asig).formatMoney(2,'.',',');
         },
         getPorcentajeDiferencia(i, importe_asignado){
             let p_dif = 0;
             Object.values(this.data.cotizaciones).forEach(cotizacion => {
                 if(cotizacion.partidas[i].mejor_opcion){
-                    p_dif = (importe_asignado * 100 / cotizacion.partidas[i].importe_moneda_conversion_sf) - 100;
+                    p_dif = ((importe_asignado - cotizacion.partidas[i].precio_con_descuento_mn) / cotizacion.partidas[i].precio_con_descuento_mn)*100;
                 }
             });
-            return parseFloat(p_dif).toFixed(2);
+            return parseFloat(p_dif).formatMoney(2,'.',',');
         },
     },
     watch:{
@@ -438,6 +441,10 @@ table th,  table td {
     border: 1px solid #dee2e6;
 }
 
+table td.mejor_opcion {
+    color: green;
+}
+
 table thead th
 {
     padding: 0.2em;
@@ -463,6 +470,10 @@ table thead th.no_negrita
 table td.sin_borde {
     border: none;
     padding: 2px 5px;
+}
+
+table td.align_right {
+    text-align: right;
 }
 
 table thead th {
