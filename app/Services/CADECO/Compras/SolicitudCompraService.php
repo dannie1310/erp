@@ -234,7 +234,7 @@ class SolicitudCompraService
                         'id_transaccion' => $cot->id_transaccion,
                         'cantidad_asignada' => '',
                         'precio_unitario' => $cot->precio_unitario,
-                        'precio_unitario_format' => '$ ' . number_format($cot->precio_unitario, 2, '.', ','),
+                        'precio_unitario_format' => '$' . number_format($cot->precio_unitario, 2, '.', ','),
                         'precio_con_descuento' => $cot->precio_compuesto,
                         'precio_con_descuento_mn' => $cot->precio_compuesto * $cot->tipo_cambio,
                         'precio_unitario_compuesto' => $cot->precio_unitario_compuesto,
