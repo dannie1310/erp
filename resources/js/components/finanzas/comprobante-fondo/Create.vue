@@ -27,9 +27,10 @@
                                  <div class="row">
                                      <div class="col-md-7">
                                          <div class="form-group error-content">
-                                            <label for="id_fondo">Fondo</label>
+                                            <label for="id_fondo">Fondo:</label>
                                                <model-list-select
                                                    name="id_fondo"
+                                                   id="id_fondo"
                                                    placeholder="Seleccionar o buscar por descripción del fondo"
                                                    data-vv-as="Fondo"
                                                    v-model="id_fondo"
@@ -42,7 +43,7 @@
                                      </div>
                                      <div class="col-md-5">
                                     <div class="form-group error-content">
-                                        <label for="referencia">Referencia</label>
+                                        <label for="referencia">Referencia:</label>
                                         <input
                                             type="text"
                                             name="referencia"
@@ -60,7 +61,7 @@
                                  <div class="row">
                                      <div class="col-md-12">
                                         <div class="form-group error-content">
-                                            <label for="id_concepto">Conceptos:</label>
+                                            <label for="id_concepto">Centro de Costo:</label>
                                             <concepto-select
                                                 name="id_concepto"
                                                 data-vv-as="Concepto"
@@ -88,15 +89,15 @@
                                  <div class="row" v-if="id_concepto">
                                      <div  class="col-md-12 table-responsive-xl">
                                          <div>
-                                             <table class="table table-bordered">
+                                             <table class="table table-bordered table-sm">
                                                  <thead>
                                                  <tr>
                                                      <th class="index_corto">#</th>
                                                      <th>Concepto</th>
-                                                     <th class="cantidad_input">Cantidad</th>
-                                                     <th class="cantidad_input">Precio</th>
-                                                     <th>Monto</th>
-                                                     <th>Destino</th>
+                                                     <th class="c70">Cantidad</th>
+                                                     <th class="c70">Precio</th>
+                                                     <th class="c100">Monto</th>
+                                                     <th class="c250">Destino</th>
                                                      <th class="icono">
                                                          <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
                                                              <i class="fa fa-spin fa-spinner"></i>
@@ -109,11 +110,11 @@
                                                  </thead>
                                                  <tbody>
                                                  <tr v-for="(partida, i) in partidas">
-                                                     <td style="text-align:center; vertical-align:inherit; width: 3%">{{i+1}}</td>
-                                                     <td style="width: 37%;"  v-if="partida.id_concepto_sat>0">
+                                                     <td style="text-align:center; vertical-align:inherit;">{{i+1}}</td>
+                                                     <td   v-if="partida.id_concepto_sat>0">
                                                          <c-f-d-i v-bind:id="partida.id_cfdi" v-bind:txt="partida.referencia" :key="i"></c-f-d-i>
                                                      </td>
-                                                     <td style="width: 37%" v-else>
+                                                     <td  v-else>
                                                          <input type="text"
                                                                 :readonly="partida.id_concepto_sat>0"
                                                                 class="form-control"
@@ -124,10 +125,10 @@
                                                                 v-model="partida.referencia"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`referencia[${i}]`)">{{ errors.first(`referencia[${i}]`) }}</div>
                                                      </td>
-                                                     <td style="width: 10%; text-align: right"  v-if="partida.id_concepto_sat>0">
+                                                     <td style="text-align: right"  v-if="partida.id_concepto_sat>0">
                                                          {{partida.cantidad}}
                                                      </td>
-                                                     <td style="width: 10%" v-else>
+                                                     <td  v-else>
                                                          <input type="number"
                                                                 min="0.01"
                                                                 step=".01"
@@ -140,11 +141,11 @@
                                                                 v-model="partida.cantidad"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`cantidad[${i}]`)">{{ errors.first(`cantidad[${i}]`) }}</div>
                                                      </td>
-                                                     <td style="width: 10%; text-align: right"  v-if="partida.id_concepto_sat>0">
+                                                     <td style="text-align: right"  v-if="partida.id_concepto_sat>0">
                                                          ${{parseFloat(partida.precio).formatMoney(2,'.',',')}}
                                                      </td>
 
-                                                     <td style="width: 10%" v-else>
+                                                     <td v-else>
                                                          <input type="number"
                                                                 :readonly="partida.id_concepto_sat>0"
                                                                 min="0.01"
@@ -158,8 +159,8 @@
                                                                 v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
-                                                     <td align="right" style="width: 10%">${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
-                                                     <td style="width: 25%">
+                                                     <td style="text-align: right">${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
+                                                     <td >
                                                         <ConceptoSelectHijo
                                                             :name="`id_concepto[${i}]`"
                                                             data-vv-as="Concepto"
@@ -174,7 +175,7 @@
                                                         ></ConceptoSelectHijo>
                                                          <div class="error-label" v-show="errors.has(`id_concepto[${i}]`)">{{ errors.first(`id_concepto[${i}]`) }}</div>
                                                     </td>
-                                                    <td style="width: 5%">
+                                                    <td >
                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
                                                     </td>
                                                  </tr>
@@ -198,28 +199,29 @@
                                              ></textarea>
                                              <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                                          </div>
+                                         <label>Total de CFDI Cargados:&nbsp;</label><span style="font-size: 15px; font-weight: bold">{{no_cfdi}}</span>
                                      </div>
-                                     <div class="col-md-3" align="left">
+                                     <div class="col-md-3" style="text-align: right">
                                          <div class="table-responsive col-md-12">
                                              <div class="col-md-12">
-                                                 <div class="table-responsive">
-                                                     <table class="table table-borderless">
-                                                         <tbody>
-                                                             <tr>
-                                                                 <th>Subtotal:</th>
-                                                                 <td style="text-align: right">${{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</td>
-                                                             </tr>
-                                                             <tr>
-                                                                 <th >IVA:</th>
-                                                                 <td style="text-align: right">${{(parseFloat(iva)).formatMoney(2,'.',',')}}</td>
-                                                             </tr>
-                                                             <tr style="text-align: right">
-                                                                 <th>Total:</th>
-                                                                  <td>${{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</td>
-                                                             </tr>
-                                                         </tbody>
-                                                     </table>
-                                                 </div>
+
+                                                 <table class="table table-borderless">
+                                                     <tbody>
+                                                         <tr>
+                                                             <th style="text-align: left">Subtotal:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</b></td>
+                                                         </tr>
+                                                         <tr>
+                                                             <th style="text-align: left">IVA:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(iva)).formatMoney(2,'.',',')}}</b></td>
+                                                         </tr>
+                                                         <tr style="text-align: right">
+                                                             <th style="text-align: left">Total:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaTotal)).formatMoney(2,'.',',')}}</b></td>
+                                                         </tr>
+                                                     </tbody>
+                                                 </table>
+
                                              </div>
                                          </div>
                                      </div>
@@ -249,13 +251,13 @@
                                     <div class="col-12">
                                         <div >
                                             <div>
-                                                <label class="col-form-label">Archivo del CFDI (XML):</label>
+                                                <label class="col-form-label">Archivos de CFDI (XML):</label>
                                             </div>
                                             <div>
                                                 <div class="form-group error-content" >
                                                     <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
                                                            row="3"
-                                                           v-validate="{required: true,  ext: ['xml'], size: 3072}"
+                                                           v-validate="{ ext: ['xml'], size: 3072}"
                                                            name="archivo"
                                                            data-vv-as="Archivo de CFDI"
                                                            ref="archivo"
@@ -331,7 +333,7 @@ export default {
             files : [],
             names : [],
             cfdi : null,
-            uuid : []
+            uuid : [],
         }
     },
     computed: {
@@ -349,6 +351,20 @@ export default {
         sumaTotal() {
             this.total = parseFloat(this.subtotal) + parseFloat(this.iva)
             return this.total
+        },
+        no_cfdi()
+        {
+            let cfdi = [];
+            this.partidas.forEach(function (doc, i) {
+                if(doc.id_cfdi>0)
+               cfdi.push(doc.id_cfdi)
+            })
+
+            let result_cfdi =cfdi.filter((item, index)=>{
+                return cfdi.indexOf(item) === index;
+            });
+
+            return result_cfdi.length;
         }
     },
     mounted() {
@@ -392,7 +408,8 @@ export default {
                 iva : 0,
                 id_concepto : "",
                 id_concepto_sat : "",
-                id_cfdi : ""
+                id_cfdi : "",
+                uuid : ""
             });
             this.index = this.index+1;
         },
@@ -418,7 +435,6 @@ export default {
                 });
 
             }else {
-                console.log("else");
                 this.partidas.splice(index, 1);
             }
         },
@@ -453,6 +469,7 @@ export default {
             datos ["iva"] = this.$data.iva;
             datos ["total"] = this.$data.total;
             datos ["partidas"] = this.$data.partidas;
+            datos ["xmls"] = JSON.stringify(this.files);
             return this.$store.dispatch('finanzas/comprobante-fondo/store', datos)
                 .then((data) => {
                     this.$emit('created', data)
@@ -499,7 +516,7 @@ export default {
                 if(busqueda == undefined)
                 {
                     _self.partidas.splice(_self.partidas.length + 1, 0, {
-                        referencia : concepto.descripcion,
+                        referencia : concepto.cfdi.serie + concepto.cfdi.folio + "-" + concepto.descripcion,
                         cantidad : concepto.cantidad,
                         precio : concepto.valor_unitario,
                         monto : concepto.importe,
@@ -507,6 +524,7 @@ export default {
                         id_concepto_sat : concepto.id,
                         id_concepto : "",
                         id_cfdi : concepto.id_cfd_sat,
+                        uuid : concepto.cfdi.uuid,
                     });
                     _self.index = _self.index+1;
                 }
@@ -563,5 +581,9 @@ export default {
 </script>
 
 <style scoped>
+
+th, label {
+    color: #86888d;
+}
 
 </style>
