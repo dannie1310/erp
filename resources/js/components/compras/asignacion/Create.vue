@@ -136,8 +136,14 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-12">
+                                <div class="col-md-18">
                                     <p><b>Las siguientes partidas no son las mejores opciones cotizadas, favor de describir la justificación de su asignación.</b></p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="custom-control custom-switch pull-right" >
+                                        <input type="checkbox" class="custom-control-input" id="cotizaciones_completas" v-model="replicar_justificacion" >
+                                        <label class="custom-control-label" for="cotizaciones_completas" >Replicar Justificación</label>
+                                    </div>
                                 </div>
                             </div>
                             <div class="row" v-for="(cotizacion, id_empresa) in data.cotizaciones" v-if="cotizacion.justificar">
@@ -192,6 +198,8 @@
                                                 </td>
                                                 <td>
                                                     <textarea
+                                                        :disabled="!validaPrimeraPartida(id_empresa,cotizacion.partidas[i].id_material)"
+                                                        v-on:keyup="keyupReplicarjustificacion()"
                                                         name="justificacion"
                                                         id="justificacion"
                                                         class="form-control"
@@ -231,6 +239,8 @@ export default {
             id_solicitud:'',
             id_empresa:'',
             justificar:false,
+            partidas_justificacion:[],
+            replicar_justificacion:false,
         }
     },
     mounted() {
@@ -375,11 +385,14 @@ export default {
         },
         validar_partidas_justificadas(){
             let self = this;
-            Object.values(this.data.cotizaciones).forEach(cotizacion =>{
+            let cant = 0;
+            
+            Object.entries(this.data.cotizaciones).forEach(([id_empresa, cotizacion]) =>{
                 cotizacion.justificar = false;
-                Object.values(cotizacion.partidas).forEach(partida => {
+                Object.entries(cotizacion.partidas).forEach(([i, partida]) =>{
                     if(partida !== null){
                         if(parseFloat(partida.cantidad_asignada) > 0 && partida.mejor_opcion == false && (partida.justificacion == '' || partida.justificacion != '')){
+                            self.partidas_justificacion.push({id_transaccion:id_empresa,id_material:partida.id_material,pos_partida:i});
                             self.justificar = true;
                             cotizacion.justificar = true;
                         }
@@ -389,7 +402,20 @@ export default {
             if(!self.justificar){
                 $(this.$refs.modalJustificacion).modal('hide');
             }else{
+                this.replicar_justificacion = false;
                 $(this.$refs.modalJustificacion).modal('show');
+            }
+        },
+        validaPrimeraPartida(id_cotizacion, id_material){
+                return !this.replicar_justificacion || (this.partidas_justificacion[0].id_transaccion === id_cotizacion && this.partidas_justificacion[0].id_material === id_material);
+        },
+        keyupReplicarjustificacion(){
+            if(this.replicar_justificacion){
+                let cotizaciones = this.data.cotizaciones
+                let p_justf = this.partidas_justificacion;
+                for(let i = 1; i<p_justf.length; i++){
+                    cotizaciones[p_justf[i].id_transaccion].partidas[p_justf[i].pos_partida].justificacion = cotizaciones[p_justf[0].id_transaccion].partidas[p_justf[0].pos_partida].justificacion;
+                }
             }
         },
         getMejorOpcionPrecioMC(i, ca_asig){
@@ -419,6 +445,11 @@ export default {
         id_solicitud(value){
             if(value != ''){
                 this.getCotizaciones(value);
+            }
+        },
+        replicar_justificacion(value){
+            if(value){
+                this.keyupReplicarjustificacion();
             }
         }
     }
