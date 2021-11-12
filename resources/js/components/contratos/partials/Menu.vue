@@ -27,6 +27,12 @@
                     <p>Presupuesto Contratista</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_presupuesto_contratista')">
+                <router-link :to="{name: 'comparativa-cotizacion-contrato'}" class="nav-link" :class="{active: this.$route.name == 'comparativa-cotizacion-contrato'}">
+                    <i class="fa fa-less-than-equal nav-icon"></i>
+                    <p>Comparativas de Cotización</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="$root.can(['consultar_asignacion_contratista'])">
                 <router-link :to="{name: 'asignacion-contratista'}" class="nav-link" :class="{active: this.$route.name == 'asignacion-contratista'}">
                     <i class="fa fa-user-check nav-icon"></i>

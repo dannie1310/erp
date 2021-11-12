@@ -656,8 +656,8 @@ export const routes = [
                                 name: 'comparativa-cotizacion-compra',
                                 component: require('./components/compras/comparativa-cotizacion/Index').default,
                                 meta: {
-                                    title: 'Lista de Solicitudes Cotizadas',
-                                    breadcrumb: {parent: 'compras', name: 'SOLICITUDES COTIZADAS'},
+                                    title: 'Lista de Solicitudes de Compra Cotizadas o Con Invitación',
+                                    breadcrumb: {parent: 'compras', name: 'SOLICITUDES DE COMPRA COTIZADAS O CON INVITACIÓN'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_cotizacion_compra'
                                 }
@@ -1078,6 +1078,35 @@ export const routes = [
                                 }
                             }
                         ]
+                    },
+                    {
+                        path: 'comparativa-cotizacion',
+                        component: require('./components/compras/comparativa-cotizacion/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'comparativa-cotizacion-contrato',
+                                component: require('./components/contratos/comparativa-cotizacion/Index').default,
+                                meta: {
+                                    title: 'Lista de Contratos Proyectados Cotizados o Con Invitación',
+                                    breadcrumb: {parent: 'contratos', name: 'CONTRATOS PROYECTADOS COTIZADAS O CON INVITACIÓN'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_presupuesto_contratista'
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: ':id/comparativa-cotizaciones',
+                        name: 'comparativa-cotizacion-contrato-consultar',
+                        component: require('./components/contratos/comparativa-cotizacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Comparativa de Cotizaciones',
+                            breadcrumb: { parent: 'comparativa-cotizacion-contrato', name: 'COMPARATIVA COTIZACIONES'},
+                            middleware: [auth, context, permission],
+                            permission: 'consultar_presupuesto_contratista'
+                        }
                     },
                     {
                         path: 'asignacion-contratista',
@@ -2831,6 +2860,20 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'telefono',
+                                name: 'telefono',
+                                component: require('./components/acarreos/catalogos/telefono/Index').default,
+                                meta: {
+                                    title: 'Teléfonos',
+                                    breadcrumb: {
+                                        parent: 'catalogo',
+                                        name: 'TELÉFONOS'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_telefono']
+                                }
+                            },
+                            {
                                 path: 'tiro',
                                 name: 'tiro',
                                 component: require('./components/acarreos/catalogos/tiro/Index').default,
@@ -2870,6 +2913,113 @@ export const routes = [
                         }
                     },
                 ],
+            },
+            {
+                path: 'control_obra',
+                components: {
+                    default: require('./components/control-obra/partials/Layout.vue').default,
+                    menu: require('./components/control-obra/partials/Menu.vue').default
+                },
+                children: [
+                    {
+                        path: '',
+                        name: 'control_obra',
+                        component: require('./components/control-obra/Index').default,
+                        meta: {
+                            title: 'Control de Obra',
+                            breadcrumb: {parent:'home', name: 'CONTROL DE OBRA'},
+                            middleware: [auth, context, access]
+                        }
+                    },
+                    {
+                        path: 'avance-obra',
+                        component: require('./components/control-obra/avance-obra/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'avance-obra',
+                                component: require('./components/control-obra/avance-obra/Index').default,
+                                meta: {
+                                    title: 'Avance de Obra',
+                                    breadcrumb: {parent: 'control_obra', name: 'AVANCE DE OBRA'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_avance_obra'
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'avance-obra-create',
+                                component: require('./components/control-obra/avance-obra/Create').default,
+                                meta: {
+                                    title: 'Registrar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_avance_obra'],
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'avance-obra-show',
+                                component: require('./components/control-obra/avance-obra/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'VER'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/aprobar',
+                                name: 'avance-obra-aprobar',
+                                component: require('./components/control-obra/avance-obra/Aprobar').default,
+                                props: true,
+                                meta: {
+                                    title: 'Aprobar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'APROBAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'aprobar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/revertir',
+                                name: 'avance-obra-revertir',
+                                component: require('./components/control-obra/avance-obra/Revertir').default,
+                                props: true,
+                                meta: {
+                                    title: 'Revertir aprobación Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'REVERTIR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'revertir_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'avance-obra-delete',
+                                component: require('./components/control-obra/avance-obra/Delete').default,
+                                props: true,
+                                meta: {
+                                    title: 'Eliminar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'eliminar_avance_obra'
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'avance-obra-edit',
+                                component: require('./components/control-obra/avance-obra/Edit').default,
+                                props: true,
+                                meta: {
+                                    title: 'Editar Avance de Obra',
+                                    breadcrumb: { parent: 'avance-obra', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_avance_obra'
+                                }
+                            },
+                        ]
+                    }
+                ]
             },
         ],
     },
@@ -4183,6 +4333,19 @@ export const routes = [
                         props: true,
                         meta: {
                             title: 'Registrar Presupuesto',
+                            breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id_invitacion_antecedente/contraoferta/:id_invitacion/create',
+                        name: 'contraoferta-presupuesto-proveedor-create',
+                        component: require('./components/portal-proveedor/presupuesto/CreateContraoferta').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Contraoferta',
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'REGISTRAR'},
                             middleware: [auth, permission],
                             permission: ['registrar_cotizacion_proveedor'],

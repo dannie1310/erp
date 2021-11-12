@@ -46,6 +46,7 @@ class PresupuestoContratista extends Transaccion
         'TcLibra',
         'DiasCredito',
         'DiasVigencia',
+        'opciones',
         'tipo_transaccion',
         'estado',
         'id_moneda'
@@ -65,7 +66,8 @@ class PresupuestoContratista extends Transaccion
         parent::boot();
 
         self::addGlobalScope(function($query) {
-            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)->whereHas('contratoProyectado');
+            return $query->where('tipo_transaccion', '=', 50)->where("estado",">",-1)
+                ->where('opciones','=', 0);
         });
     }
 
@@ -75,6 +77,11 @@ class PresupuestoContratista extends Transaccion
     public function contratoProyectado()
     {
         return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function contratoProyectadoSgv()
+    {
+        return $this->belongsTo(ContratoProyectado::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
     }
 
     public function partidas()
@@ -383,9 +390,10 @@ class PresupuestoContratista extends Transaccion
             }
         }
         foreach($subtotales as $subtotal){
-            foreach($subtotal as $k=>$v) {
+            foreach($subtotal as $k=>$v){
+                $moneda = Moneda::find($k);
                 $salida[] = [
-                    "moneda" => Moneda::find($k)->nombre,
+                    "moneda" =>$moneda ? $monedas->nombre : '',
                     "subtotal_format" => "$ " . number_format($v, 2)
                 ];
             }
@@ -739,6 +747,19 @@ class PresupuestoContratista extends Transaccion
         return $suma;
     }
 
+    public function sumaSubtotalPartidas($tipo_moneda)
+    {
+        $suma = 0;
+        foreach ($this->partidas as $partida)
+        {
+            if($tipo_moneda == $partida->IdMoneda)
+            {
+                $suma += $partida->total_precio_moneda;
+            }
+        }
+        return $suma;
+    }
+
     public function calcular_ki($precio, $precio_menor)
     {
         return $precio_menor == 0 ? ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
@@ -895,6 +916,18 @@ class PresupuestoContratista extends Transaccion
 
                 foreach($data['conceptos']['data'] as $t => $partida)
                 {
+                    if(!key_exists("enable", $partida))
+                    {
+                        $partida["enable"] = $partida["partida_activa"];
+                    }
+                    if(!key_exists("precio_cot", $partida))
+                    {
+                        $partida["precio_cot"] = $partida["precio_unitario"];
+                    }
+                    if(!key_exists("descuento_cot", $partida))
+                    {
+                        $partida["descuento_cot"] = $partida["descuento"];
+                    }
                     $precio_conversion = ($partida['enable']) ? $presupuesto->precioConversion($partida['precio_cot'], $partida['moneda_seleccionada']) : null;
                     if($precio_conversion){
                         $precio_descuento = $precio_conversion -($precio_conversion*$partida['descuento_cot']/100);
@@ -934,7 +967,8 @@ class PresupuestoContratista extends Transaccion
                     'TcLibra' => null,
                     'DiasCredito' => null,
                     'DiasVigencia' => null,
-                    'estado' => -2
+                    'estado' => -2,
+                    'opciones' => 10,
                 ]);
                 foreach($data['conceptos']['data'] as $t => $partida)
                 {

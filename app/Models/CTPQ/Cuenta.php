@@ -31,6 +31,11 @@ class Cuenta extends Model
     public $timestamps = false;
 
 
+    public function proveedor()
+    {
+        return $this->belongsTo(Proveedor::class, "Id", "IdCuenta");
+    }
+
     public function getCuentaMayorAttribute()
     {
         if ($this->asociacion->cuenta_superior->CtaMayor == 1) {
@@ -220,40 +225,72 @@ class Cuenta extends Model
             $id_empresa_contpaq = $empresaLocal->IdEmpresaContpaq;
         }
 
-        $cuenta_nombre = util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($this->Nombre)));
+        $coincidencia = null;
 
-        $proveedorSAT = new ProveedorSAT();
-        $proveedorSATService = new ProveedorSATService($proveedorSAT);
-        $coincidencias = $proveedorSATService->buscarProveedorAsociar(["nombre" => $this->Nombre]);
-        $cercanias = [];
-        $razones_sociales = [];
-
-        foreach ($coincidencias as $coincidencia) {
-            $razones_sociales[0] = Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($coincidencia->razon_social)));
-
-            $cercania = levenshtein($cuenta_nombre, $razones_sociales[0]);
-            if ($cercania >= 3) {
-                $razones_sociales_nuevas = $this->generaCombinacionesNuevas($razones_sociales[0]);
-                $razones_sociales = $razones_sociales_nuevas;
-            }
-
-            foreach ($razones_sociales as $razon_social) {
-                $cercania = levenshtein($cuenta_nombre, $razon_social);
-                $cercanias[] = [
-                    "id_empresa_contpaq" => $id_empresa_contpaq
-                    , "cercania" => $cercania
-                    , "id_proveedor_sat" => $coincidencia->id
-                    , "nombre_cuenta" => $cuenta_nombre
-                    , "nombre_cuenta_original" => $this->Nombre
-                    , "id_cuenta_contpaq" => $this->Id
-                    , "razon_social" => $razon_social
-                    , "razon_social_original" => $coincidencia->razon_social
-                ];
-            }
+        if($this->proveedor){
+            $coincidencia = ProveedorSAT::where("rfc","=",$this->proveedor->RFC)->first();
         }
 
-        $orden = array_column($cercanias, 'cercania');
-        array_multisort($cercanias, SORT_ASC, $orden);
+
+        if($coincidencia){
+
+            $cercanias[] = [
+                "id_empresa_contpaq" => $id_empresa_contpaq
+                , "cercania" => 0
+                , "id_proveedor_sat" => $coincidencia->id
+                , "nombre_cuenta" => $this->Nombre
+                , "nombre_cuenta_original" => $this->Nombre
+                , "id_cuenta_contpaq" => $this->Id
+                , "razon_social" => $coincidencia->razon_social
+                , "razon_social_original" => $coincidencia->razon_social
+            ];
+
+        } else {
+            $cuenta_nombre = util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($this->Nombre)));
+
+            $proveedorSAT = new ProveedorSAT();
+            $proveedorSATService = new ProveedorSATService($proveedorSAT);
+            $coincidencias = $proveedorSATService->buscarProveedorAsociar(["nombre" => $this->Nombre]);
+            $cercanias = [];
+            $razones_sociales = [];
+
+            foreach ($coincidencias as $coincidencia) {
+                $razones_sociales[0] = trim(Util::eliminaCaracteresEspeciales(Util::eliminaPalabrasComunes(mb_strtoupper($coincidencia->razon_social))));
+
+                if(strpos($cuenta_nombre,$coincidencia->rfc) !== false){
+                    $cercania = 0;
+                }else{
+                    $cuenta_nombre = trim(str_replace($coincidencia->rfc, "", $cuenta_nombre));
+                    $cercania = levenshtein($cuenta_nombre, $razones_sociales[0]);
+                }
+
+                if ($cercania >= 3) {
+                    $razones_sociales_nuevas = $this->generaCombinacionesNuevas($razones_sociales[0]);
+                    $razones_sociales = $razones_sociales_nuevas;
+                }
+
+                foreach ($razones_sociales as $razon_social) {
+                    if(strpos($cuenta_nombre,$coincidencia->rfc) !== false){
+                        $cercania = 0;
+                    }else{
+                        $cercania = levenshtein($cuenta_nombre, trim($razon_social));
+                    }
+                    $cercanias[] = [
+                        "id_empresa_contpaq" => $id_empresa_contpaq
+                        , "cercania" => $cercania
+                        , "id_proveedor_sat" => $coincidencia->id
+                        , "nombre_cuenta" => $cuenta_nombre
+                        , "nombre_cuenta_original" => $this->Nombre
+                        , "id_cuenta_contpaq" => $this->Id
+                        , "razon_social" => $razon_social
+                        , "razon_social_original" => $coincidencia->razon_social
+                    ];
+                }
+            }
+
+            $orden = array_column($cercanias, 'cercania');
+            array_multisort($cercanias, SORT_ASC, $orden);
+        }
 
         if (key_exists("0", $cercanias)) {
             if ($cercanias[0]["cercania"] < 3) {

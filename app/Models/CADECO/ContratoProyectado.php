@@ -16,6 +16,7 @@ use App\Models\CADECO\Contratos\ContratoEliminado;
 use App\Models\CADECO\Contratos\ContratoProyectadoEliminado;
 use App\Models\CADECO\Contratos\DestinoEliminado;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
 use App\PDF\Contratos\ContratoProyectadoFormato;
 use DateTime;
@@ -130,6 +131,11 @@ class ContratoProyectado extends Transaccion
         return $this->conceptos()->OrderBy('nivel')->whereNotNull('unidad');
     }
 
+    public function invitaciones()
+    {
+        return $this->hasMany(Invitacion::class, "id_transaccion_antecedente", "id_transaccion");
+    }
+
     /**
      * Scopes
      */
@@ -152,6 +158,11 @@ class ContratoProyectado extends Transaccion
 
     public function scopeConPresupuestos($query){
         return $query->whereHas('presupuestos');
+    }
+
+    public function scopeCotizadoOConInvitacion($query)
+    {
+        return $query->whereHas("presupuestos")->orWhereHas("invitaciones");
     }
 
     /**
@@ -277,6 +288,13 @@ class ContratoProyectado extends Transaccion
             return $this->numero_presupuestos == 0 ? true : false;
         }
         return false;
+    }
+
+    public function getUltimosPresupuestosAttribute()
+    {
+        //$id = DB::connection("cadeco")->select(DB::raw("select max(id_transaccion) from dbo.Transacciones where tipo_transaccion = 18 and estado = 1 and id_antecedente = ".$this->id_transaccion." group by id_empresa"));
+        $cotizaciones = $this->presupuestos()->whereRaw(" id_transaccion in(select max(id_transaccion) from Transacciones where tipo_transaccion = 50 and estado = 1 and opciones =  0 and id_antecedente = ".$this->id_transaccion." group by id_empresa)")->get();
+        return $cotizaciones;
     }
 
     /**
@@ -498,5 +516,267 @@ class ContratoProyectado extends Transaccion
             DB::connection('cadeco')->rollBack();
             throw $e;
         }
+    }
+
+    public function datosComparativos($data)
+    {
+        $partidas = [];
+        $presupuestos = [];
+        $precios = [];
+        $exclusiones = [];
+        $importes = [];
+        $proveedores = [];
+
+
+        if($data["cotizaciones_completas"] === "true"){
+            $cotizaciones_obj = $this->presupuestos()->where("estado","=",1)->get();
+        }else{
+            $cotizaciones_obj = $this->ultimos_presupuestos;
+        }
+
+        $conceptos = $this->conceptosSinOrden()->orderBy('id_concepto', 'asc')->get();
+
+
+        foreach ($conceptos as $key => $item) {
+
+            if (array_key_exists($item->id_concepto, $partidas)) {
+                $partidas[$item->id_concepto]['cantidad_presupuestada'] = $partidas[$item->id_concepto]['cantidad_presupuestada'] + $item->cantidad_presupuestada;
+                $partidas[$item->id_concepto]['cantidad_original'] = $partidas[$item->id_concepto]['cantidad_original'] + $item->cantidad_original;
+            } else {
+                $partidas[$item->id_concepto]['concepto'] = $item->descripcion;
+                $partidas[$item->id_concepto]['unidad'] = $item->unidad;
+                $partidas[$item->id_concepto]['cantidad_presupuestada'] = $item->cantidad_presupuestada;
+                $partidas[$item->id_concepto]['cantidad_original'] = $item->cantidad_original;
+                $partidas[$item->id_concepto]['observaciones'] = $item->observaciones ? $item->observaciones : '';
+            }
+        }
+
+        $cantidad = 0;
+        foreach ($cotizaciones_obj as $cont => $presupuesto) {
+
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id"]=$presupuesto->id_empresa;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_sucursal"]=$presupuesto->id_sucursal;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["razon_social"]=$presupuesto->empresa->razon_social;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["sucursal"]=$presupuesto->sucursal->descripcion;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["sucursal_correo"]=$presupuesto->sucursal->email;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["sucursal_contacto"]=$presupuesto->sucursal->contacto;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["usuario_correo"]=($presupuesto->empresa->usuarioIntranet)? $presupuesto->empresa->usuarioIntranet->correo:'';
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_usuario"] = ($presupuesto->empresa->usuarioIntranet)? $presupuesto->empresa->usuarioIntranet->idusuario:'';;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["seleccionado_contraoferta"]=1;
+            $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_cotizacion"]=$presupuesto->id_transaccion;
+
+            $presupuestos[$presupuesto->id_transaccion]['numero_folio'] = $presupuesto->numero_folio_format;
+            $presupuestos[$presupuesto->id_transaccion]['id_transaccion'] = $presupuesto->id_transaccion;
+            $presupuestos[$presupuesto->id_transaccion]['empresa'] = $presupuesto->empresa->razon_social;
+            $presupuestos[$presupuesto->id_transaccion]['fecha'] = $presupuesto->fecha_format;
+            $presupuestos[$presupuesto->id_transaccion]['vigencia'] = $presupuesto->DiasVigencia ? $presupuesto->DiasVigencia : '-';
+            $presupuestos[$presupuesto->id_transaccion]['anticipo'] = $presupuesto->anticipo && $presupuesto->anticipo > 0 ? $presupuesto->anticipo : '-';
+            $presupuestos[$presupuesto->id_transaccion]['dias_credito'] = $presupuesto->DiasCredito ? $presupuesto->DiasCredito : '-';
+            $presupuestos[$presupuesto->id_transaccion]['descuento_global'] = $presupuesto->descuento ? $presupuesto->descuento : '-';
+            $presupuestos[$presupuesto->id_transaccion]['descuento_global_format'] = $presupuesto->descuento>0 ? "$".number_format($presupuesto->descuento,2,".",",") : '-';
+            $presupuestos[$presupuesto->id_transaccion]['porcentaje_descuento_global'] = $presupuesto->PorcentajeDescuento ? $presupuesto->PorcentajeDescuento : '-';
+            $presupuestos[$presupuesto->id_transaccion]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
+            $presupuestos[$presupuesto->id_transaccion]['subtotal'] = $presupuesto->subtotal_calculado;
+            $presupuestos[$presupuesto->id_transaccion]['subtotal_con_descuento'] = $presupuesto->subtotal_calculado;
+            $presupuestos[$presupuesto->id_transaccion]['iva'] = $presupuesto->impuesto_calculado;
+            $presupuestos[$presupuesto->id_transaccion]['total'] = $presupuesto->monto_calculado;
+            $presupuestos[$presupuesto->id_transaccion]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
+            $presupuestos[$presupuesto->id_transaccion]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
+            if($presupuesto->invitacion){
+                $presupuestos[$presupuesto->id_transaccion]['folio_invitacion'] = $presupuesto->invitacion->numero_folio_format;
+                $presupuestos[$presupuesto->id_transaccion]['tipo_str'] = $presupuesto->invitacion->tipo == 1 ? 'Cotización' : 'Contraoferta';
+            }else{
+                $presupuestos[$presupuesto->id_transaccion]['tipo_str'] = "Cotización";
+                $presupuestos[$presupuesto->id_transaccion]['folio_invitacion'] = "N/A";
+            }
+            foreach ($presupuesto->partidas as $p) {
+                if (key_exists($p->id_concepto, $precios)) {
+                    if ($p->precio_unitario > 0 && $precios[$p->id_concepto] > $p->precio_unitario)
+                        $precios[$p->id_concepto] = (float)$p->precio_unitario;
+                        $importes[$p->id_concepto] =  $precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada;
+                } else {
+                    if ($p->precio_unitario > 0) {
+                        $precios[$p->id_concepto] = (float)$p->precio_unitario;
+                        $importes[$p->id_concepto] =  $precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada;
+                    }
+                }
+                if (array_key_exists($p->id_concepto, $partidas)) {
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['id_transaccion'] = $presupuesto->id_transaccion;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['precio_unitario'] = $p->precio_unitario_mas_descuento_partida_moneda_original;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['precio_unitario_c'] = $p->precio_unitario_convert;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['precio_con_descuento'] = $p->precio_unitario;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['precio_total_moneda'] = $p->precio_sin_descuento;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['precio_total'] = $p->precio_unitario_convert * $partidas[$p->id_concepto]['cantidad_presupuestada'];
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['tipo_cambio_descripcion'] = $p->moneda ? $p->moneda->abreviatura : '';
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['descuento_partida'] = $p->PorcentajeDescuento ? $p->PorcentajeDescuento : 0;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['observaciones'] = $p->observaciones ? $p->observaciones : '';
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['moneda'] = $p->moneda ? $p->moneda->nombre : '';
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['descuento_partida'] = $p->PorcentajeDescuento;
+                    $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['descuento_partida_format'] = $p->PorcentajeDescuento>0? number_format($p->PorcentajeDescuento,2,".",",")."%" : '-';
+                }
+            }
+
+            $importe = 0;
+            foreach($presupuesto->exclusiones as $exc => $exclusion){
+                $t_cambio = 1;
+                if($exclusion->id_moneda != 1){
+                    $t_cambio = $exclusion->moneda->cambio->cambio;
+                }
+                $exclusiones[$presupuesto->id_transaccion][$exc] = $exclusion->toArray();
+                $exclusiones[$presupuesto->id_transaccion][$exc]['moneda'] = $exclusion->moneda->nombre;
+                $exclusiones[$presupuesto->id_transaccion][$exc]['tipo_cambio'] = $t_cambio;
+                $importe += $exclusion->cantidad * $exclusion->precio_unitario * $t_cambio;
+                $cantidad ++;
+            }
+            $exclusiones[$presupuesto->id_transaccion]['importe'] = $importe;
+        }
+        foreach($partidas as $key=>$partida)
+        {
+            if(key_exists("cotizaciones", $partida)) {
+                foreach ($partida["cotizaciones"] as $key_cto => $cotizacion) {
+                    $partidas[$key]['cotizaciones'][$key_cto]['iv'] = $this->ki_format($partidas[$key]['cotizaciones'][$key_cto]["precio_con_descuento"], $precios[$key]);
+                }
+            }
+        }
+
+        $cantidad = 0;
+        $indices = [] ;
+        $i = 0;
+        foreach ($cotizaciones_obj as $cont => $presupuesto) {
+            $presupuestos[$presupuesto->id_transaccion]['ivg_partida'] = $this->calcular_ivg($importes, $presupuesto->partidas);
+            $presupuestos[$presupuesto->id_transaccion]['ivg'] = $this->ivg_format($importes, $presupuesto->partidas);
+            $indices[$i]["id_cotizacion"] = $presupuesto->id_transaccion;
+            $indices[$i]["indice"] = (float) number_format($presupuestos[$presupuesto->id_transaccion]['ivg_partida'],3,".","");
+            $presupuestos[$presupuesto->id_transaccion]['ivg_partida_porcentaje'] = $presupuesto->partidas->count() > 0 ? $presupuestos[$presupuesto->id_transaccion]['ivg_partida']/ $presupuesto->partidas->count() : 0 ;
+            $i++;
+        }
+
+        $orden = array_column($indices, 'indice');
+        array_multisort( $orden , SORT_ASC, $indices);
+
+        $j = 1;
+        foreach($partidas as $i=>$partida)
+        {
+            $partidas[$i]["indice"] = $j;
+            $j++;
+        }
+
+        $exclusiones['cantidad'] = $cantidad;
+        return [
+            'cotizaciones' => $presupuestos,
+            'partidas' => $partidas,
+            'precios_menores' => $precios,
+            'exclusiones' => $exclusiones,
+            'proveedores' => $proveedores,
+            'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0,
+        ];
+    }
+
+    private function calcular_ivg($importes, $partidas_cotizacion)
+    {
+        $suma_importes = 0;
+        $suma_importes_bajos = 0;
+        foreach($importes as $id_concepto => $importe)
+        {
+            $suma_importes_bajos += $importe;
+        }
+        foreach($partidas_cotizacion as $partida)
+        {
+            $suma_importes += $partida->precio_unitario * $partida->concepto->cantidad_presupuestada;
+        }
+
+        return $suma_importes_bajos == 0 ?  ($suma_importes - $suma_importes_bajos) : ($suma_importes - $suma_importes_bajos) / $suma_importes_bajos;
+    }
+
+    public function calcular_ki($precio, $precio_menor)
+    {
+        return $precio_menor == 0 ?  ($precio - $precio_menor) : ($precio - $precio_menor) / $precio_menor;
+    }
+
+    public function ki_format($precio, $precio_menor)
+    {
+        $ki = $this->calcular_ki($precio, $precio_menor);
+        if($ki >0){
+            return number_format($ki,3);
+        }else
+        {
+            return "-";
+        }
+    }
+
+    public function ivg_format($importes, $partidas_cotizacion)
+    {
+        $ivg = $this->calcular_ivg($importes, $partidas_cotizacion);
+        if($ivg >0){
+            return number_format($ivg,3);
+        }else
+        {
+            return "-";
+        }
+    }
+
+    public function getEstadosInvitacionCotizacionesAttribute()
+    {
+        return [
+            'titulos' => $this->obtenerPorCotizacion(),
+            'partidas' => $this->estadoCotizada()
+        ];
+    }
+
+    private function obtenerPorCotizacion()
+    {
+        $titulos = [];
+        $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
+        $i = 0;
+        foreach ($contratos as $key => $cotizacion)
+        {
+            $invitacion = Invitacion::where('id', $cotizacion->id_referente)->where('base_datos',Context::getDatabase())->where('id_obra', $cotizacion->id_obra)->first();
+            $titulos[$i]['id_transaccion'] = $cotizacion->id_transaccion;
+            $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
+            $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
+            $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $i++;
+        }
+        foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get() as $invitacion) {
+            $titulos[$i]['id_transaccion'] = '';
+            $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
+            $titulos[$i]['numero_folio'] = '';
+            $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
+            $i++;
+        }
+        return $titulos;
+    }
+
+    private function estadoCotizada()
+    {
+        $partidas = [];
+        $item = [];
+        foreach ($this->conceptos()->get() as $key => $partida)
+        {
+            $i = 0;
+            $partidas[$key]['nivel'] = $partida->clave;
+            $partidas[$key]['descripcion'] = $partida->descripcion;
+            $contratos = $this->presupuestos()->withoutGlobalScopes()->where('estado', '>', '-1')->where('tipo_transaccion', '=', 50)->orderBy('id_transaccion', 'asc')->get();
+            foreach ($contratos as $k => $cotizacion)
+            {
+                if($cotizacion->estado == 0)
+                {
+                    $item[$i]['cotizada'] = false;
+                    $item[$i]['pendiente'] = true;
+                }else {
+                    $item[$i]['cotizada'] = $partida->estaPartidaCotizada($cotizacion->id_transaccion);
+                    $item[$i]['pendiente'] = false;
+                }
+                $i++;
+            }
+            foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get()  as $invitacion)
+            {
+                $item[$i]['cotizada'] = NULL;
+                $item[$i]['pendiente'] = true;
+                $i++;
+            }
+            $partidas[$key]['partidas'] = $item;
+        }
+        return $partidas;
     }
 }

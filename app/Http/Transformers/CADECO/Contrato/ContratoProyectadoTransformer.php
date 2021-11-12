@@ -10,6 +10,7 @@ namespace App\Http\Transformers\CADECO\Contrato;
 
 use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\Auxiliares\TransaccionRelacionTransformer;
+use App\Http\Transformers\CADECO\Compras\DetalleEstadoCotizacionTransformer;
 use App\Http\Transformers\CADECO\ContratoTransformer;
 use App\Http\Transformers\SEGURIDAD_ERP\TipoAreaSubcontratanteTransformer;
 use App\Models\CADECO\ContratoProyectado;
@@ -24,7 +25,8 @@ class ContratoProyectadoTransformer extends TransformerAbstract
         'conceptos',
         'relaciones',
         'contratos',
-        'transaccion'
+        'transaccion',
+        'detalleEstadoCotizacion'
     ];
     protected $defaultIncludes=["transaccion"];
     public function transform(ContratoProyectado $model)
@@ -47,8 +49,9 @@ class ContratoProyectadoTransformer extends TransformerAbstract
             'usuario_registro' => $model->usuario_registro,
             'direccion_entrega' => $model->obra->direccion_proyecto,
             'ubicacion_entrega_plataforma_digital' => $model->obra->direccion_plataforma_digital,
-            'tipo_transaccion' => $model->tipo_transaccion,
-            'puede_editar_partidas' => $model->puede_editar_partidas
+            'puede_editar_partidas' => $model->puede_editar_partidas,
+            'numero_invitaciones' =>$model->invitaciones()->count(),
+            'numero_cotizaciones' =>$model->presupuestos()->count(),
         ];
     }
 
@@ -102,5 +105,18 @@ class ContratoProyectadoTransformer extends TransformerAbstract
     public function includeTransaccion(Transaccion $model)
     {
         return $this->item($model, new TransaccionRelacionTransformer);
+    }
+
+    /**
+     * @param ContratoProyectado $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeDetalleEstadoCotizacion(ContratoProyectado $model)
+    {
+        if($estados = $model->estados_invitacion_cotizaciones)
+        {
+            return $this->item($estados, new DetalleEstadoCotizacionTransformer);
+        }
+        return null;
     }
 }

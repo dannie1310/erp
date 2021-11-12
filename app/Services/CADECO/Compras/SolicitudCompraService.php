@@ -34,7 +34,7 @@ class SolicitudCompraService
 
         if(isset($data['numero_folio']))
         {
-            $solicitudes = $solicitudes->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+            $solicitudes = $solicitudes->where([['numero_folio', '=', $data['numero_folio']]]);
         }
 
         if (isset($data['fecha_registro'])) {
@@ -167,10 +167,10 @@ class SolicitudCompraService
         return $this->repository->show($id)->getCuerpoCorreoInvitacion();
     }
 
-    public function getComparativaCotizaciones($id)
+    public function getComparativaCotizaciones($data,$id)
     {
-        $cotizacion = $this->repository->show($id)->cotizaciones()->first();
-        return $this->repository->show($id)->datosComparativos();
+        //$cotizacion = $this->repository->show($id)->cotizaciones()->first();
+        return $this->repository->show($id)->datosComparativos($data);
     }
 
     public function getCotizaciones($id){
@@ -202,6 +202,7 @@ class SolicitudCompraService
                         'razon_social' => $cotizacion->empresa->razon_social,
                         'sucursal' => $cotizacion->sucursal->descripcion,
                         'direccion' => $cotizacion->sucursal->direccion,
+                        'justificar' => false,
                     ];
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
                 }
@@ -222,7 +223,11 @@ class SolicitudCompraService
                         'tipo_cambio' => $t_cambio,
                         'importe' => number_format($importe, 2, '.', ','),
                         'importe_moneda_conversion' =>  number_format($importe * $t_cambio, 2, '.', ','),
+                        'importe_moneda_conversion_sf' =>  $importe * $t_cambio,
                         'descuento' => $descuento,
+                        'mejor_opcion' => $cot->mejor_opcion,
+                        'color' => $cot->color_opcion,
+                        'justificacion' => '',
                     ];
                 }else{
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'][$i] = null;

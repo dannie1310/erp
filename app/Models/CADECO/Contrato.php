@@ -176,4 +176,14 @@ class Contrato extends Model
             $this->registrarDestino();
         }
     }
+
+    public function estaPartidaCotizada($id_transaccion)
+    {
+        $partida = PresupuestoContratistaPartida::where('id_transaccion', $id_transaccion)->where('id_concepto', $this->id_concepto)->cotizadas()->first();
+        if(!is_null($partida))
+        {
+            return true;
+        }
+        return false;
+    }
 }

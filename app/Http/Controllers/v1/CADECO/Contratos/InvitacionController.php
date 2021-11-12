@@ -60,6 +60,11 @@ class InvitacionController extends Controller
         return response()->json("Gracias por confirmar la recepción de la invitación", 200);
     }
 
+    public function storeContraoferta(Request $request){
+        $invitaciones = $this->service->storeContraoferta($request->all());
+        return $this->respondWithCollection($invitaciones);
+    }
+
     public function pdf($id)
     {
         return $this->service->pdf($id);

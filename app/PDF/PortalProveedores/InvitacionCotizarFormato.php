@@ -58,7 +58,7 @@ class InvitacionCotizarFormato extends Rotation
         $this->txtSeccionTam = 9;
         $this->txtContenidoTam = 11;
         $this->txtFooterTam = 6;
-        $this->encabezado_pdf = ($this->invitacion->tipo == 1) ?"INVITACIÓN A COTIZAR" : "INVITACIÓN A CONTRAOFERTAR";
+        $this->encabezado_pdf = ($this->invitacion->tipo == 2) ? "INVITACIÓN A CONTRAOFERTAR" : "INVITACIÓN A COTIZAR";
 
         $this->SetMargins(1, 0.5, 1);
         $this->AliasNbPages();

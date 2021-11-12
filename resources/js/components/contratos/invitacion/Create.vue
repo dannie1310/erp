@@ -60,17 +60,24 @@
                                 </td>
                                 <td>
                                     <span v-if="destinatario.en_catalogo">
-                                         <model-list-select
-                                             :id="`id_proveedor_${i}`"
-                                             :name="`proveedor[${i}]`"
-                                             :data-vv-as="`'Proveedor ${i + 1}'`"
-                                             option-value="id"
-                                             v-model="destinatario.id_proveedor"
-                                             v-validate="{required: true}"
-                                             :custom-text="razonSocialRFC"
-                                             :list="proveedores"
-                                             :placeholder="!cargando?'Seleccionar o busca proveedor por razón social o RFC':'Cargando...'">
-                                             </model-list-select>
+                                        <proveedor-contratista-select-autocomplete
+                                            v-if="destinatario.proveedor == null"
+                                            :value="destinatario.proveedor"
+                                            :key="`id_proveedor_${i}`"
+                                            :id="`id_proveedor_${i}`"
+                                            :name="`proveedor[${i}]`"
+                                            v-model="destinatario.proveedor"
+                                            :async="true"
+                                            v-validate="{required: true}"
+                                            :data-vv-as="`'Proveedor ${i + 1}'`"
+                                            :flatten-search-results="true"
+                                            :class="{'is-invalid': errors.has(`proveedor[${i}]`)}"
+                                            placeholder="Realice la búsqueda por razón social o RFC"
+
+                                        />
+                                        <span v-else>
+                                            {{ destinatario.proveedor.customLabel }}
+                                        </span>
                                          <div style="display:block" class="invalid-feedback" v-show="errors.has(`proveedor[${i}]`)">{{ errors.first(`proveedor[${i}]`) }}</div>
                                     </span>
                                     <span v-else >
@@ -83,7 +90,7 @@
                                         <select :disabled="destinatario.id_proveedor==''"
                                                 class="form-control"
                                                 :name="`id_sucursal[${i}]`"
-                                                data-vv-as="`'Sucursal ${i + 1}'`"
+                                                :data-vv-as="`'Sucursal ${i + 1}'`"
                                                 v-model="destinatario.id_sucursal"
                                                 v-validate="{required: true}"
                                                 :error="errors.has(`id_sucursal[${i}]`)"
@@ -338,9 +345,12 @@ import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
 
 import EncabezadoContratoProyectado from "../proyectado/Encabezado";
+import ProveedorContratistaSelectAutocomplete
+    from "../../catalogos/empresa/proveedor-contratista/partials/SelectAutocomplete";
 export default {
     name: "CreateInvitacionCompra.vue",
     components: {
+        ProveedorContratistaSelectAutocomplete,
         EncabezadoContratoProyectado,
          Datepicker,es, ModelListSelect},
     props: ['id_contrato'],
@@ -383,6 +393,7 @@ export default {
                     'sucursales_cargadas' : 0,
                     'id_proveedor_seleccionado' : '',
                     'id_sucursal_seleccionada' : '',
+                    'proveedor' : null
                 }
             ]
         }
@@ -394,7 +405,7 @@ export default {
         }else{
             this.direccion_entrega = this.contrato.direccion_entrega;
             this.ubicacion_entrega_plataforma_digital = this.contrato.ubicacion_entrega_plataforma_digital;
-            this.getProveedores();
+            this.getCuerpoCorreo();
         }
 
         this.fecha_cierre = new Date();
@@ -413,20 +424,8 @@ export default {
                 this.direccion_entrega = data.direccion_entrega;
                 this.ubicacion_entrega_plataforma_digital = data.ubicacion_entrega_plataforma_digital;
             }).finally(()=>{
-                this.getProveedores();
-            });
-        },
-        getProveedores() {
-            this.cargando = true;
-            return this.$store.dispatch('cadeco/empresa/index', {
-                params: {sort: 'razon_social', order: 'asc', scope:'tipoEmpresa:2,3', include: 'sucursales' }
-            })
-            .then(data => {
-                this.proveedores = data.data;
-            })
-            .finally(()=>{
                 this.getCuerpoCorreo();
-            })
+            });
         },
         getCuerpoCorreo(){
             this.cargando = true;
@@ -451,6 +450,7 @@ export default {
                 'sucursales_cargadas' : 0,
                 'id_proveedor_seleccionado' : '',
                 'id_sucursal_seleccionada' : '',
+                'proveedor' : null
             }
             this.destinatarios.push(array);
         },
@@ -517,6 +517,7 @@ export default {
                     'sucursales_cargadas' : 0,
                     'id_proveedor_seleccionado' : '',
                     'id_sucursal_seleccionada' : '',
+                    'proveedor' : null
                 }
             ];
             this.id_usuario = '';
@@ -673,20 +674,23 @@ export default {
             handler(destinatarios) {
                 let self = this
                 destinatarios.map((destinatario, i) => {
-                    if(destinatario.id_proveedor>0){
-                        var busqueda = this.proveedores.find(x=>x.id === destinatario.id_proveedor);
-                        destinatario.sucursales =  busqueda.sucursales.data;
+                    if(destinatario.proveedor !== null){
+                        //var busqueda = this.proveedores.find(x=>x.id === destinatario.id_proveedor);
+                        destinatario.sucursales =  destinatario.proveedor.sucursales.data;
                         if(destinatario.sucursales.length == 1 && (destinatario.sucursales_cargadas == 0 || destinatario.id_proveedor != destinatario.id_proveedor_seleccionado)){
+                            destinatario.id_proveedor = destinatario.proveedor.id;
                             destinatario.id_sucursal = destinatario.sucursales[0].id;
                             destinatario.correo = destinatario.sucursales[0].email;
                             destinatario.contacto = destinatario.sucursales[0].contacto;
                             destinatario.sucursales_cargadas = 1;
                             destinatario.id_sucursal_seleccionada = destinatario.sucursales[0].id;
-                            destinatario.id_proveedor_seleccionado = busqueda.id;
+                            destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
                         } else if(destinatario.sucursales.length > 1 && (destinatario.sucursales_cargadas == 0 || destinatario.id_proveedor != destinatario.id_proveedor_seleccionado)){
+                            destinatario.id_proveedor = destinatario.proveedor.id;
                             destinatario.correo = '';
                             destinatario.contacto = '';
-                            destinatario.id_proveedor_seleccionado = busqueda.id;
+                            destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
+                            destinatario.sucursales_cargadas = 1;
                         } /*else if(destinatario.sucursales.length > 1 &&  destinatario.id_sucursal != destinatario.id_sucursal_seleccionada){
                             var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
                             if(busqueda_sucursal  != undefined){

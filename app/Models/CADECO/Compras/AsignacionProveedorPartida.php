@@ -30,6 +30,7 @@ class AsignacionProveedorPartida extends Model
         'id_material',
         'cantidad_asignada',
         'registro',
+        'justificacion',
     ];
 
     protected static function boot ()

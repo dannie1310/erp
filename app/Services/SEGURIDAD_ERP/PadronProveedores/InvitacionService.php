@@ -4,6 +4,7 @@ namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Events\ActualizacionClaveUsuarioProveedor;
 use App\Events\AperturaInvitacion;
+use App\Events\CambioFechaCierreInvitacion;
 use App\Events\EnvioCotizacion;
 use App\Events\RegistroInvitacion;
 use App\Events\RegistroUsuarioProveedor;
@@ -12,6 +13,7 @@ use App\Models\CADECO\ContratoProyectado;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\PresupuestoContratista;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
@@ -23,6 +25,7 @@ use App\Models\SEGURIDAD_ERP\PadronProveedores\SolicitudContraoferta;
 use App\Services\CADECO\Compras\CotizacionService;
 use App\Services\CADECO\Compras\SolicitudCompraService;
 use App\Services\CADECO\Contratos\ContratoProyectadoService;
+use App\Services\CADECO\Contratos\PresupuestoContratistaService;
 use App\Services\CADECO\EmpresaService;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionRepository as Repository;
@@ -101,20 +104,23 @@ class InvitacionService
             }
         }
 
-        /*
-         *
-        _self.post.id_proveedor = _self.id_proveedor;
-        _self.post.id_sucursal = _self.id_sucursal;
-        _self.post.id_usuario = _self.id_usuario;
-        _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
-        _self.post.correo = _self.correo;
-        _self.post.contacto = _self.contacto;*/
+        $fecha_cierre = New DateTime($data['fecha_cierre']);
+        $fecha_cierre->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
+
+        $invitacionesPrevias = Invitacion::where("id_transaccion_antecedente","=",$data["id_transaccion"])
+        ->where("base_datos","=",Context::getDatabase())
+        ->where('id_obra',"=",Context::getIdObra())
+        ->where("fecha_cierre_invitacion","!=",$data["fecha_cierre"])
+        ->get();
+
 
         foreach ($data["destinatarios"] as $destinatario)
         {
             $datos_registro["id_transaccion"] = $data["id_transaccion"];
             $datos_registro["observaciones"] = $data["observaciones"];
             $datos_registro["fecha_cierre"] = $data["fecha_cierre"];
+            $datos_registro["fecha_cierre_obj"] = $fecha_cierre;
             $datos_registro["requiere_fichas_tecnicas"] = $data["requiere_fichas_tecnicas"];
             $datos_registro["direccion_entrega"] = $data["direccion_entrega"];
             $datos_registro["ubicacion_entrega_plataforma_digital"] = $data["ubicacion_entrega_plataforma_digital"];
@@ -135,6 +141,14 @@ class InvitacionService
                 $datos_registro["id_usuario"] = '';
             }
             $invitaciones[] = $this->storeIndividual($datos_registro);
+        }
+
+        foreach($invitacionesPrevias as $invitacionPrevia)
+        {
+            $invitacionPrevia->fecha_cierre_invitacion_original = $invitacionPrevia->fecha_cierre_invitacion;
+            $invitacionPrevia->fecha_cierre_invitacion = $data["fecha_cierre"];
+            $invitacionPrevia->save();
+            event(new CambioFechaCierreInvitacion($invitacionPrevia));
         }
 
         return $invitaciones;
@@ -204,10 +218,10 @@ class InvitacionService
     {
         $transaccionService = new TransaccionService(new Transaccion());
         $transaccion = $transaccionService->show($data["id_transaccion"]);
-        $fecha_cierre = New DateTime($data['fecha_cierre']);
+        /*$fecha_cierre = New DateTime($data['fecha_cierre']);
         $fecha_cierre->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
-        $data["fecha_cierre_obj"] = $fecha_cierre;
+        $data["fecha_cierre_obj"] = $fecha_cierre;*/
 
         $obra = Obra::find(Context::getIdObra());
 
@@ -653,8 +667,14 @@ class InvitacionService
         $invitaciones = $this->repository->all();
         foreach($invitaciones as $invitacion)
         {
-            $cotizacionService = new CotizacionService(new CotizacionCompra());
-            $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
+            if($invitacion->tipo_transaccion_antecedente == 17){
+                $cotizacionService = new CotizacionService(new CotizacionCompra());
+                $cotizacionService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
+            } else if($invitacion->tipo_transaccion_antecedente == 49)
+            {
+                $presupuestoService = new PresupuestoContratistaService(new PresupuestoContratista());
+                $presupuestoService->liberaCotizacion($invitacion->id_cotizacion_generada, $invitacion->base_datos);
+            }
         }
     }
 

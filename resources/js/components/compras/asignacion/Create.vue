@@ -77,11 +77,11 @@
                                                 <td>{{item.cantidad_solicitada}}</td>
                                                 <td>{{item.cantidad_asignada}}</td>
                                                 <td>{{item.cantidad_disponible}}</td>
-                                                <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario_format}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].descuento}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].moneda}}</td><td v-else></td>
-                                                <td style="text-align: right" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
+                                                <td style="text-align: right" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}" v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario_format}}</td><td v-else></td>
+                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}">{{data.cotizaciones[id_empresa].partidas[i].descuento}}</td><td v-else></td>
+                                                <td style="text-align: right" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
+                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}">{{data.cotizaciones[id_empresa].partidas[i].moneda}}</td><td v-else></td>
+                                                <td style="text-align: right" :style="{'color': data.cotizaciones[id_empresa].partidas[i].color}" v-if="data.cotizaciones[id_empresa].partidas[i]">$ {{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                                 <td>
                                                     <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
                                                         <input
@@ -124,7 +124,98 @@
                 </div>
             </div>
         </div>
+            <div class="modal" ref="modalJustificacion" tabindex="-1" role="dialog" v-if="data">
+                <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">
+                                <i class="fa fa-pencil"></i>Justificar Asignaciones</h5>
+                            <button type="button" class="close" @click="cerrar()" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p><b>Las siguientes partidas no son las mejores opciones cotizadas, favor de describir la justificación de su asignación.</b></p>
+                                </div>
+                            </div>
+                            <div class="row" v-for="(cotizacion, id_empresa) in data.cotizaciones" v-if="cotizacion.justificar">
+                                    <div class="col-sm-12">
+                                        <table class="table table-striped table-sm">
+                                            <tr>
+                                                <td colspan="6" style="border:none">
+                                                    <b>{{cotizacion.razon_social}}</b>
+                                                </td>
+                                            </tr>
+                                            <tr class="encabezado">
+                                                <th class="th_c350">
+                                                    Descripción
+                                                </th>
+                                                <th class="unidad">
+                                                    Unidad
+                                                </th>
+                                                <th class="th_c100">
+                                                    Precio Total Pesos (MXN) (Asignado)
+                                                </th>
+                                                <th class="th_c100">
+                                                    Precio Total Pesos (MXN) (Mejor Opción)
+                                                </th>
+                                                <th class="th_c100">
+                                                    Diferencia
+                                                </th>
+                                                <th class="th_c100">
+                                                    Cantidad Asignada
+                                                </th>
+                                                <th>
+                                                    Justificación
+                                                </th>
+                                            </tr>
+                                            <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i] !== null && cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0">
+                                                <td>
+                                                    {{item.descripcion}}
+                                                </td>
+                                                <td>
+                                                    {{item.unidad}}
+                                                </td>
+                                                <td class="td_money">
+                                                    $ {{cotizacion.partidas[i].importe_moneda_conversion}}
+                                                </td>
+                                                <td class="td_money">
+                                                    $ {{getMejorOpcionPrecioMC(i)}}
+                                                </td>
+                                                <td class="td_money">
+                                                    {{getPorcentajeDiferencia(i, cotizacion.partidas[i].importe_moneda_conversion_sf)}} %
+                                                </td>
+                                                <td class="td_money">
+                                                    {{parseFloat(cotizacion.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}}
+                                                </td>
+                                                <td>
+                                                    <textarea
+                                                        name="justificacion"
+                                                        id="justificacion"
+                                                        class="form-control"
+                                                        v-model="cotizacion.partidas[i].justificacion"
+                                                        v-validate="{required: true, max:500}"
+                                                        data-vv-as="Justificación"
+                                                        :class="{'is-invalid': errors.has('justificacion')}"
+                                                    ></textarea>
+                                                    <div class="invalid-feedback" v-show="errors.has('justificacion')">{{ errors.first('justificacion') }}</div>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>                                
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" @click="cerrar()"><i class="fa fa-close"></i>Cerrar</button>
+                            <button type="button" class="btn btn-primary" @click="validateModal()"><i class="fa fa-save"></i>Guardar</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </span>
+    
 </template>
 
 <script>
@@ -139,6 +230,7 @@ export default {
             data:null,
             id_solicitud:'',
             id_empresa:'',
+            justificar:false,
         }
     },
     mounted() {
@@ -148,6 +240,11 @@ export default {
 
     },
     methods: {
+        cerrar(){
+            this.$validator.reset();
+            this.$validator.errors.clear();
+            $(this.$refs.modalJustificacion).modal('hide');
+        },
         numeroFolioFormatAndObservaciones(item){
             return `[${item.numero_folio_format}] - [${item.observaciones}]`
         },
@@ -253,6 +350,7 @@ export default {
                 cotizaciones:this.data.cotizaciones
             })
             .then((data) => {
+                $(this.$refs.modalJustificacion).modal('hide');
                 this.$router.push({name: 'asignacion-proveedor'});
             })
             .finally(() => {
@@ -260,12 +358,59 @@ export default {
             })
         },
         validate() {
+            this.justificar = false;
+            this.validar_partidas_justificadas();
+            this.$validator.validate().then(result => {
+                if (result && !this.justificar){
+                    this.store();
+                }
+            });
+        },
+        validateModal() {
             this.$validator.validate().then(result => {
                 if (result){
                     this.store();
                 }
             });
-        }
+        },
+        validar_partidas_justificadas(){
+            let self = this;
+            Object.values(this.data.cotizaciones).forEach(cotizacion =>{
+                cotizacion.justificar = false;
+                Object.values(cotizacion.partidas).forEach(partida => {
+                    if(partida !== null){
+                        if(parseFloat(partida.cantidad_asignada) > 0 && partida.mejor_opcion == false && (partida.justificacion == '' || partida.justificacion != '')){
+                            console.log(parseFloat(partida.cantidad_asignada));
+                            self.justificar = true;
+                            cotizacion.justificar = true;
+                        }
+                    }
+                });
+            });
+            if(!self.justificar){
+                $(this.$refs.modalJustificacion).modal('hide');
+            }else{
+                $(this.$refs.modalJustificacion).modal('show');
+            }
+        },
+        getMejorOpcionPrecioMC(i){
+            let pu_mo = 0;
+            Object.values(this.data.cotizaciones).forEach(cotizacion => {
+                if(cotizacion.partidas[i].mejor_opcion){
+                    pu_mo = cotizacion.partidas[i].importe_moneda_conversion;
+                }
+            });
+            return pu_mo;
+        },
+        getPorcentajeDiferencia(i, importe_asignado){
+            let p_dif = 0;
+            Object.values(this.data.cotizaciones).forEach(cotizacion => {
+                if(cotizacion.partidas[i].mejor_opcion){
+                    p_dif = (importe_asignado * 100 / cotizacion.partidas[i].importe_moneda_conversion_sf) - 100;
+                }
+            });
+            return parseFloat(p_dif).toFixed(2);
+        },
     },
     watch:{
         id_solicitud(value){
@@ -276,6 +421,78 @@ export default {
     }
 }
 </script>
-<style>
+<style scoped>
+table {
+    word-wrap: unset;
+    width: 100%;
+    background-color: white;
+    border-color: transparent;
+    border-collapse: collapse;
+    clear: both;
+}
+table.table-fs-sm{
+    font-size: 10px;
+}
+
+table th,  table td {
+    border: 1px solid #dee2e6;
+}
+
+table thead th
+{
+    padding: 0.2em;
+
+    background-color: #f2f4f5;
+    font-weight: bold;
+    color: black;
+    overflow: hidden;
+    text-align: center;
+}
+
+table thead th.no_negrita
+{
+    padding: 0.2em;
+
+    background-color: #f2f4f5;
+    font-weight: normal;
+    color: black;
+    overflow: hidden;
+    text-align: center;
+}
+
+table td.sin_borde {
+    border: none;
+    padding: 2px 5px;
+}
+
+table thead th {
+    text-align: center;
+}
+table tbody tr
+{
+    border-width: 0 1px 1px 1px;
+    border-style: none solid solid solid;
+    border-color: white #CCCCCC #CCCCCC #CCCCCC;
+}
+table tbody td,
+table tbody th
+{
+    border-right: 1px solid #ccc;
+    color: #242424;
+    line-height: 20px;
+    overflow: hidden;
+    padding: 2px 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5;
+    font-weight: bold;
+}
 
 </style>

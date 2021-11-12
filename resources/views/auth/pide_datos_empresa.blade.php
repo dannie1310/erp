@@ -235,7 +235,7 @@
                 if(this.clave_nueva != this.clave_confirmacion){
                     swal({
                         title: "Actualización de Contraseña",
-                        text: 'La nueva contraseña debe conincidir con la confirmación de contraseña.',
+                        text: 'La nueva contraseña debe coincidir con la confirmación de contraseña.',
                         icon: "warning",
                         confirmButtonText: "Ok",
                     });
