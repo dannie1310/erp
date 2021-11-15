@@ -136,7 +136,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-18">
+                                <div class="col-md-8">
                                     <p><b>Las siguientes partidas no son las mejores opciones cotizadas, favor de describir la justificación de su asignación.</b></p>
                                 </div>
                                 <div class="col-md-4">
