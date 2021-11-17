@@ -66,17 +66,18 @@ import {ModelListSelect} from 'vue-search-select';
         methods: {
             init() {
                 this.cargando = true;
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
                 return this.$store.dispatch('compras/asignacion/pendientesOrden', {
                     params: {
                         include:['solicitud'],
                         sort: 'id',
+                        scope:['pendientes'],
                         order: 'desc'
                     }
                 }).then(data => {
                     this.asignaciones = data.data;
                     this.cargando= false;
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show');
                 })
             },
             idAndDescripcion (item) {

@@ -174,6 +174,12 @@ class SolicitudCompra extends Transaccion
         }
     }
 
+    public function scopeUltimoAnio($query){
+        $time = new DateTime('now');
+        $fecha = $time->modify('-1 year')->format('Y-m-d');
+        return $query->where('FechaHoraRegistro', '>', $fecha);
+    }
+
     /**
      * Attributes
      */

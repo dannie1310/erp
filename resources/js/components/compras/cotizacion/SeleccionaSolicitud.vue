@@ -91,8 +91,9 @@
                 this.cargando = true;
                 return this.$store.dispatch('compras/solicitud-compra/index', {
                     params: {
-                        scope: ['conItems','areasCompradorasAsignadas','conAutorizacion'],
+                        scope: ['conItems','areasCompradorasAsignadas','conAutorizacion', 'ultimoAnio'],
                         order: 'DESC',
+                        limit: 500,
                         sort: 'numero_folio'
                     }
                 })
