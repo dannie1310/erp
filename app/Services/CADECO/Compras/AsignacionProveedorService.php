@@ -302,7 +302,6 @@ class AsignacionProveedorService
         $pendientes = $this->repository->all();
         $resp = array();
         foreach($pendientes as $pendiente){
-            $pendiente->estado_asignacion_format;
             if($pendiente->orden_compra_pendiente){
                 $resp[] = $pendiente;
             }

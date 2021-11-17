@@ -306,7 +306,7 @@ export default {
             this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/index', {
                 params: {
-                    scope: ['cotizacion', 'conComplemento'],
+                    scope: ['cotizacion', 'conComplemento', 'ultimoAnio'],
                     order: 'DESC',
                     sort: 'numero_folio'
                 }
