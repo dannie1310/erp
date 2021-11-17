@@ -1234,10 +1234,8 @@ class Factura extends Transaccion
                 }
             }
         }catch (\Exception $e) {
-            DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage().$e->getFile().$e->getLine());
         }
-
         return $this;
     }
 
@@ -1291,20 +1289,25 @@ class Factura extends Transaccion
 
             }
 
-            $obra = Obra::query()->find(Context::getIdObra());
-            if ($obra->datosContables) {
-                if ($obra->datosContables->BDContPaq != "") {
-                    $this->generaPrepoliza();
-                }
-            }
-
-
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
 
         DB::connection('cadeco')->commit();
+
+        $obra = Obra::query()->find(Context::getIdObra());
+
+        try{
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    $this->generaPrepoliza();
+                }
+            }
+        }catch (\Exception $e) {
+            abort(400, $e->getMessage().$e->getFile().$e->getLine());
+        }
+
         return $this;
     }
 
