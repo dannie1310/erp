@@ -334,6 +334,7 @@ class ContratoProyectadoService
         try{
             $items = array();
             $presupuestos = array();
+            $precios = [];
             $contrato_p = $this->repository->show($id);
             $contratos = $contrato_p->conceptos;
             $presupuesto_contratistas = $contrato_p->presupuestos;
@@ -363,6 +364,7 @@ class ContratoProyectadoService
                                 'razon_social' => $presupuesto->empresa->razon_social,
                                 'sucursal' => $presupuesto->sucursal?$presupuesto->sucursal->descripcion:'',
                                 'direccion' => $presupuesto->sucursal?$presupuesto->sucursal->direccion:'',
+                                'numero_folio_format' => $presupuesto->numero_folio_format,
                             ];
                             $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
                         }
@@ -370,7 +372,15 @@ class ContratoProyectadoService
                         $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
                         $desc = 1;
                         $partida_presupuestada->descuento > 0?$desc = $partida_presupuestada->descuento / 100:'';
-                        if($partida_presupuestada && $partida_presupuestada->precio_unitario > 0){
+                        if($partida_presupuestada && $partida_presupuestada->precio_unitario_despues_descuento > 0){
+                            if (key_exists($partida_presupuestada->id_concepto, $precios)) {
+                                if ($partida_presupuestada->precio_unitario_despues_descuento > 0 && $precios[$partida_presupuestada->id_concepto] > $partida_presupuestada->precio_unitario_despues_descuento)
+                                    $precios[$partida_presupuestada->id_concepto] = (float)$partida_presupuestada->precio_unitario_despues_descuento;
+                            } else {
+                                if ($partida_presupuestada->precio_unitario_despues_descuento > 0) {
+                                    $precios[$partida_presupuestada->id_concepto] = (float)$partida_presupuestada->precio_unitario_despues_descuento;
+                                }
+                            }
                             $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
                                 'id_concepto' => $contrato->id_concepto,
                                 'precio_unitario' => $partida_presupuestada->precio_unitario_antes_descuento_format,
@@ -383,6 +393,8 @@ class ContratoProyectadoService
                                 'tipo_cambio' => number_format($partida_presupuestada->tipo_cambio, 4, '.', ','),
                                 'importe_moneda_conversion' => $partida_presupuestada->total_despues_descuento_partida_mc_format,
                                 'observaciones' => $partida_presupuestada->Observaciones,
+                                'mejor_opcion' => $partida_presupuestada->mejor_opcion,
+                                'justificacion' => '',
                                 'cantidad_asignada' => '',
                             ];
                         }else{
@@ -394,7 +406,7 @@ class ContratoProyectadoService
 
                 }
             }
-            return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos)];
+            return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos), 'precios_menores' => $precios];
 
         } catch (\Exception $e) {
             throw $e;
