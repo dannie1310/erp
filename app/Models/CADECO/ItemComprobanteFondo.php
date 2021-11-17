@@ -16,7 +16,8 @@ class ItemComprobanteFondo extends Item
         'importe',
         'referencia',
         'estado',
-        'id_material'
+        'id_material',
+        'id_antecedente'
     ];
 
 

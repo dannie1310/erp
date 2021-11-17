@@ -66,7 +66,7 @@ class CFDSAT extends Model
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
-    //protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
     {

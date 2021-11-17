@@ -1392,6 +1392,7 @@ class CFDSATService
             $cfd->validaCFDI33($contenido_xml);
             $cfdi = $this->registraCFDI($arreglo_cfd);
             $cfdi->conceptos->load("traslados");
+            $cfdi->conceptos->load("cfdi");
             if($cfdi->tipo_comprobante == "I"){
                 if($conceptos == null){
                     $conceptos = $cfdi->conceptos;
@@ -1403,8 +1404,6 @@ class CFDSATService
             }
         }
         return $conceptos;
-
-
     }
 
     private function validaReceptorContexto($arreglo_cfd)
