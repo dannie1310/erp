@@ -485,8 +485,27 @@ export default {
         cerrarModalCFDI(){
             $(this.$refs.modal_cfdi).modal('hide');
         },
+        eliminarPartidasCFDI(){
+            let id_conceptos_sat_borrar = [];
+            let _self = this;
+            this.partidas.forEach(function (partida, i) {
+                if(partida.id_cfdi >0)
+                {
+                    id_conceptos_sat_borrar.push(partida.id_concepto_sat);
+                }
+            });
+            id_conceptos_sat_borrar.forEach(function (elemento, i){
+                _self.partidas.forEach(function (partida, i) {
+                    if(partida.id_concepto_sat == elemento)
+                    {
+                        _self.partidas.splice(i, 1);
+                    }
+                });
+            });
+        },
         onFileChange(e){
             //this.files = [];
+            this.eliminarPartidasCFDI();
             this.archivo = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
@@ -496,6 +515,12 @@ export default {
                 this.archivo_name = files[i].name;
                 this.createImage(files[i]);
                 this.names.push(files[i].name);
+
+                const unicos = this.names.filter((valor, indice) => {
+                    return this.names.indexOf(valor) === indice;
+                });
+                this.names = unicos;
+
                 if(files[i].type == "text/xml")
                 {
 
@@ -569,6 +594,10 @@ export default {
             reader.onload = (e) => {
                 vm.archivo = e.target.result;
                 vm.files.push(e.target.result);
+                const unicos = vm.files.filter((valor, indice) => {
+                    return vm.files.indexOf(valor) === indice;
+                });
+                vm.files = unicos;
             };
             reader.readAsDataURL(file);
         },
