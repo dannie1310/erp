@@ -9,6 +9,7 @@
 namespace App\Repositories;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Repository implements RepositoryInterface
 {
@@ -220,5 +221,10 @@ class Repository implements RepositoryInterface
     {
         $this->model = $this->model->select($select);
         return $this;
+    }
+
+    public function getArchivoSQL($archivo)
+    {
+        return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
 }

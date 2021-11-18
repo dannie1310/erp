@@ -102,7 +102,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
 
     public function getEFO($rfc)
     {
-        $efo = DB::connection("seguridad")->table("Finanzas.ctg_efos")
+        $efo = DB::connection("seguridad")->table("Fiscal.ctg_efos")
         ->where("rfc","=",$rfc)
         ->first();
         return $efo;
@@ -320,7 +320,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         }catch(Exception $e){
             throw new Exception("Error de ejecución de sp spSaveDocument en la base de datos: ".Config::get('database.connections.cntpqdc.database').$e->getMessage().$e->getLine(),500);
         }
-        
+
         try{
             DB::purge('cntpqdc');
             Config::set('database.connections.cntpqdc.database', $db_doc_content);

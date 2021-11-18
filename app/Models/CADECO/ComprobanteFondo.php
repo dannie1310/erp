@@ -4,7 +4,10 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Finanzas\ComprobanteFondoEliminado;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Support\Facades\DB;
 
 class ComprobanteFondo extends Transaccion
@@ -65,6 +68,14 @@ class ComprobanteFondo extends Transaccion
         return $this->belongsTo(ComprobanteFondoEliminado::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function facturasRepositorio()
+    {
+        return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('rfc_emisor', '=',$this->empresa->rfc)
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
+    }
+
     /**
      * Scopes
      */
@@ -102,6 +113,8 @@ class ComprobanteFondo extends Transaccion
                 'cumplimiento' => $data['cumplimiento']
             ]);
 
+            $this->registrarCFDIRepositorio($comprobante, $data["factura_repositorio"]);
+
             foreach ($data['partidas'] as $partida)
             {
                 $comprobante->partidas()->create([
@@ -109,7 +122,9 @@ class ComprobanteFondo extends Transaccion
                     'id_concepto' => $partida['id_concepto'],
                     'importe' => $partida['precio'],
                     'cantidad' => $partida['cantidad'],
-                    'referencia' => $partida['referencia']
+                    'referencia' => $partida['referencia'],
+                    'id_material' => $partida["id_concepto_sat"],
+                    'id_antecedente' => $partida["id_cfdi"],
                 ]);
             }
             DB::connection('cadeco')->commit();
@@ -117,6 +132,22 @@ class ComprobanteFondo extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function asociarCFDRepositorio($data)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            $factura_repositorio->id_transaccion = $this->id_transaccion;
+            $factura_repositorio->save();
+        } else {
+            if($data){
+                $factura_repositorio = $this->facturasRepositorio()->create($data);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
+                }
+            }
         }
     }
 

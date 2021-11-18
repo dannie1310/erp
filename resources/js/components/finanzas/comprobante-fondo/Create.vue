@@ -486,7 +486,7 @@ export default {
             $(this.$refs.modal_cfdi).modal('hide');
         },
         onFileChange(e){
-            this.files = [];
+            //this.files = [];
             this.archivo = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
@@ -549,10 +549,6 @@ export default {
                         $(this.$refs.modal_cfdi).modal('hide');
                         this.$refs.archivo.value = '';
                         this.archivo = null;
-                        //this.cfdi = data;
-                        //this.$store.commit('finanzas/cfdi-sat/SET_cCFDSAT', data);
-
-                        //this.cargado = true;
                     }else{
                         if(this.$refs.archivo.value !== ''){
                             this.$refs.archivo.value = '';

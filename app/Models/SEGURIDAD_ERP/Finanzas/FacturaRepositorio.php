@@ -12,6 +12,7 @@ namespace App\Models\SEGURIDAD_ERP\Finanzas;
 use App\Facades\Context;
 use App\Models\CADECO\Factura;
 use App\Models\CADECO\Obra;
+use App\Models\CADECO\Transaccion;
 use App\Models\CTPQ\DocumentMetadata\Comprobante;
 use App\Models\CTPQ\Parametro;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -131,6 +132,21 @@ class FacturaRepositorio extends Model
             return null;
         }
 
+    }
+
+    public function getTransaccionAttribute()
+    {
+        $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()
+            ->where("id_proyecto", "=", $this->id_proyecto)
+            ->where("id_obra", "=", $this->id_obra)->first();
+        $proyecto = Proyecto::find($configuracion_obra->id_proyecto);
+
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $proyecto->base_datos);
+
+        $transaccion = Transaccion::withoutGlobalScopes()->find($this->id_transaccion);
+
+        return $transaccion;
     }
 
     public function getTransaccionFacturaAttribute()
