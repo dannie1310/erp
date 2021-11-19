@@ -75,9 +75,38 @@ class ComprobanteFondoService
                 "rfc_receptor" => $arreglo_cfd["receptor"]["rfc"],
                 "tipo_comprobante" => $arreglo_cfd["tipo_comprobante"],
             ];
+
+            $this->validaPresuntoEFO($arreglo_cfd);
         }
 
-       return $this->repository->registrar($data);
+        $data["facturas_repositorio"] = $datos_rfactura;
+
+        $transaccion = $this->repository->registrar($data);
+
+        foreach($transaccion->facturasRepositorio as $facturaRepositorio){
+            if($facturaRepositorio->cfdiSAT){
+                $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
+                $cfd = new CFD($xml);
+                $logs = $cfd->guardarXmlEnADD($xml);
+                foreach($logs as $log)
+                {
+                    if(is_array($log)){
+                        $facturaRepositorio->logsADD()->create(
+                            [
+                                "log_add"=>$log["descripcion"],
+                                "tipo"=>$log["tipo"]
+                            ]
+                        );
+                    }else {
+                        $facturaRepositorio->logsADD()->create(
+                            [
+                                "log_add"=>$log
+                            ]
+                        );
+                    }
+                }
+            }
+        }
     }
 
     public function show($id)
@@ -181,21 +210,21 @@ class ComprobanteFondoService
         $efo = $this->repository->getEFO($arreglo_cfd["emisor"]["rfc"]);
         if ($efo) {
             if ($efo->estado == 0) {
-                /*event(new IncidenciaCI(
+                event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 8,
                         "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
                         "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
                         "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));*/
+                ));
                 abort(403, "La empresa ".$arreglo_cfd["emisor"]["nombre"]." esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. \n
              Favor de comunicarse con el área fiscal para cualquier aclaración.");
             } else if ($efo->estado == 2) {
-                /*event(new IncidenciaCI(
+                event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 9,
                         "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
                         "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
                         "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));*/
+                ));
                 abort(403, "La empresa ".$arreglo_cfd["emisor"]["nombre"]." esta invalidada por el SAT, no se pueden tener operaciones con esta empresa. \n
              Favor de comunicarse con el área fiscal para cualquier aclaración.");
             }
@@ -208,12 +237,12 @@ class ComprobanteFondoService
         $efo = $this->repository->getEFO($arreglo_cfd["emisor"]["rfc"]);
         if ($efo) {
             if ($efo->estado == 2) {
-                /*event(new IncidenciaCI(
+                event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 9,
                         "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
                         "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
                         "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));*/
+                ));
             }
 
         }

@@ -71,7 +71,6 @@ class ComprobanteFondo extends Transaccion
     public function facturasRepositorio()
     {
         return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
-            ->where('rfc_emisor', '=',$this->empresa->rfc)
             ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
                 ->first()->getKey());
     }
@@ -113,7 +112,9 @@ class ComprobanteFondo extends Transaccion
                 'cumplimiento' => $data['cumplimiento']
             ]);
 
-            $this->registrarCFDIRepositorio($comprobante, $data["factura_repositorio"]);
+            foreach($data["facturas_repositorio"] as $factura_repositorio){
+                $this->registrarCFDIRepositorio($comprobante, $factura_repositorio);
+            }
 
             foreach ($data['partidas'] as $partida)
             {
@@ -132,6 +133,22 @@ class ComprobanteFondo extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    private function registrarCFDIRepositorio($comprobante, $data)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            $factura_repositorio->id_transaccion = $comprobante->id_transaccion;
+            $factura_repositorio->save();
+        } else {
+            if($data){
+                $factura_repositorio = $comprobante->facturasRepositorio()->create($data);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
+                }
+            }
         }
     }
 
