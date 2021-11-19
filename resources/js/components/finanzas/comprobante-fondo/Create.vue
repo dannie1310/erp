@@ -418,10 +418,12 @@ export default {
                 let id_conceptos_sat_borrar = [];
                 let id_cfdi = this.partidas[index].id_cfdi;
                 let _self = this;
+                let cfdi_borrar = [];
                 this.partidas.forEach(function (partida, i) {
                     if(partida.id_cfdi == id_cfdi)
                     {
                         id_conceptos_sat_borrar.push(partida.id_concepto_sat);
+                        cfdi_borrar.push(partida.uuid);
                     }
                 });
 
@@ -432,6 +434,16 @@ export default {
                             _self.partidas.splice(i, 1);
                         }
                     });
+                });
+
+                const cfdi_borrar_unicos = cfdi_borrar.filter((valor, indice) => {
+                    return cfdi_borrar.indexOf(valor) === indice;
+                });
+
+                cfdi_borrar_unicos.forEach(function(partida, i){
+                    let indice = _self.names.indexOf(partida+".xml");
+                    _self.names.splice(indice, 1);
+                    _self.files.splice(indice, 1);
                 });
 
             }else {
