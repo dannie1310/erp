@@ -538,7 +538,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@descargaLayout');
         });
-        
+
         //CHECADOR
         $api->group(['prefix' => 'checador'], function ($api) {
             $api->get('getChecadores', 'App\Http\Controllers\v1\ACARREOS\Configuracion\UsuarioProyectoController@getChecadores');
@@ -1112,6 +1112,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIva')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
+            $api->get('paginateProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@paginateSinContexto');
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION

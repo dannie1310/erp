@@ -4406,6 +4406,24 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'estimacion',
+                component: require('./components/portal-proveedor/estimacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'estimacion-proveedor',
+                        component: require('./components/portal-proveedor/estimacion/Index').default,
+                        meta: {
+                            title: 'Lista de Estimaciones',
+                            breadcrumb: {parent: 'proveedor', name: 'ESTIMACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_cotizacion_proveedor',
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

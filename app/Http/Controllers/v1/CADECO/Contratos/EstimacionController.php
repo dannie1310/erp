@@ -53,7 +53,7 @@ class EstimacionController extends Controller
     {
 
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['paginateSinContexto']);
 
         $this->middleware('permiso:consultar_formato_orden_pago_estimacion')->only('pdfOrdenPago');
         $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
@@ -117,5 +117,11 @@ class EstimacionController extends Controller
     public function ordenarConceptos($id)
     {
         return $this->service->ordenado($id);
+    }
+
+    public function paginateSinContexto(Request $request)
+    {
+        $paginator = $this->service->paginateProveedor($request->all());
+        return $this->respondWithPaginator($paginator);
     }
 }

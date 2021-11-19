@@ -22,8 +22,10 @@ use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use DateTime;
 use DateTimeZone;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
@@ -187,6 +189,16 @@ class Estimacion extends Transaccion
     public function conciliacionAcarreos()
     {
         return $this->hasOne(ConciliacionEstimacion::class, "id_estimacion", "id_transaccion");
+    }
+
+    /**
+     * Scope
+     */
+    public function scopeProveedor($query, $id_obra)
+    {
+        return $query->withoutGlobalScopes()->whereHas('empresa', function ($q) {
+            return $q->where('rfc', auth()->user()->usuario);
+        })->where('id_obra',$id_obra)->where('tipo_transaccion', '=', 52)->where('estado','>', 0)->get();
     }
 
     /**
@@ -1335,5 +1347,21 @@ class Estimacion extends Transaccion
             return $this->subcontratoEstimacion->folio_consecutivo_format;
         }
         return '';
+    }
+
+    public function estimacionesProveedor($query)
+    {
+        $datos = [];
+        $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()->where('vigencia', 1)->get();
+        foreach ($configuracion_obra as $proyecto)
+        {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $proyecto->proyecto->base_datos);
+            $datos += self::withoutGlobalScopes()->whereHas('empresa', function ($q) {
+                return $q->where('rfc', auth()->user()->usuario);
+            })->where('id_obra',$proyecto->id_obra)->where('tipo_transaccion', '=', 52)->where('estado','>', 0)->get();
+        }
+        dd($datos);
+        return $datos;
     }
 }
