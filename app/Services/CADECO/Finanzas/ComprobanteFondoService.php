@@ -65,6 +65,7 @@ class ComprobanteFondoService
             $arreglo_cfd = $this->getArregloCFD($xml);
 
             $this->validaExistenciaRepositorio($arreglo_cfd);
+            $this->validaReceptor($arreglo_cfd);
 
             $datos_rfactura[] = [
                 "xml_file" => $this->repository->getArchivoSQL($xml),
@@ -140,6 +141,7 @@ class ComprobanteFondoService
     {
         $arreglo = [];
         $cfd = new CFD($archivo_xml);
+
         $arreglo_cfd = $cfd->getArregloFactura();
 
         $arreglo["total"] = $arreglo_cfd["total"];
@@ -162,6 +164,10 @@ class ComprobanteFondoService
 
         $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
         $arreglo["folio"] = $arreglo_cfd["folio"];
+
+        if($arreglo_cfd["version"] == 3.3){
+            $cfd->validaCFDI33();
+        }
 
 
         $this->validaEFO($arreglo);
