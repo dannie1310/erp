@@ -74,6 +74,7 @@ class ComprobanteFondoService
                 "rfc_emisor" => $arreglo_cfd["emisor"]["rfc"],
                 "rfc_receptor" => $arreglo_cfd["receptor"]["rfc"],
                 "tipo_comprobante" => $arreglo_cfd["tipo_comprobante"],
+                "tipo_transaccion"=> 101
             ];
 
             $this->validaPresuntoEFO($arreglo_cfd);
@@ -87,7 +88,13 @@ class ComprobanteFondoService
             if($facturaRepositorio->cfdiSAT){
                 $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
                 $cfd = new CFD($xml);
-                $logs = $cfd->guardarXmlEnADD($xml);
+                try{
+                    $logs = $cfd->guardarXmlEnADD();
+                }catch (\Exception $e)
+                {
+                    $logs[] = "Error catch: " . $e->getMessage();
+                }
+
                 foreach($logs as $log)
                 {
                     if(is_array($log)){
@@ -107,6 +114,7 @@ class ComprobanteFondoService
                 }
             }
         }
+        return $transaccion;
     }
 
     public function show($id)

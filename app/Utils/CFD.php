@@ -22,6 +22,7 @@ class CFD
     protected $arreglo_factura;
     protected $log;
     protected $archivo_xml;
+    protected $logs;
 
     public function __construct($archivo_xml)
     {
@@ -586,66 +587,70 @@ class CFD
     }
 
 
-    public function guardarXml($xml_fuente, $xml_array){
+    public function guardarXmlEnADD(){
+        $xml_fuente = $this->archivo_xml;
+        $xml_array = $this->arreglo_factura;
         $this->logs = [];
-        $xml_split = explode('base64,', $xml_fuente);
-        $xml = base64_decode($xml_split[1]);
 
-        $obra = Obra::find(Context::getIdObra());
-        if($obra->datosContables->BDContPaq != "")
-        {
-            $this->logs[] = "Inicia";
-            DB::purge('cntpq');
-            Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
-            try{
-                $parametros = Parametro::first();
-            } catch (Exception $e){
-                $this->logs[] = "Error de lectura a la base de datos: ".Config::get('database.connections.cntpq.database').".";
-            }
+        if(in_array($this->arreglo_factura['tipo_comprobante'], ["I", "E"])) {
 
-            try{
-                $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
-                if($arreglo_bbdd == false){
-                    $this->logs[] = "Error existDb";
+            $xml_split = explode('base64,', $xml_fuente);
+            $xml = base64_decode($xml_split[1]);
+
+            $obra = Obra::find(Context::getIdObra());
+            if ($obra->datosContables->BDContPaq != "") {
+                $this->logs[] = "Inicia";
+                DB::purge('cntpq');
+                Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
+                try {
+                    $parametros = Parametro::first();
+                } catch (Exception $e) {
+                    $this->logs[] = "Error de lectura a la base de datos: " . Config::get('database.connections.cntpq.database') . ".";
                 }
-            } catch (Exception $e){
-                $this->logs[] = "Error existDb catch: ". $e->getMessage();
-            }
 
-            try{
-                $val_insercionCertificado = $this->insUpdCertificate( $xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
-                if(!$val_insercionCertificado){
-                    $this->logs[] = "Error insUpdCertificate";
-                }
-            }catch (Exception $e){
-                $this->logs[] = "Error insUpdCertificate catch: ". $e->getMessage();
-            }
-            $duplicado = false;
-            try{
-                if($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])){
-                    $this->logs[] = "CFDI ya existente en ADD";
-                }
-            }catch (Exception $e){
-                $this->logs[] = "Error buscarCfdiDuplicado catch: ". $e->getMessage();
-            }
-
-            if(!$duplicado){
-                $guid_doc_metadata = Uuid::generate()->string;
-
-                try{
-                    $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'],$arreglo_bbdd[1]['NameDB'],$arreglo_bbdd[3]['NameDB'],$arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
-                    if(!$va_insert_xml){
-                        $this->logs[] = "Error spInsUpdDocument";
-                    }else{
-                        $this->logs[] = ["tipo"=>1,"descripcion"=>"Envío éxitoso, comprobante con GUID: ".$guid_doc_metadata. " en base de datos: ".Config::get('database.connections.cntpqdm.database')];
+                try {
+                    $arreglo_bbdd = $this->existDb($parametros->GuidDSL);
+                    if ($arreglo_bbdd == false) {
+                        $this->logs[] = "Error existDb";
                     }
-                }catch (Exception $e){
-                    $this->logs[] = "Error spInsUpdDocument catch: ". $e->getMessage();
+                } catch (Exception $e) {
+                    $this->logs[] = "Error existDb catch: " . $e->getMessage();
                 }
+
+                try {
+                    $val_insercionCertificado = $this->insUpdCertificate($xml_array['certificado'], $xml_array['no_certificado'], $xml_array['emisor']['rfc'], $xml_array['emisor']['nombre']);
+                    if (!$val_insercionCertificado) {
+                        $this->logs[] = "Error insUpdCertificate";
+                    }
+                } catch (Exception $e) {
+                    $this->logs[] = "Error insUpdCertificate catch: " . $e->getMessage();
+                }
+                $duplicado = false;
+                try {
+                    if ($duplicado = $this->buscarCfdiDuplicado($arreglo_bbdd[0]['NameDB'], $xml_array['complemento']['uuid'])) {
+                        $this->logs[] = "CFDI ya existente en ADD";
+                    }
+                } catch (Exception $e) {
+                    $this->logs[] = "Error buscarCfdiDuplicado catch: " . $e->getMessage();
+                }
+
+                if (!$duplicado) {
+                    $guid_doc_metadata = Uuid::generate()->string;
+
+                    try {
+                        $va_insert_xml = $this->spInsUpdDocument($xml, $arreglo_bbdd[0]['NameDB'], $arreglo_bbdd[1]['NameDB'], $arreglo_bbdd[3]['NameDB'], $arreglo_bbdd[2]['NameDB'], $guid_doc_metadata, $xml_array['fecha_hora'], $xml_array['emisor']['rfc'], $xml_array['folio']);
+                        if (!$va_insert_xml) {
+                            $this->logs[] = "Error spInsUpdDocument";
+                        } else {
+                            $this->logs[] = ["tipo" => 1, "descripcion" => "Envío éxitoso, comprobante con GUID: " . $guid_doc_metadata . " en base de datos: " . Config::get('database.connections.cntpqdm.database')];
+                        }
+                    } catch (Exception $e) {
+                        $this->logs[] = "Error spInsUpdDocument catch: " . $e->getMessage();
+                    }
+                }
+
+                $this->logs[] = "Finaliza";
             }
-
-            $this->logs[] = "Finaliza";
-
         }
         return $this->logs;
     }

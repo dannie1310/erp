@@ -320,6 +320,7 @@ class FacturaService
                 "rfc_emisor" => $arreglo_cfd["emisor"]["rfc"],
                 "rfc_receptor" => $arreglo_cfd["receptor"]["rfc"],
                 "tipo_comprobante" => $arreglo_cfd["tipo_comprobante"],
+                "tipo_transaccion"=> 65
             ];
             if($arreglo_cfd["folio"] != ""){
                 $referencia = $arreglo_cfd["serie"] . $arreglo_cfd["folio"];
@@ -334,6 +335,7 @@ class FacturaService
                     "rfc_emisor" => $arreglo_cfd_nc["emisor"]["rfc"],
                     "rfc_receptor" => $arreglo_cfd_nc["receptor"]["rfc"],
                     "tipo_comprobante" => $arreglo_cfd_nc["tipo_comprobante"],
+                    "tipo_transaccion"=> 65
                 ];
                 $this->validaTotal($data["total"],$arreglo_cfd["total"],$arreglo_cfd_nc["total"]);
 
@@ -397,6 +399,14 @@ class FacturaService
             if($facturaRepositorio->cfdiSAT){
                 $xml = "data:text/xml;base64," . $facturaRepositorio->cfdiSAT->xml_file;
                 $logs = $this->guardarXmlEnADD($xml);
+
+                /*$cfd = new CFD($xml);
+                try{
+                    $logs = $cfd->guardarXmlEnADD();
+                }catch (\Exception $e)
+                {
+                    $logs[] = "Error catch: " . $e->getMessage();
+                }*/
                 foreach($logs as $log)
                 {
                     if(is_array($log)){

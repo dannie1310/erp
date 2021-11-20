@@ -290,6 +290,7 @@ class Factura extends Transaccion
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $factura->id_transaccion;
+            $factura_repositorio->tipo_transaccion = 65;
             $factura_repositorio->save();
         } else {
             if($data){
@@ -306,6 +307,7 @@ class Factura extends Transaccion
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $this->id_transaccion;
+            $factura_repositorio->tipo_transaccion = 65;
             $factura_repositorio->save();
         } else {
             if($data){
@@ -363,6 +365,7 @@ class Factura extends Transaccion
         if ($this->facturasRepositorioLiberar) {
             foreach ($this->facturasRepositorioLiberar as $cfd_repositorio){
                 $cfd_repositorio->id_transaccion = null;
+                $cfd_repositorio->tipo_transaccion = null;
                 $cfd_repositorio->id_proyecto = null;
                 $cfd_repositorio->id_obra = null;
                 $cfd_repositorio->usuario_asocio = null;

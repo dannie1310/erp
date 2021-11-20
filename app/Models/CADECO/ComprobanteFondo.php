@@ -118,13 +118,13 @@ class ComprobanteFondo extends Transaccion
 
             foreach ($data['partidas'] as $partida)
             {
-                $comprobante->partidas()->create([
+                $item = $comprobante->partidas()->create([
                     'id_transaccion' => $comprobante->id_transaccion,
                     'id_concepto' => $partida['id_concepto'],
                     'importe' => $partida['precio'],
                     'cantidad' => $partida['cantidad'],
                     'referencia' => $partida['referencia'],
-                    'id_material' => $partida["id_concepto_sat"],
+                    'item_antecedente' => $partida["id_concepto_sat"],
                     'id_antecedente' => $partida["id_cfdi"],
                 ]);
             }
@@ -141,6 +141,7 @@ class ComprobanteFondo extends Transaccion
         $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
         if($factura_repositorio){
             $factura_repositorio->id_transaccion = $comprobante->id_transaccion;
+            $factura_repositorio->tipo_transaccion = 65;
             $factura_repositorio->save();
         } else {
             if($data){
