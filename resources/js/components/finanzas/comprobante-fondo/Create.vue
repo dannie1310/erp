@@ -599,6 +599,8 @@ export default {
                 .catch(error => {
                     this.names = [];
                     this.files = [];
+                    this.$refs.archivo.value = '';
+                    this.archivo = null;
                 })
                 .finally(() => {
                     this.cargando = false;

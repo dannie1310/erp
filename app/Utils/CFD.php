@@ -509,7 +509,7 @@ class CFD
 
         $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
         if ($validaciones_proveedor_comprobante !== "OK") {
-            $omitido = $this->repository->getEsOmitido($respuesta["detail"][1]["detail"][0]["message"], $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
+            $omitido = $this->getEsOmitido($respuesta["detail"][1]["detail"][0]["message"], $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
             if($omitido==0){
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 14,
@@ -525,7 +525,7 @@ class CFD
 
         $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
         if ($validaciones_proveedor_complemento !== "OK") {
-            $omitido = $this->repository->getEsOmitido($respuesta["detail"][2]["detail"][0]["message"],$this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
+            $omitido = $this->getEsOmitido($respuesta["detail"][2]["detail"][0]["message"],$this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
             if($omitido==0) {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 15,

@@ -181,6 +181,7 @@ class ComprobanteFondo extends Transaccion
             foreach ($this->partidas()->get() as $item) {
                 $item->delete();
             }
+            $this->desvincularCFDIRepositorio();
             $this->respaldar($motivo);
             $this->delete();
             DB::connection('cadeco')->commit();
@@ -217,5 +218,20 @@ class ComprobanteFondo extends Transaccion
             'usuario_elimina' => auth()->id(),
             'fecha_eliminacion' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    public function desvincularCFDIRepositorio()
+    {
+        if ($this->facturasRepositorio) {
+            foreach ($this->facturasRepositorio as $cfd_repositorio){
+                $cfd_repositorio->id_transaccion = null;
+                $cfd_repositorio->tipo_transaccion = null;
+                $cfd_repositorio->id_proyecto = null;
+                $cfd_repositorio->id_obra = null;
+                $cfd_repositorio->usuario_asocio = null;
+                $cfd_repositorio->fecha_hora_asociacion = null;
+                $cfd_repositorio->save();
+            }
+        }
     }
 }
