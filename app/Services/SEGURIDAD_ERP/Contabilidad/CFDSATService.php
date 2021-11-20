@@ -1102,9 +1102,6 @@ class CFDSATService
 
         $cfdi = $this->registraCFDI($arreglo_cfd);
 
-
-
-
         return $cfdi;
     }
 
@@ -1115,6 +1112,36 @@ class CFDSATService
                 abort(500, "Este CFDI esta asociado a la solicitud de revisión con número de folio: ". $cfdi->solicitudRecepcion->numero_folio);
             }
         }
+        $cfdi_repositorio = FacturaRepositorio::where("uuid","=",$cfdi->uuid)->whereNotNull("id_transaccion")->first();
+        if($cfdi_repositorio)
+        {
+            $cfdi_repositorio->load("usuario");
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 4,
+                        "id_factura_repositorio" => $cfdi_repositorio->id,
+                        "mensaje" => 'CFDI utilizado previamente:
+            Registró: ' . $cfdi_repositorio->usuario->nombre_completo . '
+            BD: ' . $cfdi_repositorio->proyecto->base_datos . '
+            Proyecto: ' . $cfdi_repositorio->obra . '
+            Tipo Transacción: ' . $cfdi_repositorio->transaccion->tipo_transaccion_str . '
+            Folio Transacción: ' . $cfdi_repositorio->transaccion->numero_folio . '
+            Fecha Registro: '. $cfdi_repositorio->fecha_hora_registro_format . '
+            UUID: ' . $cfdi->uuid . '
+            Emisor: ' . $cfdi->proveedor->razon_social . '
+            RFC Emisor: ' .  $cfdi->rfc_emisor
+                    ]
+                ));
+                abort(403, 'CFDI utilizado previamente:
+            Registró: ' . $cfdi_repositorio->usuario->nombre_completo . '
+            BD: ' . $cfdi_repositorio->proyecto->base_datos . '
+            Proyecto: ' . $cfdi_repositorio->obra . '
+            Tipo Transacción: ' . $cfdi_repositorio->transaccion->tipo_transaccion_str . '
+            Folio Transacción: ' . $cfdi_repositorio->transaccion->numero_folio . '
+            Fecha Registro: '. $cfdi_repositorio->fecha_hora_registro_format . '
+            UUID: ' . $cfdi->uuid . '
+            Emisor: ' . $cfdi->proveedor->razon_social . '
+            RFC Emisor: ' .  $cfdi->rfc_emisor);
+            }
     }
 
     private function validaTipoTransaccion($id_tipo_transaccion, $tipo_comprobante_actual)
@@ -1147,8 +1174,8 @@ class CFDSATService
                     Storage::disk('xml_sat')->put($arreglo_factura["uuid"].".xml", $contenido_archivo_xml);
                 }
             } else {
-                $cfdi->complementarDatos($arreglo_factura);
                 $this->validaDisponibilidad($cfdi);
+                $cfdi->complementarDatos($arreglo_factura);
                 if(key_exists("id_tipo_transaccion", $arreglo_factura))
                 {
                     if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
