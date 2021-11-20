@@ -595,7 +595,12 @@ export default {
                         this.cleanData();
                         swal('Carga con XML', 'Archivo sin datos válidos', 'warning')
                     }
-                }).finally(() => {
+                })
+                .catch(error => {
+                    this.names = [];
+                    this.files = [];
+                })
+                .finally(() => {
                     this.cargando = false;
                 });
         },
