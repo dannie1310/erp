@@ -172,10 +172,10 @@
                                             {{item.unidad}}
                                         </td>
                                         <td class="td_money">
-                                            ${{getAsignadoPrecioMC(presupuesto.partidas[i].precio_unitario_con_desc_sf, presupuesto.partidas[i].cantidad_asignada)}}
+                                            ${{getAsignadoPrecioMC(presupuesto.partidas[i])}}
                                         </td>
                                         <td class="td_money">
-                                            <!-- ${{getMejorOpcionPrecioMC(i, presupuesto.partidas[i].cantidad_asignada)}} -->
+                                            ${{getMejorOpcionPrecioMC(i, presupuesto.partidas[i].cantidad_asignada)}}
                                         </td>
                                         <td class="td_money">
                                             <!-- {{getPorcentajeDiferencia(i, presupuesto.partidas[i].precio_con_descuento_mn)}} % -->
@@ -214,6 +214,7 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
+import presupuesto from '../../../store/modules/contratos/presupuesto';
 import DatosContratoProyectado from "../proyectado/partials/DatosContratoProyectado";
 export default {
     name: "asignacion-proveedores-create",
@@ -413,9 +414,18 @@ export default {
                 $(this.$refs.modalJustificacion).modal('show');
             }
         },
-        getAsignadoPrecioMC(p_u, c_a){
-            let pu_asig = parseFloat(p_u) * parseFloat(c_a);
+        getAsignadoPrecioMC(partida){
+            let pu_asig = parseFloat(partida.precio_unitario_con_desc_sf) * parseFloat(partida.cantidad_asignada) * parseFloat(partida.tipo_cambio);
             return parseFloat(pu_asig).formatMoney(2,'.',',');
+        },
+        getMejorOpcionPrecioMC(i, ca_asig){
+            let pu_mo = 0;
+            Object.values(this.data.presupuestos).forEach(presupuesto => {
+                if(presupuesto.partidas[i].mejor_opcion){
+                    pu_mo = parseFloat(presupuesto.partidas[i].precio_unitario_con_desc_sf) * parseFloat(ca_asig);
+                }
+            });
+            return pu_mo;
         },
     },
 }
