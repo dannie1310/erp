@@ -123,7 +123,7 @@ class ComprobanteFondo extends Transaccion
                     'id_concepto' => $partida['id_concepto'],
                     'importe' => $partida['precio'],
                     'cantidad' => $partida['cantidad'],
-                    'referencia' => $partida['referencia'],
+                    'referencia' => mb_substr($partida['referencia'],0,64),
                     'item_antecedente' => $partida["id_concepto_sat"],
                     'id_antecedente' => $partida["id_cfdi"],
                 ]);
