@@ -68,7 +68,7 @@ class Subcontrato extends Transaccion
     protected static function boot()
     {
         parent::boot();
-        self::addGlobalScope('tipo', function ($query) {
+        self::addGlobalScope(function ($query) {
             return $query->where('tipo_transaccion', '=', 51)
                 ->where('opciones', '=', 2)
                 ->whereIn('estado', [0, 1, 2])

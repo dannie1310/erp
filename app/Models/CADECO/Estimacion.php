@@ -95,6 +95,11 @@ class Estimacion extends Transaccion
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
     }
 
+    public function subcontratoSinGlobal()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_antecedente','id_transaccion')->withoutGlobalScopes()->where('tipo_transaccion', '=', 51)->where('opciones', '=', 2);
+    }
+
     public function itemsXContratistas()
     {
         return $this->hasMany(ItemContratista::class, 'id_empresa', 'id_empresa');
@@ -198,7 +203,7 @@ class Estimacion extends Transaccion
     {
         return $query->withoutGlobalScopes()->whereHas('empresa', function ($q) {
             return $q->where('rfc', auth()->user()->usuario);
-        })->where('id_obra',$id_obra)->where('tipo_transaccion', '=', 52)->where('estado','>', 0)->get();
+        })->where('id_obra',$id_obra)->where('tipo_transaccion', '=', 52)->where('estado','>', 0);
     }
 
     /**
@@ -1349,19 +1354,39 @@ class Estimacion extends Transaccion
         return '';
     }
 
-    public function estimacionesProveedor($query)
+    /**
+     * Obtener estimaciones para el portal de proveedores
+     * @return array
+     */
+    public function estimacionesProveedor()
     {
         $datos = [];
+        $i = 0;
         $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()->where('vigencia', 1)->get();
         foreach ($configuracion_obra as $proyecto)
         {
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $proyecto->proyecto->base_datos);
-            $datos += self::withoutGlobalScopes()->whereHas('empresa', function ($q) {
-                return $q->where('rfc', auth()->user()->usuario);
-            })->where('id_obra',$proyecto->id_obra)->where('tipo_transaccion', '=', 52)->where('estado','>', 0)->get();
+            $datos_estimacion= self::proveedor($proyecto->id_obra)->get();
+            foreach($datos_estimacion as $key => $estimacion){
+                $datos['data'][$i]['id'] = $estimacion->getKey();
+                $datos['data'][$i]['numero_folio_format'] = $estimacion->numero_folio_format;
+                $datos['data'][$i]['estado'] = (int) $estimacion->estado;
+                $datos['data'][$i]['fecha'] = $estimacion->fecha_format;
+                $datos['data'][$i]['monto_format'] = $estimacion->monto_format;
+                $datos['data'][$i]['numero_folio_sub'] = $estimacion->subcontratoSinGlobal->numero_folio_format;
+                $datos['data'][$i]['referencia_sub'] = $estimacion->subcontratoSinGlobal->referencia;
+                $datos['data'][$i]['contratista'] = $estimacion->subcontratoSinGlobal->empresa->razon_social;
+                $datos['data'][$i]['monto'] = $estimacion->monto_pagar_format;
+                $datos['data'][$i]['proyecto'] = $proyecto->nombre;
+                $datos['data'][$i]['base'] = $proyecto->proyecto->base_datos;
+            }
         }
-        dd($datos);
+        $datos['meta']['pagination']['count'] = $i++;
+        $datos['meta']['pagination']['current_page'] = 1;
+        $datos['meta']['pagination']['per_page'] = 1;
+        $datos['meta']['pagination']['total'] = $i;
+        $datos['meta']['pagination']['total_pages'] = 1;
         return $datos;
     }
 }

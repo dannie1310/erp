@@ -174,50 +174,8 @@ class EstimacionService
         return $this->repository->update($data, $id);
     }
 
-    public function paginateProveedor($data)
+    public function indexProveedor()
     {
-       /* if (isset($data['fecha'])) {
-            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
-        }
-
-        if(isset($data['numero_folio'])){
-            $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
-        }
-
-        if(isset($data['monto'])){
-            $this->repository->where([['monto', 'LIKE', '%'.$data['monto'].'%']]);
-        }
-
-        if(isset($data['numero_folio_sub'])){
-            $subcontratos = Subcontrato::query()->where([['numero_folio', 'LIKE', '%'.$data['numero_folio_sub'].'%']])->pluck("id_transaccion");
-            $this->repository->whereIn(['id_antecedente',  $subcontratos]);
-        }
-
-        if (isset($data['estado'])) {
-            if (strpos('REGISTRADA', strtoupper($data['estado'])) !== FALSE) {
-                $this->repository->where([['estado', '=', 0]]);
-            }
-            else if (strpos('APROBADA', strtoupper($data['estado'])) !== FALSE) {
-                $this->repository->where([['estado', '=', 1]]);
-            }else if (strpos('REVISADA', strtoupper($data['estado'])) !== FALSE) {
-                $this->repository->where([['estado', '=', 2]]);
-            }
-        }
-
-        if(isset($data['referencia_sub'])){
-            $contrato_proyectado = Subcontrato::query()->where([['referencia', 'LIKE', '%'.$data['referencia_sub'].'%']])->pluck("id_transaccion");
-            $this->repository->whereIn(['id_antecedente',  $contrato_proyectado]);
-        }
-
-        if(isset($data['contratista'])){
-            $empresa = Empresa::query()->where([['razon_social', 'LIKE', '%'.$data['contratista'].'%']])->pluck("id_empresa");
-            $this->repository->whereIn(['id_empresa', $empresa]);
-        }
-
-        if(isset($data['consecutivo'])){
-            $estimaciones = \App\Models\CADECO\SubcontratosEstimaciones\Estimacion::query()->where([['NumeroFolioConsecutivo', 'LIKE', '%'.$data['consecutivo'].'%']])->pluck("IDEstimacion");
-            $this->repository->whereIn(['id_transaccion',  $estimaciones]);
-        }*/
-        return $this->repository->withoutGlobalScopes()->paginate($data);
+        return $this->repository->estimacionesProveedor();
     }
 }

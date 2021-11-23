@@ -29,4 +29,9 @@ class EstimacionRepository extends Repository implements RepositoryInterface
     {
         return $this->show($id)->editar($data);
     }
+
+    public function estimacionesProveedor()
+    {
+        return $this->model->estimacionesProveedor();
+    }
 }

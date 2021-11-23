@@ -30,13 +30,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Consecutivo', field: 'consecutivo', tdClass: 'folio', sortable: false, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Fecha', field: 'fecha', sortable: true, thComp: require('../../globals/th-Date').default },
-                    { title: 'Subcontrato', tdClass: 'folio', field: 'numero_folio_sub', thComp: require('../../globals/th-Filter').default},
-                    { title: 'Referencia Subcontrato', field: 'referencia_sub', sortable: false, thComp: require('../../globals/th-Filter').default },
-                    { title: 'Contratista', field: 'contratista', sortable: false, thComp: require('../../globals/th-Filter').default },
-                    { title: 'Monto', field: 'monto', tdClass: ['th_money', 'text-right'], sortable: true, thComp: require('../../globals/th-Filter').default },
+                    { title: 'Folio', field: 'numero_folio', tdClass: 'folio', sortable: false},
+                    { title: 'Fecha', field: 'fecha', sortable: false},
+                    { title: 'Subcontrato', tdClass: 'folio', field: 'numero_folio_sub'},
+                    { title: 'Referencia Subcontrato', field: 'referencia_sub', sortable: false},
+                    { title: 'Contratista', field: 'contratista', sortable: false},
+                    { title: 'Monto', field: 'monto', tdClass: ['th_money', 'text-right'], sortable: false},
+                    { title: 'Proyecto', field: 'proyecto', sortable: false},
                     //{ title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
                     //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
@@ -62,7 +62,7 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('contratos/estimacion/paginateProveedor', {
+                return this.$store.dispatch('contratos/estimacion/indexProveedor', {
                     params: this.query
                 })
                     .then(data => {
@@ -119,11 +119,11 @@
                     self.$data.data = estimaciones.map((estimacion, i) => ({
                         index: (i + 1) + self.query.offset,
                         numero_folio: estimacion.numero_folio_format,
-                        numero_folio_sub: estimacion.subcontrato.numero_folio_format,
-                        referencia_sub: estimacion.subcontrato.referencia,
-                        contratista: estimacion.subcontrato.empresa.razon_social,
-                        consecutivo: estimacion.consecutivo,
+                        numero_folio_sub: estimacion.numero_folio_sub,
+                        referencia_sub: estimacion.referencia_sub,
+                        contratista: estimacion.contratista,
                         fecha: estimacion.fecha,
+                        proyecto: estimacion.proyecto,
                         estado: this.getEstado(estimacion.estado),
                         monto: estimacion.monto_pagar_format,
                        /* buttons: $.extend({}, {
