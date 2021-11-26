@@ -526,6 +526,10 @@ class ContratoProyectado extends Transaccion
         $exclusiones = [];
         $importes = [];
         $proveedores = [];
+        $anticipos = [];
+        $dias_credito = [];
+        $plazos_entrega = [];
+        $suma_mejor_opcion = 0;
 
 
         if($data["cotizaciones_completas"] === "true"){
@@ -565,13 +569,18 @@ class ContratoProyectado extends Transaccion
             $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["seleccionado_contraoferta"]=1;
             $proveedores[$presupuesto->id_empresa.'_'.$presupuesto->id_sucursal]["id_cotizacion"]=$presupuesto->id_transaccion;
 
+            $anticipos[] = $presupuesto->anticipo;
+            $dias_credito[] = $presupuesto->DiasCredito;
+
             $presupuestos[$presupuesto->id_transaccion]['numero_folio'] = $presupuesto->numero_folio_format;
             $presupuestos[$presupuesto->id_transaccion]['id_transaccion'] = $presupuesto->id_transaccion;
             $presupuestos[$presupuesto->id_transaccion]['empresa'] = $presupuesto->empresa->razon_social;
             $presupuestos[$presupuesto->id_transaccion]['fecha'] = $presupuesto->fecha_format;
+            $presupuestos[$presupuesto->id_transaccion]['fecha_hora_envio'] = ($presupuesto->invitacion) ? $presupuesto->invitacion->fecha_hora_envio_format : 'N/A';
+            $presupuestos[$presupuesto->id_transaccion]['fecha_envio'] = ($presupuesto->invitacion) ? $presupuesto->invitacion->fecha_envio_format : 'N/A';
             $presupuestos[$presupuesto->id_transaccion]['vigencia'] = $presupuesto->DiasVigencia ? $presupuesto->DiasVigencia : '-';
-            $presupuestos[$presupuesto->id_transaccion]['anticipo'] = $presupuesto->anticipo && $presupuesto->anticipo > 0 ? $presupuesto->anticipo : '-';
-            $presupuestos[$presupuesto->id_transaccion]['dias_credito'] = $presupuesto->DiasCredito ? $presupuesto->DiasCredito : '-';
+            $presupuestos[$presupuesto->id_transaccion]['anticipo'] =  $presupuesto->anticipo;
+            $presupuestos[$presupuesto->id_transaccion]['dias_credito'] = $presupuesto->DiasCredito ;
             $presupuestos[$presupuesto->id_transaccion]['descuento_global'] = $presupuesto->descuento ? $presupuesto->descuento : '-';
             $presupuestos[$presupuesto->id_transaccion]['descuento_global_format'] = $presupuesto->descuento>0 ? "$".number_format($presupuesto->descuento,2,".",",") : '-';
             $presupuestos[$presupuesto->id_transaccion]['porcentaje_descuento_global'] = $presupuesto->PorcentajeDescuento ? $presupuesto->PorcentajeDescuento : '-';
@@ -630,6 +639,14 @@ class ContratoProyectado extends Transaccion
             }
             $exclusiones[$presupuesto->id_transaccion]['importe'] = $importe;
         }
+
+        foreach($importes as $importe)
+        {
+            $suma_mejor_opcion += $importe;
+        }
+
+        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
+
         foreach($partidas as $key=>$partida)
         {
             if(key_exists("cotizaciones", $partida)) {
@@ -662,6 +679,11 @@ class ContratoProyectado extends Transaccion
         }
 
         $exclusiones['cantidad'] = $cantidad;
+
+        sort($anticipos, SORT_NUMERIC);
+        rsort($dias_credito, SORT_NUMERIC);
+        sort($plazos_entrega, SORT_NUMERIC);
+
         return [
             'cotizaciones' => $presupuestos,
             'partidas' => $partidas,
@@ -669,6 +691,11 @@ class ContratoProyectado extends Transaccion
             'exclusiones' => $exclusiones,
             'proveedores' => $proveedores,
             'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0,
+            'mejor_anticipo' =>$anticipos[0],
+            'peor_anticipo'=>$anticipos[count($anticipos)-1],
+            'mejor_credito' =>$dias_credito[0],
+            'peor_credito'=>$dias_credito[count($dias_credito)-1],
+            'suma_mejor_opcion'=>$suma_mejor_opcion,
         ];
     }
 
@@ -735,6 +762,9 @@ class ContratoProyectado extends Transaccion
             $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
             $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $titulos[$i]['tipo_invitacion'] = $invitacion ? $invitacion->tipo_invitacion : null;
+            $titulos[$i]['dias_cierre'] = $invitacion ? $invitacion->dias_cierre_txt : null;
+            $titulos[$i]['estilo_dias_cierre'] = $invitacion ? $invitacion->estilo_dias_cierre : null;
             $i++;
         }
         foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get() as $invitacion) {
@@ -742,6 +772,9 @@ class ContratoProyectado extends Transaccion
             $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = '';
             $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
+            $titulos[$i]['tipo_invitacion'] = $invitacion->tipo_invitacion;
+            $titulos[$i]['dias_cierre'] = $invitacion->dias_cierre_txt;
+            $titulos[$i]['estilo_dias_cierre'] = $invitacion->estilo_dias_cierre;
             $i++;
         }
         return $titulos;

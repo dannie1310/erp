@@ -761,6 +761,10 @@ class SolicitudCompra extends Transaccion
         $exclusiones = [];
         $proveedores = [];
         $importes = [];
+        $anticipos = [];
+        $dias_credito = [];
+        $plazos_entrega = [];
+        $suma_mejor_opcion = 0;
 
         if($data["cotizaciones_completas"] === "true"){
             $cotizaciones_obj = $this->cotizaciones()->where("estado","=",1)->get();
@@ -794,6 +798,10 @@ class SolicitudCompra extends Transaccion
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["seleccionado_contraoferta"]=1;
             $proveedores[$cotizacion->id_empresa.'_'.$cotizacion->id_sucursal]["id_cotizacion"]=$cotizacion->id_transaccion;
 
+            $anticipos[] = $cotizacion->complemento ? $cotizacion->complemento->anticipo : 0;
+            $dias_credito[] = $cotizacion->complemento ? $cotizacion->complemento->dias_credito : 0;
+            $plazos_entrega[] = $cotizacion->complemento ? $cotizacion->complemento->plazo_entrega : 0;
+
             $cotizaciones[$cotizacion->id_transaccion]['id_transaccion'] = $cotizacion->id_transaccion;
             $cotizaciones[$cotizacion->id_transaccion]['numero_folio'] = $cotizacion->numero_folio_format;
             $cotizaciones[$cotizacion->id_transaccion]['empresa'] = $cotizacion->empresa->razon_social;
@@ -801,9 +809,9 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['fecha_hora_envio'] = ($cotizacion->invitacion) ? $cotizacion->invitacion->fecha_hora_envio_format : 'N/A';
             $cotizaciones[$cotizacion->id_transaccion]['fecha_envio'] = ($cotizacion->invitacion) ? $cotizacion->invitacion->fecha_envio_format : 'N/A';
             $cotizaciones[$cotizacion->id_transaccion]['vigencia'] = $cotizacion->complemento ? $cotizacion->complemento->vigencia : '-';
-            $cotizaciones[$cotizacion->id_transaccion]['anticipo'] = $cotizacion->complemento ? $cotizacion->complemento->anticipo : '-';
-            $cotizaciones[$cotizacion->id_transaccion]['dias_credito'] = $cotizacion->complemento ? $cotizacion->complemento->dias_credito : '-';
-            $cotizaciones[$cotizacion->id_transaccion]['plazo_entrega'] = $cotizacion->complemento ? $cotizacion->complemento->plazo_entrega : '-';
+            /**/$cotizaciones[$cotizacion->id_transaccion]['anticipo'] = $cotizacion->complemento ? $cotizacion->complemento->anticipo : '-';
+            /**/$cotizaciones[$cotizacion->id_transaccion]['dias_credito'] = $cotizacion->complemento ? $cotizacion->complemento->dias_credito : '-';
+            /**/$cotizaciones[$cotizacion->id_transaccion]['plazo_entrega'] = $cotizacion->complemento ? $cotizacion->complemento->plazo_entrega : '-';
             $cotizaciones[$cotizacion->id_transaccion]['descuento_global'] = ($cotizacion->complemento && $cotizacion->complemento->descuento > 0) ? $cotizacion->complemento->descuento : '-';
             $cotizaciones[$cotizacion->id_transaccion]['suma_subtotal_partidas'] = $cotizacion->suma_subtotal_partidas_comparativa;
             $cotizaciones[$cotizacion->id_transaccion]['subtotal_con_descuento'] = $cotizacion->subtotal_con_descuento_comparativa;
@@ -862,8 +870,12 @@ class SolicitudCompra extends Transaccion
             }
         }
 
+        foreach($importes as $importe)
+        {
+            $suma_mejor_opcion += $importe;
+        }
 
-
+        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
 
         foreach($partidas as $key=>$partida)
         {
@@ -909,6 +921,12 @@ class SolicitudCompra extends Transaccion
         array_multisort( $orden , SORT_ASC, $indices);
 
         $exclusiones['cantidad'] = $cantidad;
+
+        sort($anticipos, SORT_NUMERIC);
+        rsort($dias_credito, SORT_NUMERIC);
+        sort($plazos_entrega, SORT_NUMERIC);
+
+
         return [
             'cotizaciones' => $cotizaciones,
             'solicitud' => ["numero_folio_format"=>$this->numero_folio_format,"id"=>$this->id_transaccion, "fecha_format"=>$this->fecha_format],
@@ -918,7 +936,14 @@ class SolicitudCompra extends Transaccion
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
             'proveedores' => $proveedores,
-            'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0
+            'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0,
+            'mejor_anticipo' =>$anticipos[0],
+            'peor_anticipo'=>$anticipos[count($anticipos)-1],
+            'mejor_credito' =>$dias_credito[0],
+            'peor_credito'=>$dias_credito[count($dias_credito)-1],
+            'mejor_plazo' =>$plazos_entrega[0],
+            'peor_plazo'=>$plazos_entrega[count($plazos_entrega)-1],
+            'suma_mejor_opcion'=>$suma_mejor_opcion,
         ];
     }
 
@@ -936,15 +961,6 @@ class SolicitudCompra extends Transaccion
         }
 
         return $suma_importes_bajos == 0 ?  ($suma_importes - $suma_importes_bajos) : ($suma_importes - $suma_importes_bajos) / $suma_importes_bajos;
-        /*dd($precios, $suma_precios_bajos, $suma_precios);
-        if ($partidas_cotizacion) {
-            foreach ($partidas_cotizacion as $partida) {
-                $ivg += $partida->precio_unitario > 0 ? $this->calcular_ki($partida->precio_unitario_compuesto, $precios[$partida->id_material]) : 0;
-            }
-            return $partidas_cotizacion->count() > 0 ? $ivg : -1;
-        }
-
-        return -1;*/
     }
 
     public function calcular_ki($precio, $precio_menor)
@@ -994,6 +1010,9 @@ class SolicitudCompra extends Transaccion
             $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
             $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $titulos[$i]['tipo_invitacion'] = $invitacion ? $invitacion->tipo_invitacion : null;
+            $titulos[$i]['dias_cierre'] = $invitacion ? $invitacion->dias_cierre_txt : null;
+            $titulos[$i]['estilo_dias_cierre'] = $invitacion ? $invitacion->estilo_dias_cierre : null;
             $i++;
         }
         foreach ($this->invitaciones()->paraCotizacionCompra()->invitacionDisponible()->get() as $invitacion) {
@@ -1001,6 +1020,9 @@ class SolicitudCompra extends Transaccion
             $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = '';
             $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
+            $titulos[$i]['tipo_invitacion'] = $invitacion->tipo_invitacion;
+            $titulos[$i]['dias_cierre'] = $invitacion->dias_cierre_txt;
+            $titulos[$i]['estilo_dias_cierre'] = $invitacion->estilo_dias_cierre;
             $i++;
         }
         return $titulos;

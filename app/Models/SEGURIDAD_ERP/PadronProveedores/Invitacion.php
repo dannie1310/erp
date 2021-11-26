@@ -14,6 +14,7 @@ use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
@@ -382,6 +383,69 @@ class Invitacion extends Model
             return $this->presupuesto->partidas()->whereNotNull('precio_unitario')->count() == $this->contratoProyectado->conceptos->count() ? true : false;
         }
         return null;
+    }
+
+    public function getDiasCierreAttribute()
+    {
+        $fecha1= new DateTime();
+        $fecha2= new DateTime($this->fecha_cierre_invitacion);
+        $diff = $fecha1->diff($fecha2);
+        return (int) ($diff->invert == 1) ?  $diff->days * -1  : $diff->days;
+    }
+
+    public function getDiasCierreTxtAttribute()
+    {
+        if($this->fecha_hora_envio_cotizacion){
+            $dias = "Enviada el ".$this->fecha_envio_format;
+        }else{
+            $fecha1= new DateTime();
+            $fecha2= new DateTime($this->fecha_cierre_invitacion);
+            $diff = $fecha1->diff($fecha2);
+            if($diff->days == 0){
+                $dias = "Vence hoy";
+            }else {
+                $dias = ($diff->invert == 1) ?  $diff->days .' dias vencida' : $diff->days." días para cierre";
+            }
+        }
+
+
+        return $dias;
+    }
+
+    public function getVencidaAttribute()
+    {
+        $fecha1= new DateTime();
+        $fecha2= new DateTime($this->fecha_cierre_invitacion);
+        $diff = $fecha1->diff($fecha2);
+        return $diff->invert;
+    }
+
+    public function getEstiloDiasCierreAttribute()
+    {
+        $dias = $this->dias_cierre;
+        if($dias>10 || $this->fecha_hora_envio_cotizacion){
+            return "color: #40c535";
+        } else if($dias>5 && $dias<=10){
+            return "color: #ffca2c";
+        }else if($dias>0 && $dias<=5){
+            return "color: #f36112";
+        }else if($dias>=0){
+            return "color: #dc4604";
+        } else if($dias<0){
+            return "color: #F00";
+        }
+    }
+
+    public function getTipoInvitacionAttribute()
+    {
+        if($this->tipo == 1)
+        {
+            return "Cotizar";
+        }else if($this->tipo == 2)
+        {
+            return "Contraofertar";
+        }
+
     }
 
     /**
