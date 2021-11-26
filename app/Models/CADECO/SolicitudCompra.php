@@ -764,6 +764,7 @@ class SolicitudCompra extends Transaccion
         $anticipos = [];
         $dias_credito = [];
         $plazos_entrega = [];
+        $suma_mejor_opcion = 0;
 
         if($data["cotizaciones_completas"] === "true"){
             $cotizaciones_obj = $this->cotizaciones()->where("estado","=",1)->get();
@@ -869,8 +870,12 @@ class SolicitudCompra extends Transaccion
             }
         }
 
+        foreach($importes as $importe)
+        {
+            $suma_mejor_opcion += $importe;
+        }
 
-
+        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
 
         foreach($partidas as $key=>$partida)
         {
@@ -917,12 +922,6 @@ class SolicitudCompra extends Transaccion
 
         $exclusiones['cantidad'] = $cantidad;
 
-        /*
-         * $anticipos[] = $cotizacion->complemento ? $cotizacion->complemento->anticipo : 0;
-            $dias_credito[] = $cotizacion->complemento ? $cotizacion->complemento->dias_credito : 0;
-            $plazos_entrega[] = $cotizacion->complemento ? $cotizacion->complemento->plazo_entrega : 0;
-         * */
-
         sort($anticipos, SORT_NUMERIC);
         rsort($dias_credito, SORT_NUMERIC);
         sort($plazos_entrega, SORT_NUMERIC);
@@ -944,6 +943,7 @@ class SolicitudCompra extends Transaccion
             'peor_credito'=>$dias_credito[count($dias_credito)-1],
             'mejor_plazo' =>$plazos_entrega[0],
             'peor_plazo'=>$plazos_entrega[count($plazos_entrega)-1],
+            'suma_mejor_opcion'=>$suma_mejor_opcion,
         ];
     }
 

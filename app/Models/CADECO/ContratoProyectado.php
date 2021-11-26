@@ -529,6 +529,7 @@ class ContratoProyectado extends Transaccion
         $anticipos = [];
         $dias_credito = [];
         $plazos_entrega = [];
+        $suma_mejor_opcion = 0;
 
 
         if($data["cotizaciones_completas"] === "true"){
@@ -575,6 +576,8 @@ class ContratoProyectado extends Transaccion
             $presupuestos[$presupuesto->id_transaccion]['id_transaccion'] = $presupuesto->id_transaccion;
             $presupuestos[$presupuesto->id_transaccion]['empresa'] = $presupuesto->empresa->razon_social;
             $presupuestos[$presupuesto->id_transaccion]['fecha'] = $presupuesto->fecha_format;
+            $presupuestos[$presupuesto->id_transaccion]['fecha_hora_envio'] = ($presupuesto->invitacion) ? $presupuesto->invitacion->fecha_hora_envio_format : 'N/A';
+            $presupuestos[$presupuesto->id_transaccion]['fecha_envio'] = ($presupuesto->invitacion) ? $presupuesto->invitacion->fecha_envio_format : 'N/A';
             $presupuestos[$presupuesto->id_transaccion]['vigencia'] = $presupuesto->DiasVigencia ? $presupuesto->DiasVigencia : '-';
             $presupuestos[$presupuesto->id_transaccion]['anticipo'] =  $presupuesto->anticipo;
             $presupuestos[$presupuesto->id_transaccion]['dias_credito'] = $presupuesto->DiasCredito ;
@@ -636,6 +639,14 @@ class ContratoProyectado extends Transaccion
             }
             $exclusiones[$presupuesto->id_transaccion]['importe'] = $importe;
         }
+
+        foreach($importes as $importe)
+        {
+            $suma_mejor_opcion += $importe;
+        }
+
+        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
+
         foreach($partidas as $key=>$partida)
         {
             if(key_exists("cotizaciones", $partida)) {
@@ -684,6 +695,7 @@ class ContratoProyectado extends Transaccion
             'peor_anticipo'=>$anticipos[count($anticipos)-1],
             'mejor_credito' =>$dias_credito[0],
             'peor_credito'=>$dias_credito[count($dias_credito)-1],
+            'suma_mejor_opcion'=>$suma_mejor_opcion,
         ];
     }
 
