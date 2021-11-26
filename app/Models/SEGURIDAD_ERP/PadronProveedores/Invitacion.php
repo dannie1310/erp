@@ -14,6 +14,7 @@ use App\Models\IGH\Usuario;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
@@ -382,6 +383,16 @@ class Invitacion extends Model
             return $this->presupuesto->partidas()->whereNotNull('precio_unitario')->count() == $this->contratoProyectado->conceptos->count() ? true : false;
         }
         return null;
+    }
+
+    public function getDiasCierreTxtAttribute()
+    {
+        $dias = "";
+        $fecha1= new DateTime();
+        $fecha2= new DateTime($this->fecha_cierre_invitacion);
+        $diff = $fecha1->diff($fecha2);
+        $dias = ($diff->invert == 1) ?  $diff->days .' dias vencida' : $diff->days." días para cierre";
+        return $dias;
     }
 
     /**

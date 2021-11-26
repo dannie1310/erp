@@ -1010,6 +1010,7 @@ class SolicitudCompra extends Transaccion
             $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
             $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $titulos[$i]['dias_cierre'] = $invitacion ? $invitacion->dias_cierre_txt : null;
             $i++;
         }
         foreach ($this->invitaciones()->paraCotizacionCompra()->invitacionDisponible()->get() as $invitacion) {
@@ -1017,6 +1018,7 @@ class SolicitudCompra extends Transaccion
             $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = '';
             $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
+            $titulos[$i]['dias_cierre'] = $invitacion->dias_cierre_txt;
             $i++;
         }
         return $titulos;

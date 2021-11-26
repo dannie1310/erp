@@ -36,11 +36,11 @@
                                                  <tr>
                                                      <th style="border-style: none;" colspan="2"></th>
                                                      <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos"  v-if="cotizacion.id_transaccion != ''">
-                                                         <span v-if="cotizacion.invitacion">Invitación: <br>{{cotizacion.invitacion}}</span>
+                                                         <span v-if="cotizacion.invitacion">Invitación: <br>{{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small>{{cotizacion.dias_cierre}}</small> </span>
                                                          <span v-else></span>
                                                      </th>
                                                      <th v-for="cotizacion in solicitud.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" >
-                                                         Invitación: <br> {{cotizacion.invitacion}}
+                                                         Invitación: <br> {{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small>{{cotizacion.dias_cierre}}</small>
                                                      </th>
                                                  </tr>
                                                  <tr>
