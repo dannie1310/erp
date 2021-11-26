@@ -23,25 +23,34 @@ class EstimacionObserver extends TransaccionObserver
     public function creating(Transaccion $estimacion)
     {
         parent::creating($estimacion);
-        $subcontrato = Subcontrato::find($estimacion->id_antecedente);
+        if(!is_null(Context::getIdObra())) {
+            $subcontrato = Subcontrato::find($estimacion->id_antecedente);
+            $estimacion->id_empresa = $subcontrato->id_empresa;
+            $estimacion->id_moneda = $subcontrato->id_moneda;
+            $estimacion->retencion = $subcontrato->retencion;
+            $estimacion->anticipo = $subcontrato->anticipo;
+            $estimacion->numero_folio = $estimacion->calcularFolio();
+        }
         $estimacion->tipo_transaccion = 52;
-        $estimacion->id_empresa = $subcontrato->id_empresa;
-        $estimacion->id_moneda = $subcontrato->id_moneda;
         $estimacion->saldo = $estimacion->monto;
-        $estimacion->retencion = $subcontrato->retencion;
-        $estimacion->anticipo = $subcontrato->anticipo;
         $estimacion->fecha = $estimacion->fecha;
-        $estimacion->numero_folio = $estimacion->calcularFolio();
     }
 
     public function created(Estimacion $estimacion)
     {
-        if ($estimacion->retencion > 0)
-        {
-            $fondo_garantia = $estimacion->subcontrato->fondo_garantia;
-            if(is_null($fondo_garantia))
-            {
-                $estimacion->subcontrato->generaFondoGarantia();
+        if(!is_null(Context::getIdObra())) {
+            if ($estimacion->retencion > 0) {
+                $fondo_garantia = $estimacion->subcontrato->fondo_garantia;
+                if (is_null($fondo_garantia)) {
+                    $estimacion->subcontrato->generaFondoGarantia();
+                }
+            }
+        }else{
+            if ($estimacion->retencion > 0) {
+                $fondo_garantia = $estimacion->fondoGarantiaSinContexto;
+                if (is_null($fondo_garantia)) {
+                    $estimacion->generaFondoGarantia();
+                }
             }
         }
         $estimacion->creaSubcontratoEstimacion();

@@ -1113,6 +1113,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
             $api->get('indexProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@indexProveedor');
+            $api->post('/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@storeProveedor');
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION

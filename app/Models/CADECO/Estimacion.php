@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\Facades\Context;
 use App\Models\CADECO\Acarreos\ConciliacionEstimacion;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
@@ -21,6 +22,7 @@ use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
+use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use DateTime;
@@ -49,7 +51,11 @@ class Estimacion extends Transaccion
         'referencia',
         'observaciones',
         'tipo_transaccion',
-        'id_usuario'
+        'id_usuario',
+        'retencion',
+        'id_empresa',
+        'id_moneda',
+        'numero_folio'
     ];
 
     public $searchable = [
@@ -196,14 +202,18 @@ class Estimacion extends Transaccion
         return $this->hasOne(ConciliacionEstimacion::class, "id_estimacion", "id_transaccion");
     }
 
+    public function fondoGarantiaSinContexto()
+    {
+        return $this->belongsTo(\App\Models\CADECO\SubcontratosFG\FondoGarantia::class,  'id_antecedente','id_subcontrato')->withoutGlobalScopes();
+    }
+
     /**
      * Scope
      */
     public function scopeProveedor($query, $id_obra)
     {
-        return $query->withoutGlobalScopes()->whereHas('empresa', function ($q) {
-            return $q->where('rfc', auth()->user()->usuario);
-        })->where('id_obra',$id_obra)->where('tipo_transaccion', '=', 52)->where('estado','>', 0);
+        $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
+        return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1]);
     }
 
     /**
@@ -262,9 +272,23 @@ class Estimacion extends Transaccion
         return $est ? $est->numero_folio + 1 : 1;
     }
 
+    /**
+     * Estimaciones desde el portal de proveedores
+     * @return int
+     */
+    public static function calcularFolioProveedor($id_obra)
+    {
+        $est = Transaccion::withoutGlobalScopes()->where('tipo_transaccion', '=', 52)->where('id_obra','=', $id_obra)->orderBy('numero_folio', 'DESC')->first();
+        return $est ? $est->numero_folio + 1 : 1;
+    }
+
     private function generaFolioConsecutivo()
     {
-        $folio = FolioPorSubcontrato::where('IDSubcontrato', '=', $this->id_antecedente)->first();
+        if(!is_null(Context::getIdObra())) {
+            $folio = FolioPorSubcontrato::where('IDSubcontrato', '=', $this->id_antecedente)->first();
+        }else{
+            $folio = FolioPorSubcontrato::withoutGlobalScopes()->where('IDSubcontrato', '=', $this->id_antecedente)->first();
+        }
 
         if ($folio) {
             $folio->UltimoFolio += 1;
@@ -272,7 +296,8 @@ class Estimacion extends Transaccion
         } else {
             $folio = FolioPorSubcontrato::create([
                 'IDSubcontrato' => $this->id_antecedente,
-                'UltimoFolio' => 1
+                'UltimoFolio' => 1,
+                'IDObra' => $this->id_obra
             ]);
         }
         return $folio->UltimoFolio;
@@ -629,7 +654,7 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        if ($this->subcontrato_sgc->impuesto != 0)
+        if ($this->subcontratoSinGlobal->impuesto != 0)
         {
             return $this->subtotal_orden_pago * 0.16;
         } else {
@@ -1379,13 +1404,55 @@ class Estimacion extends Transaccion
                 $datos['data'][$i]['contratista'] = $estimacion->subcontratoSinGlobal->empresa->razon_social;
                 $datos['data'][$i]['proyecto'] = $proyecto->nombre;
                 $datos['data'][$i]['base'] = $proyecto->proyecto->base_datos;
+                $i++;
             }
         }
-        $datos['meta']['pagination']['count'] = $i++;
+        $datos['meta']['pagination']['count'] = $i;
         $datos['meta']['pagination']['current_page'] = 1;
         $datos['meta']['pagination']['per_page'] = 1;
         $datos['meta']['pagination']['total'] = $i;
         $datos['meta']['pagination']['total_pages'] = 1;
         return $datos;
+    }
+
+    /**
+     * Acciones
+     */
+    public function registrarProveedor($data)
+    {
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $data['base']);
+            $subcontrato = Transaccion::withoutGlobalScopes()->where('id_transaccion', $data['id_antecedente'])->where('tipo_transaccion', '=', 51)->first();
+            $data['id_obra'] = $subcontrato->id_obra;
+            $data['id_empresa'] = $subcontrato->id_empresa;
+            $data['id_moneda'] = $subcontrato->id_moneda;
+            $data['retencion'] = $subcontrato->retencion;
+            $data['anticipo'] = $subcontrato->anticipo;
+            $data['numero_folio'] = $this->calcularFolioProveedor($subcontrato->id_obra);
+            $estimacion = $this->create($data);
+            $estimacion->estimaConceptos($data['conceptos']);
+            $estimacion->recalculaDatosGenerales();
+            DB::connection('cadeco')->commit();
+            return $estimacion;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function generaFondoGarantia()
+    {
+        if (is_null($this->fondoGarantiaSinContexto)) {
+            if ($this->retencion > 0) {
+                $this->fondoGarantiaSinContexto()->create([
+                    'id_subcontrato' => $this->id_antecedente,
+
+                ]);
+                $this->refresh();
+            } else {
+                throw New \Exception('El subcontrato no tiene establecido un porcentaje de retención de fondo de garantía, el fondo de garantía no puede generarse');
+            }
+        }
     }
 }

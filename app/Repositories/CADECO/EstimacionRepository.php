@@ -11,6 +11,8 @@ namespace App\Repositories\CADECO;
 use App\Models\CADECO\Estimacion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class EstimacionRepository extends Repository implements RepositoryInterface
 {
@@ -33,5 +35,10 @@ class EstimacionRepository extends Repository implements RepositoryInterface
     public function estimacionesProveedor()
     {
         return $this->model->estimacionesProveedor();
+    }
+
+    public function createProveedor(array $datos)
+    {
+        return $this->model->registrarProveedor($datos);
     }
 }

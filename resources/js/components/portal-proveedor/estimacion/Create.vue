@@ -333,26 +333,24 @@
 				});
 			},
 			store() {
-        		var conceptos = this.getConceptos();
+        		var conceptos = this.obtenerConceptos();
         		if(conceptos.length > 0) {
-					return this.$store.dispatch('contratos/estimacion/store', {
-						id_antecedente: this.id_subcontrato,
+					return this.$store.dispatch('contratos/estimacion/storeProveedor', {
+						id_antecedente: this.id,
+                        base: this.base,
                         fecha: moment(this.fecha).format('YYYY-MM-DD'),
 						cumplimiento: moment(this.fecha_inicio).format('YYYY-MM-DD'),
 						vencimiento:  moment(this.fecha_fin).format('YYYY-MM-DD'),
 						observaciones: this.observaciones,
 						conceptos: conceptos
-					})
-							.then(data=> {
-								this.$router.push({name: 'estimacion-index'});
-								this.$router.push({name: 'estimacion'});
-
-							})
+					}).then(data=> {
+                        this.salir();
+                    })
 				} else {
         		    swal('','Debe estimar al menos un concepto','warning');
 				}
 			},
-			/*getConceptos() {
+			obtenerConceptos() {
         		var conceptos = [];
                 for (var key in this.conceptos) {
                     var obj = this.conceptos[key];
@@ -368,7 +366,7 @@
                     }
                 }
 				return conceptos;
-			},*/
+			},
             toFix(num, fixed) {
                 fixed = fixed || 0;
                 fixed = Math.pow(10, fixed);

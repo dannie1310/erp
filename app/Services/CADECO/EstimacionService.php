@@ -178,4 +178,13 @@ class EstimacionService
     {
         return $this->repository->estimacionesProveedor();
     }
+
+    public function storeProveedor($data)
+    {
+        try {
+            return $this->repository->createProveedor($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }
