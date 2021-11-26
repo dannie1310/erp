@@ -1377,7 +1377,6 @@ class Estimacion extends Transaccion
                 $datos['data'][$i]['numero_folio_sub'] = $estimacion->subcontratoSinGlobal->numero_folio_format;
                 $datos['data'][$i]['referencia_sub'] = $estimacion->subcontratoSinGlobal->referencia;
                 $datos['data'][$i]['contratista'] = $estimacion->subcontratoSinGlobal->empresa->razon_social;
-                $datos['data'][$i]['monto'] = $estimacion->monto_pagar_format;
                 $datos['data'][$i]['proyecto'] = $proyecto->nombre;
                 $datos['data'][$i]['base'] = $proyecto->proyecto->base_datos;
             }

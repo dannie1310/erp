@@ -4422,6 +4422,31 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: 'create',
+                        name: 'estimacion-proveedor-seleccionar-subcontrato',
+                        component: require('./components/portal-proveedor/estimacion/SeleccionarSubcontrato').default,
+                        meta: {
+                            title: 'Seleccionar Subcontrato',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'SELECCIONAR SUBCONTRATO'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/create',
+                        name: 'estimacion-proveedor-create',
+                        component: require('./components/portal-proveedor/estimacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Estimación',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

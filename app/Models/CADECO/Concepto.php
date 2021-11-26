@@ -394,6 +394,24 @@ class Concepto extends Model
         return implode(" -> ",$path_corta);
     }
 
+    /**
+     *  Se muestra la ruta desde 3er nivel (000.000.000.) para el portal de proveedor
+     * @return mixed|string
+     */
+    public function getPathCortaProveedorAttribute()
+    {
+        $path_corta = [];
+        for($i=2;$i>=0; $i--)
+        {
+            $nivel_buscar = substr($this->nivel,0,(strlen($this->nivel)-(4*$i)));
+            if($nivel_buscar != "")
+            {
+                $path_corta[]= Concepto::withoutGlobalScopes()->where("nivel",$nivel_buscar)->first()->descripcion_clave_recortada;
+            }
+        }
+        return implode(" -> ",$path_corta);
+    }
+
     public function getPathCortaSgv($idObra)
     {
         $path_corta = [];

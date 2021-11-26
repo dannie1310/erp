@@ -1,11 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <!--<router-link :to="{name: 'estimacion-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" v-if="$root.can('registrar_cotizacion_proveedor')" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
-            </router-link>-->
+            </router-link>
         </div>
         <div class="col-12">
             <div class="card">
@@ -51,7 +51,6 @@
             this.query.include = ['subcontrato.empresa'];
             this.query.sort = 'numero_folio';
             this.query.order = 'DESC'
-            this.query.scope = 'proveedor'
 
             this.$Progress.start();
             this.paginate()
@@ -125,7 +124,7 @@
                         fecha: estimacion.fecha,
                         proyecto: estimacion.proyecto,
                         estado: this.getEstado(estimacion.estado),
-                        monto: estimacion.monto_pagar_format,
+                        monto: estimacion.monto_format,
                        /* buttons: $.extend({}, {
                             aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
                             desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
