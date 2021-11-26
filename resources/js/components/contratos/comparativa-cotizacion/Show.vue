@@ -68,7 +68,7 @@
                                                 <b>{{cotizacion.fecha}}</b>
                                             </div>
                                             <div class="col-md-3">
-                                                <b>{{cotizacion.tipo_str}}</b>
+                                                <b :style="cotizacion.tipo_str == 'Contraoferta'?`color:#3386FF`:``">{{cotizacion.tipo_str}}</b>
                                             </div>
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.folio_invitacion}}</b>
@@ -79,37 +79,34 @@
                                         </div>
                                         <hr style="margin: 1px" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                         <div class="row">
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 % Anticipo
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 Crédito (días)
                                             </div>
-                                            <div class="col-md-3">
-                                                Plazo de Entrega (días)
-                                            </div>
+
                                             <div class="col-md-3">
                                                 Vigencia (días)
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-3">
                                                 IVG
                                             </div>
                                         </div>
                                         <hr style="margin: 1px" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">
                                          <div class="row">
-                                            <div class="col-md-2">
-                                                <b>{{cotizacion.anticipo}}</b>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <b>{{cotizacion.dias_credito}}</b>
+                                            <div class="col-md-3">
+                                                <b :class="cotizacion.anticipo == mejor_anticipo?`mejor_dato`:cotizacion.anticipo == peor_anticipo ?`peor_dato`:``">
+                                                    {{cotizacion.anticipo}}
+                                                </b>
                                             </div>
                                             <div class="col-md-3">
-                                                <b>{{cotizacion.plazo_entrega}}</b>
+                                                <b :class="cotizacion.dias_credito == mejor_credito?`mejor_dato`:cotizacion.dias_credito == peor_credito ?`peor_dato`:``">{{cotizacion.dias_credito}}</b>
                                             </div>
                                             <div class="col-md-3">
                                                 <b>{{cotizacion.vigencia}}</b>
                                             </div>
-                                             <div class="col-md-2">
+                                             <div class="col-md-3">
                                                 <b :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">{{cotizacion.ivg}}</b>
                                             </div>
                                         </div>
@@ -504,6 +501,10 @@ export default {
             fecha_cierre : new Date(),
             fechasDeshabilitadas : {},
             post : {},
+            mejor_anticipo : '',
+            peor_anticipo : '',
+            mejor_credito : '',
+            peor_credito : '',
             cuerpo_correo : '<p><strong>Estimado(a) [%contacto%]</strong></p>\n' +
                 '\n' +
                 '<p>[%proveedor%]</p>' +
@@ -528,9 +529,13 @@ export default {
                 this.partidas = data.partidas
                 this.precios_menores = data.precios_menores
                 this.cantidad_partidas = data.cantidad_partidas;
-                this.cantidad_cotizaciones = data.cantidad_cotizaciones
-                this.proveedores = data.proveedores
-                this.mejor_cotizacion = data.mejor_cotizacion
+                this.cantidad_cotizaciones = data.cantidad_cotizaciones;
+                this.proveedores = data.proveedores;
+                this.mejor_cotizacion = data.mejor_cotizacion;
+                this.mejor_anticipo = data.mejor_anticipo;
+                this.peor_anticipo = data.peor_anticipo;
+                this.mejor_credito = data.mejor_credito;
+                this.peor_credito = data.peor_credito;
             }).finally(()=> {
                 this.cargando = false;
             })
@@ -609,7 +614,15 @@ table th.mejor_cotizacion,  table td.mejor_cotizacion {
 
 table thead th.no_negrita b.mejor_cotizacion
 {
-    color: #59a153;
+    color: #40c535;
+}
+
+table thead th.no_negrita  b.mejor_dato{
+    color: #40c535;
+}
+
+table thead th.no_negrita  b.peor_dato{
+    color: #F00;
 }
 
 table td.mejor_opcion {
