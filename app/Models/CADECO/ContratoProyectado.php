@@ -762,6 +762,7 @@ class ContratoProyectado extends Transaccion
             $titulos[$i]['empresa'] = $cotizacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
             $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
+            $titulos[$i]['tipo_invitacion'] = $invitacion ? $invitacion->tipo_invitacion : null;
             $titulos[$i]['dias_cierre'] = $invitacion ? $invitacion->dias_cierre_txt : null;
             $titulos[$i]['estilo_dias_cierre'] = $invitacion ? $invitacion->estilo_dias_cierre : null;
             $i++;
@@ -771,6 +772,7 @@ class ContratoProyectado extends Transaccion
             $titulos[$i]['empresa'] = $invitacion->empresa->razon_social;
             $titulos[$i]['numero_folio'] = '';
             $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
+            $titulos[$i]['tipo_invitacion'] = $invitacion->tipo_invitacion;
             $titulos[$i]['dias_cierre'] = $invitacion->dias_cierre_txt;
             $titulos[$i]['estilo_dias_cierre'] = $invitacion->estilo_dias_cierre;
             $i++;

@@ -31,24 +31,24 @@
                              <div class="row"  v-if="contrato">
                                  <div  class="col-md-12">
                                      <div class="table-responsive">
-                                         <table class="table table-bordered">
+                                         <table class="table table-sm table-bordered">
                                              <thead>
                                                  <tr>
                                                      <th style="border-style: none;" colspan="3"></th>
-                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos"  v-if="cotizacion.id_transaccion != ''">
-                                                         <span v-if="cotizacion.invitacion">Invitación: <br>{{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small :style="cotizacion.estilo_dias_cierre">{{cotizacion.dias_cierre}}</small> </span>
+                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos"  v-if="cotizacion.id_transaccion != ''" class="no_negrita">
+                                                         <span v-if="cotizacion.invitacion">Invitación a {{cotizacion.tipo_invitacion}}: <br>{{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small :style="cotizacion.estilo_dias_cierre">{{cotizacion.dias_cierre}}</small> </span>
                                                          <span v-else></span>
                                                      </th>
-                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" >
-                                                         Invitación: <br> {{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small :style="cotizacion.estilo_dias_cierre">{{cotizacion.dias_cierre}}</small>
+                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" class="no_negrita">
+                                                         Invitación a {{cotizacion.tipo_invitacion}}: <br> {{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small :style="cotizacion.estilo_dias_cierre">{{cotizacion.dias_cierre}}</small>
                                                      </th>
                                                  </tr>
                                                  <tr>
                                                      <th style="border-style: none;" colspan="3"></th>
-                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion != ''">
+                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion != ''" class="no_negrita">
                                                         Cotización: <br> {{cotizacion.numero_folio}}
                                                      </th>
-                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" ></th>
+                                                     <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" class="no_negrita"></th>
                                                  </tr>
                                                  <tr>
                                                      <th >#</th>
@@ -123,5 +123,13 @@
 </script>
 
 <style scoped>
+
+table{
+    font-size: 12px;
+}
+table th.no_negrita
+{
+    font-weight: normal;
+}
 
 </style>

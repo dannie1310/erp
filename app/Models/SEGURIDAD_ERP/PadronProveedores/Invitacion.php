@@ -436,6 +436,18 @@ class Invitacion extends Model
         }
     }
 
+    public function getTipoInvitacionAttribute()
+    {
+        if($this->tipo == 1)
+        {
+            return "Cotizar";
+        }else if($this->tipo == 2)
+        {
+            return "Contraofertar";
+        }
+
+    }
+
     /**
      * Métodos
      */
