@@ -763,6 +763,7 @@ class ContratoProyectado extends Transaccion
             $titulos[$i]['numero_folio'] = $cotizacion->numero_folio_format;
             $titulos[$i]['invitacion'] = $invitacion ? $invitacion->numero_folio_format : null;
             $titulos[$i]['dias_cierre'] = $invitacion ? $invitacion->dias_cierre_txt : null;
+            $titulos[$i]['estilo_dias_cierre'] = $invitacion ? $invitacion->estilo_dias_cierre : null;
             $i++;
         }
         foreach ($this->invitaciones()->paraCotizacionContrato()->invitacionDisponible()->get() as $invitacion) {
@@ -771,6 +772,7 @@ class ContratoProyectado extends Transaccion
             $titulos[$i]['numero_folio'] = '';
             $titulos[$i]['invitacion'] = $invitacion->numero_folio_format;
             $titulos[$i]['dias_cierre'] = $invitacion->dias_cierre_txt;
+            $titulos[$i]['estilo_dias_cierre'] = $invitacion->estilo_dias_cierre;
             $i++;
         }
         return $titulos;

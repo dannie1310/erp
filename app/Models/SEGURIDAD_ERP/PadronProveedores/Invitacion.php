@@ -385,14 +385,55 @@ class Invitacion extends Model
         return null;
     }
 
-    public function getDiasCierreTxtAttribute()
+    public function getDiasCierreAttribute()
     {
-        $dias = "";
         $fecha1= new DateTime();
         $fecha2= new DateTime($this->fecha_cierre_invitacion);
         $diff = $fecha1->diff($fecha2);
-        $dias = ($diff->invert == 1) ?  $diff->days .' dias vencida' : $diff->days." días para cierre";
+        return (int) ($diff->invert == 1) ?  $diff->days * -1  : $diff->days;
+    }
+
+    public function getDiasCierreTxtAttribute()
+    {
+        if($this->fecha_hora_envio_cotizacion){
+            $dias = "Enviada el ".$this->fecha_envio_format;
+        }else{
+            $fecha1= new DateTime();
+            $fecha2= new DateTime($this->fecha_cierre_invitacion);
+            $diff = $fecha1->diff($fecha2);
+            if($diff->days == 0){
+                $dias = "Vence hoy";
+            }else {
+                $dias = ($diff->invert == 1) ?  $diff->days .' dias vencida' : $diff->days." días para cierre";
+            }
+        }
+
+
         return $dias;
+    }
+
+    public function getVencidaAttribute()
+    {
+        $fecha1= new DateTime();
+        $fecha2= new DateTime($this->fecha_cierre_invitacion);
+        $diff = $fecha1->diff($fecha2);
+        return $diff->invert;
+    }
+
+    public function getEstiloDiasCierreAttribute()
+    {
+        $dias = $this->dias_cierre;
+        if($dias>10 || $this->fecha_hora_envio_cotizacion){
+            return "color: #40c535";
+        } else if($dias>5 && $dias<=10){
+            return "color: #ffca2c";
+        }else if($dias>0 && $dias<=5){
+            return "color: #f36112";
+        }else if($dias>=0){
+            return "color: #dc4604";
+        } else if($dias<0){
+            return "color: #F00";
+        }
     }
 
     /**

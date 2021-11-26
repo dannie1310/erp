@@ -36,11 +36,11 @@
                                                  <tr>
                                                      <th style="border-style: none;" colspan="3"></th>
                                                      <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos"  v-if="cotizacion.id_transaccion != ''">
-                                                         <span v-if="cotizacion.invitacion">Invitación: <br>{{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small>{{cotizacion.dias_cierre}}</small> </span>
+                                                         <span v-if="cotizacion.invitacion">Invitación: <br>{{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small :style="cotizacion.estilo_dias_cierre">{{cotizacion.dias_cierre}}</small> </span>
                                                          <span v-else></span>
                                                      </th>
                                                      <th v-for="cotizacion in contrato.detalleEstadoCotizacion.titulos" v-if="cotizacion.id_transaccion == ''" >
-                                                         Invitación: <br> {{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small>{{cotizacion.dias_cierre}}</small>
+                                                         Invitación: <br> {{cotizacion.invitacion}} <br v-if="cotizacion.dias_cierre"> <small :style="cotizacion.estilo_dias_cierre">{{cotizacion.dias_cierre}}</small>
                                                      </th>
                                                  </tr>
                                                  <tr>
