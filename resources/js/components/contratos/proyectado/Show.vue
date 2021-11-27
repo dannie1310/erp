@@ -72,6 +72,11 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="regresar"><i class="fa fa-angle-left"></i>Regresar</button>
+                </div>
+            </div>
         </div>
     </span>
 </template>
@@ -102,7 +107,10 @@
                 }).then(data => {
                     this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', data);
                 })
-            }
+            },
+            regresar() {
+                this.$router.push({name: 'proyectado'});
+            },
         },
         computed: {
             contrato() {
