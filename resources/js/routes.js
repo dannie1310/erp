@@ -3863,6 +3863,41 @@ export const routes = [
         ]
     },
     {
+        path: '/empresas-boletinadas',
+        components:  {
+            default: require('./components/empresas-boletinadas/partials/Layout.vue').default,
+            menu: require('./components/empresas-boletinadas/partials/Menu.vue').default
+        },
+        children:[
+            /*{
+                path:'',
+                name: 'empresas-boletinadas',
+                meta: {
+                    title: 'EMPRESAS BOLETINADAS',
+                    middleware: [auth],
+                }
+            },*/
+            {
+                path: '',
+                component: require('./components/empresas-boletinadas/partials/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"no-localizados",
+                        component: require('./components/empresas-boletinadas/Index.vue').default,
+                        meta: {
+                            title: 'Empresas Boletinadas',
+                            breadcrumb: {parent: 'fiscal', name: 'EMPRESAS BOLETINADAS'},
+                            middleware: [auth,permission],
+                            permission: ['consultar_proveedores_no_localizados'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/padron-proveedores',
         components:  {
             default: require('./components/padron-proveedores/partials/Layout.vue').default,
@@ -4427,7 +4462,6 @@ export const routes = [
             breadcrumb: {name: 'SELECCIONAR OBRA'}
         }
     },
-
     {
         path: '/sao/control_presupuesto',
         components: {
@@ -4611,7 +4645,6 @@ export const routes = [
             },
         ]
     },
-
     {
         path: '*',
         name: 'notFound',
