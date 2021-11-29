@@ -13,6 +13,7 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Subcontrato;
 use App\Repositories\CADECO\EstimacionRepository as Repository;
 use App\Models\CADECO\Estimacion;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
@@ -186,5 +187,10 @@ class EstimacionService
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    public function proveedorConceptos($id, $base)
+    {
+        return $this->repository->subcontratoAEstimar($id, $base);
     }
 }

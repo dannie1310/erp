@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" v-if="$root.can('registrar_cotizacion_proveedor')" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" v-if="$root.can('registrar_estimacion_proveedor')" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -37,8 +37,8 @@
                     { title: 'Contratista', field: 'contratista', sortable: false},
                     { title: 'Monto', field: 'monto', tdClass: ['th_money', 'text-right'], sortable: false},
                     { title: 'Proyecto', field: 'proyecto', sortable: false},
-                    //{ title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, thComp: require('../../globals/th-Filter').default},
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -125,16 +125,11 @@
                         proyecto: estimacion.proyecto,
                         estado: this.getEstado(estimacion.estado),
                         monto: estimacion.monto_format,
-                       /* buttons: $.extend({}, {
-                            aprobar: (this.$root.can('aprobar_estimacion_subcontrato') && estimacion.estado == 0 ) ? true : undefined,
-                            desaprobar: (this.$root.can('revertir_aprobacion_estimacion_subcontrato') && estimacion.estado == 1 ) ? true : undefined ,
+                        buttons: $.extend({}, {
                             id: estimacion.id,
-                            estimacion: estimacion,
-                            estado: estimacion.estado,
-                            delete: self.$root.can('eliminar_estimacion_subcontrato') ? true : false,
-                            edit: self.$root.can('editar_estimacion_subcontrato') ? true : false,
-                            transaccion: {id:estimacion.id, tipo:52},
-                        })*/
+                            show: self.$root.can('consultar_estimacion_proveedor') ? true : true,
+                            base: estimacion.base
+                        })
 
                     }));
                 },

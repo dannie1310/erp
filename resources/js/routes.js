@@ -4418,7 +4418,7 @@ export const routes = [
                             title: 'Lista de Estimaciones',
                             breadcrumb: {parent: 'proveedor', name: 'ESTIMACIONES'},
                             middleware: [auth, permission],
-                            permission: 'consultar_cotizacion_proveedor',
+                            permission: 'consultar_estimacion_proveedor',
                             general: true
                         }
                     },
@@ -4430,7 +4430,7 @@ export const routes = [
                             title: 'Seleccionar Subcontrato',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'SELECCIONAR SUBCONTRATO'},
                             middleware: [auth, permission],
-                            permission: ['registrar_cotizacion_proveedor'],
+                            permission: ['registrar_estimacion_proveedor'],
                             general: true
                         }
                     },
@@ -4443,7 +4443,20 @@ export const routes = [
                             title: 'Registrar Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},
                             middleware: [auth, permission],
-                            permission: ['registrar_cotizacion_proveedor'],
+                            permission: ['registrar_estimacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'estimacion-proveedor-show',
+                        component: require('./components/portal-proveedor/estimacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Estimación',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_estimacion_proveedor',
                             general: true
                         }
                     },

@@ -1380,6 +1380,9 @@ class Estimacion extends Transaccion
     }
 
     /**
+     * Métodos
+     */
+    /**
      * Obtener estimaciones para el portal de proveedores
      * @return array
      */
@@ -1415,9 +1418,6 @@ class Estimacion extends Transaccion
         return $datos;
     }
 
-    /**
-     * Acciones
-     */
     public function registrarProveedor($data)
     {
         try {
@@ -1455,4 +1455,75 @@ class Estimacion extends Transaccion
             }
         }
     }
+
+    /**
+     * Obtener estimación con las partidas ordenadas dependiendo los niveles de los contratos.
+     * para el portal de proveedores
+     */
+    public function subcontratoAEstimarProveedor($id, $base)
+    {
+        return[
+            'fecha_inicial' => $this->getCumplimientoAttribute($this->cumplimiento),
+            'fecha_final' => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha' => $this->fecha_format,
+            'razon_social' => $this->empresa->razon_social,
+            'moneda' => $this->moneda->nombre,
+            'observaciones' => $this->observaciones,
+            'folio' => $this->numero_folio_format,
+            'subtotal' => $this->subtotal_orden_pago,
+            'iva' => $this->iva_orden_pago,
+            'total' => $this->total_orden_pago,
+            'folio_consecutivo' => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'folio_consecutivo_num' => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
+            'id_empresa' => $this->empresa->id_empresa,
+            'anticipo_format' => $this->anticipo_format,
+            'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'estado' => $this->estado,
+            'estado_format' => $this->estado_descripcion,
+            'folio_subcontrato' => $this->subcontratoSinGlobal->numero_folio_format,
+            'subcontrato' => $this->paraEstimarProveedor($this->id_antecedente,$base,$this->id_transaccion)
+        ];
+    }
+
+    public function paraEstimarProveedor($id,$base,$id_estimacion)
+    {
+        $items = array();
+        $nivel_ancestros = '';
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        $subcontrato = $this->findSubcontratoProveedor($id,$base);
+        $partidas = ItemSubcontrato::leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
+            ->where('items.id_transaccion', '=', $id)
+            ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel')->get();
+        foreach ($partidas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->getAncestrosSinContextoAttribute($subcontrato->id_antecedente,$base) as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            $contrato = Contrato::withoutGlobalScopes()->where('id_transaccion', '=', $subcontrato->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            if($contrato == null)
+            {
+                $contrato = Contrato::withoutGlobalScopes()->where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
+                $partida = ItemSubcontrato::withoutGlobalScopes()->where('id_transaccion', '=',  $subcontrato->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+            }
+            $items [$partida->nivel] = $partida->partidasEstimadasSinContexto($id_estimacion, $subcontrato->id_antecedente, $contrato, $base);
+        }
+        return array(
+            'folio' => $subcontrato->numero_folio_format,
+            'referencia' => $subcontrato->referencia,
+            'fecha_format' => $subcontrato->fecha_format,
+            'partidas' => $items
+        );
+    }
+
+    private function findSubcontratoProveedor($id, $base)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        return Transaccion::withoutGlobalScopes()->where('id_transaccion', $id)->where('tipo_transaccion', '=', 51)->first();
+    }
+
 }
