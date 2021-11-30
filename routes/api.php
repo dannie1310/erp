@@ -538,7 +538,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\ACARREOS\Catalogos\CamionController@descargaLayout');
         });
-        
+
         //CHECADOR
         $api->group(['prefix' => 'checador'], function ($api) {
             $api->get('getChecadores', 'App\Http\Controllers\v1\ACARREOS\Configuracion\UsuarioProyectoController@getChecadores');
@@ -1484,6 +1484,7 @@ $api->version('v1', function ($api) {
             $api->get('descargar', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargar');
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaLayout');
+            $api->post('cargar-xml-comprobacion', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLComprobacion');
         });
     });
 

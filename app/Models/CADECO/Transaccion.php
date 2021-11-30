@@ -249,6 +249,7 @@ class Transaccion extends Model
             case  65: return Factura::NOMBRE;
             case  82: return Pago::NOMBRE;
             case  72: return SolicitudPagoAnticipado::NOMBRE;
+            case  101: return ComprobanteFondo::NOMBRE;
             default: try{return $this->tipo->Descripcion;} catch (\Exception $e){ return "";}
         }
     }

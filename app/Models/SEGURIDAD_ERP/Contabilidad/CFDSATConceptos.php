@@ -33,6 +33,11 @@ class CFDSATConceptos extends Model
         return $this->belongsTo(CFDSAT::class, 'id_cfd_sat', 'id');
     }
 
+    public function cfdi()
+    {
+        return $this->belongsTo(CFDSAT::class, 'id_cfd_sat', 'id');
+    }
+
     public function traslados()
     {
         return $this->hasMany(CFDSATTraslados::class, 'id_cfd_sat_concepto', 'id');

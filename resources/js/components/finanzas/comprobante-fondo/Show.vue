@@ -1,15 +1,20 @@
 <template>
     <span>
-        <div  v-if="!fondo">
-            <div class="row" >
-                <div class="col-md-12">
-                    <div class="spinner-border text-success" role="status">
-                       <span class="sr-only">Cargando...</span>
+        <div class="card" v-if="!fondo">
+            <div class="card-body">
+                <div >
+                    <div class="row" >
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success" role="status">
+                               <span class="sr-only">Cargando...</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div v-else>
+
+        <div v-else class="card">
             <div class="row">
                 <div class="col-12">
                     <div class="invoice p-3 mb-3">
@@ -120,43 +125,43 @@
 </template>
 
 <script>
-    export default {
-        name: "comprobante-fondo-show",
-        props: ['id'],
-        data(){
-            return{
-                cargando: false,
-            }
-        },
-        mounted() {
-            this.find();
-        },
-        methods: {
-            find() {
-                this.cargando = true;
-                this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', null);
-                return this.$store.dispatch('finanzas/comprobante-fondo/find', {
-                    id: this.id,
-                    params:{
-                        include: ['fondo', 'partidas.concepto', 'concepto']
-                    }
-                }).then(data => {
-                    this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', data);
-                })
-                    .finally(()=> {
-                        this.cargando = false;
-                    })
-            },
-            salir(){
-                this.$router.push({name: 'comprobante-fondo'});
-            }
-        },
-        computed: {
-            fondo() {
-                return this.$store.getters['finanzas/comprobante-fondo/currentFondo']
-            },
+export default {
+    name: "comprobante-fondo-show",
+    props: ['id'],
+    data(){
+        return{
+            cargando: false,
         }
+    },
+    mounted() {
+        this.find();
+    },
+    methods: {
+        find() {
+            this.cargando = true;
+            this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', null);
+            return this.$store.dispatch('finanzas/comprobante-fondo/find', {
+                id: this.id,
+                params:{
+                    include: ['fondo', 'partidas.concepto', 'concepto']
+                }
+            }).then(data => {
+                this.$store.commit('finanzas/comprobante-fondo/SET_FONDO', data);
+            })
+                .finally(()=> {
+                    this.cargando = false;
+                })
+        },
+        salir(){
+            this.$router.push({name: 'comprobante-fondo'});
+        }
+    },
+    computed: {
+        fondo() {
+            return this.$store.getters['finanzas/comprobante-fondo/currentFondo']
+        },
     }
+}
 </script>
 
 <style scoped>
