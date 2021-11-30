@@ -111,9 +111,10 @@ class OrdenCompraFormato extends FPDI
         $this->archivo='';
 
 
-        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM") {
+
+        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO") {
             $this->NuevoClausulado = 1;
-            $this->archivo = 'Clausulado_2019.jpg';
+            $this->archivo = 'Clausulado_2019.pdf';
         } // fin if comparación de fecha
         else {
             if (Context::getDatabase() == "SAO_CORP") {
@@ -188,17 +189,22 @@ class OrdenCompraFormato extends FPDI
                 case "SAO1814_TUNEL_DRENAJE_PRO":
                     $this->archivo = "Clausulado_tunel_drenaje_pro.jpg";
                     break;
+                case "SAO1814_TUNEL_MANZANILLO":
+                    if($this->ordenCompra->obra->id_obra == 3){
+                        $this->archivo = "ClausuladoTransitsmico.pdf";
+                    }else{
+                        $this->archivo = "Clausulado_2019.pdf";
+                    }
+                    break;
                 default:
-                    $this->archivo = "Clausulado.jpg";
+                    $this->archivo = "Clausulado_2019.pdf";
             }
         }
 
-        $this->clausulado_page=public_path('pdf/clausulados/'.$this->archivo);
+        //$this->clausulado_page=public_path('pdf/clausulados/'.$this->archivo);
         $this->SetAutoPageBreak(true, 3);
-        //$this->sin_texto=public_path('pdf/clausulados/SinTexto.jpg');
-        //$this->NuevoClausulado=2;
 
-        $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_2019.pdf'));
+        $this->setSourceFile(public_path('pdf/ClausuladosPDF/'.$this->archivo));
         $this->clausulado = $this->importPage(1);
         $this->setSourceFile(public_path('pdf/ClausuladosPDF/SinTexto.pdf'));
         $this->sin_texto =  $this->importPage(1);
@@ -394,62 +400,73 @@ class OrdenCompraFormato extends FPDI
                 $this->Ln(.5);
             } else {
                 $this->SetTextColor(0,0,0);
-                $this->SetFont('Arial', 'B', 10);
+                $this->SetFont('Arial', 'B', 9);
 
                 $this->setX(14);
-                $this->Cell(2.5, .7, utf8_decode('NÚMERO: '), 'LT', 0, 'L');
-                $this->Cell(4, .7, $this->folio_sao . ' ', 'RT', 0, 'L');
-                $this->Ln(.5);
+                $this->Cell(2.5, .4, utf8_decode('NÚMERO: '), 'LT', 0, 'L');
+                $this->Cell(4, .4, $this->folio_sao . ' ', 'RT', 0, 'L');
+                $this->Ln(.4);
 
                 $this->setX(14);
-                $this->Cell(2.5, .7, utf8_decode('OBRA: '), 'L', 0, 'L');
-                $this->Cell(4, .7, $this->obra_nombre  . ' ', 'R', 0, 'L');
-                $this->Ln(.5);
+                $this->Cell(2.5, .4, utf8_decode('OBRA: '), 'L', 0, 'L');
+                $this->Cell(4, .4, $this->obra_nombre  . ' ', 'R', 0, 'L');
+                $this->Ln(.4);
 
-                $this->SetFont('Arial', 'B', 10);
+                $this->SetFont('Arial', 'B', 9);
                 $this->setX(14);
-                $this->Cell(2.5, .5, 'FECHA: ', 'L', 0, 'L');
-                $this->Cell(4, .5, date("d/m/Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
-                $this->Ln(.5);
+                $this->Cell(2.5, .4, 'FECHA: ', 'L', 0, 'L');
+                $this->Cell(4, .4, date("d/m/Y", strtotime($this->fecha))  . ' ', 'R', 0, 'L');
+                $this->Ln(.4);
 
-                $this->SetFont('Arial', 'B', 10);
+                $this->SetFont('Arial', 'B', 9);
                 $this->setX(14);
-                $this->Cell(2.5, .5, 'SOLICITUD: ', 'L', 0, 'L');
-                $this->Cell(4, .5, $this->requisicion_folio_sao   . ' ', 'R', 0, 'L');
-                $this->Ln(.5);
+                $this->Cell(2.5, .4, 'SOLICITUD: ', 'L', 0, 'L');
+                $this->Cell(4, .4, $this->requisicion_folio_sao   . ' ', 'R', 0, 'L');
+                $this->Ln(.4);
 
                 $this->setX(14);
-                $this->Cell(2.5, .5, 'TOTAL: ', 'LB', 0, 'L');
-                $this->Cell(4, .5, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
-                $this->Ln(.5);
+                $this->Cell(2.5, .4, 'TOTAL: ', 'LB', 0, 'L');
+                $this->Cell(4, .4, "$ " . number_format($this->ordenCompra->monto, 2, '.', ','), 'RB', 1, 'L');
+                $this->Ln(.4);
 
-                $this->Ln(19.5);
+                switch (Context::getDatabase()) {
+
+                    case "SAO1814_TUNEL_MANZANILLO":
+                        if($this->ordenCompra->obra->id_obra == 3){
+                            $this->Ln(22);
+                        }else{
+                            $this->Ln(20);
+                        }
+                        break;
+                    default:
+                        $this->Ln(20);
+                }
 
                 $this->SetFont('Arial', 'B', 4);
 
-                $this->Cell(10);
+                $this->Cell(10.2);
                 $this->Cell(4.6,.5, utf8_decode('"EL CLIENTE"') ,'LT',0,'C');
                 $this->Cell(5,.5, utf8_decode('"EL PROVEEDOR"'),'LRT',0,'C');
                 $this->Ln(.4);
 
-                $this->Cell(10);
+                $this->Cell(10.2);
                 $this->CellFitScale(4.6,1.6, '      ' ,'LT',0,'C');
                 $this->CellFitScale(5,1.6,    '      ','LTR',0,'C');
                 $this->Ln(1);
 
 
-                $this->Cell(10);
+                $this->Cell(10.2);
                 $this->CellFitScale(4.6,.4,utf8_decode($this->obra->facturar),'LT',0,'C');
                 $this->CellFitScale(5,.4,utf8_decode($this->empresa_nombre) ,'LTR',0,'C');
                 $this->Ln(.4);
 
 
-                $this->Cell(10);
+                $this->Cell(10.2);
                 $this->Cell(4.6,.2, 'APODERADO LEGAL, FACTOR o','LTR',0,'C');
                 $this->Cell(5,.2, 'APODERADO LEGAL, FACTOR o','RT',0,'C');
                 $this->Ln(.2);
 
-                $this->Cell(10);
+                $this->Cell(10.2);
 
                 $this->Cell(4.6,.2, 'DEPENDIENTE','LB',0,'C');
                 $this->Cell(5,.2, 'DEPENDIENTE','LRB',0,'C');
