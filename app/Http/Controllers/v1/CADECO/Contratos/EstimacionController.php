@@ -61,7 +61,9 @@ class EstimacionController extends Controller
         $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
         $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
         $this->middleware('permiso:actualizar_amortizacion_anticipo')->only('anticipo');
-        $this->middleware('permiso:editar_estimacion_subcontrato')->only('update');
+        $this->middleware('permiso:consultar_estimacion_proveedor')->only(['proveedorConceptos','indexProveedor']);
+        $this->middleware('permiso:registrar_estimacion_proveedor')->only('storeProveedor');
+        $this->middleware('permiso:editar_estimacion_proveedor')->only('updateProveedor');
 
         $this->service = $service;
         $this->fractal = $fractal;

@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" v-if="$root.can('registrar_estimacion_proveedor')" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" v-if="$root.can('registrar_estimacion_proveedor',true)" class="btn btn-app btn-info float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -127,8 +127,8 @@
                         monto: estimacion.monto_format,
                         buttons: $.extend({}, {
                             id: estimacion.id,
-                            show: self.$root.can('consultar_estimacion_proveedor') ? true : true,
-                            edit: self.$root.can('consultar_estimacion_proveedor') ? true : true,
+                            show: self.$root.can('consultar_estimacion_proveedor',true) ? true : false,
+                            edit: (self.$root.can('editar_estimacion_proveedor',true) && estimacion.estado == 0) ? true : false,
                             base: estimacion.base
                         })
 

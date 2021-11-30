@@ -4469,7 +4469,7 @@ export const routes = [
                             title: 'Editar Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'EDITAR'},
                             middleware: [auth, permission],
-                            permission: ['editar_cotizacion_proveedor'],
+                            permission: ['editar_estimacion_proveedor'],
                             general: true
                         }
                     },
