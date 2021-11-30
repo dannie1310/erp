@@ -48,4 +48,11 @@ class EstimacionRepository extends Repository implements RepositoryInterface
         Config::set('database.connections.cadeco.database', $base);
         return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->subcontratoAEstimarProveedor($id, $base);
     }
+
+    public function updateProveedor($data, $id)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $data['base']);
+        return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->editarProveedor($data);
+    }
 }

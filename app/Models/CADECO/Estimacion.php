@@ -15,7 +15,6 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
-use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
@@ -213,7 +212,7 @@ class Estimacion extends Transaccion
     public function scopeProveedor($query, $id_obra)
     {
         $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
-        return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1]);
+        return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1])->orderby('id_transaccion','desc');
     }
 
     /**
@@ -1465,6 +1464,8 @@ class Estimacion extends Transaccion
         return[
             'fecha_inicial' => $this->getCumplimientoAttribute($this->cumplimiento),
             'fecha_final' => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha_cumplimiento' => $this->cumplimiento,
+            'fecha_vencimiento' => $this->vencimiento,
             'fecha' => $this->fecha_format,
             'razon_social' => $this->empresa->razon_social,
             'moneda' => $this->moneda->nombre,
@@ -1526,4 +1527,65 @@ class Estimacion extends Transaccion
         return Transaccion::withoutGlobalScopes()->where('id_transaccion', $id)->where('tipo_transaccion', '=', 51)->first();
     }
 
+    public function editarProveedor($datos)
+    {
+        try {
+            $fecha_inicial = New DateTime($datos['fecha_cumplimiento']);
+            $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_final = New DateTime($datos['fecha_vencimiento']);
+            $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+            DB::connection('cadeco')->beginTransaction();
+
+            foreach ($datos['subcontrato']['partidas'] as $partida) {
+
+                if (array_key_exists('id', $partida)) {
+
+                    /**
+                     * Se edita item existente.
+                     */
+                    if ($partida['id_item_estimacion'] != 0) {
+                        $item = $this->items()->where('id_item', '=', $partida['id_item_estimacion'])->first();
+
+                        $item->update([
+                            'cantidad' => $partida['cantidad_estimacion'],
+                            'importe' => $partida['importe_estimacion']
+                        ]);
+                    }
+
+                    /**
+                     * Se crea un item nuevo.
+                     */
+                    if ($partida['id_item_estimacion'] == 0 && $partida['cantidad_estimacion'] != 0) {
+                        $this->items()->create([
+                            'id_transaccion' => $this->id_transaccion,
+                            'id_antecedente' => $this->id_antecedente,
+                            'item_antecedente' => $partida['id_concepto'],
+                            'id_concepto' => $partida['id_destino'],
+                            'cantidad' => $partida['cantidad_estimacion'],
+                            'cantidad_material' => 0,
+                            'cantidad_mano_obra' => 0,
+                            'importe' => $partida['importe_estimacion'],
+                            'precio_unitario' => $partida['precio_unitario_subcontrato'],
+                            'precio_material' => 0,
+                            'precio_mano_obra' => 0
+                        ]);
+                    }
+                }
+            }
+
+            $this->update([
+                'cumplimiento' => $fecha_inicial->format("Y-m-d"),
+                'vencimiento' => $fecha_final->format("Y-m-d"),
+                'observaciones' => $datos['observaciones']
+            ]);
+
+            $this->recalculaDatosGenerales();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage());
+            throw $e;
+        }
+    }
 }

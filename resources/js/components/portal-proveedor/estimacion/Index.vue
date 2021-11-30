@@ -128,6 +128,7 @@
                         buttons: $.extend({}, {
                             id: estimacion.id,
                             show: self.$root.can('consultar_estimacion_proveedor') ? true : true,
+                            edit: self.$root.can('consultar_estimacion_proveedor') ? true : true,
                             base: estimacion.base
                         })
 

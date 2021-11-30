@@ -40,8 +40,8 @@
 		        </div>
             </div>
             <div class="col-md-12">
-                <div class="card">
-                    <div class="card-body table-responsive">
+                <div class="row">
+                    <div class="table-responsive">
                         <table id="tabla-conceptos">
                             <thead>
                                 <tr>

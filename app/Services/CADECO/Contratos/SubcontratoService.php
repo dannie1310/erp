@@ -169,6 +169,6 @@ class SubcontratoService
 
     public function paraEstimarProveedor($id, $data)
     {
-        return $this->repository->paraEstimarProveedor($id,$data['base'], null);
+        return $this->repository->paraEstimarfindSinContextoProveedor($id,$data['base'], null);
     }
 }
