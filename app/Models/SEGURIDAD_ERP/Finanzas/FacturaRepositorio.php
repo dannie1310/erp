@@ -102,7 +102,7 @@ class FacturaRepositorio extends Model
         $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()
             ->where("id_proyecto", "=", $this->id_proyecto)
             ->where("id_obra", "=", $this->id_obra)->first();
-        return $configuracion_obra->nombre;
+        return ($configuracion_obra) ?$configuracion_obra->nombre : "";
     }
 
     public function getTieneComprobanteAddAttribute()
