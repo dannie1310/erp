@@ -1112,6 +1112,10 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIva')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
+            $api->get('indexProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@indexProveedor');
+            $api->post('/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@storeProveedor');
+            $api->post('{id}/ordenarConceptosProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@proveedorConceptos')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@updateProveedor')->where(['id' => '[0-9]+']);
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
@@ -1152,7 +1156,9 @@ $api->version('v1', function ($api) {
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@pdf')->where(['id' => '[0-9]+']);
             $api->get('{id_subcontrato}/descargar-layout-cambios-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@descargarLayoutCambiosPrecioVolumen')->where(['id' => '[0-9]+']);
-
+            $api->get('/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@indexSinContexto');
+            $api->patch('{id}/sinContexto', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@showSinContexto')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/proveedorConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptosProveedor')->where(['id' => '[0-9]+']);
         });
 
         /**

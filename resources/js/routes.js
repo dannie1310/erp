@@ -4406,6 +4406,75 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'estimacion',
+                component: require('./components/portal-proveedor/estimacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'estimacion-proveedor',
+                        component: require('./components/portal-proveedor/estimacion/Index').default,
+                        meta: {
+                            title: 'Lista de Estimaciones',
+                            breadcrumb: {parent: 'proveedor', name: 'ESTIMACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_estimacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'estimacion-proveedor-seleccionar-subcontrato',
+                        component: require('./components/portal-proveedor/estimacion/SeleccionarSubcontrato').default,
+                        meta: {
+                            title: 'Seleccionar Subcontrato',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'SELECCIONAR SUBCONTRATO'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_estimacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/create',
+                        name: 'estimacion-proveedor-create',
+                        component: require('./components/portal-proveedor/estimacion/Create').default,
+                        props: true,
+                        meta: {
+                            title: 'Registrar Estimación',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_estimacion_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'estimacion-proveedor-show',
+                        component: require('./components/portal-proveedor/estimacion/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consultar Estimación',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_estimacion_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/editar',
+                        name: 'estimacion-proveedor-edit',
+                        props: true,
+                        component: require('./components/portal-proveedor/estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Estimación',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: ['editar_estimacion_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

@@ -29,8 +29,21 @@
                     <p>Enviar Cotización</p>
                 </router-link>
             </li>
-
-
+        </ul>
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+            <li class="nav-header">ESTIMACIONES</li>
+            <li class="nav-item"  v-if="$root.can('registrar_estimacion_proveedor',true)">
+                <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'estimacion-proveedor-seleccionar-subcontrato'}">
+                    <i class="fa fa-plus nav-icon"></i>
+                    <p>Registrar Estimación</p>
+                </router-link>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_estimacion_proveedor',true)">
+                <router-link :to="{name: 'estimacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'estimacion-proveedor'}">
+                    <i class="fa fa-mail-bulk nav-icon"></i>
+                    <p>Lista de Estimaciones</p>
+                </router-link>
+            </li>
         </ul>
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-header">SOLICITUDES DE REVISIÓN DE CFDI</li>

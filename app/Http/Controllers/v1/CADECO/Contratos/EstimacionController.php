@@ -53,7 +53,7 @@ class EstimacionController extends Controller
     {
 
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['indexProveedor','storeProveedor','proveedorConceptos','updateProveedor']);
 
         $this->middleware('permiso:consultar_formato_orden_pago_estimacion')->only('pdfOrdenPago');
         $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
@@ -61,7 +61,9 @@ class EstimacionController extends Controller
         $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
         $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
         $this->middleware('permiso:actualizar_amortizacion_anticipo')->only('anticipo');
-        $this->middleware('permiso:editar_estimacion_subcontrato')->only('update');
+        $this->middleware('permiso:consultar_estimacion_proveedor')->only(['proveedorConceptos','indexProveedor']);
+        $this->middleware('permiso:registrar_estimacion_proveedor')->only('storeProveedor');
+        $this->middleware('permiso:editar_estimacion_proveedor')->only('updateProveedor');
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -117,5 +119,25 @@ class EstimacionController extends Controller
     public function ordenarConceptos($id)
     {
         return $this->service->ordenado($id);
+    }
+
+    public function indexProveedor()
+    {
+        return $this->service->indexProveedor();
+    }
+
+    public function storeProveedor(Request $request)
+    {
+        return $this->service->storeProveedor($request->all());
+    }
+
+    public function proveedorConceptos(Request $request, $id)
+    {
+        return $this->service->proveedorConceptos($id, $request->all()['base']);
+    }
+
+    public function updateProveedor(Request $request, $id)
+    {
+        return $this->service->updateProveedor($request->all(), $id);
     }
 }
