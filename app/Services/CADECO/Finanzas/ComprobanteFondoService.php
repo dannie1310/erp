@@ -61,6 +61,8 @@ class ComprobanteFondoService
         $data['fecha'] = $fecha->format("Y-m-d H:i:s");
         $data['cumplimiento'] = $fecha->format("Y-m-d");
 
+        $datos_rfactura = [];
+
         foreach($archivos_xml as $xml){
             $arreglo_cfd = $this->getArregloCFD($xml);
 
