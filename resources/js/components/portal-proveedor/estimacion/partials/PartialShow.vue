@@ -152,7 +152,8 @@
                     id: this.id,
                     base: this.base
                 }).then(data => {
-                    this.estimacion = data;
+                    this.estimacion = data
+                    this.$emit('cargaFinalizada', this.estimacion);
                 }).finally(() => {
                     this.cargando = false;
                 })

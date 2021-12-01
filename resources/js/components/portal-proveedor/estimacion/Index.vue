@@ -129,6 +129,7 @@
                             id: estimacion.id,
                             show: self.$root.can('consultar_estimacion_proveedor',true) ? true : false,
                             edit: (self.$root.can('editar_estimacion_proveedor',true) && estimacion.estado == 0) ? true : false,
+                            delete: (self.$root.can('eliminar_estimacion_proveedor',true) && estimacion.estado == 0) ? true : false,
                             base: estimacion.base
                         })
 

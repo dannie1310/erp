@@ -493,6 +493,47 @@ export default {
                     });
             });
         },
+        eliminarProveedor(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar la Estimación",
+                    text: "¿Está seguro de que desea eliminar esta estimación?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id+'/eliminar',payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Estimación eliminada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
     getters: {
         estimaciones(state) {

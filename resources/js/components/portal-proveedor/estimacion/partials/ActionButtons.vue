@@ -7,6 +7,9 @@
              <router-link  :to="{ name: 'estimacion-proveedor-edit', params: {id: value.id, base: value.base}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
                 <i class="fa fa-pencil"></i>
             </router-link>
+            <router-link  :to="{ name: 'estimacion-proveedor-delete', params: {id: value.id, base: value.base}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
+                <i class="fa fa-trash"></i>
+            </router-link>
         </div>
     </span>
 </template>

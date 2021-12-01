@@ -53,7 +53,7 @@ class EstimacionController extends Controller
     {
 
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['indexProveedor','storeProveedor','proveedorConceptos','updateProveedor']);
+        $this->middleware('context')->except(['indexProveedor','storeProveedor','proveedorConceptos','updateProveedor','destroyProveedor']);
 
         $this->middleware('permiso:consultar_formato_orden_pago_estimacion')->only('pdfOrdenPago');
         $this->middleware('permiso:registrar_estimacion_subcontrato')->only('store');
@@ -139,5 +139,10 @@ class EstimacionController extends Controller
     public function updateProveedor(Request $request, $id)
     {
         return $this->service->updateProveedor($request->all(), $id);
+    }
+
+    public function destroyProveedor(Request $request, $id)
+    {
+        return $this->service->deleteProveedor($request->all(), $id);
     }
 }

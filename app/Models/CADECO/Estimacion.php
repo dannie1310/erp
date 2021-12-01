@@ -1588,4 +1588,33 @@ class Estimacion extends Transaccion
             throw $e;
         }
     }
+
+    public function eliminarProveedor($base,$motivo)
+    {
+        try {
+            DB::purge('cadeco');
+            Config::set('database.connections.cadeco.database', $base);
+            DB::connection('cadeco')->beginTransaction();
+            $this->respaldar($motivo);
+            foreach ($this->items()->get() as $item) {
+                $item->delete();
+            }
+            $this->delete();
+            DB::connection('cadeco')->commit();
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function cambioEstadoEliminarEstimacion()
+    {
+        if (self::withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)->count('id_transaccion') == 0) {
+            if ($this->subcontratoSinGlobal->estado == 1) {
+                $this->subcontratoSinGlobal->estado = 0;
+                $this->subcontratoSinGlobal->save();
+            }
+        }
+    }
 }

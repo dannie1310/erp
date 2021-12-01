@@ -4473,6 +4473,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/delete',
+                        name: 'estimacion-proveedor-delete',
+                        props: true,
+                        component: require('./components/portal-proveedor/estimacion/Delete').default,
+                        meta: {
+                            title: 'Eliminar Estimación',
+                            breadcrumb: { parent: 'estimacion-proveedor', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: ['eliminar_estimacion_proveedor'],
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

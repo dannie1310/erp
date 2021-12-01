@@ -197,4 +197,9 @@ class EstimacionService
     {
         return $this->repository->updateProveedor($data, $id);
     }
+
+    public function deleteProveedor($data, $id)
+    {
+        return $this->repository->eliminar($id, $data['data']);
+    }
 }

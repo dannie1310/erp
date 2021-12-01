@@ -31,7 +31,6 @@
                 </span>
             </div>
         </div>
-        <br>
     </span>
 </template>
 

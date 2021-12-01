@@ -82,6 +82,10 @@ class EstimacionObserver extends TransaccionObserver
     public function deleted(Estimacion $estimacion)
     {
         $estimacion->subcontratoEstimacion()->delete();
-        $estimacion->subcontrato->cambioEstadoEliminarEstimacion();
+        if(!is_null(Context::getIdObra())) {
+            $estimacion->subcontrato->cambioEstadoEliminarEstimacion();
+        }else{
+            $estimacion->cambioEstadoEliminarEstimacion();
+        }
     }
 }
