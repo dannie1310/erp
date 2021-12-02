@@ -26,7 +26,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group col-md-12 error-content">
-                                        <label for="imei" class="col-form-label">Imei:</label>
+                                        <label for="imei" class="col-form-label">IMEI:</label>
                                         <input
                                             :disabled="true"
                                             type="text"
@@ -39,7 +39,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group col-md-12 error-content">
-                                        <label for="device_id" class="col-form-label">Id. Dispositivo:</label>
+                                        <label for="device_id" class="col-form-label">Id. de Dispositivo:</label>
                                         <input
                                             :disabled="true"
                                             type="text"
