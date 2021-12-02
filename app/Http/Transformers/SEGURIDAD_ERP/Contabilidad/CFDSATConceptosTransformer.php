@@ -35,6 +35,7 @@ class CFDSATConceptosTransformer extends TransformerAbstract
             'unidad'=>$model->unidad,
             'valor_unitario'=>$model->valor_unitario,
             'valor_unitario_format'=>$model->valor_unitario_format,
+            "id_cfd"=>$model->id_cfd_sat
         ];
     }
 

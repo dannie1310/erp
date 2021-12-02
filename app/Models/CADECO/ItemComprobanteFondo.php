@@ -15,7 +15,9 @@ class ItemComprobanteFondo extends Item
         'cantidad',
         'importe',
         'referencia',
-        'estado'
+        'estado',
+        'item_antecedente',
+        'id_antecedente'
     ];
 
 

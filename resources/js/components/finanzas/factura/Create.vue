@@ -2,7 +2,7 @@
     <span>
     <div class="row">
         <div class="col-12"  v-if="$root.can('registrar_factura')" :disabled="cargando">
-            <button @click="init" class="btn btn-app btn-info float-right">
+            <button @click="init" class="btn btn-app float-right">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
