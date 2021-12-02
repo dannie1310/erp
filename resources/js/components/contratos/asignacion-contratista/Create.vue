@@ -178,14 +178,14 @@
                                             ${{getMejorOpcionPrecioMC(i, presupuesto.partidas[i].cantidad_asignada)}}
                                         </td>
                                         <td class="td_money">
-                                            <!-- {{getPorcentajeDiferencia(i, presupuesto.partidas[i].precio_con_descuento_mn)}} % -->
+                                            {{getPorcentajeDiferencia(i, presupuesto.partidas[i].precio_unitario_con_desc_sf)}} %
                                         </td>
                                         <td class="td_money">
-                                            <!-- {{parseFloat(presupuesto.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}} -->
+                                            {{parseFloat(presupuesto.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}}
                                         </td>
                                         <td>
-                                            <!-- <textarea
-                                                :disabled="!validaPrimeraPartida(id_empresa,presupuesto.partidas[i].id_material)"
+                                            <textarea
+                                                :disabled="validaPrimeraPartida(id_transaccion,presupuesto.partidas[i].id_concepto)"
                                                 v-on:keyup="keyupReplicarjustificacion()"
                                                 name="justificacion"
                                                 id="justificacion"
@@ -195,7 +195,7 @@
                                                 data-vv-as="Justificación"
                                                 :class="{'is-invalid': errors.has('justificacion')}"
                                             ></textarea>
-                                            <div class="invalid-feedback" v-show="errors.has('justificacion')">{{ errors.first('justificacion') }}</div> -->
+                                            <div class="invalid-feedback" v-show="errors.has('justificacion')">{{ errors.first('justificacion') }}</div>
                                         </td>
                                     </tr>
                                 </table>
@@ -395,6 +395,7 @@ export default {
         },
         validar_partidas_justificadas(){
             let self = this;
+            self.partidas_justificacion = [];
             Object.entries(this.data.presupuestos).forEach(([id_transaccion, presupuesto]) =>{
                 presupuesto.justificar = false;
                 Object.entries(presupuesto.partidas).forEach(([i, partida]) =>{
@@ -425,7 +426,38 @@ export default {
                     pu_mo = parseFloat(presupuesto.partidas[i].precio_unitario_con_desc_sf) * parseFloat(ca_asig);
                 }
             });
-            return pu_mo;
+            return parseFloat(pu_mo).formatMoney(2,'.',',');
+        },
+        getPorcentajeDiferencia(i, importe_asignado){
+            let p_dif = 0;
+            Object.values(this.data.presupuestos).forEach(presupuesto => {
+                if(presupuesto.partidas[i].mejor_opcion){
+                    p_dif = ((importe_asignado - presupuesto.partidas[i].precio_unitario_con_desc_sf) / presupuesto.partidas[i].precio_unitario_con_desc_sf)*100;
+                }
+            });
+            return parseFloat(p_dif).formatMoney(2,'.',',');
+        },
+        validaPrimeraPartida(id_transaccion, id_concepto){
+            if (this.replicar_justificacion){
+                return !(this.partidas_justificacion[0].id_transaccion === id_transaccion && this.partidas_justificacion[0].id_concepto === id_concepto);
+            }
+            return false;
+        },
+        keyupReplicarjustificacion(){
+            if(this.replicar_justificacion){
+                let presupuesto = this.data.presupuestos
+                let p_justf = this.partidas_justificacion;
+                for(let i = 1; i<p_justf.length; i++){
+                    presupuesto[p_justf[i].id_transaccion].partidas[p_justf[i].pos_partida].justificacion = presupuesto[p_justf[0].id_transaccion].partidas[p_justf[0].pos_partida].justificacion;
+                }
+            }
+        },
+        validateModal() {
+            this.$validator.validate().then(result => {
+                if (result){
+                    this.store();
+                }
+            });
         },
     },
 }
