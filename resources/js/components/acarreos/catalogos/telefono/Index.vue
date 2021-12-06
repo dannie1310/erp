@@ -32,7 +32,7 @@
                 columns: [
                     { title: '#', field: 'index', thClass: 'th_index', tdClass: 'td_index', sortable: false },
                     { title: 'IMEI Teléfono', field: 'imei',sortable: true, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Id. Dispositivo', field: 'device_id', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Id. de Dispositivo', field: 'device_id', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Linea Telefónica', field: 'linea', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Marca', field: 'marca', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Modelo', field: 'modelo', sortable: true, thComp: require('../../../globals/th-Filter').default},
