@@ -174,6 +174,7 @@ import empresaProveedor from './modules/padronProveedores/empresa';
 import especialidad from './modules/padronProveedores/especialidad';
 import giro from './modules/padronProveedores/giro';
 import invitacion  from "./modules/padronProveedores/invitacion";
+import empresaBoletinada from './modules/padronProveedores/empresa-boletinada';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -429,6 +430,7 @@ export default new Vuex.Store({
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
         'padronProveedores/invitacion' : invitacion,
+        'padronProveedores/empresa-boletinada' : empresaBoletinada,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 

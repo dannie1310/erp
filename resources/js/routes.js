@@ -3883,7 +3883,7 @@ export const routes = [
                 children:[
                     {
                         path:"/",
-                        name:"no-localizados",
+                        name:"empresas-boletinadas",
                         component: require('./components/empresas-boletinadas/Index.vue').default,
                         meta: {
                             title: 'Empresas Boletinadas',
