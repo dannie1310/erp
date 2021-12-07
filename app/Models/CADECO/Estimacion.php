@@ -212,6 +212,7 @@ class Estimacion extends Transaccion
     public function scopeProveedor($query, $id_obra)
     {
         $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
+        dd(auth()->user()->usuario);
         return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1])->orderby('id_transaccion','desc');
     }
 
@@ -912,6 +913,70 @@ class Estimacion extends Transaccion
             'subcontrato'             => $this->subcontrato->subcontratoParaEstimar($this->id_transaccion)
         ];
     }
+
+    public function proveedorSubcontratoAEstimar($base){
+        return [
+            'fecha_inicial'           => $this->getCumplimientoAttribute($this->cumplimiento),
+            'fecha_final'             => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha'                   => $this->fecha_format,
+            'razon_social'            => $this->empresa->razon_social,
+            'moneda'                  => $this->moneda->nombre,
+            'observaciones'           => $this->observaciones,
+            'folio'                   => $this->numero_folio_format,
+            'subtotal'                => $this->subtotal_orden_pago,
+            'iva'                     => $this->iva_orden_pago,
+            'total'                   => $this->total_orden_pago,
+            'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
+            'folio_consecutivo_num'   => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
+            'id_empresa'              => $this->empresa->id_empresa,
+            'anticipo_format'         => $this->anticipo_format,
+            'monto_anticipo_aplicado' => $this->monto_anticipo_aplicado,
+            'estado'                  => $this->estado,
+            'estado_format'           => $this->estado_descripcion,
+            'subcontrato'             => $this->proveedorSubcontratoEstimar($this->subcontratoSinGlobal, $base)
+        ];
+    }
+
+    public function proveedorSubcontratoEstimar($subcontrato, $base){
+        $respuesta = array();
+        $items = array();
+        $nivel_ancestros = '';
+
+        $partidasOrdenadas = ItemSubcontrato::Where('items.id_transaccion', '=', $subcontrato->id_transaccion)->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
+        ->where('items.id_transaccion', '=', $subcontrato->id_transaccion)
+        ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel')->get();
+
+        foreach ($partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                // dd($partida->getAncestrosSinContextoAttribute($subcontrato->id_antecedente,$base));
+                foreach ($partida->getAncestrosSinContextoAttribute($subcontrato->id_antecedente,$base) as $ancestro) {
+                    // dd(3);
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            // dd(1);
+            $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            if($contrato == null)
+            {
+                // dd(11);
+                $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
+                $partida = ItemSubcontrato::where('id_transaccion', '=',  $subcontrato->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+                // dd($contrato);
+            }
+            $items [$partida->nivel] = $partida->proveedorPartidasEstimadas($subcontrato->id_transaccion, $subcontrato->id_antecedente, $contrato, $subcontrato->id_obra);
+        }
+        $respuesta = array(
+            'folio' => $this->numero_folio_format,
+            'referencia' => $this->referencia,
+            'fecha_format' => $this->fecha_format,
+            'partidas' => $items
+        );
+        return $respuesta;
+    }
+
+
 
     /**
      * Editar la estimación

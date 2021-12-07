@@ -10,12 +10,13 @@ namespace App\Services\CADECO;
 
 
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Subcontrato;
-use App\Repositories\CADECO\EstimacionRepository as Repository;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
+use App\PDF\PortalProveedores\SolicitudAvanceFormato;
+use App\Repositories\CADECO\EstimacionRepository as Repository;
 
 class EstimacionService
 {
@@ -201,5 +202,10 @@ class EstimacionService
     public function deleteProveedor($data, $id)
     {
         return $this->repository->eliminar($id, $data['data']);
+    }
+
+    public function pdfSolicitudAvanceFormato($id, $data){
+        $pdf = new SolicitudAvanceFormato($id, $data['db']);
+        return $pdf;
     }
 }
