@@ -40,7 +40,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group error-content">
-                                        <label class="col-form-label">Inicio de estimación</label>
+                                        <label class="col-form-label">Inicio de Estimación</label>
                                         <datepicker v-model = "fecha_inicio"
                                                     name = "fecha_inicio"
                                                     :format = "formatoFecha"
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group error-content">
-                                        <label class="col-form-label">Fin de estimación</label>
+                                        <label class="col-form-label">Fin de Estimación</label>
                                         <datepicker v-model = "fecha_fin"
                                                     name = "fecha_fin"
                                                     :format = "formatoFecha"
