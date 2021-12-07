@@ -378,6 +378,7 @@ export default {
                 presupuestos:this.data.presupuestos
             })
             .then((data) => {
+                $(this.$refs.modalJustificacion).modal('hide');
                 this.$router.push({name: 'asignacion-contratista'});
             })
             .finally(() => {
