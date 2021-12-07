@@ -22,65 +22,53 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-3">
+                                <div class="col-md-1">
                                     <div class="form-group error-content">
-                                        <label for="fecha" class="col-md-2 col-form-label">Fecha</label>
-                                        <div class="col-md-10">
-                                            <datepicker v-model = "fecha"
-                                                        name = "fecha"
-                                                        :format = "formatoFecha"
-                                                        :language = "es"
-                                                        :bootstrap-styling = "true"
-                                                        class = "form-control"
-                                                        :disabled-dates="fechasDeshabilitadas"
-                                                        v-validate="{required: true}"
-                                                        :class="{'is-invalid': errors.has('fecha')}"
-                                            ></datepicker>
-                                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                        </div>
+                                        <label for="fecha" class="col-form-label">Fecha</label>
+                                        <datepicker v-model = "fecha"
+                                                    name = "fecha"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    :disabled-dates="fechasDeshabilitadas"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="row">
-                                       <div class="row">
-                                           <div class="col-md-12">
-                                               <h6><b>Periodo de Estimación</b></h6>
-                                           </div>
-                                       </div>
-                                        <div class="row">
-                                            <div class="col-md-6">
-                                                <div class="form-group error-content">
-                                                    <label class="col-form-label">Inicio</label>
-                                                    <datepicker v-model = "fecha_inicio"
-                                                                name = "fecha_inicio"
-                                                                :format = "formatoFecha"
-                                                                :language = "es"
-                                                                :bootstrap-styling = "true"
-                                                                class = "form-control"
-                                                                v-validate="{required: true}"
-                                                                :class="{'is-invalid': errors.has('fecha_inicio')}"
-                                                    ></datepicker>
-                                                    <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6">
-                                                <div class="form-group error-content">
-                                                    <label class="col-form-label">Término</label>
-                                                    <datepicker v-model = "fecha_fin"
-                                                                name = "fecha_fin"
-                                                                :format = "formatoFecha"
-                                                                :language = "es"
-                                                                :bootstrap-styling = "true"
-                                                                class = "form-control"
-                                                                v-validate="{required: true}"
-                                                                :class="{'is-invalid': errors.has('fecha_fin')}"
-                                                    ></datepicker>
-                                                    <div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div class="col-md-1">
+                                    <div class="form-group error-content">
+                                        <label class="col-form-label">Inicio de estimación</label>
+                                        <datepicker v-model = "fecha_inicio"
+                                                    name = "fecha_inicio"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha_inicio')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
                                     </div>
                                 </div>
+                                <div class="col-md-1">
+                                    <div class="form-group error-content">
+                                        <label class="col-form-label">Fin de estimación</label>
+                                        <datepicker v-model = "fecha_fin"
+                                                    name = "fecha_fin"
+                                                    :format = "formatoFecha"
+                                                    :language = "es"
+                                                    :bootstrap-styling = "true"
+                                                    class = "form-control"
+                                                    v-validate="{required: true}"
+                                                    :class="{'is-invalid': errors.has('fecha_fin')}"
+                                        ></datepicker>
+                                        <div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
+                                    </div>
+                                </div>
+
                             </div>
                             <br>
                             <div class="card">
@@ -211,7 +199,26 @@
                                     </table>
                                 </div>
                             </div>
-
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="observaciones" class="col-form-label">Observaciones: </label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group row error-content">
+                                        <textarea
+                                            name="observaciones"
+                                            id="observaciones"
+                                            class="form-control"
+                                            v-model="observaciones"
+                                            data-vv-as="Observaciones"
+                                            :class="{'is-invalid': errors.has('observaciones')}"
+                                        ></textarea>
+                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="salir">
