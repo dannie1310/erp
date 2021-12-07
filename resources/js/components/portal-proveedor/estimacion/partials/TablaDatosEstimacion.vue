@@ -4,7 +4,7 @@
             <span><i class="fa fa-comment-dollar"></i>Datos de Estimación</span>
             <table class="table table-sm">
                 <tr>
-                    <th class="encabezado" colspan="7">
+                    <th class="encabezado" colspan="8">
                         {{estimacion.razon_social}}
                     </th>
                 </tr>
@@ -19,16 +19,19 @@
                         Fecha de Estimación
                     </th>
                     <th class="encabezado">
-                        Inicio de estimación
+                        Inicio de Estimación
                     </th>
                     <th class="encabezado">
-                        Fin de estimación
+                        Fin de Estimación
                     </th>
                     <th class="encabezado">
                         Subtotal
                     </th>
                     <th class="encabezado">
                         IVA
+                    </th>
+                    <th class="encabezado">
+                        Total
                     </th>
                 </tr>
                 <tr>
@@ -53,18 +56,21 @@
                     <td style="text-align: right">
                         {{estimacion.iva}}
                     </td>
+                    <td style="text-align: right">
+                        {{estimacion.total}}
+                    </td>
                 </tr>
                 <tr>
-                    <th style="border: none" colspan="7"></th>
+                    <th style="border: none" colspan="8"></th>
                 </tr>
                 <template v-if="estimacion.observaciones!=null">
                     <tr>
-                        <th colspan="7" class="encabezado">
+                        <th colspan="8" class="encabezado">
                             Observaciones
                         </th>
                     </tr>
                     <tr>
-                        <td colspan="7">
+                        <td colspan="8">
                             {{estimacion.observaciones}}
                         </td>
                     </tr>
