@@ -22,7 +22,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <label for="fecha" class="col-form-label">Fecha</label>
                                         <datepicker v-model = "fecha"
@@ -38,7 +38,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <label class="col-form-label">Inicio de estimación</label>
                                         <datepicker v-model = "fecha_inicio"
@@ -53,7 +53,7 @@
                                         <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
                                     </div>
                                 </div>
-                                <div class="col-md-1">
+                                <div class="col-md-2">
                                     <div class="form-group error-content">
                                         <label class="col-form-label">Fin de estimación</label>
                                         <datepicker v-model = "fecha_fin"
