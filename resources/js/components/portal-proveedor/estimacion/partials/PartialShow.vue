@@ -10,6 +10,9 @@
             </div>
         </div>
         <div class="row" v-if="!cargando">
+            <div class="col-md-12" v-if="estimacion">
+                <resumen v-bind:estimacion="estimacion" v-bind:base="base" />
+            </div>
             <div class="col-md-12" >
                 <datos-estimacion v-bind:estimacion="estimacion" />
             </div>
@@ -127,10 +130,11 @@
 
 <script>
     import DatosEstimacion from "./DatosEstimacion";
+    import Resumen from "../Resumen"
     export default {
         name: "estimacion-show",
         props: ["id", "base"],
-        components: {DatosEstimacion},
+        components: {DatosEstimacion, Resumen},
         data() {
             return {
                 cargando: true,
