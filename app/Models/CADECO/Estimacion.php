@@ -212,7 +212,6 @@ class Estimacion extends Transaccion
     public function scopeProveedor($query, $id_obra)
     {
         $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
-        dd(auth()->user()->usuario);
         return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1])->orderby('id_transaccion','desc');
     }
 
@@ -950,20 +949,15 @@ class Estimacion extends Transaccion
             $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
             if ($nivel != $nivel_ancestros) {
                 $nivel_ancestros = $nivel;
-                // dd($partida->getAncestrosSinContextoAttribute($subcontrato->id_antecedente,$base));
                 foreach ($partida->getAncestrosSinContextoAttribute($subcontrato->id_antecedente,$base) as $ancestro) {
-                    // dd(3);
                     $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
                 }
             }
-            // dd(1);
-            $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
             if($contrato == null)
             {
-                // dd(11);
                 $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
                 $partida = ItemSubcontrato::where('id_transaccion', '=',  $subcontrato->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
-                // dd($contrato);
             }
             $items [$partida->nivel] = $partida->proveedorPartidasEstimadas($subcontrato->id_transaccion, $subcontrato->id_antecedente, $contrato, $subcontrato->id_obra);
         }
@@ -974,6 +968,34 @@ class Estimacion extends Transaccion
             'partidas' => $items
         );
         return $respuesta;
+    }
+
+    public function getPartidasPDFProveedor($base){
+        $subcontrato = $this->subcontratoSinGlobal;
+        $items = array();
+        $nivel_ancestros = '';
+
+        $partidasOrdenadas = ItemSubcontrato::Where('items.id_transaccion', '=', $subcontrato->id_transaccion)->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
+        ->where('items.id_transaccion', '=', $subcontrato->id_transaccion)
+        ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel')->get();
+
+        foreach ($partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->getAncestrosSinContextoAttribute($subcontrato->id_antecedente,$base) as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            if($contrato == null)
+            {
+                $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
+                $partida = ItemSubcontrato::where('id_transaccion', '=',  $subcontrato->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+            }
+            $items [$partida->nivel] = $partida->partidasFormatoEstimacion($this->id_transaccion, $contrato);
+        }
+        return $items;
     }
 
 
@@ -1125,10 +1147,36 @@ class Estimacion extends Transaccion
         return $anticipo;
     }
 
+    public function getAnticipoAnteriorProveedorAttribute()
+    {
+        $anticipo = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $anticipo += $estimacion->monto_anticipo_aplicado;
+        }
+        return $anticipo;
+    }
+
     public function getFondoGarantiaAcumuladoAnteriorAttribute()
     {
         $fondo = 0;
         $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+                                        ->where('numero_folio', '<', $this->numero_folio)
+                                        ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $fondo += $estimacion->retencion_fondo_garantia_orden_pago;
+        }
+        return $fondo;
+    }
+
+    public function getFondoGarantiaAcumuladoAnteriorProveedorAttribute()
+    {
+        $fondo = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
                                         ->where('numero_folio', '<', $this->numero_folio)
                                         ->where('estado', '>=', 0)->get();
 
@@ -1204,10 +1252,36 @@ class Estimacion extends Transaccion
         return $iva_retenido;
     }
 
+    public function getIvaRetenidoCalculadoAnteriorProveedorAttribute()
+    {
+        $iva_retenido = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $iva_retenido += $estimacion->iva_retenido_calculado;
+        }
+        return $iva_retenido;
+    }
+
     public function getAcumuladoPenalizacionesAnterioresAttribute()
     {
         $acumulado = 0;
         $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoPenalizacionesAnterioresProveedorAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
             ->where('numero_folio', '<', $this->numero_folio)
             ->where('estado', '>=', 0)->get();
 
@@ -1229,6 +1303,18 @@ class Estimacion extends Transaccion
         return $acumulado;
     }
 
+    public function getAcumuladoPenalizacionesLiberadaAnterioresProveedoresAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_penalizaciones_liberadas;
+        }
+        return $acumulado;
+    }
+
     public function getAcumuladoRetencionAnterioresAttribute()
     {
         $acumulado = 0;
@@ -1241,10 +1327,34 @@ class Estimacion extends Transaccion
         return $acumulado;
     }
 
+    public function getAcumuladoRetencionAnterioresProveedorAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_retenciones;
+        }
+        return $acumulado;
+    }
+
     public function getAcumuladoLiberacionAnterioresAttribute()
     {
         $acumulado = 0;
         $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+        foreach ($estimaciones_anteriores as $estimacion) {
+            $acumulado += $estimacion->suma_liberaciones;
+        }
+        return $acumulado;
+    }
+
+    public function getAcumuladoLiberacionAnterioresProveedorAttribute()
+    {
+        $acumulado = 0;
+        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
             ->where('numero_folio', '<', $this->numero_folio)
             ->where('estado', '>=', 0)->get();
         foreach ($estimaciones_anteriores as $estimacion) {
@@ -1457,6 +1567,9 @@ class Estimacion extends Transaccion
         $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()->where('vigencia', 1)->get();
         foreach ($configuracion_obra as $proyecto)
         {
+            if($proyecto->proyecto->base_datos != 'SAO1814'){
+                continue;
+            }
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $proyecto->proyecto->base_datos);
             $datos_estimacion= self::proveedor($proyecto->id_obra)->get();

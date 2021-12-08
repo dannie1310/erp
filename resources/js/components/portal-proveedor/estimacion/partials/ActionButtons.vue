@@ -10,7 +10,7 @@
             <router-link  :to="{ name: 'estimacion-proveedor-delete', params: {id: value.id, base: value.base}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
                 <i class="fa fa-trash"></i>
             </router-link>
-            <PDF v-bind:id="value.id" v-bind:base="value.base"></PDF>
+            <PDF v-bind:id="value.id" v-bind:base="value.base" v-if="value.show"></PDF>
         </div>
     </span>
 </template>
@@ -19,7 +19,7 @@
     import PDF from '../FormatoEstimacion.vue';
     export default {
         name: "action-buttons",
-        components:['pdf'],
+        components: { PDF },
         props: ['value'],
         data() {
             return {

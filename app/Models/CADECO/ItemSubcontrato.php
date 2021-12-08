@@ -192,7 +192,7 @@ class ItemSubcontrato extends Item
         $porcentaje_estimado = 0;
         $estimacion && $this->cantidad > 0 ? $porcentaje_estimado = $estimacion->cantidad  / $this->cantidad:'';
         $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
-// dd($id_estimacion, $id_contrato, $contrato, $destino->concepto_sgv);
+        
         return array(
             'id' => $this->id_item,
             'id_concepto' => $this->id_concepto,
