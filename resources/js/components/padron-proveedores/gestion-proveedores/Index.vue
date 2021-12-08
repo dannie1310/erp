@@ -27,7 +27,7 @@
                         </div>
                         <br />
                         <div class="table-responsive">
-                            <datatable v-bind="$data" />
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                         </div>
                     </div>
                 </div>

@@ -4,10 +4,8 @@
 namespace App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores;
 
 
-use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinada;
+use App\Views\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaVw;
 use League\Fractal\TransformerAbstract;
-use App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa;
-use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\ArchivoTransformer;
 
 class EmpresaBoletinadaTransformer extends TransformerAbstract
 {
@@ -19,15 +17,15 @@ class EmpresaBoletinadaTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(EmpresaBoletinada $model)
+    public function transform(EmpresaBoletinadaVw $model)
     {
         return [
             'id' => $model->rfc,
             'razon_social' => $model->razon_social,
             'rfc' => $model->rfc,
-            'tipo' => $model->tipo,
             'motivo' => $model->motivo,
-
+            'observaciones' => $model->observaciones,
+            'editable' => $model->editable,
         ];
     }
 }

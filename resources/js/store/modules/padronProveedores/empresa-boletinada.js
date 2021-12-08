@@ -80,7 +80,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Iniciar Expediente de Proveedor",
+                    title: "Registrar Empresa Boletinada",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -89,7 +89,7 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Iniciar Expediente',
+                            text: 'Si, Registrar',
                             closeModal: false,
                         }
                     }
@@ -99,7 +99,7 @@ export default {
                             .post(URI, payload)
                             .then(r => r.data)
                             .then(data => {
-                                swal("Expediente iniciado correctamente", {
+                                swal("Empresa boletinada registrada correctamente", {
                                     icon: "success",
                                     timer: 2000,
                                     buttons: false

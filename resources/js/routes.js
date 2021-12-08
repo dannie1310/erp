@@ -3869,14 +3869,6 @@ export const routes = [
             menu: require('./components/empresas-boletinadas/partials/Menu.vue').default
         },
         children:[
-            /*{
-                path:'',
-                name: 'empresas-boletinadas',
-                meta: {
-                    title: 'EMPRESAS BOLETINADAS',
-                    middleware: [auth],
-                }
-            },*/
             {
                 path: '',
                 component: require('./components/empresas-boletinadas/partials/Layout.vue').default,
@@ -3888,8 +3880,7 @@ export const routes = [
                         meta: {
                             title: 'Empresas Boletinadas',
                             breadcrumb: {parent: 'fiscal', name: 'EMPRESAS BOLETINADAS'},
-                            middleware: [auth,permission],
-                            permission: ['consultar_proveedores_no_localizados'],
+                            middleware: [auth],
                             general: true
                         }
                     },
@@ -3914,6 +3905,23 @@ export const routes = [
                     permission: ['consultar_expediente_proveedor'],
                     general: true
                 }
+            },
+            {
+                path: 'gestion-empresas-boletinadas',
+                component: require('./components/padron-proveedores/gestion-empresas-boletinadas/partials/Layout.vue').default,
+                children:[
+                    {
+                        path:"/",
+                        name:"empresas-boletinadas-index",
+                        component: require('./components/padron-proveedores/gestion-empresas-boletinadas/Index.vue').default,
+                        meta: {
+                            title: 'Empresas Boletinadas',
+                            breadcrumb: {parent: 'fiscal', name: 'EMPRESAS BOLETINADAS'},
+                            middleware: [auth],
+                            general: true
+                        }
+                    },
+                ]
             },
             {
                 path: 'gestion-proveedores',

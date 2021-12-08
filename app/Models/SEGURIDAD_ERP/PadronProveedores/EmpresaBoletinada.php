@@ -11,11 +11,19 @@ use Illuminate\Support\Facades\DB;
 class EmpresaBoletinada extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.PadronProveedores.vw_empresas_boletinadas';
+    protected $table = 'SEGURIDAD_ERP.PadronProveedores.empresas_boletinadas';
     public $timestamps = false;
    // protected $primaryKey = "rfc";
 
     protected $fillable = [
-       'motivo'
+        'id_tipo_boletinadas',
+        'rfc',
+        'razon_social',
+        'observaciones'
     ];
+
+    public function motivo()
+    {
+        return $this->belongsTo(CtgMotivoBoletinada::class, "id_tipo_boletinadas", "id");
+    }
 }
