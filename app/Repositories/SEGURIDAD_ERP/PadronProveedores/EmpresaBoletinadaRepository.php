@@ -36,7 +36,8 @@ class EmpresaBoletinadaRepository extends Repository implements RepositoryInterf
     {
         $item = $this->model_real->find($id);
         $item->update($data);
-        return $item;
+        $model_vw = EmpresaBoletinadaVw::find($item->id);
+        return $model_vw;
     }
 
     public function delete(array $data, $id)
@@ -44,9 +45,14 @@ class EmpresaBoletinadaRepository extends Repository implements RepositoryInterf
         $this->model_real->destroy($id);
     }
 
-    public function validaPreexistencia($rfc)
+    public function validaPreexistencia($rfc, $id = null)
     {
-        $model_vw = EmpresaBoletinadaVw::where("rfc","=",$rfc)->first();
+        if($id){
+            $model_vw = EmpresaBoletinadaVw::where("rfc","=",$rfc)->where("id","!=",$id)->first();
+        }else{
+            $model_vw = EmpresaBoletinadaVw::where("rfc","=",$rfc)->first();
+        }
+
         if($model_vw){
             abort(500,"La empresa con RFC: ". $rfc . " ya esta boletinada por ".$model_vw->motivo_txt);
         }

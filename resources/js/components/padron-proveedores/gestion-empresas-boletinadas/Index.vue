@@ -86,7 +86,7 @@ export default {
                     buttons: $.extend({}, {
                         delete: empresa.editable ? true : false,
                         edit: empresa.editable ? true : false,
-                        id: empresa.rfc,
+                        id: empresa.id,
                     })
                 }));
             },

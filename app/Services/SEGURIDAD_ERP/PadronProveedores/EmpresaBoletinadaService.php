@@ -74,9 +74,9 @@ class EmpresaBoletinadaService
         }
     }
 
-    private function validaPreexistencia($rfc)
+    private function validaPreexistencia($rfc, $id = null)
     {
-        $this->repository->validaPreexistencia($rfc);
+        $this->repository->validaPreexistencia($rfc, $id);
     }
 
     private function validaRFC($rfc)
@@ -103,6 +103,8 @@ class EmpresaBoletinadaService
 
     public function update(array $data, $id)
     {
+        $this->validaPreexistencia($data["rfc"], $id);
+        $this->validaRFC($data["rfc"]);
         return $this->repository->update($data, $id);
     }
 }
