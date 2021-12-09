@@ -29,7 +29,7 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">IMEI</th>
-                                        <th scope="col">Id.Dispositivo</th>
+                                        <th scope="col">Id. de Dispositivo</th>
                                         <th scope="col">Linea Telefónica</th>
                                         <th scope="col">Marca</th>
                                         <th scope="col">Modelo</th>
