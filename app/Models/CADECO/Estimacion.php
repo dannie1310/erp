@@ -1640,8 +1640,8 @@ class Estimacion extends Transaccion
     public function subcontratoAEstimarProveedor($id, $base)
     {
         return[
-            'fecha_inicial' => $this->getCumplimientoAttribute($this->cumplimiento),
-            'fecha_final' => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha_inicial' => $this->cumplimiento_form,
+            'fecha_final' => $this->vencimiento_form,
             'fecha_cumplimiento' => $this->cumplimiento,
             'fecha_vencimiento' => $this->vencimiento,
             'fecha' => $this->fecha_format,
@@ -1649,9 +1649,9 @@ class Estimacion extends Transaccion
             'moneda' => $this->moneda->nombre,
             'observaciones' => $this->observaciones,
             'folio' => $this->numero_folio_format,
-            'subtotal' => $this->subtotal_orden_pago,
-            'iva' => $this->iva_orden_pago,
-            'total' => $this->total_orden_pago,
+            'subtotal' => $this->subtotal_orden_pago_format,
+            'iva' => $this->iva_orden_pago_format,
+            'total' => $this->total_orden_pago_format,
             'folio_consecutivo' => $this->subcontratoEstimacion->folio_consecutivo_format,
             'folio_consecutivo_num' => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
             'id_empresa' => $this->empresa->id_empresa,
