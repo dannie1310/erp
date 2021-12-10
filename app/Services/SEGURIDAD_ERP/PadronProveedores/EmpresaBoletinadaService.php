@@ -107,4 +107,9 @@ class EmpresaBoletinadaService
         $this->validaRFC($data["rfc"]);
         return $this->repository->update($data, $id);
     }
+
+    public function delete(array $data, $id)
+    {
+        return $this->repository->delete($data, $id);
+    }
 }

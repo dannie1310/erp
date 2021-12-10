@@ -42,7 +42,7 @@ class EmpresaBoletinadaRepository extends Repository implements RepositoryInterf
 
     public function delete(array $data, $id)
     {
-        $this->model_real->destroy($id);
+        return $this->model_real->find($id)->eliminar($data["motivo_eliminacion"]);
     }
 
     public function validaPreexistencia($rfc, $id = null)

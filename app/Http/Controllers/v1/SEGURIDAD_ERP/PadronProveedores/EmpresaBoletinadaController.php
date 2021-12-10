@@ -35,6 +35,7 @@ class EmpresaBoletinadaController extends Controller
      */
     public function __construct(Manager $fractal, EmpresaBoletinadaService $service, EmpresaBoletinadaTransformer $transformer)
     {
+        $this->middleware('auth:api');
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;

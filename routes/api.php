@@ -463,6 +463,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaController@show')->where(['id' => '[0-9]+']);
             //$api->get('{rfc}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaController@showRFC');
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaController@update')->where(['id' => '[0-9]+']);
         });
         $api->group(['prefix' => 'especialidad'], function ($api){
