@@ -107,14 +107,14 @@ class Obra extends Model
         }
     }
 
-    public function getLogoProveedorAttribute($base)
+    public function getLogoProveedorAttribute($base,$id_obra)
     {
         $proyecto = Proyecto::query()->where('base_datos', '=', $base)->first();
         if($proyecto){
-            $configuracion = ConfiguracionObra::withoutGlobalScopes()->where('id_proyecto', '=', $proyecto->id)->first();
+            $configuracion = ConfiguracionObra::withoutGlobalScopes()->where('id_proyecto', '=', $proyecto->id)->where('id_obra', $id_obra)->first();
             if (isset($configuracion->logotipo_original)) {
                 return bin2hex($configuracion->logotipo_original);
-            } 
+            }
         }
         else {
             $file = public_path('img/ghi-logo.png');

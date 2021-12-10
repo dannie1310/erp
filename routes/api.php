@@ -491,6 +491,7 @@ $api->version('v1', function ($api) {
             $api->post('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@proveedorConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/eliminar', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@pdfSolicitudAvanceFormato')->where(['id' => '[0-9]+']);
         });
     });
 
@@ -1131,7 +1132,6 @@ $api->version('v1', function ($api) {
             $api->post('{id}/ordenarConceptosProveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@proveedorConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@updateProveedor')->where(['id' => '[0-9]+']);
             $api->patch('{id}/eliminar', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@destroyProveedor')->where(['id' => '[0-9]+']);
-            $api->get('{id}/solicitud-avance-formato', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfSolicitudAvanceFormato')->where(['id' => '[0-9]+']);
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION

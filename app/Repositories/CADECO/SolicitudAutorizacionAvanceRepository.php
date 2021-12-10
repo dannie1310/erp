@@ -32,7 +32,7 @@ class SolicitudAutorizacionAvanceRepository extends Repository implements Reposi
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
-        return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->subcontratoAEstimar($id, $base);
+        return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->subcontratoAEstimar($base);
     }
 
     public function update(array $data, $id)

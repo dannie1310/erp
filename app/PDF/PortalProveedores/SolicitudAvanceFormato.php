@@ -3,25 +3,24 @@
 
 namespace App\PDF\PortalProveedores;
 
+use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\SolicitudAutorizacionAvance;
 use Carbon\Carbon;
 use App\Facades\Context;
 use Ghidev\Fpdf\Rotation;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Contrato;
-use App\Models\CADECO\Estimacion;
-use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\App;
 use App\Models\CADECO\ItemSubcontrato;
 use Illuminate\Support\Facades\Config;
-use App\Models\CADECO\SubcontratoProveedor;
 
 
 class SolicitudAvanceFormato extends Rotation
 {
     protected $obra;
     protected $bae;
-    protected $estimacion;
+    protected $solicitud;
     protected $subcontrato;
     private $encabezado_pdf = '';
     protected $extgstates = array();
@@ -46,17 +45,17 @@ class SolicitudAvanceFormato extends Rotation
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
         parent::__construct('L', 'cm', 'Letter');
-        $this->estimacion = Estimacion::withoutGlobalScopes()->find($id);
-        $this->subcontrato = SubcontratoProveedor::withoutGlobalScopes()->find($this->estimacion->id_antecedente);
-        $this->obra = Obra::withoutGlobalScopes()->find($this->estimacion->id_obra);
+        $this->solicitud = SolicitudAutorizacionAvance::withoutGlobalScopes()->find($id);
+        $this->subcontrato = Solicitud::withoutGlobalScopes()->find($this->solicitud->id_antecedente);
+        $this->obra = Obra::withoutGlobalScopes()->find($this->solicitud->id_obra);
         $this->id = $id;
         $this->base = $base;
         $this->encabezado_pdf = utf8_decode($this->obra->facturar);
 
-        $this->conceptos_ordenados = $this->estimacion->proveedorSubcontratoAEstimar($base);
-        $this->fecha = Carbon::parse($this->estimacion->fecha)->format('d-m-Y');
-        $this->fecha_inicial = Carbon::parse($this->estimacion->cumplimiento)->format('d-m-Y');
-        $this->fecha_final = Carbon::parse($this->estimacion->vencimiento)->format('d-m-Y');
+        $this->conceptos_ordenados = $this->solicitud->subcontratoAEstimar($base);
+        $this->fecha = Carbon::parse($this->solicitud->fecha)->format('d-m-Y');
+        $this->fecha_inicial = Carbon::parse($this->solicitud->cumplimiento)->format('d-m-Y');
+        $this->fecha_final = Carbon::parse($this->solicitud->vencimiento)->format('d-m-Y');
 
         $this->tran_antecedentes = 0;
         $this->suma_contrato = 0;
@@ -70,13 +69,15 @@ class SolicitudAvanceFormato extends Rotation
 
     function logo()
     {
-        $data = $this->obra->getLogoProveedorAttribute($this->base);
-        $data = pack('H*', hex2bin($data));
-        $file = public_path('/img/logo_temp.png');
-        if (file_put_contents($file, $data) !== false) {
-            list($width, $height) = $this->resizeToFit($file);
-            $this->Image($file, 1, 1, $width-2, $height-1);
-            unlink($file);
+        $data = $this->obra->getLogoProveedorAttribute($this->base, $this->solicitud->id_obra);
+        if(!is_null($data)) {
+            $data = pack('H*', hex2bin($data));
+            $file = public_path('img\logo_temp.png');
+            if (file_put_contents($file, $data) !== false) {
+                list($width, $height) = $this->resizeToFit($file);
+                $this->Image($file, 1, 1, $width - 2, $height - 1);
+                unlink($file);
+            }
         }
     }
 
@@ -90,7 +91,7 @@ class SolicitudAvanceFormato extends Rotation
 
         $this->setXY(7.2, 3.5);
         $this->SetFont('Arial', 'B', 14);
-        $this->CellFitScale(1* $this->WidthTotal, 0.1,  utf8_decode("Solicitud de Autorización de Avance"), '', 'CB');
+        $this->CellFitScale(1* $this->WidthTotal, 0.1,  utf8_decode("Solicitud de Autorización de Avance de Estimación"), '', 'CB');
 
         $y_inicial = $this->getY() - 2;
         $x_inicial = $this->GetPageWidth() / 1.51;
@@ -102,12 +103,6 @@ class SolicitudAvanceFormato extends Rotation
         $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('Folio SAO'), 'LT, LR, LB', 0, 'L');
         $this->SetFont('Arial', 'B', "SDASDA");
         $this->Cell(0.207 * $this->WidthTotal, 0.5, utf8_decode($this->conceptos_ordenados['folio']), 'RT, RB', 1, 'R');
-
-        $this->SetFont('Arial', 'B', 12);
-        $this->SetX($x_inicial);
-        $this->Cell(0.125 * $this->WidthTotal, 0.5, utf8_decode('No. Estimación'), 'L, LR, LB', 0, 'L');
-        $this->SetFont('Arial', 'B', "");
-        $this->Cell(0.207 * $this->WidthTotal, 0.5, $this->conceptos_ordenados['folio_consecutivo_num'], 'RB', 1, 'R');
 
         $this->SetFont('Arial', 'B', 9);
         $this->SetX($x_inicial);
@@ -142,7 +137,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->SetFont('Arial', 'B', 9);
         $this->Cell(0.280 * $this->WidthTotal, 0.5, utf8_decode('No. de Contrato:'), 'LB, LR, LT', 0, 'L');
         $this->SetFont('Arial', 'B', '#' . 10);
-        $this->Cell(0.720 * $this->WidthTotal, 0.5,utf8_decode($this->conceptos_ordenados['subcontrato']['referencia']), 'RB, LT', 1, 'C');
+        $this->Cell(0.720 * $this->WidthTotal, 0.5,utf8_decode($this->conceptos_ordenados['referencia']), 'RB, LT', 1, 'C');
 
         $this->tableHeader();
 
@@ -274,7 +269,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->SetAligns(['L', 'C', 'C', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
         $this->encola = 'obra_ejecutada';
 
-        foreach ($this->estimacion->getPartidasPDFProveedor($this->base) as $p) {
+        foreach ($this->solicitud->getPartidasPDFProveedor($this->base) as $p) {
             if(!array_key_exists('para_estimar', $p)) {
                 $this->suma_contrato += $p['importe_subcontrato'];
                 $this->suma_estimacionAnterior += $p['importe_acumulado_anterior'];
@@ -426,7 +421,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->retencionesTitle();
         $this->encola = 'retenciones';
         $this->Ln();
-        $retenciones = $this->estimacion->retenciones()->get();
+        $retenciones = $this->solicitud->retenciones()->get();
        foreach ($retenciones as $retencion) {
 
            $this->Row([
@@ -487,7 +482,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->retencionesLiberadasTitle();
         $this->encola = 'liberaciones';
         $this->Ln();
-        $liberaciones = $this->estimacion->liberaciones;
+        $liberaciones = $this->solicitud->liberaciones;
 
         foreach ($liberaciones as $liberacion) {
             $this->Row([
@@ -527,9 +522,9 @@ class SolicitudAvanceFormato extends Rotation
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4,number_format(($this->subcontrato->acumulado_retencion_anteriores-$this->subcontrato->acumulado_liberacion_anteriores)-($this->estimacion->retenciones->sum('importe')-$liberaciones->sum('importe')), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,number_format(($this->subcontrato->acumulado_retencion_anteriores-$this->subcontrato->acumulado_liberacion_anteriores)-($this->solicitud->retenciones->sum('importe')-$liberaciones->sum('importe')), 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->retenciones->sum('importe')-$liberaciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->solicitud->retenciones->sum('importe')-$liberaciones->sum('importe'), 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_retencion_anteriores-$this->subcontrato->acumulado_liberacion_anteriores, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
@@ -568,7 +563,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->encola = 'penalizaciones';
         $this->Ln();
 
-        foreach ( $this->estimacion->penalizaciones as $penalizacion) {
+        foreach ( $this->solicitud->penalizaciones as $penalizacion) {
 
             $this->Row([
                 utf8_decode($penalizacion->concepto),
@@ -590,9 +585,9 @@ class SolicitudAvanceFormato extends Rotation
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_anteriores - $this->estimacion->suma_penalizaciones, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_anteriores - $this->solicitud->suma_penalizaciones, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format( $this->estimacion->suma_penalizaciones, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format( $this->solicitud->suma_penalizaciones, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
@@ -628,7 +623,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->encola = 'penalizaciones_liberadas';
         $this->Ln();
 
-        foreach ($this->estimacion->penalizacionLiberaciones as $liberacion) {
+        foreach ($this->solicitud->penalizacionLiberaciones as $liberacion) {
             $this->Row([
                 utf8_decode($liberacion->concepto),
                 '', '', '', '', '', '', '', '',
@@ -647,9 +642,9 @@ class SolicitudAvanceFormato extends Rotation
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor - $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor - $this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
@@ -666,9 +661,9 @@ class SolicitudAvanceFormato extends Rotation
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4,number_format(($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor-$this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor)-($this->estimacion->suma_penalizaciones - $this->estimacion->suma_penalizaciones_liberadas), 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4,number_format(($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor-$this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor)-($this->solicitud->suma_penalizaciones - $this->solicitud->suma_penalizaciones_liberadas), 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
-        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->estimacion->suma_penalizaciones - $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), 'BTLR', 0, 'R', 1);
+        $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->solicitud->suma_penalizaciones - $this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
         $this->Cell(0.072 * $this->WidthTotal, 0.4, number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor-$this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor, 4, ".", ","), 'BTLR', 0, 'R', 1);
         $this->Cell(0.050 * $this->WidthTotal, 0.4, '', 'BTLR', 0, 'R', 1);
@@ -701,15 +696,15 @@ class SolicitudAvanceFormato extends Rotation
         $this->SetAligns(['L', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R']);
 
         /// Calculos Resumen Amortizacion Anticpo
-        $amort_anticipo_anterior = $this->estimacion->anticipo_anterior_proveedor;
-        $amortizacion_anticipo =  $this->estimacion->monto_anticipo_aplicado;
+        $amort_anticipo_anterior = $this->solicitud->anticipo_anterior_proveedor;
+        $amortizacion_anticipo =  $this->solicitud->monto_anticipo_aplicado;
         $anticipo_actual = $amort_anticipo_anterior + $amortizacion_anticipo;
         $anticipo_saldo = $this->subcontrato->anticipo_monto - $anticipo_actual;
 
         /// Calculos Resumen Fondo Garantia
         $fondo_garantia_contrato = $this->subcontrato->importe_fondo_garantia;
-        $fondo_garantia_anterior= $this->estimacion->fondo_garantia_acumulado_anterior_proveedor;
-        $fondo_garantia= $this->estimacion->retencion_fondo_garantia_orden_pago;
+        $fondo_garantia_anterior= $this->solicitud->fondo_garantia_acumulado_anterior_proveedor;
+        $fondo_garantia= $this->solicitud->retencion_fondo_garantia_orden_pago;
         $fondo_garantia_actual = $fondo_garantia_anterior + $fondo_garantia;
         $fondo_garantia_saldo = $fondo_garantia_contrato - $fondo_garantia_actual;
 
@@ -720,32 +715,32 @@ class SolicitudAvanceFormato extends Rotation
         $subtotal_a_estimar = $this->suma_porEstimar - $anticipo_saldo;
 
         $this->Row(['Importe asociado a trabajos ejecutados', '', '', '', '',  number_format($this->suma_contrato, 4, ".", ","), '', number_format($this->suma_estimacionAnterior, 4, ".", ","), '', number_format($this->suma_estimacion, 4, ".", ","), '',number_format($this->suma_acumulada, 4, ".", ","), '', number_format($this->suma_porEstimar, 4, ".", ",")]);
-        $this->Row([utf8_decode('Amortización Anticipo'), '', '%',  number_format($this->estimacion->anticipo, 4, ".", ","), '', '', '',number_format($amort_anticipo_anterior, 4, ".", ",") , '', number_format($amortizacion_anticipo, 4, ".", ","), ' ',number_format($anticipo_actual, 4, ".", ","), ' ',number_format($anticipo_saldo, 4, ".", ",")]);
+        $this->Row([utf8_decode('Amortización Anticipo'), '', '%',  number_format($this->solicitud->anticipo, 4, ".", ","), '', '', '',number_format($amort_anticipo_anterior, 4, ".", ",") , '', number_format($amortizacion_anticipo, 4, ".", ","), ' ',number_format($anticipo_actual, 4, ".", ","), ' ',number_format($anticipo_saldo, 4, ".", ",")]);
 
-        if($this->estimacion->configuracion->ret_fon_gar_antes_iva==1)
+        if($this->solicitud->configuracion->ret_fon_gar_antes_iva==1)
         {
             $subtotal_contrato -= $fondo_garantia_contrato;
             $subtotal_acum_estimado_anterior -= $fondo_garantia_anterior;
             $subtotal_estimacion -= $fondo_garantia;
             $subtotal_acumulado -=  $fondo_garantia_actual;
             $subtotal_a_estimar -= $fondo_garantia_saldo;
-            $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+            $this->Row([utf8_decode('Fondo de Garantía'), ' ', '%', $this->solicitud->subcontratoEstimacion ? $this->solicitud->subcontratoEstimacion->PorcentajeFondoGarantia : '', ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
         }
 
-        if($this->estimacion->configuracion->retenciones_antes_iva==1)
+        if($this->solicitud->configuracion->retenciones_antes_iva==1)
         {
-            $subtotal_acum_estimado_anterior -= $this->estimacion->acumulado_retencion_anteriores_proveedor;
-            $subtotal_acum_estimado_anterior += $this->estimacion->acumulado_liberacion_anteriores_proveedor;
-            $subtotal_estimacion -= $this->estimacion->suma_retenciones;
-            $subtotal_estimacion += $this->estimacion->suma_liberaciones;
-            $subtotal_acumulado -=  ($this->estimacion->acumulado_retencion_anteriores_proveedor + $this->estimacion->suma_retenciones);
-            $subtotal_acumulado +=  ($this->estimacion->acumulado_liberacion_anteriores_proveedor + $this->estimacion->suma_liberaciones);
+            $subtotal_acum_estimado_anterior -= $this->solicitud->acumulado_retencion_anteriores_proveedor;
+            $subtotal_acum_estimado_anterior += $this->solicitud->acumulado_liberacion_anteriores_proveedor;
+            $subtotal_estimacion -= $this->solicitud->suma_retenciones;
+            $subtotal_estimacion += $this->solicitud->suma_liberaciones;
+            $subtotal_acumulado -=  ($this->solicitud->acumulado_retencion_anteriores_proveedor + $this->solicitud->suma_retenciones);
+            $subtotal_acumulado +=  ($this->solicitud->acumulado_liberacion_anteriores_proveedor + $this->solicitud->suma_liberaciones);
 
-            $this->Row(['Total Retenciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_retencion_anteriores_proveedor, 4, ".", ","), '', number_format($this->estimacion->suma_retenciones, 4, ".", ","), '',  number_format(($this->estimacion->acumulado_retencion_anteriores_proveedor + $this->estimacion->suma_retenciones), 4, ".", ","), '', '']);
-            $this->Row(['Total Retenciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_liberacion_anteriores_proveedor, 4, ".", ","), '', number_format( $this->estimacion->suma_liberaciones, 4, ".", ","), '',  number_format(($this->estimacion->acumulado_liberacion_anteriores_proveedor + $this->estimacion->suma_liberaciones), 4, ".", ","), '', '']);
+            $this->Row(['Total Retenciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->solicitud->acumulado_retencion_anteriores_proveedor, 4, ".", ","), '', number_format($this->solicitud->suma_retenciones, 4, ".", ","), '',  number_format(($this->solicitud->acumulado_retencion_anteriores_proveedor + $this->solicitud->suma_retenciones), 4, ".", ","), '', '']);
+            $this->Row(['Total Retenciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->solicitud->acumulado_liberacion_anteriores_proveedor, 4, ".", ","), '', number_format( $this->solicitud->suma_liberaciones, 4, ".", ","), '',  number_format(($this->solicitud->acumulado_liberacion_anteriores_proveedor + $this->solicitud->suma_liberaciones), 4, ".", ","), '', '']);
         }
 
-        if($this->estimacion->configuracion->desc_pres_mat_antes_iva == 1)
+        if($this->solicitud->configuracion->desc_pres_mat_antes_iva == 1)
         {
             $subtotal_contrato -= $this->deductivas['importe_total_original'];
             $subtotal_acum_estimado_anterior -= $this->deductivas['importe_descuento_anterior'];
@@ -755,19 +750,19 @@ class SolicitudAvanceFormato extends Rotation
             $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
         }
 
-        if($this->estimacion->configuracion->penalizacion_antes_iva == 1)
+        if($this->solicitud->configuracion->penalizacion_antes_iva == 1)
         {
-            $subtotal_acum_estimado_anterior -= $this->estimacion->acumulado_penalizaciones_anteriores_proveedor;
-            $subtotal_acum_estimado_anterior += $this->estimacion->acumulado_penalizaciones_liberada_anteriores_proveedor;
-            $subtotal_estimacion -= $this->estimacion->suma_penalizaciones;
-            $subtotal_estimacion += $this->estimacion->suma_penalizaciones_liberadas;
-            $subtotal_acumulado -=  ($this->estimacion->acumulado_penalizaciones_anteriores_proveedor + $this->estimacion->suma_penalizaciones);
-            $subtotal_acumulado +=  ($this->estimacion->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->estimacion->suma_penalizaciones_liberadas);
+            $subtotal_acum_estimado_anterior -= $this->solicitud->acumulado_penalizaciones_anteriores_proveedor;
+            $subtotal_acum_estimado_anterior += $this->solicitud->acumulado_penalizaciones_liberada_anteriores_proveedor;
+            $subtotal_estimacion -= $this->solicitud->suma_penalizaciones;
+            $subtotal_estimacion += $this->solicitud->suma_penalizaciones_liberadas;
+            $subtotal_acumulado -=  ($this->solicitud->acumulado_penalizaciones_anteriores_proveedor + $this->solicitud->suma_penalizaciones);
+            $subtotal_acumulado +=  ($this->solicitud->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->solicitud->suma_penalizaciones_liberadas);
 
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones, 4, ".", ","), '',  number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor + $this->estimacion->suma_penalizaciones, 4, ".", ","), '', '']);
+            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor, 4, ".", ","), '', number_format($this->solicitud->suma_penalizaciones, 4, ".", ","), '',  number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor + $this->solicitud->suma_penalizaciones, 4, ".", ","), '', '']);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '', '']);
+            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor, 4, ".", ","), '', number_format($this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), '', '']);
         }
 
         $total_contrato = $subtotal_contrato;
@@ -779,8 +774,8 @@ class SolicitudAvanceFormato extends Rotation
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
         $this->Row(['Sub-total valor de los trabajos', ' ', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior, 4, ".", ","), ' ',  number_format($subtotal_estimacion, 4, ".", ","), ' ', number_format($subtotal_acumulado, 4, ".", ","), ' ', number_format($subtotal_a_estimar, 4, ".", ",")]);
         $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-        if($this->estimacion->iva_orden_pago == 0){
-            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
+        if($this->solicitud->iva_orden_pago == 0){
+            $this->Row(['IVA', ' ', '%', number_format($this->solicitud->impuesto!= 0 ? $this->solicitud->porcentaje_iva : 0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
         }else {
             $total_contrato += $subtotal_contrato * 0.16;
             $total_acum_estimado_anterior += $subtotal_acum_estimado_anterior * 0.16;
@@ -788,19 +783,19 @@ class SolicitudAvanceFormato extends Rotation
             $total_acumulado += $subtotal_acumulado * 0.16;
             $total_a_estimar += $subtotal_a_estimar * 0.16;
 
-            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
+            $this->Row(['IVA', ' ', '%', number_format($this->solicitud->impuesto!= 0 ? $this->solicitud->porcentaje_iva : 0, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
         }
 
-        $total_acum_estimado_anterior -= $this->estimacion->iva_retenido_calculado_anterior_proveedor;
-        $total_estimacion -= $this->estimacion->iva_retenido_calculado;
-        $total_acumulado -= ($this->estimacion->iva_retenido_calculado_anterior_proveedor + $this->estimacion->iva_retenido_calculado);
+        $total_acum_estimado_anterior -= $this->solicitud->iva_retenido_calculado_anterior_proveedor;
+        $total_estimacion -= $this->solicitud->iva_retenido_calculado;
+        $total_acumulado -= ($this->solicitud->iva_retenido_calculado_anterior_proveedor + $this->solicitud->iva_retenido_calculado);
 
-        $this->Row([utf8_decode('Retención IVA '), ' ', '', '', ' ', '', ' ', number_format($this->estimacion->iva_retenido_calculado_anterior_proveedor, 4, ".", ","),'', number_format($this->estimacion->iva_retenido_calculado, 4, ".", ","), ' ', number_format(($this->estimacion->iva_retenido_calculado_anterior_proveedor + $this->estimacion->iva_retenido_calculado), 4, ".", ","), ' ', '']);
+        $this->Row([utf8_decode('Retención IVA '), ' ', '', '', ' ', '', ' ', number_format($this->solicitud->iva_retenido_calculado_anterior_proveedor, 4, ".", ","),'', number_format($this->solicitud->iva_retenido_calculado, 4, ".", ","), ' ', number_format(($this->solicitud->iva_retenido_calculado_anterior_proveedor + $this->solicitud->iva_retenido_calculado), 4, ".", ","), ' ', '']);
 
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
         $this->Row(['Total','', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($total_contrato, 4, ".", ","), ' ', number_format($total_acum_estimado_anterior, 4, ".", ","), ' ', number_format($total_estimacion, 4, ".", ","), ' ', number_format($total_acumulado, 4, ".", ","), ' ', number_format($total_a_estimar, 4, ".", ",")]);
 
-        if($this->estimacion->configuracion->ret_fon_gar_antes_iva==0)
+        if($this->solicitud->configuracion->ret_fon_gar_antes_iva==0)
         {
             $total_contrato -= $fondo_garantia_contrato;
             $total_acum_estimado_anterior -= $fondo_garantia_anterior;
@@ -809,10 +804,10 @@ class SolicitudAvanceFormato extends Rotation
             $total_a_estimar -= $fondo_garantia_saldo;
 
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row([ $this->estimacion->configuracion->ret_fon_gar_con_iva == 1 ? utf8_decode('Fondo de Garantía + IVA') : utf8_decode('Fondo de Garantía') , ' ', '%', $this->estimacion->subcontratoEstimacion->PorcentajeFondoGarantia, ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
+            $this->Row([ $this->solicitud->configuracion->ret_fon_gar_con_iva == 1 ? utf8_decode('Fondo de Garantía + IVA') : utf8_decode('Fondo de Garantía') , ' ', '%', $this->solicitud->subcontratoEstimacion ? $this->solicitud->subcontratoEstimacion->PorcentajeFondoGarantia : '', ' ', number_format($fondo_garantia_contrato, 4, ".", ",") , ' ', number_format($fondo_garantia_anterior, 4, ".", ",") , ' ', number_format($fondo_garantia, 4, ".", ",") , ' ', number_format($fondo_garantia_actual, 4, ".", ",") , ' ', number_format($fondo_garantia_saldo, 4, ".", ",") ]);
         }
 
-        if($this->estimacion->configuracion->desc_pres_mat_antes_iva==0)
+        if($this->solicitud->configuracion->desc_pres_mat_antes_iva==0)
         {
             $total_contrato -= $this->deductivas['importe_total_original'];
             $total_acum_estimado_anterior -= $this->deductivas['importe_descuento_anterior'];
@@ -824,32 +819,32 @@ class SolicitudAvanceFormato extends Rotation
             $this->Row(['Deductivas y Descuentos', '', '', '', '', number_format($this->deductivas['importe_total_original'], 4, ".", ","), '', number_format($this->deductivas['importe_descuento_anterior'], 4, ".", ","),'', number_format($this->deductivas['importe_descuento'], 4, ".", ","), '', number_format($this->deductivas['$importe_acumulado'], 4, ".", ","), '', number_format($this->deductivas['importe_porEstimar'], 4, ".", ",")]);
         }
 
-        if($this->estimacion->configuracion->retenciones_antes_iva==0) {
+        if($this->solicitud->configuracion->retenciones_antes_iva==0) {
 
-            $total_acum_estimado_anterior -= $this->estimacion->acumulado_retencion_anteriores;
-            $total_acum_estimado_anterior += $this->estimacion->acumulado_liberacion_anteriores;
-            $total_estimacion -= $this->estimacion->suma_retenciones;
-            $total_estimacion += $this->estimacion->suma_liberaciones;
-            $total_acumulado -= ($this->estimacion->acumulado_retencion_anteriores + $this->estimacion->suma_retenciones);
-            $total_acumulado += ($this->estimacion->acumulado_liberacion_anteriores + $this->estimacion->suma_liberaciones);
+            $total_acum_estimado_anterior -= $this->solicitud->acumulado_retencion_anteriores;
+            $total_acum_estimado_anterior += $this->solicitud->acumulado_liberacion_anteriores;
+            $total_estimacion -= $this->solicitud->suma_retenciones;
+            $total_estimacion += $this->solicitud->suma_liberaciones;
+            $total_acumulado -= ($this->solicitud->acumulado_retencion_anteriores + $this->solicitud->suma_retenciones);
+            $total_acumulado += ($this->solicitud->acumulado_liberacion_anteriores + $this->solicitud->suma_liberaciones);
 
-            $this->Row(['Total Retenciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_retencion_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_retenciones, 4, ".", ","), '', number_format(($this->estimacion->acumulado_retencion_anteriores + $this->estimacion->suma_retenciones), 4, ".", ","), '', '']);
-            $this->Row(['Total Retenciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->estimacion->acumulado_liberacion_anteriores, 4, ".", ","), '', number_format($this->estimacion->suma_liberaciones, 4, ".", ","), '', number_format(($this->estimacion->acumulado_liberacion_anteriores + $this->estimacion->suma_liberaciones), 4, ".", ","), '', '']);
+            $this->Row(['Total Retenciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->solicitud->acumulado_retencion_anteriores, 4, ".", ","), '', number_format($this->solicitud->suma_retenciones, 4, ".", ","), '', number_format(($this->solicitud->acumulado_retencion_anteriores + $this->solicitud->suma_retenciones), 4, ".", ","), '', '']);
+            $this->Row(['Total Retenciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->solicitud->acumulado_liberacion_anteriores, 4, ".", ","), '', number_format($this->solicitud->suma_liberaciones, 4, ".", ","), '', number_format(($this->solicitud->acumulado_liberacion_anteriores + $this->solicitud->suma_liberaciones), 4, ".", ","), '', '']);
         }
 
-            if($this->estimacion->configuracion->penalizacion_antes_iva == 0)
+            if($this->solicitud->configuracion->penalizacion_antes_iva == 0)
         {
             $total_acum_estimado_anterior -= $this->subcontrato->acumulado_penalizaciones_anteriores_proveedor;
             $total_acum_estimado_anterior += $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor;
-            $total_estimacion -= $this->estimacion->suma_penalizaciones;
-            $total_estimacion += $this->estimacion->suma_penalizaciones_liberadas;
-            $total_acumulado -= $this->subcontrato->acumulado_penalizaciones_anteriores_proveedor + $this->estimacion->suma_penalizaciones;
-            $total_acumulado += $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->estimacion->suma_penalizaciones_liberadas;
+            $total_estimacion -= $this->solicitud->suma_penalizaciones;
+            $total_estimacion += $this->solicitud->suma_penalizaciones_liberadas;
+            $total_acumulado -= $this->subcontrato->acumulado_penalizaciones_anteriores_proveedor + $this->solicitud->suma_penalizaciones;
+            $total_acumulado += $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->solicitud->suma_penalizaciones_liberadas;
 
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones, 4, ".", ","), '',  number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor + $this->estimacion->suma_penalizaciones, 4, ".", ","), '', '']);
+            $this->Row(['Total Penalizaciones', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor, 4, ".", ","), '', number_format($this->solicitud->suma_penalizaciones, 4, ".", ","), '',  number_format($this->subcontrato->acumulado_penalizaciones_anteriores_proveedor + $this->solicitud->suma_penalizaciones, 4, ".", ","), '', '']);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
-            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor, 4, ".", ","), '', number_format($this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->estimacion->suma_penalizaciones_liberadas, 4, ".", ","), '', '']);
+            $this->Row(['Total Penalizaciones Liberadas', '', '', '', '', number_format(0, 4, ".", ","), '', number_format($this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor, 4, ".", ","), '', number_format($this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), '',  number_format( $this->subcontrato->acumulado_penalizaciones_liberada_anteriores_proveedor + $this->solicitud->suma_penalizaciones_liberadas, 4, ".", ","), '', '']);
         }
 
         $total_contrato += $this->subcontrato->anticipo_monto;
@@ -1091,7 +1086,7 @@ class SolicitudAvanceFormato extends Rotation
             $this->Cell(0.73);
             $this->Cell(($this->GetPageWidth() - 5) / 5, 0.4, utf8_decode('ADMINISTRACIÓN'), 'TRLB', 0, 'C', 1);
         }
-        else if (Context::getDatabase() == "SAO1814_PRESA_LIBERTAD" && Context::getIdObra() == 6 && $this->estimacion->origenAcarreos) {
+        else if (Context::getDatabase() == "SAO1814_PRESA_LIBERTAD" && Context::getIdObra() == 6 && $this->solicitud->origenAcarreos) {
             /*Firmas Acarreos Presa Libertad*/
             $this->SetY(-3.5);
             $this->SetTextColor('0', '0', '0');
@@ -1434,7 +1429,7 @@ class SolicitudAvanceFormato extends Rotation
 
     public function estatus()
     {
-        if ($this->estimacion->estado === '0') {
+        if ($this->solicitud->estado === '0') {
             $this->SetFont('Arial', 'B', 91);
             $this->SetTextColor(155, 155, 155);
             $this->SetAlpha(0.30);
@@ -1452,7 +1447,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->SetAutoPageBreak(true,3.75);
 
         $this->partidas();
-        $this->partidaDeductiva($this->estimacion->descuentosPartidas());
+        $this->partidaDeductiva($this->solicitud->descuentosPartidas());
         $this->partidaRetenciones();
         $this->partidaRetencionesLiberadas();
         $this->partidaPenalizaciones();

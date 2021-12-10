@@ -173,10 +173,4 @@ class EstimacionService
     {
         return $this->repository->update($data, $id);
     }
-
-
-    public function pdfSolicitudAvanceFormato($id, $data){
-        $pdf = new SolicitudAvanceFormato($id, $data['db']);
-        return $pdf;
-    }
 }

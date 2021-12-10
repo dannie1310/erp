@@ -117,9 +117,4 @@ class EstimacionController extends Controller
     {
         return $this->service->ordenado($id);
     }
-
-
-    public function pdfSolicitudAvanceFormato(Request $request, $id){
-        return $this->service->pdfSolicitudAvanceFormato($id, $request->all())->create();
-    }
 }
