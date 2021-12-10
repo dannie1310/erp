@@ -12,7 +12,7 @@
                             </label>
                             <label class="btn btn-primary">
                                 <input type="checkbox" autocomplete="off"
-                                       v-model="mala_experiencia"> Mala Experiencia
+                                       v-model="mala_experiencia"> Mala Experiencia Operativa
                             </label>
                             <label class="btn btn-primary">
                                 <input type="checkbox" autocomplete="off"
@@ -217,19 +217,12 @@ label:not(.form-check-label):not(.custom-file-label) {
 }
 
 .btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
-    /*color: #ffffff;
-    background-color: #0062cc;
-    border-color: #005cbf;*/
     color: #ffffff;
     background-color: #007bff;
     border-color: #005cbf;
 }
 
 .btn-primary {
-    /*color: #ffffff;
-    background-color: #007bff;
-    border-color: #007bff;
-    box-shadow: none;*/
     color: #007bff;
     background-color: #ffffff;
     border-color: #dee2e6;

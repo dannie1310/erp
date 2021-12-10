@@ -66,7 +66,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="btn-group btn-group-toggle">
-                                    <label class="btn btn-outline-secondary" :class="empresa_motivo_boletinada === key ? 'active': ''" v-for="(tipo_boletinada, key) in tipos_boletinada" :key="key">
+                                    <label class="btn btn-outline-primary" :class="empresa_motivo_boletinada === key ? 'active': ''" v-for="(tipo_boletinada, key) in tipos_boletinada" :key="key">
                                         <input type="radio"
                                                class="btn-group-toggle"
                                                name="tipo_boletinada"
