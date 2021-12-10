@@ -26,8 +26,8 @@ export default {
                 { title: '#', field: 'index', thClass: 'index_corto', sortable: false },
                 { title: 'RFC', field: 'rfc',sortable: true,  thClass:'th_c100', thComp: require('../globals/th-Filter').default},
                 { title: 'Razón Social', field: 'razon_social', thClass:'th_c400', sortable: true, thComp: require('../globals/th-Filter').default},
-                { title: 'Tipo', tdClass:'center', field: 'tipo', sortable: true, thClass:'th_c100', thComp: require('../globals/th-Filter').default},
-                { title: 'Motivo', field: 'motivo',  sortable: true},
+                { title: 'Motivo', tdClass:'center', field: 'motivo', sortable: true, thClass:'th_c100', thComp: require('../globals/th-Filter').default},
+                { title: 'Observaciones', field: 'observaciones',  sortable: true},
             ],
             data: [],
             total: 0,
@@ -75,8 +75,8 @@ export default {
                     index: (i + 1) + self.query.offset,
                     rfc: empresa.rfc,
                     razon_social: empresa.razon_social,
-                    tipo: empresa.tipo,
                     motivo: empresa.motivo,
+                    observaciones: empresa.observaciones,
                 }));
             },
             deep: true
