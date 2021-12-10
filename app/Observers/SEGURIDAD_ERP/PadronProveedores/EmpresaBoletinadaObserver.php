@@ -21,6 +21,38 @@ class EmpresaBoletinadaObserver
     /**
      * @param EmpresaBoletinada $empresa
      */
+    public function updating(EmpresaBoletinada $empresa)
+    {
+        $log = EmpresaBoletinadaLog::create(
+            [
+                'id_empresa_boletinada' => $empresa->id,
+                'usuario_edito' => auth()->id(),
+                'fecha_hora_edicion' => date('Y-m-d H:i:s'),
+            ]
+        );
+
+        if($empresa->getOriginal('id_tipo_boletinadas') != $empresa->id_tipo_boletinadas)
+        {
+            $log->id_tipo_boletinadas = $empresa->getOriginal('id_tipo_boletinadas');
+        }
+        if($empresa->getOriginal('rfc') != $empresa->rfc)
+        {
+            $log->rfc = $empresa->getOriginal('rfc');
+        }
+        if($empresa->getOriginal('razon_social') != $empresa->razon_social)
+        {
+            $log->rfc = $empresa->getOriginal('razon_social');
+        }
+        if($empresa->getOriginal('observaciones') != $empresa->observaciones)
+        {
+            $log->observaciones = $empresa->getOriginal('observaciones');
+        }
+        $log->save();
+    }
+
+    /**
+     * @param EmpresaBoletinada $empresa
+     */
     public function deleting(EmpresaBoletinada $empresa)
     {
 

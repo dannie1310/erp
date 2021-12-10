@@ -23,8 +23,8 @@ class EmpresaBoletinadaLog extends Model
         'observaciones',
         'usuario_registro',
         'fecha_hora_registro',
-        'usuario_actualizo',
-        'fecha_hora_actualizacion',
+        'usuario_edito',
+        'fecha_hora_edicion',
         'usuario_elimino',
         'fecha_hora_eliminacion',
         'motivo_eliminacion'
