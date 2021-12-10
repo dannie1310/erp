@@ -88,7 +88,7 @@
                 var data = {};
                 data['motivo'] = this.motivo;
                 data['base'] = this.base;
-                return this.$store.dispatch('contratos/estimacion/eliminarProveedor', {
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/eliminar', {
                     id: this.id,
                     data: data
                 }).then(data => {

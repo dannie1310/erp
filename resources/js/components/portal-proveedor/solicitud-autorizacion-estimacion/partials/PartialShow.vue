@@ -152,7 +152,7 @@
         },
         methods: {
             find() {
-                return this.$store.dispatch('contratos/estimacion/ordenarConceptosProveedor', {
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/ordenarConceptos', {
                     id: this.id,
                     base: this.base
                 }).then(data => {

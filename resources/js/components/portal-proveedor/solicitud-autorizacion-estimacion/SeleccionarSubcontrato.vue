@@ -58,7 +58,7 @@
 
 <script>
     import {ModelListSelect} from 'vue-search-select';
-    import DatosSubcontrato from "../estimacion/partials/DatosSubcontrato";
+    import DatosSubcontrato from  "./partials/DatosSubcontrato";
     export default {
         name: "estimacion-proveedor-seleccionar-subcontrato",
         components: {

@@ -173,33 +173,4 @@ class EstimacionService
     {
         return $this->repository->update($data, $id);
     }
-
-    public function indexProveedor()
-    {
-        return $this->repository->estimacionesProveedor();
-    }
-
-    public function storeProveedor($data)
-    {
-        try {
-            return $this->repository->createProveedor($data);
-        } catch (\Exception $e) {
-            throw $e;
-        }
-    }
-
-    public function proveedorConceptos($id, $base)
-    {
-        return $this->repository->subcontratoAEstimar($id, $base);
-    }
-
-    public function updateProveedor(array $data, $id)
-    {
-        return $this->repository->updateProveedor($data, $id);
-    }
-
-    public function deleteProveedor($data, $id)
-    {
-        return $this->repository->eliminar($id, $data['data']);
-    }
 }

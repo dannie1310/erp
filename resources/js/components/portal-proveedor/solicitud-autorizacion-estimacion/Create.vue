@@ -342,7 +342,7 @@
 			store() {
         		var conceptos = this.obtenerConceptos();
         		if(conceptos.length > 0) {
-					return this.$store.dispatch('contratos/estimacion/storeProveedor', {
+					return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/store', {
 						id_antecedente: this.id,
                         base: this.base,
                         fecha: moment(this.fecha).format('YYYY-MM-DD'),

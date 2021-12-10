@@ -482,6 +482,20 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * PORTAL PROVEEDORES
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'portal-proveedor'], function ($api) {
+        $api->group(['prefix' => 'solicitud-autorizacion-avance'], function ($api) {
+            $api->get('index', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@index');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@store');
+            $api->post('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@proveedorConceptos')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@update')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/eliminar', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@destroy')->where(['id' => '[0-9]+']);
+        });
+    });
+
+
+    /**
      * CONFIGURACION
      */
     $api->group(['middleware' => 'api', 'prefix' => 'configuracion'], function ($api) {

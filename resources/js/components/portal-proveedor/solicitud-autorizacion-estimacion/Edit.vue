@@ -21,7 +21,7 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         <div class="form-group error-content">
                                             <label class="col-form-label">Inicio de Estimación</label>
                                             <datepicker v-model = "estimacion.fecha_cumplimiento"
@@ -36,7 +36,7 @@
                                             <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
+                                    <div class="col-md-2">
                                         <div class="form-group error-content">
                                             <label class="col-form-label">Fin de Estimación</label>
                                             <datepicker v-model = "estimacion.fecha_vencimiento"
@@ -252,7 +252,7 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             find() {
-                return this.$store.dispatch('contratos/estimacion/ordenarConceptosProveedor', {
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/ordenarConceptos', {
                     id: this.id,
                     base: this.base
                 }).then(data => {
@@ -290,7 +290,7 @@
             },
             update() {
                 this.estimacion.base =  this.base;
-                return this.$store.dispatch('contratos/estimacion/updateProveedor', {
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/update', {
                     id: this.id,
                     data: this.estimacion
                 })

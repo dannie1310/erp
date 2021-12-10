@@ -4408,15 +4408,15 @@ export const routes = [
             },
             {
                 path: 'estimacion',
-                component: require('./components/portal-proveedor/estimacion/Layout').default,
+                component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Layout').default,
                 children: [
                     {
                         path: '/',
                         name: 'estimacion-proveedor',
-                        component: require('./components/portal-proveedor/estimacion/Index').default,
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Index').default,
                         meta: {
-                            title: 'Lista de Estimaciones',
-                            breadcrumb: {parent: 'proveedor', name: 'ESTIMACIONES'},
+                            title: 'Lista de Solicitud de Autorización de Avance',
+                            breadcrumb: {parent: 'proveedor', name: 'SOLICITUD DE AUTORIZACIÓN DE AVANCE DE ESTIMACIONES'},
                             middleware: [auth, permission],
                             permission: 'consultar_estimacion_proveedor',
                             general: true
@@ -4425,7 +4425,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'estimacion-proveedor-seleccionar-subcontrato',
-                        component: require('./components/portal-proveedor/estimacion/SeleccionarSubcontrato').default,
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/SeleccionarSubcontrato').default,
                         meta: {
                             title: 'Seleccionar Subcontrato',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'SELECCIONAR SUBCONTRATO'},
@@ -4437,10 +4437,10 @@ export const routes = [
                     {
                         path: ':id/create',
                         name: 'estimacion-proveedor-create',
-                        component: require('./components/portal-proveedor/estimacion/Create').default,
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Create').default,
                         props: true,
                         meta: {
-                            title: 'Registrar Estimación',
+                            title: 'Registrar Solicitud Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},
                             middleware: [auth, permission],
                             permission: ['registrar_estimacion_proveedor'],
@@ -4450,7 +4450,7 @@ export const routes = [
                     {
                         path: ':id',
                         name: 'estimacion-proveedor-show',
-                        component: require('./components/portal-proveedor/estimacion/Show').default,
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Show').default,
                         props: true,
                         meta: {
                             title: 'Consultar Estimación',
@@ -4464,7 +4464,7 @@ export const routes = [
                         path: ':id/editar',
                         name: 'estimacion-proveedor-edit',
                         props: true,
-                        component: require('./components/portal-proveedor/estimacion/Edit').default,
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Edit').default,
                         meta: {
                             title: 'Editar Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'EDITAR'},
@@ -4477,7 +4477,7 @@ export const routes = [
                         path: ':id/delete',
                         name: 'estimacion-proveedor-delete',
                         props: true,
-                        component: require('./components/portal-proveedor/estimacion/Delete').default,
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Delete').default,
                         meta: {
                             title: 'Eliminar Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'ELIMINAR'},

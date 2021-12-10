@@ -31,35 +31,4 @@ class EstimacionRepository extends Repository implements RepositoryInterface
     {
         return $this->show($id)->editar($data);
     }
-
-    public function estimacionesProveedor()
-    {
-        return $this->model->estimacionesProveedor();
-    }
-
-    public function createProveedor(array $datos)
-    {
-        return $this->model->registrarProveedor($datos);
-    }
-
-    public function subcontratoAEstimar($id, $base)
-    {
-        DB::purge('cadeco');
-        Config::set('database.connections.cadeco.database', $base);
-        return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->subcontratoAEstimarProveedor($id, $base);
-    }
-
-    public function updateProveedor($data, $id)
-    {
-        DB::purge('cadeco');
-        Config::set('database.connections.cadeco.database', $data['base']);
-        return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->editarProveedor($data);
-    }
-
-    public function eliminar($id, $data)
-    {
-        DB::purge('cadeco');
-        Config::set('database.connections.cadeco.database', $data['base']);
-        return $this->model->where('id_transaccion', $id)->withoutGlobalScopes()->first()->eliminarProveedor($data['base'],$data['motivo']);
-    }
 }

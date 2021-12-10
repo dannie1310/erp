@@ -271,16 +271,6 @@ class Estimacion extends Transaccion
         return $est ? $est->numero_folio + 1 : 1;
     }
 
-    /**
-     * Estimaciones desde el portal de proveedores
-     * @return int
-     */
-    public static function calcularFolioProveedor($id_obra)
-    {
-        $est = Transaccion::withoutGlobalScopes()->where('tipo_transaccion', '=', 52)->where('id_obra','=', $id_obra)->orderBy('numero_folio', 'DESC')->first();
-        return $est ? $est->numero_folio + 1 : 1;
-    }
-
     private function generaFolioConsecutivo()
     {
         if(!is_null(Context::getIdObra())) {

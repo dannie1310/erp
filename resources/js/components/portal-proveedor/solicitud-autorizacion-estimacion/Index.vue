@@ -61,12 +61,12 @@
         methods: {
             paginate() {
                 this.cargando = true;
-                return this.$store.dispatch('contratos/estimacion/indexProveedor', {
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/index', {
                     params: this.query
                 })
                     .then(data => {
-                        this.$store.commit('contratos/estimacion/SET_ESTIMACIONES', data.data);
-                        this.$store.commit('contratos/estimacion/SET_META', data.meta);
+                        this.$store.commit('portalProveedor/solicitud-autorizacion-avance/SET_ESTIMACIONES', data.data);
+                        this.$store.commit('portalProveedor/solicitud-autorizacion-avance/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -101,10 +101,10 @@
         },
         computed: {
             estimaciones(){
-                return this.$store.getters['contratos/estimacion/estimaciones'];
+                return this.$store.getters['portalProveedor/solicitud-autorizacion-avance/estimaciones'];
             },
             meta(){
-                return this.$store.getters['contratos/estimacion/meta'];
+                return this.$store.getters['portalProveedor/solicitud-autorizacion-avance/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}

@@ -23,14 +23,12 @@ class EstimacionObserver extends TransaccionObserver
     public function creating(Transaccion $estimacion)
     {
         parent::creating($estimacion);
-        if(!is_null(Context::getIdObra())) {
-            $subcontrato = Subcontrato::find($estimacion->id_antecedente);
-            $estimacion->id_empresa = $subcontrato->id_empresa;
-            $estimacion->id_moneda = $subcontrato->id_moneda;
-            $estimacion->retencion = $subcontrato->retencion;
-            $estimacion->anticipo = $subcontrato->anticipo;
-            $estimacion->numero_folio = $estimacion->calcularFolio();
-        }
+        $subcontrato = Subcontrato::find($estimacion->id_antecedente);
+        $estimacion->id_empresa = $subcontrato->id_empresa;
+        $estimacion->id_moneda = $subcontrato->id_moneda;
+        $estimacion->retencion = $subcontrato->retencion;
+        $estimacion->anticipo = $subcontrato->anticipo;
+        $estimacion->numero_folio = $estimacion->calcularFolio();
         $estimacion->tipo_transaccion = 52;
         $estimacion->saldo = $estimacion->monto;
         $estimacion->fecha = $estimacion->fecha;
@@ -38,19 +36,10 @@ class EstimacionObserver extends TransaccionObserver
 
     public function created(Estimacion $estimacion)
     {
-        if(!is_null(Context::getIdObra())) {
-            if ($estimacion->retencion > 0) {
-                $fondo_garantia = $estimacion->subcontrato->fondo_garantia;
-                if (is_null($fondo_garantia)) {
-                    $estimacion->subcontrato->generaFondoGarantia();
-                }
-            }
-        }else{
-            if ($estimacion->retencion > 0) {
-                $fondo_garantia = $estimacion->fondoGarantiaSinContexto;
-                if (is_null($fondo_garantia)) {
-                    $estimacion->generaFondoGarantia();
-                }
+        if ($estimacion->retencion > 0) {
+            $fondo_garantia = $estimacion->fondoGarantiaSinContexto;
+            if (is_null($fondo_garantia)) {
+                $estimacion->generaFondoGarantia();
             }
         }
         $estimacion->creaSubcontratoEstimacion();
@@ -82,10 +71,6 @@ class EstimacionObserver extends TransaccionObserver
     public function deleted(Estimacion $estimacion)
     {
         $estimacion->subcontratoEstimacion()->delete();
-        if(!is_null(Context::getIdObra())) {
-            $estimacion->subcontrato->cambioEstadoEliminarEstimacion();
-        }else{
-            $estimacion->cambioEstadoEliminarEstimacion();
-        }
+        $estimacion->subcontrato->cambioEstadoEliminarEstimacion();
     }
 }
