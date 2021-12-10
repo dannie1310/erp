@@ -175,6 +175,53 @@ class ItemSubcontrato extends Item
         );
     }
 
+    /**
+     * Función para obtener cifras utilizadas en estimaciones (creación, edición, consulta)
+     * @return array
+     */
+    public function proveedorPartidasEstimadas($id_estimacion, $id_contrato, $contrato, $id_obra)
+    {
+       $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)
+           ->where('id_antecedente', $this->id_transaccion)
+           ->where('item_antecedente', $this->id_concepto)->first();
+
+        $precio_unitario = $estimacion ? $estimacion->precio_unitario : $this->precio_unitario;
+        $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
+        $cantidad_estimado_anterior = $estimacion ?  $cantidad_estimada_total - $estimacion->cantidad : $cantidad_estimada_total;
+        $porcentaje_avance = $this->cantidad > 0? $cantidad_estimado_anterior / $this->cantidad:0;
+        $porcentaje_estimado = 0;
+        $estimacion && $this->cantidad > 0 ? $porcentaje_estimado = $estimacion->cantidad  / $this->cantidad:'';
+        $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
+        
+        return array(
+            'id' => $this->id_item,
+            'id_concepto' => $this->id_concepto,
+            'unidad' => $contrato->unidad,
+            'clave' => $contrato->clave,
+            'descripcion_concepto' => $contrato->descripcion,
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
+            'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
+            'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
+            'id_item_estimacion' =>  $estimacion ? $estimacion->id_item : 0,
+            'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
+            'porcentaje_avance' => (float) number_format((($porcentaje_avance) * 100), 2, '.', ''),
+            'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
+            'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
+            'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
+            'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
+            'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
+            'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
+            'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
+            'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
+            'destino_path' => $destino->concepto_sgv->path_corta_proveedor,
+            'destino_path_larga' => $destino->concepto_sgv->getPathSgv($id_obra),
+            'id_destino' => $destino->id_concepto,
+            'cantidad_addendum' => "",
+            'precio_modificado' => 0,
+        );
+    }
+
     public function partidasFormatoEstimacion($id_estimacion, $contrato)
     {
         $estimacion = ItemEstimacion::where('id_transaccion', '=', $id_estimacion)

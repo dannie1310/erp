@@ -18,6 +18,8 @@ use App\Models\SEGURIDAD_ERP\Compras\Configuracion;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Config;
 
 class Obra extends Model
 {
@@ -99,6 +101,22 @@ class Obra extends Model
         if (isset($this->configuracion->logotipo_original)) {
             return bin2hex($this->configuracion->logotipo_original);
         } else {
+            $file = public_path('img/ghi-logo.png');
+            $data = unpack("H*", file_get_contents($file));
+            return bin2hex($data[1]);
+        }
+    }
+
+    public function getLogoProveedorAttribute($base)
+    {
+        $proyecto = Proyecto::query()->where('base_datos', '=', $base)->first();
+        if($proyecto){
+            $configuracion = ConfiguracionObra::withoutGlobalScopes()->where('id_proyecto', '=', $proyecto->id)->first();
+            if (isset($configuracion->logotipo_original)) {
+                return bin2hex($configuracion->logotipo_original);
+            } 
+        }
+        else {
             $file = public_path('img/ghi-logo.png');
             $data = unpack("H*", file_get_contents($file));
             return bin2hex($data[1]);
