@@ -12,8 +12,8 @@
                 </router-link>
             </li>
             <li class="nav-item" >
-                <router-link :to="{name: 'empresas-boletinadas-index'}" class="nav-link" :class="{active: this.$route.name == 'empresas-boletinadas-index'}">
-                    <i class="fa fa-exclamation-triangle nav-icon"></i>
+                <router-link :to="{name: 'empresas-boletinadas-index'}" v-if="$root.can('consultar_empresa_boletinada',true)" class="nav-link" :class="{active: this.$route.name == 'empresas-boletinadas-index'}">
+                    <i class="fa fa-users-slash nav-icon"></i>
                     <p>Empresas Boletinadas</p>
                 </router-link>
             </li>

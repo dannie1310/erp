@@ -3917,7 +3917,8 @@ export const routes = [
                         meta: {
                             title: 'Empresas Boletinadas',
                             breadcrumb: {parent: 'padron-proveedores', name: 'EMPRESAS BOLETINADAS'},
-                            middleware: [auth],
+                            middleware: [auth,permission],
+                            permission: ['consultar_empresa_boletinada'],
                             general: true
                         }
                     },

@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="init" type="button" class="btn btn-app float-right" >
+            <button @click="init" type="button" class="btn btn-app float-right" v-if="$root.can('registrar_empresa_boletinada', true)">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar

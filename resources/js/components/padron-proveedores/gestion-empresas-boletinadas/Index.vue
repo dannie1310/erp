@@ -117,9 +117,10 @@ export default {
                     motivo: empresa.motivo,
                     observaciones: empresa.observaciones,
                     buttons: $.extend({}, {
-                        delete: empresa.editable ? true : false,
-                        edit: empresa.editable ? true : false,
+                        delete: empresa.editable && self.$root.can('eliminar_empresa_boletinada', true) ? true : false,
+                        edit: empresa.editable && self.$root.can('editar_empresa_boletinada', true)? true : false,
                         id: empresa.id,
+                        //edit: self.$root.can('consultar_expediente_proveedor', true) ? true : false,
                     })
                 }));
             },
