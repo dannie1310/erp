@@ -52,7 +52,7 @@ export default {
                 { title: 'RFC', field: 'rfc',sortable: true,  thClass:'th_c100', thComp: require('../globals/th-Filter').default},
                 { title: 'Razón Social', field: 'razon_social', thClass:'th_c400', sortable: true, thComp: require('../globals/th-Filter').default},
                 { title: 'Motivo', tdClass:'center', field: 'motivo', sortable: true, thClass:'th_c100', thComp: require('../globals/th-Filter').default},
-                { title: 'Observaciones-', field: 'observaciones',  sortable: true},
+                { title: 'Observaciones', field: 'observaciones',  sortable: true},
             ],
             data: [],
             total: 0,
@@ -205,5 +205,25 @@ export default {
 <style scoped>
 label:not(.form-check-label):not(.custom-file-label) {
     font-weight: 500;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    /*color: #ffffff;
+    background-color: #0062cc;
+    border-color: #005cbf;*/
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    /*color: #ffffff;
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: none;*/
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
 }
 </style>

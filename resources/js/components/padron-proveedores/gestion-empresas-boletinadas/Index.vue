@@ -4,7 +4,30 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
-                    <!-- /.card-header -->
+                    <div class="card-header">
+                        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                            <label class="btn btn-primary">
+                                <input type="checkbox" autocomplete="off"
+                                       v-model="en_juicio"> En Juicio
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="checkbox" autocomplete="off"
+                                       v-model="mala_experiencia"> Mala Experiencia
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="checkbox" autocomplete="off"
+                                       v-model="no_localizados"> No Localizado
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="checkbox" autocomplete="off"
+                                       v-model="efos_presuntos"> EFOS Presuntos
+                            </label>
+                            <label class="btn btn-primary">
+                                <input type="checkbox" name="options" autocomplete="off"
+                                       v-model="efos_definitivos"> EFOS Definitivos
+                            </label>
+                        </div>
+                    </div>
                     <div class="card-body">
                         <div class="table-responsive">
                             <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
@@ -38,7 +61,12 @@ export default {
             data: [],
             total: 0,
             query: {scope:'', sort: 'rfc', order: 'asc', limit:'20'},
-            cargando: false
+            cargando: false,
+            no_localizados : true,
+            efos_definitivos : true,
+            efos_presuntos: true,
+            en_juicio : true,
+            mala_experiencia : true,
         }
     },
     mounted() {
@@ -51,6 +79,11 @@ export default {
     methods: {
         paginate() {
             this.cargando = true;
+            this.$data.query.mala_experiencia = this.mala_experiencia;
+            this.$data.query.en_juicio = this.en_juicio;
+            this.$data.query.efos_presuntos = this.efos_presuntos;
+            this.$data.query.efos_definitivos = this.efos_definitivos;
+            this.$data.query.no_localizados = this.no_localizados;
             return this.$store.dispatch('padronProveedores/empresa-boletinada/paginate', { params: this.query})
                 .then(data => {
                     this.$store.commit('padronProveedores/empresa-boletinada/SET_EMPRESAS', data.data);
@@ -93,6 +126,56 @@ export default {
             deep: true
         },
 
+        no_localizados(no_localizados) {
+            this.$data.query.mala_experiencia = this.mala_experiencia;
+            this.$data.query.en_juicio = this.en_juicio;
+            this.$data.query.efos_presuntos = this.efos_presuntos;
+            this.$data.query.efos_definitivos = this.efos_definitivos;
+            this.$data.query.no_localizados = no_localizados;
+            this.query.offset = 0;
+            this.paginate()
+        },
+
+        efos_definitivos(efos_definitivos) {
+            this.$data.query.mala_experiencia = this.mala_experiencia;
+            this.$data.query.en_juicio = this.en_juicio;
+            this.$data.query.efos_presuntos = this.efos_presuntos;
+            this.$data.query.efos_definitivos = efos_definitivos;
+            this.$data.query.no_localizados = this.no_localizados;
+            this.query.offset = 0;
+            this.paginate()
+        },
+
+        efos_presuntos(efos_presuntos) {
+            this.$data.query.mala_experiencia = this.mala_experiencia;
+            this.$data.query.en_juicio = this.en_juicio;
+            this.$data.query.efos_presuntos = efos_presuntos;
+            this.$data.query.efos_definitivos = this.efos_definitivos;
+            this.$data.query.no_localizados = this.no_localizados;
+            this.query.offset = 0;
+            this.paginate()
+        },
+
+        en_juicio(en_juicio) {
+            this.$data.query.mala_experiencia = this.mala_experiencia;
+            this.$data.query.en_juicio = en_juicio;
+            this.$data.query.efos_presuntos = this.efos_presuntos;
+            this.$data.query.efos_definitivos = this.efos_definitivos;
+            this.$data.query.no_localizados = this.no_localizados;
+            this.query.offset = 0;
+            this.paginate()
+        },
+
+        mala_experiencia(mala_experiencia) {
+            this.$data.query.mala_experiencia = mala_experiencia;
+            this.$data.query.en_juicio = this.en_juicio;
+            this.$data.query.efos_presuntos = this.efos_presuntos;
+            this.$data.query.efos_definitivos = this.efos_definitivos;
+            this.$data.query.no_localizados = this.no_localizados;
+            this.query.offset = 0;
+            this.paginate()
+        },
+
         meta: {
             handler(meta) {
                 let total = meta.pagination.total
@@ -129,5 +212,27 @@ export default {
 </script>
 
 <style scoped>
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+}
 
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    /*color: #ffffff;
+    background-color: #0062cc;
+    border-color: #005cbf;*/
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    /*color: #ffffff;
+    background-color: #007bff;
+    border-color: #007bff;
+    box-shadow: none;*/
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
 </style>
