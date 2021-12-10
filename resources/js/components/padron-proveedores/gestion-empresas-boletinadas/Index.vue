@@ -37,7 +37,7 @@ export default {
             ],
             data: [],
             total: 0,
-            query: {scope:'', sort: '', order: ''},
+            query: {scope:'', sort: 'rfc', order: 'asc', limit:'20'},
             cargando: false
         }
     },
