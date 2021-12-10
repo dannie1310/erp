@@ -36,31 +36,14 @@ class EmpresaBoletinadaController extends Controller
     public function __construct(Manager $fractal, EmpresaBoletinadaService $service, EmpresaBoletinadaTransformer $transformer)
     {
         $this->middleware('auth:api');
+
+        $this->middleware('permiso:eliminar_empresa_boletinada')->only(['destroy']);
+        $this->middleware('permiso:editar_empresa_boletinada')->only(['update']);
+        $this->middleware('permiso:registrar_empresa_boletinada')->only(['store']);
+
+
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function revisarRFC(Request $request, $id)
-    {
-        return $this->service->revisarRFC($request->all()['rfc'], $id);
-    }
-
-    public function showRFC(Request $request, $rfc)
-    {
-        if(auth()->user()->usuario == $rfc){
-            $empresa =  $this->service->buscaPorRFC($rfc);
-            if($empresa){
-                $item = $this->service->show($empresa->id);
-                return $this->respondWithItem($item);
-            }
-            else{
-                $item = $this->service->generaExpediente($rfc);
-                return $this->respondWithItem($item);
-            }
-
-        } else {
-            return response()->json("No esta autorizado a consultar esta información", 200);
-        }
     }
 }
