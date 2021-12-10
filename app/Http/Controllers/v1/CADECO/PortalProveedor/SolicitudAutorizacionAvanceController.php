@@ -46,10 +46,10 @@ class SolicitudAutorizacionAvanceController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context')->except(['index','store','proveedorConceptos','update','destroy']);
 
-        $this->middleware('permisoGlobal:consultar_estimacion_proveedor')->only(['proveedorConceptos','index']);
-        $this->middleware('permisoGlobal:registrar_estimacion_proveedor')->only('store');
-        $this->middleware('permisoGlobal:editar_estimacion_proveedor')->only('update');
-        $this->middleware('permisoGlobal:eliminar_estimacion_proveedor')->only('destroy');
+        $this->middleware('permisoGlobal:consultar_solicitud_autorizacion_avance_proveedor')->only(['proveedorConceptos','index']);
+        $this->middleware('permisoGlobal:registrar_solicitud_autorizacion_avance_proveedor')->only('store');
+        $this->middleware('permisoGlobal:editar_solicitud_autorizacion_avance_proveedor')->only('update');
+        $this->middleware('permisoGlobal:eliminar_solicitud_autorizacion_avance_proveedor')->only('destroy');
 
         $this->service = $service;
         $this->fractal = $fractal;

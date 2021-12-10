@@ -4418,7 +4418,7 @@ export const routes = [
                             title: 'Lista de Solicitud de Autorización de Avance',
                             breadcrumb: {parent: 'proveedor', name: 'SOLICITUD DE AUTORIZACIÓN DE AVANCE DE ESTIMACIONES'},
                             middleware: [auth, permission],
-                            permission: 'consultar_estimacion_proveedor',
+                            permission: 'consultar_solicitud_autorizacion_avance_proveedor',
                             general: true
                         }
                     },
@@ -4430,7 +4430,7 @@ export const routes = [
                             title: 'Seleccionar Subcontrato',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'SELECCIONAR SUBCONTRATO'},
                             middleware: [auth, permission],
-                            permission: ['registrar_estimacion_proveedor'],
+                            permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
                             general: true
                         }
                     },
@@ -4443,7 +4443,7 @@ export const routes = [
                             title: 'Registrar Solicitud de Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},
                             middleware: [auth, permission],
-                            permission: ['registrar_estimacion_proveedor'],
+                            permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
                             general: true
                         }
                     },
@@ -4456,7 +4456,7 @@ export const routes = [
                             title: 'Consultar Solicitud de Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'VER'},
                             middleware: [auth, permission],
-                            permission: 'consultar_estimacion_proveedor',
+                            permission: 'consultar_solicitud_autorizacion_avance_proveedor',
                             general: true
                         }
                     },
@@ -4469,7 +4469,7 @@ export const routes = [
                             title: 'Editar Solicitud de Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'EDITAR'},
                             middleware: [auth, permission],
-                            permission: ['editar_estimacion_proveedor'],
+                            permission: ['editar_solicitud_autorizacion_avance_proveedor'],
                             general: true
                         }
                     },
@@ -4482,7 +4482,7 @@ export const routes = [
                             title: 'Eliminar Solicitud de Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'ELIMINAR'},
                             middleware: [auth, permission],
-                            permission: ['eliminar_estimacion_proveedor'],
+                            permission: ['eliminar_solicitud_autorizacion_avance_proveedor'],
                             general: true
                         }
                     },
