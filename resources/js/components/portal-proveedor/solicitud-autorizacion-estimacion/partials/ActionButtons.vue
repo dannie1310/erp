@@ -16,7 +16,7 @@
 </template>
 
 <script>
-    import PDF from '../FormatoEstimacion.vue';
+    import PDF from '../Formato.vue';
     export default {
         name: "action-buttons",
         components: { PDF },

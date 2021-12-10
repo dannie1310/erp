@@ -209,11 +209,6 @@ class Estimacion extends Transaccion
     /**
      * Scope
      */
-    public function scopeProveedor($query, $id_obra)
-    {
-        $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
-        return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1])->orderby('id_transaccion','desc');
-    }
 
     /**
      * Acciones
@@ -268,16 +263,6 @@ class Estimacion extends Transaccion
     public static function calcularFolio()
     {
         $est = Transaccion::where('tipo_transaccion', '=', 52)->orderBy('numero_folio', 'DESC')->first();
-        return $est ? $est->numero_folio + 1 : 1;
-    }
-
-    /**
-     * Estimaciones desde el portal de proveedores
-     * @return int
-     */
-    public static function calcularFolioProveedor($id_obra)
-    {
-        $est = Transaccion::withoutGlobalScopes()->where('tipo_transaccion', '=', 52)->where('id_obra','=', $id_obra)->orderBy('numero_folio', 'DESC')->first();
         return $est ? $est->numero_folio + 1 : 1;
     }
 
@@ -1051,19 +1036,6 @@ class Estimacion extends Transaccion
     {
         $anticipo = 0;
         $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
-                                        ->where('numero_folio', '<', $this->numero_folio)
-                                        ->where('estado', '>=', 0)->get();
-
-        foreach($estimaciones_anteriores as $estimacion){
-            $anticipo += $estimacion->monto_anticipo_aplicado;
-        }
-        return $anticipo;
-    }
-
-    public function getAnticipoAnteriorProveedorAttribute()
-    {
-        $anticipo = 0;
-        $estimaciones_anteriores = $this->withoutGlobalScopes()->where('id_antecedente', '=', $this->id_antecedente)
                                         ->where('numero_folio', '<', $this->numero_folio)
                                         ->where('estado', '>=', 0)->get();
 

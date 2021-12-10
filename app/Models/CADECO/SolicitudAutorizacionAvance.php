@@ -302,6 +302,11 @@ class SolicitudAutorizacionAvance extends Transaccion
         return $monto_pagar;
     }
 
+    public function getMontoAPagarFormatAttribute()
+    {
+        return '$ ' . number_format($this->monto_a_pagar, 2);
+    }
+
     public function getAnticipoAnteriorProveedorAttribute()
     {
         $anticipo = 0;
@@ -339,6 +344,55 @@ class SolicitudAutorizacionAvance extends Transaccion
             $acumulado += $estimacion->suma_penalizaciones;
         }
         return $acumulado;
+    }
+
+    public function getSumaDeductivasAttribute()
+    {
+        return $this->descuentos->sum('importe');
+    }
+
+    public function getSumaDeductivasFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_deductivas, 2);
+    }
+
+    public function getSumaRetencionesAttribute()
+    {
+        return $this->retenciones->sum('importe');
+    }
+
+    public function getSumaRetencionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_retenciones, 2);
+    }
+
+    public function getSumaLiberacionesAttribute()
+    {
+        return $this->liberaciones->sum('importe');
+    }
+
+    public function getSumaLiberacionesFormatAttribute()
+    {
+        return '$ ' . number_format($this->suma_liberaciones, 2);
+    }
+
+    public function getIvaRetenidoCalculadoAttribute()
+    {
+        return $this->IVARetenido + $this->retencionIVA_2_3;
+    }
+
+    public function getIvaRetenidoFormatAttribute()
+    {
+        return '$ ' . number_format($this->iva_retenido_calculado, 2);
+    }
+
+    public function getIvaRetenidoPorcentajeAttribute()
+    {
+        if ($this->suma_importes > 0) {
+            return number_format($this->IVARetenido * 100 / $this->suma_importes, 2) . " %";
+        } else {
+            return "0 %";
+        }
     }
 
     /**
@@ -506,13 +560,6 @@ class SolicitudAutorizacionAvance extends Transaccion
             'retencion_iva_porcentaje' => $this->iva_retenido_porcentaje,
             'retencion_iva_format' => $this->iva_retenido_format,
             'total_orden_pago' => $this->total_orden_pago_format,
-            'retencion' => $this->retencion,
-            'retencion_fondo_garantia' => $this->retencion_fondo_garantia_orden_pago_format,
-            'total_deductivas' => $this->suma_deductivas_format,
-            'total_retenciones' => $this->suma_retenciones_format,
-            'total_retencion_liberadas' => $this->suma_liberaciones_format,
-            'suma_penalizaciones' => $this->suma_penalizaciones_format,
-            'suma_penalizaciones_liberadas' => $this->suma_penalizaciones_liberadas_format,
             'total_anticipo_liberar' => $this->anticipo_a_liberar_format,
             'monto_pagar_format' => $this->monto_a_pagar_format,
         ];

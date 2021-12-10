@@ -7,10 +7,10 @@
 </template>
 
 <script>
-import Encabezado from "./EncabezadoEstimacion";
-import TablaDatos from "./TablaDatosEstimacion";
+import Encabezado from "./EncabezadoSolicitud";
+import TablaDatos from "./TablaDatosSolicitud";
 export default {
-    name: "DatosEstimacion",
+    name: "DatosSolicitud",
     components: {
         TablaDatos,
         Encabezado

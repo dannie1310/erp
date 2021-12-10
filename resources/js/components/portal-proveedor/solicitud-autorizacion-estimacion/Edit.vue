@@ -223,7 +223,7 @@
 </template>
 
 <script>
-    import Encabezado from './partials/EncabezadoEstimacion';
+    import Encabezado from './partials/EncabezadoSolicitud';
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {

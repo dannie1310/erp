@@ -43,7 +43,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Estimación",
+                    title: "Registrar Solicitud",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -63,7 +63,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Estimación registrada correctamente", {
+                                    swal("Solicitud registrada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -95,7 +95,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar la Estimación",
+                    text: "Actualizar la Solicitud",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -114,7 +114,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Estimación actualizada correctamente", {
+                                    swal("Solicitud actualizada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -133,8 +133,8 @@ export default {
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar la Estimación",
-                    text: "¿Está seguro de que desea eliminar esta estimación?",
+                    title: "Eliminar la Solicitud",
+                    text: "¿Está seguro de que desea eliminar esta solicitud?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
