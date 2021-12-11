@@ -15,7 +15,15 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+                        <div class="row" v-if="cargando">
+                            <div class="col-md-12">
+                                <div class="spinner-border text-success" role="status">
+                                    <span class="sr-only">Cargando...</span>
+                                </div>
+                            </div>
+                        </div>
+                        <span v-else>
+                            <div class="row">
                             <div class="col-md-12">
                                 <label >RFC:</label>
                             </div>
@@ -34,7 +42,7 @@
                            </div>
                        </div>
                         <br>
-                       <div class="row">
+                            <div class="row">
                             <div class="col-md-12">
                                 <label >Razón Social / Nombre:</label>
                             </div>
@@ -89,17 +97,18 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <textarea
-                                rows="2"
-                                id="observaciones"
-                                name="observaciones"
-                                data-vv-as="'Observaciones'"
-                                class="form-control"
-                                v-validate="{ required: true}"
-                                :class="{'is-invalid': errors.has('observaciones')}"
-                                v-model="observaciones" />
+                                    rows="2"
+                                    id="observaciones"
+                                    name="observaciones"
+                                    data-vv-as="'Observaciones'"
+                                    class="form-control"
+                                    v-validate="{ required: true}"
+                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                    v-model="observaciones" />
                                 <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                             </div>
                         </div>
+                        </span>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>

@@ -18,7 +18,8 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <div class="row">
+                        <span>
+                            <div class="row">
                             <div class="col-md-12">
                                 <label >RFC:</label>
                             </div>
@@ -89,17 +90,20 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <textarea
-                                rows="2"
-                                id="observaciones"
-                                name="observaciones"
-                                data-vv-as="'Observaciones'"
-                                class="form-control"
-                                v-validate="{ required: true}"
-                                :class="{'is-invalid': errors.has('observaciones')}"
-                                v-model="observaciones" />
+                                    rows="2"
+                                    id="observaciones"
+                                    name="observaciones"
+                                    data-vv-as="'Observaciones'"
+                                    class="form-control"
+                                    v-validate="{ required: true}"
+                                    :class="{'is-invalid': errors.has('observaciones')}"
+                                    v-model="observaciones" />
                                 <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                             </div>
                         </div>
+
+                        </span>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="salir"><i class="fa fa-close"></i> Cerrar</button>

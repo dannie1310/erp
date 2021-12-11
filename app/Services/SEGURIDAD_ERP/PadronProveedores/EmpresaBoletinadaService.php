@@ -56,71 +56,63 @@ class EmpresaBoletinadaService
             $this->repository->where([['motivo', 'LIKE', '%' . $data['motivo'] . '%']]);
         }
 
-
-        $condiciones = [];
         $in = [];
 
         if(isset($data['en_juicio']))
         {
             if($data['en_juicio'] === "true"){
-                $condiciones[] = ["motivo","LIKE","%En Juicio%"];
                 $in[] = "En Juicio";
-                //$this->repository->whereOr([['motivo', 'LIKE', '%En Juicio%']]);
-            }else{
-                $condiciones[] = ["motivo","NOT LIKE","%En Juicio%"];
-                //$this->repository->whereOr([['motivo', 'NOT LIKE', '%En Juicio%']]);
             }
         }
 
         if(isset($data['mala_experiencia']))
         {
             if($data['mala_experiencia'] === "true"){
-                $condiciones[] = ["motivo","LIKE","%Mala Experiencia%"];
                 $in[] = "Mala Experiencia Operativa";
-                //$this->repository->whereOr([['motivo', 'LIKE', '%Mala Experiencia%']]);
-            }else{
-                $condiciones[] = ["motivo","NOT LIKE","%Mala Experiencia%"];
-                //$this->repository->whereOr([['motivo', 'NOT LIKE', '%Mala Experiencia%']]);
             }
         }
 
         if(isset($data['no_localizados']))
         {
             if($data['no_localizados'] === "true"){
-                $condiciones[] = ["motivo","LIKE","%No Localizado%"];
                 $in[] = "No Localizado";
-                //$this->repository->whereOr([['motivo', 'LIKE', '%No Localizado%']]);
-            }else{
-                $condiciones[] = ["motivo","NOT LIKE","%No Localizado%"];
-                //$this->repository->whereOr([['motivo', 'NOT LIKE', '%No Localizado%']]);
             }
         }
 
         if(isset($data['efos_definitivos']))
         {
             if($data['efos_definitivos'] === "true"){
-                $condiciones[] = ["motivo","LIKE","%EFOS Definitivo%"];
                 $in[] = "EFOS Definitivo";
-                //$this->repository->whereOr([['motivo', 'LIKE', '%EFOS Definitivo%']]);
-            }else{
-                $condiciones[] = ["motivo","NOT LIKE","%EFOS Definitivo%"];
-                //$this->repository->whereOr([['motivo', 'NOT LIKE', '%EFOS Definitivo%']]);
             }
         }
 
         if(isset($data['efos_presuntos']))
         {
             if($data['efos_presuntos'] === "true"){
-                $condiciones[] = ["motivo","LIKE","%EFOS Presunto%"];
                 $in[] = "EFOS Presunto";
-                //$this->repository->whereOr([['motivo', 'LIKE', '%EFOS Presunto%']]);
-            }else{
-                $condiciones[] = ["motivo","NOT LIKE","%EFOS Presunto%"];
-                //$this->repository->whereOr([['motivo', 'NOT LIKE', '%EFOS Presunto']]);
             }
         }
 
-        //$this->repository->whereOr($condiciones);
+        if(isset($data['no_localizados_hi']))
+        {
+            if($data['no_localizados_hi'] === "true"){
+                $in[] = "No Localizado HI";
+            }
+        }
+
+        if(isset($data['efos_definitivos_hi']))
+        {
+            if($data['efos_definitivos_hi'] === "true"){
+                $in[] = "EFOS Definitivo HI";
+            }
+        }
+
+        if(isset($data['efos_presuntos_hi']))
+        {
+            if($data['efos_presuntos_hi'] === "true"){
+                $in[] = "EFOS Presunto HI";
+            }
+        }
 
         $this->repository->whereIn(["motivo",$in]);
 
