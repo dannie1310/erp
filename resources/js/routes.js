@@ -3879,7 +3879,7 @@ export const routes = [
                         component: require('./components/empresas-boletinadas/Index.vue').default,
                         meta: {
                             title: 'Empresas Boletinadas',
-                            breadcrumb: {parent: 'fiscal', name: 'EMPRESAS BOLETINADAS'},
+                            breadcrumb: { name: 'EMPRESAS BOLETINADAS'},
                             middleware: [auth],
                             general: true
                         }

@@ -1,6 +1,37 @@
 <template>
     <span>
-        <div class="row" v-if="$router.currentRoute.name == 'home'">
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" v-else>
+            <div class="card-body">
+                <div class="row" v-if="$router.currentRoute.name == 'home'">
+
+            <div class="col-12 col-sm-6 col-md-3" >
+                <div class="info-box">
+                    <span :class="'info-box-icon bg-danger elevation-1'"><i class="fa fa-users-slash" title="Empresas Boletinadas" ></i></span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">Empresas Boletinadas</span>
+                        <router-link :to="{name: 'empresas-boletinadas'}" >
+                            <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right" /></span>
+                        </router-link>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+                <!-- /.info-box -->
+            </div>
+
+
             <div class="col-12 col-sm-6 col-md-3" v-for="(sistema, i) in sistemas">
                 <div class="info-box">
                     <span :class="'info-box-icon '+sistema.color+' elevation-1'"><i :class="sistema.icon" :title="sistema.description"></i></span>
@@ -22,6 +53,8 @@
                 <!-- /.info-box -->
             </div>
         </div>
+            </div>
+        </div>
         <router-view ></router-view>
     </span>
 </template>
@@ -31,7 +64,7 @@
         name: "home",
         data() {
             return {
-                loading: false
+                cargando: false
             }
         },
         mounted() {
@@ -39,6 +72,7 @@
         },
         methods: {
             index() {
+                this.cargando = true;
                 this.$store.commit('seguridad/sistema/SET_SISTEMAS', []);
                 this.$session.remove('sistemas');
 
@@ -48,6 +82,12 @@
                     .then(data => {
                         this.$store.commit('seguridad/sistema/SET_SISTEMAS', data);
                         this.$session.set('sistemas', data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
                     })
             }
         },
