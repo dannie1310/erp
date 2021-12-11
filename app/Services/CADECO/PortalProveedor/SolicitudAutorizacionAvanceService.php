@@ -6,6 +6,7 @@ namespace App\Services\CADECO\PortalProveedor;
 
 use App\Models\CADECO\SolicitudAutorizacionAvance;
 
+use App\PDF\PortalProveedores\SolicitudAvanceFormato;
 use App\Repositories\CADECO\SolicitudAutorizacionAvanceRepository as Repository;
 
 class SolicitudAutorizacionAvanceService
@@ -51,5 +52,11 @@ class SolicitudAutorizacionAvanceService
     public function delete($data, $id)
     {
         return $this->repository->eliminar($id, $data['data']);
+    }
+
+    public function pdfSolicitudAvanceFormato($id, $data)
+    {
+        $pdf = new SolicitudAvanceFormato($id, $data['db']);
+        return $pdf;
     }
 }

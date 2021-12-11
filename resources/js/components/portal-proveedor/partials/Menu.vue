@@ -30,15 +30,15 @@
                 </router-link>
             </li>
         </ul>
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <ul class="nav nav-pills nav-sidebar flex-column" v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true) || $root.can('consultar_solicitud_autorizacion_avance_proveedor',true)" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-header">SOLICITUD AUTORIZACIÓN DE AVANCE</li>
-            <li class="nav-item"  v-if="$root.can('registrar_estimacion_proveedor',true)">
+            <li class="nav-item"  v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true)">
                 <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'estimacion-proveedor-seleccionar-subcontrato'}">
                     <i class="fa fa-plus nav-icon"></i>
                     <p>Registrar Solicitud</p>
                 </router-link>
             </li>
-            <li class="nav-item"  v-if="$root.can('consultar_estimacion_proveedor',true)">
+            <li class="nav-item"  v-if="$root.can('consultar_solicitud_autorizacion_avance_proveedor',true)">
                 <router-link :to="{name: 'estimacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'estimacion-proveedor'}">
                     <i class="fa fa-mail-bulk nav-icon"></i>
                     <p>Lista de Solicitudes</p>

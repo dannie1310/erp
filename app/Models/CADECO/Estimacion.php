@@ -209,11 +209,6 @@ class Estimacion extends Transaccion
     /**
      * Scope
      */
-    public function scopeProveedor($query, $id_obra)
-    {
-        $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
-        return $query->withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 52)->whereIn("estado", [0, 1])->orderby('id_transaccion','desc');
-    }
 
     /**
      * Acciones

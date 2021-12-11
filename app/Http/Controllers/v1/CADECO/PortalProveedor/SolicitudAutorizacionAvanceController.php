@@ -44,7 +44,6 @@ class SolicitudAutorizacionAvanceController extends Controller
     public function __construct(SolicitudAutorizacionAvanceService $service, Manager $fractal, SolicitudAutorizacionAvanceTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['index','store','proveedorConceptos','update','destroy']);
 
         $this->middleware('permisoGlobal:consultar_solicitud_autorizacion_avance_proveedor')->only(['proveedorConceptos','index']);
         $this->middleware('permisoGlobal:registrar_solicitud_autorizacion_avance_proveedor')->only('store');
@@ -79,5 +78,10 @@ class SolicitudAutorizacionAvanceController extends Controller
     public function destroy(Request $request, $id)
     {
         return $this->service->delete($request->all(), $id);
+    }
+
+    public function pdfSolicitudAvanceFormato(Request $request, $id)
+    {
+        return $this->service->pdfSolicitudAvanceFormato($id, $request->all())->create();
     }
 }
