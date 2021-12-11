@@ -43,7 +43,7 @@ export default {
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Registrar Solicitud",
+                    title: "Registrar Solicitud de Autorización",
                     text: "¿Está seguro de que la información es correcta?",
                     icon: "info",
                     buttons: {
@@ -63,7 +63,7 @@ export default {
                                 .post(URI, payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Solicitud registrada correctamente", {
+                                    swal("Solicitud de autorización registrada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -95,7 +95,7 @@ export default {
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Está seguro?",
-                    text: "Actualizar la Solicitud",
+                    text: "Actualizar la Solicitud de Autorización",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -114,7 +114,7 @@ export default {
                                 .patch(URI + payload.id, payload.data,{ params: payload.params } )
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Solicitud actualizada correctamente", {
+                                    swal("Solicitud de autorización actualizada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
@@ -133,7 +133,7 @@ export default {
         eliminar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar la Solicitud",
+                    title: "Eliminar la Solicitud de Autorización",
                     text: "¿Está seguro de que desea eliminar esta solicitud?",
                     icon: "warning",
                     closeOnClickOutside: false,
@@ -154,7 +154,7 @@ export default {
                                 .patch(URI + payload.id+'/eliminar',payload)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Estimación eliminada correctamente", {
+                                    swal("Solicitud de Autotización eliminada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false
