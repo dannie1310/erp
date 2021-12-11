@@ -21,7 +21,7 @@
                     <span :class="'info-box-icon bg-danger elevation-1'"><i class="fa fa-users-slash" title="Empresas Boletinadas" ></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-number">Empresas Boletinadas</span>
+                        <span class="info-box-number">Ver Empresas Boletinadas</span>
                         <router-link :to="{name: 'empresas-boletinadas'}" >
                             <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right" /></span>
                         </router-link>
