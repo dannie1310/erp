@@ -89,7 +89,7 @@ class SolicitudAvanceFormato extends Rotation
         $this->SetFont('Arial', 'B', 12);
         $this->MultiCell(13, 0.9, $this->encabezado_pdf, '', 'C');
 
-        $this->setXY(7.2, 3.5);
+        $this->setXY(6, 3.5);
         $this->SetFont('Arial', 'B', 14);
         $this->CellFitScale(1* $this->WidthTotal, 0.1,  utf8_decode("Solicitud de Autorización de Avance de Estimación"), '', 'CB');
 
