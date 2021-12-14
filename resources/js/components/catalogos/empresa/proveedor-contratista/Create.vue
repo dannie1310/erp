@@ -36,17 +36,17 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
-                                        <label for="rfc" class="col-sm-5 col-form-label">R.F.C.: </label>
+                                        <label for="rfc" class="col-sm-5 col-form-label">RFC: </label>
                                         <div class="col-sm-7">
                                             <input
                                                 :disabled="emite_factura === 0 || es_nacional === 0"
                                                 type="text"
                                                 name="rfc"
-                                                data-vv-as="R.F.C."
+                                                data-vv-as="RFC"
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 id="rfc"
-                                                placeholder="R.F.C."
+                                                placeholder="RFC"
                                                 v-model="rfc"
                                                 :class="{'is-invalid': errors.has('rfc')}">
                                             <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>
@@ -55,7 +55,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
-                                        <label for="no_proveedor_virtual" class="col-sm-5 col-form-label">No. Proveedor Virtual: </label>
+                                        <label for="no_proveedor_virtual" class="col-sm-5 col-form-label">No. de Proveedor Virtual: </label>
                                         <div class="col-sm-7">
                                             <input
                                                     type="number"
@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group row error-content">
-                                        <label for="dias_credito" class="col-sm-5 col-form-label">Días Crédito: </label>
+                                        <label for="dias_credito" class="col-sm-5 col-form-label">Días de Crédito: </label>
                                         <div class="col-sm-7">
                                             <input
                                                     type="number"
@@ -131,7 +131,7 @@
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group row error-content">
-                                        <label for="es_nacional" class="col-sm-5 col-form-label">Es Proveedor Nacional: </label>
+                                        <label for="es_nacional" class="col-sm-5 col-form-label">¿Es Proveedor Nacional?: </label>
                                         <div class="col-sm-7">
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="es_nacional === Number(1) ? 'active': ''"  :key="1">
@@ -160,7 +160,7 @@
                                 </div>
                                 <div class="col-md-6">
                                    <div class="form-group row error-content">
-                                        <label for="emite_factura" class="col-sm-5 col-form-label">Emite Factura (XML): </label>
+                                        <label for="emite_factura" class="col-sm-5 col-form-label">¿Emite Factura (XML)?: </label>
                                         <div class="col-sm-7">
                                             <div class="btn-group btn-group-toggle">
                                                 <label class="btn btn-outline-secondary" :class="emite_factura === Number(1) ? 'active': ''"  :key="1">

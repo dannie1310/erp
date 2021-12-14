@@ -12,6 +12,8 @@ use App\Models\IGH\Usuario;
 use App\Events\IncidenciaCI;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinada;
+use App\Views\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaVw;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\FinanzasCBE\Solicitud;
@@ -89,6 +91,11 @@ class Empresa extends Model
     public function efo()
     {
         return $this->belongsTo(CtgEfos::class, 'rfc', 'rfc');
+    }
+
+    public function empresaBoletinada()
+    {
+        return $this->belongsTo(EmpresaBoletinada::class, 'rfc', 'rfc');
     }
 
     public function transacciones()
@@ -296,8 +303,20 @@ class Empresa extends Model
             if(strlen(str_replace(" ","", $data->rfc))>0){
                 $this->rfcValido($data->rfc)?'':abort(403, 'El RFC tiene formato inválido.');
                 $this->rfcValidaEfos($data->rfc);
+                $this->rfcValidaBoletinados($data->rfc);
             }
         }
+    }
+
+    private function rfcValidaBoletinados($rfc)
+    {
+        $boletinada = EmpresaBoletinadaVw::where("rfc","=",$rfc)->first();
+        if($boletinada)
+        {
+            abort(403, 'Esta empresa esta boletinada para HI por '.$boletinada->motivo_txt.', no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+        }
+
     }
 
     private function rfcValidaEfos($rfc)
@@ -310,7 +329,7 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
-            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+            abort(403, 'Esta empresa esta invalidada por el SAT por ser un EFOS definitivo, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
         {
@@ -320,7 +339,7 @@ class Empresa extends Model
                     "empresa"=>$this->efo->razon_social,
                 ]
             ));
-            abort(403, 'Esta empresa esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+            abort(403, 'Esta empresa esta invalidada por el SAT por ser un EFOS presunto, no se pueden tener operaciones con esta empresa.
              Favor de comunicarse con el área fiscal para cualquier aclaración.');
         }
     }
