@@ -21,12 +21,14 @@ class ActualizacionClaveUsuarioProveedor
     public $usuario;
     public $tipo;
     public $clave;
+    public $reset;
 
-    public function __construct(Usuario $usuario, $clave)
+    public function __construct(Usuario $usuario, $clave, $reset = null)
     {
         $this->usuario = $usuario;
         $this->clave = $clave;
         $this->tipo = 10;
+        $this->reset = $reset;
     }
 
     /**
