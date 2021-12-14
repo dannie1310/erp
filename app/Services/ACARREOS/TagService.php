@@ -180,6 +180,8 @@ class TagService
         /**
              * Se genera el respaldo del json
              */
+        $data = array_except($data, 'access_token');
+        $json = array_except($data, 'NuevaClave');
         $this->repository->crearJson($data);
 
         /**
