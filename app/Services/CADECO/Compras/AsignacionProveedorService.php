@@ -6,6 +6,7 @@ namespace App\Services\CADECO\Compras;
 
 use App\Models\CADECO\OrdenCompra;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
+use App\Traits\EmpresaTrait;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
 use App\Models\CADECO\OrdenCompraPartida;
@@ -16,6 +17,7 @@ use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 
 class AsignacionProveedorService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */
@@ -408,10 +410,7 @@ class AsignacionProveedorService
                    abort(403, " No se puede realizar la asignación, la empresa " . $cotizacion['razon_social'] . " no tiene RFC registrado, favor de comunicarse con soporte a aplicaciones");
                }
                else {
-                   $no_localizado = CtgNoLocalizado::where('rfc', $cotizacion['rfc'])->first();
-                   if ($no_localizado) {
-                       abort(403, "El proveedor " . $cotizacion['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
-                   }
+                   $this->rfcValidaBoletinados($cotizacion['rfc']);
                }
            }
         }
