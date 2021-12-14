@@ -13,6 +13,7 @@ use App\Events\IncidenciaCI;
 use App\Models\CADECO\Transaccion;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinada;
+use App\Traits\EmpresaTrait;
 use App\Views\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaVw;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,8 @@ use App\Models\CADECO\Finanzas\CuentaBancariaEmpresa;
 
 class Empresa extends Model
 {
+    use EmpresaTrait;
+
     protected $connection = 'cadeco';
     protected $table = 'dbo.empresas';
     protected $primaryKey = 'id_empresa';
@@ -308,53 +311,6 @@ class Empresa extends Model
         }
     }
 
-    private function rfcValidaBoletinados($rfc)
-    {
-        $boletinada = EmpresaBoletinadaVw::where("rfc","=",$rfc)->first();
-        if($boletinada)
-        {
-            abort(403, 'Esta empresa esta boletinada para HI por '.$boletinada->motivo_txt.', no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-        }
-
-    }
-
-    private function rfcValidaEfos($rfc)
-    {
-        if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 0)->first()))
-        {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia"=>1,
-                    "rfc"=>$rfc,
-                    "empresa"=>$this->efo->razon_social,
-                ]
-            ));
-            abort(403, 'Esta empresa esta invalidada por el SAT por ser un EFOS definitivo, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-        }else if(!is_null($this->efo()->where('rfc', $rfc)->where('estado', 2)->first()))
-        {
-            event(new IncidenciaCI(
-                ["id_tipo_incidencia"=>2,
-                    "rfc"=>$rfc,
-                    "empresa"=>$this->efo->razon_social,
-                ]
-            ));
-            abort(403, 'Esta empresa esta invalidada por el SAT por ser un EFOS presunto, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-        }
-    }
-
-    private function rfcValido($rfc)
-    {
-        if(strlen(str_replace(" ","", $rfc))>0){
-            $reg_exp = "/^(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13578]|[1][02])(([0][1-9]|[12][\\d])|[3][01])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
-                "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})([0][13456789]|[1][012])(([0][1-9]|[12][\\d])|[3][0])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
-                "(([A-ZÑ&]{3,4})[\-]?([02468][048]|[13579][26])[0][2]([0][1-9]|[12][\\d])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))|".
-                "(([A-ZÑ&]{3,4})[\-]?([0-9]{2})[0][2]([0][1-9]|[1][0-9]|[2][0-8])[\-]?([A-V1-9]{1})([A-Z1-9]{1})([A0-9]{1}))$/";
-            return (bool)preg_match($reg_exp, $rfc);
-        }
-        return true;
-    }
 
     public function validaEliminacion()
     {
