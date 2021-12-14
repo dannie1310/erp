@@ -511,6 +511,12 @@ class PresupuestoContratista extends Transaccion
 
     public function crear($data)
     {
+        $empresa = ProveedorContratista::find($data["id_proveedor"]);
+
+        if($empresa && strlen(str_replace(" ","", $empresa->rfc))>0){
+            $empresa->rfcValidaBoletinados($empresa->rfc);
+            $empresa->rfcValidaEfos($empresa->rfc);
+        }
         try
         {
             DB::connection('cadeco')->beginTransaction();
