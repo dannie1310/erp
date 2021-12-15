@@ -113,7 +113,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.$router.push({name: 'solicitud-autorizacion-avance-create', params: {id: this.id_subcontrato, base_b64: btoa(this.subcontrato.base)}});
+                        this.$router.push({name: 'solicitud-autorizacion-avance-create', params: {id: this.id_subcontrato, base: btoa(this.subcontrato.base)}});
                     }
                 });
             },

@@ -214,7 +214,7 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "estimacion-edit",
-        props: ["id", "base"],
+        props: ["id", "base_b64"],
         components: {Encabezado, Datepicker, es},
         data() {
             return {
@@ -222,7 +222,8 @@
                 cargando: true,
                 columnas: [],
                 estimacion: [],
-                fechasDeshabilitadas: {}
+                fechasDeshabilitadas: {},
+                base:''
             };
         },
         mounted() {
@@ -230,8 +231,10 @@
             if (this.base == undefined) {
                 this.salir();
             } else {
+                this.base = atob(this.base_b64)
                 this.find();
             }
+
         },
         methods: {
             formatoFecha(date) {

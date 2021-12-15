@@ -133,13 +133,14 @@
     import Resumen from "../Resumen"
     export default {
         name: "estimacion-show",
-        props: ["id", "base"],
+        props: ["id", "base_b64"],
         components: {Datos, Resumen},
         data() {
             return {
                 cargando: true,
                 columnas: [],
                 estimacion: [],
+                base:''
             };
         },
         mounted() {
@@ -147,6 +148,7 @@
             {
                 this.salir();
             }else {
+                this.base = atob(this.base_b64)
                 this.find();
             }
         },

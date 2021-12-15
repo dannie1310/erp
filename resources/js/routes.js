@@ -4495,10 +4495,13 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id',
+                        path: ':id/:base',
                         name: 'solicitud-autorizacion-avance-show',
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Show').default,
-                        props: true,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
                         meta: {
                             title: 'Consultar Solicitud de Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'VER'},
@@ -4508,9 +4511,12 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/editar',
+                        path: ':id/:base/editar',
                         name: 'solicitud-autorizacion-avance-edit',
-                        props: true,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Edit').default,
                         meta: {
                             title: 'Editar Solicitud de Autorización de Avance de Estimación',
@@ -4521,9 +4527,12 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/delete',
+                        path: ':id/:base/delete',
                         name: 'solicitud-autorizacion-avance-delete',
-                        props: true,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Delete').default,
                         meta: {
                             title: 'Eliminar Solicitud de Autorización de Avance de Estimación',

@@ -7,7 +7,7 @@
 			            <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <partial-show v-bind:id="id" v-bind:base="base" @cargaFinalizada="iniciar" />
+                                    <partial-show v-bind:id="id" v-bind:base_b64="this.base_b64" @cargaFinalizada="iniciar" />
                                 </div>
                             </div>
                             <hr />
@@ -53,7 +53,7 @@
     export default {
         name: "solicitud-autorizacion-avance-delete",
         components: {PartialShow},
-        props: ['id', 'base'],
+        props: ['id', 'base_b64'],
         data(){
             return{
                 cargando: false,

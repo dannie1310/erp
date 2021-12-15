@@ -5,7 +5,7 @@
                 <div class="col-12">
                     <div class="card">
 			            <div class="card-body">
-                            <partial-show v-bind:id="id" v-bind:base="base" />
+                            <partial-show v-bind:id="id" v-bind:base_b64="this.base_b64" />
                         </div>
                         <div class="card-footer">
                             <div class="pull-right">
@@ -24,7 +24,7 @@
     export default {
         name: "solicitud-autorizacion-avance-show",
         components: {PartialShow},
-        props: ['id', 'base'],
+        props: ['id', 'base_b64'],
         data(){
             return{
                 cargando: false,

@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'solicitud-autorizacion-avance-seleccionar-subcontrato'}" v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true)" class="btn btn-app btn-info float-right" :disabled="cargando">
+            <router-link :to="{name: 'solicitud-autorizacion-avance-seleccionar-subcontrato'}" v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true)" class="btn btn-app float-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Registrar
@@ -130,7 +130,7 @@
                             show: self.$root.can('consultar_solicitud_autorizacion_avance_proveedor',true) ? true : false,
                             edit: (self.$root.can('editar_solicitud_autorizacion_avance_proveedor',true) && estimacion.estado == 0) ? true : false,
                             delete: (self.$root.can('eliminar_solicitud_autorizacion_avance_proveedor',true) && estimacion.estado == 0) ? true : false,
-                            base: estimacion.base
+                            base: btoa(estimacion.base)
                         })
 
                     }));
