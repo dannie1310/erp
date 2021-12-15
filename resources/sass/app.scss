@@ -233,6 +233,13 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
     min-width: 400px;
 }
 
+.th_c400, th.c400, .td_c400, td.c400
+{
+    width: 400px;
+    max-width: 400px;
+    min-width: 400px;
+}
+
 .td_c500, td.c500, th.c500, .th_c500
 {
     width: 500px;

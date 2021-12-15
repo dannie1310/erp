@@ -174,6 +174,7 @@ import empresaProveedor from './modules/padronProveedores/empresa';
 import especialidad from './modules/padronProveedores/especialidad';
 import giro from './modules/padronProveedores/giro';
 import invitacion  from "./modules/padronProveedores/invitacion";
+import empresaBoletinada from './modules/padronProveedores/empresa-boletinada';
 
 //PORTAL PROVEEDOR
 import solicitudAutorizacionAvance from './modules/portalProveedor/solicitud-autorizacion-avance';
@@ -432,6 +433,7 @@ export default new Vuex.Store({
         'padronProveedores/especialidad' : especialidad,
         'padronProveedores/giro' : giro,
         'padronProveedores/invitacion' : invitacion,
+        'padronProveedores/empresa-boletinada' : empresaBoletinada,
 
         'portalProveedor/solicitud-autorizacion-avance' : solicitudAutorizacionAvance,
 
