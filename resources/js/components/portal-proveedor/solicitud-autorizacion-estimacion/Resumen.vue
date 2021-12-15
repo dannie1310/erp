@@ -9,7 +9,7 @@
                     <div class="modal-dialog" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="resumenLabel">Resumen de Estimación</h5>
+                                <h5 class="modal-title" id="resumenLabel">Resumen de Solicitud</h5>
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -19,7 +19,7 @@
                                     <table style="width: 100%" class="table table-striped">
                                         <tbody>
                                         <tr>
-                                            <th style="text-align: left" colspan="2">Importe Estimación</th>
+                                            <th style="text-align: left" colspan="2">Importe Solicitud</th>
                                             <td style="text-align: right">{{estimacion.suma_importes}}</td>
                                         </tr>
                                         <tr>
@@ -70,7 +70,7 @@
                                             <td style="text-align: right">{{estimacion.total_orden_pago}}</td>
                                         </tr>
                                         <tr v-if="configuracion.ret_fon_gar_antes_iva == 0">
-                                            <th style="text-align: left">Retención de Fondo de Garantia Estimación</th>
+                                            <th style="text-align: left">Retención de Fondo de Garantia Solicitud</th>
                                             <td v-if="configuracion.ret_fon_gar_con_iva == 1">{{estimacion.retencion}} % + IVA</td>
                                             <td v-else>{{estimacion.retencion}} %</td>
                                             <td style="text-align: right">{{estimacion.retencion_fondo_garantia}}</td>
