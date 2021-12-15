@@ -161,6 +161,7 @@ class ViajeNetoService
         /**
          * Respaldar los datos
          */
+        $data = array_except($data,'clave');
         $this->repository->crearJson(array_except($data, 'access_token'));
 
         if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A')
@@ -438,7 +439,10 @@ class ViajeNetoService
         /**
         * Se genera el respaldo del json
          */
-        $this->repository->crearJson($data);
+        $data = array_except($data, 'access_token');
+        $json = array_except($data,'clave');
+        $json = array_except($json, 'NuevaClave');
+        $this->repository->crearJson($json);
         /**
          * Se genera el log de cambio de contraseña.
          */

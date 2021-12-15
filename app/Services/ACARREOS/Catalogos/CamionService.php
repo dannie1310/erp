@@ -139,7 +139,9 @@ class CamionService
         /**
          * Se genera el respaldo del json
          */
-        $this->repository->crearJson($data);
+        $data = array_except($data, 'access_token');
+        $json = array_except($data, 'NuevaClave');
+        $this->repository->crearJson($json);
         /**
          * Se genera el log de cambio de contraseña.
          */

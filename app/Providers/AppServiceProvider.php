@@ -189,6 +189,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinada;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadora;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegal;
@@ -377,6 +378,7 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoNoLocalizadosObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
+use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaPrestadoraObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\RepresentanteLegalObserver;
@@ -732,6 +734,7 @@ class AppServiceProvider extends ServiceProvider
             \App\Models\SEGURIDAD_ERP\PadronProveedores\Empresa::observe(\App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaObserver::class);
             EmpresaPrestadora::observe(EmpresaPrestadoraObserver::class);
             RepresentanteLegal::observe(RepresentanteLegalObserver::class);
+            EmpresaBoletinada::observe(EmpresaBoletinadaObserver::class);
 
             /**
              * PolizasCtpqIncidentes
