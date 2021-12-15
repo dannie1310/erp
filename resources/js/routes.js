@@ -4451,12 +4451,12 @@ export const routes = [
                 ]
             },
             {
-                path: 'estimacion',
+                path: 'solicitud-autorizacion-avance',
                 component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Layout').default,
                 children: [
                     {
                         path: '/',
-                        name: 'estimacion-proveedor',
+                        name: 'solicitud-autorizacion-avance',
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Index').default,
                         meta: {
                             title: 'Lista de Solicitud de Autorización de Avance',
@@ -4467,8 +4467,8 @@ export const routes = [
                         }
                     },
                     {
-                        path: 'create',
-                        name: 'estimacion-proveedor-seleccionar-subcontrato',
+                        path: 'seleccionar-subcontrato',
+                        name: 'solicitud-autorizacion-avance-seleccionar-subcontrato',
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/SeleccionarSubcontrato').default,
                         meta: {
                             title: 'Seleccionar Subcontrato',
@@ -4479,10 +4479,13 @@ export const routes = [
                         }
                     },
                     {
-                        path: ':id/create',
-                        name: 'estimacion-proveedor-create',
+                        path: ':id/:base/create',
+                        name: 'solicitud-autorizacion-avance-create',
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Create').default,
-                        props: true,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
                         meta: {
                             title: 'Registrar Solicitud de Autorización de Avance de Estimación',
                             breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},

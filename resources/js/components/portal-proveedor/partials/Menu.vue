@@ -31,22 +31,22 @@
             </li>
         </ul>
         <ul class="nav nav-pills nav-sidebar flex-column" v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true) || $root.can('consultar_solicitud_autorizacion_avance_proveedor',true)" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-header">SOLICITUD AUTORIZACIÓN DE AVANCE</li>
+            <li class="nav-header">AUTORIZACIÓN DE AVANCE</li>
             <li class="nav-item"  v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true)">
-                <router-link :to="{name: 'estimacion-proveedor-seleccionar-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'estimacion-proveedor-seleccionar-subcontrato'}">
+                <router-link :to="{name: 'solicitud-autorizacion-avance-seleccionar-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-autorizacion-avance-seleccionar-subcontrato'}">
                     <i class="fa fa-plus nav-icon"></i>
                     <p>Registrar Solicitud</p>
                 </router-link>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_solicitud_autorizacion_avance_proveedor',true)">
-                <router-link :to="{name: 'estimacion-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'estimacion-proveedor'}">
+                <router-link :to="{name: 'solicitud-autorizacion-avance'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-autorizacion-avance'}">
                     <i class="fa fa-mail-bulk nav-icon"></i>
                     <p>Lista de Solicitudes</p>
                 </router-link>
             </li>
         </ul>
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-header">SOLICITUDES DE REVISIÓN DE CFDI</li>
+            <li class="nav-header">REVISIÓN DE CFDI</li>
             <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
                 <router-link :to="{name: 'seleccionar-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-cfdi'}">
                     <i class="fa fa-plus nav-icon"></i>

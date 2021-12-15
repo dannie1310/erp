@@ -11,228 +11,224 @@
                 </div>
             </div>
         </div>
-        <div class="row" v-if="!cargando">
-            <div class="col-12">
-                <div class="invoice p-3 mb-3">
-                    <form role="form" @submit.prevent="validate">
-                        <div class="modal-body" v-if="subcontrato">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <encabezado v-bind:subcontrato="subcontrato" />
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <label for="fecha" class="col-form-label">Fecha</label>
-                                        <datepicker v-model = "fecha"
-                                                    name = "fecha"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    v-validate="{required: true}"
-                                                    :class="{'is-invalid': errors.has('fecha')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <label class="col-form-label">Inicio de Estimación</label>
-                                        <datepicker v-model = "fecha_inicio"
-                                                    name = "fecha_inicio"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :class="{'is-invalid': errors.has('fecha_inicio')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group error-content">
-                                        <label class="col-form-label">Fin de Estimación</label>
-                                        <datepicker v-model = "fecha_fin"
-                                                    name = "fecha_fin"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :class="{'is-invalid': errors.has('fecha_fin')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
-                                    </div>
-                                </div>
+        <form role="form" @submit.prevent="validate" v-else>
+        <div class="card" >
+            <div class="card-body" v-if="subcontrato">
+                <div class="row">
+                    <div class="col-md-12">
+                        <encabezado v-bind:subcontrato="subcontrato" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="form-group error-content">
+                            <label for="fecha" class="col-form-label">Fecha de Solicitud</label>
+                            <datepicker v-model = "fecha"
+                                        id="fecha"
+                                        name = "fecha"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        :disabled-dates="fechasDeshabilitadas"
+                                        v-validate="{required: true}"
+                                        :class="{'is-invalid': errors.has('fecha')}"
+                            ></datepicker>
+                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content">
+                            <label class="col-form-label">Inicio de Avance</label>
+                            <datepicker v-model = "fecha_inicio"
+                                        name = "fecha_inicio"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :class="{'is-invalid': errors.has('fecha_inicio')}"
+                            ></datepicker>
+                            <div class="invalid-feedback" v-show="errors.has('fecha_inicio')">{{ errors.first('fecha_inicio') }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group error-content">
+                            <label class="col-form-label">Fin de Avance</label>
+                            <datepicker v-model = "fecha_fin"
+                                        name = "fecha_fin"
+                                        :format = "formatoFecha"
+                                        :language = "es"
+                                        :bootstrap-styling = "true"
+                                        class = "form-control"
+                                        v-validate="{required: true}"
+                                        :class="{'is-invalid': errors.has('fecha_fin')}"
+                            ></datepicker>
+                            <div class="invalid-feedback" v-show="errors.has('fecha_fin')">{{ errors.first('fecha_fin') }}</div>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <div class="form-check form-check-inline">
+                    <input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
+                    <label class="form-check-label" for="contratado">Contratado</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input v-model="columnas" class="form-check-input" type="checkbox" id="avance-volumen" value="avance-volumen">
+                    <label class="form-check-label" for="avance-volumen">Avance Volumen</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input v-model="columnas" class="form-check-input" type="checkbox" id="avance-importe" value="avance-importe">
+                    <label class="form-check-label" for="avance-importe">Avance Importe</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input v-model="columnas" class="form-check-input" type="checkbox" id="saldo" value="saldo">
+                    <label class="form-check-label" for="saldo">Saldo</label>
+                </div>
+                <br>
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <table id="tabla-conceptos">
+                    <thead>
+                        <tr>
+                            <th rowspan="2" class="c120">Clave</th>
+                            <th rowspan="2">Concepto</th>
+                            <th rowspan="2" class="c100">Unidad</th>
+                            <th style="display: none" colspan="2" class="contratado">Contratado</th>
+                            <th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
+                            <th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
+                            <th style="display: none" colspan="2" class="saldo">Saldo</th>
+                            <th colspan="4">Esta Solicitud</th>
+                            <!--<th style="display: none" class="destino">Distribución</th>-->
+                        </tr>
+                        <tr>
+                            <th style="display: none" class="contratado c100">Volumen</th>
+                            <th style="display: none" class="contratado c100">P.U.</th>
+                            <th style="display: none" class="avance-volumen c100">Anterior</th>
+                            <th style="display: none" class="avance-volumen c100">Acumulado</th>
+                            <th style="display: none" class="avance-volumen c100">%</th>
+                            <th style="display: none" class="avance-importe c100">Anterior</th>
+                            <th style="display: none" class="avance-importe c100">Acumulado</th>
+                            <th style="display: none" class="saldo c100">Volumen</th>
+                            <th style="display: none" class="saldo c100">Importe</th>
+                            <th class="c100">Volumen</th>
+                            <th class="c100">%</th>
+                            <th class="c100">P.U.</th>
+                            <th class="c100">Importe</th>
+                            <!--<th style="display: none" class="destino">Destino</th>-->
+                        </tr>
+                    </thead>
+                    <tbody v-for="(concepto, i) in conceptos">
+                        <tr v-if="concepto.para_estimar == 0">
+                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
+                            <td :title="concepto.descripcion">
+                                <span v-for="n in concepto.nivel">&nbsp;</span>
+                                <b>{{concepto.descripcion}}</b></td>
+                            <td></td>
+                            <td style="display: none" class="numerico contratado"/>
+                            <td style="display: none" class="numerico contratado"/>
+                            <td style="display: none" class="numerico avance-volumen"/>
+                            <td style="display: none" class="numerico avance-volumen"/>
+                            <td style="display: none" class="numerico avance-volumen"/>
+                            <td style="display: none" class="numerico avance-importe"/>
+                            <td style="display: none" class="numerico avance-importe"/>
+                            <td style="display: none" class="numerico saldo"/>
+                            <td style="display: none" class="numerico saldo"/>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <!--<td style="display: none" class="destino"/>-->
+                        </tr>
+                        <tr v-else>
+                            <td :title="concepto.clave">{{ concepto.clave }}</td>
+                            <td :title="concepto.descripcion_concepto">
+                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                {{concepto.descripcion_concepto}}
+                            </td>
+                            <td class="centrado">{{concepto.unidad}}</td>
+                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico avance-volumen"></td>
+                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico avance-importe"></td>
+                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
+                            <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
+                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
+                            <td class="editable-cell numerico">
+                                <input v-on:change="changeCantidad(concepto)"
+                                       class="text"
+                                       v-model="concepto.cantidad_estimacion"
+                                       :name="`cantidadEstimacion[${i}]`"
+                                       data-vv-as="'Volumen'"
+                                       v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
+                                       :class="{'is-invalid': errors.has(`cantidadEstimacion[${i}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${i}]`)">{{ errors.first(`cantidadEstimacion[${i}]`) }}</div>
+                            </td>
+                            <td class="editable-cell numerico">
+                                <input v-on:change="changePorcentaje(concepto)"
+                                       v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
+                                       class="text"
+                                       data-vv-as="'Porcentaje'"
+                                       :name="`porcentaje[${i}]`"
+                                       v-model="concepto.porcentaje_estimado"
+                                       :class="{'is-invalid': errors.has(`porcentaje[${i}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`porcentaje[${i}]`)">{{ errors.first(`porcentaje[${i}]`) }}</div>
+                            </td>
+                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                            <td class="editable-cell numerico">
+                                <input v-on:change="changeImporte(concepto)"
+                                       class="text"
+                                       data-vv-as="'Importe'"
+                                       :name="`importe[${i}]`"
+                                       v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
+                                       v-model="concepto.importe_estimacion"
+                                       :class="{'is-invalid': errors.has(`importe[${i}]`)}" />
+                                 <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
+                            </td>
+                            <!--<td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>-->
+                        </tr>
+                    </tbody>
+                </table>
+                    </div>
+                </div>
+                <br>
 
-                            </div>
-                            <br>
-                            <div class="card">
-                                <div class="card-body">
-                                    <div class="form-check form-check-inline">
-                                        <input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
-                                        <label class="form-check-label" for="contratado">Contratado</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input v-model="columnas" class="form-check-input" type="checkbox" id="avance-volumen" value="avance-volumen">
-                                        <label class="form-check-label" for="avance-volumen">Avance Volumen</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input v-model="columnas" class="form-check-input" type="checkbox" id="avance-importe" value="avance-importe">
-                                        <label class="form-check-label" for="avance-importe">Avance Importe</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input v-model="columnas" class="form-check-input" type="checkbox" id="saldo" value="saldo">
-                                        <label class="form-check-label" for="saldo">Saldo</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
-                                        <label class="form-check-label" for="destino">Destino</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card" v-if="conceptos">
-                                <div class="card-body table-responsive">
-                                    <table id="tabla-conceptos">
-                                        <thead>
-                                            <tr>
-                                                <th rowspan="2">Clave</th>
-                                                <th rowspan="2">Concepto</th>
-                                                <th rowspan="2">UM</th>
-                                                <th style="display: none" colspan="2" class="contratado">Contratado</th>
-                                                <th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
-                                                <th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
-                                                <th style="display: none" colspan="2" class="saldo">Saldo</th>
-                                                <th colspan="4">Esta Estimación</th>
-                                                <th style="display: none" class="destino">Distribución</th>
-                                            </tr>
-                                            <tr>
-                                                <th style="display: none" class="contratado">Volumen</th>
-                                                <th style="display: none" class="contratado">P.U.</th>
-                                                <th style="display: none" class="avance-volumen">Anterior</th>
-                                                <th style="display: none" class="avance-volumen">Acumulado</th>
-                                                <th style="display: none" class="avance-volumen">%</th>
-                                                <th style="display: none" class="avance-importe">Anterior</th>
-                                                <th style="display: none" class="avance-importe">Acumulado</th>
-                                                <th style="display: none" class="saldo">Volumen</th>
-                                                <th style="display: none" class="saldo">Importe</th>
-                                                <th>Volumen</th>
-                                                <th>%</th>
-                                                <th>P.U.</th>
-                                                <th>Importe</th>
-                                                <th style="display: none" class="destino">Destino</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody v-for="(concepto, i) in conceptos">
-                                            <tr v-if="concepto.para_estimar == 0">
-                                                <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                                                <td :title="concepto.descripcion">
-                                                    <span v-for="n in concepto.nivel">&nbsp;</span>
-                                                    <b>{{concepto.descripcion}}</b></td>
-                                                <td></td>
-                                                <td style="display: none" class="numerico contratado"/>
-                                                <td style="display: none" class="numerico contratado"/>
-                                                <td style="display: none" class="numerico avance-volumen"/>
-                                                <td style="display: none" class="numerico avance-volumen"/>
-                                                <td style="display: none" class="numerico avance-volumen"/>
-                                                <td style="display: none" class="numerico avance-importe"/>
-                                                <td style="display: none" class="numerico avance-importe"/>
-                                                <td style="display: none" class="numerico saldo"/>
-                                                <td style="display: none" class="numerico saldo"/>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td style="display: none" class="destino"/>
-                                            </tr>
-                                            <tr v-else>
-                                                <td :title="concepto.clave">{{ concepto.clave }}</td>
-                                                <td :title="concepto.descripcion_concepto">
-                                                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                    {{concepto.descripcion_concepto}}
-                                                </td>
-                                                <td class="centrado">{{concepto.unidad}}</td>
-                                                <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                                                <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
-                                                <td style="display: none" class="numerico avance-volumen"></td>
-                                                <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                                                <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
-                                                <td style="display: none" class="numerico avance-importe"></td>
-                                                <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
-                                                <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
-                                                <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                                                <td class="editable-cell numerico">
-                                                    <input v-on:change="changeCantidad(concepto)"
-                                                           class="text"
-                                                           v-model="concepto.cantidad_estimacion"
-                                                           :name="`cantidadEstimacion[${concepto.id}]`"
-                                                           v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
-                                                           :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
-                                                     <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
-                                                </td>
-                                                <td class="editable-cell numerico">
-                                                    <input v-on:change="changePorcentaje(concepto)"
-                                                           v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
-                                                           class="text"
-                                                           :name="`porcentaje[${concepto.id}]`"
-                                                           v-model="concepto.porcentaje_estimado"
-                                                           :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
-                                                     <div class="invalid-feedback" v-show="errors.has(`porcentaje[${concepto.id}]`)">{{ errors.first(`porcentaje[${concepto.id}]`) }}</div>
-                                                </td>
-                                                <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                                                <td class="editable-cell numerico">
-                                                    <input v-on:change="changeImporte(concepto)"
-                                                           class="text"
-                                                           :name="`importe[${concepto.id}]`"
-                                                           v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
-                                                           v-model="concepto.importe_estimacion"
-                                                           :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
-                                                     <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>
-                                                </td>
-                                                <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="observaciones" class="col-form-label">Observaciones: </label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="form-group row error-content">
-                                        <textarea
-                                            name="observaciones"
-                                            id="observaciones"
-                                            class="form-control"
-                                            v-model="observaciones"
-                                            data-vv-as="Observaciones"
-                                            :class="{'is-invalid': errors.has('observaciones')}"
-                                        ></textarea>
-                                        <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
-                                    </div>
-                                </div>
-                            </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="observaciones" class="col-form-label">Observaciones: </label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row error-content">
+                            <textarea
+                                name="observaciones"
+                                id="observaciones"
+                                class="form-control"
+                                v-model="observaciones"
+                                data-vv-as="Observaciones"
+                                :class="{'is-invalid': errors.has('observaciones')}"
+                            ></textarea>
+                            <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" v-on:click="salir">
-                                <i class="fa fa-angle-left"></i>
-                                Regresar</button>
-                            <button type="button" @click="validate" :disabled="subcontrato == ''" class="btn btn-primary">
-                                <i class="fa fa-save"></i>
-                                Guardar
-                            </button>
-                        </div>
-                    </form>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>
+                        Regresar</button>
+                    <button type="button" @click="validate" :disabled="subcontrato == ''" class="btn btn-primary">
+                        <i class="fa fa-save"></i>
+                        Guardar
+                    </button>
                 </div>
             </div>
         </div>
+       </form>
     </span>
 </template>
 
@@ -243,7 +239,7 @@
     export default {
         name: "estimacion-proveedor-create",
         components: {Encabezado, Datepicker, es},
-        props: ['id', 'base'],
+        props: ['id', 'base_b64'],
         data() {
             return {
                 es:es,
@@ -258,6 +254,7 @@
 				subcontratos: [],
                 fechasDeshabilitadas:{},
                 fecha_hoy : '',
+                base : ''
             }
         },
 
@@ -271,6 +268,7 @@
             {
                 this.seleccionarSubcontrato();
             }else {
+                this.base = atob(this.base_b64)
                 this.find()
             }
         },
@@ -284,7 +282,6 @@
                     base: this.base
                 }).then(data => {
                     this.subcontrato = data;
-                    this.cargando = false;
                     this.getConceptos();
                 })
             },
@@ -294,7 +291,8 @@
             },
             salir()
             {
-                this.$router.push({name: 'estimacion-proveedor'});
+                this.$router.go(-1);
+                //this.$router.push({name: 'estimacion-proveedor'});
             },
             getConceptos() {
                 this.conceptos = null;
@@ -413,14 +411,16 @@
 		border-color: transparent;
 		border-collapse: collapse;
 		clear: both;
+        font-size: 12px;
 	}
 
 	table thead th
 	{
 		padding: 0.2em;
-		border: 1px solid #666;
-		background-color: #333;
-		color: white;
+		border: 1px solid #ccc;
+		background-color: #f2f4f5;
+		color: #242424;
+        /*border-right: 1px solid #ccc;*/
 		font-weight: normal;
 		overflow: hidden;
 		text-align: center;
@@ -483,4 +483,8 @@
 	table tbody td input.text {
 		text-align: right;
 	}
+    td.editable-cell, td.editable-cell input{
+        background-color: #d0dcd0;
+    }
+
 </style>
