@@ -163,7 +163,7 @@
                 })
             },
             salir() {
-                this.$router.push({name: 'estimacion-proveedor'});
+                this.$router.push({name: 'solicitud-autorizacion-avance'});
             },
         },
         watch: {

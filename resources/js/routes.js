@@ -4472,7 +4472,7 @@ export const routes = [
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/SeleccionarSubcontrato').default,
                         meta: {
                             title: 'Seleccionar Subcontrato',
-                            breadcrumb: { parent: 'estimacion-proveedor', name: 'SELECCIONAR SUBCONTRATO'},
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'SELECCIONAR SUBCONTRATO'},
                             middleware: [auth, permission],
                             permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
                             general: true
@@ -4488,7 +4488,7 @@ export const routes = [
                         }),
                         meta: {
                             title: 'Registrar Solicitud de Autorización de Avance de Estimación',
-                            breadcrumb: { parent: 'estimacion-proveedor', name: 'REGISTRAR'},
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'REGISTRAR'},
                             middleware: [auth, permission],
                             permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
                             general: true
@@ -4496,12 +4496,12 @@ export const routes = [
                     },
                     {
                         path: ':id',
-                        name: 'estimacion-proveedor-show',
+                        name: 'solicitud-autorizacion-avance-show',
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Show').default,
                         props: true,
                         meta: {
                             title: 'Consultar Solicitud de Autorización de Avance de Estimación',
-                            breadcrumb: { parent: 'estimacion-proveedor', name: 'VER'},
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'VER'},
                             middleware: [auth, permission],
                             permission: 'consultar_solicitud_autorizacion_avance_proveedor',
                             general: true
@@ -4509,12 +4509,12 @@ export const routes = [
                     },
                     {
                         path: ':id/editar',
-                        name: 'estimacion-proveedor-edit',
+                        name: 'solicitud-autorizacion-avance-edit',
                         props: true,
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Edit').default,
                         meta: {
                             title: 'Editar Solicitud de Autorización de Avance de Estimación',
-                            breadcrumb: { parent: 'estimacion-proveedor', name: 'EDITAR'},
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'EDITAR'},
                             middleware: [auth, permission],
                             permission: ['editar_solicitud_autorizacion_avance_proveedor'],
                             general: true
@@ -4522,12 +4522,12 @@ export const routes = [
                     },
                     {
                         path: ':id/delete',
-                        name: 'estimacion-proveedor-delete',
+                        name: 'solicitud-autorizacion-avance-delete',
                         props: true,
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Delete').default,
                         meta: {
                             title: 'Eliminar Solicitud de Autorización de Avance de Estimación',
-                            breadcrumb: { parent: 'estimacion-proveedor', name: 'ELIMINAR'},
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'ELIMINAR'},
                             middleware: [auth, permission],
                             permission: ['eliminar_solicitud_autorizacion_avance_proveedor'],
                             general: true

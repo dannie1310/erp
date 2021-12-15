@@ -22,7 +22,7 @@
 <script>
     import PartialShow from "./partials/PartialShow";
     export default {
-        name: "estimacion-proveedor-show",
+        name: "solicitud-autorizacion-avance-show",
         components: {PartialShow},
         props: ['id', 'base'],
         data(){
@@ -35,7 +35,7 @@
         },
         methods: {
             salir() {
-                this.$router.push({name: 'estimacion-proveedor'});
+                this.$router.push({name: 'solicitud-autorizacion-avance'});
             },
         }
     }

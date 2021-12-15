@@ -60,7 +60,7 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosSubcontrato from  "./partials/DatosSubcontrato";
     export default {
-        name: "estimacion-proveedor-seleccionar-subcontrato",
+        name: "solicitud-autorizacion-avance-seleccionar-subcontrato",
         components: {
             DatosSubcontrato,
             ModelListSelect},
@@ -85,7 +85,7 @@
             },
             salir()
             {
-                this.$router.push({name: 'estimacion-proveedor'});
+                this.$router.push({name: 'solicitud-autorizacion-avance'});
             },
             getSubcontratos(){
                 this.subcontratos = [];

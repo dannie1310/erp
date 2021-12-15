@@ -120,7 +120,7 @@
 
 <script>
     export default {
-        name: "resumen-estimacion-proveedor",
+        name: "resumen-solicitud-autorizacion-avance",
         components: {},
         props: ['estimacion','base'],
         data() {

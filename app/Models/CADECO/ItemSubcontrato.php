@@ -192,7 +192,7 @@ class ItemSubcontrato extends Item
         $porcentaje_estimado = 0;
         $estimacion && $this->cantidad > 0 ? $porcentaje_estimado = $estimacion->cantidad  / $this->cantidad:'';
         $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
-        
+
         return array(
             'id' => $this->id_item,
             'id_concepto' => $this->id_concepto,
@@ -365,6 +365,7 @@ class ItemSubcontrato extends Item
             'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
             'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
             'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
+            'importe_estimacion_format' => $estimacion ? number_format($estimacion->importe, 2, '.', ',') : 0,
             'destino_path' => $destino->concepto_sgv->path_corta_proveedor,
             'destino_path_larga' => $destino->concepto_sgv->path_sgv,
             'id_destino' => $destino->id_concepto,

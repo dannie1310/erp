@@ -89,108 +89,101 @@
                 <div class="row">
                     <div class="col-md-12 table-responsive">
                         <table id="tabla-conceptos">
-                    <thead>
-                        <tr>
-                            <th rowspan="2" class="c120">Clave</th>
-                            <th rowspan="2">Concepto</th>
-                            <th rowspan="2" class="c100">Unidad</th>
-                            <th style="display: none" colspan="2" class="contratado">Contratado</th>
-                            <th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
-                            <th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
-                            <th style="display: none" colspan="2" class="saldo">Saldo</th>
-                            <th colspan="4">Esta Solicitud</th>
-                            <!--<th style="display: none" class="destino">Distribución</th>-->
-                        </tr>
-                        <tr>
-                            <th style="display: none" class="contratado c100">Volumen</th>
-                            <th style="display: none" class="contratado c100">P.U.</th>
-                            <th style="display: none" class="avance-volumen c100">Anterior</th>
-                            <th style="display: none" class="avance-volumen c100">Acumulado</th>
-                            <th style="display: none" class="avance-volumen c100">%</th>
-                            <th style="display: none" class="avance-importe c100">Anterior</th>
-                            <th style="display: none" class="avance-importe c100">Acumulado</th>
-                            <th style="display: none" class="saldo c100">Volumen</th>
-                            <th style="display: none" class="saldo c100">Importe</th>
-                            <th class="c100">Volumen</th>
-                            <th class="c100">%</th>
-                            <th class="c100">P.U.</th>
-                            <th class="c100">Importe</th>
-                            <!--<th style="display: none" class="destino">Destino</th>-->
-                        </tr>
-                    </thead>
-                    <tbody v-for="(concepto, i) in conceptos">
-                        <tr v-if="concepto.para_estimar == 0">
-                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                            <td :title="concepto.descripcion">
-                                <span v-for="n in concepto.nivel">&nbsp;</span>
-                                <b>{{concepto.descripcion}}</b></td>
-                            <td></td>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <!--<td style="display: none" class="destino"/>-->
-                        </tr>
-                        <tr v-else>
-                            <td :title="concepto.clave">{{ concepto.clave }}</td>
-                            <td :title="concepto.descripcion_concepto">
-                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                {{concepto.descripcion_concepto}}
-                            </td>
-                            <td class="centrado">{{concepto.unidad}}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen"></td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
-                            <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
-                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changeCantidad(concepto)"
-                                       class="text"
-                                       v-model="concepto.cantidad_estimacion"
-                                       :name="`cantidadEstimacion[${i}]`"
-                                       data-vv-as="'Volumen'"
-                                       v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
-                                       :class="{'is-invalid': errors.has(`cantidadEstimacion[${i}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${i}]`)">{{ errors.first(`cantidadEstimacion[${i}]`) }}</div>
-                            </td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changePorcentaje(concepto)"
-                                       v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
-                                       class="text"
-                                       data-vv-as="'Porcentaje'"
-                                       :name="`porcentaje[${i}]`"
-                                       v-model="concepto.porcentaje_estimado"
-                                       :class="{'is-invalid': errors.has(`porcentaje[${i}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`porcentaje[${i}]`)">{{ errors.first(`porcentaje[${i}]`) }}</div>
-                            </td>
-                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changeImporte(concepto)"
-                                       class="text"
-                                       data-vv-as="'Importe'"
-                                       :name="`importe[${i}]`"
-                                       v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
-                                       v-model="concepto.importe_estimacion"
-                                       :class="{'is-invalid': errors.has(`importe[${i}]`)}" />
-                                 <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
-                            </td>
-                            <!--<td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>-->
-                        </tr>
-                    </tbody>
-                </table>
+                            <thead>
+                                <tr>
+                                    <th rowspan="2" class="c120">Clave</th>
+                                    <th rowspan="2">Concepto</th>
+                                    <th rowspan="2" class="c100">Unidad</th>
+                                    <th style="display: none" colspan="2" class="contratado">Contratado</th>
+                                    <th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
+                                    <th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
+                                    <th style="display: none" colspan="2" class="saldo">Saldo</th>
+                                    <th colspan="4">Esta Solicitud</th>
+                                    <!--<th style="display: none" class="destino">Distribución</th>-->
+                                </tr>
+                                <tr>
+                                    <th style="display: none" class="contratado c100">Volumen</th>
+                                    <th style="display: none" class="contratado c100">P.U.</th>
+                                    <th style="display: none" class="avance-volumen c100">Anterior</th>
+                                    <th style="display: none" class="avance-volumen c100">Acumulado</th>
+                                    <th style="display: none" class="avance-volumen c100">%</th>
+                                    <th style="display: none" class="avance-importe c100">Anterior</th>
+                                    <th style="display: none" class="avance-importe c100">Acumulado</th>
+                                    <th style="display: none" class="saldo c100">Volumen</th>
+                                    <th style="display: none" class="saldo c100">Importe</th>
+                                    <th class="c100">Volumen</th>
+                                    <th class="c100">%</th>
+                                    <th class="c100">P.U.</th>
+                                    <th class="c100">Importe</th>
+                                    <!--<th style="display: none" class="destino">Destino</th>-->
+                                </tr>
+                            </thead>
+                            <tbody v-for="(concepto, i) in conceptos">
+                                <tr v-if="concepto.para_estimar == 0">
+                                    <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
+                                    <td :title="concepto.descripcion">
+                                        <span v-for="n in concepto.nivel">&nbsp;</span>
+                                        <b>{{concepto.descripcion}}</b></td>
+                                    <td></td>
+                                    <td style="display: none" class="numerico contratado"/>
+                                    <td style="display: none" class="numerico contratado"/>
+                                    <td style="display: none" class="numerico avance-volumen"/>
+                                    <td style="display: none" class="numerico avance-volumen"/>
+                                    <td style="display: none" class="numerico avance-volumen"/>
+                                    <td style="display: none" class="numerico avance-importe"/>
+                                    <td style="display: none" class="numerico avance-importe"/>
+                                    <td style="display: none" class="numerico saldo"/>
+                                    <td style="display: none" class="numerico saldo"/>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <!--<td style="display: none" class="destino"/>-->
+                                </tr>
+                                <tr v-else>
+                                    <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                    <td :title="concepto.descripcion_concepto">
+                                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                        {{concepto.descripcion_concepto}}
+                                    </td>
+                                    <td class="centrado">{{concepto.unidad}}</td>
+                                    <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
+                                    <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                                    <td style="display: none" class="numerico avance-volumen"></td>
+                                    <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
+                                    <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
+                                    <td style="display: none" class="numerico avance-importe"></td>
+                                    <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
+                                    <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
+                                    <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
+                                    <td class="editable-cell numerico">
+                                        <input v-on:keyup="changeCantidad(concepto)"
+                                               class="text"
+                                               v-model="concepto.cantidad_estimacion"
+                                               :name="`cantidadEstimacion[${i}]`"
+                                               data-vv-as="'Volumen'"
+                                               v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
+                                               :class="{'is-invalid': errors.has(`cantidadEstimacion[${i}]`)}" />
+                                         <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${i}]`)">{{ errors.first(`cantidadEstimacion[${i}]`) }}</div>
+                                    </td>
+                                    <td class="editable-cell numerico">
+                                        <input v-on:keyup="changePorcentaje(concepto)"
+                                               v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
+                                               class="text"
+                                               data-vv-as="'Porcentaje'"
+                                               :name="`porcentaje[${i}]`"
+                                               v-model="concepto.porcentaje_estimado"
+                                               :class="{'is-invalid': errors.has(`porcentaje[${i}]`)}" />
+                                         <div class="invalid-feedback" v-show="errors.has(`porcentaje[${i}]`)">{{ errors.first(`porcentaje[${i}]`) }}</div>
+                                    </td>
+                                    <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                                    <td class="numerico">
+                                        ${{concepto.importe_estimacion_format}}
+                                    </td>
+                                    <!--<td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>-->
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 <br>
@@ -237,7 +230,7 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
-        name: "estimacion-proveedor-create",
+        name: "solicitud-autorizacion-avance-create",
         components: {Encabezado, Datepicker, es},
         props: ['id', 'base_b64'],
         data() {
@@ -287,12 +280,12 @@
             },
             seleccionarSubcontrato()
             {
-                this.$router.push({name: 'estimacion-proveedor-seleccionar-subcontrato'});
+                this.$router.push({name: 'solicitud-autorizacion-avance-seleccionar-subcontrato'});
             },
             salir()
             {
                 this.$router.go(-1);
-                //this.$router.push({name: 'estimacion-proveedor'});
+                //this.$router.push({name: 'solicitud-autorizacion-avance'});
             },
             getConceptos() {
                 this.conceptos = null;
@@ -311,10 +304,12 @@
             changeCantidad(concepto) {
                 concepto.porcentaje_estimado = this.toFix(((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100),2);
                 concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),2);
+                concepto.importe_estimacion_format = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).formatMoney(2)
             },
             changePorcentaje(concepto) {
                 concepto.cantidad_estimacion = this.toFix(((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100),2);
                 concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),2);
+                concepto.importe_estimacion_format = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).formatMoney(2)
             },
             changeImporte(concepto) {
                 concepto.cantidad_estimacion = this.toFix((concepto.importe_estimacion / concepto.precio_unitario_subcontrato),2);
@@ -411,7 +406,7 @@
 		border-color: transparent;
 		border-collapse: collapse;
 		clear: both;
-        font-size: 12px;
+        font-size: 13px;
 	}
 
 	table thead th
@@ -485,6 +480,10 @@
 	}
     td.editable-cell, td.editable-cell input{
         background-color: #d0dcd0;
+    }
+
+    .vdp-datepicker {
+        padding: 0.2rem;
     }
 
 </style>

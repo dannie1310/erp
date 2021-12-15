@@ -51,7 +51,7 @@
 <script>
     import PartialShow from "./partials/PartialShow";
     export default {
-        name: "estimacion-proveedor-delete",
+        name: "solicitud-autorizacion-avance-delete",
         components: {PartialShow},
         props: ['id', 'base'],
         data(){
@@ -70,7 +70,7 @@
                 this.cargando = false
             },
             salir() {
-                this.$router.push({name: 'estimacion-proveedor'});
+                this.$router.push({name: 'solicitud-autorizacion-avance'});
             },
             validate() {
                 this.$validator.validate().then(result => {

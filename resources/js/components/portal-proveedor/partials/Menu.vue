@@ -31,7 +31,7 @@
             </li>
         </ul>
         <ul class="nav nav-pills nav-sidebar flex-column" v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true) || $root.can('consultar_solicitud_autorizacion_avance_proveedor',true)" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-header">AUTORIZACIÓN DE AVANCE</li>
+            <li class="nav-header">SOLICITAR AUTORIZACIÓN DE AVANCE</li>
             <li class="nav-item"  v-if="$root.can('registrar_solicitud_autorizacion_avance_proveedor',true)">
                 <router-link :to="{name: 'solicitud-autorizacion-avance-seleccionar-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'solicitud-autorizacion-avance-seleccionar-subcontrato'}">
                     <i class="fa fa-plus nav-icon"></i>
@@ -46,7 +46,7 @@
             </li>
         </ul>
         <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-            <li class="nav-header">REVISIÓN DE CFDI</li>
+            <li class="nav-header">SOLICITAR REVISIÓN DE CFDI</li>
             <li class="nav-item"  v-if="$root.can('registrar_solicitud_recepcion_cfdi',true)">
                 <router-link :to="{name: 'seleccionar-cfdi'}" class="nav-link" :class="{active: this.$route.name == 'seleccionar-cfdi'}">
                     <i class="fa fa-plus nav-icon"></i>
