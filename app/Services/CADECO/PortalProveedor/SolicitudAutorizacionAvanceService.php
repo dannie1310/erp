@@ -59,4 +59,9 @@ class SolicitudAutorizacionAvanceService
         $pdf = new SolicitudAvanceFormato($id, $data['db']);
         return $pdf;
     }
+
+    public function registrarRetencionIva($data, $id)
+    {
+        return $this->repository->registrarIVARetenido($id, $data);
+    }
 }

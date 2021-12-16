@@ -148,13 +148,54 @@ export default {
                         }
                     }
                 })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .patch(URI + payload.id+'/eliminar',payload)
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("Solicitud de Autotización eliminada correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
+            });
+        },
+        registrarRetencionIva(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Retención IVA",
+                    text: "¿Está seguro de que desea registrar esta retención de IVA?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
                     .then((value) => {
                         if (value) {
                             axios
-                                .patch(URI + payload.id+'/eliminar',payload)
+                                .patch(URI + payload.id + '/registrarRetencionIva', payload.params)
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal("Solicitud de Autotización eliminada correctamente", {
+                                    swal("Retención IVA registrada correctamente", {
                                         icon: "success",
                                         timer: 1500,
                                         buttons: false

@@ -84,4 +84,9 @@ class SolicitudAutorizacionAvanceController extends Controller
     {
         return $this->service->pdfSolicitudAvanceFormato($id, $request->all())->create();
     }
+
+    public function registrarRetencionIva(Request $request, $id)
+    {
+        return $this->service->registrarRetencionIva($request->all(), $id);
+    }
 }

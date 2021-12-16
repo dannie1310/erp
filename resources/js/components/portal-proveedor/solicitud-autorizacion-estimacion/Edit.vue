@@ -16,6 +16,14 @@
                         <div class="row" v-if="!cargando">
                             <div class="col-12">
                                 <div class="row">
+                                    <div class="p-2">
+                                        <retencion-i-v-a v-bind:id="id" v-bind:base_b64="base_b64" />
+                                    </div>
+                                    <div class="p-2">
+                                        <resumen v-bind:id="id" v-bind:base_b64="base_b64" />
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-12">
                                         <encabezado v-bind:estimacion="estimacion" />
                                     </div>
@@ -210,12 +218,14 @@
 
 <script>
     import Encabezado from './partials/EncabezadoSolicitud';
+    import RetencionIVA from "./RetencionIVA";
+    import Resumen from "./Resumen";
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "estimacion-edit",
         props: ["id", "base_b64"],
-        components: {Encabezado, Datepicker, es},
+        components: {Encabezado, RetencionIVA, Resumen, Datepicker, es},
         data() {
             return {
                 es:es,

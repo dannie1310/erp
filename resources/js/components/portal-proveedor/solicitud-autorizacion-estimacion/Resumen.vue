@@ -122,10 +122,11 @@
     export default {
         name: "resumen-solicitud-autorizacion-avance",
         components: {},
-        props: ['estimacion','base'],
+        props: ['id','base_b64'],
         data() {
             return {
                 configuracion : [],
+                estimacion : []
             }
         },
         mounted() {
@@ -133,7 +134,18 @@
         methods: {
             init(){
                 this.configuracion = [];
-                this.getConfiguraciones();
+                this.estimacion = [];
+                this.base = atob(this.base_b64)
+                this.find();
+            },
+            find() {
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/ordenarConceptos', {
+                    id: this.id,
+                    base: this.base
+                }).then(data => {
+                    this.estimacion = data;
+                    this.getConfiguraciones();
+                })
             },
             getConfiguraciones() {
                 return this.$store.dispatch('finanzas/estimacion/indexProveedor', {
@@ -142,7 +154,9 @@
                     this.configuracion = data
                     $(this.$refs.modal).appendTo('body')
                     $(this.$refs.modal).modal('show');
-                });
+                }).finally(() => {
+                    this.cargando = false;
+                })
             },
         }
     }

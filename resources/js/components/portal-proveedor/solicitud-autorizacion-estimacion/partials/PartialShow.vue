@@ -12,7 +12,7 @@
         <div v-if="!cargando">
             <div class="row" >
                 <div class="col-md-12" v-if="estimacion">
-                    <resumen v-bind:estimacion="estimacion" v-bind:base="base" />
+                    <resumen v-bind:id="id" v-bind:base_b64="base_b64" />
                 </div>
             </div>
             <div class="row" >

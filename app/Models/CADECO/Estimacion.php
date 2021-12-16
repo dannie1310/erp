@@ -23,10 +23,8 @@ use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class Estimacion extends Transaccion
