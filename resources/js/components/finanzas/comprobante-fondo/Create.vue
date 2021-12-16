@@ -83,6 +83,9 @@
                                          <button type="button" class="btn btn-success btn-sm pull-right" @click="modalCFDI()" v-if="id_concepto">
                                              <i class="fa fa-file-code"></i> Cargar x CFDI
                                          </button>
+                                         <button type="button" class="btn btn-success btn-sm pull-right mr-1" @click="modalDestino()" v-if="id_concepto" :disabled="partidas.length == 0">
+                                             <i class="fa fa-sign-in"></i> Destino 
+                                         </button>
                                      </div>
                                  </div>
                                  <hr />
@@ -161,19 +164,26 @@
                                                      </td>
                                                      <td style="text-align: right">${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
                                                      <td >
-                                                        <ConceptoSelectHijo
-                                                            :name="`id_concepto[${i}]`"
-                                                            data-vv-as="Concepto"
-                                                            id="id_concepto"
-                                                            v-model="partida.id_concepto"
-                                                            ref="conceptoSelectHijo"
-                                                            :disableBranchNodes="true"
-                                                            v-bind:nivel_id="id_concepto"
-                                                            placeholder="--- Concepto ----"
-                                                            v-validate="{required: true}"
-                                                            :class="{'is-invalid': errors.has(`id_concepto[${i}]`)}"
+                                                         <span v-if="id_concepto_temporal > 0 && partida.cambio_concepto == 0">
+                                                            <span style="cursor: pointer;text-decoration: underline" v-on:click="seleccionarDestino(i)">{{partida.destino}}</span>
+                                                         <div class="error-label" v-show="errors.has(`id_concepto[${i}]`)">{{ errors.first(`id_concepto[${i}]`) }}</div>
+                                                         </span>
+                                                         <span v-else>
+                                                             <ConceptoSelectHijo
+                                                                :name="`id_concepto[${i}]`"
+                                                                data-vv-as="Concepto"
+                                                                id="id_concepto"
+                                                                v-model="partida.id_concepto"
+                                                                ref="conceptoSelectHijo"
+                                                                :disableBranchNodes="true"
+                                                                v-bind:nivel_id="id_concepto"
+                                                                :placeholder="id_concepto_temporal>0 &&partida.id_concepto == id_concepto_temporal?p_holder:'--- Concepto ----'"
+                                                                v-validate="{required: true}"
+                                                                :class="{'is-invalid': errors.has(`id_concepto[${i}]`)}"
                                                         ></ConceptoSelectHijo>
                                                          <div class="error-label" v-show="errors.has(`id_concepto[${i}]`)">{{ errors.first(`id_concepto[${i}]`) }}</div>
+                                                         </span>
+                                                        
                                                     </td>
                                                     <td >
                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
@@ -298,6 +308,46 @@
                     </div>
                 </div>
             </div>
+        <div class="modal fade" ref="modal_destino" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg" >
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modal-destino"> <i class="fa fa-sign-in"></i> Seleccionar Destino General</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group row error-content">
+                                        <label for="id_concepto" class="col-sm-2 col-form-label">Conceptos:</label>
+                                        <div class="col-sm-10">
+                                            <from-concepto-select
+                                                v-if="id_concepto"
+                                                v-bind:nivel_id="id_concepto"
+                                                name="id_concepto"
+                                                data-vv-as="Concepto"
+                                                id="id_concepto"
+                                                v-model="id_concepto_temporal"
+                                                :error="errors.has('id_concepto')"
+                                                ref="conceptoSelect"
+                                                :disableBranchNodes="true"
+                                            ></from-concepto-select>
+                                            <div class="error-label" v-show="errors.has('id_concepto_temporal')">{{ errors.first('id_concepto_temporal') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button  type="button"  class="btn btn-secondary" v-on:click="cerrarModalDestino"><i class="fa fa-close"  ></i> Cerrar</button>
+                            </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
@@ -306,12 +356,13 @@ import Datepicker from 'vuejs-datepicker';
 import {es} from 'vuejs-datepicker/dist/locale';
 import {ModelListSelect} from 'vue-search-select';
 import ConceptoSelect from "../../cadeco/concepto/Select";
+import FromConceptoSelect from "../../cadeco/concepto/SelectFromConcepto.vue";
 import ConceptoSelectHijo from "../../cadeco/concepto/SelectHijo";
 import CfdiShow from "../../fiscal/cfd/cfd-sat/Show";
 import CFDI from "../../fiscal/cfd/cfd-sat/CFDI";
 export default {
     name: "comprobante-fondo-create",
-    components: {CFDI, CfdiShow, ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo},
+    components: {CFDI, CfdiShow, ModelListSelect, Datepicker, es, ConceptoSelect, ConceptoSelectHijo, FromConceptoSelect},
     data() {
         return {
             cargando : false,
@@ -334,6 +385,9 @@ export default {
             names : [],
             cfdi : null,
             uuid : [],
+            id_concepto_temporal:'',
+            p_holder:'',
+            destino:'',
         }
     },
     computed: {
@@ -409,7 +463,9 @@ export default {
                 id_concepto : "",
                 id_concepto_sat : "",
                 id_cfdi : "",
-                uuid : ""
+                uuid : "",
+                cambio_concepto:1,
+                destino:"",
             });
             this.index = this.index+1;
         },
@@ -497,6 +553,12 @@ export default {
         cerrarModalCFDI(){
             $(this.$refs.modal_cfdi).modal('hide');
         },
+        modalDestino(){
+            $(this.$refs.modal_destino).modal('show');
+        },
+        cerrarModalDestino(){
+            $(this.$refs.modal_destino).modal('hide');
+        },
         eliminarPartidasCFDI(){
             let id_conceptos_sat_borrar = [];
             let _self = this;
@@ -562,6 +624,8 @@ export default {
                         id_concepto : "",
                         id_cfdi : concepto.id_cfd_sat,
                         uuid : concepto.cfdi.uuid,
+                        cambio_concepto:1,
+                        destino:"",
                     });
                     _self.index = _self.index+1;
                 }
@@ -620,7 +684,41 @@ export default {
             };
             reader.readAsDataURL(file);
         },
+        getConcepto() {
+            return this.$store.dispatch('cadeco/concepto/find', {
+                id: this.id_concepto_temporal,
+                params: {
+                }
+            })
+                .then(data => {
+                    this.destino = data;
+                    this.p_holder = data.clave_concepto_select + ' ' + data.descripcion;
+                    this.replicarConcepto(data);
+                })
+        },
+        replicarConcepto(data){
+            let self = this;
+            self.partidas.forEach(function (partida, i) {
+                if(partida.id_concepto == ""){
+                    partida.id_concepto = self.id_concepto_temporal;
+                    partida.destino = data.clave_concepto_select + ' ' + data.descripcion;
+                    partida.cambio_concepto = 0;
+                }
+                
+            });
+            self.cerrarModalDestino();
+        },
+        seleccionarDestino(i){
+            this.partidas[i].cambio_concepto = 1;
+        },
     },
+    watch: {
+        id_concepto_temporal(value){
+            if(value !== '' && value !== null && value !== undefined){
+                this.getConcepto();
+            }
+        },
+    }
 }
 </script>
 
