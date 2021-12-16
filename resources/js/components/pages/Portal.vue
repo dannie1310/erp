@@ -14,7 +14,7 @@
         <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
-                    <div class="col-12 col-sm-6 col-md-3" >
+                    <div class="col-12 col-sm-6 col-md-3" v-if="currentUser.usuario_estado == 2">
                         <div class="info-box">
                             <span :class="'info-box-icon bg-danger elevation-1'"><i class="fa fa-users-slash" title="Empresas Boletinadas" ></i></span>
 
