@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button type="button" @click="init()" class="btn btn-primary" >
+        <button type="button" @click="init()" v-if="$root.can('editar_retencion_iva_solicitud_autorizacion_avance_proveedor',true)" class="btn btn-primary" >
             Retención IVA
         </button>
         <div class="row">

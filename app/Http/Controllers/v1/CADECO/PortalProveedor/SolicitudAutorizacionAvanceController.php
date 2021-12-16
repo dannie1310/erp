@@ -49,6 +49,7 @@ class SolicitudAutorizacionAvanceController extends Controller
         $this->middleware('permisoGlobal:registrar_solicitud_autorizacion_avance_proveedor')->only('store');
         $this->middleware('permisoGlobal:editar_solicitud_autorizacion_avance_proveedor')->only('update');
         $this->middleware('permisoGlobal:eliminar_solicitud_autorizacion_avance_proveedor')->only('destroy');
+        $this->middleware('permisoGlobal:editar_retencion_iva_solicitud_autorizacion_avance_proveedor')->only('registrarRetencionIva');
 
         $this->service = $service;
         $this->fractal = $fractal;
