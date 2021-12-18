@@ -164,9 +164,12 @@
                                                      </td>
                                                      <td style="text-align: right">${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
                                                      <td >
-                                                         <span v-if="id_concepto_temporal > 0 && partida.cambio_concepto == 0">
-                                                            <span style="cursor: pointer;text-decoration: underline" v-on:click="seleccionarDestino(i)">{{partida.destino}}</span>
+                                                         <span v-if="partida.cambio_concepto == 0">
+                                                            <span class="underline-cursored" v-on:click="seleccionarDestino(i)">{{partida.destino}}</span>
                                                          <div class="error-label" v-show="errors.has(`id_concepto[${i}]`)">{{ errors.first(`id_concepto[${i}]`) }}</div>
+                                                         </span>
+                                                         <span v-else-if="partida.cambio_concepto == 1">
+                                                             <span class="underline-cursored" v-on:click="seleccionarDestino(i)"> Seleccionar Destino</span>
                                                          </span>
                                                          <span v-else>
                                                              <ConceptoSelectHijo
@@ -177,7 +180,7 @@
                                                                 ref="conceptoSelectHijo"
                                                                 :disableBranchNodes="true"
                                                                 v-bind:nivel_id="id_concepto"
-                                                                :placeholder="id_concepto_temporal>0 &&partida.id_concepto == id_concepto_temporal?p_holder:'--- Concepto ----'"
+                                                                :placeholder="partida.destino != ''?partida.destino:'--- Concepto ----'"
                                                                 v-validate="{required: true}"
                                                                 :class="{'is-invalid': errors.has(`id_concepto[${i}]`)}"
                                                         ></ConceptoSelectHijo>
@@ -709,7 +712,7 @@ export default {
             self.cerrarModalDestino();
         },
         seleccionarDestino(i){
-            this.partidas[i].cambio_concepto = 1;
+            this.partidas[i].cambio_concepto = 2;
         },
     },
     watch: {
@@ -726,6 +729,10 @@ export default {
 
 th, label {
     color: #86888d;
+}
+.underline-cursored{
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 </style>
