@@ -1449,12 +1449,14 @@ class CFDSATService
     public function cargaXMLComprobacion(array $data)
     {
         $archivos_xml = json_decode($data["xmls"]);
+        $nombres_archivo = json_decode($data["nombres_archivo"]);
         $conceptos = null;
+        $i = 0;
         foreach ($archivos_xml as $archivo_xml){
             $cfd = new CFD($archivo_xml);
             $arreglo_cfd = $cfd->getArregloFactura();
 
-            $this->validaReceptorContexto($arreglo_cfd);
+            $this->validaReceptorContexto($arreglo_cfd, $nombres_archivo[$i]);
 
             $arreglo_cfd["id_empresa_sat"] = $this->repository->getIdEmpresa($arreglo_cfd["receptor"]);
             $proveedor = $this->repository->getProveedorSAT($arreglo_cfd["emisor"], $arreglo_cfd["id_empresa_sat"]);
@@ -1476,21 +1478,27 @@ class CFDSATService
             }else {
                 abort(400,"Los CFDI deben ser de tipo Ingreso, favor de verificar");
             }
+            $i++;
         }
         return $conceptos;
     }
 
-    private function validaReceptorContexto($arreglo_cfd)
+    private function validaReceptorContexto($arreglo_cfd, $nombre = null)
     {
         $rfc_obra = $this->repository->getRFCObra();
-        if ($arreglo_cfd["receptor"]["rfc"] != $rfc_obra) {
-            event(new IncidenciaCI(
-                [
-                    "id_tipo_incidencia" => 6,
-                    "rfc" => $arreglo_cfd["receptor"]["rfc"],
-                ]
-            ));
-            abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
+        if(key_exists("receptor",$arreglo_cfd))
+        {
+            if ($arreglo_cfd["receptor"]["rfc"] != $rfc_obra) {
+                event(new IncidenciaCI(
+                    [
+                        "id_tipo_incidencia" => 6,
+                        "rfc" => $arreglo_cfd["receptor"]["rfc"],
+                    ]
+                ));
+                abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
+            }
+        }else{
+            abort(500, "Error de lectura del archivo: ".$nombre);
         }
     }
 }
