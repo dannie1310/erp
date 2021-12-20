@@ -66,7 +66,7 @@ class CFDSAT extends Model
     ];
 
     protected $dates =["fecha", "fecha_cancelacion"];
-    //protected $dateFormat = 'Y-m-d H:i:s';
+    protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
     {
@@ -335,6 +335,24 @@ class CFDSAT extends Model
                         foreach($data["traslados"] as $traslado){
                             $this->traslados()->create($traslado);
                         }
+                    }
+                }
+            }else{
+                if(key_exists("conceptos",$data)){
+                    $this->conceptos()->delete();
+                    foreach($data["conceptos"] as $concepto){
+                        $conceptoObj = $this->conceptos()->create($concepto);
+                        if(key_exists("traslados",$concepto)){
+                            foreach($concepto["traslados"] as $traslado){
+                                $conceptoObj->traslados()->create($traslado);
+                            }
+                        }
+                    }
+                }
+                if(key_exists("traslados",$data)){
+                    $this->traslados()->delete();
+                    foreach($data["traslados"] as $traslado){
+                        $this->traslados()->create($traslado);
                     }
                 }
             }
