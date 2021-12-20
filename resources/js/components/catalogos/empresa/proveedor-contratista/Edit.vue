@@ -47,17 +47,17 @@
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group row error-content">
-                                                    <label for="rfc" class="col-md-5 col-form-label">R.F.C.: </label>
+                                                    <label for="rfc" class="col-md-5 col-form-label">RFC: </label>
                                                     <div class="col-md-7">
                                                         <input
                                                             :disabled="!$root.can('editar_proveedor_rfc') || emite_factura === 0 || es_nacional === 0"
                                                             type="text"
                                                             name="rfc"
-                                                            data-vv-as="R.F.C."
+                                                            data-vv-as="RFC"
                                                             v-validate="{required: true}"
                                                             class="form-control"
                                                             id="rfc"
-                                                            placeholder="R.F.C."
+                                                            placeholder="RFC"
                                                             v-model="edit.rfc_nuevo"
                                                             :class="{'is-invalid': errors.has('rfc')}">
                                                         <div class="invalid-feedback" v-show="errors.has('rfc')">{{ errors.first('rfc') }}</div>

@@ -5,7 +5,9 @@ namespace App\Services\CADECO\Compras;
 
 
 use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\ProveedorContratista;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
+use App\Traits\EmpresaTrait;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Compras\AsignacionFormato;
 use App\Models\CADECO\OrdenCompraPartida;
@@ -16,6 +18,7 @@ use App\Http\Transformers\CADECO\Compras\OrdenCompraTransformer;
 
 class AsignacionProveedorService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */
@@ -148,10 +151,12 @@ class AsignacionProveedorService
     }
 
     public function generarOrdenCompra($data){
+        $asignacion = $this->repository->show($data['id']);
+        $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
+        $this->validarEmpresasAsignacion($partidas);
         try{
             DB::connection('cadeco')->beginTransaction();
-            $asignacion = $this->repository->show($data['id']);
-            $partidas = $asignacion->partidas()->orderBy('id_transaccion_cotizacion')->get();
+
             $transaccion_cotizacion = '';
 
             foreach($partidas as $partida){
@@ -232,9 +237,10 @@ class AsignacionProveedorService
     }
 
     public function generarOrdenIndividual($data){
+        $partidas = AsignacionProveedorPartida::where('id_transaccion_cotizacion', '=', $data['id_transaccion'])->where('id_asignacion_proveedores', '=', $data['id'])->get();
+        $this->validarEmpresasAsignacion($partidas);
         try{
             DB::connection('cadeco')->beginTransaction();
-            $partidas = AsignacionProveedorPartida::where('id_transaccion_cotizacion', '=', $data['id_transaccion'])->where('id_asignacion_proveedores', '=', $data['id'])->get();
 
             $transaccion_cotizacion = '';
             $orden_c = null;
@@ -288,13 +294,24 @@ class AsignacionProveedorService
 
             $partida->asignacion->estado = 2;
             $partida->asignacion->save();
-
             DB::connection('cadeco')->commit();
             return $partida->asignacion;
         }catch (\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;
+        }
+    }
+
+    public function validarEmpresasAsignacion($partidas)
+    {
+        foreach($partidas as $partida) {
+            $empresa = $partida->cotizacionCompra->empresa;
+
+            if($empresa && strlen(str_replace(" ","", $empresa->rfc))>0){
+                $empresa->rfcValidaBoletinados($empresa->rfc);
+                $empresa->rfcValidaEfos($empresa->rfc);
+            }
         }
     }
 
@@ -408,10 +425,7 @@ class AsignacionProveedorService
                    abort(403, " No se puede realizar la asignación, la empresa " . $cotizacion['razon_social'] . " no tiene RFC registrado, favor de comunicarse con soporte a aplicaciones");
                }
                else {
-                   $no_localizado = CtgNoLocalizado::where('rfc', $cotizacion['rfc'])->first();
-                   if ($no_localizado) {
-                       abort(403, "El proveedor " . $cotizacion['razon_social'] . " es un contribuyente 'No Localizado' ante el SAT, no es posible realizarle una asignación.");
-                   }
+                   $this->rfcValidaBoletinados($cotizacion['rfc']);
                }
            }
         }

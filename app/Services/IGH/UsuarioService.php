@@ -159,6 +159,7 @@ class UsuarioService
             /*1.3 si no existe se valida que el RFC sea válido ante el SAT*/
             $rfc_valido = $empresaPadronService->validaRFCSM($datos["rfc"]);
             if($rfc_valido){
+                $empresaPadronService->rfcValidaBoletinados($datos["rfc"]);
                 /*1.3.1   es válido ante el SAT*/
 
                 /*1.3.1.1 se actualiza registro de usurio*/
