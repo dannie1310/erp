@@ -14,6 +14,7 @@ use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\PresupuestoContratista;
+use App\Models\CADECO\ProveedorContratista;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\Sucursal;
 use App\Models\CADECO\Transaccion;
@@ -33,11 +34,13 @@ use App\Services\CADECO\SucursalService;
 use App\Services\CADECO\TransaccionService;
 use App\Services\IGH\UsuarioService;
 use App\Services\SEGURIDAD_ERP\Contabilidad\EmpresaSATService;
+use App\Traits\EmpresaTrait;
 use DateTime;
 use DateTimeZone;
 
 class InvitacionService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */
@@ -113,6 +116,17 @@ class InvitacionService
         ->where('id_obra',"=",Context::getIdObra())
         ->where("fecha_cierre_invitacion","!=",$data["fecha_cierre"])
         ->get();
+
+        foreach ($data["destinatarios"] as $destinatario)
+        {
+            $empresa = ProveedorContratista::find($destinatario["id_proveedor"]);
+
+            if($empresa && strlen(str_replace(" ","", $empresa->rfc))>0){
+                $this->rfcValido($empresa->rfc)?'':abort(403, 'El RFC tiene formato inválido.');
+                $this->rfcValidaEfos($empresa->rfc);
+                $this->rfcValidaBoletinados($empresa->rfc);
+            }
+        }
 
 
         foreach ($data["destinatarios"] as $destinatario)

@@ -4,7 +4,10 @@
 namespace App\Models\CADECO;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Finanzas\ComprobanteFondoEliminado;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Illuminate\Support\Facades\DB;
 
 class ComprobanteFondo extends Transaccion
@@ -65,6 +68,13 @@ class ComprobanteFondo extends Transaccion
         return $this->belongsTo(ComprobanteFondoEliminado::class, 'id_transaccion', 'id_transaccion');
     }
 
+    public function facturasRepositorio()
+    {
+        return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
+    }
+
     /**
      * Scopes
      */
@@ -102,14 +112,20 @@ class ComprobanteFondo extends Transaccion
                 'cumplimiento' => $data['cumplimiento']
             ]);
 
+            foreach($data["facturas_repositorio"] as $factura_repositorio){
+                $this->registrarCFDIRepositorio($comprobante, $factura_repositorio);
+            }
+
             foreach ($data['partidas'] as $partida)
             {
-                $comprobante->partidas()->create([
+                $item = $comprobante->partidas()->create([
                     'id_transaccion' => $comprobante->id_transaccion,
                     'id_concepto' => $partida['id_concepto'],
                     'importe' => $partida['precio'],
                     'cantidad' => $partida['cantidad'],
-                    'referencia' => $partida['referencia']
+                    'referencia' => mb_substr($partida['referencia'],0,64),
+                    'item_antecedente' => $partida["id_concepto_sat"],
+                    'id_antecedente' => $partida["id_cfdi"],
                 ]);
             }
             DB::connection('cadeco')->commit();
@@ -117,6 +133,39 @@ class ComprobanteFondo extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    private function registrarCFDIRepositorio($comprobante, $data)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            $factura_repositorio->id_transaccion = $comprobante->id_transaccion;
+            $factura_repositorio->tipo_transaccion = 65;
+            $factura_repositorio->save();
+        } else {
+            if($data){
+                $factura_repositorio = $comprobante->facturasRepositorio()->create($data);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
+                }
+            }
+        }
+    }
+
+    public function asociarCFDRepositorio($data)
+    {
+        $factura_repositorio = FacturaRepositorio::where("uuid","=",$data["uuid"])->first();
+        if($factura_repositorio){
+            $factura_repositorio->id_transaccion = $this->id_transaccion;
+            $factura_repositorio->save();
+        } else {
+            if($data){
+                $factura_repositorio = $this->facturasRepositorio()->create($data);
+                if (!$factura_repositorio) {
+                    abort(400, "Hubo un error al registrar el CFDI en el repositorio");
+                }
+            }
         }
     }
 
@@ -132,6 +181,7 @@ class ComprobanteFondo extends Transaccion
             foreach ($this->partidas()->get() as $item) {
                 $item->delete();
             }
+            $this->desvincularCFDIRepositorio();
             $this->respaldar($motivo);
             $this->delete();
             DB::connection('cadeco')->commit();
@@ -168,5 +218,20 @@ class ComprobanteFondo extends Transaccion
             'usuario_elimina' => auth()->id(),
             'fecha_eliminacion' => date('Y-m-d H:i:s')
         ]);
+    }
+
+    public function desvincularCFDIRepositorio()
+    {
+        if ($this->facturasRepositorio) {
+            foreach ($this->facturasRepositorio as $cfd_repositorio){
+                $cfd_repositorio->id_transaccion = null;
+                $cfd_repositorio->tipo_transaccion = null;
+                $cfd_repositorio->id_proyecto = null;
+                $cfd_repositorio->id_obra = null;
+                $cfd_repositorio->usuario_asocio = null;
+                $cfd_repositorio->fecha_hora_asociacion = null;
+                $cfd_repositorio->save();
+            }
+        }
     }
 }

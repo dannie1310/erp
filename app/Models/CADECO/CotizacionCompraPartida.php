@@ -233,11 +233,11 @@ class CotizacionCompraPartida extends Model
         if(count($cotizaciones) == 1){
             return true;
         }
-        $precio_unitario_base = $this->precio_unitario - ($this->precio_unitario * $this->descuento / 100);
+        $precio_unitario_base = $this->precio_unitario_compuesto;
         unset($cotizaciones[array_search($this->id_transaccion, $cotizaciones)]);
         $partidas_comparar = self::whereIn('id_transaccion',$cotizaciones)->where('id_material', '=', $this->id_material)->get();
         foreach($partidas_comparar as $partida){
-            $precio_unitario_partida = $partida->precio_unitario - ($partida->precio_unitario * $partida->descuento / 100);
+            $precio_unitario_partida = $partida->precio_unitario_compuesto;
             if($precio_unitario_base > $precio_unitario_partida){
                 return false;
             }

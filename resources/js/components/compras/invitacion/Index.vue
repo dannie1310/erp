@@ -35,7 +35,7 @@
                     { title: 'Fecha de Cierre', field: 'fecha_cierre_invitacion', tdClass: 'td_c90', sortable: true, thComp: require('../../globals/th-Date').default },
                     { title: 'Folio de Solicitud', field: 'numero_folio_solicitud', tdClass: 'td_c100' },
                     { title: 'Fecha de Solicitud', field: 'fecha_solicitud', tdClass: 'td_c100' },
-                    { title: 'Proveedor Invitado', field: 'razon_social', sortable: true, thComp: require('../../globals/th-Filter').default, },
+                    { title: 'Proveedor Invitado', field: 'razon_social', sortable: false,  },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
                     { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
@@ -123,7 +123,7 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        razon_social:invitacion.razon_social,
+                        razon_social:invitacion.usuario_invitado,
                         id: invitacion.numero_folio_format,
                         numero_folio_solicitud: invitacion.transaccion.numero_folio_format,
                         fecha_hora_invitacion: invitacion.fecha_format,

@@ -84,27 +84,20 @@ class ViajeNetoService
             return json_encode(array("error" => "El usuario no tiene perfil de CHECADOR favor de solicitarlo."));
         }
         $telefono = $usuario->first()->telefono;
+        if (is_null($telefono)) {
+            return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
+        }
+
         if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A' ) {
             /**
              * Validar telefono asignado al proyecto y al usuario.
              */
-            if ($this->repository->getTelefonoActivo('imei',$data['IMEI'])) {
-                return json_encode(array("error" => "El teléfono no tiene autorización para operar."));
+            if ($this->repository->getTelefonoActivo('imei',$data['IMEI']) || $this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
+                return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
             }
-
-
-            if (is_null($telefono) || $telefono->imei != $data['IMEI']) {
-                return json_encode(array("error" => "El usuario no tiene asignado este teléfono. Favor de solicitarlo."));
-            }
-
-        }else if(array_key_exists('deviceId', $data)){
-            if($telefono->device_id != null){
-                if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
-                    return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
-                }
-            }else{
-                $telefono->device_id = $data['deviceId'];
-                $telefono->save();
+        }else{
+            if ($this->repository->getTelefonoActivo('device_id',$data['deviceId'])) {
+                return json_encode(array("error" => "El usuario no tiene autorización para operar este telefono."));
             }
         }
 
@@ -168,6 +161,7 @@ class ViajeNetoService
         /**
          * Respaldar los datos
          */
+        $data = array_except($data,'clave');
         $this->repository->crearJson(array_except($data, 'access_token'));
 
         if(config('app.env_variables.ACARREOS_COMPROBAR_IMEI') == 1 && $data['IMEI'] != 'N/A')
@@ -445,7 +439,10 @@ class ViajeNetoService
         /**
         * Se genera el respaldo del json
          */
-        $this->repository->crearJson($data);
+        $data = array_except($data, 'access_token');
+        $json = array_except($data,'clave');
+        $json = array_except($json, 'NuevaClave');
+        $this->repository->crearJson($json);
         /**
          * Se genera el log de cambio de contraseña.
          */

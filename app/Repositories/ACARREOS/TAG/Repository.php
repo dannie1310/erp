@@ -97,6 +97,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
      */
     public function crearJson($json)
     {
+        $json = array_except($json,'clave');
         Json::create([
             'json' => json_encode($json)
         ]);

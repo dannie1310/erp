@@ -425,6 +425,20 @@ export default {
                 }
             }
         },
+        cargarXMLComprobacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI + 'cargar-xml-comprobacion', payload.data, payload.config)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
     },
 
     getters: {

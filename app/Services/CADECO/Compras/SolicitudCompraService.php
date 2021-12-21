@@ -174,6 +174,7 @@ class SolicitudCompraService
     }
 
     public function getCotizaciones($id){
+        $precios = [];
         $items = array();
         $cotizaciones = array();
         $solicitud = $this->repository->show($id);
@@ -195,6 +196,20 @@ class SolicitudCompraService
             ];
             foreach($solicitud_cotizaciones as $cotizacion){
                 if(!$cotizacion->id_empresa)continue;
+
+                foreach ($cotizacion->partidas as $p) {
+                    if (key_exists($p->id_material, $precios)) {
+                        if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
+                            $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                            $importes[$p->id_material] =  $precios[$p->id_material] * $p->cantidad;
+                    } else {
+                        if($p->precio_unitario_compuesto > 0) {
+                            $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
+                            $importes[$p->id_material] = $precios[$p->id_material]  * $p->cantidad;
+                        }
+                    }
+                }
+
                 if(!array_key_exists($cotizacion->id_transaccion, $cotizaciones)){
                     $cotizaciones[$cotizacion->id_transaccion] = [
                         'id_transaccion' => $cotizacion->id_transaccion,
@@ -202,6 +217,7 @@ class SolicitudCompraService
                         'razon_social' => $cotizacion->empresa->razon_social,
                         'sucursal' => $cotizacion->sucursal->descripcion,
                         'direccion' => $cotizacion->sucursal->direccion,
+                        'folio_format' => $cotizacion->numero_folio_format,
                         'justificar' => false,
                     ];
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
@@ -218,13 +234,18 @@ class SolicitudCompraService
                         'id_transaccion' => $cot->id_transaccion,
                         'cantidad_asignada' => '',
                         'precio_unitario' => $cot->precio_unitario,
-                        'precio_unitario_format' => '$ ' . number_format($cot->precio_unitario, 2, '.', ','),
+                        'precio_unitario_format' => '$' . number_format($cot->precio_unitario, 2, '.', ','),
+                        'precio_con_descuento' => $cot->precio_compuesto,
+                        'precio_con_descuento_mn' => $cot->precio_compuesto * $cot->tipo_cambio,
+                        'precio_unitario_compuesto' => $cot->precio_unitario_compuesto,
                         'moneda' => $cot->moneda->abreviatura,
                         'tipo_cambio' => $t_cambio,
                         'importe' => number_format($importe, 2, '.', ','),
+                        'importe_total_moneda' => $cot->total_precio_descuento_partida_moneda_comparativa,
                         'importe_moneda_conversion' =>  number_format($importe * $t_cambio, 2, '.', ','),
                         'importe_moneda_conversion_sf' =>  $importe * $t_cambio,
                         'descuento' => $descuento,
+                        'descuento_format' => $cot->partida && $cot->partida->descuento_partida>0? number_format($cot->partida->descuento_partida,2,".",",")."%" : '-',
                         'mejor_opcion' => $cot->mejor_opcion,
                         'color' => $cot->color_opcion,
                         'justificacion' => '',
@@ -234,7 +255,7 @@ class SolicitudCompraService
                 }
             }
         }
-        return ['items'=>$items,'cotizaciones'=> $cotizaciones];
+        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios];
     }
 
     public function leerQR($data)

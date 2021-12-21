@@ -522,10 +522,11 @@ class AsignacionContratista extends Model
 
     public function generarSubcontratos()
     {
+        $partidas = $this->partidas()->orderBy('id_concepto')->get();
+        $this->validarEmpresasAsignacion($partidas);
         try{
             DB::connection('cadeco')->beginTransaction();
 
-            $partidas = $this->partidas()->orderBy('id_concepto')->get();
             $subcontratos = [];
             foreach($partidas as $partida){
                 $subcontrato = null;
@@ -589,6 +590,18 @@ class AsignacionContratista extends Model
             throw $e;
         }
 
+    }
+
+    public function validarEmpresasAsignacion($partidas)
+    {
+        foreach($partidas as $partida) {
+            $empresa = $partida->presupuesto->empresa;
+
+            if($empresa && strlen(str_replace(" ","", $empresa->rfc))>0){
+                $empresa->rfcValidaBoletinados($empresa->rfc);
+                $empresa->rfcValidaEfos($empresa->rfc);
+            }
+        }
     }
 
     public function sumaSubtotalPartidas($tipo_moneda, $id_presupuesto)

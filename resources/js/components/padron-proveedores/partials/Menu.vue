@@ -5,10 +5,16 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-header">MÓDULOS</li>
-            <li class="nav-item"  v-if="$root.can('consultar_expediente_proveedor',true)">
-                <router-link :to="{name: 'proveedores-index'}" class="nav-link">
-                    <i class="fa fa-tasks nav-icon"></i>
-                    <p>Gestión de Proveedores</p>
+            <li class="nav-item"  v-if="$root.can('consultar_expediente_proveedor',true)" >
+                <router-link :to="{name: 'proveedores-index'}" class="nav-link" :class="{active: this.$route.name == 'proveedores-index'}">
+                    <i class="fa fa-users nav-icon"></i>
+                    <p>Proveedores</p>
+                </router-link>
+            </li>
+            <li class="nav-item" >
+                <router-link :to="{name: 'empresas-boletinadas-index'}" v-if="$root.can('consultar_empresa_boletinada',true)" class="nav-link" :class="{active: this.$route.name == 'empresas-boletinadas-index'}">
+                    <i class="fa fa-users-slash nav-icon"></i>
+                    <p>Empresas Boletinadas</p>
                 </router-link>
             </li>
         </ul>

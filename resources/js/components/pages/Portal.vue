@@ -14,6 +14,18 @@
         <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
+                    <div class="col-12 col-sm-6 col-md-3" v-if="currentUser.usuario_estado == 2">
+                        <div class="info-box">
+                            <span :class="'info-box-icon bg-danger elevation-1'"><i class="fa fa-users-slash" title="Empresas Boletinadas" ></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-number">VER EMPRESAS BOLETINADAS</span>
+                                <router-link :to="{name: 'empresas-boletinadas'}" >
+                                    <span class="info-box-text">Ingresar <i class="fa fa-arrow-circle-o-right" /></span>
+                                </router-link>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12 col-sm-6 col-md-3" v-for="(aplicacion, i) in aplicaciones">
                         <div class="info-box">
                             <span :class="aplicacion.color" class="info-box-icon elevation-1" ><i :class="aplicacion.icon"></i></span>

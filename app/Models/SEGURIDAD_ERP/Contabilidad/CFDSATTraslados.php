@@ -21,7 +21,8 @@ class CFDSATTraslados extends Model
         "tasa_o_cuota",
         "importe",
         "impuesto",
-        "base"
+        "base",
+        "id_cfd_sat",
     ];
 
     public function cfd_sat()
