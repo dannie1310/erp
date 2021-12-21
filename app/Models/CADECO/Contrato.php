@@ -148,7 +148,7 @@ class Contrato extends Model
     }
 
     public function registrarDestino(){
-        if($this->cantidad_original > 0){
+        if($this->cantidad_original >= 0){
             Destino::create([
                 'id_transaccion' => $this->id_transaccion,
                 'id_concepto_contrato' => $this->id_concepto,
