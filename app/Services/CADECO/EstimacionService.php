@@ -173,4 +173,9 @@ class EstimacionService
     {
         return $this->repository->update($data, $id);
     }
+
+    public function descargaLayout($id)
+    {
+        return $this->repository->descargaLayout($id);
+    }
 }

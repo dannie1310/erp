@@ -62,6 +62,7 @@ class EstimacionController extends Controller
         $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
         $this->middleware('permiso:actualizar_amortizacion_anticipo')->only('anticipo');
         $this->middleware('permiso:editar_estimacion_subcontrato')->only('update');
+        $this->middleware('permiso:descargar_layout_cotizacion_compra')->only(['descargaLayout']);
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -117,5 +118,10 @@ class EstimacionController extends Controller
     public function ordenarConceptos($id)
     {
         return $this->service->ordenado($id);
+    }
+
+    public function descargaLayout($id)
+    {
+        return $this->service->descargaLayout($id);
     }
 }

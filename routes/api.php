@@ -1121,6 +1121,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIva')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
+            $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@descargaLayout')->where(['id' => '[0-9]+']);
 
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
