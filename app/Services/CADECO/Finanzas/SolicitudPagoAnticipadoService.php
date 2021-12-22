@@ -37,11 +37,8 @@ class SolicitudPagoAnticipadoService
     public function store(array $data)
     {
         $antecedente = Transaccion::query()->find($data['id_antecedente']);
-
-        $antecedente->empresa->validaEmpresa();
-
+        $antecedente->empresa->validaRFC($antecedente->empresa);
         $obra = Obra::query()->find(Context::getIdObra());
-        abort(500, "Prove");
         try {
             DB::connection('cadeco')->beginTransaction();
 
