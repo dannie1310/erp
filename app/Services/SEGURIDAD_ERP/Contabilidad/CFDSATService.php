@@ -10,6 +10,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
 use DateTimeZone;
@@ -27,7 +28,6 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
@@ -1309,6 +1309,12 @@ class CFDSATService
 
         return $cfdiRepository->getListaCFDI($data);
 
+    }
+
+    public function obtenerListaCFDIMesAnio($data)
+    {
+        $cfdiRepository = new CFDSATRepository(new CFDSAT());
+        return $cfdiRepository->obtenerListaCFDIMesAnio($data);
     }
 
     public function obtenerNumeroEmpresa()

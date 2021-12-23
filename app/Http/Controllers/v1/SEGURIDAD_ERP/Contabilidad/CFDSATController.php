@@ -130,6 +130,12 @@ class CFDSATController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function obtenerListaCFDIMesAnio(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerListaCFDIMesAnio($request->all());
+        return response()->json($respuesta, 200);
+    }
+
     public function obtenerNumeroEmpresa()
     {
         $respuesta =$this->service->obtenerNumeroEmpresa();

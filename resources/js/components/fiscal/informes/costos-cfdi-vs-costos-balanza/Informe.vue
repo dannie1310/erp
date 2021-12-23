@@ -56,7 +56,7 @@
                 <div class="row" >
                     <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
                         <span><b>{{this.empresa_sat_razon_social}}</b></span>
-                        <table class="table table-sm table-fs-sm" id="sticky">
+                        <table class="table table-sm" id="sticky">
                             <thead >
                                 <tr>
                                     <th class="index_corto">#</th>
@@ -72,7 +72,7 @@
                                     <td>{{i+1}}</td>
                                     <td>{{partida.mes}}</td>
                                     <td style="text-align: right">{{partida.costo_balanza}}</td>
-                                    <td style="text-align: right">{{partida.costo_cfdi}}</td>
+                                    <td style="text-align: right; text-decoration: underline; cursor: pointer" v-on:click="verCFDI(partida)">{{partida.costo_cfdi}}</td>
                                     <td style="text-align: right">{{partida.sustitucion_ejercicios_anteriores}}</td>
                                     <td style="text-align: right">{{partida.relacion_ejercicios_anteriores}}</td>
                                 </tr>
@@ -91,6 +91,156 @@
                 </div>
             </div>
         </div>
+        <div class="modal fade" ref="modal_cfdi" tabindex="-1" role="dialog">
+                 <div class="modal-dialog modal-xl" id="mdialTamanio">
+                     <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title"><i class="fa fa-file-invoice-dollar"></i> Lista de CFDI</h4>
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+                        </div>
+                        <div class="modal-body " ref="body">
+                            <div class="row">
+                                <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
+                                    <span class="pull-right"><h6>{{ total_cfdi }}</h6></span>
+                                    <table class="table table-sm table-fs-sm">
+                                        <thead >
+                                            <tr>
+                                                <th class="index_corto encabezado">#</th>
+                                                <th class="encabezado">Serie y Folio</th>
+                                                <th class="encabezado">Tipo</th>
+                                                <th class="encabezado">Fecha</th>
+                                                <th class="encabezado">Moneda</th>
+                                                <th class="encabezado">TC</th>
+                                                <th class="encabezado">Descuento</th>
+                                                <th class="encabezado">Descuento MXN</th>
+                                                <th class="encabezado">Subtotal</th>
+                                                <th class="encabezado">Subtotal MXN</th>
+                                                <th class="encabezado">Subtotal - Descuento MXN</th>
+                                                <th class="encabezado">Total</th>
+                                                <th class="encabezado">Total MXN</th>
+                                                <th class="encabezado">Fue Reemplazado</th>
+                                                <th class="encabezado">Fecha CFDI Reemplazo</th>
+                                                <th class="encabezado">Es Reemplazo</th>
+                                                <th class="encabezado">Fecha CFDI Original</th>
+                                                <th class="encabezado">Obra SAO</th>
+                                                <th class="encabezado">Empresa Contpaq</th>
+                                                <th class="encabezado"></th>
+                                            </tr>
+                                        </thead>
+                                        <tr v-for="(cfdi, i) in lista_cfdi">
+                                            <td>{{i+1}}</td>
+                                            <td>{{cfdi.serie}} {{cfdi.folio}}</td>
+                                            <td>{{cfdi.tipo_comprobante}}</td>
+                                            <td>{{cfdi.fecha}}</td>
+                                            <td>{{cfdi.moneda}}</td>
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.tc_xls != null">
+                                                    ${{ parseFloat(cfdi.tc_xls).formatMoney(2,".",",") }}
+                                                </span>
+                                                <span v-else>
+                                                    ${{ parseFloat(cfdi.tipo_cambio).formatMoney(2,".",",") }}
+                                                </span>
+                                            </td>
+
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.descuento <0">(</span>${{ parseFloat(Math.abs(cfdi.descuento)).formatMoney(2,".",",") }}<span v-if="cfdi.descuento <0">)</span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.descuento_mxn <0">(</span>${{ parseFloat(Math.abs(cfdi.descuento_mxn)).formatMoney(2,".",",") }}<span v-if="cfdi.descuento_mxn <0">)</span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.subtotal <0">(</span>${{ parseFloat(Math.abs(cfdi.subtotal)).formatMoney(2,".",",") }}<span v-if="cfdi.subtotal <0">)</span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.subtotal_mxn <0">(</span>${{ parseFloat(Math.abs(cfdi.subtotal_mxn)).formatMoney(2,".",",") }}<span v-if="cfdi.subtotal_mxn <0">)</span>
+                                            </td>
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.subtotal_a_sumar <0">(</span>${{ parseFloat(Math.abs(cfdi.subtotal_a_sumar)).formatMoney(2,".",",") }}<span v-if="cfdi.subtotal_a_sumar <0">)</span>
+                                            </td>
+
+                                            <td style="text-align: right">
+                                                <span v-if="cfdi.total_xls != null">
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                </span>
+                                                <span v-else>
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                </span>
+
+                                            </td>
+
+
+                                            <template v-if="cfdi.moneda !='MXN'">
+                                                 <td style="text-align: right" v-if="cfdi.tc_xls != null">
+                                                    <span v-if="cfdi.total_xls != null">
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls * cfdi.tc_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                    </span>
+                                                    <span v-else>
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total * cfdi.tc_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                    </span>
+                                                </td>
+                                                <td style="text-align: right" v-else>
+                                                    <span v-if="cfdi.total_xls != null">
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls * cfdi.tipo_cambio).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                    </span>
+                                                    <span v-else>
+                                                        <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total * cfdi.tipo_cambio).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                    </span>
+                                                </td>
+                                            </template>
+                                            <td style="text-align: right" v-else>
+                                                <span v-if="cfdi.total_xls != null">
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total_xls).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                </span>
+                                                <span v-else>
+                                                    <span v-if="cfdi.tipo_comprobante == 'E'">(</span>${{ parseFloat(cfdi.total).formatMoney(2,".",",") }}<span v-if="cfdi.tipo_comprobante == 'E'">)</span>
+                                                </span>
+                                            </td>
+
+
+                                            <td style="text-align: center">
+                                                <span v-if="cfdi.id_reemplaza>0"><i class="fa fa-check"></i></span>
+                                            </td>
+                                            <td>
+                                                <CFDI v-if="cfdi.id_reemplaza >0" v-bind:txt="cfdi.fecha_reemplaza" v-bind:id="cfdi.id_reemplaza" @click="cfdi.id_reemplaza" ></CFDI>
+                                            </td>
+                                            <td style="text-align: center">
+                                                <span v-if="cfdi.id_reemplazado>0"><i class="fa fa-check"></i></span>
+                                            </td>
+                                            <td>
+                                                <CFDI v-if="cfdi.id_reemplazado >0" v-bind:txt="cfdi.fecha_reemplazado" v-bind:id="cfdi.id_reemplazado" @click="cfdi.id_reemplazado" ></CFDI>
+                                            </td>
+                                            <td>
+                                                {{cfdi.obra_sao}}
+                                            </td>
+                                            <td>
+                                                {{cfdi.empresa_contpaq}}
+                                            </td>
+                                            <td style="width: 90px">
+                                                <CFDI v-bind:id="cfdi.id" @click="cfdi.id" ></CFDI>
+                                                <DescargaCFDI v-bind:id="cfdi.id"></DescargaCFDI>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="10" style="border: none">
+
+                                            </td>
+                                            <td style="text-align: right; border: none" >
+                                                <b>{{ total_cfdi }}</b>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                <i class="fa fa-times" ></i>
+                                Cerrar
+                            </button>
+                        </div>
+                     </div>
+                 </div>
+            </div>
     </span>
 </template>
 
@@ -159,10 +309,33 @@ export default {
                 this.informe = data.informe;
                 this.empresas_sat = data.informe.empresas_sat;
                 this.empresa_sat_razon_social = data.informe.empresa;
+                this.anio = data.informe.anio;
             })
             .finally(() => {
                 this.cargando = false;
             });
+        },
+        verCFDI(partida, tipo = 1)
+        {
+            if(this.abriendo_modal == 0) {
+                this.abriendo_modal = 1;
+                return this.$store.dispatch('fiscal/cfd-sat/getListaCFDIMesAnio', {
+                    empresa_sat: this.empresa_sat_seleccionada,
+                    mes: partida.id_mes,
+                    anio: this.anio_input
+                })
+                    .then(data => {
+                        this.lista_cfdi = data.informe;
+                        this.razon_social = partida.razon_social;
+                        this.rfc = partida.rfc;
+                        this.total_cfdi = data.total;
+                    })
+                    .finally(() => {
+                        $(this.$refs.modal_cfdi).appendTo('body')
+                        $(this.$refs.modal_cfdi).modal('show');
+                        this.abriendo_modal = 0;
+                    });
+            }
         },
         over(e){
             let tr = $(e.target).parent();
@@ -238,7 +411,7 @@ table {
     clear: both;
 }
 table.table-fs-sm{
-    font-size: 12px;
+    font-size: 8px;
 }
 
 .ui.dropdown, .ui.dropdown input {

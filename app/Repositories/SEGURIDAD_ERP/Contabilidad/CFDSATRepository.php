@@ -194,6 +194,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
+    public function obtenerListaCFDIMesAnio($data)
+    {
+        $cfdi = InformeCostosCFDIvsCostosBalanza::getListaCFDI($data);
+        return $cfdi;
+    }
+
     public function getListaCFDI($data)
     {
         if($data["tipo"] == 1){
