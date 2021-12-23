@@ -1,6 +1,6 @@
 <template>
     <span>
-        <div class="row" v-if="cargando">
+        <div class="row" v-if="!informe">
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-body">
@@ -11,7 +11,7 @@
                 </div>
             </div>
         </div>
-        <div class="card" v-else-if="cargando== false">
+        <div class="card" v-else>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-12">
@@ -258,7 +258,7 @@ export default {
     components: {PolizaShowModal, PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
         return {
-            informe : [],
+            informe : null,
             cuentas : [],
             cargando: false,
             importe_cuentas : 0,
@@ -284,7 +284,7 @@ export default {
             codigo_cuenta : '',
             nombre_cuenta : '',
             empresa_contpaq:'',
-            empresa_sat : 1,
+            empresa_sat : "1",
             empresas_sat:[],
             empresa_sat_seleccionada:'',
             sin_proveedor : {},
@@ -363,22 +363,6 @@ export default {
             return anios;
         }
     },
-    watch: {
-        empresa_sat(value) {
-            if(value !== '' && value !== null && value !== undefined){
-                var busqueda = this.empresas_sat.find(x=>x.id === value);
-                if(busqueda != undefined)
-                {
-                    /*this.fecha_inicial = new Date(busqueda.fecha_inicial);
-                    this.fecha_final = new Date(busqueda.fecha_final);
-                    this.fecha_inicial_input = this.fecha_inicial;
-                    this.fecha_final_input = this.fecha_final;
-                    this.fechasDeshabilitadas.to = this.fecha_inicial_input;
-                    this.fechasDeshabilitadas.from = this.fecha_final_input;*/
-                }
-            }
-        },
-    }
 }
 </script>
 
