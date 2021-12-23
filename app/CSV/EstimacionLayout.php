@@ -6,195 +6,147 @@ namespace App\CSV;
 
 use App\Facades\Context;
 use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Subcontrato;
 use App\Utils\ValidacionSistema;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
 
 class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
-    protected $estimacion;
+    protected $subcontrato;
     protected $moneda;
-    protected $evento;
     protected $tipo_cambio;
     protected $verifica;
     protected $tc_partida_euro;
     protected $tc_partida_dlls;
 
-    public function __construct(Estimacion $estimacion)
+    public function __construct(Subcontrato $subcontrato)
     {
         $this->verifica = new ValidacionSistema();
-        $this->estimacion = $estimacion;
+        $this->subcontrato = $subcontrato;
     }
 
     public function registerEvents(): array
     {
         return [
             AfterSheet::class    => function(AfterSheet $event) {
-                $cellRange = 'A1:L2'; // All headers
+                $cellRange = 'A1:N2'; // All headers
 
                 $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray([
                     'font' => [
                         'name'      =>  'arial',
                         'bold' => true
                     ]]);
+                $event->sheet->getDelegate()->getStyle('A8:N8')->applyFromArray([
+                    'font' => [
+                        'bold' => true
+                    ],
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THICK,
+                            'color' => ['argb' => '000000'],
+                        ]
+                    ]
+                ]);
                 $event->sheet->getProtection()->setSheet(true);
 
                 $event->sheet->getColumnDimension('A')->setAutoSize(false);
-                $event->sheet->getColumnDimension('A')->setWidth(10);
+                $event->sheet->getColumnDimension('A')->setWidth(5);
                 $event->sheet->getColumnDimension('B')->setAutoSize(false);
-                $event->sheet->getColumnDimension('B')->setWidth(60);
+                $event->sheet->getColumnDimension('B')->setWidth(30);
                 $event->sheet->getColumnDimension('C')->setAutoSize(false);
-                $event->sheet->getColumnDimension('C')->setWidth(15);
-                $event->sheet->getColumnDimension('J')->setAutoSize(false);
-                $event->sheet->getColumnDimension('J')->setWidth(12.5);
-                $event->sheet->getColumnDimension('G')->setAutoSize(false);
-                $event->sheet->getColumnDimension('G')->setWidth(20);
-                $event->sheet->getColumnDimension('L')->setAutoSize(true);
+                $event->sheet->getColumnDimension('C')->setWidth(18);
+                $event->sheet->getColumnDimension('H')->setAutoSize(false);
+                $event->sheet->getColumnDimension('H')->setWidth(15);
 
-                $i=2;
-                $solicitud = $this->cotizacion->solicitud;
-                if(is_null($solicitud))
-                {
-                    $solicitud = SolicitudCompra::where('id_transaccion', $this->cotizacion->id_antecedente)->withoutGlobalScopes()->first();
-                    $verificacion_cotizacion = $this->verifica->encripta($this->cotizacion->invitacion->base_datos."|".$this->cotizacion->invitacion->id_obra."|".$this->cotizacion->id_transaccion);
-                }else{
-                    $verificacion_cotizacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->cotizacion->id_transaccion);
-                }
-                $event->sheet->setCellValue("A1", $verificacion_cotizacion);
-
-                foreach ($solicitud->partidas as $item){
-                    $cot = CotizacionCompraPartida::where('id_transaccion', '=', $this->cotizacion->id_transaccion)->where('id_material', '=', $item->id_material)->first();
-                    if(!$cot){continue;}
-                    $id_moneda = '';
-                    switch ((int)$cot->id_moneda){
-                        case 1:
-                            $id_moneda = 'PESO MXN';
-                            break;
-                        case 2:
-                            $id_moneda = 'DOLAR USD';
-                            break;
-                        case 3:
-                            $id_moneda = 'EURO';
-                            break;
-                        case 4:
-                            $id_moneda = 'LIBRA';
-                            break;
+                $event->sheet->setCellValue("B3", 'Fecha de Estimación');
+                $event->sheet->getStyle('C3')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+                $fecha = date("d/m/Y");
+                $event->sheet->setCellValue("C3", $fecha);
+                $event->sheet->getStyle('C3')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getDelegate()->getStyle('B3:C3')->applyFromArray([
+                    'font' => ['bold' => true]
+                ]);
+                $event->sheet->setCellValue("B4", 'Fecha Inicio de Estimación');
+                $event->sheet->getStyle('C4')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+                $fecha = date("d/m/Y");
+                $event->sheet->setCellValue("C4", $fecha);
+                $event->sheet->getStyle('C4')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getDelegate()->getStyle('B4:C4')->applyFromArray([
+                    'font' => ['bold' => true]
+                ]);
+                $event->sheet->setCellValue("B5", 'Fecha Fin de Estimación');
+                $event->sheet->getStyle('C5')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
+                $fecha = date("d/m/Y");
+                $event->sheet->setCellValue("C5", $fecha);
+                $event->sheet->getStyle('C5')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getDelegate()->getStyle('B5:C5')->applyFromArray([
+                    'font' => ['bold' => true]
+                ]);
+                $i = 8;
+                $verificacion_estimacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->subcontrato->id_transaccion);
+                $event->sheet->setCellValue("A1", $verificacion_estimacion);
+                $datos_subcontrato = $this->subcontrato->subcontratoParaEstimar(null);
+                foreach ($datos_subcontrato['partidas'] as $key => $item) {
+                    if (array_key_exists('id', $item)) {
+                        $datos = $item['id'];
+                    } else {
+                        $datos = $key;
                     }
-                    $datos = $cot->id_material;
                     $cadena_json_id = json_encode($datos);
                     $cadena_encriptar = $cadena_json_id . ">";
                     $firmada = $this->verifica->encripta($cadena_encriptar);
                     $i++;
-                    $event->sheet->setCellValue("A".$i, ($i-2));
-                    $event->sheet->setCellValue("G".$i, $cot->precio_unitario);
-                    $event->sheet->setCellValue("H".$i, ($cot->partida) ? $cot->partida->descuento_partida : 0);
-                    $event->sheet->setCellValue("E".$i, ($item->cantidad_original1 > 0) ? $item->cantidad_original1 : $cot['cantidad']);
-                    $event->sheet->setCellValue("F".$i, $cot['cantidad']);
-                    $event->sheet->setCellValue("B".$i, '['.$cot->material->numero_parte.'] '.$cot->material->descripcion);
-                    $event->sheet->setCellValue("D".$i, $cot->material->unidad);
-                    $event->sheet->setCellValue("C".$i, $firmada);
-                    $event->sheet->setCellValue("J".$i, $id_moneda);
-                    if($cot->partida)
-                    {
-                        $event->sheet->setCellValue("L".$i, $cot->partida->observaciones);
+                    $event->sheet->setCellValue("A" . $i, ($i - 8));
+                    if (array_key_exists('id', $item)) {
+                        $event->sheet->setCellValue("B" . $i, $key);
+                        $event->sheet->setCellValue("C" . $i, $item['clave']);
+                        $event->sheet->setCellValue("D" . $i, $item['descripcion_concepto']);
+                        $event->sheet->setCellValue("E" . $i, $item['unidad']);
+                        $event->sheet->setCellValue("F" . $i, $item['cantidad_subcontrato']);
+                        $event->sheet->setCellValue("G" . $i, $item['precio_unitario_subcontrato']);
+                        $event->sheet->setCellValue("H" . $i, number_format($item['cantidad_por_estimar'],2));
+                        $event->sheet->setCellValue("I" . $i, number_format($item['importe_por_estimar'],2));
+                        $event->sheet->setCellValue("J" . $i, 0);
+                        $event->sheet->setCellValue("K" . $i, 0);
+                        $event->sheet->setCellValue("L" . $i, $item['precio_unitario_subcontrato_format']);
+                        $event->sheet->setCellValue("M" . $i, 0);
+                        $event->sheet->setCellValue("N" . $i, $item['destino_path']);
+                        $event->sheet->setCellValue("O" . $i, $firmada);
+                        $event->sheet->getStyle('J'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                        $event->sheet->getStyle('K'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                        $event->sheet->getStyle('M'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                        $event->sheet->getDelegate()->getStyle('J'.$i.':M'.$i)->applyFromArray(['font' => ['bold' => true]]);
+                    } else {
+                        $event->sheet->setCellValue("B" . $i, $key);
+                        $event->sheet->setCellValue("C" . $i, $item['clave']);
+                        $event->sheet->getDelegate()->getStyle('D'.$i)->applyFromArray(['font' => ['bold' => true]]);
+                        $event->sheet->setCellValue("D" . $i,  $item['descripcion']);
                     }
-                    //MONEDAS
-                    $objValidation = $event->sheet->getCell('J'.$i)->getDataValidation();
-                    $objValidation->setType(DataValidation::TYPE_LIST);
-                    $objValidation->setErrorStyle(DataValidation::STYLE_INFORMATION);
-                    $objValidation->setAllowBlank(false);
-                    $objValidation->setShowInputMessage(true);
-                    $objValidation->setShowErrorMessage(true);
-                    $objValidation->setShowDropDown(true);
-                    $objValidation->setErrorTitle('Error de entrada');
-                    $objValidation->setError('El valor no esta en la lista');
-                    $objValidation->setPromptTitle('Seleccione de la lista');
-                    $objValidation->setPrompt('Por favor seleccione un valor de la lista');
-                    $objValidation->setFormula1('"LIBRA, EURO, DOLAR USD, PESO MXN"');
-                    $event->sheet->setCellValue('K'.$i,'=IF(J'.$i.'="LIBRA",I'.$i.'*'.$this->tc_partida_libra.'/1,IF(J'.$i.'="EURO",I'.$i.'*'.$this->tc_partida_euro.'/1,IF(J'.$i.'="DOLAR USD",I'.$i.'*'.$this->tc_partida_dlls.'/1, IF(J'.$i.'="PESO MXN",I'.$i.',0))))');
-                    $event->sheet->setCellValue("I".$i, '=G'.$i.'*E'.$i.'-((G'.$i.'*E'.$i.'*H'.$i.')/100)');
-
-                    $event->sheet->getStyle('G'.$i.':H'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                    $event->sheet->getStyle('J'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                    $event->sheet->getStyle('L'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 }
-                $event->sheet->getStyle('G'.($i+1))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+6))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+7))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+8))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+12))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+13))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+14))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+15))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+16))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+17))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+18))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
 
-                $event->sheet->setCellValue("G".($i+2), '=SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+3), '=SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+4), '=SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+5), '=SUMIF(J3:J'.$i.',"LIBRA",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"LIBRA",I3:I'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+10), '=SUM(K3:K'.$i.')-(SUM(K3:K'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+11), '=G'.($i+10).'*0.16');
-                $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'+G'.($i+11));
-                $event->sheet->setCellValue("F".($i+1), '%Descuento');
-                $event->sheet->setCellValue("G".($i+1), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->descuento : 0);
-                $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXN)');
-                $event->sheet->setCellValue("F".($i+3), '%Subtotal Precios Dolar (USD)');
-                $event->sheet->setCellValue("F".($i+4), 'Subtotal Precios EURO');
-                $event->sheet->setCellValue("F".($i+5), 'Subtotal Precios LIBRA');
-                $event->sheet->setCellValue("F".($i+6), 'TC USD');
-                $event->sheet->setCellValue("F".($i+7), 'TC EURO');
-                $event->sheet->setCellValue("F".($i+8), 'TC LIBRA');
-                $event->sheet->setCellValue("F".($i+9), 'Moneda de Conv.');
-                $event->sheet->setCellValue("F".($i+10), 'Subtotal Moneda Conv.');
-                $event->sheet->setCellValue("F".($i+11), 'IVA');
-                $event->sheet->setCellValue("F".($i+12), 'TOTAL');
-                $event->sheet->setCellValue("F".($i+13), 'Fecha de Cotizacion');
-                $event->sheet
-                    ->getStyle('G'.($i+13).":G".($i+13))
-                    ->getNumberFormat()
-                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
-                $fechaCotizacion = date_create($this->cotizacion->fecha);
-                $event->sheet->setCellValue("G".($i+13), \PhpOffice\PhpSpreadsheet\Shared\Date::dateTimeToExcel($fechaCotizacion));
-                $event->sheet->setCellValue("F".($i+14), 'Pago en Parcialdades (%)');
-                $event->sheet->setCellValue("G".($i+14), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->parcialidades : 0);
-                $event->sheet->setCellValue("F".($i+15), 'Anticipo (%)');
-                $event->sheet->setCellValue("G".($i+15), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->anticipo : 0);
-                $event->sheet->setCellValue("F".($i+16), 'Credito (días)');
-                $event->sheet->setCellValue("G".($i+16), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->dias_credito : 0);
-                $event->sheet->setCellValue("F".($i+17), 'Tiempo de Entraga (días)');
-                $event->sheet->setCellValue("G".($i+17), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->plazo_entrega : 0);
-                $event->sheet->setCellValue("F".($i+18), 'Vigencia (días)');
-                $event->sheet->setCellValue("G".($i+18), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->vigencia : 0);
-                $event->sheet->setCellValue("F".($i+19), 'Observaciones Generales');
-                $event->sheet->setCellValue("G".($i+19), $this->cotizacion->observaciones);
-                $event->sheet->setCellValue("G".($i+6), $this->tc_partida_dlls);
-                $event->sheet->setCellValue("G".($i+7), $this->tc_partida_euro);
-                $event->sheet->setCellValue("G".($i+8), $this->tc_partida_libra);
-                $event->sheet->setCellValue("G".($i+9), "PESO MX");
-
-                //PESOS
-                $objValidation = $event->sheet->getCell('G'.($i+7))->getDataValidation();
-                $objValidation->setType(DataValidation::TYPE_LIST);
-                $objValidation->setErrorStyle(DataValidation::STYLE_INFORMATION);
-                $objValidation->setAllowBlank(false);
-                $objValidation->setShowInputMessage(true);
-                $objValidation->setShowErrorMessage(true);
-                $objValidation->setShowDropDown(true);
-                $objValidation->setFormula1('"PESO MX"');
+                $event->sheet->getDelegate()->getStyle('C'.($i+3).':D'.($i+3))->applyFromArray([
+                    'font' => ['bold' => true]
+                ]);
+                $event->sheet->setCellValue("C" . ($i+3), 'OBSERVACIONES');
+                $event->sheet->setCellValue("D" . ($i+3), $item['clave']);
             },
         ];
+
     }
 
     public function headings(): array
     {
-        return array([' ',' ',' ',' ',' ',' ',($this->cotizacion->empresa) ? $this->cotizacion->empresa->razon_social : '----- Proveedor Desconocido ----- '],
-            ['#','DESCRIPCION','IDENTIFICADOR','UNIDAD','CANTIDAD_SOLICITADA','CANTIDAD_APROBADA','PRECIO_UNITARIO','%_DESCUENTO','PRECIO_TOTAL','MONEDA',
-                'PRECIO_TOTAL_MONEDA_CONVERSION','OBSERVACIONES']);
+        return array([' ','',' ',' ',' ',' ',' ',($this->subcontrato->empresa) ? $this->subcontrato->empresa->razon_social : '----- Proveedor Desconocido ----- '],[],[],[],[],[],[],
+            ['#','','CLAVE','CONCEPTO','UM','VOLUMEN CONTRATADO','P.U. CONTRATADO','VOLUMEN SALDO','IMPORTE SALDO','VOLUMEN','%','PRECIO UNITARIO','IMPORTE',
+                'DISTRIBUCIÓN DESTINO']);
     }
 }

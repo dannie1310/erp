@@ -1342,10 +1342,11 @@ class Estimacion extends Transaccion
     /**
      * Métodos
      */
-    public function descargaLayout()
+    public function descargaLayout($id)
     {
-        $folio = str_pad($this->numero_folio, 5, 0, 0);
-        return Excel::download(new EstimacionLayout($this), '#'.$folio.'.xlsx');
+        $subcontrato = Subcontrato::where('id_transaccion', $id)->first();
+        $folio = str_pad($subcontrato->numero_folio, 5, 0, 0);
+        return Excel::download(new EstimacionLayout($subcontrato), '#'.$folio.'.xlsx');
     }
 
 }

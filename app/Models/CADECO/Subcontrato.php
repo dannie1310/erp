@@ -810,8 +810,6 @@ class Subcontrato extends Transaccion
             'anticipo_monto' => $this->anticipo_monto,
             'anticipo_saldo' => $this->anticipo_saldo,
             'PorcentajeDescuento' => $this->PorcentajeDescuento,
-            'impuesto' => $this->impuesto,
-            'impuesto_retenido' => $this->impuesto_retenido,
             'retencion' => $this->retencion,
             'observaciones' => $this->observaciones,
             'tipo_cambio' => $this->tipo_cambio,
