@@ -56,11 +56,12 @@ ORDER BY razon_social asc , anio desc, mes asc";
         return $informe;
     }
 
-    private static function getMeses()
+    public static function getMeses()
     {
         $query = "
         SELECT
         CatalogoMeses.NombreCorto AS mes_txt,
+        CatalogoMeses.NombreMes AS mes,
         CatalogoMeses.MesID as id
         FROM SEGURIDAD_ERP.Reportes.CatalogoMeses CatalogoMeses
         ";
