@@ -1,0 +1,453 @@
+<?php
+
+
+namespace App\Informes\Fiscal;
+
+
+use App\Informes\CFDICompleto;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
+use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto;
+use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+
+class InformeCostosCFDIvsCostosBalanza
+{
+    public static function  get($data)
+    {
+        $informe["anio"] = $data["anio"];
+        $informe["partidas"] = InformeCostosCFDIvsCostosBalanza::getInforme($data);
+        $informe["empresas_sat"] = InformeCostosCFDIvsCostosBalanza::getEmpresasSAT();
+        $informe["empresa"] = InformeCostosCFDIvsCostosBalanza::getEmpresa($data);
+        $informe["sumatorias"] = InformeCostosCFDIvsCostosBalanza::getSumatoria($informe["partidas"]);
+        return $informe;
+    }
+
+    public static function getEmpresa($data)
+    {
+        $alias_bdd = InformeCostosCFDIvsCostosBalanza::getAliasBDD($data["empresa_sat"]);
+        $empresaSAT = EmpresaSAT::find($data["empresa_sat"])->razon_social;
+        return  ($alias_bdd) ? "Año: ".$data["anio"]." Empresa: ".$empresaSAT ." (".$alias_bdd.")":"Año: ".$data["anio"]." Empresa: ".$empresaSAT ;
+    }
+
+    public static function getEmpresasSAT()
+    {
+        $informe = DB::connection("seguridad")->select("
+    SELECT
+        les.id as id,
+        les.razon_social +' ('+ le.AliasBDD+')' as label,
+        les.razon_social as customLabel
+    FROM
+        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT as les join
+        SEGURIDAD_ERP.Contabilidad.ListaEmpresas as le on(les.id = le.IdEmpresaSAT)
+    WHERE
+        le.Consolidadora = 1 and le.Historica = 0 and le.Desarrollo = 0
+    group by les.id, les.razon_social, le.AliasBDD
+    ORDER BY les.razon_social;
+");
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return collect($informe);
+    }
+
+    public static function getSumatoria($partidas)
+    {
+        $suma_costos_balanza = 0;
+        $suma_costos_cfdi = 0;
+        $suma_sustitucion_ejercicios_anteriores = 0;
+        $suma_relacion_ejercicios_anteriores = 0;
+
+        foreach($partidas as $partida)
+        {
+            $suma_costos_balanza += $partida["costo_balanza_sf"];
+            $suma_costos_cfdi += $partida["costo_cfdi_sf"];
+            $suma_sustitucion_ejercicios_anteriores += $partida["sustitucion_ejercicios_anteriores_sf"];
+            $suma_relacion_ejercicios_anteriores += $partida["relacion_ejercicios_anteriores_sf"];
+        }
+
+        return array(
+            "suma_costos_balanza"=>number_format($suma_costos_balanza,2),
+            "suma_costos_cfdi"=>number_format($suma_costos_cfdi,2),
+            "suma_sustitucion_ejercicios_anteriores"=>number_format($suma_sustitucion_ejercicios_anteriores,2),
+            "suma_relacion_ejercicios_anteriores"=>number_format($suma_relacion_ejercicios_anteriores,2),
+            "suma_costos_balanza_sf"=>$suma_costos_balanza,
+            "suma_costos_cfdi_sf"=>$suma_costos_cfdi,
+            "suma_sustitucion_ejercicios_anteriores_sf"=>$suma_sustitucion_ejercicios_anteriores,
+            "suma_relacion_ejercicios_anteriores_sf"=>$suma_relacion_ejercicios_anteriores,
+        );
+
+    }
+
+    public static function getInforme($data)
+    {
+        $informe = [];
+        $costos_cfdi_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDI($data);
+        $costos_balanza_ini = InformeCostosCFDIvsCostosBalanza::getCostoBalanza($data);
+        $sustituciones_ejercicios_anteriores_ini = InformeCostosCFDIvsCostosBalanza::getSustitucionEjerciciosAnteriores($data);
+        $relaciones_ejercicios_anteriores_ini = InformeCostosCFDIvsCostosBalanza::getRelacionEjerciciosAnteriores($data);
+
+        $costo_cfdi = [];
+        $costo_balanza = [];
+        $sustitucion_ejercicios_anteriores = [];
+        $relacion_ejercicios_anteriores = [];
+        foreach($costos_cfdi_ini as $costo_cfdi_ini)
+        {
+            $costo_cfdi[$costo_cfdi_ini["mes"]] = $costo_cfdi_ini["cfdi_recibidos"];
+        }
+
+        foreach($costos_balanza_ini as $costo_balanza_ini)
+        {
+            $costo_balanza[$costo_balanza_ini["periodo"]] = $costo_balanza_ini["costo_bza"];
+        }
+
+        foreach($sustituciones_ejercicios_anteriores_ini as $sustitucion_ejercicios_anteriores_ini)
+        {
+            $sustitucion_ejercicios_anteriores[$sustitucion_ejercicios_anteriores_ini["mes"]] = $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
+        }
+
+        foreach($relaciones_ejercicios_anteriores_ini as $relacion_ejercicios_anteriores_ini)
+        {
+            $relacion_ejercicios_anteriores[$relacion_ejercicios_anteriores_ini["mes"]] = $relacion_ejercicios_anteriores_ini["neto_subtotal"];
+        }
+
+        $meses = CFDICompleto::getMeses();
+
+        foreach($meses as $mes){
+            $informe[] = [
+                "mes"=>$mes["mes"]
+                , "id_mes" => $mes["id"]
+                , "costo_cfdi"=>key_exists($mes["id"], $costo_cfdi)? number_format($costo_cfdi[$mes["id"]],2):"-"
+                , "costo_balanza"=>key_exists($mes["id"], $costo_balanza)? number_format($costo_balanza[$mes["id"]],2):"-"
+                , "sustitucion_ejercicios_anteriores"=>key_exists($mes["id"], $sustitucion_ejercicios_anteriores)? number_format($sustitucion_ejercicios_anteriores[$mes["id"]],2):"-"
+                , "relacion_ejercicios_anteriores"=>key_exists($mes["id"], $relacion_ejercicios_anteriores)? number_format($relacion_ejercicios_anteriores[$mes["id"]],2):"-"
+                , "costo_cfdi_sf"=>key_exists($mes["id"], $costo_cfdi)? $costo_cfdi[$mes["id"]]:"0"
+                , "costo_balanza_sf"=>key_exists($mes["id"], $costo_balanza)? $costo_balanza[$mes["id"]]:"0"
+                , "sustitucion_ejercicios_anteriores_sf"=>key_exists($mes["id"], $sustitucion_ejercicios_anteriores)? $sustitucion_ejercicios_anteriores[$mes["id"]]:"0"
+                , "relacion_ejercicios_anteriores_sf"=>key_exists($mes["id"], $relacion_ejercicios_anteriores)? $relacion_ejercicios_anteriores[$mes["id"]]:"0"
+            ];
+        }
+        return $informe;
+    }
+
+    private static function getAliasBDD($id_empresa_sat)
+    {
+        $empresa_contpaq = Empresa::where("IdEmpresaSAT","=",$id_empresa_sat)->consolidadora()->first();
+        if($empresa_contpaq){
+            return $empresa_contpaq->AliasBDD;
+        }else {
+            return null;
+        }
+    }
+
+    private static function getCostoBalanza($data)
+    {
+        $empresa_contpaq = Empresa::where("IdEmpresaSAT","=",$data["empresa_sat"])
+            ->consolidadora()
+            ->first();
+
+        if($empresa_contpaq){
+            Config::set('database.connections.cntpq.database',$empresa_contpaq->AliasBDD);
+            $cuentas = CuentaCosto::where("tipo_costo","=",1)->
+            where("base_datos_contpaq","=",$empresa_contpaq->AliasBDD)->pluck("codigo_cuenta")->toArray();
+
+            $informe_qry = "
+            SELECT Periodo as periodo, sum(Importe) as costo_bza from (
+                SELECT Periodo,
+                CASE
+                    mp.TipoMovto WHEN 0 THEN Importe
+                    WHEN 1 THEN Importe * -1
+                END Importe
+                from ".$empresa_contpaq->AliasBDD.".dbo.MovimientosPoliza mp
+                join ".$empresa_contpaq->AliasBDD.".dbo.Cuentas ct on(ct.Id = mp.IdCuenta)
+                where Ejercicio = ".$data["anio"]." and ct.Codigo
+                in('".implode("','", $cuentas)."')
+            ) AS qry
+            GROUP by Periodo
+            ";
+
+            $informe = DB::connection("cntpq")->select($informe_qry);
+            $informe = array_map(function ($value) {
+                return (array)$value;
+            }, $informe);
+
+            return $informe;
+
+        }else {
+            return null;
+        }
+    }
+
+    private static function getSustitucionEjerciciosAnteriores($data)
+    {
+        $informe_qry = "
+        select mes, sum(neto_subtotal) as neto_subtotal from (
+SELECT
+distinct
+	cfd_sat.id_proveedor_sat,
+	CASE
+		WHEN cfd_sat.tipo_comprobante = 'E' THEN 2
+		WHEN cfd_sat.tipo_comprobante = 'I' THEN 1
+	END id_tipo_cfdi,
+	cfd_sat.fecha,
+
+		CASE
+			WHEN cfd_sat.moneda_xls != 'MXN'
+			AND cfd_sat.tc_xls > 0 THEN
+			CASE
+				WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
+				WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+			END
+			ELSE
+			CASE
+				WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1)
+				WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0))
+			END
+		END AS neto_subtotal,
+		month(fecha) as mes
+	FROM
+		SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+
+	WHERE
+		(((cfd_sat.cancelado = 0
+			AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"].")
+		AND cfd_sat.tipo_comprobante IN ('I'))
+			) AND year(cfd_sat.fecha) = ".$data["anio"]."
+			and cfd_sat.cfdi_relacionado is not null and cfd_sat.tipo_relacion=4
+			and cfdi_relacionado not in(
+				SELECT uuid from SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+				WHERE YEAR(fecha) = ".$data["anio"]."
+			)
+	) as qry
+	GROUP by mes
+        ";
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+    private static function getRelacionEjerciciosAnteriores($data)
+    {
+        $informe_qry = "
+        select mes, sum(neto_subtotal) as neto_subtotal from (
+SELECT
+distinct
+	cfd_sat.id_proveedor_sat,
+	CASE
+		WHEN cfd_sat.tipo_comprobante = 'E' THEN 2
+		WHEN cfd_sat.tipo_comprobante = 'I' THEN 1
+	END id_tipo_cfdi,
+	cfd_sat.fecha,
+
+		CASE
+			WHEN cfd_sat.moneda_xls != 'MXN'
+			AND cfd_sat.tc_xls > 0 THEN
+			CASE
+				WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) *  cfd_sat.tipo_cambio
+				WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+			END
+			ELSE
+			CASE
+				WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0))
+				WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0))
+			END
+		END AS neto_subtotal,
+		month(fecha) as mes
+	FROM
+		SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+
+	WHERE
+		(((cfd_sat.cancelado = 0
+			AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"].")
+		AND cfd_sat.tipo_comprobante IN ('E'))
+			) AND year(cfd_sat.fecha) = ".$data["anio"]."
+			and cfd_sat.cfdi_relacionado is not null
+			and cfdi_relacionado not in(
+				SELECT uuid from SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+				WHERE YEAR(fecha) = ".$data["anio"]."
+			)
+	) as qry
+	GROUP by mes
+        ";
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+    private static function getCostoCFDI($data)
+    {
+
+        $informe_qry = "
+        select mes,
+               CatalogoMeses.NombreMes AS mes_txt,
+               sum(neto_subtotal) as cfdi_recibidos  from(
+
+    select distinct
+        cfd_sat.id,
+        month(cfd_sat.fecha) as mes,
+        CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull( cfd_sat.descuento,0)) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull( cfd_sat.descuento,0))
+            END
+        END AS neto_subtotal
+
+        FROM
+            SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+        WHERE
+            (((cfd_sat.cancelado = 0
+                AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]." )
+            AND cfd_sat.tipo_comprobante IN ('E', 'I'))
+                )
+                AND year(cfd_sat.fecha) = ".$data["anio"]."
+        )as query INNER JOIN SEGURIDAD_ERP.Reportes.CatalogoMeses CatalogoMeses
+          ON (query.mes = CatalogoMeses.MesID)
+
+    GROUP by mes, CatalogoMeses.NombreMes ;
+        ";
+
+
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+    private static function getMeses()
+    {
+        $query = "
+        SELECT
+        CatalogoMeses.NombreCorto AS mes_txt,
+        CatalogoMeses.MesID as id
+        FROM SEGURIDAD_ERP.Reportes.CatalogoMeses CatalogoMeses
+        ";
+
+        $meses = DB::select($query);
+        $meses = array_map(function ($value) {
+            return (array)$value;
+        }, $meses);
+        return $meses;
+    }
+
+    public static function getListaCFDI($data){
+        $qry = "
+      SELECT distinct cfd_sat.*,
+            CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull( cfd_sat.descuento,0)) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull( cfd_sat.descuento,0))
+            END
+        END AS subtotal_a_sumar,
+
+        CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal )
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal )
+            END
+        END AS subtotal_mxn,
+
+
+CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.descuento ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.descuento )
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.descuento ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.descuento )
+            END
+        END AS descuento_mxn,
+
+       cfd_sat_1.id AS id_reemplazado,
+       cfd_sat_1.serie AS serie_reemplazado,
+       cfd_sat_1.folio AS folio_reemplazado,
+       cfd_sat_1.fecha AS fecha_reemplazado,
+
+       cfd_sat_2.id AS id_reemplaza,
+       cfd_sat_2.fecha AS fecha_reemplaza,
+       cfd_sat_2.serie AS serie_reemplaza,
+       cfd_sat_2.folio AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_1
+            ON (cfd_sat.cfdi_relacionado = cfd_sat_1.uuid and cfd_sat.tipo_relacion = 4))
+        LEFT OUTER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_2
+           ON (cfd_sat.uuid = cfd_sat_2.cfdi_relacionado and cfd_sat_2.tipo_relacion = 4 ))
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+              configuracion_obra.id_proyecto)
+          AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+    WHERE month(cfd_sat.fecha) = ".$data["mes"]."
+      AND  year(cfd_sat.fecha) = ".$data["anio"]."
+      AND cfd_sat.cancelado = 0
+        AND cfd_sat.tipo_comprobante in('I','E')
+        AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]." order by cfd_sat.id";
+
+        $informe = DB::connection("seguridad")->select($qry);
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        $i = 0;
+        foreach($informe as $partida_informe)
+        {
+            if($i>0) {
+                if ($partida_informe["id"] != $informe[$i - 1]["id"]){
+                    $total += $partida_informe["subtotal_a_sumar"];
+                }
+            } else {
+                $total += $partida_informe["subtotal_a_sumar"];
+            }
+            $i++;
+        }
+
+        return ["informe" => $informe, "total"=>"$".number_format($total,2)];
+    }
+}

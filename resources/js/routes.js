@@ -3696,6 +3696,18 @@ export const routes = [
                 }
             },
             {
+                path: 'informes/costos-cfdi-vs-costos-balanza',
+                name: 'informe-general-cfdi-costos-balanza',
+                component: require('./components/fiscal/informes/costos-cfdi-vs-costos-balanza/Informe.vue').default,
+                meta: {
+                    title: 'Informe Costos CFDI vs. Costos Balanza',
+                    breadcrumb: {name: 'INFORME COSTOS CFDI VS. COSTOS BALANZA', parent: 'fiscal'},
+                    middleware: [auth, permission],
+                    permission: ['consultar_informe_general_cfdi_costos_balanza'],
+                    general: true
+                }
+            },
+            {
                 path: 'efos-empresa',
                 component: require('./components/fiscal/efos/Layout.vue').default,
                 children:[

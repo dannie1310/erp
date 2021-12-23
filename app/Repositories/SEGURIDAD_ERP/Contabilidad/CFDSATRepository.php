@@ -11,6 +11,7 @@ namespace App\Repositories\SEGURIDAD_ERP\Contabilidad;
 use App\Facades\Context;
 use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
+use App\Informes\Fiscal\InformeCostosCFDIvsCostosBalanza;
 use App\Informes\Fiscal\InformeSATLP;
 use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
@@ -175,6 +176,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $informe;
     }
 
+    public function obtenerInformeCostosCFDIvsCostosBalanza($data)
+    {
+        $informe["informe"] = InformeCostosCFDIvsCostosBalanza::get($data);
+        return $informe;
+    }
+
     public function obtenerCuentasInformeSATLP2020($data)
     {
         $informe["informe"] = InformeSATLP::getCuentas($data);
@@ -185,6 +192,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     {
         $informe["informe"] = InformeSATLP::getMovimientos($data);
         return $informe;
+    }
+
+    public function obtenerListaCFDIMesAnio($data)
+    {
+        $cfdi = InformeCostosCFDIvsCostosBalanza::getListaCFDI($data);
+        return $cfdi;
     }
 
     public function getListaCFDI($data)
