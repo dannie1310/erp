@@ -14,7 +14,7 @@
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
-                    <form role="form" @submit.prevent="validate" v-if="datos_archivo != []">
+                    <form role="form" @submit.prevent="validate">
 
                         <div class="modal-body">
                             <div class="row justify-content-between">
@@ -45,11 +45,23 @@
                                 Cargar</button>
                         </div>
                     </form>
-                    <form role="form" v-else>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" ref="modal_datos" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl modal" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle2"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE ESTIMACIÓN</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form role="form">
                          <div class="modal-body">
-                            <div class="row">
                                 <div class="col-md-12">
-                                    <h1>{{datos_archivo.contratista}}</h1>
+                                    <h4>{{datos_archivo.contratista}}</h4>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="col-md-3">
@@ -66,7 +78,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="card" v-if="!cargando">
+                                    <div class="card">
                                         <div class="card-body">
                                             <div class="form-check form-check-inline">
                                                 <input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
@@ -147,7 +159,6 @@
                                                     </tr>
                                                 </tbody>
                                             </table>
-                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -157,11 +168,7 @@
                                 <i class="fa fa-times-circle"></i>
                                 Cerrar
                             </button>
-                            <button type="button" class="btn btn-primary" @click="validate" :disabled="!file" v-if="datos_archivo != []">
-                                <i class="fa fa-upload"></i>
-                                Cargar
-                            </button>
-                            <button class="btn btn-info float-right" type="submit" @click="guardar" v-else>
+                            <button class="btn btn-info float-right" type="submit" @click="guardar">
                                 Guardar
                             </button>
                         </div>
@@ -181,6 +188,7 @@
                 cargando: false,
                 file: null,
                 nombre: '',
+                columnas: [],
                 datos_archivo: []
             }
         },
@@ -231,18 +239,14 @@
                     })
                     .then(data => {
                         this.datos_archivo = data;
+                        $(this.$refs.modal_datos).appendTo('body')
+                        $(this.$refs.modal_datos).modal('show');
 
                     }).finally(() => {
                         this.$refs.carga_layout.value = '';
                         this.file = null;
                         this.file_name = '';
                         this.$validator.errors.clear();
-                        /*
-                        setTimeout(() => {
-                            $(this.$refs.modal).modal('hide');
-                            this.$emit('back', this.data);
-                        }, 100);
-                        */
                     });
             },
             createImage(file, tipo) {
@@ -275,8 +279,22 @@
                     conceptos: this.datos_archivo.partidas
                 })
                 .then(data=> {
-                    this.$router.push({name: 'estimacion-index'});
-                    this.$router.push({name: 'estimacion'});
+
+                }).finally(()=>{
+                    //this.$router.push({name: 'estimacion'});
+                });
+            },
+        },
+        watch: {
+            columnas(val) {
+                $('.contratado').css('display', 'none');
+                $('.avance-volumen').css('display', 'none');
+                $('.avance-importe').css('display', 'none');
+                $('.saldo').css('display', 'none');
+                $('.destino').css('display', 'none');
+
+                val.forEach(v => {
+                    $('.' + v).removeAttr('style')
                 })
             },
         }
@@ -284,5 +302,81 @@
 </script>
 
 <style scoped>
+    table#tabla-conceptos {
+        word-wrap: unset;
+        width: 100%;
+        background-color: white;
+        border-color: transparent;
+        border-collapse: collapse;
+        clear: both;
+    }
 
+    table thead th
+    {
+        padding: 0.2em;
+        border: 1px solid #666;
+        background-color: #333;
+        color: white;
+        font-weight: normal;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    table thead th {
+        text-align: center;
+    }
+    table tbody tr
+    {
+        border-width: 0 1px 1px 1px;
+        border-style: none solid solid solid;
+        border-color: white #CCCCCC #CCCCCC #CCCCCC;
+    }
+    table tbody td,
+    table tbody th
+    {
+        border-right: 1px solid #ccc;
+        color: #242424;
+        line-height: 20px;
+        overflow: hidden;
+        padding: 1px 5px;
+        text-align: left;
+        text-overflow: ellipsis;
+        -o-text-overflow: ellipsis;
+        -ms-text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    table col.clave { width: 120px; }
+    table col.icon { width: 25px; }
+    table col.monto { width: 115px; }
+    table col.pct { width: 60px; }
+    table col.unidad { width: 80px; }
+    table col.clave  {width: 100px; }
+
+    table tbody td input.text
+    {
+        border: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        background-color: transparent;
+        font-family: inherit;
+        font-size: inherit;
+        font-weight: bold;
+    }
+
+    table tbody .numerico
+    {
+        text-align: right;
+        padding-left: 0;
+        white-space: normal;
+    }
+
+    .text.is-invalid {
+        color: #dc3545;
+    }
+
+    table tbody td input.text {
+        text-align: right;
+    }
 </style>
