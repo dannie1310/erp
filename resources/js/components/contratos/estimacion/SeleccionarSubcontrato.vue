@@ -38,6 +38,7 @@
                                      <div class="col-md-12">
                                          <div class="pull-right">
                                              <descarga-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
+                                             <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
                                              <button type="button" class="btn btn-secondary" v-on:click="salir">
                                                 <i class="fa fa-angle-left"></i>
                                                 Regresar</button>
@@ -61,9 +62,10 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosSubcontrato from  "./partials/DatosSubcontrato";
     import DescargaLayout from "./DescargaLayout";
+    import CargarLayout from "./CargaLayout";
     export default {
         name: "estimacion-seleccionar-subcontrato",
-        components: { DatosSubcontrato, ModelListSelect, DescargaLayout },
+        components: { DatosSubcontrato, ModelListSelect, DescargaLayout, CargarLayout },
         data() {
             return {
                 cargando: false,

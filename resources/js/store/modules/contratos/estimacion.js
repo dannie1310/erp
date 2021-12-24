@@ -402,6 +402,45 @@ export default {
                 })
             }
         },
+        cargaLayout(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Cargar Layout de Estimación",
+                    text: "¿Está seguro/a de que desea cargar xlsx?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Agregar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + 'layout', payload.data, payload.config)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo leido correctamente", {
+                                        icon: "success",
+                                        timer: 2000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+
+                                })
+                                .catch(error => {
+                                    reject('Archivo no procesable');
+                                })
+                        }
+                    });
+            });
+        },
     },
     getters: {
         estimaciones(state) {

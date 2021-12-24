@@ -9,13 +9,18 @@
 namespace App\Services\CADECO;
 
 
+use App\Facades\Context;
+use App\Imports\CotizacionImport;
+use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Subcontrato;
 use App\Repositories\CADECO\EstimacionRepository as Repository;
 use App\Models\CADECO\Estimacion;
+use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
+use Maatwebsite\Excel\Facades\Excel;
 
 class EstimacionService
 {
@@ -177,5 +182,98 @@ class EstimacionService
     public function descargaLayout($id)
     {
         return $this->repository->descargaLayout($id);
+    }
+
+    public function cargaLayout($file, $id, $name)
+    {
+        $file_xls = $this->getFileXls($file, $name);
+        $celdas = $this->getDatosPartidas($file_xls);
+        $this->verifica = new ValidacionSistema();
+        $subcontrato = Subcontrato::where('id_transaccion', $id)->first();
+
+        $x = 8;
+        $partidas = array();
+        if (count($celdas[0]) != 15) {
+            abort(400, 'Archivo XLS no compatible');
+        }
+
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_validar = $cadena_validacion_exp[2];
+
+        if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $id != $id_validar)
+        {
+            abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
+        }
+
+        while ($x < count($subcontrato->partidas) + 8) {
+            if (!is_null($celdas[$x][14])) {
+                if($celdas[$x][9] != 0 && $celdas[$x][10] != 0 && $celdas[$x][12] != 0) {
+                    $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
+                    $item = $subcontrato->partidas->where('id_item', $decodificado)->first();
+                    if (!is_numeric($celdas[$x][9]) || !is_numeric($celdas[$x][10]) || !is_numeric($celdas[$x][12])) {
+                        abort(400, 'No es posible obtener datos de la partida # ' . ($x - 1));
+                    }
+                    if (!$item) {
+                        abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
+                    }
+                    $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("id_concepto", "=", $item->id_concepto)->first();
+                    if ($contrato == null) {
+                        $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
+                    }
+                    $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
+                    $datos_partida['cantidad_estimacion'] = $celdas[$x][9];
+                    $datos_partida['porcentaje_estimado'] = $celdas[$x][10];
+                    $datos_partida['importe_estimacion'] = $celdas[$x][12];
+
+                    $partidas[] = $datos_partida;
+                }
+            }
+            $x++;
+        }
+        $repuesta = [
+            'id' => $subcontrato->getKey(),
+            'contratista' => $celdas[0][7],
+            'fecha_estimacion' => $celdas[2][2],
+            'fecha_inicio_estimacion' => $celdas[3][2],
+            'fecha_fin_estimacion' => $celdas[4][2],
+            'observaciones' => $celdas[$x + 2][3],
+            'partidas' => $partidas
+        ];
+        return $repuesta;
+    }
+
+    private function generaDirectorios($name)
+    {
+        $name = str_replace('.xlsx', '-', $name) . date("Ymdhis") . ".xlsx";
+        $dir_xls = "uploads/contratos/estimacion/";
+        $path_xls = $dir_xls . $name;
+        if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
+            mkdir($dir_xls, 777, true);
+        }
+        return [
+            'path_xls' => $path_xls,
+            'dir_xls' => $dir_xls
+        ];
+    }
+
+    private function getFileXls($file, $name)
+    {
+        $path = $this->generaDirectorios($name);
+        $exp = explode("base64,", $file);
+        $data = base64_decode($exp[1]);
+        $file_xls = public_path($path["path_xls"]);
+        $env = file_put_contents($file_xls, $data);
+        return $file_xls;
+    }
+
+    private function getDatosPartidas($file_xls)
+    {
+        $rows = Excel::toArray(new CotizacionImport, $file_xls);
+        unlink($file_xls);
+        return $rows[0];
     }
 }
