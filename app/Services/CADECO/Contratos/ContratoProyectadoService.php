@@ -12,15 +12,16 @@ namespace App\Services\CADECO\Contratos;
 use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
-use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CADECO\ContratoProyectado;
+use App\CSV\Contratos\AsignacionContratistaLayout;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 
 class ContratoProyectadoService
 {
@@ -369,7 +370,7 @@ class ContratoProyectadoService
                         array_key_exists($presupuesto->id_transaccion, $presupuestos)?'': $presupuestos[$presupuesto->id_transaccion] = array();
                         $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
                         $desc = 1;
-                        $partida_presupuestada->descuento > 0?$desc = $partida_presupuestada->descuento / 100:'';
+                        $partida_presupuestada && $partida_presupuestada->descuento > 0?$desc = $partida_presupuestada->descuento / 100:'';
                         if($partida_presupuestada && $partida_presupuestada->precio_unitario > 0){
                             $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
                                 'id_concepto' => $contrato->id_concepto,
@@ -463,5 +464,11 @@ class ContratoProyectadoService
         $cotizacion = $this->repository->show($id)->cotizaciones()->first();
         $pdf = new PresupuestoContratistaTablaComparativaFormato($cotizacion);
         return $pdf;
+    }
+
+    public function getLayoutAsignacion($id){
+        $cotizaciones = $this->getCotizaciones($id);
+        $file_name = $this->show($id)->numero_folio_format.'.xlsx';
+        return Excel::download(new AsignacionContratistaLayout($cotizaciones),$file_name);
     }
 }
