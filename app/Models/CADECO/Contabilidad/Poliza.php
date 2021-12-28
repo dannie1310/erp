@@ -10,6 +10,7 @@ namespace App\Models\CADECO\Contabilidad;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\ComprobanteFondo;
 use App\Models\CADECO\EntradaMaterial;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Factura;
@@ -107,6 +108,11 @@ class Poliza extends Model
     public function transaccionFactura()
     {
         return $this->belongsTo(Factura::class, 'id_transaccion_sao');
+    }
+
+    public function transaccionComprobanteFondo()
+    {
+        return $this->belongsTo(ComprobanteFondo::class, 'id_transaccion_sao');
     }
 
     public function traspaso()
@@ -310,6 +316,12 @@ class Poliza extends Model
         return $query->where('estatus', 2);
     }
 
+    public function scopeConCFDI($query)
+    {
+        return $query->whereHas("transaccionFactura")
+            ->orWhereHas("transaccionComprobanteFondo");
+    }
+
     /**
      * Métodos
      */
@@ -360,10 +372,18 @@ class Poliza extends Model
     }
 
     private function generaPolizaCFDI($poliza_interfaz){
+        $transaccion = null;
         if($this->transaccionAntecedente){
             if($this->transaccionAntecedente->tipo_transaccion == 65){
-                $factura = Factura::find($this->transaccionAntecedente->id_transaccion);
-                $uuid_cfdis = $factura->facturasRepositorio->pluck("uuid");
+                $transaccion = Factura::find($this->transaccionAntecedente->id_transaccion);
+            }
+
+            if($this->transaccionAntecedente->tipo_transaccion == 101){
+                $transaccion = ComprobanteFondo::find($this->transaccionAntecedente->id_transaccion);
+            }
+
+            if($transaccion){
+                $uuid_cfdis = $transaccion->facturasRepositorio->pluck("uuid");
                 foreach($uuid_cfdis as $uud_cfdi)
                 {
                     $poliza_interfaz->polizasCFDI()->create(
@@ -421,7 +441,7 @@ class Poliza extends Model
         $obra = Obra::find(Context::getIdObra());
         DB::purge('cntpq');
         Config::set('database.connections.cntpq.database', $obra->datosContables->BDContPaq);
-        $polizas = Poliza::deFactura()->get();
+        $polizas = Poliza::conCFDI()->get();
         foreach($polizas as $poliza){
             if(count($poliza->polizasInterfaz()->get())>0){
                 if(count($poliza->transaccionFactura->facturaRepositorio()->get())>0){
@@ -452,7 +472,7 @@ class Poliza extends Model
 
     public function buscarPolizasSinAsociarCFDI()
     {
-        $polizas_sao = Poliza::lanzadas()->deFactura()->get();
+        $polizas_sao = Poliza::lanzadas()->conCFDI()->get();
         $polizas = [];
         $obra = Obra::find(Context::getIdObra());
         if($obra->datosContables->BDContPaq != "") {
@@ -674,7 +694,7 @@ class Poliza extends Model
 
     public function buscarCFDISinCargarAlADD()
     {
-        $polizas_sao = Poliza::lanzadas()->deFactura()->get();
+        $polizas_sao = Poliza::lanzadas()->conCFDI()->get();
         $cfdis_pendientes = [];
 
         $obra = Obra::find(Context::getIdObra());
