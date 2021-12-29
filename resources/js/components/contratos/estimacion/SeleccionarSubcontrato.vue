@@ -31,15 +31,18 @@
                                         </div>
                                     </div>
                                 </div>
-                                <datos-subcontrato v-else v-bind:subcontrato="subcontrato" />
-                                <div class="row">
-                                     <div class="col-md-12">
-                                         <div class="pull-right">
-                                             <descarga-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
-                                             <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
-                                         </div>
-                                     </div>
+                                <div v-else>
+                                    <datos-subcontrato v-bind:subcontrato="subcontrato" />
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="pull-right">
+                                                <descarga-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
+                                                <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
+                                
                             </div>
                              <div class="card-footer">
                                  <div class="row">
