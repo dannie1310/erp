@@ -169,6 +169,7 @@
                                 Cerrar
                             </button>
                             <button class="btn btn-info float-right" type="button" @click="guardar">
+                                <i class="fa fa-save"></i>
                                 Guardar
                             </button>
                         </div>
