@@ -5,16 +5,17 @@ namespace App\CSV;
 
 
 use App\Facades\Context;
+use App\Utils\ValidacionSistema;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Subcontrato;
-use App\Utils\ValidacionSistema;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithEvents;
-use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Events\AfterSheet;
-use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
+use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
 class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
@@ -91,10 +92,16 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getDelegate()->getStyle('B5:C5')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
+                $event->sheet->getStyle('C3:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
                 $i = 8;
                 $verificacion_estimacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->subcontrato->id_transaccion);
                 $event->sheet->setCellValue("A1", $verificacion_estimacion);
                 $datos_subcontrato = $this->subcontrato->subcontratoParaEstimar(null);
+
+                $event->sheet->getColumnDimension('D')->setAutoSize(false);
+                $event->sheet->getColumnDimension('D')->setWidth(90);
+                $event->sheet->getColumnDimension('K')->setAutoSize(false);
+                $event->sheet->getColumnDimension('K')->setWidth(4);
                 foreach ($datos_subcontrato['partidas'] as $key => $item) {
                     if (array_key_exists('id', $item)) {
                         $datos = $item['id'];
@@ -122,8 +129,9 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                         $event->sheet->setCellValue("N" . $i, $item['destino_path']);
                         $event->sheet->setCellValue("O" . $i, $firmada);
                         $event->sheet->getStyle('J'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                        $event->sheet->getStyle('K'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                        $event->sheet->getStyle('M'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                        $event->sheet->getStyle('J'.$i)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
+                        $event->sheet->setCellValue("K" . $i, '=J'.$i.'*100/F'.$i);
+                        $event->sheet->setCellValue("M" . $i, '=J'.$i.'*G'.$i);
                         $event->sheet->getDelegate()->getStyle('J'.$i.':M'.$i)->applyFromArray(['font' => ['bold' => true]]);
                     } else {
                         $event->sheet->setCellValue("B" . $i, $key);

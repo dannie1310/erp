@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="load()" type="button" class="btn btn-success" :disabled="cargando" title="Cargar Layout">
+        <button @click="load()" type="button" class="btn btn-outline-success" :disabled="cargando" title="Cargar Layout">
             <i class="fa fa-upload" v-if="!cargando"></i>
             <i class="fa fa-spinner fa-spin" v-else></i>
             Cargar Layout
@@ -54,7 +54,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle2"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE ESTIMACIÓN</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal_datos" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -103,7 +103,7 @@
                                         </div>
 		                            </div>
                                     <div class="card">
-                                        <div class="card-body table-responsive">
+                                        <div class="card-body table-responsive scrolling" >
                                             <table id="tabla-conceptos">
                                                 <thead>
                                                     <tr>
@@ -151,10 +151,10 @@
                                                         <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
                                                         <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                                                         <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
-                                                        <td class="numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(2)}}</td>
+                                                        <td class="numerico">{{parseFloat(concepto.cantidad).formatMoney(2)}}</td>
                                                         <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td>
                                                         <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                                                        <td class="numerico">{{parseFloat(concepto.importe_estimacion).formatMoney(2)}}</td>
+                                                        <td class="numerico">{{parseFloat(concepto.importe).formatMoney(2)}}</td>
                                                         <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                                                     </tr>
                                                 </tbody>
@@ -164,11 +164,11 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" @click="cerrarModal">
+                            <button type="button" class="btn btn-secondary" @click="cerrarModalResumen">
                                 <i class="fa fa-times-circle"></i>
                                 Cerrar
                             </button>
-                            <button class="btn btn-info float-right" type="submit" @click="guardar">
+                            <button class="btn btn-info float-right" type="button" @click="guardar">
                                 Guardar
                             </button>
                         </div>
@@ -210,18 +210,19 @@
                 });
             },
             load() {
-                this.$refs.carga_layout.value = '';
                 this.file = null;
                 this.$validator.errors.clear();
 
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
             },
-            cerrarModal(event) {
-                this.$refs.carga_layout.value = '';
+            cerrarModal() {
                 this.file = null;
                 this.$validator.errors.clear();
                 $(this.$refs.modal).modal('hide')
+            },
+            cerrarModalResumen(){
+                $(this.$refs.modal_datos).modal('hide');
             },
             cargarLayout(){
 
@@ -272,16 +273,17 @@
             guardar() {
                 return this.$store.dispatch('contratos/estimacion/store', {
                     id_antecedente: this.datos_archivo.id,
-                    fecha: moment(this.datos_archivo.fecha_estimacion).format('YYYY-MM-DD'),
-                    cumplimiento: moment(this.datos_archivo.fecha_inicio_estimacion).format('YYYY-MM-DD'),
-                    vencimiento:  moment(this.datos_archivo.fecha_fin_estimacion).format('YYYY-MM-DD'),
+                    fecha: moment(this.datos_archivo.fecha_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                    cumplimiento: moment(this.datos_archivo.fecha_inicio_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                    vencimiento:  moment(this.datos_archivo.fecha_fin_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
                     observaciones: this.datos_archivo.observaciones,
                     conceptos: this.datos_archivo.partidas
                 })
                 .then(data=> {
-
+                    this.cerrarModal();
+                    this.cerrarModalResumen();
                 }).finally(()=>{
-                    //this.$router.push({name: 'estimacion'});
+                    this.$router.push({name: 'estimacion'});
                 });
             },
         },
@@ -302,6 +304,11 @@
 </script>
 
 <style scoped>
+    .scrolling {
+        overflow-y: auto;
+        height: 500px;
+    }
+
     table#tabla-conceptos {
         word-wrap: unset;
         width: 100%;

@@ -20,6 +20,8 @@ use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\DB;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
+use DateTime;
+use Hamcrest\Type\IsNumeric;
 use Maatwebsite\Excel\Facades\Excel;
 
 class EstimacionService
@@ -181,11 +183,15 @@ class EstimacionService
 
     public function descargaLayout($id)
     {
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
         return $this->repository->descargaLayout($id);
     }
 
     public function cargaLayout($file, $id, $name)
     {
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
         $file_xls = $this->getFileXls($file, $name);
         $celdas = $this->getDatosPartidas($file_xls);
         $this->verifica = new ValidacionSistema();
@@ -209,12 +215,12 @@ class EstimacionService
             abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
         }
 
-        while ($x < count($subcontrato->partidas) + 8) {
-            if (!is_null($celdas[$x][14])) {
-                if($celdas[$x][9] != 0 && $celdas[$x][10] != 0 && $celdas[$x][12] != 0) {
+        while ($x < count($celdas) - 3) {
+            if (!is_null($celdas[$x][13])) {
+                if($celdas[$x][7] > 0 && is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0) {
                     $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
                     $item = $subcontrato->partidas->where('id_item', $decodificado)->first();
-                    if (!is_numeric($celdas[$x][9]) || !is_numeric($celdas[$x][10]) || !is_numeric($celdas[$x][12])) {
+                    if (!is_numeric($celdas[$x][9])) {
                         abort(400, 'No es posible obtener datos de la partida # ' . ($x - 1));
                     }
                     if (!$item) {
@@ -225,22 +231,27 @@ class EstimacionService
                         $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
                     }
                     $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
-                    $datos_partida['cantidad_estimacion'] = $celdas[$x][9];
-                    $datos_partida['porcentaje_estimado'] = $celdas[$x][10];
-                    $datos_partida['importe_estimacion'] = $celdas[$x][12];
+                    $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                    $datos_partida['cantidad'] = $celdas[$x][9];
+                    $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
+                    $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
 
                     $partidas[] = $datos_partida;
                 }
             }
             $x++;
         }
+        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$celdas[2][2];
+        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$celdas[3][2];
+        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$celdas[4][2];
+
         $repuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
-            'fecha_estimacion' => $celdas[2][2],
-            'fecha_inicio_estimacion' => $celdas[3][2],
-            'fecha_fin_estimacion' => $celdas[4][2],
-            'observaciones' => $celdas[$x + 2][3],
+            'fecha_estimacion' => $fecha_est,
+            'fecha_inicio_estimacion' => $fecha_est_ini,
+            'fecha_fin_estimacion' => $fecha_est_fin,
+            'observaciones' => (string)$celdas[$x + 2][3],
             'partidas' => $partidas
         ];
         return $repuesta;
@@ -275,5 +286,12 @@ class EstimacionService
         $rows = Excel::toArray(new CotizacionImport, $file_xls);
         unlink($file_xls);
         return $rows[0];
+    }
+
+    private function convertToDate($date){
+        $date = date('Y-m-d',(($date - 25569) * 86400));
+        $date = new DateTime($date);
+        $date->modify('+1 day');
+        return $date->format('d/m/Y');
     }
 }

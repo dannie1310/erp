@@ -9,7 +9,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_subcontrato">Buscar Subcontrato:</label>
+                                            <label for="id_subcontrato">Buscar Subcontratox:</label>
                                             <model-list-select
                                                 :disabled="cargando"
                                                 name="id_subcontrato"
@@ -32,13 +32,19 @@
                                     </div>
                                 </div>
                                 <datos-subcontrato v-else v-bind:subcontrato="subcontrato" />
+                                <div class="row">
+                                     <div class="col-md-12">
+                                         <div class="pull-right">
+                                             <descarga-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
+                                             <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
+                                         </div>
+                                     </div>
+                                </div>
                             </div>
                              <div class="card-footer">
                                  <div class="row">
                                      <div class="col-md-12">
                                          <div class="pull-right">
-                                             <descarga-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
-                                             <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />
                                              <button type="button" class="btn btn-secondary" v-on:click="salir">
                                                 <i class="fa fa-angle-left"></i>
                                                 Regresar</button>
