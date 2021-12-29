@@ -145,7 +145,7 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     'font' => ['bold' => true]
                 ]);
                 $event->sheet->setCellValue("C" . ($i+3), 'OBSERVACIONES');
-                $event->sheet->setCellValue("D" . ($i+3), $item['clave']);
+                $event->sheet->setCellValue("D" . ($i+3), $this->subcontrato->presupuesto->observaciones);
             },
         ];
 

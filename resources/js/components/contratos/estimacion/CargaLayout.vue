@@ -54,7 +54,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle2"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE ESTIMACIÓN</h5>
-                        <button type="button" class="close" data-dismiss="modal_datos" aria-label="Close">
+                        <button type="button" class="close" @click="cerrarModalResumen" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
@@ -79,7 +79,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="card">
-                                        <div class="card-body">
+                                        <div class="card-body" >
                                             <div class="form-check form-check-inline">
                                                 <input v-model="columnas" class="form-check-input" type="checkbox" value="contratado" id="contratado">
                                                 <label class="form-check-label" for="contratado">Contratado</label>
@@ -100,75 +100,73 @@
                                                 <input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
                                                 <label class="form-check-label" for="destino">Destino</label>
                                             </div>
-                                        </div>
-		                            </div>
-                                    <div class="card">
-                                        <div class="card-body table-responsive scrolling" >
-                                            <table id="tabla-conceptos">
-                                                <thead>
-                                                    <tr>
-                                                        <th rowspan="2">Clave</th>
-                                                        <th rowspan="2">Concepto</th>
-                                                        <th rowspan="2">UM</th>
-                                                        <th style="display: none" colspan="2" class="contratado">Contratado</th>
-                                                        <th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
-                                                        <th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
-                                                        <th style="display: none" colspan="2" class="saldo">Saldo</th>
-                                                        <th colspan="4">Esta Estimación</th>
-                                                        <th style="display: none" class="destino">Distribución</th>
-                                                    </tr>
-                                                    <tr>
-                                                        <th style="display: none" class="contratado">Volumen</th>
-                                                        <th style="display: none" class="contratado">P.U.</th>
-                                                        <th style="display: none" class="avance-volumen">Anterior</th>
-                                                        <th style="display: none" class="avance-volumen">Acumulado</th>
-                                                        <th style="display: none" class="avance-volumen">%</th>
-                                                        <th style="display: none" class="avance-importe">Anterior</th>
-                                                        <th style="display: none" class="avance-importe">Acumulado</th>
-                                                        <th style="display: none" class="saldo">Volumen</th>
-                                                        <th style="display: none" class="saldo">Importe</th>
-                                                        <th>Volumen</th>
-                                                        <th>%</th>
-                                                        <th>P.U.</th>
-                                                        <th>Importe</th>
-                                                        <th style="display: none" class="destino">Destino</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody v-for="(concepto, i) in datos_archivo.partidas">
-                                                    <tr>
-                                                        <td :title="concepto.clave">{{ concepto.clave }}</td>
-                                                        <td :title="concepto.descripcion_concepto">
-                                                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                            {{concepto.descripcion_concepto}}
-                                                        </td>
-                                                        <td class="centrado">{{concepto.unidad}}</td>
-                                                        <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                                                        <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
-                                                        <td style="display: none" class="numerico avance-volumen"></td>
-                                                        <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                                                        <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
-                                                        <td style="display: none" class="numerico avance-importe"></td>
-                                                        <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
-                                                        <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                                                        <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
-                                                        <td class="numerico">{{parseFloat(concepto.cantidad).formatMoney(2)}}</td>
-                                                        <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td>
-                                                        <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
-                                                        <td class="numerico">{{parseFloat(concepto.importe).formatMoney(2)}}</td>
-                                                        <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
+                                            <div class=" table-responsive scrolling">
+                                                <table id="tabla-conceptos">
+                                                    <thead>
+                                                        <tr>
+                                                            <th rowspan="2">Clave</th>
+                                                            <th rowspan="2">Concepto</th>
+                                                            <th rowspan="2">UM</th>
+                                                            <th style="display: none" colspan="2" class="contratado">Contratado</th>
+                                                            <th style="display: none" colspan="3" class="avance-volumen">Avance Volumen</th>
+                                                            <th style="display: none" colspan="2" class="avance-importe">Avance Importe</th>
+                                                            <th style="display: none" colspan="2" class="saldo">Saldo</th>
+                                                            <th colspan="4">Esta Estimación</th>
+                                                            <th style="display: none" class="destino">Distribución</th>
+                                                        </tr>
+                                                        <tr>
+                                                            <th style="display: none" class="contratado">Volumen</th>
+                                                            <th style="display: none" class="contratado">P.U.</th>
+                                                            <th style="display: none" class="avance-volumen">Anterior</th>
+                                                            <th style="display: none" class="avance-volumen">Acumulado</th>
+                                                            <th style="display: none" class="avance-volumen">%</th>
+                                                            <th style="display: none" class="avance-importe">Anterior</th>
+                                                            <th style="display: none" class="avance-importe">Acumulado</th>
+                                                            <th style="display: none" class="saldo">Volumen</th>
+                                                            <th style="display: none" class="saldo">Importe</th>
+                                                            <th>Volumen</th>
+                                                            <th>%</th>
+                                                            <th>P.U.</th>
+                                                            <th>Importe</th>
+                                                            <th style="display: none" class="destino">Destino</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody v-for="(concepto, i) in datos_archivo.partidas">
+                                                        <tr>
+                                                            <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                                            <td :title="concepto.descripcion_concepto">
+                                                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                                {{concepto.descripcion_concepto}}
+                                                            </td>
+                                                            <td class="centrado">{{concepto.unidad}}</td>
+                                                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
+                                                            <td style="display: none" class="numerico contratado">${{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                                                            <td style="display: none" class="numerico avance-volumen"></td>
+                                                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
+                                                            <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
+                                                            <td style="display: none" class="numerico avance-importe"></td>
+                                                            <td style="display: none" class="numerico avance-importe">${{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
+                                                            <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
+                                                            <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
+                                                            <td class="numerico">{{parseFloat(concepto.cantidad).formatMoney(2)}}</td>
+                                                            <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td>
+                                                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                                                            <td class="numerico">${{parseFloat(concepto.importe).formatMoney(2)}}</td>
+                                                            <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" @click="cerrarModalResumen">
-                                <i class="fa fa-times-circle"></i>
+                                <i class="fa fa-times"></i>
                                 Cerrar
                             </button>
-                            <button class="btn btn-info float-right" type="button" @click="guardar">
+                            <button class="btn btn-primary float-right" type="button" @click="guardar">
                                 <i class="fa fa-save"></i>
                                 Guardar
                             </button>

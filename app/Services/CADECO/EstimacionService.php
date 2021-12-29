@@ -241,9 +241,9 @@ class EstimacionService
             }
             $x++;
         }
-        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$celdas[2][2];
-        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$celdas[3][2];
-        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$celdas[4][2];
+        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Estimación');
+        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Estimación');
+        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Estimación');
 
         $repuesta = [
             'id' => $subcontrato->getKey(),
@@ -293,5 +293,15 @@ class EstimacionService
         $date = new DateTime($date);
         $date->modify('+1 day');
         return $date->format('d/m/Y');
+    }
+
+    function validateDate($date, $type)
+    {
+        $format = 'd/m/Y';
+        $d = DateTime::createFromFormat($format, $date);
+        if($d && $d->format($format) === $date){
+            return $date;
+        }
+        abort(403, "La fecha de $type es inválida");
     }
 }

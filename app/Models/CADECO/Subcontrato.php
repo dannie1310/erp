@@ -206,6 +206,10 @@ class Subcontrato extends Transaccion
         return $this->hasMany(SolicitudCambioSubcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function presupuesto(){
+        return $this->hasOne(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente')->where('id_empresa', '=', $this->id_empresa);
+    }
+
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo), 2) . '%';
