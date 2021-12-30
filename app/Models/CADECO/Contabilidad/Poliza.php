@@ -110,6 +110,12 @@ class Poliza extends Model
         return $this->belongsTo(Factura::class, 'id_transaccion_sao');
     }
 
+    public function transaccionCFDI()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_transaccion_sao')
+            ->whereIn("tipo_transaccion",[65,101]);
+    }
+
     public function transaccionComprobanteFondo()
     {
         return $this->belongsTo(ComprobanteFondo::class, 'id_transaccion_sao');
@@ -485,8 +491,8 @@ class Poliza extends Model
                 if ($poliza_sao->polizaContpaq) {
                     $guid_poliza = $poliza_sao->polizaContpaq->Guid;
                     $tipo = $poliza_sao->polizaContpaq->tipo;
-                    $cfdis = $poliza_sao->transaccionFactura->facturasRepositorio;
-                    foreach ($poliza_sao->transaccionFactura->facturasRepositorio as $cfdi) {
+                    $cfdis = $poliza_sao->transaccionCFDI->facturasRepositorio;
+                    foreach ($poliza_sao->transaccionCFDI->facturasRepositorio as $cfdi) {
                         $comprobanteADD = null;
                         try {
                             $comprobanteADD = $cfdi->tiene_comprobante_add;
@@ -565,7 +571,7 @@ class Poliza extends Model
                 if ($poliza_sao->polizaContpaq) {
                     $guid_poliza = $poliza_sao->polizaContpaq->Guid;
                     $tipo = "Poliza de ".$poliza_sao->polizaContpaq->tipo_poliza->Nombre;
-                    if ($poliza_sao->transaccionFactura->facturasRepositorio) {
+                    if ($poliza_sao->transaccionCFDI->facturasRepositorio) {
                         DB::purge('cntpqom');
                         Config::set('database.connections.cntpqom.database', 'other_' . $base->GuidDSL . '_metadata');
                         $documento = Documento::where('GuidDocument', $guid_poliza)->first();
@@ -624,7 +630,7 @@ class Poliza extends Model
                                 abort(500,"Error de escritura a la base de datos: ".Config::get('database.connections.cntpqom.database').". \n \n Favor de contactar a soporte a aplicaciones.");
                             }
                         }
-                        foreach ($poliza_sao->transaccionFactura->facturasRepositorio as $cfdi) {
+                        foreach ($poliza_sao->transaccionCFDI->facturasRepositorio as $cfdi) {
                             if ($cfdi->tiene_comprobante_add) {
                                 $guid_document = $cfdi->comprobante->GuidDocument;
                                 try{
@@ -707,7 +713,7 @@ class Poliza extends Model
             $sin_poliza_contpaq = 0;
 
             foreach ($polizas_sao as $key => $poliza_sao) {
-                $cfdis = $poliza_sao->transaccionFactura->facturasRepositorio;
+                $cfdis = $poliza_sao->transaccionCFDI->facturasRepositorio;
                 foreach ($cfdis as $cfdi) {
                     $comprobanteADD = null;
                     try {
