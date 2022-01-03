@@ -26,9 +26,7 @@
                                 <DatosContratoProyectado :contrato_proyectado="contrato" v-if="contrato"></DatosContratoProyectado>
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <button @click="cargar()"  v-if="contrato" type="button" class="btn btn-outline-success pull-right" :disabled="cargando" title="Cargar Layout">
-                                            <i class="fa fa-upload"></i>Cargar Layout Excel
-                                        </button>
+                                        <carga-layout v-if="contrato" :disabled="cargando" v-bind:id_contrato="id_contrato" />
                                         <button @click="descargar()" v-if="contrato" type="button" class="btn btn-outline-success pull-right mr-1" title="Descargar Layout Asignación">
                                             <i class="fa fa-download"></i>Descargar Layout Excel
                                         </button>
@@ -55,9 +53,10 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     import DatosContratoProyectado from "../proyectado/partials/DatosContratoProyectado";
+    import CargaLayout from './CargaLayout';
     export default {
         name: "selecciona-contrato-proyectado-asignacion",
-        components: {DatosContratoProyectado, ModelListSelect},
+        components: {DatosContratoProyectado, ModelListSelect, CargaLayout},
         data() {
             return {
                 cargando: false,
@@ -125,9 +124,6 @@
                         this.$emit('success')
                         this.cargando = false;
                     })
-            },
-            cargar(){
-                console.log('Panda carga');
             },
         },
         computed: {

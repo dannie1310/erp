@@ -112,4 +112,8 @@ class ContratoProyectadoController extends Controller
     public function descargaLayoutAsignacion($id){
         return $this->service->getLayoutAsignacion($id);
     }
+
+    public function procesaLayoutAsigancion(Request $request){
+        return $this->service->procesaLayoutAsigancion($request->all());
+    }
 }

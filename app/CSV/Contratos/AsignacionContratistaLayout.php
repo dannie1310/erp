@@ -19,12 +19,14 @@ use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
     protected $contratos;
+    protected $id_contrato_p;
     protected $verifica;
 
-    public function __construct($contratos)
+    public function __construct($contratos, $id_contrato_p)
     {
         $this->verifica = new ValidacionSistema();
         $this->contratos = $contratos;
+        $this->id_contrato_p = $id_contrato_p;
     }
 
     /**
@@ -38,6 +40,11 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
             $event->sheet->getProtection()->setSheet(true);
             $col_rs = 7;
             $row = 1;
+
+            // Validación de archivo xls
+            // dd($this->contratos);
+            $verificacion_estimacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->id_contrato_p);
+            $event->sheet->setCellValue("A1", $verificacion_estimacion);
 
             // Encabezado con Razón Social y id presupuesto
             foreach($this->contratos['presupuestos'] as $id_pres => $presupuesto){
@@ -105,8 +112,9 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
             $event->sheet->getColumnDimension('C')->setWidth(20);
             $row = 4;
             $index_p = 0;
+            dd($this->contratos);
             foreach($this->contratos['items'] as $key_item => $item){
-                $event->sheet->setCellValue("A".$row, $this->verifica->encripta($key_item));
+                $event->sheet->setCellValue("A".$row, $this->verifica->encripta($item['id_concepto']));
                 $event->sheet->setCellValue("B".$row, $item['descripcion']);
                 $event->sheet->setCellValue("C".$row, $item['destino_corto']);
                 $event->sheet->setCellValue("D".$row, $item['unidad']);
@@ -116,16 +124,16 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                 $f_suma = "=".$item['cantidad_disponible']."-(";
                 $col_partida = 7;
                 foreach($this->contratos['presupuestos'] as $id_pres => $presupuesto){
-                    if($presupuesto['partidas'][$index_p] != null){
+                    if($presupuesto['partidas'][$key_item] != null){
                         $range_p = $this->getLetter(($col_partida)).$row.":".$this->getLetter($col_partida+7).$row;
-                        $event->sheet->setCellValueByColumnAndRow($col_partida,  $row, $presupuesto['partidas'][$index_p]['precio_unitario']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+1,$row, $presupuesto['partidas'][$index_p]['precio_total_antes_desc']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+2,$row, $presupuesto['partidas'][$index_p]['descuento']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+3,$row, $presupuesto['partidas'][$index_p]['precio_unitario_con_desc']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+4,$row, $presupuesto['partidas'][$index_p]['precio_total_con_desc']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+5,$row, $presupuesto['partidas'][$index_p]['moneda']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+6,$row, $presupuesto['partidas'][$index_p]['importe_moneda_conversion']);
-                        $event->sheet->setCellValueByColumnAndRow($col_partida+7,$row, $presupuesto['partidas'][$index_p]['observaciones'].$range_p);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida,  $row, $presupuesto['partidas'][$key_item]['precio_unitario']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+1,$row, $presupuesto['partidas'][$key_item]['precio_total_antes_desc']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+2,$row, $presupuesto['partidas'][$key_item]['descuento']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+3,$row, $presupuesto['partidas'][$key_item]['precio_unitario_con_desc']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+4,$row, $presupuesto['partidas'][$key_item]['precio_total_con_desc']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+5,$row, $presupuesto['partidas'][$key_item]['moneda']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+6,$row, $presupuesto['partidas'][$key_item]['importe_moneda_conversion']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+7,$row, $presupuesto['partidas'][$key_item]['observaciones']);
                         $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                         $event->sheet->getStyle($range_p)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('00B5FE');
                         $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('4CBD47');
