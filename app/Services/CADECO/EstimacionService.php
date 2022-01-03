@@ -199,6 +199,7 @@ class EstimacionService
 
         $x = 8;
         $partidas = array();
+        $partidas_no_validas = array();
         if (count($celdas[0]) != 15) {
             abort(400, 'Archivo XLS no compatible');
         }
@@ -214,37 +215,53 @@ class EstimacionService
         {
             abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
         }
+        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Estimación');
+        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Estimación');
+        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Estimación');
+        if( strtotime($fecha_est_ini) > strtotime($fecha_est_fin) ){
+            abort(400, 'La fecha de inicio en posterior a la fecha de finalización.');
+        }
 
+        $partidas_invalidas = false;
         while ($x < count($celdas) - 3) {
             if (!is_null($celdas[$x][13])) {
+                $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
+                $item = $subcontrato->partidas->where('id_item', $decodificado)->first();
+                if (!is_numeric($celdas[$x][9])) {
+                    // abort(400, 'No es posible obtener datos de la partida # ' . ($x - 1));
+                }
+                if (!$item) {
+                    abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
+                }
+                $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("id_concepto", "=", $item->id_concepto)->first();
+                if ($contrato == null) {
+                    $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
+                }
                 if($celdas[$x][7] > 0 && is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0) {
-                    $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
-                    $item = $subcontrato->partidas->where('id_item', $decodificado)->first();
-                    if (!is_numeric($celdas[$x][9])) {
-                        abort(400, 'No es posible obtener datos de la partida # ' . ($x - 1));
-                    }
-                    if (!$item) {
-                        abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
-                    }
-                    $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("id_concepto", "=", $item->id_concepto)->first();
-                    if ($contrato == null) {
-                        $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
-                    }
+                    
                     $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
                     $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
                     $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
+                    $datos_partida['cantidad_valida'] = true;
 
                     $partidas[] = $datos_partida;
+                }else if(!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null){
+                    $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
+                    $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                    $datos_partida['cantidad'] = 'N/A';
+                    $datos_partida['porcentaje_estimado'] = 'N/A';
+                    $datos_partida['importe'] = 'N/A';
+                    $datos_partida['cantidad_valida'] = false;
+                    $partidas_invalidas = true;
+                    $partidas_no_validas[] = $datos_partida;
                 }
             }
             $x++;
         }
-        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Estimación');
-        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Estimación');
-        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Estimación');
-
+        
+        $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas:$partidas;
         $repuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
@@ -252,7 +269,8 @@ class EstimacionService
             'fecha_inicio_estimacion' => $fecha_est_ini,
             'fecha_fin_estimacion' => $fecha_est_fin,
             'observaciones' => (string)$celdas[$x + 2][3],
-            'partidas' => $partidas
+            'partidas_invalidas' => $partidas_invalidas,
+            'partidas' => $partidas_filtradas
         ];
         return $repuesta;
     }
