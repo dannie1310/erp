@@ -464,7 +464,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 table {
     word-wrap: unset;
     width: 100%;
