@@ -100,6 +100,7 @@
                                                 <input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
                                                 <label class="form-check-label" for="destino">Destino</label>
                                             </div>
+                                            <div class="pull-right" v-if="datos_archivo.partidas_invalidas" style="color:red;">N/A: Partidas con cantidades no válidas</div>
                                             <div class=" table-responsive scrolling">
                                                 <table id="tabla-conceptos">
                                                     <thead>
@@ -132,7 +133,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody v-for="(concepto, i) in datos_archivo.partidas">
-                                                        <tr>
+                                                        <tr :style="concepto.cantidad_valida">
                                                             <td :title="concepto.clave">{{ concepto.clave }}</td>
                                                             <td :title="concepto.descripcion_concepto">
                                                                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -148,9 +149,15 @@
                                                             <td style="display: none" class="numerico avance-importe">${{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
                                                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                                                             <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
-                                                            <td class="numerico">{{parseFloat(concepto.cantidad).formatMoney(2)}}</td>
-                                                            <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td>
-                                                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
+                                                            <template v-if="concepto.cantidad_valida"><td class="numerico">{{parseFloat(concepto.cantidad).formatMoney(2)}}</td></template>
+                                                            <template v-else><td class="numerico" style="color:red">N/A</td></template>
+                                                            <template v-if="concepto.cantidad_valida"><td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td></template>
+                                                            <template v-else><td class="numerico" style="color:red">N/A</td></template>
+                                                            <template v-if="concepto.cantidad_valida"><td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td></template>
+                                                            <template v-else><td class="numerico" style="color:red">N/A</td></template>
+                                                            
+                                                            
+                                                            
                                                             <td class="numerico">${{parseFloat(concepto.importe).formatMoney(2)}}</td>
                                                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                                                         </tr>
@@ -166,7 +173,7 @@
                                 <i class="fa fa-times"></i>
                                 Cerrar
                             </button>
-                            <button class="btn btn-primary float-right" type="button" @click="guardar">
+                            <button class="btn btn-primary float-right" type="button" @click="guardar" :disabled="datos_archivo.partidas_invalidas">
                                 <i class="fa fa-save"></i>
                                 Guardar
                             </button>
