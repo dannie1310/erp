@@ -240,6 +240,7 @@ class EstimacionService
                 if($celdas[$x][7] > 0 && is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0) {
                     
                     $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
+                    $datos_partida['no_partida'] = $celdas[$x][0];
                     $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
@@ -249,6 +250,7 @@ class EstimacionService
                     $partidas[] = $datos_partida;
                 }else if(!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null){
                     $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
+                    $datos_partida['no_partida'] = $celdas[$x][0];
                     $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
                     $datos_partida['cantidad'] = 'N/A';
                     $datos_partida['porcentaje_estimado'] = 'N/A';
@@ -262,13 +264,14 @@ class EstimacionService
         }
         
         $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas:$partidas;
+        $observaciones = $celdas[$x + 2][3] == null ? ' ': (string)$celdas[$x + 2][3];
         $repuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
             'fecha_estimacion' => $fecha_est,
             'fecha_inicio_estimacion' => $fecha_est_ini,
             'fecha_fin_estimacion' => $fecha_est_fin,
-            'observaciones' => (string)$celdas[$x + 2][3],
+            'observaciones' => $observaciones,
             'partidas_invalidas' => $partidas_invalidas,
             'partidas' => $partidas_filtradas
         ];
