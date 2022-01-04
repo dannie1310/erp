@@ -50,7 +50,7 @@
         </div>
 
         <div class="modal fade" ref="modal_datos" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-scrollable modal-xl modal" role="document">
+            <div class="modal-dialog modal-dialog-scrollable modal-xl modal" role="document" style="height:auto">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle2"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE ESTIMACIÓN</h5>
@@ -64,18 +64,21 @@
                                     <h4>{{datos_archivo.contratista}}</h4>
                                 </div>
                                 <div class="col-md-12">
-                                    <div class="col-md-3">
-                                        <label class="col-form-label">Fecha de Estimación</label>
-                                        {{datos_archivo.fecha_estimacion}}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label class="col-form-label">Fecha de Estimación</label>
+                                            {{datos_archivo.fecha_estimacion}}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-form-label">Fecha Inicio de Estimación</label>
+                                            {{datos_archivo.fecha_inicio_estimacion}}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="col-form-label">Fecha Término de Estimación</label>
+                                            {{datos_archivo.fecha_fin_estimacion}}
+                                        </div>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="col-form-label">Fecha Inicio de Estimación</label>
-                                        {{datos_archivo.fecha_inicio_estimacion}}
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="col-form-label">Fecha Término de Estimación</label>
-                                        {{datos_archivo.fecha_fin_estimacion}}
-                                    </div>
+                                    
                                 </div>
                                 <div class="col-md-12">
                                     <div class="card">
@@ -101,10 +104,11 @@
                                                 <label class="form-check-label" for="destino">Destino</label>
                                             </div>
                                             <div class="pull-right" v-if="datos_archivo.partidas_invalidas" style="color:red;">N/A: Partidas con cantidades no válidas</div>
-                                            <div class=" table-responsive scrolling">
+                                            <div class=" table-responsive" style="overflow-y: auto; height:250px">
                                                 <table id="tabla-conceptos">
                                                     <thead>
                                                         <tr>
+                                                            <th rowspan="2">#</th>
                                                             <th rowspan="2">Clave</th>
                                                             <th rowspan="2">Concepto</th>
                                                             <th rowspan="2">UM</th>
@@ -133,7 +137,8 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody v-for="(concepto, i) in datos_archivo.partidas">
-                                                        <tr :style="concepto.cantidad_valida">
+                                                        <tr>
+                                                            <td>{{concepto.no_partida}}</td>
                                                             <td :title="concepto.clave">{{ concepto.clave }}</td>
                                                             <td :title="concepto.descripcion_concepto">
                                                                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -312,7 +317,6 @@
 <style scoped>
     .scrolling {
         overflow-y: auto;
-        height: 500px;
     }
 
     table#tabla-conceptos {
