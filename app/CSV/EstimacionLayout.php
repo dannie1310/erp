@@ -120,7 +120,7 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                         $event->sheet->setCellValue("E" . $i, $item['unidad']);
                         $event->sheet->setCellValue("F" . $i, $item['cantidad_subcontrato']);
                         $event->sheet->setCellValue("G" . $i, $item['precio_unitario_subcontrato']);
-                        $event->sheet->setCellValue("H" . $i, number_format($item['cantidad_por_estimar'],2));
+                        $event->sheet->setCellValue("H" . $i, number_format($item['cantidad_por_estimar'],3));
                         $event->sheet->setCellValue("I" . $i, number_format($item['importe_por_estimar'],2));
                         $event->sheet->setCellValue("J" . $i, 0);
                         $event->sheet->setCellValue("K" . $i, 0);
