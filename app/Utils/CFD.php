@@ -549,7 +549,7 @@ class CFD
             $validacion_status_sat = $respuesta["statusSat"];
             $validacion_status_code_sat = $respuesta["statusCodeSat"];
 
-            if ($validacion_status_sat !== "Vigente") {
+            if ($validacion_status_sat !== "Vigente" && date("Y") == $this->arreglo_factura["fecha"]->format("Y") && $validacion_status_code_sat != "Expresión impresa no válida. Expresión: 601") {
                 abort(500, "Aviso SAT:\n" . $validacion_status_sat . " -" . $validacion_status_code_sat . "");
             }
         }
