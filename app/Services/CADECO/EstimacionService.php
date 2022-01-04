@@ -227,9 +227,6 @@ class EstimacionService
             if (!is_null($celdas[$x][13])) {
                 $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
                 $item = $subcontrato->partidas->where('id_item', $decodificado)->first();
-                if (!is_numeric($celdas[$x][9])) {
-                    // abort(400, 'No es posible obtener datos de la partida # ' . ($x - 1));
-                }
                 if (!$item) {
                     abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
                 }
@@ -237,7 +234,7 @@ class EstimacionService
                 if ($contrato == null) {
                     $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
                 }
-                if($celdas[$x][7] > 0 && is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0) {
+                if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0 && $celdas[$x][7] > 0 &&  $celdas[$x][9] <= $celdas[$x][7]) {
                     
                     $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
                     $datos_partida['no_partida'] = $celdas[$x][0];
@@ -252,9 +249,20 @@ class EstimacionService
                     $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
                     $datos_partida['no_partida'] = $celdas[$x][0];
                     $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
-                    $datos_partida['cantidad'] = 'N/A';
-                    $datos_partida['porcentaje_estimado'] = 'N/A';
-                    $datos_partida['importe'] = 'N/A';
+                    $datos_partida['cantidad'] = 'N/V';
+                    $datos_partida['porcentaje_estimado'] = 'N/V';
+                    $datos_partida['importe'] = 'N/V';
+                    $datos_partida['cantidad_valida'] = false;
+                    $partidas_invalidas = true;
+                    $partidas_no_validas[] = $datos_partida;
+                    
+                }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] != null && $celdas[$x][9] > $celdas[$x][7]){
+                    $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
+                    $datos_partida['no_partida'] = $celdas[$x][0];
+                    $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                    $datos_partida['cantidad'] = $celdas[$x][9];
+                    $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
+                    $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
                     $datos_partida['cantidad_valida'] = false;
                     $partidas_invalidas = true;
                     $partidas_no_validas[] = $datos_partida;
@@ -265,7 +273,7 @@ class EstimacionService
         
         $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas:$partidas;
         $observaciones = $celdas[$x + 2][3] == null ? '': (string)$celdas[$x + 2][3];
-        $repuesta = [
+        $respuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
             'fecha_estimacion' => $fecha_est,
@@ -275,7 +283,7 @@ class EstimacionService
             'partidas_invalidas' => $partidas_invalidas,
             'partidas' => $partidas_filtradas
         ];
-        return $repuesta;
+        return $respuesta;
     }
 
     private function generaDirectorios($name)

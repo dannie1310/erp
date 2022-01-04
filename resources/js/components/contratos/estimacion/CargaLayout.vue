@@ -103,7 +103,7 @@
                                                 <input v-model="columnas" class="form-check-input" type="checkbox" id="destino" value="destino">
                                                 <label class="form-check-label" for="destino">Destino</label>
                                             </div>
-                                            <div class="pull-right" v-if="datos_archivo.partidas_invalidas" style="color:red;">N/A: Partidas con cantidades no válidas</div>
+                                            <div class="pull-right" v-if="datos_archivo.partidas_invalidas" style="color:red;">Partidas con volumen no válido o mayor al saldo</div>
                                             <div class=" table-responsive" style="overflow-y: auto; height:250px">
                                                 <table id="tabla-conceptos">
                                                     <thead>
@@ -155,15 +155,18 @@
                                                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                                                             <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
                                                             <template v-if="concepto.cantidad_valida"><td class="numerico">{{parseFloat(concepto.cantidad).formatMoney(2)}}</td></template>
-                                                            <template v-else><td class="numerico" style="color:red">N/A</td></template>
+                                                            <template v-else><td class="numerico" style="color:red">{{concepto.cantidad}}</td></template>
+
                                                             <template v-if="concepto.cantidad_valida"><td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td></template>
-                                                            <template v-else><td class="numerico" style="color:red">N/A</td></template>
-                                                            <template v-if="concepto.cantidad_valida"><td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td></template>
-                                                            <template v-else><td class="numerico" style="color:red">N/A</td></template>
-                                                            
-                                                            
-                                                            
-                                                            <td class="numerico">${{parseFloat(concepto.importe).formatMoney(2)}}</td>
+                                                            <template v-else-if="concepto.porcentaje_estimado == 'N/V'"><td class="numerico" style="color:red">N/V</td></template>
+                                                            <template v-else><td class="numerico" style="color:red">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2)}}</td></template>
+
+                                                            <td class="numerico">{{ concepto.precio_unitario_subcontrato_format}}</td>
+
+                                                            <template v-if="concepto.cantidad_valida"><td class="numerico">${{parseFloat(concepto.importe).formatMoney(2)}}</td></template>
+                                                            <template v-else-if="concepto.importe == 'N/V'"><td class="numerico" style="color:red">N/V</td></template>
+                                                            <template v-else><td class="numerico" style="color:red">${{parseFloat(concepto.importe).formatMoney(2)}}</td></template>
+
                                                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                                                         </tr>
                                                     </tbody>
