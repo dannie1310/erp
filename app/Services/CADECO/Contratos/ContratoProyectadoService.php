@@ -559,6 +559,8 @@ class ContratoProyectadoService
                         'tipo_cambio' => number_format($partida_presupuestada->tipo_cambio, 4, '.', ','),
                         'importe_moneda_conversion' => $partida_presupuestada->total_despues_descuento_partida_mc_format,
                         'observaciones' => $partida_presupuestada->Observaciones,
+                        'mejor_opcion' => $partida_presupuestada->mejor_opcion,
+                        'justificacion' => '',
                         'cantidad_asignada' => '',
                     ];
                 }else{
