@@ -282,19 +282,20 @@
                 }
             },
             guardar() {
-                return this.$store.dispatch('contratos/estimacion/store', {
+                let data ={
                     id_antecedente: this.datos_archivo.id,
                     fecha: moment(this.datos_archivo.fecha_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
                     cumplimiento: moment(this.datos_archivo.fecha_inicio_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                    vencimiento:  moment(this.datos_archivo.fecha_fin_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                    observaciones: this.datos_archivo.observaciones,
+                    vencimiento:  moment(this.datos_archivo.fecha_fin_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),                   
                     conceptos: this.datos_archivo.partidas
-                })
+                };
+                this.datos_archivo.observaciones!=''?data.observaciones = this.datos_archivo.observaciones:'';
+                return this.$store.dispatch('contratos/estimacion/store', data)
                 .then(data=> {
                     this.cerrarModal();
                     this.cerrarModalResumen();
-                }).finally(()=>{
                     this.$router.push({name: 'estimacion'});
+                }).finally(()=>{
                 });
             },
         },

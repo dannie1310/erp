@@ -264,7 +264,7 @@ class EstimacionService
         }
         
         $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas:$partidas;
-        $observaciones = $celdas[$x + 2][3] == null ? ' ': (string)$celdas[$x + 2][3];
+        $observaciones = $celdas[$x + 2][3] == null ? '': (string)$celdas[$x + 2][3];
         $repuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
