@@ -10,6 +10,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
 use DateTimeZone;
@@ -27,7 +28,6 @@ use App\Models\SEGURIDAD_ERP\Proyecto;
 use App\PDF\Fiscal\InformeCFDICompleto;
 use Illuminate\Support\Facades\Storage;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
-use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
@@ -301,6 +301,8 @@ class CFDSATService
                 }
 
                 $arreglo_cfd = $cfd->getArregloFactura();
+                $rcfd->subtotal = $arreglo_cfd["subtotal"];
+                $rcfd->descuento = $arreglo_cfd["descuento"];
                 $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
                 $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
                 $rcfd->save();
@@ -1256,6 +1258,11 @@ class CFDSATService
         return $this->repository->obtenerInformeSATLP2020($data);
     }
 
+    public function obtenerInformeCostosCFDIvsCostosBalanza($data)
+    {
+        return $this->repository->obtenerInformeCostosCFDIvsCostosBalanza($data);
+    }
+
     public function obtenerCuentasInformeSATLP2020($data)
     {
 
@@ -1304,6 +1311,12 @@ class CFDSATService
 
         return $cfdiRepository->getListaCFDI($data);
 
+    }
+
+    public function obtenerListaCFDIMesAnio($data)
+    {
+        $cfdiRepository = new CFDSATRepository(new CFDSAT());
+        return $cfdiRepository->obtenerListaCFDIMesAnio($data);
     }
 
     public function obtenerNumeroEmpresa()
@@ -1499,6 +1512,41 @@ class CFDSATService
             }
         }else{
             abort(500, "Error de lectura del archivo: ".$nombre);
+        }
+    }
+    private function setDatosPago($factura_xml)
+    {
+        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
+        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $monto = 0 ;
+        if($pagos){
+            foreach($pagos as $pago)
+            {
+                $monto += (float) $pago["Monto"];
+                $moneda = (string) $pago["MonedaP"];
+                $forma_pago = (string) $pago["FormaDePagoP"];
+                $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
+            }
+
+            $this->arreglo_factura["total"] = $monto;
+            $this->arreglo_factura["moneda"] = $moneda;
+            $this->arreglo_factura["forma_pago"] = $forma_pago;
+            $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+        }
+
+        if($doctos){
+            $id = 0;
+            foreach($doctos as $docto)
+            {
+                $this->arreglo_factura["documentos_pagados"][$id]["uuid"] = (string)$docto["IdDocumento"];
+                $this->arreglo_factura["documentos_pagados"][$id]["moneda"] = (string)$docto["MonedaDR"];
+                $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_insoluto"] = (float)$docto["ImpSaldoInsoluto"];
+                $this->arreglo_factura["documentos_pagados"][$id]["imp_pagado"] = (float)$docto["ImpPagado"];
+                $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
+                $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
+                $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+                $id++;
+            }
         }
     }
 }

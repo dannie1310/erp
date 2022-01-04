@@ -221,6 +221,10 @@ class PolizaService
                             );
                         }
                     }
+                    if(count($logs)>2)
+                    {
+                        abort(500,"Error en carga de CFDI a ADD");
+                    }
                 }
             }
         }

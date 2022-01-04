@@ -10,7 +10,9 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Documentacion\Archivo;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
+use App\Models\SEGURIDAD_ERP\Proyecto;
 use Carbon\Carbon;
 use App\Facades\Context;
 use App\Models\IGH\Usuario;
@@ -73,6 +75,13 @@ class Transaccion extends Model
         } else{
             return $this->comentario;
         }
+    }
+
+    public function facturasRepositorio()
+    {
+        return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
+            ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
+                ->first()->getKey());
     }
 
     public function getNumeroFolioFormatAttribute()

@@ -106,6 +106,12 @@
                     <p>Informe CFDI vs. Pasivos</p>
                 </router-link>
             </li>
+            <li class="nav-item"  v-if="$root.can('consultar_informe_general_cfdi_costos_balanza',true)">
+                <router-link :to="{name: 'informe-general-cfdi-costos-balanza'}" class="nav-link" :class="{active: this.$route.name == 'informe-general-cfdi-costos-balanza'}">
+                    <i class="fa fa-file-alt nav-icon"></i>
+                    <p>Informe CFDI vs. Costos Bza.</p>
+                </router-link>
+            </li>
         </ul>
     </nav>
 </template>

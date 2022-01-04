@@ -129,11 +129,24 @@ class ComprobanteFondo extends Transaccion
                 ]);
             }
             DB::connection('cadeco')->commit();
-            return $comprobante;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
+
+        $obra = Obra::query()->find(Context::getIdObra());
+
+        try{
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    $comprobante->generaPrepoliza();
+                }
+            }
+        }catch (\Exception $e) {
+            abort(400, $e->getMessage().$e->getFile().$e->getLine());
+        }
+
+        return $comprobante;
     }
 
     private function registrarCFDIRepositorio($comprobante, $data)
@@ -233,5 +246,11 @@ class ComprobanteFondo extends Transaccion
                 $cfd_repositorio->save();
             }
         }
+    }
+
+    private function generaPrepoliza()
+    {
+        DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaReembolso] {$this->id_transaccion}");
+        return $this;
     }
 }

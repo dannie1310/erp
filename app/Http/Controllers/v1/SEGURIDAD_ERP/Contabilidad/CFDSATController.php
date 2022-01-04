@@ -105,6 +105,13 @@ class CFDSATController extends Controller
         return response()->json($respuesta, 200);
     }
 
+    public function obtenerInformeCostosCFDIvsCostosBalanza(Request $request)
+    {
+        $respuesta =$this->service->obtenerInformeCostosCFDIvsCostosBalanza($request->all());
+        return response()->json($respuesta, 200);
+
+    }
+
     public function obtenerCuentasInformeSATLP2020(Request $request, $id)
     {
         $respuesta =$this->service->obtenerCuentasInformeSATLP2020($request->all());
@@ -120,6 +127,12 @@ class CFDSATController extends Controller
     public function obtenerListaCFDI(Request $request, $id)
     {
         $respuesta =$this->service->obtenerListaCFDI($request->all());
+        return response()->json($respuesta, 200);
+    }
+
+    public function obtenerListaCFDIMesAnio(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerListaCFDIMesAnio($request->all());
         return response()->json($respuesta, 200);
     }
 
