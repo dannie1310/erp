@@ -215,6 +215,94 @@
                     </div>
                 </div>
                 <br>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div >
+                            <div>
+                                <label class="col-form-label"><span><i class="fa fa-files-o"></i>Archivos Adjuntos</span></label>
+                            </div>
+                            <div>
+                                <div class="form-group error-content" >
+                                    <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
+                                           row="3"
+                                           v-validate="{ }"
+                                           name="archivos"
+                                           data-vv-as="Archivos a Enviar"
+                                           ref="archivos"
+                                           :class="{'is-invalid': errors.has('archivos')}"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has('archivos')">{{ errors.first('archivos') }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <table class="table  table-sm table-bordered" v-if="names.length>0">
+                            <tr>
+                                <th class="encabezado index_corto">
+                                    #
+                                </th>
+
+                                <th class="encabezado">
+                                    Nombre de Archivo
+                                </th>
+                                <th class="encabezado c300" >
+                                    Tipo
+                                </th>
+                                <th class="encabezado c250" >
+                                    Observaciones
+                                </th>
+                                <th class="encabezado icono">
+                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregarArchivo" :disabled="cargando">
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
+                                </th>
+                            </tr>
+
+                            <tr v-for="(archivo, i) in this.archivos">
+                                <td>{{i+1}}</td>
+
+                                <td>
+                                    {{archivo.nombre}}
+                                </td>
+                                <td>
+                                    <model-list-select
+                                        :id="`tipo_archivo_${i}`"
+                                        :name="`tipo_archivo_${i}`"
+                                        option-value="id"
+                                        option-text="descripcion"
+                                        v-model="archivo.tipo"
+                                        v-validate="{required: true}"
+                                        :list="tipos_archivo_enviar"
+                                        :isError="errors.has(`tipo_archivo_${i}`)">
+                                        :placeholder="!cargando?'Seleccionar tipo de archivo':'Cargando...'">
+                                    </model-list-select>
+
+                                </td>
+                                <td>
+                                    <textarea
+                                        :id="`observaciones_${i}`"
+                                        :name="`observaciones_${i}`"
+                                        class="form-control"
+                                        v-model="archivo.observaciones"
+                                        v-validate="{required: (archivo.tipo == 14) ? true:false}"
+                                        :data-vv-as="`Observaciones ${i+1}`"
+                                        :class="{'is-invalid': errors.has(`observaciones_${i}`)}"
+                                    ></textarea>
+                                </td>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="destinatarios.length == 1" >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+
+                <br>
 
                 <div class="row" v-if="contrato">
                     <div class="col-md-6">
@@ -395,7 +483,13 @@ export default {
                     'id_sucursal_seleccionada' : '',
                     'proveedor' : null
                 }
-            ]
+            ],
+            files : [],
+            names : [],
+            archivos :[],
+            tipos_archivo_enviar : [],
+            tipos_archivo_enviados : [],
+            tipos_archivo_solicitar : []
         }
     },
     mounted() {
@@ -436,8 +530,38 @@ export default {
                 this.cuerpo_correo = data;
             })
             .finally(()=>{
-                this.cargando = false;
+                this.getTiposArchivoEnviar();
             })
+        },
+        getTiposArchivoEnviar(){
+            this.cargando = true;
+            return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
+                params:{
+                    tipo : [1,3],
+                    area: [2,3]
+                }
+            })
+            .then(data => {
+                this.tipos_archivo_enviar = data;
+            })
+            .finally(()=>{
+                this.getTiposArchivoSolicitar();
+            })
+        },
+        getTiposArchivoSolicitar(){
+            this.cargando = true;
+            return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
+                params:{
+                    tipo : [2,3],
+                    area: [2,3]
+                }
+            })
+                .then(data => {
+                    this.tipos_archivo_solicitar = data;
+                })
+                .finally(()=>{
+                    this.cargando = false;
+                })
         },
         agregarDestinatario(){
             var array = {
@@ -453,6 +577,13 @@ export default {
                 'proveedor' : null
             }
             this.destinatarios.push(array);
+        },
+        agregarArchivo(){
+            var array = {
+                'tipo_archivo' : '',
+                'nombre':'',
+            }
+            this.archivos.push(array);
         },
         quitarDestinatario(index){
             this.destinatarios.splice(index, 1);
@@ -604,7 +735,23 @@ export default {
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
         },
-        createImage(file, tipo) {
+
+        createImage(file) {
+            var reader = new FileReader();
+            var vm = this;
+
+            reader.onload = (e) => {
+                vm.archivo = e.target.result;
+                vm.files.push(e.target.result);
+                const unicos = vm.files.filter((valor, indice) => {
+                    return vm.files.indexOf(valor) === indice;
+                });
+                vm.files = unicos;
+            };
+            reader.readAsDataURL(file);
+        },
+
+        /*createImage(file, tipo) {
             var reader = new FileReader();
             var vm = this;
 
@@ -619,21 +766,69 @@ export default {
                 }
             };
             reader.readAsDataURL(file);
-        },
-        onFileChange(e){
-            this.file = null;
+        },*/
+        /*
+        * onFileChange(e){
+            //this.files = [];
+            this.eliminarPartidasCFDI();
+            this.archivo = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
 
-            if(e.target.id == 'carta_terminos') {
+            for(let i=0; i<files.length; i++) {
+                this.archivo_name = files[i].name;
+                this.createImage(files[i]);
+                this.names.push(files[i].name);
+
+                const unicos = this.names.filter((valor, indice) => {
+                    return this.names.indexOf(valor) === indice;
+                });
+                this.names = unicos;
+
+                if(files[i].type == "text/xml")
+                {
+
+                } else {
+                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
+                }
+            }
+
+            setTimeout(() => {
+                this.cargarXML(1)
+            }, 500);
+        },
+        * */
+        onFileChange(e){
+            //this.file = null;
+            var files = e.target.files || e.dataTransfer.files;
+            if (!files.length)
+                return;
+            let _self = this;
+
+            for(let i=0; i<files.length; i++) {
+                this.archivo_name = files[i].name;
+                this.createImage(files[i]);
+                this.names.push(files[i].name);
+
+                const unicos = this.names.filter((valor, indice) => {
+                    return this.names.indexOf(valor) === indice;
+                });
+                this.names = unicos;
+            }
+
+            this.names.forEach(function(name, i){
+                _self.archivos.push({nombre:name, tipo:null, observaciones:""});
+            });
+
+            /*if(e.target.id == 'carta_terminos') {
                 this.nombre_archivo_carta_terminos_condiciones = files[0].name;
             }
             if(e.target.id == 'formato_cotizacion')
             {
                 this.nombre_archivo_formato_cotizacion = files[0].name;
             }
-            this.createImage(files[0], e.target.id);
+            this.createImage(files[0], e.target.id);*/
         },
         cambiaSucursal(destinatario)
         {

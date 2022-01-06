@@ -3,6 +3,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Models\CADECO\Transaccion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\CtgTipoArchivoInvitacion;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion as Model;
@@ -23,5 +24,13 @@ class InvitacionRepository extends Repository implements RepositoryInterface
     public function getPorCotizar()
     {
        return $this->model->getSolicitudes();
+    }
+
+    public function getTiposArchivo($data)
+    {
+        $tipos = CtgTipoArchivoInvitacion::where("estatus","=",1)
+            ->whereIn("tipo",$data["tipo"])
+            ->whereIn("area",$data["area"])->get();
+        return $tipos;
     }
 }

@@ -69,4 +69,10 @@ class InvitacionController extends Controller
     {
         return $this->service->pdf($id);
     }
+
+    public function getTiposArchivo(Request $request)
+    {
+        return $this->service->getTiposArchivo($request->all());
+
+    }
 }

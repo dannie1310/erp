@@ -719,4 +719,9 @@ class InvitacionService
             return 1;
         }
     }
+
+    public function getTiposArchivo($data)
+    {
+        return $this->repository->getTiposArchivo($data);
+    }
 }
