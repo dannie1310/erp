@@ -272,7 +272,7 @@
                                         option-text="descripcion"
                                         v-model="archivo.tipo"
                                         :list="tipos_archivo_enviar"
-                                        :isError="errors.has(`tipo_archivo_${i}`)">
+                                        :isError="archivo.errores_tipo">
                                         :placeholder="!cargando?'Seleccionar tipo de archivo':'Cargando...'">
                                     </model-list-select>
                                 </td>
@@ -283,7 +283,7 @@
                                         class="form-control"
                                         v-model="archivo.observaciones"
                                         :data-vv-as="`Observaciones ${i+1}`"
-                                        :class="{'is-invalid': errors.has(`observaciones_${i}`)}"
+                                        :class="{'is-invalid': archivo.errores_observacion}"
                                         rows="1"
                                     ></textarea>
                                 </td>
@@ -666,8 +666,6 @@ export default {
             this.post.nombre_archivo_formato_cotizacion = null;
             this.post.requerir_fichas_tecnicas = null;
 
-
-            //this.id_contrato;
             this.id_proveedor = null;
             this.id_sucursal = null;
             this.observaciones = null;
@@ -704,8 +702,24 @@ export default {
         enviar()
         {
             let _self = this;
+
+            let errores = 0;
+            this.archivos.forEach(function(archivo, i) {
+                if(archivo.tipo == 14 && (archivo.observaciones) == "")
+                {
+                    archivo.errores_observacion = true;
+                    errores ++;
+                } else if(archivo.tipo == null){
+                    archivo.errores_tipo = true;
+                    errores ++;
+                }else{
+                    archivo.errores_tipo = false;
+                    archivo.errores_observacion = false;
+                }
+            });
+
             this.$validator.validate().then(result => {
-                if (result) {
+                if (result && errores == 0) {
 
                     let correos = [];
                     _self.destinatarios.forEach(function (destinatario, i) {
@@ -713,7 +727,6 @@ export default {
                             correos.push(destinatario.correo);
                         }
                     });
-
                     if (correos.length > 0 && _self.usuarios_cargados == 0) {
                         return this.$store.dispatch('igh/usuario/findPorCorreos', {
                             config: {sort: 'usuario',  order: 'asc'},
@@ -730,7 +743,6 @@ export default {
                                     this.store();
                                 }
                             });
-
                     }else {
                         this.store();
                     }
@@ -743,12 +755,6 @@ export default {
             this.$validator.validate().then(result => {
                 if (result) {
                     _self.post.id_transaccion = _self.id_contrato;
-                    /*_self.post.id_proveedor = _self.id_proveedor;
-                    _self.post.id_sucursal = _self.id_sucursal;
-                    _self.post.id_usuario = _self.id_usuario;
-                    _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
-                    _self.post.correo = _self.correo;
-                    _self.post.contacto = _self.contacto;*/
                     _self.post.observaciones = _self.observaciones;//
                     _self.post.fecha_cierre = _self.fecha_cierre;//
                     _self.post.direccion_entrega = _self.direccion_entrega;//
@@ -782,72 +788,14 @@ export default {
             reader.onload = (e) => {
                 vm.archivo = e.target.result;
                 vm.files.push(e.target.result);
-                /*const unicos = vm.files.filter((valor, indice) => {
-                    return vm.files.indexOf(valor) === indice;
-                });
-                vm.files = unicos;*/
             };
             reader.readAsDataURL(file);
         },
-
-        /*createImage(file, tipo) {
-            var reader = new FileReader();
-            var vm = this;
-
-            reader.onload = (e) => {
-                if(tipo == "carta_terminos")
-                {
-                    vm.archivo_carta_terminos_condiciones = e.target.result;
-                }
-                if(tipo== 'formato_cotizacion')
-                {
-                    vm.archivo_formato_cotizacion = e.target.result;
-                }
-            };
-            reader.readAsDataURL(file);
-        },*/
-        /*
-        * onFileChange(e){
-            //this.files = [];
-            this.eliminarPartidasCFDI();
-            this.archivo = null;
-            var files = e.target.files || e.dataTransfer.files;
-            if (!files.length)
-                return;
-
-            for(let i=0; i<files.length; i++) {
-                this.archivo_name = files[i].name;
-                this.createImage(files[i]);
-                this.names.push(files[i].name);
-
-                const unicos = this.names.filter((valor, indice) => {
-                    return this.names.indexOf(valor) === indice;
-                });
-                this.names = unicos;
-
-                if(files[i].type == "text/xml")
-                {
-
-                } else {
-                    swal('Carga con XML', 'El archivo debe ser en formato XML', 'error')
-                }
-            }
-
-            setTimeout(() => {
-                this.cargarXML(1)
-            }, 500);
-        },
-        * */
         onFileChange(e){
-            //this.file = null;
-            //this.archivos = [];
-            //this.files = [];
-            //this.names = [];
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
             let _self = this;
-
 
             for(let i=0; i<files.length; i++) {
                 if(!this.names.includes(files[i].name))
@@ -855,31 +803,10 @@ export default {
                     this.archivo_name = files[i].name;
                     this.createImage(files[i]);
                     this.names.push(files[i].name);
-                    this.archivos.push({nombre:files[i].name, tipo:null, observaciones:""});
+                    this.archivos.push({nombre:files[i].name, tipo:null, observaciones:"", errores_tipo: false, errores_observacion : false});
                 }
-
-                /*const unicos = this.names.filter((valor, indice) => {
-                    return this.names.indexOf(valor) === indice;
-                });
-                this.names = unicos;*/
             }
-
-
-
             this.$refs.archivos.value = '';
-
-            /*this.names.forEach(function(name, i){
-                _self.archivos.push({nombre:name, tipo:null, observaciones:""});
-            });*/
-
-            /*if(e.target.id == 'carta_terminos') {
-                this.nombre_archivo_carta_terminos_condiciones = files[0].name;
-            }
-            if(e.target.id == 'formato_cotizacion')
-            {
-                this.nombre_archivo_formato_cotizacion = files[0].name;
-            }
-            this.createImage(files[0], e.target.id);*/
         },
         cambiaSucursal(destinatario)
         {
@@ -937,55 +864,12 @@ export default {
                             destinatario.contacto = '';
                             destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
                             destinatario.sucursales_cargadas = 1;
-                        } /*else if(destinatario.sucursales.length > 1 &&  destinatario.id_sucursal != destinatario.id_sucursal_seleccionada){
-                            var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
-                            if(busqueda_sucursal  != undefined){
-                                destinatario.correo = busqueda_sucursal.email+'6';
-                                destinatario.contacto = busqueda_sucursal.contacto+'6';
-                            }
-                        }*/
+                        }
                     }
                 });
             },
             deep: true
         },
-       /* id_proveedor(value){
-            this.id_sucursal = null;
-            if(value !== '' && value !== null && value !== undefined){
-                var busqueda = this.proveedores.find(x=>x.id === value);
-                this.sucursales = busqueda.sucursales.data;
-                this.sucursal = (busqueda.sucursales.data.length) ? true : false;
-                if(this.sucursales.length == 1){
-                    this.id_sucursal = this.sucursales[0].id;
-                    this.correo = busqueda.email;
-                    this.contacto = busqueda.contacto;
-                }
-            }
-        },
-        id_sucursal(value){
-            this.correo = '';
-            this.contacto = '';
-            if(value !== '' && value !== null && value !== undefined){
-                var busqueda = this.sucursales.find(x=>x.id === value);
-                this.correo = busqueda.email;
-                this.contacto = busqueda.contacto;
-            }
-        },
-        proveedor_en_catalogo(value){
-            if(value == 1){
-
-            } else {
-                this.id_sucursal = null;
-                this.id_proveedor = null;
-            }
-        },
-        sin_coincidencia_proveedor(value){
-            if(value == 1){
-                this.id_usuario = '';
-            } else {
-
-            }
-        },*/
     }
 }
 </script>
