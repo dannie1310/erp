@@ -12,15 +12,19 @@ namespace App\Services\CADECO\Contratos;
 use App\Facades\Context;
 use App\Models\CADECO\Concepto;
 use App\Models\CADECO\Contrato;
-use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 use App\Repositories\Repository;
+use App\Utils\ValidacionSistema;
+use App\Imports\CotizacionImport;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\SolicitudEdicionImport;
 use App\Models\CADECO\ContratoProyectado;
+use App\Models\CADECO\PresupuestoContratista;
+use App\CSV\Contratos\AsignacionContratistaLayout;
 use App\Models\CADECO\Contratos\AreaSubcontratante;
 use App\Models\CADECO\PresupuestoContratistaPartida;
 use App\Models\SEGURIDAD_ERP\TipoAreaSubcontratante;
+use App\PDF\Contratos\PresupuestoContratistaTablaComparativaFormato;
 
 class ContratoProyectadoService
 {
@@ -28,6 +32,8 @@ class ContratoProyectadoService
      * @var Repository
      */
     protected $repository;
+
+    protected $verifica;
 
     /**
      * ContratoProyectadoService constructor.
@@ -475,5 +481,133 @@ class ContratoProyectadoService
         $cotizacion = $this->repository->show($id)->cotizaciones()->first();
         $pdf = new PresupuestoContratistaTablaComparativaFormato($cotizacion);
         return $pdf;
+    }
+
+    public function getLayoutAsignacion($id){
+        $cotizaciones = $this->getCotizaciones($id);
+        $file_name = $this->show($id)->numero_folio_format.'.xlsx';
+        return Excel::download(new AsignacionContratistaLayout($cotizaciones, $id),$file_name);
+    }
+
+    public function procesaLayoutAsigancion($data){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        $items = array();
+        $presupuestos = array();
+        $precios = [];
+        $partidas_no_validas = false;
+        $file_xls = $this->getFileXls($data['name'], $data['file']);
+        $celdas = $this->getDatosAsignacionLayout($file_xls);
+        $this->verifica = new ValidacionSistema();
+
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_validar = $cadena_validacion_exp[2];
+
+        if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $data['id'] != $id_validar)
+        {
+            abort(400, 'El archivo  XLS no corresponde al contrato proyectado');
+        }
+
+        $cant_pres =(count($celdas[0]) - 6) / 9;
+        
+        for($i = 3; $i < count($celdas);$i++){
+            $id_contrato = $this->verifica->desencripta($celdas[$i][0]);
+            $contrato = Contrato::where('id_concepto', '=', $id_contrato)->first();
+            $cantidad_pendiente = 0;
+            $items[$i] = [
+                'id_concepto' => $contrato->id_concepto,
+                'descripcion' => $contrato->descripcion,
+                'descripcion_corta' => mb_substr($contrato->descripcion, 0, 20),
+                'destino' => $contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel),
+                'destino_corto' => mb_substr($contrato->destino->concepto->getAncestrosAttribute($contrato->destino->concepto->nivel), 0, 20),
+                'unidad' => $contrato->unidad,
+                'cantidad_solicitada' => number_format($contrato->cantidad_original, 4, '.', ''),
+                'cantidad_aprobada' => number_format($contrato->cantidad_original, 4, '.', ''),
+                'cantidad_disponible' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
+                'cantidad_base' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
+                'item_pendiente' => $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada') > 0?true:false,
+                'cotizado' => false,
+                'asignadas_mayor_disponible' => false,
+            ];
+            $cantidad_pendiente = $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada');
+            $indx_id_contrato = 6;
+            $cant_asignada = 0;
+            for($j = 0; $j < $cant_pres; $j++){
+                $id_presupuesto = $this->verifica->desencripta($celdas[1][$indx_id_contrato]);
+                $presupuesto = PresupuestoContratista::where('id_transaccion', '=',$id_presupuesto)->first();
+                if(!array_key_exists($presupuesto->id_transaccion, $presupuestos)){
+                    $presupuestos[$presupuesto->id_transaccion] = [
+                        'id_transaccion' => $presupuesto->id_transaccion,
+                        'rfc' => $presupuesto->empresa->rfc,
+                        'razon_social' => $presupuesto->empresa->razon_social,
+                        'sucursal' => $presupuesto->sucursal?$presupuesto->sucursal->descripcion:'',
+                        'direccion' => $presupuesto->sucursal?$presupuesto->sucursal->direccion:'',
+                        'numero_folio_format' => $presupuesto->numero_folio_format,
+                        'justificar' => false,
+                        'partidas_no_validas' => false,
+                    ];
+                    $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
+                }
+                array_key_exists($presupuesto->id_transaccion, $presupuestos)?'': $presupuestos[$presupuesto->id_transaccion] = array();
+                $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+                if (key_exists($partida_presupuestada->id_concepto, $precios)) {
+                    if ($partida_presupuestada->precio_unitario_despues_descuento > 0 && $precios[$partida_presupuestada->id_concepto] > $partida_presupuestada->precio_unitario_despues_descuento)
+                        $precios[$partida_presupuestada->id_concepto] = (float)$partida_presupuestada->precio_unitario_despues_descuento;
+                } else {
+                    if ($partida_presupuestada->precio_unitario_despues_descuento > 0) {
+                        $precios[$partida_presupuestada->id_concepto] = (float)$partida_presupuestada->precio_unitario_despues_descuento;
+                    }
+                }
+                if($celdas[$i][$indx_id_contrato] != null && $celdas[$i][$indx_id_contrato+8] != null ){
+                    $c_pres = 0;
+                    $c_valida = true;
+                    if(is_numeric($celdas[$i][$indx_id_contrato+8]) && $celdas[$i][$indx_id_contrato+8] > 0){
+                        $c_pres = $celdas[$i][$indx_id_contrato+8];
+                        $cant_asignada += $celdas[$i][$indx_id_contrato+8];
+                    }else{
+                        $c_pres = 'N/V';
+                        $c_valida = false;
+                        $partidas_no_validas = true;
+                        $presupuestos[$presupuesto->id_transaccion]['partidas_no_validas'] = true;
+                    }
+                    $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
+                        'id_concepto' => $contrato->id_concepto,
+                        'precio_unitario' => $partida_presupuestada->precio_unitario_antes_descuento_format,
+                        'precio_total_antes_desc' => $partida_presupuestada->total_antes_descuento_format,
+                        'precio_unitario_con_desc' =>  $partida_presupuestada->precio_unitario_despues_descuento_format,
+                        'precio_unitario_con_desc_sf' =>  $partida_presupuestada->precio_unitario_despues_descuento,
+                        'precio_total_con_desc' =>   $partida_presupuestada->total_despues_descuento_format,
+                        'descuento' => $partida_presupuestada->porcentaje_descuento_format,
+                        'moneda' => $partida_presupuestada->moneda->abreviatura,
+                        'tipo_cambio' => number_format($partida_presupuestada->tipo_cambio, 4, '.', ','),
+                        'importe_moneda_conversion' => $partida_presupuestada->total_despues_descuento_partida_mc_format,
+                        'observaciones' => $partida_presupuestada->Observaciones,
+                        'mejor_opcion' => $partida_presupuestada->mejor_opcion,
+                        'justificacion' => '',
+                        'cantidad_asignada' => $c_pres,
+                        'cantidad_valida' => $c_valida,
+                    ];
+                }else{
+                    $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = null;
+                }
+                $indx_id_contrato +=9;
+            }
+            if($cant_asignada > $items[$i]['cantidad_disponible']){
+                $items[$i]['asignadas_mayor_disponible'] = true;
+            }
+            
+        }
+        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas];
+    }
+
+    private function getDatosAsignacionLayout($file_xls)
+    {
+        $rows = Excel::toArray(new CotizacionImport, $file_xls);
+        unlink($file_xls);
+        return $rows[0];
     }
 }

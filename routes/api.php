@@ -1098,6 +1098,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
             $api->get('{id}/comparativa-cotizaciones', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@getComparativaCotizaciones')->where(['id' => '[0-9]+']);
             $api->get('{id}/comparativa-cotizaciones/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@pdfComparativaCotizaciones')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargaLayoutAsignacion', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@descargaLayoutAsignacion')->where(['id' => '[0-9]+']);
+            $api->post('cargalayout','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@procesaLayoutAsigancion');
         });
 
         /**
