@@ -44,6 +44,20 @@ class InvitacionArchivoService
         return $this->repository->create($data);
     }
 
+    public function agregarArchivoSolicitar($data)
+    {
+        $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
+        $data_registro["id_invitacion"] = $data["id_invitacion"];
+        $data_registro["tamanio_kb"] = "";
+        $data_registro["hashfile"] = "";
+        $data_registro["nombre"] = "";
+        $data_registro["extension"] = "";
+
+        $archivoObj = $this->store($data_registro);
+
+        return $archivoObj;
+    }
+
     public function agregarArchivo($data){
         $archivo_nombre = $data['archivo_nombre'];
         $archivo = $data['archivo'];
@@ -63,13 +77,9 @@ class InvitacionArchivoService
             $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
             //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
             sort($files, SORT_NUMERIC);
-            //4.-SE GUARDA EL ÚNICO ARCHIVO QUE SE ENVÍA
 
             $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
             $nombre_archivo_exp = explode('.', $files[0]);
-
-
-            //5.-SE ELIMINA EL DIRECTORIO TEMPORAL
 
             $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
             $data_registro["id_invitacion"] = $data["id_invitacion"];

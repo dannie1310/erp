@@ -486,10 +486,6 @@ export default {
             direccion_entrega : '',
             ubicacion_entrega_plataforma_digital : '',
             fechasDeshabilitadas: {},
-            archivo_carta_terminos_condiciones:'',
-            nombre_archivo_carta_terminos_condiciones:'',
-            archivo_formato_cotizacion:'',
-            nombre_archivo_formato_cotizacion:'',
             cuerpo_correo:'',
             usuarios_cargados : 0,
             sin_coincidencia_proveedor : 0,
@@ -513,13 +509,14 @@ export default {
             archivos :[],
             archivos_solicitar : [
                 {
-                    'id_tipo':null,
+                    'tipo':null,
                     'observaciones':''
                 }
             ],
             tipos_archivo_enviar : [],
             tipos_archivo_enviados : [],
-            tipos_archivo_solicitar : []
+            tipos_archivo_solicitar : [],
+            archivo : ''
         }
     },
     mounted() {
@@ -660,10 +657,6 @@ export default {
             this.post.fecha_cierre = null;
             this.post.direccion_entrega = null;
             this.post.ubicacion_entrega_plataforma_digital = null;
-            this.post.archivo_carta_terminos_condiciones = null;
-            this.post.nombre_archivo_carta_terminos_condiciones = null;
-            this.post.archivo_formato_cotizacion = null;
-            this.post.nombre_archivo_formato_cotizacion = null;
             this.post.requerir_fichas_tecnicas = null;
 
             this.id_proveedor = null;
@@ -709,12 +702,14 @@ export default {
                 {
                     archivo.errores_observacion = true;
                     errores ++;
-                } else if(archivo.tipo == null){
+                } else{
+                    archivo.errores_observacion = false;
+                }
+                if(archivo.tipo == null){
                     archivo.errores_tipo = true;
                     errores ++;
                 }else{
                     archivo.errores_tipo = false;
-                    archivo.errores_observacion = false;
                 }
             });
 
@@ -759,14 +754,14 @@ export default {
                     _self.post.fecha_cierre = _self.fecha_cierre;//
                     _self.post.direccion_entrega = _self.direccion_entrega;//
                     _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;//
-                    _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;//
-                    _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;//
-                    _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;//
-                    _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;//
                     _self.post.cuerpo_correo = _self.cuerpo_correo;//
                     _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;//
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.usuarios = _self.usuarios;
+                    _self.post.archivos_solicitar = _self.archivos_solicitar;
+                    _self.post.archivos = _self.archivos;
+                    _self.post.files = _self.files;
+
 
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
