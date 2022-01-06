@@ -743,10 +743,10 @@ export default {
             reader.onload = (e) => {
                 vm.archivo = e.target.result;
                 vm.files.push(e.target.result);
-                const unicos = vm.files.filter((valor, indice) => {
+                /*const unicos = vm.files.filter((valor, indice) => {
                     return vm.files.indexOf(valor) === indice;
                 });
-                vm.files = unicos;
+                vm.files = unicos;*/
             };
             reader.readAsDataURL(file);
         },
@@ -801,25 +801,32 @@ export default {
         * */
         onFileChange(e){
             //this.file = null;
+            //this.archivos = [];
+            //this.files = [];
+            //this.names = [];
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
             let _self = this;
 
             for(let i=0; i<files.length; i++) {
-                this.archivo_name = files[i].name;
-                this.createImage(files[i]);
-                this.names.push(files[i].name);
+                if(!this.names.includes(files[i].name))
+                {
+                    this.archivo_name = files[i].name;
+                    this.createImage(files[i]);
+                    this.names.push(files[i].name);
+                    this.archivos.push({nombre:files[i].name, tipo:null, observaciones:""});
+                }
 
-                const unicos = this.names.filter((valor, indice) => {
+                /*const unicos = this.names.filter((valor, indice) => {
                     return this.names.indexOf(valor) === indice;
                 });
-                this.names = unicos;
+                this.names = unicos;*/
             }
 
-            this.names.forEach(function(name, i){
+            /*this.names.forEach(function(name, i){
                 _self.archivos.push({nombre:name, tipo:null, observaciones:""});
-            });
+            });*/
 
             /*if(e.target.id == 'carta_terminos') {
                 this.nombre_archivo_carta_terminos_condiciones = files[0].name;
