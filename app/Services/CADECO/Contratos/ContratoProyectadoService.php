@@ -494,6 +494,8 @@ class ContratoProyectadoService
         ini_set('max_execution_time', '7200') ;
         $items = array();
         $presupuestos = array();
+        $precios = [];
+        $partidas_no_validas = false;
         $file_xls = $this->getFileXls($data['name'], $data['file']);
         $celdas = $this->getDatosAsignacionLayout($file_xls);
         $this->verifica = new ValidacionSistema();
@@ -507,11 +509,11 @@ class ContratoProyectadoService
 
         if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $data['id'] != $id_validar)
         {
-            // abort(400, 'El archivo  XLS no corresponde al contrato proyectado');
+            abort(400, 'El archivo  XLS no corresponde al contrato proyectado');
         }
 
         $cant_pres =(count($celdas[0]) - 6) / 9;
-        $indx_id_contrato = 6;
+        
         for($i = 3; $i < count($celdas);$i++){
             $id_contrato = $this->verifica->desencripta($celdas[$i][0]);
             $contrato = Contrato::where('id_concepto', '=', $id_contrato)->first();
@@ -529,8 +531,11 @@ class ContratoProyectadoService
                 'cantidad_base' => number_format($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada'), 4, '.', ''),
                 'item_pendiente' => $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada') > 0?true:false,
                 'cotizado' => false,
+                'asignadas_mayor_disponible' => false,
             ];
             $cantidad_pendiente = $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada');
+            $indx_id_contrato = 6;
+            $cant_asignada = 0;
             for($j = 0; $j < $cant_pres; $j++){
                 $id_presupuesto = $this->verifica->desencripta($celdas[1][$indx_id_contrato]);
                 $presupuesto = PresupuestoContratista::where('id_transaccion', '=',$id_presupuesto)->first();
@@ -541,12 +546,34 @@ class ContratoProyectadoService
                         'razon_social' => $presupuesto->empresa->razon_social,
                         'sucursal' => $presupuesto->sucursal?$presupuesto->sucursal->descripcion:'',
                         'direccion' => $presupuesto->sucursal?$presupuesto->sucursal->direccion:'',
+                        'numero_folio_format' => $presupuesto->numero_folio_format,
+                        'justificar' => false,
+                        'partidas_no_validas' => false,
                     ];
                     $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
                 }
                 array_key_exists($presupuesto->id_transaccion, $presupuestos)?'': $presupuestos[$presupuesto->id_transaccion] = array();
                 $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
-                if($celdas[$i][$indx_id_contrato] != null && $celdas[$i][$indx_id_contrato+8] != null && $celdas[$i][$indx_id_contrato+8] > 0){
+                if (key_exists($partida_presupuestada->id_concepto, $precios)) {
+                    if ($partida_presupuestada->precio_unitario_despues_descuento > 0 && $precios[$partida_presupuestada->id_concepto] > $partida_presupuestada->precio_unitario_despues_descuento)
+                        $precios[$partida_presupuestada->id_concepto] = (float)$partida_presupuestada->precio_unitario_despues_descuento;
+                } else {
+                    if ($partida_presupuestada->precio_unitario_despues_descuento > 0) {
+                        $precios[$partida_presupuestada->id_concepto] = (float)$partida_presupuestada->precio_unitario_despues_descuento;
+                    }
+                }
+                if($celdas[$i][$indx_id_contrato] != null && $celdas[$i][$indx_id_contrato+8] != null ){
+                    $c_pres = 0;
+                    $c_valida = true;
+                    if(is_numeric($celdas[$i][$indx_id_contrato+8]) && $celdas[$i][$indx_id_contrato+8] > 0){
+                        $c_pres = $celdas[$i][$indx_id_contrato+8];
+                        $cant_asignada += $celdas[$i][$indx_id_contrato+8];
+                    }else{
+                        $c_pres = 'N/V';
+                        $c_valida = false;
+                        $partidas_no_validas = true;
+                        $presupuestos[$presupuesto->id_transaccion]['partidas_no_validas'] = true;
+                    }
                     $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = [
                         'id_concepto' => $contrato->id_concepto,
                         'precio_unitario' => $partida_presupuestada->precio_unitario_antes_descuento_format,
@@ -561,30 +588,21 @@ class ContratoProyectadoService
                         'observaciones' => $partida_presupuestada->Observaciones,
                         'mejor_opcion' => $partida_presupuestada->mejor_opcion,
                         'justificacion' => '',
-                        'cantidad_asignada' => '',
+                        'cantidad_asignada' => $c_pres,
+                        'cantidad_valida' => $c_valida,
                     ];
                 }else{
                     $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = null;
                 }
-
-
-                // dd(2, $id_presupuesto);
+                $indx_id_contrato +=9;
+            }
+            if($cant_asignada > $items[$i]['cantidad_disponible']){
+                $items[$i]['asignadas_mayor_disponible'] = true;
             }
             
         }
-        // dd($cant_pres);
-        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>$cant_pres];
+        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas];
     }
-
-    // private function getFileXls($file, $name)
-    // {
-    //     $path = $this->generaDirectorios($name);
-    //     $exp = explode("base64,", $file);
-    //     $data = base64_decode($exp[1]);
-    //     $file_xls = public_path($path["path_xls"]);
-    //     $env = file_put_contents($file_xls, $data);
-    //     return $file_xls;
-    // }
 
     private function getDatosAsignacionLayout($file_xls)
     {
@@ -592,18 +610,4 @@ class ContratoProyectadoService
         unlink($file_xls);
         return $rows[0];
     }
-
-    // private function generaDirectorios($name)
-    // {
-    //     $name = str_replace('.xlsx', '-', $name) . date("Ymdhis") . ".xlsx";
-    //     $dir_xls = "uploads/contratos/asignacion/";
-    //     $path_xls = $dir_xls . $name;
-    //     if (!file_exists($dir_xls) && !is_dir($dir_xls)) {
-    //         mkdir($dir_xls, 777, true);
-    //     }
-    //     return [
-    //         'path_xls' => $path_xls,
-    //         'dir_xls' => $dir_xls
-    //     ];
-    // }
 }

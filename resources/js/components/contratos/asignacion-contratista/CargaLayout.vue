@@ -7,7 +7,7 @@
             <div class="modal-dialog modal-dialog-centered modal" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE ESTIMACIÓN</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE ASIGNACIÓN</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -41,6 +41,76 @@
                 </div>
             </div>
         </div>
+        <div class="modal" ref="modalInvalidas" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">
+                            <i class="fa fa-pencil"></i>Resumen Carga de Layout con Errores</h5>
+                        <button type="button" class="close" @click="cerrarModalInvalidas()" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" v-if="modalInvalidas">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <p><b>Las siguientes partidas no son válidas o exedieron la cantidad pendiente por asignar.</b></p>
+                            </div>
+                        </div>
+                        <div class="row" v-for="(presupuesto, id_transaccion) in data.presupuestos" v-if="presupuesto.partidas_no_validas">
+                            <div class="col-sm-12">
+                                <table class="table table-striped table-sm">
+                                    <tr>
+                                        <td colspan="6" style="border:none">
+                                            <b>[{{presupuesto.numero_folio_format}}] {{presupuesto.razon_social}}</b>
+                                        </td>
+                                    </tr>
+                                    <tr class="encabezado">
+                                        <th style="width: 18%;">Descripción</th>
+                                        <th style="width: 4%;">Unidad</th>
+                                        <th style="width: 6%;">Cantidad Solicitada</th>
+                                        <th style="width: 6%;">Cantidad Pendiente Asignar</th>
+
+                                        <th class="bg-gray-light ">Precio Unitario Antes Descto.</th>
+                                        <th class="bg-gray-light">% Descuento</th>
+                                        <th class="bg-gray-light ">Precio Unitario</th>
+                                        <th class="bg-gray-light ">Precio Total</th>
+                                        <th class="bg-gray-light">Moneda</th>
+                                        <th class="bg-gray-light ">Precio Total Moneda Conversión</th>
+                                        <th class="bg-gray-light th_c100">Cantidad Asignada</th>
+                                    </tr>
+                                    <tr v-for="(item, i) in data.items" v-if="presupuesto.partidas[i] !== null && (!presupuesto.partidas[i].cantidad_valida || item.asignadas_mayor_disponible)">
+                                        <td style="text-align: right" :class="item.asignadas_mayor_disponible?`asignacion_mayor`:``" :title="item.descripcion">{{item.descripcion_corta}}</td>
+                                        <td style="text-align: right" :class="item.asignadas_mayor_disponible?`asignacion_mayor`:``">{{item.unidad}}</td>
+                                        <td style="text-align: right" :class="item.asignadas_mayor_disponible?`asignacion_mayor`:``">{{item.cantidad_solicitada}}</td>
+                                        <td style="text-align: right" :class="item.asignadas_mayor_disponible?`asignacion_mayor`:``">{{item.cantidad_disponible}}</td>
+                                        
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].precio_unitario}}</td>
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].descuento}}</td>
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].precio_unitario_con_desc}}</td>
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].precio_total_con_desc}}</td>
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].moneda}}</td>
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].importe_moneda_conversion}}</td>
+                                        <td style="text-align: right" :class="!data.presupuestos[id_transaccion].partidas[i].cantidad_valida||item.asignadas_mayor_disponible?`cantidad_invalida`:``">
+                                            {{data.presupuestos[id_transaccion].partidas[i].cantidad_asignada}}</td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @click="cerrarModalInvalidas()"><i class="fa fa-close"></i>Cerrar</button>
+                        <!-- <button type="button" class="btn btn-primary" @click="validateModal()"><i class="fa fa-save"></i>Guardar</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </span>
 </template>
 
@@ -55,6 +125,8 @@ export default {
             contratos : [],
             file: null,
             nombre: '',
+            data:null,
+            modalInvalidas: false,
         }
     },
     mounted() {
@@ -116,15 +188,21 @@ export default {
                     }
                 })
                 .then(data => {
-                    this.datos_archivo = data;
-                    $(this.$refs.modal_datos).appendTo('body')
-                    $(this.$refs.modal_datos).modal('show');
-
+                    if(data.partidas_no_validas){
+                        this.modalInvalidas = true;
+                        this.data = data;
+                        this.file = null;
+                        this.$validator.errors.clear();
+                        $(this.$refs.modalInvalidas).appendTo('body')
+                        $(this.$refs.modalInvalidas).modal('show');
+                    }else{
+                        $(this.$refs.modal).modal('hide');
+                        this.file = null;
+                        this.file_name = '';
+                        this.$validator.errors.clear();
+                        this.$router.push({name: 'asignacion-contratista-layout-create', params: {id_contrato: this.id_contrato, data:data}});}
                 }).finally(() => {
-                    this.$refs.carga_layout.value = '';
-                    this.file = null;
-                    this.file_name = '';
-                    this.$validator.errors.clear();
+                    
                 });
         },
         cerrarModal() {
@@ -132,12 +210,104 @@ export default {
             this.$validator.errors.clear();
             $(this.$refs.modal).modal('hide')
         },
+        cerrarModalInvalidas(){
+            this.file = null;
+            this.$validator.errors.clear();
+            $(this.$refs.modalInvalidas).modal('hide')
+        },
     }
 
 
 }
 </script>
 
-<style>
+<style scoped>
+table {
+    word-wrap: unset;
+    width: 100%;
+    background-color: white;
+    border-color: transparent;
+    border-collapse: collapse;
+    clear: both;
+}
+table.table-fs-sm{
+    font-size: 10px;
+}
 
+table th,  table td {
+    border: 1px solid #dee2e6;
+}
+
+table td.mejor_opcion {
+    color: green;
+}
+
+table td.asignacion_mayor {
+    color: red;
+}
+
+table td.cantidad_invalida {
+    color: red;
+}
+
+table thead th
+{
+    padding: 0.2em;
+
+    background-color: #f2f4f5;
+    font-weight: bold;
+    color: black;
+    overflow: hidden;
+    text-align: center;
+}
+
+table thead th.no_negrita
+{
+    padding: 0.2em;
+
+    background-color: #f2f4f5;
+    font-weight: normal;
+    color: black;
+    overflow: hidden;
+    text-align: center;
+}
+
+table td.sin_borde {
+    border: none;
+    padding: 2px 5px;
+}
+
+table td.align_right {
+    text-align: right;
+}
+
+table thead th {
+    text-align: center;
+}
+table tbody tr
+{
+    border-width: 0 1px 1px 1px;
+    border-style: none solid solid solid;
+    border-color: white #CCCCCC #CCCCCC #CCCCCC;
+}
+table tbody td,
+table tbody th
+{
+    border-right: 1px solid #ccc;
+    color: #242424;
+    line-height: 20px;
+    overflow: hidden;
+    padding: 2px 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    -ms-text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.encabezado{
+    text-align: center;
+    background-color: #f2f4f5;
+    font-weight: bold;
+}
 </style>

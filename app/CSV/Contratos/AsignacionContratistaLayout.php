@@ -42,7 +42,6 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
             $row = 1;
 
             // Validación de archivo xls
-            // dd($this->contratos);
             $verificacion_estimacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->id_contrato_p);
             $event->sheet->setCellValue("A1", $verificacion_estimacion);
 
@@ -112,7 +111,6 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
             $event->sheet->getColumnDimension('C')->setWidth(20);
             $row = 4;
             $index_p = 0;
-            dd($this->contratos);
             foreach($this->contratos['items'] as $key_item => $item){
                 $event->sheet->setCellValue("A".$row, $this->verifica->encripta($item['id_concepto']));
                 $event->sheet->setCellValue("B".$row, $item['descripcion']);
@@ -134,18 +132,25 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                         $event->sheet->setCellValueByColumnAndRow($col_partida+5,$row, $presupuesto['partidas'][$key_item]['moneda']);
                         $event->sheet->setCellValueByColumnAndRow($col_partida+6,$row, $presupuesto['partidas'][$key_item]['importe_moneda_conversion']);
                         $event->sheet->setCellValueByColumnAndRow($col_partida+7,$row, $presupuesto['partidas'][$key_item]['observaciones']);
+                        $event->sheet->setCellValueByColumnAndRow($col_partida+8,$row, 0);
+                        $event->sheet->getStyle($range_p)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('BEF6FC');
+
+                        $id_concepto_partida = $presupuesto['partidas'][$key_item]['id_concepto'];
+                        if(number_format($this->contratos['precios_menores'][$id_concepto_partida],2) == number_format($presupuesto['partidas'][$key_item]['precio_unitario_con_desc_sf'],2)){
+                            $event->sheet->getStyle($range_p)->getFont()->getColor()->setRGB ('32B051');
+                        }
+                       
                         $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                        $event->sheet->getStyle($range_p)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('00B5FE');
                         $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('4CBD47');
-                        $f_suma .= $this->getLetter($col_partida+8).$row;
+
+                        $f_suma .= $this->getLetter($col_partida+8).$row.'+';
                     }else{
                         $range_p = $this->getLetter(($col_partida)).$row.":".$this->getLetter($col_partida+8).$row;
                         $event->sheet->getStyle($range_p)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('D0D0D0');
                     }
                     $col_partida +=9;
                 }
-                $event->sheet->setCellValue("F".$row, "=".$item['cantidad_disponible']."-(O".$row."+X".$row."+AG".$row.")");
-                // $event->sheet->setCellValue("F".$row, $item['cantidad_disponible']);
+                $event->sheet->setCellValue("F".$row, $f_suma."0)");
                 $row++;
                 $index_p++;
             }
