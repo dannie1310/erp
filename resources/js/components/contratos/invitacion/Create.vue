@@ -253,10 +253,7 @@
                                     Observaciones
                                 </th>
                                 <th class="encabezado icono">
-                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregarArchivo" :disabled="cargando">
-                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                        <i class="fa fa-plus" v-else></i>
-                                    </button>
+
                                 </th>
                             </tr>
 
@@ -292,7 +289,7 @@
                                     ></textarea>
                                 </td>
                                 <td style="text-align: center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="destinatarios.length == 1" >
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarArchivo(i)" :disabled="archivos.length == 1" >
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </td>
@@ -578,15 +575,13 @@ export default {
             }
             this.destinatarios.push(array);
         },
-        agregarArchivo(){
-            var array = {
-                'tipo_archivo' : '',
-                'nombre':'',
-            }
-            this.archivos.push(array);
-        },
         quitarDestinatario(index){
             this.destinatarios.splice(index, 1);
+        },
+        quitarArchivo(index){
+            this.archivos.splice(index, 1);
+            this.files.splice(index, 1);
+            this.names.splice(index, 1);
         },
         razonSocialRFC (item)
         {
@@ -823,6 +818,8 @@ export default {
                 });
                 this.names = unicos;*/
             }
+
+            this.$refs.archivos.value = '';
 
             /*this.names.forEach(function(name, i){
                 _self.archivos.push({nombre:name, tipo:null, observaciones:""});
