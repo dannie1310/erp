@@ -237,6 +237,7 @@
                         </div>
 
 
+
                         <table class="table  table-sm table-bordered" v-if="names.length>0">
                             <tr>
                                 <th class="encabezado index_corto">
@@ -270,12 +271,10 @@
                                         option-value="id"
                                         option-text="descripcion"
                                         v-model="archivo.tipo"
-                                        v-validate="{required: true}"
                                         :list="tipos_archivo_enviar"
                                         :isError="errors.has(`tipo_archivo_${i}`)">
                                         :placeholder="!cargando?'Seleccionar tipo de archivo':'Cargando...'">
                                     </model-list-select>
-
                                 </td>
                                 <td>
                                     <textarea
@@ -283,9 +282,9 @@
                                         :name="`observaciones_${i}`"
                                         class="form-control"
                                         v-model="archivo.observaciones"
-                                        v-validate="{required: (archivo.tipo == 14) ? true:false}"
                                         :data-vv-as="`Observaciones ${i+1}`"
                                         :class="{'is-invalid': errors.has(`observaciones_${i}`)}"
+                                        rows="1"
                                     ></textarea>
                                 </td>
                                 <td style="text-align: center">
@@ -301,36 +300,64 @@
 
                 <br>
 
-                <div class="row" v-if="contrato">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="carta_terminos">Carta de Términos y Condiciones:</label>
-                            <input type="file" class="form-control" id="carta_terminos"
-                               @change="onFileChange"
-                               v-validate="{required:true, ext: ['pdf'],  size: 102400}"
-                               name="carta_terminos"
-                               data-vv-as="Carta de Términos y Condiciones"
-                               ref="carta_terminos"
-                               :class="{'is-invalid': errors.has('carta_terminos')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
-                        </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <span><label><i class="fa fa-files-o"></i>Archivos a Solicitar</label></span>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <th class="encabezado index_corto">
+                                    #
+                                </th>
+                                <th class="encabezado c300">
+                                    Tipo
+                                </th>
+                                <th class="encabezado">
+                                    Observaciones
+                                </th>
+                                <th class="encabezado icono">
+                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregarArchivoSolicitar" :disabled="cargando">
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
+                                </th>
+                            </tr>
+
+                            <tr v-for="(archivo_solicitar, i) in this.archivos_solicitar">
+                                <td>{{i+1}}</td>
+                                <td >
+                                    <model-list-select
+                                        :id="`tipo_archivo_solicitar_${i}`"
+                                        :name="`tipo_archivo_solicitar_${i}`"
+                                        option-value="id"
+                                        option-text="descripcion"
+                                        v-model="archivo_solicitar.tipo"
+                                        :list="tipos_archivo_solicitar"
+                                        v-validate="{required:true}"
+                                        :isError="errors.has(`tipo_archivo_solicitar_${i}`)">
+                                        :placeholder="!cargando?'Seleccionar tipo de archivo':'Cargando...'">
+                                    </model-list-select>
+                                </td>
+                                <td>
+                                    <textarea
+                                        :id="`observaciones_solicitar_${i}`"
+                                        :name="`observaciones_solicitar_${i}`"
+                                        class="form-control"
+                                        rows="1"
+                                        v-model="archivo_solicitar.observaciones"
+                                        :data-vv-as="`Observaciones ${i+1}`"
+                                        :class="{'is-invalid': errors.has(`observaciones_solicitar_${i}`)}"
+                                    ></textarea>
+                                </td>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarArchivoSolicitar(i)"  >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
                     </div>
-                     <div class="col-md-6">
-                         <div class="form-group">
-                            <label for="carta_terminos">Formato de Presupuesto:</label>
-                            <input type="file" class="form-control" id="formato_cotizacion"
-                                   @change="onFileChange"
-                                   v-validate="{ext: ['docx'],  size: 102400}"
-                                   name="formato_cotizacion"
-                                   data-vv-as="Formato de Cotización"
-                                   ref="formato_cotizacion"
-                                   :class="{'is-invalid': errors.has('formato_cotizacion')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('formato_cotizacion')">{{ errors.first('formato_cotizacion') }} (docx)</div>
-                         </div>
-                    </div>
-                 </div>
+                </div>
             </div>
             <div class="card-footer">
                 <div class="row" v-if="contrato">
@@ -484,6 +511,12 @@ export default {
             files : [],
             names : [],
             archivos :[],
+            archivos_solicitar : [
+                {
+                    'id_tipo':null,
+                    'observaciones':''
+                }
+            ],
             tipos_archivo_enviar : [],
             tipos_archivo_enviados : [],
             tipos_archivo_solicitar : []
@@ -575,6 +608,14 @@ export default {
             }
             this.destinatarios.push(array);
         },
+        agregarArchivoSolicitar()
+        {
+            var array = {
+                'id_tipo' : null,
+                'observaciones' : ''
+            }
+            this.archivos_solicitar.push(array);
+        },
         quitarDestinatario(index){
             this.destinatarios.splice(index, 1);
         },
@@ -582,6 +623,9 @@ export default {
             this.archivos.splice(index, 1);
             this.files.splice(index, 1);
             this.names.splice(index, 1);
+        },
+        quitarArchivoSolicitar(index){
+            this.archivos_solicitar.splice(index, 1);
         },
         razonSocialRFC (item)
         {
@@ -804,6 +848,7 @@ export default {
                 return;
             let _self = this;
 
+
             for(let i=0; i<files.length; i++) {
                 if(!this.names.includes(files[i].name))
                 {
@@ -818,6 +863,8 @@ export default {
                 });
                 this.names = unicos;*/
             }
+
+
 
             this.$refs.archivos.value = '';
 
