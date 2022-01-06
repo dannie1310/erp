@@ -344,6 +344,7 @@
                                         class="form-control"
                                         rows="1"
                                         v-model="archivo_solicitar.observaciones"
+                                        v-validate="{required:(archivo_solicitar.tipo == 14)?true:false}"
                                         :data-vv-as="`Observaciones ${i+1}`"
                                         :class="{'is-invalid': errors.has(`observaciones_solicitar_${i}`)}"
                                     ></textarea>
@@ -761,7 +762,6 @@ export default {
                     _self.post.archivos_solicitar = _self.archivos_solicitar;
                     _self.post.archivos = _self.archivos;
                     _self.post.files = _self.files;
-
 
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
