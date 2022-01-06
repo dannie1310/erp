@@ -301,6 +301,8 @@ class CFDSATService
                 }
 
                 $arreglo_cfd = $cfd->getArregloFactura();
+                $rcfd->subtotal = $arreglo_cfd["subtotal"];
+                $rcfd->descuento = $arreglo_cfd["descuento"];
                 $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
                 $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
                 $rcfd->save();

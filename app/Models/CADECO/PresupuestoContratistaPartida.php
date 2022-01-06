@@ -385,6 +385,12 @@ class PresupuestoContratistaPartida extends Model
         }
     }
 
+    public function getMejorOpcionAttribute(){
+        $presupuestos = $this->presupuesto->contratoProyectado->presupuestos->pluck('id_transaccion');
+        $mejor_partida = self::whereIn('id_transaccion', $presupuestos)->where('id_concepto', '=', $this->id_concepto)->whereNotNull('precio_unitario')->orderBy('precio_unitario', 'ASC')->first();
+        return $mejor_partida->precio_unitario_antes_descuento == $this->precio_unitario_antes_descuento;
+    }
+
     public function scopeAsignadas($query, $id_asignacion, $id_transaccion)
     {
         $id_conceptos = AsignacionContratista::find($id_asignacion)->partidas()->where("id_transaccion","=", $id_transaccion)->pluck("id_concepto")->unique()->toArray();

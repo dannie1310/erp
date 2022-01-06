@@ -501,6 +501,7 @@ class AsignacionContratista extends Model
                             'id_concepto' => $partida['id_concepto'],
                             'cantidad_asignada' => $partida['cantidad_asignada'],
                             'cantidad_autorizada' => $partida['cantidad_asignada'],
+                            'justificacion' => $partida['justificacion'],
                         ]);
                         $registradas ++;
                     }

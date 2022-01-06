@@ -230,6 +230,8 @@ class FacturaService
     {
         $respuesta = $this->getValidacionCFDI33($xml);
         $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+        $cfd = new CFD($xml);
+        $this->arreglo_factura = $cfd->getArregloFactura();
 
         if ($estructura_correcta !== "OK") {
             $omitido = $this->repository->getEsOmitido($respuesta["detail"][0]["detail"][0]["message"],$rfc_emisor, $uuid);
@@ -283,7 +285,7 @@ class FacturaService
             $validacion_status_sat = $respuesta["statusSat"];
             $validacion_status_code_sat = $respuesta["statusCodeSat"];
 
-            if ($validacion_status_sat !== "Vigente") {
+            if ($validacion_status_sat !== "Vigente" && date("Y") == $this->arreglo_factura["fecha"]->format("Y") && $validacion_status_code_sat != "Expresión impresa no válida. Expresión: 601") {
                 event(new IncidenciaCI(
                     ["id_tipo_incidencia" => 3,
                         "rfc" => $this->arreglo_factura["emisor"]["rfc"],
