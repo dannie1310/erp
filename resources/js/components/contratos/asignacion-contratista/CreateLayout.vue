@@ -61,7 +61,7 @@
                                         <td :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]">{{data.presupuestos[id_transaccion].partidas[i].moneda}}</td><td v-else></td>
                                         <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
                                         <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].observaciones}}</td><td v-else></td>
-                                        <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{data.presupuestos[id_transaccion].partidas[i].cantidad_asignada}}</td><td v-else></td>
+                                        <td style="text-align: right" :class="data.presupuestos[id_transaccion].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.presupuestos[id_transaccion].partidas[i]"> {{parseFloat(data.presupuestos[id_transaccion].partidas[i].cantidad_asignada).formatMoney(4,'.',',')}}</td><td v-else></td>
                                         
                                     </tr>
                                 </tbody>
