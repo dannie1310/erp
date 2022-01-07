@@ -81,6 +81,14 @@
                                     
                                 </div>
                                 <div class="col-md-12">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <label class="col-form-label">Observaciones: </label>
+                                            {{datos_archivo.observaciones}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
                                     <div class="card">
                                         <div class="card-body" >
                                             <div class="form-check form-check-inline">
