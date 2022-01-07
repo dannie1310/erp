@@ -4,11 +4,13 @@
 namespace App\Services\CADECO\Compras;
 
 
-use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Utils\ValidacionSistema;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
 use App\PDF\CADECO\Compras\SolicitudCompraFormato;
+use App\CSV\Compras\AsignacionProveedorLayout;
+use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Solicitud\Repository;
 
 
@@ -255,7 +257,7 @@ class SolicitudCompraService
                 }
             }
         }
-        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios];
+        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios, 'importes_menores_mn' => $importes];
     }
 
     public function leerQR($data)
@@ -270,5 +272,11 @@ class SolicitudCompraService
         }else{
             return "Error de lectura";
         }
+    }
+    
+    public function getLayoutAsignacion($id){
+        $cotizaciones = $this->getCotizaciones($id);
+        $file_name = $this->show($id)->numero_folio_format.'.xlsx';
+        return Excel::download(new AsignacionProveedorLayout($cotizaciones, $id),$file_name);
     }
 }

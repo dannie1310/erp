@@ -276,7 +276,19 @@ export default {
                         }
                     });
             });
-        }
+        },
+        descargaLayoutAsignacion(context, payload){
+            var urr = URI + payload.id +  '/descargaLayoutAsignacion?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
     },
 
     getters: {

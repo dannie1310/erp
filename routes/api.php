@@ -1043,6 +1043,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/comparativa-cotizaciones/pdf', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@pdfComparativaCotizaciones')->where(['id' => '[0-9]+']);
             $api->get('{id}/getCotizaciones', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCotizaciones')->where(['id' => '[0-9]+']);
             $api->get('{id}/getCuerpoCorreo','App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargaLayoutAsignacion', 'App\Http\Controllers\v1\CADECO\Compras\SolicitudCompraController@descargaLayoutAsignacion')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'invitacion-cotizar'], function ($api) {

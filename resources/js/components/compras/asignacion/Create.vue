@@ -1,7 +1,7 @@
 <template>
     <span>
         <div class="row">
-            <div class="col-12">
+            <!-- <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
@@ -22,8 +22,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12" v-if="data">
+            </div> -->
+            <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
@@ -231,20 +231,20 @@ import {ModelListSelect} from 'vue-search-select';
 export default {
     name: "asignacion-proveedor-create",
     components: {ModelListSelect},
+    props:['data', 'id_empresa'],
     data() {
         return {
             cargando: false,
             solicitudes:[],
-            data:null,
-            id_solicitud:'',
-            id_empresa:'',
+            // id_solicitud:'',
             justificar:false,
             partidas_justificacion:[],
             replicar_justificacion:false,
         }
     },
     mounted() {
-        this.getSolicitudes();
+        // this.id_empresa = Object.keys(data.cotizaciones)[0];
+        // this.getSolicitudes();
     },
     computed: {
 
@@ -300,38 +300,38 @@ export default {
                 }
             });
         },
-        getSolicitudes(){
-            this.cargando = true;
-            this.solicitudes = [];
-            this.data = null;
-            return this.$store.dispatch('compras/solicitud-compra/index', {
-                params: {
-                    scope: ['cotizacion', 'conComplemento', 'ultimoAnio'],
-                    order: 'DESC',
-                    sort: 'numero_folio'
-                }
-            })
-            .then(data => {
-                this.solicitudes = data.data;
-                this.cargando = false;
-            })
+        // getSolicitudes(){
+        //     this.cargando = true;
+        //     this.solicitudes = [];
+        //     this.data = null;
+        //     return this.$store.dispatch('compras/solicitud-compra/index', {
+        //         params: {
+        //             scope: ['cotizacion', 'conComplemento', 'ultimoAnio'],
+        //             order: 'DESC',
+        //             sort: 'numero_folio'
+        //         }
+        //     })
+        //     .then(data => {
+        //         this.solicitudes = data.data;
+        //         this.cargando = false;
+        //     })
 
-        },
-        getCotizaciones(id){
-            this.cargando = true;
-            this.data = null;
-            return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
-                id: id,
-                params: {}
-            })
-            .then(data => {
-                this.id_empresa = Object.keys(data.cotizaciones)[0];
-                this.data = data;
-            })
-            .finally(() => {
-                this.cargando = false;
-            })
-        },
+        // },
+        // getCotizaciones(id){
+        //     this.cargando = true;
+        //     this.data = null;
+        //     return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
+        //         id: id,
+        //         params: {}
+        //     })
+        //     .then(data => {
+        //         this.id_empresa = Object.keys(data.cotizaciones)[0];
+        //         this.data = data;
+        //     })
+        //     .finally(() => {
+        //         this.cargando = false;
+        //     })
+        // },
         recalcular(i){
             let asignadas = 0.0;
 
@@ -442,11 +442,11 @@ export default {
         },
     },
     watch:{
-        id_solicitud(value){
-            if(value != ''){
-                this.getCotizaciones(value);
-            }
-        },
+        // id_solicitud(value){
+        //     if(value != ''){
+        //         // this.getCotizaciones(value);
+        //     }
+        // },
         replicar_justificacion(value){
             if(value){
                 this.keyupReplicarjustificacion();
