@@ -64,7 +64,7 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                     ]
                 ]
             ]);
-            $event->sheet->getStyle($range_rs)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FCE4B7');
+            $event->sheet->getStyle($range_rs)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('DFDFDF');
 
             // Encabezado de columnas
             $row = 3;            
@@ -100,7 +100,7 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                     ]
                 ]
             ]);
-            $event->sheet->getStyle($range_titles)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('CACACA');
+            $event->sheet->getStyle($range_titles)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('B9B9B9');
 
             // Partidas
             $event->sheet->getColumnDimension('A')->setAutoSize(false);
@@ -117,7 +117,7 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                 $event->sheet->setCellValue("C".$row, $item['destino_corto']);
                 $event->sheet->setCellValue("D".$row, $item['unidad']);
                 $event->sheet->setCellValue("E".$row, $item['cantidad_solicitada']);
-                $event->sheet->getStyle("A".$row.":F".$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('FEB100');
+                $event->sheet->getStyle("A".$row.":F".$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('DFDFDF');
 
                 $f_suma = "=".$item['cantidad_disponible']."-(";
                 $col_partida = 7;
@@ -133,7 +133,7 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                         $event->sheet->setCellValueByColumnAndRow($col_partida+6,$row, $presupuesto['partidas'][$key_item]['importe_moneda_conversion']);
                         $event->sheet->setCellValueByColumnAndRow($col_partida+7,$row, $presupuesto['partidas'][$key_item]['observaciones']);
                         $event->sheet->setCellValueByColumnAndRow($col_partida+8,$row, 0);
-                        $event->sheet->getStyle($range_p)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('BEF6FC');
+                        // $event->sheet->getStyle($range_p)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('BEF6FC');
 
                         $id_concepto_partida = $presupuesto['partidas'][$key_item]['id_concepto'];
                         if(number_format($this->contratos['precios_menores'][$id_concepto_partida],2) == number_format($presupuesto['partidas'][$key_item]['precio_unitario_con_desc_sf'],2)){
@@ -141,7 +141,7 @@ class AsignacionContratistaLayout implements WithHeadings, ShouldAutoSize, WithE
                         }
                        
                         $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                        $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('4CBD47');
+                        $event->sheet->getStyle($this->getLetter($col_partida+8).$row)->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('C6C6C6');
 
                         $f_suma .= $this->getLetter($col_partida+8).$row.'+';
                     }else{

@@ -513,6 +513,7 @@ class ContratoProyectadoService
         }
 
         $cant_pres =(count($celdas[0]) - 6) / 9;
+        $cant_asignaciones = [];
         
         for($i = 3; $i < count($celdas);$i++){
             $id_contrato = $this->verifica->desencripta($celdas[$i][0]);
@@ -533,7 +534,7 @@ class ContratoProyectadoService
                 'cotizado' => false,
                 'asignadas_mayor_disponible' => false,
             ];
-            $cantidad_pendiente = $contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada');
+            
             $indx_id_contrato = 6;
             $cant_asignada = 0;
             for($j = 0; $j < $cant_pres; $j++){
@@ -549,6 +550,7 @@ class ContratoProyectadoService
                         'numero_folio_format' => $presupuesto->numero_folio_format,
                         'justificar' => false,
                         'partidas_no_validas' => false,
+                        'partidas_asignadas' => false,
                     ];
                     $presupuestos[$presupuesto->id_transaccion]['partidas'] = array();
                 }
@@ -566,8 +568,8 @@ class ContratoProyectadoService
                     $c_pres = 0;
                     $c_valida = true;
                     if(is_numeric($celdas[$i][$indx_id_contrato+8]) && $celdas[$i][$indx_id_contrato+8] > 0){
-                        $c_pres = $celdas[$i][$indx_id_contrato+8];
-                        $cant_asignada += $celdas[$i][$indx_id_contrato+8];
+                        $c_pres = (float)$celdas[$i][$indx_id_contrato+8];
+                        $cant_asignada += (float)$celdas[$i][$indx_id_contrato+8];
                     }else{
                         $c_pres = 'N/V';
                         $c_valida = false;
@@ -591,17 +593,21 @@ class ContratoProyectadoService
                         'cantidad_asignada' => $c_pres,
                         'cantidad_valida' => $c_valida,
                     ];
+                    $presupuestos[$presupuesto->id_transaccion]['partidas_asignadas'] = true;
+                    $cant_asignaciones[$presupuesto->id_transaccion] = 1;
                 }else{
                     $presupuestos[$presupuesto->id_transaccion]['partidas'][$i] = null;
                 }
                 $indx_id_contrato +=9;
             }
-            if($cant_asignada > $items[$i]['cantidad_disponible']){
+            if((float)$cant_asignada > (float)$items[$i]['cantidad_disponible']){
                 $items[$i]['asignadas_mayor_disponible'] = true;
+                $partidas_no_validas = true;
+                $presupuestos[$presupuesto->id_transaccion]['partidas_no_validas'] = true;
             }
             
         }
-        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($presupuestos), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas];
+        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($cant_asignaciones), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas];
     }
 
     private function getDatosAsignacionLayout($file_xls)
