@@ -36,7 +36,6 @@ class Archivo extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
-
     public function transaccion()
     {
         return $this->belongsTo(Transaccion::class, 'id_transaccion','id_transaccion')->withOutGlobalScopes();

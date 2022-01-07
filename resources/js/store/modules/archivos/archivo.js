@@ -182,6 +182,20 @@ export default {
                     });
             });
         },
+        getArchivosInvitacion(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/invitacion',payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit("SET_ARCHIVOS", data.data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         getArchivosTransaccionSC(context, payload){
             return new Promise((resolve, reject) => {
                 axios
@@ -320,6 +334,19 @@ export default {
                         reject(error);
                     });
             });
+        },
+
+        descargarArchivoInvitacion(context, payload){
+            var urr = URI +  'descargar-archivo-invitacion/'+payload.id+'?access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
         },
     },
     getters: {

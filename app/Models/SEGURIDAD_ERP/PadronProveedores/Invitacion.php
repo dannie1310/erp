@@ -80,6 +80,8 @@ class Invitacion extends Model
     //protected $dates = ["fecha_cierre_invitacion"];
     //protected $dateFormat = 'M d Y h:i:s A';
 
+    public const ICONO = "fa fa-envelope-open-text";
+
     /**
      * Relaciones
      */
@@ -446,6 +448,11 @@ class Invitacion extends Model
             return "Contraofertar";
         }
 
+    }
+
+    public function getIconoAttribute()
+    {
+        return Invitacion::ICONO;
     }
 
     /**

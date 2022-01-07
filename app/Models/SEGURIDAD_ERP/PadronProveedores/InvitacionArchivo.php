@@ -39,16 +39,46 @@ class InvitacionArchivo extends Model
 
     public function tipo()
     {
-        return $this->belongsTo(CtgTipoArchivo::class, "id_tipo_archivo", "id");
+        return $this->belongsTo(CtgTipoArchivoInvitacion::class, "id_tipo_archivo", "id");
+    }
+
+    public function usuarioRegistro(){
+        return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
+    }
+
+    public function getFechaRegistroFormatAttribute()
+    {
+        if($this->fecha_hora_registro){
+            $date = date_create($this->fecha_hora_registro);
+            return date_format($date,"d/m/Y H:i");
+        }
+        return '';
     }
 
     /*
      * Scope*/
 
-
+    public function scopeCargados($query)
+    {
+        return $query->whereNotNull("hashfile");
+    }
 
     /*
      * Atributos*/
+
+    public function getTipoArchivoTxtAttribute()
+    {
+        try{
+            return $this->tipo->descripcion;
+        } catch (\Exception $e){
+            return $this->tipo->descripcion;
+        }
+    }
+
+    public function getRegistroAttribute()
+    {
+        return $this->usuarioRegistro->nombre_completo;
+    }
 
     /*
      * Métodos*/

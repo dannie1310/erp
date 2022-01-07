@@ -2,9 +2,13 @@
 
 namespace App\Services\SEGURIDAD_ERP\PadronProveedores;
 
+use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo as Model;
 use App\Repositories\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoRepository as Repository;
 use App\Utils\Files;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -125,10 +129,10 @@ class InvitacionArchivoService
     public function descargar($id)
     {
         $archivo =  $this->repository->show($id);
-        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->nombre.".".$archivo->extension);
+        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->descripcion_descarga.'_'.$archivo->nombre);
 
         $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
-        $descargaPath = "downloads/fiscal/descarga/".date("Ymdhis")."/";
+        $descargaPath = "downloads/padron_contratistas/".date("Ymdhis")."/";
         if (!file_exists($descargaPath) && !is_dir($descargaPath)) {
             mkdir($descargaPath, 777, true);
         }
@@ -142,6 +146,26 @@ class InvitacionArchivoService
         } else {
             return response()->json(["mensaje"=>"No existe el archivo para la descarga".$archivo->uuid]);
         }
+    }
+
+    public function getArchivosInvitacion($id_invitacion, $bd ='')
+    {
+        if($bd != '')
+        {
+            $this->setDB($bd);
+        }
+        $salida = [];
+        $salida["archivos"] = $this->repository
+            ->where([['id_invitacion', '=', $id_invitacion]])
+            ->where([['hashfile', "<>",""]])
+            ->all();
+        $salida["transaccion"] = $this->repository->getInvitacion($id_invitacion);
+        return $salida;
+    }
+
+    public function setDB($base_datos){
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database',$base_datos);
     }
 
 }
