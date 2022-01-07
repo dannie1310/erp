@@ -146,6 +146,8 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 ]);
                 $event->sheet->setCellValue("C" . ($i+3), 'OBSERVACIONES');
                 $event->sheet->setCellValue("D" . ($i+3), $this->subcontrato->presupuesto->observaciones);
+                $event->sheet->getStyle("D" . ($i+3))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle("D" . ($i+3))->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
             },
         ];
 
