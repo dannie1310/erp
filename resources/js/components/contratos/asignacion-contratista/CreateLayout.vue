@@ -16,25 +16,15 @@
                 <DatosContratoProyectado v-if="contrato" :contrato_proyectado="contrato"></DatosContratoProyectado>
                 <div class="row">
                     <div class="col-md-12">
-                        <div class=" table-responsive">
-                            <span style="color: #6c757d" class="pull-right">{{data.cantidad_presupuestos}} Presupuestos registrados</span>
+                        <span style="color: #6c757d" class="pull-right">{{data.cantidad_presupuestos}} Presupuestos registrados</span>
+                    </div>
+                    <div class="col-md-12" v-for="(presupuesto, id_transaccion) in data.presupuestos">
+                        <div class=" table-responsive" v-if="presupuesto.partidas_asignadas">
+                            
                             <table class="table table-striped">
                                     <thead>
                                     <tr>
-                                        <th colspan="6" rowspan="2" class="text-left"><h5></h5></th>
-                                    </tr>
-                                    <tr class="bg-gray-light">
-                                        <th colspan="9" >
-                                            <select
-                                                type="text"
-                                                name="id_empresa"
-                                                data-vv-as="Razón Social"
-                                                class="form-control"
-                                                id="id_empresa"
-                                                v-model="id_transaccion">
-                                                <option v-for="presupuesto in data.presupuestos" :value="presupuesto.id_transaccion">[{{presupuesto.numero_folio_format}}] {{ presupuesto.razon_social }}</option>
-                                            </select>
-                                        </th>
+                                        <th colspan="15" class="text-left"><b>[{{presupuesto.numero_folio_format}}] {{ presupuesto.razon_social }}</b></th>
                                     </tr>
                                     <tr>
                                         <th>#</th>
@@ -56,7 +46,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="(item, i) in data.items" v-if="item.item_pendiente">
+                                    <tr v-for="(item, i) in data.items" v-if="item.item_pendiente && presupuesto.partidas[i] != null">
                                         <td>{{ i+1}}</td>
                                         <td :title="item.descripcion">{{item.descripcion_corta}}</td>
                                         <td :title="item.destino">{{item.destino_corto}}</td>
