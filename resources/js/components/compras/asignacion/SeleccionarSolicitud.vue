@@ -42,7 +42,8 @@
                 </div>
             </div>
         </div>
-        <Create v-bind:data="data" v-bind:id_empresa="Object.keys(data.cotizaciones)[0]" v-if="data && continuar"></Create> 
+        <Create v-bind:data="data" v-bind:id_empresa="Object.keys(data.cotizaciones)[0]" v-if="data && continuar"></Create>
+         
     </span>
     
 </template>
