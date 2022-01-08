@@ -95,7 +95,7 @@
                                         <td class="align_right" :class="!partida.cantidad_valida?`cantidad_invalida`:``">${{partida.importe}}</td>
                                         <td :class="!partida.cantidad_valida?`cantidad_invalida`:``">{{partida.moneda}}</td>
                                         <td class="align_right" :class="!partida.cantidad_valida?`cantidad_invalida`:``">${{partida.importe_moneda_conversion}}</td>
-                                        <td class="align_right" :class="!partida.cantidad_valida || data.items[i].asignadas_mayor_disponible?`cantidad_invalida`:``">{{parseFloat(partida.cantidad_asignada).formatMoney(4,'.',',')}}</td>
+                                        <td class="align_right" :class="!partida.cantidad_valida || data.items[i].asignadas_mayor_disponible?`cantidad_invalida`:``">{{partida.cantidad_asignada}}</td>
                                         
                                     </tr>
                                 </table>

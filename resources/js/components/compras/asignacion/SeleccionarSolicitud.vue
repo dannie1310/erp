@@ -20,24 +20,13 @@
                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                             </div>
                         </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <!-- <carga-layout v-if="data" v-bind:id_solicitud="id_solicitud" /> -->
-                                <!-- <button @click="descargar()" v-if="data" type="button" class="btn btn-outline-success pull-right mr-1 mt-1" title="Descargar Layout Asignación">
-                                    <i class="fa fa-download"></i>Descargar Layout Excel
-                                </button> -->
+                    </div>
+                    <div class="row" v-if="cargandoCotizaciones">
+                        <div class="col-md-12">
+                            <div class="spinner-border text-success ml-4" role="status">
+                                <span class="sr-only">Cargando...</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" v-on:click="salir">
-                            <i class="fa fa-angle-left"></i>
-                            Regresar</button>
-                        <button type="button" :disabled="id_solicitud == ''" class="btn btn-primary">
-                            Continuar
-                            <i class="fa fa-angle-right"></i>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -58,6 +47,7 @@ export default {
     data() {
         return {
             cargando: false,
+            cargandoCotizaciones: false,
             solicitudes:[],
             data:null,
             id_solicitud:'',
@@ -125,7 +115,7 @@ export default {
 
         },
         getCotizaciones(id){
-            this.cargando = true;
+            this.cargandoCotizaciones = true;
             this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
                 id: id,
@@ -136,7 +126,7 @@ export default {
                 this.data = data;
             })
             .finally(() => {
-                this.cargando = false;
+                this.cargandoCotizaciones = false;
             })
         },
     },
