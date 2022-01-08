@@ -91,6 +91,7 @@ class InvitacionArchivoService
             $data_registro["hashfile"] = $hashfile;
             $data_registro["nombre"] = $files[0];
             $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
+            $data_registro["usuario_registro"] = $data["usuario_registro"];
 
             $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
 
@@ -129,7 +130,7 @@ class InvitacionArchivoService
     public function descargar($id)
     {
         $archivo =  $this->repository->show($id);
-        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->descripcion_descarga.'_'.$archivo->nombre);
+        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->descripcion_descarga.'_'.$archivo->nombre_descarga);
 
         $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
         $descargaPath = "downloads/padron_contratistas/".date("Ymdhis")."/";

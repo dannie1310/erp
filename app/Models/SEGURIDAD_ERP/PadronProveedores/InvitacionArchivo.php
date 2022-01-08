@@ -7,6 +7,7 @@ namespace App\Models\SEGURIDAD_ERP\PadronProveedores;
 use App\Models\CADECO\Obra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Utils\Util;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -78,6 +79,24 @@ class InvitacionArchivo extends Model
     public function getRegistroAttribute()
     {
         return $this->usuarioRegistro->nombre_completo;
+    }
+
+    public function getNombreDescargaAttribute()
+    {
+        $nombre_explode = explode(".",$this->nombre);
+        $extension = ".".$nombre_explode[count($nombre_explode)-1];
+        $nombre = str_replace($extension,"",$this->nombre);
+
+        return implode("_",explode(" ",strtolower(Util::eliminaCaracteresEspeciales($nombre).$extension)));
+
+    }
+
+    public function  getObservacionesFormatAttribute(){
+        if(strlen($this->observaciones)>60){
+            return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        } else {
+            return $this->observaciones;
+        }
     }
 
     /*

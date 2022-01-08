@@ -335,7 +335,6 @@ export default {
                     });
             });
         },
-
         descargarArchivoInvitacion(context, payload){
             var urr = URI +  'descargar-archivo-invitacion/'+payload.id+'?access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");
@@ -348,6 +347,19 @@ export default {
                 })
             }
         },
+        getArchivoInvitacion(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'consultar-archivo-invitacion/' + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        }
     },
     getters: {
         archivos(state) {

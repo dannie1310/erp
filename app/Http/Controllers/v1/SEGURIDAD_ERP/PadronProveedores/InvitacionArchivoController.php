@@ -59,4 +59,10 @@ class InvitacionArchivoController extends Controller
         $archivos = $this->service->getArchivosInvitacion($id);
         return $this->respondWithCollection($archivos["archivos"]);
     }
+
+    public function show(Request $request, $id)
+    {
+        $item = $this->service->show($id);
+        return $this->respondWithItem($item);
+    }
 }

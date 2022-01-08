@@ -14,34 +14,30 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
 
-                                <table class="table" id="documentos" name="documentos">
+                                <table class="table table-sm" id="documentos" name="documentos">
                                     <tbody>
                                         <template v-for="(archivo, i) in archivos" >
                                             <tr v-if="i ==0" style="background-color: #ddd">
-                                                <td class="index_corto">#</td>
-                                                <td>Tipo Documento</td>
-                                                <td >Documento</td>
-                                                <td >Descripción</td>
-                                                <td >Usuario Cargo</td>
-                                                <td class="fecha_hora">Fecha Hora Carga</td>
-                                                <td >Acciones</td>
+                                                <td class="index_corto" style="text-align: center">#</td>
+                                                <td style="text-align: center" class="c200">Tipo de Archivo</td>
+                                                <td style="text-align: center">Archivo</td>
+                                                <td style="text-align: center" class="c200">Observaciones</td>
+                                                <td style="text-align: center" class="c100">Acciones</td>
                                             </tr>
                                             <tr v-if="i ==0">
-                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
-                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                                <td colspan="7"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong>
+                                                {{archivo.observaciones_transaccion}}</td>
                                             </tr>
                                             <tr v-else-if="archivo.id_transaccion != archivos[i-1].id_transaccion">
-                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
-                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                                <td colspan="7"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong>
+                                                {{archivo.observaciones_transaccion}}</td>
                                             </tr>
 
                                             <tr  >
                                                 <td>{{i+1}}</td>
                                                 <td>{{archivo.tipo_archivo_txt}}</td>
                                                 <td>{{archivo.nombre}}</td>
-                                                <td>{{archivo.descripcion}}</td>
-                                                <td>{{archivo.registro}}</td>
-                                                <td>{{archivo.fecha_registro_format}}</td>
+                                                <td :title="archivo.observaciones">{{archivo.observaciones_format}}</td>
                                                 <td>
                                                     <div class="btn-group">
                                                         <Documento v-bind:url="url" v-bind:metodo = "metodo" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
@@ -65,6 +61,7 @@
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && archivo.eliminable" :disabled="eliminando_imagenes">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
+                                                        <show-info-archivo-ivitacion v-bind:id="archivo.id"/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -94,10 +91,11 @@
 <script>
 import Documento from './Documento';
 import Imagen from './Imagen';
+import ShowInfoArchivoIvitacion from "./Info";
 export default {
     name: "ListArchivosInvitacion",
     props: ['id','tipo','cargar','relacionadas', 'sin_contexto', 'id_obra', 'base_datos', 'id_invitacion'],
-    components:{Documento, Imagen},
+    components:{ShowInfoArchivoIvitacion, Documento, Imagen},
     data(){
         return{
             url : '/api/archivo/{id}/invitacion/documento?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
@@ -157,48 +155,13 @@ export default {
         },
         find() {
             this.cargando = true;
-            if(!this.sin_contexto){
-                if(!this.relacionadas){
-
-                    return this.$store.dispatch('documentacion/archivo/getArchivosInvitacion', {
-                        id: this.id_invitacion,
-                        params: {include: []}
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }else{
-                    return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccion', {
-                        id: this.id_invitacion,
-                        tipo: this.tipo,
-                        params: {include: []}
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }
-            }else {
-                if(!this.relacionadas){
-                    let _self = this;
-                    return this.$store.dispatch('documentacion/archivo/getArchivosTransaccionSC', {
-                        id: this.id,
-                        id_obra : _self.id_obra,
-                        base_datos : _self.base_datos
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }else{
-                    return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccionSC', {
-                        id: this.id,
-                        'tipo': this.tipo,
-                        data: {id_obra : this.id_obra, base_datos : this.base_datos}
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }
-            }
+            return this.$store.dispatch('documentacion/archivo/getArchivosInvitacion', {
+                id: this.id_invitacion,
+                params: {include: []}
+            }).then(data => {
+            }).finally(()=> {
+                this.cargando = false;
+            })
         },
         modalImagen(archivo){
             this.cargando_imagenes = true;
@@ -220,33 +183,17 @@ export default {
         },
 
         eliminar(archivo){
-
-            if(this.sin_contexto)
-            {
-                this.eliminando_imagenes = true;
-                let _self = this;
-                return this.$store.dispatch('documentacion/archivo/eliminarSC', {
-                    id: archivo.id,
-                    id_obra : _self.id_obra,
-                    base_datos : _self.base_datos,
-                }).then(data => {
-                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
-                }).finally( ()=>{
-                    this.eliminando_imagenes = false;
-                })
-            }else {
-                this.eliminando_imagenes = true;
-                let _self = this;
-                return this.$store.dispatch('documentacion/archivo/eliminar', {
-                    id: archivo.id,
-                    id_obra : _self.id_obra,
-                    base_datos : _self.base_datos,
-                }).then(data => {
-                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
-                }).finally( ()=>{
-                    this.eliminando_imagenes = false;
-                })
-            }
+            this.eliminando_imagenes = true;
+            let _self = this;
+            return this.$store.dispatch('documentacion/archivo/eliminarArchivoInvitacion', {
+                id: archivo.id,
+                id_obra : _self.id_obra,
+                base_datos : _self.base_datos,
+            }).then(data => {
+                //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
+            }).finally( ()=>{
+                this.eliminando_imagenes = false;
+            })
         },
     },
     computed: {
@@ -260,6 +207,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+    table.table-sm{
+        font-size: 11px;
+    }
 </style>
