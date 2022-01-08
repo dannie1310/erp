@@ -537,7 +537,6 @@ export default {
                 }
             ],
             tipos_archivo_enviar : [],
-            tipos_archivo_enviados : [],
             tipos_archivo_solicitar : [],
             archivo : ''
         }
