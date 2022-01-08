@@ -169,4 +169,20 @@ class InvitacionArchivoService
         Config::set('database.connections.cadeco.database',$base_datos);
     }
 
+    public function delete($data, $id)
+    {
+        $archivo = $this->repository->show($id);
+        if($archivo->usuario_registro != auth()->user()->idusuario)
+        {
+            abort(500, 'No puede eliminar un archivo que fue cargado por otro usuario.');
+        }
+        $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
+        if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
+            Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+            return $archivo->delete();
+        }else{
+            return $archivo->delete();
+        }
+    }
+
 }

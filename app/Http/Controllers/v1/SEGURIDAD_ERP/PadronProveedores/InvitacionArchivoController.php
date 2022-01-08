@@ -65,4 +65,10 @@ class InvitacionArchivoController extends Controller
         $item = $this->service->show($id);
         return $this->respondWithItem($item);
     }
+
+    public function destroy(Request $request, $id)
+    {
+        $this->service->delete($request->all(), $id);
+        return response()->json("{}", 200);
+    }
 }

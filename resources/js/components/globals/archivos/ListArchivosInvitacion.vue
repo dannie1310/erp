@@ -186,9 +186,7 @@ export default {
             this.eliminando_imagenes = true;
             let _self = this;
             return this.$store.dispatch('documentacion/archivo/eliminarArchivoInvitacion', {
-                id: archivo.id,
-                id_obra : _self.id_obra,
-                base_datos : _self.base_datos,
+                id: archivo.id
             }).then(data => {
                 //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
             }).finally( ()=>{

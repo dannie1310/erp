@@ -359,7 +359,49 @@ export default {
                         reject(error);
                     })
             });
-        }
+        },
+        eliminarArchivoInvitacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Archivo",
+                    text: "¿Está seguro que desea eliminar el archivo previamente cargado?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + 'eliminar-archivo-invitacion/' + payload.id, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit("DELETE_ARCHIVO", payload.id);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
     getters: {
         archivos(state) {

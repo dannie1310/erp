@@ -39,7 +39,7 @@ class InvitacionArchivoTransformer extends TransformerAbstract
             'observaciones_transaccion' => $model->invitacion->observaciones,
             'icono_transaccion' => $model->invitacion->icono,
             'id_transaccion' => $model->invitacion->id,
-            'eliminable' => 1,
+            'eliminable' => ($model->usuario_registro == auth()->user()->idusuario) ? 1 : 0,
         ];
     }
 
