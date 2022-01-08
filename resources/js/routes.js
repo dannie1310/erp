@@ -241,6 +241,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'createLayout',
+                                name: 'asignacion-proveedor-layout-create',
+                                component: require('./components/compras/asignacion/CreateLayout').default,
+                                props:true,
+                                meta: {
+                                    title: 'Registrar Asignación de Proveedores Layout',
+                                    breadcrumb: { parent: 'asignacion-proveedor-create', name: 'REGISTRAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_asignacion_proveedor'
+                                }
+                            },
+                            {
                                 path: ':id',
                                 name: 'asignacion-proveedor-show',
                                 component: require('./components/compras/asignacion/Show').default,

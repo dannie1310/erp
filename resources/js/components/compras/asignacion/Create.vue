@@ -1,31 +1,17 @@
 <template>
     <span>
         <div class="row">
-            <!-- <div class="col-12">
+            <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="id_solicitud">Seleccionar Solicitud de Compra:</label>
-                                    <model-list-select
-                                        :disabled="cargando"
-                                        name="id_solicitud"
-                                        option-value="id"
-                                        v-model="id_solicitud"
-                                        :custom-text="numeroFolioFormatAndObservaciones"
-                                        :list="solicitudes"
-                                        :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio o observación':'Cargando...'"
-                                        :isError="errors.has(`id_solicitud`)">
-                                    </model-list-select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
+                                <carga-layout v-if="data" v-bind:id_solicitud="id_solicitud" />
+                                <button @click="descargar()" v-if="data" type="button" class="btn btn-outline-success pull-right mr-1 mb-2" title="Descargar Layout Asignación">
+                                    <i class="fa fa-download"></i>Descargar Layout Excel
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div> -->
-            <div class="col-12">
-                <div class="invoice p-3 mb-3">
-                    <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-12 table-responsive">
@@ -228,10 +214,11 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
+import CargaLayout from './CargarLayoutAsignacion';
 export default {
     name: "asignacion-proveedor-create",
-    components: {ModelListSelect},
-    props:['data', 'id_empresa'],
+    components: {ModelListSelect, CargaLayout},
+    props:['data', 'id_empresa', 'id_solicitud'],
     data() {
         return {
             cargando: false,
@@ -250,6 +237,14 @@ export default {
 
     },
     methods: {
+        descargar(){
+            this.cargando = true;
+            return this.$store.dispatch('compras/solicitud-compra/descargaLayoutAsignacion', {id:this.id_solicitud})
+                .then(() => {
+                    this.$emit('success')
+                    this.cargando = false;
+                })
+        },
         cerrar(){
             this.$validator.reset();
             this.$validator.errors.clear();

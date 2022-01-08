@@ -23,18 +23,18 @@
                         <br>
                         <div class="row">
                             <div class="col-md-12">
-                                <!-- <carga-layout v-if="contrato" :disabled="cargando" v-bind:id_contrato="id_contrato" /> -->
-                                <button @click="descargar()" v-if="data" type="button" class="btn btn-outline-success pull-right mr-1 mt-2" title="Descargar Layout Asignación">
+                                <!-- <carga-layout v-if="data" v-bind:id_solicitud="id_solicitud" /> -->
+                                <!-- <button @click="descargar()" v-if="data" type="button" class="btn btn-outline-success pull-right mr-1 mt-1" title="Descargar Layout Asignación">
                                     <i class="fa fa-download"></i>Descargar Layout Excel
-                                </button>
+                                </button> -->
                             </div>
                         </div>
                     </div>
-                    <div class="modal-footer" v-if="!continuar">
+                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" v-on:click="salir">
                             <i class="fa fa-angle-left"></i>
                             Regresar</button>
-                        <button type="button" :disabled="id_solicitud == ''" @click="continua" class="btn btn-primary">
+                        <button type="button" :disabled="id_solicitud == ''" class="btn btn-primary">
                             Continuar
                             <i class="fa fa-angle-right"></i>
                         </button>
@@ -42,8 +42,8 @@
                 </div>
             </div>
         </div>
-        <Create v-bind:data="data" v-bind:id_empresa="Object.keys(data.cotizaciones)[0]" v-if="data && continuar"></Create>
-         
+        <Create v-bind:data="data" v-bind:id_empresa="Object.keys(data.cotizaciones)[0]" v-bind:id_solicitud="id_solicitud" v-if="data"></Create>
+
     </span>
     
 </template>
@@ -51,9 +51,10 @@
 <script>
 import {ModelListSelect} from 'vue-search-select';
 import Create from './Create';
+import CargaLayout from './CargarLayoutAsignacion';
 export default {
     name: "asignacion-proveedor-seleccionar",
-    components: {ModelListSelect, Create},
+    components: {ModelListSelect, Create, CargaLayout},
     data() {
         return {
             cargando: false,
@@ -64,7 +65,6 @@ export default {
             justificar:false,
             partidas_justificacion:[],
             replicar_justificacion:false,
-            continuar:false,
         }
     },
     mounted() {
@@ -81,9 +81,6 @@ export default {
                     this.$emit('success')
                     this.cargando = false;
                 })
-        },
-        continua(){
-            this.continuar = true;
         },
         numeroFolioFormatAndObservaciones(item){
             return `[${item.numero_folio_format}] - [${item.observaciones}]`
@@ -146,7 +143,6 @@ export default {
     watch:{
         id_solicitud(value){
             if(value != ''){
-                this.continuar = false;
                 this.getCotizaciones(value);
             }
         },

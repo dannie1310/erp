@@ -95,4 +95,8 @@ class SolicitudCompraController extends Controller
     public function descargaLayoutAsignacion($id){
         return $this->service->getLayoutAsignacion($id);
     }
+
+    public function procesarLayoutAsignacion(Request $request){
+        return $this->service->procesarLayoutAsignacion($request->all());
+    }
 }
