@@ -499,7 +499,7 @@ class InvitacionService
     private function registraArchivo($data)
     {
         $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
-        $archivoService->agregarArchivo($data);
+        return $archivoService->agregarArchivo($data);
     }
 
     private function registraArchivoSolicitar($data)
@@ -729,5 +729,23 @@ class InvitacionService
     public function getTiposArchivo($data)
     {
         return $this->repository->getTiposArchivo($data);
+    }
+
+    public function cargarArchivos($id_invitacion , $data)
+    {
+        $i = 0;
+        $archivos = [];
+
+        foreach($data["archivos"] as $archivo)
+        {
+            $archivo_registrar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_registrar['archivo'] = $data["files"][$i];
+            $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['id_invitacion'] = $id_invitacion;
+            $archivo_registrar['usuario_registro'] = auth()->id();
+            $archivos[] = $this->registraArchivo($archivo_registrar);
+            $i++;
+        }
+        return $archivos;
     }
 }

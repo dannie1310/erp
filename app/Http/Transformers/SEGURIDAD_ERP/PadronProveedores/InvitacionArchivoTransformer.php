@@ -33,6 +33,7 @@ class InvitacionArchivoTransformer extends TransformerAbstract
             'descripcion' => $model->descripcion,
             'estatus' => $model->estatus,
             'registro' => $model->registro,
+            'tamanio' => $model->tamanio_format,
             'fecha_registro_format' => $model->fecha_registro_format,
             'tipo_transaccion' => "Invitación a ".$model->invitacion->tipo_invitacion,
             'folio_transaccion' => $model->invitacion->numero_folio_format,

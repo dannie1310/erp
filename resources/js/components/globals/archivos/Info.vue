@@ -61,6 +61,14 @@
                                         <b>{{ archivo.tipo_archivo_txt }}</b>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>
+                                        Tamaño (MB):
+                                    </td>
+                                    <td>
+                                        <b>{{ archivo.tamanio }}</b>
+                                    </td>
+                                </tr>
 
                                 <tr>
                                     <td>
@@ -70,6 +78,7 @@
                                         <b>{{ archivo.observaciones }}</b>
                                     </td>
                                 </tr>
+
 
                             </table>
                         </div>

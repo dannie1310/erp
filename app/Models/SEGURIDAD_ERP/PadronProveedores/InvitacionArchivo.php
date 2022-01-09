@@ -99,6 +99,11 @@ class InvitacionArchivo extends Model
         }
     }
 
+    public function getTamanioFormatAttribute()
+    {
+        return number_format($this->tamanio_kb/1024,"2",".", ",");
+    }
+
     /*
      * Métodos*/
 

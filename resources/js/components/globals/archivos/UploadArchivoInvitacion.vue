@@ -7,7 +7,7 @@
         </button>
 
         <div class="modal fade" ref="modal" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-upload"></i> SUBIR ARCHIVOS</h5>
@@ -96,8 +96,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>Cerrar</button>
-                        <button @click="validate" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times"></i>Cerrar</button>
+                        <button @click="enviar" type="button" class="btn btn-primary" :disabled="errors.count() > 0 || cargando == true">
                             <span v-if="cargando==true">
                                 <i class="fa fa-spin fa-spinner"></i>
                             </span>
@@ -136,6 +136,7 @@ export default {
             cargando_imagenes: false,
             archivos :[],
             tipos_archivo_enviar : [],
+            post: {},
         }
     },
     mounted() {
@@ -144,18 +145,18 @@ export default {
     methods: {
         getTiposArchivoEnviar(){
             this.cargando = true;
-            return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
+            return this.$store.dispatch('padronProveedores/invitacion/getTiposArchivo', {
                 params:{
-                    tipo : [1,3],
-                    area: [1,3]
+                    id : this.id,
+                    global : this.global,
                 }
             })
-                .then(data => {
-                    this.tipos_archivo_enviar = data;
-                })
-                .finally(()=>{
-                    this.cargando = false;
-                })
+            .then(data => {
+                this.tipos_archivo_enviar = data;
+            })
+            .finally(()=>{
+                this.cargando = false;
+            })
         },
         createImage(file) {
             var reader = new FileReader();
@@ -193,9 +194,6 @@ export default {
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },
-        validarExtensiones(){
-            return ['pdf', 'jpg', 'jpeg', 'png'];
-        },
         upload(){
             var formData = new FormData();
 
@@ -211,63 +209,70 @@ export default {
                 this.uploadPDF(formData);
             }
         },
-        uploadPDF(data){
-            if(this.global){
-                data.append('base_datos',  this.base_datos);
-                return this.$store.dispatch('documentacion/archivo/cargarArchivoSC', {
-                    data: data,
-                    config: {
-                        params: { _method: 'POST'}
-                    }
-                }).then((data) => {
-
-                }).finally(()=> {
-                    $(this.$refs.modal).modal('hide');
-                })
-            } else {
-                return this.$store.dispatch('documentacion/archivo/cargarArchivo', {
-                    data: data,
-                    config: {
-                        params: { _method: 'POST'}
-                    }
-                }).then((data) => {
-
-                }).finally(()=> {
-                    $(this.$refs.modal).modal('hide');
-                })
-            }
-        },
-        uploadZIP(data){
-            return this.$store.dispatch('documentacion/archivo/cargarArchivoZIP', {
-                data: data,
-                config: {
-                    params: { _method: 'POST'}
-                }
-            }).then((data) => {
-                this.$store.commit('documentacion/archivo/UPDATE_ARCHIVO', data);
-                $(this.$refs.modal).modal('hide');
-            })
-        },
-        validate() {
-            this.$validator.validate().then(result => {
-                if (result) {
-                    this.upload();
-                }
-            });
-        },
-        esZip(nombres){
-            if(nombres.length === 1){
-                let split = nombres[0].nombre.split('.');
-                if(split[split.length -1].toLowerCase() == 'zip'){
-                    return true;
-                }
-            }
-            return false;
-        },
         quitarArchivo(index){
             this.archivos.splice(index, 1);
             this.files.splice(index, 1);
             this.names.splice(index, 1);
+        },
+        enviar()
+        {
+            let _self = this;
+            let errores = 0;
+
+            this.archivos.forEach(function(archivo, i) {
+                if(archivo.tipo == 14 && (archivo.observaciones) == "")
+                {
+                    archivo.errores_observacion = true;
+                    errores ++;
+                } else{
+                    archivo.errores_observacion = false;
+                }
+                if(archivo.tipo == null){
+                    archivo.errores_tipo = true;
+                    errores ++;
+                }else{
+                    archivo.errores_tipo = false;
+                }
+            });
+
+            this.$validator.validate().then(result => {
+                if (result && errores == 0) {
+
+                    _self.post.id_transaccion = _self.id_solicitud;
+                    _self.post.observaciones = _self.observaciones;//
+                    _self.post.fecha_cierre = _self.fecha_cierre;//
+                    _self.post.direccion_entrega = _self.direccion_entrega;//
+                    _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;//
+                    _self.post.cuerpo_correo = _self.cuerpo_correo;//
+                    _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;//
+                    _self.post.destinatarios = _self.destinatarios;
+                    _self.post.usuarios = _self.usuarios;
+                    _self.post.archivos_solicitar = _self.archivos_solicitar;
+                    _self.post.archivos = _self.archivos;
+                    _self.post.files = _self.files;
+
+                    return this.$store.dispatch('padronProveedores/invitacion/cargarArchivos', {
+                        data: _self.post,
+                        id: _self.id,
+                        config: {
+                            params: { _method: 'POST'}
+                        }
+                    }).then((data) => {
+                        this.$store.dispatch('documentacion/archivo/getArchivosInvitacion', {
+                            id: _self.id,
+                            params: {include: []}
+                        }).then(data => {
+                            this.$store.commit('documentacion/archivo/SET_ARCHIVOS', data.data);
+                        }).finally(()=> {
+                            this.cargando = false;
+                        })
+                    }).finally(()=> {
+                        setTimeout(() => {
+                            $(this.$refs.modal).modal('hide')
+                        }, 500);
+                    })
+                }
+            });
         },
     },
 
