@@ -78,7 +78,7 @@ class InvitacionArchivo extends Model
 
     public function getRegistroAttribute()
     {
-        return $this->usuarioRegistro->nombre_completo;
+        return ($this->usuarioRegistro)?$this->usuarioRegistro->nombre_completo:"";
     }
 
     public function getNombreDescargaAttribute()

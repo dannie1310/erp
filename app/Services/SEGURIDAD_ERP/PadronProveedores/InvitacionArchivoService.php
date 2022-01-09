@@ -105,7 +105,7 @@ class InvitacionArchivoService
 
     private function generaDirectorioTemporal()
     {
-        $dir_tempo = "uploads/archivos_transacciones/pdf_temporal/".date("Ymdhis")."/";
+        $dir_tempo = "uploads/archivos_invitaciones/pdf_temporal/".date("Ymdhis")."/";
         if (!file_exists($dir_tempo) && !is_dir($dir_tempo)) {
             mkdir($dir_tempo, 0777, true);
         }
@@ -117,22 +117,22 @@ class InvitacionArchivoService
         $hashfile = hash_file('sha1', $path.$nombre_archivo);
         $nombre_archivo_exp = explode('.', $nombre_archivo);
         $file = fopen($path.$nombre_archivo, 'r');
-        Storage::disk('archivos_transacciones')->put( $hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1], $file );
+        Storage::disk('archivos_invitaciones')->put( $hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1], $file );
         Files::eliminaDirectorio($path);
     }
 
     public function documento($id){
         $archivo = $this->repository->show($id);
-        $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
+        $storagePath  = Storage::disk('archivos_invitaciones')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
     }
 
     public function descargar($id)
     {
         $archivo =  $this->repository->show($id);
-        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->descripcion_descarga.'_'.$archivo->nombre_descarga);
+        return Storage::disk('archivos_invitaciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->descripcion_descarga.'_'.$archivo->nombre_descarga);
 
-        $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
+        $storagePath  = Storage::disk('archivos_invitaciones')->getDriver()->getAdapter()->getPathPrefix();
         $descargaPath = "downloads/padron_contratistas/".date("Ymdhis")."/";
         if (!file_exists($descargaPath) && !is_dir($descargaPath)) {
             mkdir($descargaPath, 777, true);
@@ -177,8 +177,11 @@ class InvitacionArchivoService
             abort(500, 'No puede eliminar un archivo que fue cargado por otro usuario.');
         }
         $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
-        if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
-            Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+        if(is_file(Storage::disk('archivos_invitaciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
+            $numero_invitaciones = InvitacionArchivo::where("hashfile","=",$archivo->hashfile)->count();
+            if($numero_invitaciones == 1){
+                Storage::disk('archivos_invitaciones')->delete($nombre_archivo);
+            }
             return $archivo->delete();
         }else{
             return $archivo->delete();
