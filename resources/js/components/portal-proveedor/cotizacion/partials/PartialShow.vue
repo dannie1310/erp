@@ -524,6 +524,7 @@ export default {
     },
     methods : {
         find() {
+            this.$store.commit('padronProveedores/invitacion/SET_INVITACION', null);
             this.cargando = true;
             return this.$store.dispatch('padronProveedores/invitacion/find', {
                 id: this.id_invitacion,

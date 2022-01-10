@@ -367,7 +367,7 @@ class CotizacionService
             $data_archivos["id_transaccion"] = $id;
             $data_archivos["id_tipo_archivo"] = 1;
             $data_archivos["id_categoria"] = 2;
-            $data_archivos["descripcion"] = '';
+            $data_archivos["descripcion"] = $archivo->tipo->descripcion;
             $data_archivos["observaciones"] = $archivo->observaciones;
             $data_archivos['nombre'] = $archivo->nombre;
             $data_archivos['extension'] = $archivo->extension;

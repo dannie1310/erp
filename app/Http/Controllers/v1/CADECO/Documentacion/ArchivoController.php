@@ -43,8 +43,8 @@ class ArchivoController extends Controller
         $this->middleware('permiso:cargar_archivos_transaccion')->only('cargarArchivo');
         $this->middleware('permiso:eliminar_archivos_transaccion')->only('destroy');
         $this->middleware('permiso:consultar_archivos_transaccion')->only(['documento', 'getArchivosTransaccion','imagenes']);
-        $this->middleware('permisoGlobal:eliminar_archivos_transaccion')->only('destroySC');
-        $this->middleware('permisoGlobal:consultar_archivos_transaccion')->only(['documentoSC', 'getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC']);
+        $this->middleware('permisoGlobal:eliminar_archivos_transaccion_proveedor')->only('destroySC');
+        $this->middleware('permisoGlobal:consultar_archivos_transaccion_proveedor')->only(['documentoSC', 'getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC']);
         $this->middleware('permisoGlobal:cargar_archivos_transaccion')->only('cargarArchivoSC');
 
         $this->fractal = $fractal;
