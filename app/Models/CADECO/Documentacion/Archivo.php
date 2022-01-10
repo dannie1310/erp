@@ -113,4 +113,12 @@ class Archivo extends Model
         return implode("_",explode(" ",strtolower(Util::eliminaCaracteresEspeciales($nombre).$extension)));
 
     }
+
+    public function  getObservacionesFormatAttribute(){
+        if(strlen($this->observaciones)>60){
+            return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        } else {
+            return $this->observaciones;
+        }
+    }
 }

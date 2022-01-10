@@ -95,7 +95,7 @@
 
     export default {
         name: "Info",
-        props: ['id','de_invitacion'],
+        props: ['id','de_invitacion', 'base_datos','id_obra','sin_contexto'],
         data(){
             return{
                 cargando: false,
@@ -118,14 +118,29 @@
                         this.cargando = false;
                     })
                 }else {
-                    return this.$store.dispatch('documentacion/archivo/getArchivo', {
-                        id: this.id,
-                        params: {}
-                    }).then(data => {
-                        this.$store.commit('documentacion/archivo/SET_ARCHIVO', data);
-                    }).finally(() => {
-                        this.cargando = false;
-                    })
+                    if(this.sin_contexto == 1){
+                        let _self = this;
+                        return this.$store.dispatch('documentacion/archivo/getArchivoSC',
+                            {
+                                id: this.id,
+                                id_obra : _self.id_obra,
+                                base_datos : _self.base_datos
+                            }
+                        ).then(data => {
+                            this.$store.commit('documentacion/archivo/SET_ARCHIVO', data);
+                        }).finally(() => {
+                            this.cargando = false;
+                        })
+                    }else{
+                        return this.$store.dispatch('documentacion/archivo/getArchivo', {
+                            id: this.id,
+                            params: {}
+                        }).then(data => {
+                            this.$store.commit('documentacion/archivo/SET_ARCHIVO', data);
+                        }).finally(() => {
+                            this.cargando = false;
+                        })
+                    }
                 }
             }
         },

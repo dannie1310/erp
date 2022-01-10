@@ -24,6 +24,7 @@ class ArchivoTransformer extends TransformerAbstract
             'tipo_archivo' => $model->tipo_archivo_txt,
             'tipo_archivo_txt' => $model->tipo_archivo_txt,
             'observaciones' => $model->observaciones,
+            'observaciones_format' => $model->observaciones_format,
             'categoria' => $model->categoria->descripcion,
             'nombre' => $model->nombre,
             'extension' => $model->extension,

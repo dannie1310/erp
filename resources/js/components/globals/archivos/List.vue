@@ -19,9 +19,10 @@
                                         <template v-for="(archivo, i) in archivos" >
                                             <tr v-if="i ==0" style="background-color: #ddd">
                                                 <td class="index_corto">#</td>
-                                                <td class="c100" style="text-align: center">Tipo Documento</td>
+                                                <!--<td class="c100" style="text-align: center">Tipo Documento</td>-->
                                                 <td style="text-align: center">Documento</td>
                                                 <td class="c200" style="text-align: center">Descripción</td>
+                                                <td style="text-align: center" class="c300">Observaciones</td>
                                                 <td class="c100" style="text-align: center">Acciones</td>
                                             </tr>
                                             <tr v-if="i ==0">
@@ -35,9 +36,10 @@
 
                                             <tr  >
                                                 <td>{{i+1}}</td>
-                                                <td>{{archivo.tipo_archivo}}</td>
+                                                <!--<td>{{archivo.tipo_archivo}}</td>-->
                                                 <td>{{archivo.nombre}}</td>
                                                 <td>{{archivo.descripcion}}</td>
+                                                <td :title="archivo.observaciones">{{archivo.observaciones_format}}</td>
                                                 <td style="text-align: center">
                                                     <div class="btn-group">
                                                         <Documento v-bind:url="url" v-bind:metodo = "metodo" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
@@ -60,7 +62,7 @@
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && archivo.eliminable" :disabled="eliminando_imagenes">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
-                                                        <info v-bind:id="archivo.id"/>
+                                                        <info v-bind:id="archivo.id" v-bind:sin_contexto="sin_contexto" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" />
                                                     </div>
                                                 </td>
                                             </tr>
@@ -242,15 +244,33 @@ export default {
         descargar(id)
         {
             this.descargando = true;
-            return this.$store.dispatch('documentacion/archivo/descargar',
-                {
-                    id : id
-                })
-                .then(data => {
-                    this.$emit('success');
-                }).finally(() => {
-                    this.descargando = false;
-                });
+            if(this.sin_contexto)
+            {
+                let _self = this;
+                return this.$store.dispatch('documentacion/archivo/descargarSC',
+                    {
+                        id : id,
+                        id_obra : _self.id_obra,
+                        base_datos : _self.base_datos,
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
+
+            }else{
+                return this.$store.dispatch('documentacion/archivo/descargar',
+                    {
+                        id : id
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
+            }
+
         },
     },
     computed: {

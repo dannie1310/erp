@@ -53,6 +53,8 @@ $api->version('v1', function ($api) {
             $api->patch('/eliminar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/descargar', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@descargar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@showSC')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargar-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@descargarSC')->where(['id' => '[0-9]+']);
         });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {

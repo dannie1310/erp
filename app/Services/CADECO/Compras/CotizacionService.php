@@ -334,6 +334,7 @@ class CotizacionService
             $archivoService->delete(["base_datos"=>$invitacion->base_datos], $archivo->id);
         }
         $this->cargaArchivosRequeridosInvitacion($data);
+        $this->cargaArchivosAdicionalesInvitacion($data);
         $this->cargaArchivos($id, $data, $cotizacion);
         $cotizacion->envia();
     }
@@ -355,6 +356,25 @@ class CotizacionService
         }
     }
 
+    public function cargaArchivosAdicionalesInvitacion($data)
+    {
+        $i = 0;
+        foreach($data["archivos"] as $archivo)
+        {
+            $archivo_registrar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_registrar['archivo'] = $data["files"][$i];
+            $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
+            $archivo_registrar['id_invitacion'] = $data["id_invitacion"];
+            $archivo_registrar['usuario_registro'] = auth()->id();
+
+            $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
+            $archivoService->agregarArchivo($archivo_registrar);
+
+            $i++;
+        }
+    }
+
     public function cargaArchivos($id, $data, $cotizacion)
     {
         $invitacionService = new InvitacionService(new Invitacion());
@@ -366,7 +386,7 @@ class CotizacionService
             $data_archivos["id"] = $id;
             $data_archivos["id_transaccion"] = $id;
             $data_archivos["id_tipo_archivo"] = 1;
-            $data_archivos["id_categoria"] = 2;
+            $data_archivos["id_categoria"] = $archivo->requerido == 1? 2:1;
             $data_archivos["descripcion"] = $archivo->tipo->descripcion;
             $data_archivos["observaciones"] = $archivo->observaciones;
             $data_archivos['nombre'] = $archivo->nombre;
@@ -377,51 +397,6 @@ class CotizacionService
             $archivoService->agregarArchivoDesdeInvitacion($data_archivos);
 
         }
-        /*if(key_exists("nombres_archivos_fichas_tecnicas", $data)){
-            foreach($data["nombres_archivos_fichas_tecnicas"] as $key=>$nombre)
-            {
-                $archivoService = new ArchivoService(new Archivo());
-                $archivoService->setDB($invitacion->base_datos);
-                $data_archivos["id"] = $id;
-                $data_archivos["id_transaccion"] = $id;
-                $data_archivos["id_tipo_archivo"] = 5;
-                $data_archivos["id_categoria"] = 2;
-                $data_archivos["descripcion"] = 'Ficha técnica asociada a la cotización '.$cotizacion->numero_folio_format;
-                $data_archivos['archivos_nombres'] = \json_encode([$nombre]);
-                $data_archivos['archivos'] = \json_encode([$data["archivos_fichas_tecnicas"][$key]]);
-                $archivoService->cargarArchivosPDF($data_archivos);
-            }
-        }*/
-
-        /*if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
-            $archivoService = new ArchivoService(new Archivo());
-            $archivoService->setDB($invitacion->base_datos);
-
-            $data_archivos["id"] = $id;
-            $data_archivos["id_transaccion"] = $id;
-            $data_archivos["id_tipo_archivo"] = 3;
-            $data_archivos["id_categoria"] = 2;
-            $data_archivos["descripcion"] = 'Carta asociada a la cotización '.$cotizacion->numero_folio_format;
-            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_carta_terminos_condiciones"]]]);
-            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_carta_terminos_condiciones"]]]);
-
-            $archivoService->cargarArchivosPDF($data_archivos);
-        }
-
-        if(key_exists("nombre_archivo_formato_cotizacion", $data)){
-            $archivoService = new ArchivoService(new Archivo());
-            $archivoService->setDB($invitacion->base_datos);
-
-            $data_archivos["id"] = $id;
-            $data_archivos["id_transaccion"] = $id;
-            $data_archivos["id_tipo_archivo"] = 4;
-            $data_archivos["id_categoria"] = 2;
-            $data_archivos["descripcion"] = 'Formato de cotización asociado a la cotización'.$cotizacion->numero_folio_format;
-            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_formato_cotizacion"]]]);
-            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_formato_cotizacion"]]]);
-
-            $archivoService->cargarArchivosPDF($data_archivos);
-        }*/
     }
 
     public function deleteProveedor(array $data, $id)

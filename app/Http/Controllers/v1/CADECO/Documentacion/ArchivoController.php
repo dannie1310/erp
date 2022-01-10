@@ -39,7 +39,7 @@ class ArchivoController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC','descargarSC']);
+        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC','descargarSC','showSC']);
         $this->middleware('permiso:cargar_archivos_transaccion')->only('cargarArchivo');
         $this->middleware('permiso:eliminar_archivos_transaccion')->only('destroy');
         $this->middleware('permiso:consultar_archivos_transaccion')->only(['documento', 'getArchivosTransaccion','imagenes']);
@@ -120,16 +120,21 @@ class ArchivoController extends Controller
 
     public function show(Request $request, $id)
     {
-        $item = $this->service->show($id);
+        $item = $this->service->show($request->all(),$id);
+        return $this->respondWithItem($item);
+    }
+    public function showSC(Request $request, $id)
+    {
+        $item = $this->service->show($request->all(),$id);
         return $this->respondWithItem($item);
     }
 
-    public function descargar($id){
-        return $this->service->descargar($id);
+    public function descargar(Request $request,$id){
+        return $this->service->descargar($request->all(),$id);
     }
 
-    public function descargarSC($id){
-        return $this->service->descargar($id);
+    public function descargarSC(Request $request,$id){
+        return $this->service->descargar($request->all(),$id);
     }
 
 }

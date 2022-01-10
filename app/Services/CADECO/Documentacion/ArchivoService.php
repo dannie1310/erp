@@ -189,6 +189,7 @@ class ArchivoService
         $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
         $data_registro["id_categoria"] = $data["id_categoria"];
         $data_registro["observaciones"] = $data["observaciones"];
+        $data_registro["descripcion"] = $data["descripcion"];
         $data_registro["id_transaccion"] = $data["id_transaccion"];
         $data_registro["tamanio_kb"] = $data["tamanio_kb"];
         $data_registro["hashfile"] = $data["hashfile"];
@@ -211,8 +212,12 @@ class ArchivoService
         return $this->repository->create($data);
     }
 
-    public function show($id)
+    public function show($data,$id)
     {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
         return $this->repository->show($id);
     }
 
@@ -384,8 +389,12 @@ class ArchivoService
         Config::set('database.connections.cadeco.database',$base_datos);
     }
 
-    public function descargar($id)
+    public function descargar($data,$id)
     {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
         $archivo =  $this->repository->show($id);
         return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->nombre_descarga);
     }

@@ -256,13 +256,32 @@
             },
             enviar() {
                 let _self = this;
+                let errores = 0;
+
+                this.archivos.forEach(function(archivo, i) {
+                    if(archivo.tipo == 14 && (archivo.observaciones) == "")
+                    {
+                        archivo.errores_observacion = true;
+                        errores ++;
+                    } else{
+                        archivo.errores_observacion = false;
+                    }
+                    if(archivo.tipo == null){
+                        archivo.errores_tipo = true;
+                        errores ++;
+                    }else{
+                        archivo.errores_tipo = false;
+                    }
+                });
                 this.$validator.validate().then(result => {
-                    if (result) {
+                    if (result && errores == 0) {
                         _self.post.id_invitacion = _self.id_invitacion;
                         _self.post.id_cotizacion = _self.id_cotizacion;
                         _self.post.cotizacion_completa = _self.invitacion.cotizacion_completa;
                         _self.post.archivos_requeridos = _self.archivos_requeridos;
                         _self.post.files_requeridos = _self.files_requeridos;
+                        _self.post.archivos = _self.archivos;
+                        _self.post.files = _self.files;
 
                         return this.$store.dispatch('compras/cotizacion/enviarCotizacion', _self.post)
                         .then((data) => {
@@ -270,6 +289,11 @@
                         });
                     }
                 });
+            },
+            quitarArchivo(index){
+                this.archivos.splice(index, 1);
+                this.files.splice(index, 1);
+                this.names.splice(index, 1);
             },
             getTiposArchivoEnviar(){
                 this.cargando = true;
