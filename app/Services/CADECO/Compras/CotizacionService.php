@@ -9,9 +9,11 @@ use App\Imports\CotizacionImport;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Cotizacion\Repository;
 use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoService;
 use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 use App\Utils\ValidacionSistema;
 use Illuminate\Support\Facades\Config;
@@ -324,24 +326,58 @@ class CotizacionService
         $this->setDB($invitacion->base_datos);
         $cotizacion = $this->repository->withoutGlobalScopes()->show($id);
 
-        $archivos = $cotizacion->archivos()->where("id_categoria","=",2)->whereIn("id_tipo_archivo",[3,4,5])->get();
+        $archivos = $cotizacion->archivos()->where("id_categoria","=",2)->whereIn("id_tipo_archivo",[1])->get();
         foreach($archivos as $archivo)
         {
             $archivoService = new ArchivoService(new Archivo());
             $archivoService->setDB($invitacion->base_datos);
             $archivoService->delete(["base_datos"=>$invitacion->base_datos], $archivo->id);
         }
-
+        $this->cargaArchivosRequeridosInvitacion($data);
         $this->cargaArchivos($id, $data, $cotizacion);
         $cotizacion->envia();
+    }
+
+    public function cargaArchivosRequeridosInvitacion($data)
+    {
+        $i = 0;
+        foreach($data["archivos_requeridos"] as $archivo)
+        {
+            $archivo_actualizar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_actualizar['archivo'] = $data["files_requeridos"][$i]["file"];
+            $archivo_actualizar['id'] = $archivo["id"];
+            $archivo_actualizar['usuario_registro'] = auth()->id();
+
+            $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
+            $archivoService->actualizarArchivoRequerido($archivo_actualizar);
+
+            $i++;
+        }
     }
 
     public function cargaArchivos($id, $data, $cotizacion)
     {
         $invitacionService = new InvitacionService(new Invitacion());
         $invitacion = $invitacionService->show($data["id_invitacion"]);
-        //$cotizacion = $this->repository->withoutGlobalScopes()->show($id);
-        if(key_exists("nombres_archivos_fichas_tecnicas", $data)){
+        foreach ($invitacion->archivos as $archivo)
+        {
+            $archivoService = new ArchivoService(new Archivo());
+            $archivoService->setDB($invitacion->base_datos);
+            $data_archivos["id"] = $id;
+            $data_archivos["id_transaccion"] = $id;
+            $data_archivos["id_tipo_archivo"] = 1;
+            $data_archivos["id_categoria"] = 2;
+            $data_archivos["descripcion"] = '';
+            $data_archivos["observaciones"] = $archivo->observaciones;
+            $data_archivos['nombre'] = $archivo->nombre;
+            $data_archivos['extension'] = $archivo->extension;
+            $data_archivos['tamanio_kb'] = $archivo->tamanio_kb;
+            $data_archivos['hashfile'] = $archivo->hashfile;
+            $data_archivos['usuario_registro'] = $archivo->usuario_registro;
+            $archivoService->agregarArchivoDesdeInvitacion($data_archivos);
+
+        }
+        /*if(key_exists("nombres_archivos_fichas_tecnicas", $data)){
             foreach($data["nombres_archivos_fichas_tecnicas"] as $key=>$nombre)
             {
                 $archivoService = new ArchivoService(new Archivo());
@@ -355,9 +391,9 @@ class CotizacionService
                 $data_archivos['archivos'] = \json_encode([$data["archivos_fichas_tecnicas"][$key]]);
                 $archivoService->cargarArchivosPDF($data_archivos);
             }
-        }
+        }*/
 
-        if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
+        /*if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
             $archivoService = new ArchivoService(new Archivo());
             $archivoService->setDB($invitacion->base_datos);
 
@@ -385,7 +421,7 @@ class CotizacionService
             $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_formato_cotizacion"]]]);
 
             $archivoService->cargarArchivosPDF($data_archivos);
-        }
+        }*/
     }
 
     public function deleteProveedor(array $data, $id)

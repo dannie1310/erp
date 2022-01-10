@@ -176,6 +176,41 @@ class ArchivoService
         }
     }
 
+    public function agregarArchivoDesdeInvitacion($data){
+
+        if(!key_exists("id_tipo_archivo", $data)){
+            $data["id_tipo_archivo"] = 1;
+        }
+
+        if(!key_exists("id_categoria", $data)){
+            $data["id_categoria"] = 1;
+        }
+
+        $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
+        $data_registro["id_categoria"] = $data["id_categoria"];
+        $data_registro["observaciones"] = $data["observaciones"];
+        $data_registro["id_transaccion"] = $data["id_transaccion"];
+        $data_registro["tamanio_kb"] = $data["tamanio_kb"];
+        $data_registro["hashfile"] = $data["hashfile"];
+        $data_registro["nombre"] = $data["nombre"];
+        $data_registro["extension"] = $data["extension"];
+        $data_registro["usuario_registro"] = $data["usuario_registro"];
+
+        Storage::disk('archivos_transacciones')->put( $data["hashfile"].".".$data["extension"]
+            , Storage::disk("archivos_invitaciones")->get($data["hashfile"].".".$data["extension"])
+        );
+
+
+        $archivoObj = $this->store($data_registro);
+
+        return $archivoObj;
+    }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
     private function guardarArchivo( $data, $path, $archivo)
     {
         $hashfile = hash_file('sha1', $path.$archivo);
@@ -319,7 +354,10 @@ class ArchivoService
         }
         $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
         if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
-            Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+            $numero_transacciones = Archivo::where("hashfile","=",$archivo->hashfile)->count();
+            if($numero_transacciones == 1){
+                Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+            }
             return $archivo->delete();
         }else{
             return $archivo->delete();
