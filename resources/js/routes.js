@@ -232,10 +232,22 @@ export const routes = [
                             {
                                 path: 'create',
                                 name: 'asignacion-proveedor-create',
-                                component: require('./components/compras/asignacion/Create').default,
+                                component: require('./components/compras/asignacion/SeleccionarSolicitud').default,
                                 meta: {
                                     title: 'Registrar Asignación de Proveedores',
                                     breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_asignacion_proveedor'
+                                }
+                            },
+                            {
+                                path: 'createLayout',
+                                name: 'asignacion-proveedor-layout-create',
+                                component: require('./components/compras/asignacion/CreateLayout').default,
+                                props:true,
+                                meta: {
+                                    title: 'Registrar Asignación de Proveedores Layout',
+                                    breadcrumb: { parent: 'asignacion-proveedor-create', name: 'REGISTRAR LAYOUT'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_asignacion_proveedor'
                                 }
