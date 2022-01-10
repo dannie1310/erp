@@ -191,6 +191,7 @@ export default {
             }
             this.names = [];
             this.files = [];
+            this.archivos = [];
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },

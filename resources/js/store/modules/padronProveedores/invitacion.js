@@ -152,13 +152,23 @@ export default {
                         .post(URI + payload.id+ '/cargar-archivos',  payload.data)
                         .then(r => r.data)
                         .then(data => {
-                            swal("Archivos Subidos Correctamente", {
-                                icon: "success",
-                                timer: 2000,
-                                buttons: false
-                            }).then(() => {
-                                resolve(data);
-                            })
+                            if(Array.isArray(data)){
+                                swal("Archivos Subidos Correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            }else{
+                                swal("Error al subir archivo, por favor reporte el incidente a Soporte a Aplicaciones", {
+                                    icon: "error",
+                                    title:"Error",
+                                    timer: 3000,
+                                    buttons: false
+                                })
+                            }
+
                         })
                         .catch(error => {
                             reject(error)
