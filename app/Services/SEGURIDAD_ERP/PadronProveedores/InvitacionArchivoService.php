@@ -56,6 +56,8 @@ class InvitacionArchivoService
         $data_registro["hashfile"] = "";
         $data_registro["nombre"] = "";
         $data_registro["extension"] = "";
+        $data_registro["requerido"] = 1;
+        $data_registro["observaciones"] = $data["observaciones"];
 
         $archivoObj = $this->store($data_registro);
 

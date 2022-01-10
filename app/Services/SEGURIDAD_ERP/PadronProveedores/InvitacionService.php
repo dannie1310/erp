@@ -410,6 +410,7 @@ class InvitacionService
             $archivo_registrar['archivo_nombre'] = $archivo["nombre"];
             $archivo_registrar['archivo'] = $data["files"][$i];
             $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
             $archivo_registrar['id_invitacion'] = $invitacion->id;
             $archivo_registrar['usuario_registro'] = auth()->id();
             $this->registraArchivo($archivo_registrar);
@@ -421,6 +422,8 @@ class InvitacionService
         {
             $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
             $archivo_registrar['id_invitacion'] = $invitacion->id;
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
+            $archivo_registrar['requerido'] = 1;
             $this->registraArchivoSolicitar($archivo_registrar);
             $i++;
         }

@@ -528,10 +528,11 @@ export default {
             return this.$store.dispatch('padronProveedores/invitacion/find', {
                 id: this.id_invitacion,
                 params: {
-                    include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas', 'cotizacionCompra.exclusiones'],
+                    include: ['cotizacion','formato_cotizacion','cotizacionCompra.complemento', 'cotizacionCompra.empresa', 'cotizacionCompra.sucursal', 'cotizacionCompra.partidas', 'cotizacionCompra.exclusiones', 'archivos_requeridos'],
                     scope: ['invitadoAutenticado']
                 }
             }).then(data => {
+                this.$store.commit('padronProveedores/invitacion/SET_INVITACION', data);
                 this.descuento_cot = data.cotizacionCompra.complemento.descuento;
                 this.invitacion = data;
                 this.dolar = data.cotizacionCompra.complemento ? parseFloat(data.cotizacionCompra.complemento.tc_usd).formatMoney(4, '.', '') : 0;

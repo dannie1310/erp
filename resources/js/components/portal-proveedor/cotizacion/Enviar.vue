@@ -8,53 +8,58 @@
                     </div>
                 </div>
                 <hr>
-                <div class="row" v-if="cargando == false">
-                    <div class="col-md-4" v-if="invitacion.formato_cotizacion">
-                        <div class="form-group">
-                            <label for="formato_cotizacion">Formato de Cotización:</label>
-                            <input type="file" class="form-control" id="formato_cotizacion"
-                                   @change="onFileChange"
-                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
-                                   name="formato_cotizacion"
-                                   data-vv-as="Formato de Cotización"
-                                   ref="formato_cotizacion"
-                                   :class="{'is-invalid': errors.has('formato_cotizacion')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('formato_cotizacion')">{{ errors.first('formato_cotizacion') }} (pdf)</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="invitacion.tipo == 1">
-                        <div class="form-group">
-                            <label for="carta_terminos">Carta de Términos y Condiciones FIRMADA*:</label>
-                            <input type="file" class="form-control" id="carta_terminos"
-                                   @change="onFileChange"
-                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
-                                   name="carta_terminos"
-                                   data-vv-as="Carta de Términos y Condiciones"
-                                   ref="carta_terminos"
-                                   :class="{'is-invalid': errors.has('carta_terminos')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
-                        </div>
-                    </div>
-                    <div class="col-md-4" v-if="requiere_fichas_tecnicas == 1">
-                        <div class="form-group">
-                            <label for="carta_terminos">Fichas Técnicas:</label>
-                            <input type="file" class="form-control" id="fichas_tecnicas" multiple="multiple"
-                                   @change="onFileChange"
-                                   v-validate="{required:true, ext: ['pdf'],  size: 10240}"
-                                   name="fichas_tecnicas"
-                                   data-vv-as="Fichas Técnicas"
-                                   ref="fichas_tecnicas"
-                                   :class="{'is-invalid': errors.has('fichas_tecnicas')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('fichas_tecnicas')">{{ errors.first('fichas_tecnicas') }} (pdf)</div>
-                        </div>
-                    </div>
-                 </div>
-                <div class="row" v-if="cargando == false && invitacion.tipo == 1">
+                <div class="row" v-if="invitacion">
                     <div class="col-md-12">
-                        <small><b style="font-style: italic; color: #00b44e">* Adjuntar un archivo en el campo para la carta de términos y condiciones firmada implica la aceptación tácita de los términos y condiciones.</b></small>
+                        <span><label><i class="fa fa-files-o"></i>Archivos Requeridos Para Envío</label></span>
+                        <table class="table table-sm table-bordered">
+
+                            <tr>
+                                <th class="encabezado index_corto">
+                                    #
+                                </th>
+                                <th class="encabezado c250" >
+                                    Tipo
+                                </th>
+                                <th class="encabezado c250" >
+                                    Observaciones
+                                </th>
+                                <th class="encabezado c250">
+                                    Archivo
+                                </th>
+                            </tr>
+
+                            <tbody>
+                                <tr v-for="(archivo_requerido, i) in invitacion.archivos_requeridos.data">
+                                    <td>{{i+1}}</td>
+                                    <td >
+                                        {{archivo_requerido.tipo_archivo_txt}}
+
+                                    </td>
+                                    <td>
+                                        {{archivo_requerido.observaciones}}
+                                    </td>
+                                    <td>
+                                        <div class="form-group error-content">
+                                            <input type="file" class="form-control" id="cargar_file"
+                                                   @change="onFileChangeRequeridos"
+                                                   row="3"
+                                                   v-validate="{required:true, size: 102400}"
+                                                   :name="`archivo_requerido_${archivo_requerido.id}`"
+                                                   :id="`${archivo_requerido.id}`"
+                                                   data-vv-as="Cargar"
+                                                   :ref="`${archivo_requerido.id}`"
+                                                   :class="{'is-invalid': errors.has(`archivo_requerido_${archivo_requerido.id}`)}"
+                                            >
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="row" v-if="cargando == false">
+                    <div class="col-md-12">
+                        <small><b style="font-style: italic; color: #00b44e">* Adjuntar un archivo de carta de términos y condiciones implica la aceptación tácita de los términos y condiciones.</b></small>
                     </div>
                 </div>
 			</div>
@@ -77,11 +82,9 @@
         data() {
             return {
                 cargando : true,
-                invitacion : '',
                 id_cotizacion : '',
-                requiere_fichas_tecnicas : '',
-                archivos_fichas_tecnicas : [],
-                nombres_archivos_fichas_tecnicas : [],
+                archivos_requeridos : [],
+                files_requeridos : [],
                 post : {},
             }
         },
@@ -95,35 +98,81 @@
             cargaFinalizada(invitacion)
             {
                 this.cargando = false;
-                this.invitacion = invitacion;
                 this.id_cotizacion = invitacion.cotizacion.id_transaccion;
                 this.requiere_fichas_tecnicas = invitacion.requiere_fichas_tecnicas;
             },
-            onFileChange(e){
+            onFileChangeRequeridos(e){
                 this.file = null;
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
+                let id = null;
+                let existe_id = false;
 
-                if(e.target.id == 'carta_terminos') {
-                    this.nombre_archivo_carta_terminos_condiciones = files[0].name;
-                    this.createImage(files[0], e.target.id);
-                }else if(e.target.id == 'formato_cotizacion') {
-                    this.nombre_archivo_formato_cotizacion = files[0].name;
-                    this.createImage(files[0], e.target.id);
-                }else if(e.target.id == 'fichas_tecnicas') {
-                    for(let i=0; i<files.length; i++) {
-                        this.createImage(files[i], e.target.id);
-                        this.nombres_archivos_fichas_tecnicas[i] = {
-                            nombre: files[i].name,
-                        };
+                id = e.target.id;
+                this.archivo_name = files[0].name;
+
+
+                this.archivos_requeridos = this.archivos_requeridos.map(ar =>{
+                    if(ar.id === id)
+                    {
+                        existe_id = true;
+                        return Object.assign({},ar,{
+                            nombre : files[0].name,
+                            id : id,
+                            observaciones : "",
+                            errores_tipo : false,
+                            errores_observacion : false
+                        });
+
+                    }else{
+                        return ar;
                     }
+                });
+
+                if(!existe_id)
+                {
+                    this.archivos_requeridos.push(
+                        {
+                            nombre : files[0].name,
+                            id : id,
+                            observaciones : "",
+                            errores_tipo : false,
+                            errores_observacion : false
+                        }
+                    );
                 }
+
+                this.createImageRequeridos(files[0],id);
             },
-            createImage(file, tipo) {
+            createImageRequeridos(file, id) {
                 var reader = new FileReader();
                 var vm = this;
+
                 reader.onload = (e) => {
+                    vm.archivo = e.target.result;
+
+                    let existe_id = false;
+                    vm.files_requeridos = vm.files_requeridos.map(fr =>{
+                        if(fr.id === id)
+                        {
+                            existe_id = true;
+                            return Object.assign({},fr,{file: e.target.result, id: id});
+
+                        }else{
+                            return fr;
+                        }
+                    });
+
+                    if(!existe_id)
+                    {
+                        vm.files_requeridos.push({file: e.target.result, id: id});
+                    }
+
+
+                };
+
+                /*reader.onload = (e) => {
                     if(tipo == "carta_terminos")
                     {
                         vm.archivo_carta_terminos_condiciones = e.target.result;
@@ -135,21 +184,48 @@
                         vm.archivos_fichas_tecnicas.push({archivo: e.target.result});
                     }
                 };
+                */
+
                 reader.readAsDataURL(file);
             },
+            /*
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.archivo = e.target.result;
+                    vm.files.push(e.target.result);
+                };
+                reader.readAsDataURL(file);
+            },
+            onFileChange(e){
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                let _self = this;
+
+                for(let i=0; i<files.length; i++) {
+                    if(!this.names.includes(files[i].name))
+                    {
+                        this.archivo_name = files[i].name;
+                        this.createImage(files[i]);
+                        this.names.push(files[i].name);
+                        this.archivos.push({nombre:files[i].name, tipo:null, observaciones:"", errores_tipo: false, errores_observacion : false});
+                    }
+                }
+                this.$refs.archivos.value = '';
+            },
+            * */
             enviar() {
                 let _self = this;
                 this.$validator.validate().then(result => {
                     if (result) {
                         _self.post.id_invitacion = _self.id_invitacion;
                         _self.post.id_cotizacion = _self.id_cotizacion;
-                        _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;
-                        _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;
-                        _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;
-                        _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;
-                        _self.post.archivos_fichas_tecnicas = _self.archivos_fichas_tecnicas;
-                        _self.post.nombres_archivos_fichas_tecnicas = _self.nombres_archivos_fichas_tecnicas;
-                        _self.post.cotizacion_completa = _self.invitacion.cotizacion_completa
+                        _self.post.cotizacion_completa = _self.invitacion.cotizacion_completa;
+                        _self.post.archivos_requeridos = _self.archivos_requeridos;
+                        _self.post.files_requeridos = _self.files_requeridos;
 
                         return this.$store.dispatch('compras/cotizacion/enviarCotizacion', _self.post)
                         .then((data) => {
@@ -160,7 +236,9 @@
             }
         },
         computed: {
-
+            invitacion() {
+                return this.$store.getters['padronProveedores/invitacion/currentInvitacion']
+            }
         },
     }
 </script>
@@ -247,6 +325,9 @@ table .numerico
 
 table tbody td input.text {
     text-align: right;
+}
+.encabezado{
+    background-color: #f2f4f5;
 }
 </style>
 

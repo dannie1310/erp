@@ -171,6 +171,13 @@ class Invitacion extends Model
         return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id");
     }
 
+    public function archivosRequeridos()
+    {
+        return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id")
+            ->where("requerido","=",1)
+            ->Where("hashfile","=","");
+    }
+
     public function obra()
     {
         DB::purge('cadeco');

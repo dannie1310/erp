@@ -28,7 +28,8 @@ class InvitacionArchivo extends Model
         'observaciones',
         'usuario_registro',
         'fecha_hora_registro',
-        'tamanio_kb'
+        'tamanio_kb',
+        'requerido'
     ];
     /*
      * Relaciones*/
