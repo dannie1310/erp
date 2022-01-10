@@ -39,7 +39,7 @@ class ArchivoController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC']);
+        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC','descargarSC']);
         $this->middleware('permiso:cargar_archivos_transaccion')->only('cargarArchivo');
         $this->middleware('permiso:eliminar_archivos_transaccion')->only('destroy');
         $this->middleware('permiso:consultar_archivos_transaccion')->only(['documento', 'getArchivosTransaccion','imagenes']);
@@ -116,6 +116,20 @@ class ArchivoController extends Controller
     {
         $this->service->delete($request->all(), $id);
         return response()->json("{}", 200);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $item = $this->service->show($id);
+        return $this->respondWithItem($item);
+    }
+
+    public function descargar($id){
+        return $this->service->descargar($id);
+    }
+
+    public function descargarSC($id){
+        return $this->service->descargar($id);
     }
 
 }

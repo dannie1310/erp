@@ -14,17 +14,15 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
 
-                                <table class="table" id="documentos" name="documentos">
+                                <table class="table table-sm" id="documentos" name="documentos">
                                     <tbody>
                                         <template v-for="(archivo, i) in archivos" >
                                             <tr v-if="i ==0" style="background-color: #ddd">
                                                 <td class="index_corto">#</td>
-                                                <td>Tipo Documento</td>
-                                                <td >Documento</td>
-                                                <td >Descripción</td>
-                                                <td >Usuario Cargo</td>
-                                                <td class="fecha_hora">Fecha Hora Carga</td>
-                                                <td >Acciones</td>
+                                                <td class="c100" style="text-align: center">Tipo Documento</td>
+                                                <td style="text-align: center">Documento</td>
+                                                <td class="c200" style="text-align: center">Descripción</td>
+                                                <td class="c100" style="text-align: center">Acciones</td>
                                             </tr>
                                             <tr v-if="i ==0">
                                                 <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
@@ -40,12 +38,10 @@
                                                 <td>{{archivo.tipo_archivo}}</td>
                                                 <td>{{archivo.nombre}}</td>
                                                 <td>{{archivo.descripcion}}</td>
-                                                <td>{{archivo.registro}}</td>
-                                                <td>{{archivo.fecha_registro_format}}</td>
-                                                <td>
+                                                <td style="text-align: center">
                                                     <div class="btn-group">
                                                         <Documento v-bind:url="url" v-bind:metodo = "metodo" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
-                                                        <button v-if="archivo.extension && archivo.extension.toLowerCase()  != 'pdf'" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
+                                                        <button v-else-if="archivo.extension && (archivo.extension.toLowerCase()  == 'gif' || archivo.extension.toLowerCase()  == 'jpeg' || archivo.extension.toLowerCase()  == 'jpeg' || archivo.extension.toLowerCase()  == 'png' )" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
                                                             <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
                                                                 <i class="fa fa-spin fa-spinner"></i>
                                                             </span>
@@ -53,9 +49,18 @@
                                                                 <i class="fa fa-picture-o"></i>
                                                             </span>
                                                         </button>
+                                                        <button v-else type="button" class="btn btn-sm btn-outline-primary" title="Descargar"  @click="descargar(archivo.id)" >
+                                                            <span v-if="cargando_imagenes == true && id_archivo == archivo.id">
+                                                                <i class="fa fa-spin fa-spinner"></i>
+                                                            </span>
+                                                            <span v-else>
+                                                                <i class="fa fa-download"></i>
+                                                            </span>
+                                                        </button>
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && archivo.eliminable" :disabled="eliminando_imagenes">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
+                                                        <info v-bind:id="archivo.id"/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -86,10 +91,11 @@
 <script>
 import Documento from './Documento';
 import Imagen from './Imagen';
+import Info from "./Info";
 export default {
     name: "List",
     props: ['id','tipo','cargar','relacionadas', 'sin_contexto', 'id_obra', 'base_datos'],
-    components:{Documento, Imagen},
+    components:{Info, Documento, Imagen},
     data(){
         return{
             url : '/api/archivo/{id}/{metodo}?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
@@ -232,6 +238,20 @@ export default {
                 })
             }
         },
+
+        descargar(id)
+        {
+            this.descargando = true;
+            return this.$store.dispatch('documentacion/archivo/descargar',
+                {
+                    id : id
+                })
+                .then(data => {
+                    this.$emit('success');
+                }).finally(() => {
+                    this.descargando = false;
+                });
+        },
     },
     computed: {
         archivos(){
@@ -244,6 +264,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+    table.table-sm{
+        font-size: 11px;
+    }
 </style>

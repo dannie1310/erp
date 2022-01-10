@@ -61,7 +61,7 @@
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && archivo.eliminable" :disabled="eliminando_imagenes">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
-                                                        <show-info-archivo-ivitacion v-bind:id="archivo.id"/>
+                                                        <info v-bind:id="archivo.id" v-bind:de_invitacion="1"/>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -91,11 +91,11 @@
 <script>
 import Documento from './Documento';
 import Imagen from './Imagen';
-import ShowInfoArchivoIvitacion from "./Info";
+import Info from "./Info";
 export default {
     name: "ListArchivosInvitacion",
     props: ['id','tipo','cargar','relacionadas', 'sin_contexto', 'id_obra', 'base_datos', 'id_invitacion'],
-    components:{ShowInfoArchivoIvitacion, Documento, Imagen},
+    components:{Info, Documento, Imagen},
     data(){
         return{
             url : '/api/archivo/{id}/invitacion/documento?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
@@ -113,7 +113,6 @@ export default {
             id_obra_url : '',
             base_datos_url : '',
             metodo : 'documento'
-
         }
     },
     mounted() {

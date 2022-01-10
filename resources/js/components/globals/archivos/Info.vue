@@ -61,7 +61,7 @@
                                         <b>{{ archivo.tipo_archivo_txt }}</b>
                                     </td>
                                 </tr>
-                                <tr>
+                                <tr v-if="archivo.tamanio > 0">
                                     <td>
                                         Tamaño (MB):
                                     </td>
@@ -94,8 +94,8 @@
 
 
     export default {
-        name: "ShowInfoArchivoIvitacion",
-        props: ['id'],
+        name: "Info",
+        props: ['id','de_invitacion'],
         data(){
             return{
                 cargando: false,
@@ -107,14 +107,26 @@
                 this.$store.commit('documentacion/archivo/SET_ARCHIVO', null);
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
-                return this.$store.dispatch('documentacion/archivo/getArchivoInvitacion', {
-                    id: this.id,
-                    params: {}
-                }).then(data => {
-                    this.$store.commit('documentacion/archivo/SET_ARCHIVO', data);
-                }).finally(() => {
-                    this.cargando = false;
-                })
+                if(this.de_invitacion === 1)
+                {
+                    return this.$store.dispatch('documentacion/archivo/getArchivoInvitacion', {
+                        id: this.id,
+                        params: {}
+                    }).then(data => {
+                        this.$store.commit('documentacion/archivo/SET_ARCHIVO', data);
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
+                }else {
+                    return this.$store.dispatch('documentacion/archivo/getArchivo', {
+                        id: this.id,
+                        params: {}
+                    }).then(data => {
+                        this.$store.commit('documentacion/archivo/SET_ARCHIVO', data);
+                    }).finally(() => {
+                        this.cargando = false;
+                    })
+                }
             }
         },
         computed: {

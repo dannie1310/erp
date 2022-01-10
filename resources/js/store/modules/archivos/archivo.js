@@ -347,10 +347,35 @@ export default {
                 })
             }
         },
+        descargar(context, payload){
+            var urr = URI + payload.id+ '/descargar?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token='+ this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
         getArchivoInvitacion(context, payload){
             return new Promise((resolve, reject) => {
                 axios
                     .get(URI + 'consultar-archivo-invitacion/' + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        getArchivo(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);

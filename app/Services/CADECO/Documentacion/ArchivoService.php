@@ -211,6 +211,11 @@ class ArchivoService
         return $this->repository->create($data);
     }
 
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
     private function guardarArchivo( $data, $path, $archivo)
     {
         $hashfile = hash_file('sha1', $path.$archivo);
@@ -377,5 +382,11 @@ class ArchivoService
     public function setDB($base_datos){
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database',$base_datos);
+    }
+
+    public function descargar($id)
+    {
+        $archivo =  $this->repository->show($id);
+        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->nombre_descarga);
     }
 }

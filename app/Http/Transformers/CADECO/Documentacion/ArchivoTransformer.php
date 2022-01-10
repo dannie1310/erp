@@ -22,6 +22,8 @@ class ArchivoTransformer extends TransformerAbstract
         return [
             'id' => $model->getKey(),
             'tipo_archivo' => $model->tipo_archivo_txt,
+            'tipo_archivo_txt' => $model->tipo_archivo_txt,
+            'observaciones' => $model->observaciones,
             'categoria' => $model->categoria->descripcion,
             'nombre' => $model->nombre,
             'extension' => $model->extension,
@@ -29,6 +31,7 @@ class ArchivoTransformer extends TransformerAbstract
             'estatus' => $model->estatus,
             'registro' => $model->registro,
             'fecha_registro_format' => $model->fecha_registro_format,
+            'tamanio' => $model->tamanio_format,
             'tipo_transaccion' => $model->transaccion->tipo_transaccion_str,
             'folio_transaccion' => $model->transaccion->numero_folio_format,
             'observaciones_transaccion' => $model->transaccion->observaciones,
