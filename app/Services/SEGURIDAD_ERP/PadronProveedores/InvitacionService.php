@@ -122,6 +122,28 @@ class InvitacionService
         {
             $empresa = ProveedorContratista::find($destinatario["id_proveedor"]);
 
+            if($destinatario["id_proveedor"] > 0)
+            {
+                $noInvitacionesPrevias = Invitacion::where("id_proveedor_sao","=",$destinatario["id_proveedor"])
+                    ->where("id_transaccion_antecedente","=", $data["id_transaccion"])
+                    ->where("base_datos","=", Context::getDatabase())
+                    ->count();
+                if($noInvitacionesPrevias>0)
+                {
+                    abort("500", "El proveedor ".$empresa->razon_social." ya ha sido invitado a cotizar esta transacción.");
+                }
+            }else{
+                $noInvitacionesPrevias = Invitacion::where("email","=",$destinatario["correo"])
+                    ->where("id_transaccion_antecedente","=", $data["id_transaccion"])
+                    ->where("base_datos","=", Context::getDatabase())
+                    ->count();
+
+                if($noInvitacionesPrevias>0)
+                {
+                    abort("500", "Ya se ha enviado una invitación a la dirección ".$destinatario["correo"]." para cotizar esta transacción.");
+                }
+            }
+
             if($empresa && strlen(str_replace(" ","", $empresa->rfc))>0){
                 $this->rfcValido($empresa->rfc)?'':abort(403, 'El RFC tiene formato inválido.');
                 $this->rfcValidaEfos($empresa->rfc);
