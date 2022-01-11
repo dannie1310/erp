@@ -628,7 +628,7 @@ export const routes = [
                                 }),
                                 meta: {
                                     title: 'Documentos de Invitación a Cotizar',
-                                    breadcrumb: { parent: 'invitacion-cotizar-contrato', name: 'DOCUMENTOS'},
+                                    breadcrumb: { parent: 'invitacion-compra', name: 'DOCUMENTOS'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_invitacion_cotizar_contrato'
                                 }
