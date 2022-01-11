@@ -30,10 +30,17 @@ class SendCotizacionEnviadaNotification
      */
     public function handle(EnvioCotizacion $event)
     {
-        $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        $usuario = Usuario::suscripcion($suscripciones)->get();
+        if($event->invitacion->id_area_compradora == 1 || $event->invitacion->id_area_compradora == 5)
+        {
+            $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
+            $usuario = Usuario::suscripcion($suscripciones)->get();
+            Notification::send($usuario, new NotificacionCotizacionEnviada($event->invitacion, $event->cotizacion));
+        }
 
-        Notification::send($usuario, new NotificacionCotizacionEnviada($event->invitacion, $event->cotizacion));
+        if($event->invitacion->copiados()->count()>0){
+            Notification::route("mail",$event->invitacion->copiados()->pluck("direccion"))->notify(new NotificacionCotizacionEnviada($event->invitacion));
+        }
+
         Notification::send($event->invitacion->usuarioInvito, new NotificacionCotizacionEnviada($event->invitacion, $event->cotizacion));
     }
 }
