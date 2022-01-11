@@ -213,6 +213,11 @@ class Invitacion extends Model
             ->where("id_tipo_archivo","=",44);
     }
 
+    public function copiados()
+    {
+        return $this->hasMany(InvitacionCopiados::class, "id_invitacion", "id");
+    }
+
     /**
      * Scopes
      */

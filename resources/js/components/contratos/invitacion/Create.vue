@@ -18,9 +18,16 @@
                         <encabezado-contrato-proyectado v-bind:contrato_proyectado="contrato"></encabezado-contrato-proyectado>
                     </div>
                 </div>
+                <div class="row" style="margin-bottom: 5px">
+                    <div class="col-md-6">
+                        <span><i class="fa fa-envelope"></i>Destinatarios de Invitación</span>
+                    </div>
+                    <div class="col-md-6">
+                        <button  type="button" class="btn btn-sm btn-outline-secondary pull-right" title="Editar Solicitud" @click="toggleCC" > <i class="fa fa-users"></i>CC</button>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <span><i class="fa fa-envelope"></i>Destinatarios de Invitación</span>
                         <table class="table  table-sm table-bordered">
                             <tr>
                                 <th class="encabezado index_corto">
@@ -32,7 +39,7 @@
                                 <th class="encabezado c350">
                                     Proveedor
                                 </th>
-                                <th class="encabezado c250" >
+                                <th class="encabezado c200" >
                                     Sucursal
                                 </th>
                                 <th class="encabezado" >
@@ -40,6 +47,9 @@
                                 </th>
                                 <th class="encabezado" >
                                     Contacto
+                                </th>
+                                <th class="encabezado" v-if="con_copia == 1">
+                                    Con Copia
                                 </th>
                                 <th class="encabezado icono">
                                     <button type="button" class="btn btn-sm btn-outline-success" @click="agregarDestinatario" :disabled="cargando">
@@ -132,6 +142,15 @@
                                         :class="{'is-invalid': errors.has(`contacto_${i}`)}"
                                     />
                                     <div style="display:block" class="invalid-feedback" v-show="errors.has(`contacto_${i}`)">{{ errors.first(`contacto_${i}`) }}</div>
+                                </td>
+                                <td v-if="con_copia == 1">
+                                    <textarea
+                                        :name="`cc_${i}`"
+                                        :id="`cc_${i}`"
+                                        v-model="destinatario.cc"
+                                        type="text"
+                                        class="form-control"
+                                    />
                                 </td>
                                 <td style="text-align: center">
                                     <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="destinatarios.length == 1" >
@@ -502,7 +521,8 @@ export default {
                     'sucursales_cargadas' : 0,
                     'id_proveedor_seleccionado' : '',
                     'id_sucursal_seleccionada' : '',
-                    'proveedor' : null
+                    'proveedor' : null,
+                    'cc' : "",
                 }
             ],
             files : [],
@@ -517,7 +537,8 @@ export default {
             tipos_archivo_enviar : [],
             tipos_archivo_enviados : [],
             tipos_archivo_solicitar : [],
-            archivo : ''
+            archivo : '',
+            con_copia : 0,
         }
     },
     mounted() {
@@ -606,7 +627,8 @@ export default {
                 'sucursales_cargadas' : 0,
                 'id_proveedor_seleccionado' : '',
                 'id_sucursal_seleccionada' : '',
-                'proveedor' : null
+                'proveedor' : null,
+                'cc':""
             }
             this.destinatarios.push(array);
         },
@@ -683,7 +705,8 @@ export default {
                     'sucursales_cargadas' : 0,
                     'id_proveedor_seleccionado' : '',
                     'id_sucursal_seleccionada' : '',
-                    'proveedor' : null
+                    'proveedor' : null,
+                    'cc':""
                 }
             ];
             this.id_usuario = '';
@@ -833,6 +856,13 @@ export default {
         toggleSinCoincidenciaProveedor(usuario){
             if(usuario.sin_coincidencia_proveedor == 1){
                 usuario.id_usuario = null;
+            }
+        },
+        toggleCC(){
+            if(this.con_copia == 1){
+                this.con_copia = 0;
+            }else{
+                this.con_copia = 1;
             }
         }
     },

@@ -4,10 +4,8 @@ namespace App\Listeners;
 
 
 use App\Events\RegistroInvitacion;
-use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
-use App\Notifications\NotificacionCredenciales;
-use App\Models\IGH\Usuario;
 use App\Notifications\NotificacionInvitacionCotizar;
+use App\Notifications\NotificacionInvitacionCotizarCopiados;
 use Illuminate\Support\Facades\Notification;
 
 
@@ -28,10 +26,9 @@ class SendInvitacionCotizarNotification
      */
     public function handle(RegistroInvitacion $event)
     {
-        $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        //$usuario = Usuario::suscripcion($suscripciones)->get();
-
-        //Notification::send($usuario, new NotificacionInvitacionCotizar($event->invitacion));
+        if($event->invitacion->copiados()->count()>0){
+            Notification::route("mail",$event->invitacion->copiados()->pluck("direccion"))->notify(new NotificacionInvitacionCotizarCopiados($event->invitacion));
+        }
         Notification::send($event->invitacion->usuarioInvitado, new NotificacionInvitacionCotizar($event->invitacion));
     }
 }

@@ -117,6 +117,7 @@ class InvitacionService
         ->where("fecha_cierre_invitacion","!=",$data["fecha_cierre"])
         ->get();
 
+        $i = 0;
         foreach ($data["destinatarios"] as $destinatario)
         {
             $empresa = ProveedorContratista::find($destinatario["id_proveedor"]);
@@ -126,8 +127,35 @@ class InvitacionService
                 $this->rfcValidaEfos($empresa->rfc);
                 $this->rfcValidaBoletinados($empresa->rfc);
             }
-        }
+            $data["destinatarios"][$i]["copiados"] = [];
+            if(key_exists("cc",$destinatario)){
+                $copiados = [];
 
+                if(strlen(trim($destinatario["cc"]))>0)
+                {
+                    if(strpos($destinatario["cc"], ",")>0){
+                        $copiados = explode(",",$destinatario["cc"]);
+                        if(count($copiados)==0){
+                            abort("500", "Debe separar con coma ',' las direcciones 'Con Copia'");
+                        }
+                    }
+                    else{
+                        $copiados[] = $destinatario["cc"];
+                    }
+                }
+
+                $regex = "/^([a-zA-Z0-9\.]+@+[a-zA-Z]+(\.)+[a-zA-Z]{2,3})$/";
+                foreach($copiados as $copiado)
+                {
+                    if(!preg_match($regex, $copiado))
+                    {
+                        abort("500", "La dirección de correo: ".$copiado." no es válida; favor de corregir.");
+                    }
+                    $data["destinatarios"][$i]["copiados"][] = $copiado;
+                }
+            }
+            $i++;
+        }
 
         foreach ($data["destinatarios"] as $destinatario)
         {
@@ -148,6 +176,7 @@ class InvitacionService
             $datos_registro["archivos"] = $data["archivos"];
             $datos_registro["archivos_solicitar"] = $data["archivos_solicitar"];
             $datos_registro["files"] = $data["files"];
+            $datos_registro["copiados"] = $destinatario["copiados"];
             if(key_exists($destinatario["correo"], $usuarios)){
                 $datos_registro["id_usuario"] = $usuarios[$destinatario["correo"]];
             }else{
@@ -403,6 +432,13 @@ class InvitacionService
         $invitacion = $this->repository->store($datos_registro);
         $invitacion->cuerpo_correo = $this->generaCuerpoCorreo($data["cuerpo_correo"],$invitacion);
         $invitacion->save();
+
+        if(key_exists("copiados", $data)){
+            foreach($data["copiados"] as $copiado)
+            {
+                $invitacion->copiados()->create(["direccion"=>$copiado]);
+            }
+        }
 
         $i = 0;
         foreach($data["archivos"] as $archivo)
