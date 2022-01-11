@@ -301,7 +301,7 @@
                 <br>
 
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 table-responsive">
                         <span><label><i class="fa fa-files-o"></i>Archivos a Solicitar</label></span>
                         <table class="table table-sm table-bordered">
                             <tr>
@@ -566,7 +566,9 @@ export default {
             return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
                 params:{
                     tipo : [1,3],
-                    area: [2,3]
+                    area: [2,3],
+                    sort: 'descripcion',
+                    order: 'ASC'
                 }
             })
             .then(data => {
@@ -581,7 +583,9 @@ export default {
             return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
                 params:{
                     tipo : [2,3],
-                    area: [2,3]
+                    area: [2,3],
+                    sort: 'descripcion',
+                    order: 'ASC'
                 }
             })
                 .then(data => {

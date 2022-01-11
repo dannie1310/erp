@@ -171,6 +171,12 @@ class Invitacion extends Model
         return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id");
     }
 
+    public function archivosParaTransaccion()
+    {
+        return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id")
+            ->where("de_envio","=",1);
+    }
+
     public function archivosRequeridos()
     {
         return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id")

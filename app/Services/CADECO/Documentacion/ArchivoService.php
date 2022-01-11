@@ -196,11 +196,11 @@ class ArchivoService
         $data_registro["nombre"] = $data["nombre"];
         $data_registro["extension"] = $data["extension"];
         $data_registro["usuario_registro"] = $data["usuario_registro"];
+        $data_registro["id_tipo_general_archivo"] = $data["id_tipo_general_archivo"];
 
         Storage::disk('archivos_transacciones')->put( $data["hashfile"].".".$data["extension"]
             , Storage::disk("archivos_invitaciones")->get($data["hashfile"].".".$data["extension"])
         );
-
 
         $archivoObj = $this->store($data_registro);
 

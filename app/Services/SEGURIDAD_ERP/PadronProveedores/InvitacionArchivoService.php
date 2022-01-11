@@ -63,6 +63,7 @@ class InvitacionArchivoService
         $data_registro["extension"] = "";
         $data_registro["requerido"] = 1;
         $data_registro["observaciones"] = $data["observaciones"];
+        $data_registro["de_envio"] = $data["de_envio"];
 
         $archivoObj = $this->store($data_registro);
 
@@ -140,6 +141,8 @@ class InvitacionArchivoService
             $data_registro["nombre"] = $files[0];
             $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
             $data_registro["usuario_registro"] = $data["usuario_registro"];
+            $data_registro["de_invitacion"] = $data["de_invitacion"];
+            $data_registro["de_envio"] = $data["de_envio"];
 
             $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
 

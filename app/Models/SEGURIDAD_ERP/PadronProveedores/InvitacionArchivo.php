@@ -29,7 +29,9 @@ class InvitacionArchivo extends Model
         'usuario_registro',
         'fecha_hora_registro',
         'tamanio_kb',
-        'requerido'
+        'requerido',
+        'de_invitacion',
+        'de_envio'
     ];
     /*
      * Relaciones*/

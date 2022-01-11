@@ -53,12 +53,14 @@ class InvitacionRepository extends Repository implements RepositoryInterface
 
             $tipos = CtgTipoArchivoInvitacion::where("estatus","=",1)
                 ->whereIn("tipo",$tipos)
-                ->whereIn("area",$areas)->get();
+                ->whereIn("area",$areas)
+                ->orderBy("descripcion")->get();
 
         } else{
             $tipos = CtgTipoArchivoInvitacion::where("estatus","=",1)
                 ->whereIn("tipo",$data["tipo"])
-                ->whereIn("area",$data["area"])->get();
+                ->whereIn("area",$data["area"])
+                ->orderBy("descripcion")->get();
         }
         return $tipos;
     }

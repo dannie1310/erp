@@ -413,6 +413,8 @@ class InvitacionService
             $archivo_registrar['observaciones'] = $archivo["observaciones"];
             $archivo_registrar['id_invitacion'] = $invitacion->id;
             $archivo_registrar['usuario_registro'] = auth()->id();
+            $archivo_registrar['de_invitacion'] = 1;
+            $archivo_registrar['de_envio'] = 0;
             $this->registraArchivo($archivo_registrar);
 
             $i++;
@@ -424,6 +426,8 @@ class InvitacionService
             $archivo_registrar['id_invitacion'] = $invitacion->id;
             $archivo_registrar['observaciones'] = $archivo["observaciones"];
             $archivo_registrar['requerido'] = 1;
+            $archivo_registrar['de_invitacion'] = 0;
+            $archivo_registrar['de_envio'] = 1;
             $this->registraArchivoSolicitar($archivo_registrar);
             $i++;
         }

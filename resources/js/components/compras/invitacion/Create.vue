@@ -243,7 +243,7 @@
 
                 <br>
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 table-responsive">
                         <div >
                             <div>
                                 <label class="col-form-label"><span><i class="fa fa-files-o"></i>Archivos Adjuntos</span></label>

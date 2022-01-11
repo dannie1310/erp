@@ -367,6 +367,8 @@ class CotizacionService
             $archivo_registrar['observaciones'] = $archivo["observaciones"];
             $archivo_registrar['id_invitacion'] = $data["id_invitacion"];
             $archivo_registrar['usuario_registro'] = auth()->id();
+            $archivo_registrar['de_invitacion'] = 0;
+            $archivo_registrar['de_envio'] = 1;
 
             $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
             $archivoService->agregarArchivo($archivo_registrar);
@@ -379,7 +381,7 @@ class CotizacionService
     {
         $invitacionService = new InvitacionService(new Invitacion());
         $invitacion = $invitacionService->show($data["id_invitacion"]);
-        foreach ($invitacion->archivos as $archivo)
+        foreach ($invitacion->archivosParaTransaccion as $archivo)
         {
             $archivoService = new ArchivoService(new Archivo());
             $archivoService->setDB($invitacion->base_datos);
@@ -394,6 +396,7 @@ class CotizacionService
             $data_archivos['tamanio_kb'] = $archivo->tamanio_kb;
             $data_archivos['hashfile'] = $archivo->hashfile;
             $data_archivos['usuario_registro'] = $archivo->usuario_registro;
+            $data_archivos["id_tipo_general_archivo"] = 1;
             $archivoService->agregarArchivoDesdeInvitacion($data_archivos);
 
         }
