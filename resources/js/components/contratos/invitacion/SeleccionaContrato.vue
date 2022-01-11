@@ -42,7 +42,7 @@
             }
         },
         mounted() {
-            this.$store.commit('compras/solicitud-compra/SET_SOLICITUD', null);
+            this.$store.commit('contratos/contrato-proyectado/SET_CONTRATO', null);
             this.$validator.reset();
         },
         methods : {

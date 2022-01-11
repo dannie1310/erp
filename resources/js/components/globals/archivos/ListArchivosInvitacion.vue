@@ -18,29 +18,27 @@
                                     <tbody>
                                         <template v-for="(archivo, i) in archivos" >
                                             <tr v-if="i ==0" style="background-color: #ddd">
-                                                <td class="index_corto">#</td>
-                                                <!--<td class="c100" style="text-align: center">Tipo Documento</td>-->
-                                                <td style="text-align: center">Documento</td>
-                                                <td class="c200" style="text-align: center">Descripción</td>
-                                                <td style="text-align: center" class="c300">Observaciones</td>
-                                                <td class="c100" style="text-align: center">Acciones</td>
+                                                <td class="index_corto" style="text-align: center">#</td>
+                                                <td style="text-align: center" class="c200">Tipo de Archivo</td>
+                                                <td style="text-align: center">Archivo</td>
+                                                <td style="text-align: center" class="c200">Observaciones</td>
+                                                <td style="text-align: center" class="c100">Acciones</td>
                                             </tr>
                                             <tr v-if="i ==0">
-                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
-                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                                <td colspan="7"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong>
+                                                {{archivo.observaciones_transaccion}}</td>
                                             </tr>
                                             <tr v-else-if="archivo.id_transaccion != archivos[i-1].id_transaccion">
-                                                <td colspan="2"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong></td>
-                                                <td colspan="5">{{archivo.observaciones_transaccion}}</td>
+                                                <td colspan="7"><strong><i :class="archivo.icono_transaccion"></i>{{archivo.tipo_transaccion}} {{archivo.folio_transaccion}}</strong>
+                                                {{archivo.observaciones_transaccion}}</td>
                                             </tr>
 
                                             <tr  >
                                                 <td>{{i+1}}</td>
-                                                <!--<td>{{archivo.tipo_archivo}}</td>-->
+                                                <td>{{archivo.tipo_archivo_txt}}</td>
                                                 <td>{{archivo.nombre}}</td>
-                                                <td>{{archivo.descripcion}}</td>
                                                 <td :title="archivo.observaciones">{{archivo.observaciones_format}}</td>
-                                                <td style="text-align: center">
+                                                <td>
                                                     <div class="btn-group">
                                                         <Documento v-bind:url="url" v-bind:metodo = "metodo" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" v-bind:id="archivo.id" v-if="archivo.extension.toLowerCase() == 'pdf'"></Documento>
                                                         <button v-else-if="archivo.extension && (archivo.extension.toLowerCase()  == 'gif' || archivo.extension.toLowerCase()  == 'jpeg' || archivo.extension.toLowerCase()  == 'jpeg' || archivo.extension.toLowerCase()  == 'png' )" type="button" class="btn btn-sm btn-outline-success" title="Ver" @click="modalImagen(archivo)" :disabled="cargando_imagenes == true">
@@ -59,17 +57,17 @@
                                                                 <i class="fa fa-download"></i>
                                                             </span>
                                                         </button>
+
                                                         <button @click="eliminar(archivo)" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="archivo.nombre && archivo.eliminable" :disabled="eliminando_imagenes">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
-                                                        <info v-bind:id="archivo.id" v-bind:sin_contexto="sin_contexto" v-bind:base_datos="base_datos_url" v-bind:id_obra="id_obra_url" />
+                                                        <info v-bind:id="archivo.id" v-bind:de_invitacion="1"/>
                                                     </div>
                                                 </td>
                                             </tr>
                                         </template>
                                     </tbody>
                                 </table>
-
                             </div>
                         </div>
                     </div>
@@ -95,12 +93,12 @@ import Documento from './Documento';
 import Imagen from './Imagen';
 import Info from "./Info";
 export default {
-    name: "List",
-    props: ['id','tipo','cargar','relacionadas', 'sin_contexto', 'id_obra', 'base_datos'],
+    name: "ListArchivosInvitacion",
+    props: ['id','tipo','cargar','relacionadas', 'sin_contexto', 'id_obra', 'base_datos', 'id_invitacion'],
     components:{Info, Documento, Imagen},
     data(){
         return{
-            url : '/api/archivo/{id}/{metodo}?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
+            url : '/api/archivo/{id}/invitacion/documento?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
             id_archivo:'',
             descripcion:'',
             archivo:'',
@@ -114,7 +112,7 @@ export default {
             eliminando_imagenes : false,
             id_obra_url : '',
             base_datos_url : '',
-            metodo : '',
+            metodo : 'documento'
         }
     },
     mounted() {
@@ -131,15 +129,21 @@ export default {
         }else{
             this.id_obra_url = this.$session.get('id_obra');
         }
-        if(this.sin_contexto)
-        {
-            this.metodo = 'documento-sc'
-        }
-        else  {
-            this.metodo = 'documento';
-        }
     },
     methods: {
+        descargar(id)
+        {
+            this.descargando = true;
+            return this.$store.dispatch('documentacion/archivo/descargarArchivoInvitacion',
+                {
+                    id : id
+                })
+                .then(data => {
+                    this.$emit('success');
+                }).finally(() => {
+                    this.descargando = false;
+                });
+        },
         createImage(file, tipo) {
             var reader = new FileReader();
             var vm = this;
@@ -150,47 +154,13 @@ export default {
         },
         find() {
             this.cargando = true;
-            if(!this.sin_contexto){
-                if(!this.relacionadas){
-                    return this.$store.dispatch('documentacion/archivo/getArchivosTransaccion', {
-                        id: this.id,
-                        params: {include: []}
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }else{
-                    return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccion', {
-                        id: this.id,
-                        tipo: this.tipo,
-                        params: {include: []}
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }
-            }else {
-                if(!this.relacionadas){
-                    let _self = this;
-                    return this.$store.dispatch('documentacion/archivo/getArchivosTransaccionSC', {
-                        id: this.id,
-                        id_obra : _self.id_obra,
-                        base_datos : _self.base_datos
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }else{
-                    return this.$store.dispatch('documentacion/archivo/getArchivosRelacionadosTransaccionSC', {
-                        id: this.id,
-                        'tipo': this.tipo,
-                        data: {id_obra : this.id_obra, base_datos : this.base_datos}
-                    }).then(data => {
-                    }).finally(()=> {
-                        this.cargando = false;
-                    })
-                }
-            }
+            return this.$store.dispatch('documentacion/archivo/getArchivosInvitacion', {
+                id: this.id_invitacion,
+                params: {include: []}
+            }).then(data => {
+            }).finally(()=> {
+                this.cargando = false;
+            })
         },
         modalImagen(archivo){
             this.cargando_imagenes = true;
@@ -212,65 +182,15 @@ export default {
         },
 
         eliminar(archivo){
-
-            if(this.sin_contexto)
-            {
-                this.eliminando_imagenes = true;
-                let _self = this;
-                return this.$store.dispatch('documentacion/archivo/eliminarSC', {
-                    id: archivo.id,
-                    id_obra : _self.id_obra,
-                    base_datos : _self.base_datos,
-                }).then(data => {
-                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
-                }).finally( ()=>{
-                    this.eliminando_imagenes = false;
-                })
-            }else {
-                this.eliminando_imagenes = true;
-                let _self = this;
-                return this.$store.dispatch('documentacion/archivo/eliminar', {
-                    id: archivo.id,
-                    id_obra : _self.id_obra,
-                    base_datos : _self.base_datos,
-                }).then(data => {
-                    //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
-                }).finally( ()=>{
-                    this.eliminando_imagenes = false;
-                })
-            }
-        },
-
-        descargar(id)
-        {
-            this.descargando = true;
-            if(this.sin_contexto)
-            {
-                let _self = this;
-                return this.$store.dispatch('documentacion/archivo/descargarSC',
-                    {
-                        id : id,
-                        id_obra : _self.id_obra,
-                        base_datos : _self.base_datos,
-                    })
-                    .then(data => {
-                        this.$emit('success');
-                    }).finally(() => {
-                        this.descargando = false;
-                    });
-
-            }else{
-                return this.$store.dispatch('documentacion/archivo/descargar',
-                    {
-                        id : id
-                    })
-                    .then(data => {
-                        this.$emit('success');
-                    }).finally(() => {
-                        this.descargando = false;
-                    });
-            }
-
+            this.eliminando_imagenes = true;
+            let _self = this;
+            return this.$store.dispatch('documentacion/archivo/eliminarArchivoInvitacion', {
+                id: archivo.id
+            }).then(data => {
+                //this.$store.commit('documentacion/archivo/DELETE_ARCHIVO', data);
+            }).finally( ()=>{
+                this.eliminando_imagenes = false;
+            })
         },
     },
     computed: {

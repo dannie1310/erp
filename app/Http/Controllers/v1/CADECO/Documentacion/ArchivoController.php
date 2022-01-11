@@ -39,12 +39,12 @@ class ArchivoController extends Controller
     public function __construct(Manager $fractal, Service $service, Transformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC']);
+        $this->middleware('context')->except(['getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC','documentoSC', 'cargarArchivoSC','destroySC','descargarSC','showSC']);
         $this->middleware('permiso:cargar_archivos_transaccion')->only('cargarArchivo');
         $this->middleware('permiso:eliminar_archivos_transaccion')->only('destroy');
         $this->middleware('permiso:consultar_archivos_transaccion')->only(['documento', 'getArchivosTransaccion','imagenes']);
-        $this->middleware('permisoGlobal:eliminar_archivos_transaccion')->only('destroySC');
-        $this->middleware('permisoGlobal:consultar_archivos_transaccion')->only(['documentoSC', 'getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC']);
+        $this->middleware('permisoGlobal:eliminar_archivos_transaccion_proveedor')->only('destroySC');
+        $this->middleware('permisoGlobal:consultar_archivos_transaccion_proveedor')->only(['documentoSC', 'getArchivosTransaccionSC','getArchivosRelacionadosTransaccionSC']);
         $this->middleware('permisoGlobal:cargar_archivos_transaccion')->only('cargarArchivoSC');
 
         $this->fractal = $fractal;
@@ -116,6 +116,25 @@ class ArchivoController extends Controller
     {
         $this->service->delete($request->all(), $id);
         return response()->json("{}", 200);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $item = $this->service->show($request->all(),$id);
+        return $this->respondWithItem($item);
+    }
+    public function showSC(Request $request, $id)
+    {
+        $item = $this->service->show($request->all(),$id);
+        return $this->respondWithItem($item);
+    }
+
+    public function descargar(Request $request,$id){
+        return $this->service->descargar($request->all(),$id);
+    }
+
+    public function descargarSC(Request $request,$id){
+        return $this->service->descargar($request->all(),$id);
     }
 
 }

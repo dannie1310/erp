@@ -116,6 +116,67 @@ export default {
                     })
             });
         },
+        getTiposArchivo(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id+ '/tipos-archivo', {params: payload.params})
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    });
+            });
+        },
+        cargarArchivos(context, payload){
+            return new Promise((resolve, reject) => {
+
+                swal({
+                    title: "Subir Archivos a Invitación",
+                    text: "¿Está seguro de que la información es correcta?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Subir Archivos',
+                            closeModal: false,
+                        }
+                    }
+                }).then((value) => {
+                    if (value) {
+                        axios
+                        .post(URI + payload.id+ '/cargar-archivos',  payload.data)
+                        .then(r => r.data)
+                        .then(data => {
+                            if(Array.isArray(data)){
+                                swal("Archivos Subidos Correctamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
+                                })
+                            }else{
+                                swal("Error al subir archivo, por favor reporte el incidente a Soporte a Aplicaciones", {
+                                    icon: "error",
+                                    title:"Error",
+                                    timer: 3000,
+                                    buttons: false
+                                })
+                            }
+
+                        })
+                        .catch(error => {
+                            reject(error)
+                        })
+                    }
+                });
+            });
+        },
     },
 
     getters: {

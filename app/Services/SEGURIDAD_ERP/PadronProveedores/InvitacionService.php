@@ -140,15 +140,14 @@ class InvitacionService
             $datos_registro["ubicacion_entrega_plataforma_digital"] = $data["ubicacion_entrega_plataforma_digital"];
             $datos_registro["direccion_entrega"] = $data["direccion_entrega"];
             $datos_registro["cuerpo_correo"] = $data["cuerpo_correo"];
-            $datos_registro["archivo_carta_terminos_condiciones"] = $data["archivo_carta_terminos_condiciones"];
-            $datos_registro["nombre_archivo_carta_terminos_condiciones"] = $data["nombre_archivo_carta_terminos_condiciones"];
-            $datos_registro["archivo_formato_cotizacion"] = $data["archivo_formato_cotizacion"];
-            $datos_registro["nombre_archivo_formato_cotizacion"] = $data["nombre_archivo_formato_cotizacion"];
             $datos_registro["id_proveedor"] = $destinatario["id_proveedor"];
             $datos_registro["id_sucursal"] = $destinatario["id_sucursal"];
             $datos_registro["correo"] = $destinatario["correo"];
             $datos_registro["contacto"] = $destinatario["contacto"];
             $datos_registro["proveedor_en_catalogo"] = $destinatario["en_catalogo"];
+            $datos_registro["archivos"] = $data["archivos"];
+            $datos_registro["archivos_solicitar"] = $data["archivos_solicitar"];
+            $datos_registro["files"] = $data["files"];
             if(key_exists($destinatario["correo"], $usuarios)){
                 $datos_registro["id_usuario"] = $usuarios[$destinatario["correo"]];
             }else{
@@ -232,10 +231,6 @@ class InvitacionService
     {
         $transaccionService = new TransaccionService(new Transaccion());
         $transaccion = $transaccionService->show($data["id_transaccion"]);
-        /*$fecha_cierre = New DateTime($data['fecha_cierre']);
-        $fecha_cierre->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $data["fecha_cierre"] = $fecha_cierre->format("Y-m-d");
-        $data["fecha_cierre_obj"] = $fecha_cierre;*/
 
         $obra = Obra::find(Context::getIdObra());
 
@@ -409,20 +404,32 @@ class InvitacionService
         $invitacion->cuerpo_correo = $this->generaCuerpoCorreo($data["cuerpo_correo"],$invitacion);
         $invitacion->save();
 
-        $carta_terminos_condiciones['archivo_nombre'] = $data["nombre_archivo_carta_terminos_condiciones"];
-        $carta_terminos_condiciones['archivo'] = $data["archivo_carta_terminos_condiciones"];
-        $carta_terminos_condiciones['id_tipo_archivo'] = 43;
-        $carta_terminos_condiciones['id_invitacion'] = $invitacion->id;
-        $this->registraArchivo($carta_terminos_condiciones);
+        $i = 0;
+        foreach($data["archivos"] as $archivo)
+        {
+            $archivo_registrar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_registrar['archivo'] = $data["files"][$i];
+            $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
+            $archivo_registrar['id_invitacion'] = $invitacion->id;
+            $archivo_registrar['usuario_registro'] = auth()->id();
+            $archivo_registrar['de_invitacion'] = 1;
+            $archivo_registrar['de_envio'] = 0;
+            $this->registraArchivo($archivo_registrar);
 
-        if(key_exists("archivo_formato_cotizacion",$data)){
-            if($data["nombre_archivo_formato_cotizacion"] != ""){
-                $formato_cotizacion['archivo_nombre'] = $data["nombre_archivo_formato_cotizacion"];
-                $formato_cotizacion['archivo'] = $data["archivo_formato_cotizacion"];
-                $formato_cotizacion['id_tipo_archivo'] = 44;
-                $formato_cotizacion['id_invitacion'] = $invitacion->id;
-                $this->registraArchivo($formato_cotizacion);
-            }
+            $i++;
+        }
+
+        foreach($data["archivos_solicitar"] as $archivo)
+        {
+            $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['id_invitacion'] = $invitacion->id;
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
+            $archivo_registrar['requerido'] = 1;
+            $archivo_registrar['de_invitacion'] = 0;
+            $archivo_registrar['de_envio'] = 1;
+            $this->registraArchivoSolicitar($archivo_registrar);
+            $i++;
         }
 
         if($invitacion){
@@ -499,7 +506,13 @@ class InvitacionService
     private function registraArchivo($data)
     {
         $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
-        $archivoService->agregarArchivo($data);
+        return $archivoService->agregarArchivo($data);
+    }
+
+    private function registraArchivoSolicitar($data)
+    {
+        $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
+        $archivoService->agregarArchivoSolicitar($data);
     }
 
     private function generaUsuarioEmpresaDeducible($usuarioServicio, $empresa, $correo, $empresaGlobal)
@@ -718,5 +731,29 @@ class InvitacionService
         } else {
             return 1;
         }
+    }
+
+    public function getTiposArchivo($data)
+    {
+        return $this->repository->getTiposArchivo($data);
+    }
+
+    public function cargarArchivos($id_invitacion , $data)
+    {
+        $i = 0;
+        $archivos = [];
+
+        foreach($data["archivos"] as $archivo)
+        {
+            $archivo_registrar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_registrar['archivo'] = $data["files"][$i];
+            $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
+            $archivo_registrar['id_invitacion'] = $id_invitacion;
+            $archivo_registrar['usuario_registro'] = auth()->id();
+            $archivos[] = $this->registraArchivo($archivo_registrar);
+            $i++;
+        }
+        return $archivos;
     }
 }

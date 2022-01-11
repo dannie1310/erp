@@ -46,6 +46,15 @@ $api->version('v1', function ($api) {
             $api->get('{id}/documento-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documentoSC')->where(['id' => '[0-9]+']);
             $api->post('cargar-archivo-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivoSC');
             $api->post('{id}/destroy-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroySC')->where(['id' => '[0-9]+']);
+            $api->get('{id}/invitacion/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/invitacion', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@getArchivosInvitacion')->where(['id' => '[0-9]+']);
+            $api->get('/descargar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@descargar')->where(['id' => '[0-9]+']);
+            $api->get('/consultar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('/eliminar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargar', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@descargar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@showSC')->where(['id' => '[0-9]+']);
+            $api->get('{id}/descargar-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@descargarSC')->where(['id' => '[0-9]+']);
         });
         // ALMACENES
         $api->group(['prefix' => 'almacen'], function ($api) {
@@ -488,7 +497,8 @@ $api->version('v1', function ($api) {
             $api->post('abrir/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@abrir')->where(['id' => '[0-9]+']);
             $api->get('{id}/getPresupuestoEdit', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getPresupuestoEdit')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@pdf')->where(['id' => '[0-9]+']);
-
+            $api->get('{id}/tipos-archivo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@getTiposArchivo');
+            $api->post('{id}/cargar-archivos', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionController@cargarArchivos');
         });
     });
 
@@ -1218,6 +1228,7 @@ $api->version('v1', function ($api) {
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@pdf')->where(['id' => '[0-9]+']);
             $api->get('abierto/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@abrir')->where(['id' => '[0-9]+']);
             $api->post('/contraoferta','App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@storeContraoferta');
+            $api->get('/tipos-archivo', 'App\Http\Controllers\v1\CADECO\Contratos\InvitacionController@getTiposArchivo');
         });
     });
 

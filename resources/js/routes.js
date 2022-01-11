@@ -620,17 +620,17 @@ export const routes = [
                             },
                             {
                                 path: ':id/documentos',
-                                name: 'invitacion-compra-documentos',
+                                name: 'invitacion-cotizar-compra-documentos',
                                 component: require('./components/globals/archivos/Files').default,
                                 props: route => ({
-                                    id: route.params.id,
+                                    id_invitacion: route.params.id,
                                     permiso: ['registrar_invitacion_cotizar_compra'],
                                 }),
                                 meta: {
-                                    title: 'Documentos de Invitación',
+                                    title: 'Documentos de Invitación a Cotizar',
                                     breadcrumb: { parent: 'invitacion-compra', name: 'DOCUMENTOS'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_invitacion_cotizar_compra'
+                                    permission: 'consultar_invitacion_cotizar_contrato'
                                 }
                             },
                             {
@@ -1010,6 +1010,21 @@ export const routes = [
                                     permission: ['registrar_cotizacion_compra']
                                 }
                             },
+                            {
+                                path: ':id/documentos',
+                                name: 'invitacion-cotizar-contrato-documentos',
+                                component: require('./components/globals/archivos/Files').default,
+                                props: route => ({
+                                    id_invitacion: route.params.id,
+                                    permiso: ['registrar_invitacion_cotizar_contrato'],
+                                }),
+                                meta: {
+                                    title: 'Documentos de Invitación a Cotizar',
+                                    breadcrumb: { parent: 'invitacion-cotizar-contrato', name: 'DOCUMENTOS'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_invitacion_cotizar_contrato'
+                                }
+                            }
                         ]
                     },
                     {
@@ -4277,12 +4292,13 @@ export const routes = [
                         name: 'invitacion-proveedor-documentos',
                         component: require('./components/globals/archivos/Files').default,
                         props: route => ({
-                            id: route.params.id,
-                            permiso: ['registrar_solicitud_compra'],
+                            id_invitacion: route.params.id,
+                            permiso: ['registrar_cotizacion_proveedor'],
+                            global: true
                         }),
                         meta: {
                             title: 'Documentos de Invitación a Cotizar',
-                            breadcrumb: { parent: 'solicitud-compra', name: 'DOCUMENTOS'},
+                            breadcrumb: { parent: 'invitacion-proveedor', name: 'DOCUMENTOS'},
                             middleware: [auth, permission],
                             permission: 'consultar_invitacion_cotizar_proveedor',
                             general: true
