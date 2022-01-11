@@ -128,7 +128,7 @@
                                     ></textarea>
                                 </td>
                                 <td style="text-align: center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarArchivo(i)" :disabled="archivos.length == 1" >
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarArchivo(i)" >
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </td>

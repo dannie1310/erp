@@ -441,7 +441,7 @@
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id,
                     params: {
-                        include: ['presupuesto_proveedor','formato_cotizacion'],
+                        include: ['presupuesto_proveedor','formato_cotizacion', 'archivos_requeridos'],
                         scope: ['invitadoAutenticado']
                     }
                 }).then(data => {
