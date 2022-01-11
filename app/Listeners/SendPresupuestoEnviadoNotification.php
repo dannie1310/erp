@@ -32,10 +32,19 @@ class SendPresupuestoEnviadoNotification
      */
     public function handle(EnvioPresupuesto $event)
     {
-        $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        $usuario = Usuario::suscripcion($suscripciones)->get();
 
-        Notification::send($usuario, new NotificacionPresupuestoEnviado($event->invitacion, $event->cotizacion));
+
+        if($event->invitacion->id_area_contratante == 1)
+        {
+            $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
+            $usuario = Usuario::suscripcion($suscripciones)->get();
+            Notification::send($usuario, new NotificacionPresupuestoEnviado($event->invitacion, $event->cotizacion));
+        }
+
+        if($event->invitacion->copiados()->count()>0){
+            Notification::route("mail",$event->invitacion->copiados()->pluck("direccion"))->notify(new NotificacionPresupuestoEnviado($event->invitacion));
+        }
+
         Notification::send($event->invitacion->usuarioInvito, new NotificacionPresupuestoEnviado($event->invitacion, $event->cotizacion));
     }
 }

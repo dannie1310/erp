@@ -4,12 +4,9 @@ namespace App\Listeners;
 
 
 use App\Events\CambioFechaCierreInvitacion;
-use App\Events\RegistroInvitacion;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Notifications\NotificacionCambioFechaCierreInvitacion;
-use App\Notifications\NotificacionCredenciales;
 use App\Models\IGH\Usuario;
-use App\Notifications\NotificacionInvitacionCotizar;
 use Illuminate\Support\Facades\Notification;
 
 
@@ -30,10 +27,22 @@ class SendCambioFechaCierreInvitacionNotification
      */
     public function handle(CambioFechaCierreInvitacion $event)
     {
-        $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        //$usuario = Usuario::suscripcion($suscripciones)->get();
+        if($event->invitacion->id_area_compradora == 1)
+        {
+            $suscripciones = Suscripcion::activa()->where("id_evento",15)->get();
+            $usuario = Usuario::suscripcion($suscripciones)->get();
+            Notification::send($usuario, new NotificacionCambioFechaCierreInvitacion($event->invitacion));
+        }
+        else if($event->invitacion->id_area_contratante == 1)
+        {
+            $suscripciones = Suscripcion::activa()->where("id_evento",16)->get();
+            $usuario = Usuario::suscripcion($suscripciones)->get();
+            Notification::send($usuario, new NotificacionCambioFechaCierreInvitacion($event->invitacion));
+        }
 
-        //Notification::send($usuario, new NotificacionInvitacionCotizar($event->invitacion));
+        if($event->invitacion->copiados()->count()>0){
+            Notification::route("mail",$event->invitacion->copiados()->pluck("direccion"))->notify(new NotificacionCambioFechaCierreInvitacion($event->invitacion));
+        }
         Notification::send($event->invitacion->usuarioInvitado, new NotificacionCambioFechaCierreInvitacion($event->invitacion));
     }
 }
