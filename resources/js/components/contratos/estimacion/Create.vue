@@ -341,7 +341,7 @@
         		var conceptos = this.getConceptos();
         		if(conceptos.length > 0) {
 					return this.$store.dispatch('contratos/estimacion/store', {
-						id_antecedente: this.id_subcontrato,
+						id_antecedente: this.id,
                         fecha: moment(this.fecha).format('YYYY-MM-DD'),
 						cumplimiento: moment(this.fecha_inicio).format('YYYY-MM-DD'),
 						vencimiento:  moment(this.fecha_fin).format('YYYY-MM-DD'),
