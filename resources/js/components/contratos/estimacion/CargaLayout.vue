@@ -293,12 +293,14 @@
                 }
             },
             guardar() {
+                var conceptos = this.getConceptos();
                 let data ={
                     id_antecedente: this.datos_archivo.id,
                     fecha: moment(this.datos_archivo.fecha_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
                     cumplimiento: moment(this.datos_archivo.fecha_inicio_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
-                    vencimiento:  moment(this.datos_archivo.fecha_fin_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),                   
-                    conceptos: this.datos_archivo.partidas
+                    vencimiento:  moment(this.datos_archivo.fecha_fin_estimacion, 'DD/MM/YYYY').format('YYYY-MM-DD'),
+                    referencia: this.datos_archivo.referencia,            
+                    conceptos: conceptos
                 };
                 this.datos_archivo.observaciones!=''?data.observaciones = this.datos_archivo.observaciones:'';
                 return this.$store.dispatch('contratos/estimacion/store', data)
@@ -309,6 +311,32 @@
                 }).finally(()=>{
                 });
             },
+            getConceptos() {
+                var partidas = this.datos_archivo.partidas;
+        		var conceptos = [];
+                Object.values(partidas).forEach(partida =>{
+                    if (parseFloat(partida.cantidad) !== 0) {
+                        conceptos.push({
+                            item_antecedente: partida.id_concepto,
+                            id_concepto: partida.id_destino,
+                            importe: partida.importe,
+                            cantidad: partida.cantidad
+                        })
+                    }
+                });
+                // for (var key in partidas) {
+                //     var obj = partidas[key];
+                //     if (parseFloat(obj.cantidad) !== 0) {
+                //         conceptos.push({
+                //             item_antecedente: obj.id_concepto,
+                //             id_concepto: obj.id_destino,
+                //             importe: obj.importe,
+                //             cantidad: obj.cantidad
+                //         })
+                //     }
+                // }
+				return conceptos;
+			},
         },
         watch: {
             columnas(val) {
