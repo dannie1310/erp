@@ -23,7 +23,7 @@
                             {{subcontrato.empresa}}
                         </td>
                         <td>
-                            {{subcontrato.folio_contrato}}
+                            {{subcontrato.contrato_proyectado.numero_folio_format}}
                         </td>
                         <td>
                             {{subcontrato.referencia}}

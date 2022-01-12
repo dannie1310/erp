@@ -105,7 +105,6 @@ class SubcontratoTransformer extends TransformerAbstract
             'tiene_nodo_cambio_precio'=>$model->tiene_nodo_cambio_precio,
             'tc_actualizado' => false,
             'tiene_estimaciones' => $model->tiene_estimaciones,
-            'folio_contrato' => $model->contratoProyectado->numero_folio_format
         ];
     }
     /**

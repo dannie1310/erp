@@ -112,6 +112,7 @@
                 this.$store.commit('contratos/subcontrato/SET_SUBCONTRATO', null);
                 return this.$store.dispatch('contratos/subcontrato/find', {
                     id: this.id_subcontrato,
+                    params:{include:['contrato_proyectado']},
                 }).then(data => {
                     this.subcontrato = data;
                     this.cargando = false;
