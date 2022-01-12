@@ -1,16 +1,25 @@
 <template>
     <span>
-        <div class="row">
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-if="data">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <carga-layout v-if="data" v-bind:id_solicitud="id_solicitud" />
-                                <button @click="descargar()" v-if="data" type="button" class="btn btn-outline-success pull-right mr-1 mb-2" title="Descargar Layout Asignación">
-                                    <i class="fa fa-download"></i>Descargar Layout Excel
-                                </button>
+                                <tabla-datos-solicitud-compra v-bind:solicitud_compra="solicitud_compra"></tabla-datos-solicitud-compra>
                             </div>
+                            
                         </div>
                         <div class="row">
                             <div class="col-md-12">
@@ -214,16 +223,17 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
-import CargaLayout from './CargarLayoutAsignacion';
+import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSolicitudCompra";
 export default {
     name: "asignacion-proveedor-create",
-    components: {ModelListSelect, CargaLayout},
-    props:['data', 'id_empresa', 'id_solicitud'],
+    components: {ModelListSelect, TablaDatosSolicitudCompra},
+    props:['id_solicitud', 'solicitud_compra'],
     data() {
         return {
             cargando: false,
             solicitudes:[],
-            // id_solicitud:'',
+            data:null,
+            id_empresa:'',
             justificar:false,
             partidas_justificacion:[],
             replicar_justificacion:false,
@@ -231,20 +241,12 @@ export default {
     },
     mounted() {
         // this.id_empresa = Object.keys(data.cotizaciones)[0];
-        // this.getSolicitudes();
+        this.getCotizaciones();
     },
     computed: {
 
     },
     methods: {
-        descargar(){
-            this.cargando = true;
-            return this.$store.dispatch('compras/solicitud-compra/descargaLayoutAsignacion', {id:this.id_solicitud})
-                .then(() => {
-                    this.$emit('success')
-                    this.cargando = false;
-                })
-        },
         cerrar(){
             this.$validator.reset();
             this.$validator.errors.clear();
@@ -312,21 +314,21 @@ export default {
         //     })
 
         // },
-        // getCotizaciones(id){
-        //     this.cargando = true;
-        //     this.data = null;
-        //     return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
-        //         id: id,
-        //         params: {}
-        //     })
-        //     .then(data => {
-        //         this.id_empresa = Object.keys(data.cotizaciones)[0];
-        //         this.data = data;
-        //     })
-        //     .finally(() => {
-        //         this.cargando = false;
-        //     })
-        // },
+        getCotizaciones(){
+            this.cargando = true;
+            this.data = null;
+            return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
+                id: this.id_solicitud,
+                params: {}
+            })
+            .then(data => {
+                this.id_empresa = Object.keys(data.cotizaciones)[0];
+                this.data = data;
+            })
+            .finally(() => {
+                this.cargando = false;
+            })
+        },
         recalcular(i){
             let asignadas = 0.0;
 

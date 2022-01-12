@@ -347,7 +347,7 @@ class SolicitudCompraService
                     ];
                     $cotizaciones[$cotizacion->id_transaccion]['partidas'] = array();
                 }
-
+                array_key_exists($cotizacion->id_transaccion, $cotizaciones)?'': $cotizaciones[$cotizacion->id_transaccion] = array();
                 $partida_presupuestada = CotizacionCompraPartida::where('id_transaccion', '=',$cotizacion->id_transaccion)->where('id_material', '=', $partida->id_material)->first();
                 if (key_exists($partida_presupuestada->id_material, $precios)) {
                     if($partida_presupuestada->precio_unitario_compuesto > 0 && $precios[$partida_presupuestada->id_material] > $partida_presupuestada->precio_unitario_compuesto)
@@ -409,7 +409,9 @@ class SolicitudCompraService
             if((float)$cant_asignada > (float)$items[$i]['cantidad_disponible']){
                 $items[$i]['asignadas_mayor_disponible'] = true;
                 $partidas_no_validas = true;
-                $cotizaciones[$cotizacion->id_transaccion]['partidas_no_validas'] = true;
+                foreach($cotizaciones as $key => $cotizacion){
+                    $cotizacion['partidas'][$i]?$cotizaciones[$key]['partidas_no_validas'] = true:'';
+                }
             }
         }
         return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios, 'cantidad_cotizaciones'=>count($cant_cotizaciones), 'partidas_no_validas' => $partidas_no_validas];
