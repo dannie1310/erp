@@ -20,18 +20,34 @@
                                 <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="row" v-if="cargandoCotizaciones">
-                        <div class="col-md-12">
-                            <div class="spinner-border text-success ml-4" role="status">
-                                <span class="sr-only">Cargando...</span>
+                        <div class="row" v-if="cargandoCotizaciones">
+                            <div class="col-md-12">
+                                <div class="spinner-border text-success ml-4" role="status">
+                                    <span class="sr-only">Cargando...</span>
+                                </div>
                             </div>
                         </div>
+                        <br><br>
+                        <DatosSolicitud  v-bind:solicitud_compra="solicitud_compra" v-if="solicitud_compra"></DatosSolicitud>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <carga-layout v-if="solicitud_compra" v-bind:id_solicitud="id_solicitud" />
+                                <button @click="descargar()" v-if="solicitud_compra" type="button" class="btn btn-outline-success pull-right mr-1 mb-2" title="Descargar Layout Asignación">
+                                    <i class="fa fa-download"></i>Descargar Layout Excel
+                                </button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>Regresar</button>
+                        <button type="button" @click="continuar" :disabled="id_solicitud == ''" class="btn btn-primary"> Continuar <i class="fa fa-angle-right"></i></button>
                     </div>
                 </div>
             </div>
         </div>
-        <Create v-bind:data="data" v-bind:id_empresa="Object.keys(data.cotizaciones)[0]" v-bind:id_solicitud="id_solicitud" v-if="data"></Create>
+        <!-- <Create v-bind:data="data" v-bind:id_empresa="Object.keys(data.cotizaciones)[0]" v-bind:id_solicitud="id_solicitud" v-if="data"></Create> -->
+        
 
     </span>
     
@@ -41,9 +57,10 @@
 import {ModelListSelect} from 'vue-search-select';
 import Create from './Create';
 import CargaLayout from './CargarLayoutAsignacion';
+import DatosSolicitud from '../solicitud-compra/partials/DatosSolicitudCompra';
 export default {
     name: "asignacion-proveedor-seleccionar",
-    components: {ModelListSelect, Create, CargaLayout},
+    components: {ModelListSelect, Create, CargaLayout, DatosSolicitud},
     data() {
         return {
             cargando: false,
@@ -55,6 +72,7 @@ export default {
             justificar:false,
             partidas_justificacion:[],
             replicar_justificacion:false,
+            solicitud_compra:null,
         }
     },
     mounted() {
@@ -64,6 +82,9 @@ export default {
 
     },
     methods: {
+        continuar(){
+            this.$router.push({name: 'asignacion-create', params: {id_solicitud: this.id_solicitud, solicitud_compra:this.solicitud_compra}});
+        },
         descargar(){
             this.cargando = true;
             return this.$store.dispatch('compras/solicitud-compra/descargaLayoutAsignacion', {id:this.id_solicitud})
@@ -129,11 +150,21 @@ export default {
                 this.cargandoCotizaciones = false;
             })
         },
+        find() {
+                this.cargando = true;
+                return this.$store.dispatch('compras/solicitud-compra/find', {
+                    id: this.id_solicitud,
+                    params:{}
+                }).then(data => {
+                    this.solicitud_compra = data;
+                    this.cargando = false;
+                })
+            },
     },
     watch:{
         id_solicitud(value){
             if(value != ''){
-                this.getCotizaciones(value);
+                this.find();
             }
         },
     }

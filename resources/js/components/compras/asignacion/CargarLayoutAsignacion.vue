@@ -48,7 +48,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">
-                            <i class="fa fa-pencil"></i>Resumen Carga de Layout con Errores</h5>
+                            <i class="fa fa-close"></i>Errores en Carga de Layout</h5>
                         <button type="button" class="close" @click="cerrarModalInvalidas()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -56,7 +56,7 @@
                     <div class="modal-body" v-if="modalInvalidas">
                         <div class="row">
                             <div class="col-md-8">
-                                <p><b>Las siguientes partidas no son válidas o exedieron la cantidad pendiente por asignar.</b></p>
+                                <p><b>Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</b></p>
                             </div>
                         </div>
                         <div class="row" v-for="(cotizacion, id_transaccion) in data.cotizaciones" v-if="cotizacion.partidas_no_validas">
@@ -194,15 +194,21 @@ export default {
                         $(this.$refs.modalInvalidas).appendTo('body')
                         $(this.$refs.modalInvalidas).modal('show');
                     }else{
-                        $(this.$refs.modal).modal('hide');
-                        this.file = null;
-                        this.file_name = '';
-                        this.$validator.errors.clear();
-                        this.$router.push({name: 'asignacion-proveedor-layout-create', params: {id_empresa: Object.keys(data.cotizaciones)[0], id_solicitud:this.id_solicitud, data:data}});
+                        if(data.cantidad_cotizaciones > 0){
+                            $(this.$refs.modal).modal('hide');
+                            this.file = null;
+                            this.file_name = '';
+                            this.$validator.errors.clear();
+                            this.$router.push({name: 'asignacion-proveedor-layout-create', params: {id_empresa: Object.keys(data.cotizaciones)[0], id_solicitud:this.id_solicitud, data:data}});
+                        }else{
+                            $(this.$refs.modal).modal('hide');
+                            this.file = null;
+                            this.file_name = '';
+                            this.$validator.errors.clear();
+                            swal('¡Aviso!', 'Archivo XLS sin partidas asignadas.', 'warning')
                         }
-                }).finally(() => {
-                    
-                });
+                    }
+                })
         },
         cerrarModal() {
             this.file = null;

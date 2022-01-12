@@ -47,7 +47,7 @@
                                                 <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">${{partida.importe}}</td><td v-else></td>
                                                 <td v-if="partida" :class="partida.mejor_opcion?`mejor_opcion`:``">{{partida.moneda}}</td><td v-else></td>
                                                 <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">${{partida.importe_moneda_conversion}}</td><td v-else></td>
-                                                <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">${{partida.cantidad_asignada}}</td><td v-else></td>
+                                                <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">{{partida.cantidad_asignada}}</td><td v-else></td>
                                                 
                                             </tr>
                                         </tbody>

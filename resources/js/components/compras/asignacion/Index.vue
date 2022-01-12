@@ -58,7 +58,7 @@
 
         methods: {
             create(){
-                this.$router.push({name: 'asignacion-proveedor-create'});
+                this.$router.push({name: 'seleccionar-solicitud-compra'});
             },
             paginate() {
                 return this.$store.dispatch('compras/asignacion/paginate', { params: this.query})
