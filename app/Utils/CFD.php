@@ -50,6 +50,7 @@ class CFD
 
     public function getArregloFactura()
     {
+
         $this->arreglo_factura = [];
         $this->arreglo_factura["xml"] = $this->archivo_xml;
         try {
@@ -493,65 +494,67 @@ class CFD
             $xml = $this->archivo_xml;
         }
 
-        $respuesta = $this->getValidacionCFDI33($xml);
-        $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
-
-        if ($estructura_correcta !== "OK") {
-            $omitido = $this->getEsOmitido($respuesta["detail"][0]["detail"][0]["message"], $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
-            if($omitido == 0){
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 13,
-                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                        "mensaje" => $estructura_correcta,
-                        "xml" => $xml
-                    ]
-                ));
-                abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
+        if ($usa_servicio == 1) {
+            $respuesta = $this->getValidacionCFDI33($xml);
+            $estructura_correcta = $respuesta["detail"][0]["detail"][0]["message"];
+            if ($estructura_correcta !== "OK") {
+                $omitido = $this->getEsOmitido($respuesta["detail"][0]["detail"][0]["message"], $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
+                if($omitido == 0){
+                    event(new IncidenciaCI(
+                        ["id_tipo_incidencia" => 13,
+                            "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                            "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                            "mensaje" => $estructura_correcta,
+                            "xml" => $xml
+                        ]
+                    ));
+                    abort(500, "Aviso SAT:\nError en la validación de la estructura del comprobante: " . $estructura_correcta);
+                }
             }
-        }
-
-        $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
-        if ($validaciones_proveedor_comprobante !== "OK") {
-            $omitido = $this->getEsOmitido($respuesta["detail"][1]["detail"][0]["message"], $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
-            if($omitido==0){
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 14,
-                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                        "mensaje" => $validaciones_proveedor_comprobante,
-                        "xml" => $xml
-                    ]
-                ));
-                abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+            $validaciones_proveedor_comprobante = $respuesta["detail"][1]["detail"][0]["message"];
+            if ($validaciones_proveedor_comprobante !== "OK") {
+                $omitido = $this->getEsOmitido($respuesta["detail"][1]["detail"][0]["message"], $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
+                if($omitido==0){
+                    event(new IncidenciaCI(
+                        ["id_tipo_incidencia" => 14,
+                            "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                            "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                            "mensaje" => $validaciones_proveedor_comprobante,
+                            "xml" => $xml
+                        ]
+                    ));
+                    abort(500, "Aviso SAT:\nError en la validación del proveedor del comprobante: " . $validaciones_proveedor_comprobante);
+                }
             }
-        }
 
-        $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
-        if ($validaciones_proveedor_complemento !== "OK") {
-            $omitido = $this->getEsOmitido($respuesta["detail"][2]["detail"][0]["message"],$this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
-            if($omitido==0) {
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 15,
-                        "rfc" => $this->arreglo_factura["emisor"]["rfc"],
-                        "empresa" => $this->arreglo_factura["emisor"]["nombre"],
-                        "mensaje" => $validaciones_proveedor_complemento,
-                        "xml" => $xml
-                    ]
-                ));
-                abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+            $validaciones_proveedor_complemento = $respuesta["detail"][2]["detail"][0]["message"];
+            if ($validaciones_proveedor_complemento !== "OK") {
+                $omitido = $this->getEsOmitido($respuesta["detail"][2]["detail"][0]["message"],$this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["uuid"]);
+                if($omitido==0) {
+                    event(new IncidenciaCI(
+                        ["id_tipo_incidencia" => 15,
+                            "rfc" => $this->arreglo_factura["emisor"]["rfc"],
+                            "empresa" => $this->arreglo_factura["emisor"]["nombre"],
+                            "mensaje" => $validaciones_proveedor_complemento,
+                            "xml" => $xml
+                        ]
+                    ));
+                    abort(500, "Aviso SAT:\nError en la validación del proveedor del timbre: " . $validaciones_proveedor_complemento);
+                }
             }
-        }
 
-        $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
+            $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
 
-        if ($env_servicio === "production") {
-            $validacion_status_sat = $respuesta["statusSat"];
-            $validacion_status_code_sat = $respuesta["statusCodeSat"];
+            if ($env_servicio === "production") {
+                $validacion_status_sat = $respuesta["statusSat"];
+                $validacion_status_code_sat = $respuesta["statusCodeSat"];
 
-            if ($validacion_status_sat !== "Vigente" && date("Y") == $this->arreglo_factura["fecha"]->format("Y") && $validacion_status_code_sat != "Expresión impresa no válida. Expresión: 601") {
-                abort(500, "Aviso SAT:\n" . $validacion_status_sat . " -" . $validacion_status_code_sat . "");
+                if ($validacion_status_sat !== "Vigente" && date("Y") == $this->arreglo_factura["fecha"]->format("Y") && $validacion_status_code_sat != "Expresión impresa no válida. Expresión: 601") {
+                    abort(500, "Aviso SAT:\n" . $validacion_status_sat . " -" . $validacion_status_code_sat . "");
+                }
             }
+
         }
 
     }
