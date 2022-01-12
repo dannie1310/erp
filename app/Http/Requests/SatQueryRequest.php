@@ -68,13 +68,11 @@ class SatQueryRequest
 
     public static function response($data)
     {
-        if( $data["Body"]["ConsultaResponse"]["ConsultaResult"]["Estado"] != 'Vigente' && $data["Body"]["ConsultaResponse"]["ConsultaResult"]["CodigoEstatus"] != 'S - Comprobante obtenido satisfactoriamente.') {
-            if($data["Body"]["ConsultaResponse"]["ConsultaResult"]["EstatusCancelacion"] != [])
-            {
-                abort(500, "Aviso SAT: \n".$data["Body"]["ConsultaResponse"]["ConsultaResult"]["CodigoEstatus"]."\nEstado: ".$data["Body"]["ConsultaResponse"]["ConsultaResult"]["Estado"] ."\nEs cancelable: ". $data["Body"]["ConsultaResponse"]["ConsultaResult"]["EsCancelable"]."\nEstado de cancelación: ".$data["Body"]["ConsultaResponse"]["ConsultaResult"]["EstatusCancelacion"]);
-            }else {
-                abort(500, "Aviso SAT: \n" . $data["Body"]["ConsultaResponse"]["ConsultaResult"]["CodigoEstatus"] . "\nEstado: " . $data["Body"]["ConsultaResponse"]["ConsultaResult"]["Estado"] ."\nEs cancelable: ". $data["Body"]["ConsultaResponse"]["ConsultaResult"]["EsCancelable"]);
-            }
-        }
+        $obj = (object)[];
+        $obj->CodigoEstatus = $data["Body"]["ConsultaResponse"]["ConsultaResult"]["CodigoEstatus"];
+        $obj->Estado = $data["Body"]["ConsultaResponse"]["ConsultaResult"]["Estado"];
+        $obj->EsCancelable = $data["Body"]["ConsultaResponse"]["ConsultaResult"]["EsCancelable"];
+        $obj->EstatusCancelacion = $data["Body"]["ConsultaResponse"]["ConsultaResult"]["EstatusCancelacion"];
+        return $obj;
     }
 }
