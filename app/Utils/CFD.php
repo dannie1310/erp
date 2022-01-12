@@ -9,6 +9,7 @@
 namespace App\Utils;
 use App\Events\IncidenciaCI;
 use App\Facades\Context;
+use App\Http\Requests\SatQueryRequest;
 use App\Models\CADECO\Obra;
 use App\Models\CTPQ\Parametro;
 use App\Models\SEGURIDAD_ERP\Finanzas\AvisoSATOmitir;
@@ -98,6 +99,7 @@ class CFD
             $this->arreglo_factura["metodo_pago"] = (string)$factura_xml["MetodoPago"];
             $this->arreglo_factura["no_certificado"] = (string)$factura_xml["NoCertificado"];
             $this->arreglo_factura["certificado"] = (string)$factura_xml["Certificado"];
+            $this->arreglo_factura["sello"] = (string)$factura_xml["Sello"];
             $emisor = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Emisor')[0];
             $this->arreglo_factura["emisor"]["rfc"] = (string)$emisor["Rfc"][0];
             $this->arreglo_factura["emisor"]["razon_social"] = (string)$emisor["Nombre"][0];
@@ -448,43 +450,7 @@ class CFD
 
     private function getValidacionCFDI33($xml)
     {
-        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
-        if ($usa_servicio == 1) {
-            $client = new \GuzzleHttp\Client();
-            $url = config('app.env_variables.SERVICIO_CFDI_URL');
-            $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
-
-
-            $headers = [
-                'Authorization' => 'Bearer ' . $token,
-                'Accept' => 'application/json',
-            ];
-            try{
-                $multipart = [[
-                    'name' => 'xml',
-                    'contents' => $xml,
-                    'filename' => 'custom_filename.xml'
-                ]];
-
-                $response = $client->request('POST', $url, [
-                    'headers' => $headers,
-                    'multipart' => $multipart,
-                ]);
-            }catch (\Exception $e){
-                $multipart = [[
-                    'name' => 'xml',
-                    'contents' => fopen($xml, 'r'),
-                    'filename' => 'custom_filename.xml'
-                ]];
-
-                $response = $client->request('POST', $url, [
-                    'headers' => $headers,
-                    'multipart' => $multipart,
-                ]);
-            }
-
-            return json_decode($response->getBody()->getContents(), true);
-        }
+        return SatQueryRequest::soapRequest($arreglo_cfd['emisor']['rfc'], $arreglo_cfd['receptor']['rfc'],$arreglo_cfd['total'], $arreglo_cfd['complemento']['uuid'], substr($arreglo_cfd['sello'],-8));
     }
 
     public function validaCFDI33($xml = null)

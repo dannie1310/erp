@@ -1147,6 +1147,7 @@ class CFDSATService
         $this->validaTipoTransaccion($data["id_tipo_transaccion"], $arreglo_cfd["tipo_comprobante"]);
 
         $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
+        dd($contenido_xml);
         $cfd->validaCFDI33($contenido_xml);
 
         $cfdi = $this->registraCFDI($arreglo_cfd);
