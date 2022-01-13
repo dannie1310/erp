@@ -285,7 +285,6 @@ class CFDSATService
         $take = 1000;
 
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
-            //dd($i, $cantidad, $take);
             $cfd = CFDSAT::where("id_empresa_sat","=",1)
                 ->where("cancelado","=","0")
                 ->whereIn("tipo_comprobante",["I","E"])
@@ -1121,7 +1120,6 @@ class CFDSATService
         }
 
         $arreglo_cfd = $cfd->getArregloFactura();
-        //dd($arreglo_cfd);
         $pdf = new CFDI($arreglo_cfd);
         return $pdf;
     }
@@ -1508,7 +1506,7 @@ class CFDSATService
                         "rfc" => $arreglo_cfd["receptor"]["rfc"],
                     ]
                 ));
-               // abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
+                abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
             }
         }else{
             abort(500, "Error de lectura del archivo: ".$nombre);
