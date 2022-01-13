@@ -118,4 +118,15 @@ class EstimacionController extends Controller
     {
         return $this->service->ordenado($id);
     }
+
+    public function descargaLayout($id)
+    {
+        return $this->service->descargaLayout($id);
+    }
+
+    public function cargaLayout(Request $request)
+    {
+        $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
+        return response()->json($res, 200);
+    }
 }

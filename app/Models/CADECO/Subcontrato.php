@@ -206,6 +206,10 @@ class Subcontrato extends Transaccion
         return $this->hasMany(SolicitudCambioSubcontrato::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function presupuesto(){
+        return $this->hasOne(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente')->where('id_empresa', '=', $this->id_empresa);
+    }
+
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo), 2) . '%';
@@ -810,8 +814,6 @@ class Subcontrato extends Transaccion
             'anticipo_monto' => $this->anticipo_monto,
             'anticipo_saldo' => $this->anticipo_saldo,
             'PorcentajeDescuento' => $this->PorcentajeDescuento,
-            'impuesto' => $this->impuesto,
-            'impuesto_retenido' => $this->impuesto_retenido,
             'retencion' => $this->retencion,
             'observaciones' => $this->observaciones,
             'tipo_cambio' => $this->tipo_cambio,
