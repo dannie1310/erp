@@ -46,16 +46,14 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">
-                            <i class="fa fa-pencil"></i>Resumen Carga de Layout con Errores</h5>
+                            <i class="fa fa-close"></i>Errores en Carga de Layout</h5>
                         <button type="button" class="close" @click="cerrarModalInvalidas()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body" v-if="modalInvalidas">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <p><b>Las siguientes partidas no son válidas o exedieron la cantidad pendiente por asignar.</b></p>
-                            </div>
+                        <div class="alert alert-danger" role="alert">
+                            <p><b><h5><i class="fa fa-exclamation-triangle fa-xs"></i>  Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</h5></b></p>
                         </div>
                         <div class="row" v-for="(presupuesto, id_transaccion) in data.presupuestos" v-if="presupuesto.partidas_no_validas">
                             <div class="col-sm-12">
@@ -195,12 +193,19 @@ export default {
                         this.$validator.errors.clear();
                         $(this.$refs.modalInvalidas).appendTo('body')
                         $(this.$refs.modalInvalidas).modal('show');
+                    }else if (data.cantidad_presupuestos > 0){
+                        $(this.$refs.modal).modal('hide');
+                        this.file = null;
+                        this.file_name = '';
+                        this.$validator.errors.clear();
+                        this.$router.push({name: 'asignacion-contratista-layout-create', params: {id_contrato: this.id_contrato, data:data}});
                     }else{
                         $(this.$refs.modal).modal('hide');
                         this.file = null;
                         this.file_name = '';
                         this.$validator.errors.clear();
-                        this.$router.push({name: 'asignacion-contratista-layout-create', params: {id_contrato: this.id_contrato, data:data}});}
+                        swal('¡Aviso!', 'El archivo XLS no tiene partidas asignadas.', 'warning')
+                    }
                 }).finally(() => {
                     
                 });
