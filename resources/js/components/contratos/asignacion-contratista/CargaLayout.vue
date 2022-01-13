@@ -52,10 +52,8 @@
                         </button>
                     </div>
                     <div class="modal-body" v-if="modalInvalidas">
-                        <div class="row">
-                            <div class="col-md-8">
-                                <p><b>Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</b></p>
-                            </div>
+                        <div class="alert alert-danger" role="alert">
+                            <p><b><h5><i class="fa fa-exclamation-triangle fa-xs"></i>  Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</h5></b></p>
                         </div>
                         <div class="row" v-for="(presupuesto, id_transaccion) in data.presupuestos" v-if="presupuesto.partidas_no_validas">
                             <div class="col-sm-12">

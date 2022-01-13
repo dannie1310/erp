@@ -603,7 +603,11 @@ class ContratoProyectadoService
             if((float)$cant_asignada > (float)$items[$i]['cantidad_disponible']){
                 $items[$i]['asignadas_mayor_disponible'] = true;
                 $partidas_no_validas = true;
-                $presupuestos[$presupuesto->id_transaccion]['partidas_no_validas'] = true;
+                foreach($presupuestos as $key => $presupuesto){
+                    if($presupuesto['partidas'][$i]){
+                        $presupuestos[$key]['partidas_no_validas'] = true;
+                    }
+                }
             }
             
         }
