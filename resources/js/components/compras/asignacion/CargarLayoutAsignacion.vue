@@ -55,14 +55,8 @@
                     </div>
                     <div class="modal-body" v-if="modalInvalidas">
                         <div class="alert alert-danger" role="alert">
-                                    <p><b><h5>Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</h5></b></p>
-                                </div>
-                        <!-- <div class="row">
-                            <div class="col-md-12">
-                                
-                                
-                            </div>
-                        </div> -->
+                            <p><b><h5><i class="fa fa-exclamation-triangle fa-xs"></i>  Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</h5></b></p>
+                        </div>
                         <div class="row" v-for="(cotizacion, id_transaccion) in data.cotizaciones" v-if="cotizacion.partidas_no_validas">
                             <div class="col-sm-12">
                                 <table class="table table-striped table-sm">
