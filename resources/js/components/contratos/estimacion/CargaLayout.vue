@@ -261,6 +261,7 @@
                         }
                     })
                     .then(data => {
+                        this.columnas= [];
                         this.datos_archivo = data;
                         $(this.$refs.modal_datos).appendTo('body')
                         $(this.$refs.modal_datos).modal('show');

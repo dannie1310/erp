@@ -234,21 +234,18 @@ class EstimacionService
                 if ($contrato == null) {
                     $contrato = Contrato::where('id_transaccion', '=', $subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
                 }
-                if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0 && $celdas[$x][7] > 0 &&  $celdas[$x][9] <= $celdas[$x][7]) {
-                    
-                    $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
-                    $datos_partida['no_partida'] = $celdas[$x][0];
-                    $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                $vol_saldo = (float)str_replace(',', '', $celdas[$x][7]);
+                $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
+                $datos_partida['no_partida'] = $celdas[$x][0];
+                $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0 && $vol_saldo > 0 &&  $celdas[$x][9] <= $vol_saldo) {
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
                     $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
                     $datos_partida['cantidad_valida'] = true;
-
                     $partidas[] = $datos_partida;
+
                 }else if(!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null){
-                    $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
-                    $datos_partida['no_partida'] = $celdas[$x][0];
-                    $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
                     $datos_partida['cantidad'] = 'N/V';
                     $datos_partida['porcentaje_estimado'] = 'N/V';
                     $datos_partida['importe'] = 'N/V';
@@ -256,10 +253,7 @@ class EstimacionService
                     $partidas_invalidas = true;
                     $partidas_no_validas[] = $datos_partida;
                     
-                }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] != null && $celdas[$x][9] > $celdas[$x][7]){
-                    $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
-                    $datos_partida['no_partida'] = $celdas[$x][0];
-                    $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] != null && $celdas[$x][9] > $vol_saldo){
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
                     $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
