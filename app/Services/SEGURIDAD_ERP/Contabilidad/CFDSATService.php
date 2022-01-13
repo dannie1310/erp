@@ -285,7 +285,6 @@ class CFDSATService
         $take = 1000;
 
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
-            //dd($i, $cantidad, $take);
             $cfd = CFDSAT::where("id_empresa_sat","=",1)
                 ->where("cancelado","=","0")
                 ->whereIn("tipo_comprobante",["I","E"])
@@ -1121,7 +1120,6 @@ class CFDSATService
         }
 
         $arreglo_cfd = $cfd->getArregloFactura();
-        //dd($arreglo_cfd);
         $pdf = new CFDI($arreglo_cfd);
         return $pdf;
     }
@@ -1147,7 +1145,7 @@ class CFDSATService
         $this->validaTipoTransaccion($data["id_tipo_transaccion"], $arreglo_cfd["tipo_comprobante"]);
 
         $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
-        $cfd->validaCFDI33($contenido_xml);
+        $cfd->validaCFDI33($contenido_xml, $arreglo_cfd);
 
         $cfdi = $this->registraCFDI($arreglo_cfd);
 
@@ -1478,7 +1476,7 @@ class CFDSATService
             $exp = explode("base64,", $archivo_xml);
             $contenido_xml = base64_decode($exp[1]);
             $arreglo_cfd["contenido_xml"] = $contenido_xml;
-            $cfd->validaCFDI33($contenido_xml);
+            $cfd->validaCFDI33($contenido_xml, $arreglo_cfd);
             $cfdi = $this->registraCFDI($arreglo_cfd);
             $cfdi->conceptos->load("traslados");
             $cfdi->conceptos->load("cfdi");

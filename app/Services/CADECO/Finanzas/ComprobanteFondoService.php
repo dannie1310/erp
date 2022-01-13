@@ -194,6 +194,7 @@ class ComprobanteFondoService
         $arreglo["moneda"] = $arreglo_cfd["moneda"];
         $arreglo["no_certificado"] = $arreglo_cfd["no_certificado"];
         $arreglo["certificado"] = $arreglo_cfd["certificado"];
+        $arreglo["sello"] = $arreglo_cfd["Sello"];
 
         $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
         $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
@@ -205,9 +206,8 @@ class ComprobanteFondoService
         $arreglo["folio"] = $arreglo_cfd["folio"];
 
         if($arreglo_cfd["version"] == 3.3){
-            $cfd->validaCFDI33();
+            $cfd->validaCFDI33(null, $arreglo_cfd);
         }
-
 
         $this->validaEFO($arreglo);
         $this->validaReceptor($arreglo);
