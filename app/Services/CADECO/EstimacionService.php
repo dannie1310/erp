@@ -281,6 +281,7 @@ class EstimacionService
             'fecha_fin_estimacion' => $fecha_est_fin,
             'observaciones' => $observaciones,
             'partidas_invalidas' => $partidas_invalidas,
+            'referencia' => 'XLY',
             'partidas' => $partidas_filtradas
         ];
         return $respuesta;
