@@ -7,6 +7,7 @@
  */
 
 namespace App\Models\CADECO;
+use App\CSV\EstimacionLayout;
 use App\Models\CADECO\Acarreos\ConciliacionEstimacion;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
@@ -25,6 +26,7 @@ use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class Estimacion extends Transaccion
 {
@@ -1336,4 +1338,15 @@ class Estimacion extends Transaccion
         }
         return '';
     }
+
+    /**
+     * Métodos
+     */
+    public function descargaLayout($id)
+    {
+        $subcontrato = Subcontrato::where('id_transaccion', $id)->first();
+        $folio = str_pad($subcontrato->numero_folio, 5, 0, 0);
+        return Excel::download(new EstimacionLayout($subcontrato), '#'.$folio.'.xlsx');
+    }
+
 }

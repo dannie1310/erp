@@ -1235,13 +1235,25 @@ export const routes = [
                             },
                             {
                                 path: 'create',
+                                name: 'estimacion-seleccionar-create',
+                                component: require('./components/contratos/estimacion/SeleccionarSubcontrato').default,
+                                meta: {
+                                    title: 'Seleccionar Subcontrato',
+                                    breadcrumb: { parent: 'estimacion', name: 'SELECCIONAR SUBCONTRATO'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_estimacion_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id/create',
                                 name: 'estimacion-create',
+                                props: true,
                                 component: require('./components/contratos/estimacion/Create').default,
                                 meta: {
-                                    title: 'Estimaciones',
-                                    breadcrumb: {parent: 'estimacion', name: 'REGISTRAR'},
+                                    title: 'Estimación',
+                                    breadcrumb: { parent: 'estimacion-seleccionar-create', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
-                                    permission: 'registrar_estimacion_subcontrato'
+                                    permission: ['registrar_estimacion_subcontrato']
                                 }
                             },
                             {
