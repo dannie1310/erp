@@ -46,7 +46,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle">
-                            <i class="fa fa-pencil"></i>Resumen Carga de Layout con Errores</h5>
+                            <i class="fa fa-close"></i>Errores en Carga de Layout</h5>
                         <button type="button" class="close" @click="cerrarModalInvalidas()" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -54,7 +54,7 @@
                     <div class="modal-body" v-if="modalInvalidas">
                         <div class="row">
                             <div class="col-md-8">
-                                <p><b>Las siguientes partidas no son válidas o exedieron la cantidad pendiente por asignar.</b></p>
+                                <p><b>Las siguientes partidas no son válidas o excedieron la cantidad pendiente por asignar.</b></p>
                             </div>
                         </div>
                         <div class="row" v-for="(presupuesto, id_transaccion) in data.presupuestos" v-if="presupuesto.partidas_no_validas">
