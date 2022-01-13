@@ -1147,8 +1147,7 @@ class CFDSATService
         $this->validaTipoTransaccion($data["id_tipo_transaccion"], $arreglo_cfd["tipo_comprobante"]);
 
         $arreglo_cfd["id_tipo_transaccion"] = $data["id_tipo_transaccion"];
-        dd($contenido_xml);
-        $cfd->validaCFDI33($contenido_xml);
+        $cfd->validaCFDI33($contenido_xml, $arreglo_cfd);
 
         $cfdi = $this->registraCFDI($arreglo_cfd);
 
@@ -1479,7 +1478,7 @@ class CFDSATService
             $exp = explode("base64,", $archivo_xml);
             $contenido_xml = base64_decode($exp[1]);
             $arreglo_cfd["contenido_xml"] = $contenido_xml;
-            $cfd->validaCFDI33($contenido_xml);
+            $cfd->validaCFDI33($contenido_xml, $arreglo_cfd);
             $cfdi = $this->registraCFDI($arreglo_cfd);
             $cfdi->conceptos->load("traslados");
             $cfdi->conceptos->load("cfdi");
@@ -1509,7 +1508,7 @@ class CFDSATService
                         "rfc" => $arreglo_cfd["receptor"]["rfc"],
                     ]
                 ));
-                abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
+               // abort(500, "El RFC de la obra (" . $rfc_obra . ") no corresponde al RFC del receptor en el comprobante digital (" . $arreglo_cfd["receptor"]["rfc"] . ")");
             }
         }else{
             abort(500, "Error de lectura del archivo: ".$nombre);
