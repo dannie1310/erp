@@ -106,7 +106,7 @@
         methods: {
             getNodos(){
                 return this.$store.dispatch('cadeco/concepto/index', {
-                    params: { scope:['roots']}
+                    params: { scope:['roots', 'conceptoActivo']}
                 }).then(data => {
                     this.$store.commit('cadeco/concepto/SET_CONCEPTOS', data.data)
                     if(data.data.length === 1){

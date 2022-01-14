@@ -230,12 +230,36 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create',
-                                name: 'asignacion-proveedor-create',
-                                component: require('./components/compras/asignacion/Create').default,
+                                path: 'create/seleccionar-solicitud-compra',
+                                name: 'seleccionar-solicitud-compra',
+                                component: require('./components/compras/asignacion/SeleccionarSolicitud').default,
                                 meta: {
                                     title: 'Registrar Asignación de Proveedores',
                                     breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_asignacion_proveedor'
+                                }
+                            },
+                            {
+                                path: ':id_solicitud/create',
+                                name: 'asignacion-create',
+                                component: require('./components/compras/asignacion/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Cotización',
+                                    breadcrumb: { parent: 'asignacion-proveedor', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_asignacion_proveedor'
+                                }
+                            },
+                            {
+                                path: 'createLayout',
+                                name: 'asignacion-proveedor-layout-create',  
+                                component: require('./components/compras/asignacion/CreateLayout').default,
+                                props:true,
+                                meta: {
+                                    title: 'Registrar Asignación de Proveedores Layout',
+                                    breadcrumb: { parent: 'asignacion-proveedor-create', name: 'REGISTRAR LAYOUT'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_asignacion_proveedor'
                                 }
@@ -944,6 +968,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id_contrato/asignacion-contratista/layoutCreate',
+                                name: 'asignacion-contratista-layout-create',
+                                component: require('./components/contratos/asignacion-contratista/CreateLayout').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Asignación Contratistas Layout',
+                                    breadcrumb: { parent: 'asignacion-contratista-selecciona-contrato-proyectado', name: 'REGISTRAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_asignacion_contratista']
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -1124,7 +1160,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create/seleccionar_contrato_proyectado',
+                                path: 'create/seleccionar_contrato_proyectado',  
                                 name: 'asignacion-contratista-selecciona-contrato-proyectado',
                                 component: require('./components/contratos/asignacion-contratista/SeleccionaContratoProyectado').default,
                                 meta: {

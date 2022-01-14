@@ -50,7 +50,7 @@ class Concepto extends Model
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new ActivoScope);
+        // static::addGlobalScope(new ActivoScope);
         static::addGlobalScope(new ObraScope);
     }
 
@@ -335,6 +335,10 @@ class Concepto extends Model
     public function scopeActivo($query)
     {
         return $query->where('estado', '=', 0);
+    }
+
+    public function scopeConceptoActivo($query){
+        return $query->where('activo', '=', 1);
     }
 
     public function cuentaConcepto()
