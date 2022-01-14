@@ -108,4 +108,12 @@ class ContratoProyectadoController extends Controller
     {
         return $this->service->getComparativaCotizaciones($request->all(),$id);
     }
+
+    public function descargaLayoutAsignacion($id){
+        return $this->service->getLayoutAsignacion($id);
+    }
+
+    public function procesaLayoutAsigancion(Request $request){
+        return $this->service->procesaLayoutAsigancion($request->all());
+    }
 }

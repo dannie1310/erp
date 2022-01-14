@@ -944,6 +944,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id_contrato/asignacion-contratista/layoutCreate',
+                                name: 'asignacion-contratista-layout-create',
+                                component: require('./components/contratos/asignacion-contratista/CreateLayout').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Asignación Contratistas Layout',
+                                    breadcrumb: { parent: 'asignacion-contratista-selecciona-contrato-proyectado', name: 'REGISTRAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_asignacion_contratista']
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'proyectado-documentos',
                                 component: require('./components/globals/archivos/Files').default,
