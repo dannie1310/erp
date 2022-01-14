@@ -434,7 +434,7 @@ class SolicitudAutorizacionAvance extends Transaccion
     {
         $datos = [];
         $i = 0;
-        $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()->where('vigencia', 1)->get();
+        $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()->where('tipo_obra','!=',2)->get();
         foreach ($configuracion_obra as $proyecto)
         {
             DB::purge('cadeco');
