@@ -51,7 +51,7 @@
             getRootNodes() {
                 let self = this
                 return self.$store.dispatch('cadeco/concepto/index', {
-                    params: { scope: 'nivel:' + this.nivel_id }
+                    params: { scope: ['nivel:' + this.nivel_id, 'conceptoActivo'] }
                 })
                     .then(data => {
                         self.rootNodes = data.data.map(concepto => ({
@@ -66,7 +66,7 @@
             loadOptions({ action, parentNode, callback }) {
                 return this.$store.dispatch('cadeco/concepto/find',{
                     id: parentNode.id,
-                    params: { include: 'hijos', scope: this.scope }
+                    params: { include: 'hijos', scope: this.scp_find }
                 })
                     .then(data => {
                         parentNode.children = data.hijos.data.map(concepto => ({
@@ -91,6 +91,13 @@
                     return Array.isArray(this.scope) ? [...this.scope, 'roots'] : [this.scope, 'roots']
                 } else {
                     return 'roots'
+                }
+            },
+            scp_find() {
+                if (this.scope) {
+                    return Array.isArray(this.scope) ? [...this.scope, 'conceptoActivo'] : [this.scope, 'conceptoActivo']
+                } else {
+                    return ['conceptoActivo']
                 }
             }
         }
