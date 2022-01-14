@@ -91,4 +91,12 @@ class SolicitudCompraController extends Controller
     {
         return $this->service->getCuerpoCorreo($id);
     }
+
+    public function descargaLayoutAsignacion($id){
+        return $this->service->getLayoutAsignacion($id);
+    }
+
+    public function procesarLayoutAsignacion(Request $request){
+        return $this->service->procesarLayoutAsignacion($request->all());
+    }
 }

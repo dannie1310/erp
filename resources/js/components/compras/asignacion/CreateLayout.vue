@@ -1,52 +1,22 @@
 <template>
     <span>
-        <div class="card" v-if="cargando">
-            <div class="card-body">
-                <div class="row" >
-                    <div class="col-md-12">
-                        <div class="spinner-border text-success" role="status">
-                            <span class="sr-only">Cargando...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row" v-if="data">
+        <div class="row">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-12">
-                                <tabla-datos-solicitud-compra v-bind:solicitud_compra="solicitud_compra"></tabla-datos-solicitud-compra>
-                            </div>
-                            
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-12" v-for="cotizacion in data.cotizaciones" v-if="cotizacion.partidas_asignadas">
                                 <div class="col-12 table-responsive">
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th colspan="6" rowspan="4" class="text-left"><h5></h5></th>
+                                                <th colspan="12" class="text-left"><b>[{{cotizacion.folio_format}}] {{ cotizacion.razon_social }}</b></th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="6" >
-                                                    <select
-                                                        type="text"
-                                                        name="id_empresa"
-                                                        data-vv-as="Razón Social"
-                                                        class="form-control"
-                                                        id="id_empresa"
-                                                        v-model="id_empresa">
-                                                        <option v-for="cotizacion in data.cotizaciones" :value="cotizacion.id_transaccion">[{{cotizacion.folio_format}}] {{ cotizacion.razon_social }}</option>
-                                                    </select>
-                                                </th>
+                                                <th colspan="12" class="text-left">{{cotizacion.sucursal}}</th>
                                             </tr>
                                             <tr class="bg-gray-light">
-                                                <th colspan="6" >{{data.cotizaciones[id_empresa].sucursal}}</th>
-                                            </tr>
-                                            <tr class="bg-gray-light">
-                                                <th colspan="6"  >{{data.cotizaciones[id_empresa].direccion}}</th>
+                                                <th colspan="12" class="text-left">{{cotizacion.direccion}}</th>
                                             </tr>
                                             <tr>
                                                 <th>#</th>
@@ -65,44 +35,24 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(item, i) in data.items" v-if="item.item_pendiente">
-                                                <td>{{ i+1}}</td>
-                                                <td :title="item.descripcion">{{item.descripcion_corta}}</td>
-                                                <td>{{item.unidad}}</td>
-                                                <td class="align_right">{{item.cantidad_solicitada}}</td>
-                                                <td class="align_right">{{item.cantidad_asignada}}</td>
-                                                <td class="align_right">{{item.cantidad_disponible}}</td>
-                                                <td class="align_right" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.cotizaciones[id_empresa].partidas[i]">{{data.cotizaciones[id_empresa].partidas[i].precio_unitario_format}}</td><td v-else></td>
-                                                <td class="align_right" v-if="data.cotizaciones[id_empresa].partidas[i]" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``">{{data.cotizaciones[id_empresa].partidas[i].descuento}}</td><td v-else></td>
-                                                <td class="align_right" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.cotizaciones[id_empresa].partidas[i]">${{data.cotizaciones[id_empresa].partidas[i].importe}}</td><td v-else></td>
-                                                <td v-if="data.cotizaciones[id_empresa].partidas[i]" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``">{{data.cotizaciones[id_empresa].partidas[i].moneda}}</td><td v-else></td>
-                                                <td class="align_right" :class="data.cotizaciones[id_empresa].partidas[i].mejor_opcion?`mejor_opcion`:``" v-if="data.cotizaciones[id_empresa].partidas[i]">${{data.cotizaciones[id_empresa].partidas[i].importe_moneda_conversion}}</td><td v-else></td>
-                                                <td>
-                                                    <span  v-if="data.cotizaciones[id_empresa].partidas[i]">
-                                                        <input
-                                                            type="number" @change="recalcular(i)"
-                                                            :disabled="item.cantidad_disponible == 0 && data.cotizaciones[id_empresa].partidas[i].cantidad_asignada == ''"
-
-                                                            class="form-control"
-                                                            :name="`cantidad_asignada[${item.id_material}]`"
-                                                            data-vv-as="Cantidad Asignada"
-                                                            v-model="data.cotizaciones[id_empresa].partidas[i].cantidad_asignada"
-                                                            v-validate="{max_value:item.cantidad_base, min_value:0}"
-                                                            :class="{'is-invalid': errors.has(`cantidad_asignada[${item.id_material}]`)}"
-                                                            id="cantidad_asignada">
-                                                        <div class="invalid-feedback" v-show="errors.has(`cantidad_asignada[${item.id_material}]`)">{{ errors.first(`cantidad_asignada[${item.id_material}]`) }}</div>
-                                                    </span>
-                                                </td>
+                                            <tr v-for="(partida, i) in cotizacion.partidas" v-if="partida">
+                                                <td>{{ i}}</td>
+                                                <td :title="data.items[i].descripcion">{{data.items[i].descripcion_corta}}</td>
+                                                <td>{{data.items[i].unidad}}</td>
+                                                <td class="align_right">{{data.items[i].cantidad_solicitada}}</td>
+                                                <td class="align_right">{{data.items[i].cantidad_asignada}}</td>
+                                                <td class="align_right">{{data.items[i].cantidad_disponible}}</td>
+                                                <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">{{partida.precio_unitario_format}}</td><td v-else></td>
+                                                <td class="align_right" v-if="partida" :class="partida.mejor_opcion?`mejor_opcion`:``">{{partida.descuento}}</td><td v-else></td>
+                                                <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">${{partida.importe}}</td><td v-else></td>
+                                                <td v-if="partida" :class="partida.mejor_opcion?`mejor_opcion`:``">{{partida.moneda}}</td><td v-else></td>
+                                                <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">${{partida.importe_moneda_conversion}}</td><td v-else></td>
+                                                <td class="align_right" :class="partida.mejor_opcion?`mejor_opcion`:``" v-if="partida">{{partida.cantidad_asignada}}</td><td v-else></td>
+                                                
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <button type="button" @click="borrarVolumenes()" class="btn btn-default pull-right" style="margin-left:5px">Borrar los Volumenes del Proveedor</button>
-                                <button type="button" @click="cargarVolumenes()" class="btn btn-default pull-right">Cargar Todos los Volumenes a Proveedor</button>
                             </div>
                         </div>
                     </div>
@@ -172,33 +122,34 @@
                                                     Justificación
                                                 </th>
                                             </tr>
-                                            <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i] !== null && cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0">
+                                            <!-- <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i] !== null && cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0"> -->
+                                            <tr v-for="(partida, i) in cotizacion.partidas" v-if="partida && !partida.mejor_opcion">
                                                 <td>
-                                                    {{item.descripcion}}
+                                                    {{data.items[i].descripcion}}
                                                 </td>
                                                 <td>
-                                                    {{item.unidad}}
+                                                    {{data.items[i].unidad}}
                                                 </td>
                                                 <td class="td_money">
-                                                    ${{getAsignadoPrecioMC(cotizacion.partidas[i].precio_con_descuento_mn, cotizacion.partidas[i].cantidad_asignada)}}
+                                                    ${{getAsignadoPrecioMC(partida.precio_con_descuento_mn, partida.cantidad_asignada)}}
                                                 </td>
                                                 <td class="td_money">
-                                                    ${{getMejorOpcionPrecioMC(i, cotizacion.partidas[i].cantidad_asignada)}}
+                                                    ${{getMejorOpcionPrecioMC(partida.id_material, partida.cantidad_asignada)}}
                                                 </td>
                                                 <td class="td_money">
-                                                    {{getPorcentajeDiferencia(i, cotizacion.partidas[i].precio_con_descuento_mn)}} %
+                                                    {{getPorcentajeDiferencia(partida.id_material, partida.precio_con_descuento_mn)}} %
                                                 </td>
                                                 <td class="td_money">
-                                                    {{parseFloat(cotizacion.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}}
+                                                    {{parseFloat(partida.cantidad_asignada).formatMoney(2,'.',',')}}
                                                 </td>
                                                 <td>
                                                     <textarea
-                                                        :disabled="!validaPrimeraPartida(id_empresa,cotizacion.partidas[i].id_material)"
+                                                        :disabled="!validaPrimeraPartida(id_empresa,partida.id_material)"
                                                         v-on:keyup="keyupReplicarjustificacion()"
                                                         name="justificacion"
                                                         id="justificacion"
                                                         class="form-control"
-                                                        v-model="cotizacion.partidas[i].justificacion"
+                                                        v-model="partida.justificacion"
                                                         v-validate="{required: true, max:500}"
                                                         data-vv-as="Justificación"
                                                         :class="{'is-invalid': errors.has('justificacion')}"
@@ -223,25 +174,20 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
-import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSolicitudCompra";
 export default {
     name: "asignacion-proveedor-create",
-    components: {ModelListSelect, TablaDatosSolicitudCompra},
-    props:['id_solicitud', 'solicitud_compra'],
+    components: {ModelListSelect},
+    props:['data', 'id_empresa', 'id_solicitud'],
     data() {
         return {
             cargando: false,
             solicitudes:[],
-            data:null,
-            id_empresa:'',
             justificar:false,
             partidas_justificacion:[],
             replicar_justificacion:false,
         }
     },
     mounted() {
-        // this.id_empresa = Object.keys(data.cotizaciones)[0];
-        this.getCotizaciones();
     },
     computed: {
 
@@ -251,29 +197,6 @@ export default {
             this.$validator.reset();
             this.$validator.errors.clear();
             $(this.$refs.modalJustificacion).modal('hide');
-        },
-        numeroFolioFormatAndObservaciones(item){
-            return `[${item.numero_folio_format}] - [${item.observaciones}]`
-        },
-        cargarVolumenes(){
-            let self = this;
-            self.data.items.forEach(function (item, i){
-                if(item.cantidad_disponible > 0){
-                    self.data.cotizaciones[self.id_empresa].partidas[i]? self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = item.cantidad_disponible:'';
-                    item.cantidad_disponible = parseFloat(0).toFixed(4);
-                }
-            });
-        },
-        borrarVolumenes(){
-            let self = this;
-            self.data.items.forEach(function (item, i){
-                if(self.data.cotizaciones[self.id_empresa].partidas[i]){
-                    if(self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada > 0){
-                        self.data.cotizaciones[self.id_empresa].partidas[i].cantidad_asignada = '';
-                        item.cantidad_disponible = parseFloat(item.cantidad_base).toFixed(4);
-                    }
-                }
-            });
         },
         salir(){
             swal({
@@ -293,62 +216,9 @@ export default {
             })
             .then((value) => {
                 if (value) {
-                    this.$router.push({name: 'asignacion-proveedor'});
+                    this.$router.push({name: 'asignacion-proveedor-create'});
                 }
             });
-        },
-        // getSolicitudes(){
-        //     this.cargando = true;
-        //     this.solicitudes = [];
-        //     this.data = null;
-        //     return this.$store.dispatch('compras/solicitud-compra/index', {
-        //         params: {
-        //             scope: ['cotizacion', 'conComplemento', 'ultimoAnio'],
-        //             order: 'DESC',
-        //             sort: 'numero_folio'
-        //         }
-        //     })
-        //     .then(data => {
-        //         this.solicitudes = data.data;
-        //         this.cargando = false;
-        //     })
-
-        // },
-        getCotizaciones(){
-            this.cargando = true;
-            this.data = null;
-            return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
-                id: this.id_solicitud,
-                params: {}
-            })
-            .then(data => {
-                this.id_empresa = Object.keys(data.cotizaciones)[0];
-                this.data = data;
-            })
-            .finally(() => {
-                this.cargando = false;
-            })
-        },
-        recalcular(i){
-            let asignadas = 0.0;
-
-            Object.values(this.data.cotizaciones).forEach(partida =>{
-                if(partida.partidas[i] && partida.partidas[i].cantidad_asignada !== ''){
-                    asignadas = +asignadas + +partida.partidas[i].cantidad_asignada;
-                }
-            });
-
-            if(asignadas > this.data.items[i].cantidad_base){
-                if(this.data.items[i].cantidad_disponible === 0){
-                    swal('¡Aviso!', 'El insumo ya no tiene cantidad pendiente por asignar', 'warning');
-                }else{
-                    swal('¡Aviso!', 'La cantidad asignada es mayor a la pendiente por asignar.', 'warning');
-                }
-                asignadas = +asignadas - +this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada;
-                this.data.cotizaciones[this.id_empresa].partidas[i].cantidad_asignada = '';
-            }
-            this.data.items[i].cantidad_disponible = parseFloat(this.data.items[i].cantidad_base - asignadas).toFixed(4);
-
         },
         store() {
             this.cargando = true;
@@ -417,12 +287,8 @@ export default {
         },
         getMejorOpcionPrecioMC(i, ca_asig){
             let pu_mo = 0;
-            Object.values(this.data.cotizaciones).forEach(cotizacion => {
-                if(cotizacion.partidas[i].mejor_opcion){
-                    pu_mo = parseFloat(cotizacion.partidas[i].precio_con_descuento_mn) * parseFloat(ca_asig);
-                }
-            });
-            return pu_mo;
+            pu_mo = parseFloat(this.data.precios_menores[i]) * parseFloat(ca_asig);
+            return parseFloat(pu_mo).formatMoney(2,'.',',');
         },
         getAsignadoPrecioMC(p_u, c_a){
             let pu_asig = parseFloat(p_u) * parseFloat(c_a);
@@ -430,20 +296,11 @@ export default {
         },
         getPorcentajeDiferencia(i, importe_asignado){
             let p_dif = 0;
-            Object.values(this.data.cotizaciones).forEach(cotizacion => {
-                if(cotizacion.partidas[i].mejor_opcion){
-                    p_dif = ((importe_asignado - cotizacion.partidas[i].precio_con_descuento_mn) / cotizacion.partidas[i].precio_con_descuento_mn)*100;
-                }
-            });
+            p_dif = ((importe_asignado - this.data.precios_menores[i]) / this.data.precios_menores[i])*100;
             return parseFloat(p_dif).formatMoney(2,'.',',');
         },
     },
     watch:{
-        // id_solicitud(value){
-        //     if(value != ''){
-        //         // this.getCotizaciones(value);
-        //     }
-        // },
         replicar_justificacion(value){
             if(value){
                 this.keyupReplicarjustificacion();
