@@ -493,6 +493,21 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * PORTAL PROVEEDORES
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'portal-proveedor'], function ($api) {
+        $api->group(['prefix' => 'solicitud-autorizacion-avance'], function ($api) {
+            $api->get('index', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@index');
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@store');
+            $api->post('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@proveedorConceptos')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@update')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/eliminar', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('{id}/formato', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@pdfSolicitudAvanceFormato')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@registrarRetencionIva')->where(['id' => '[0-9]+']);
+        });
+    });
+
+    /**
      * CONFIGURACION
      */
     $api->group(['middleware' => 'api', 'prefix' => 'configuracion'], function ($api) {
@@ -1125,7 +1140,6 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@cargaLayout');
-
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
              */
@@ -1165,7 +1179,9 @@ $api->version('v1', function ($api) {
             $api->delete('{id}','App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@pdf')->where(['id' => '[0-9]+']);
             $api->get('{id_subcontrato}/descargar-layout-cambios-precio-volumen', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@descargarLayoutCambiosPrecioVolumen')->where(['id' => '[0-9]+']);
-
+            $api->get('/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@indexSinContexto');
+            $api->patch('{id}/sinContexto', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@showSinContexto')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/proveedorConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptosProveedor')->where(['id' => '[0-9]+']);
         });
 
         /**
@@ -1320,6 +1336,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'estimacion'], function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@store');
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@index');
+            $api->post('/proveedor', 'App\Http\Controllers\v1\CADECO\Finanzas\ConfiguracionEstimacionController@indexSinContexto');
         });
 
         /**

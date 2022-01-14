@@ -35,7 +35,6 @@ export default {
                     })
             });
         },
-
         find (context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -49,7 +48,6 @@ export default {
                     })
             });
         },
-
         ordenarConceptos (context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -168,6 +166,45 @@ export default {
                     buttons: false
                 })
             }
+        },
+        indexSinContexto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI+'proveedor', { params: payload.params })
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data.data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        findSinContexto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI+payload.id+'/sinContexto', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+        proveedorConceptos (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id+'/proveedorConceptos', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
         },
     },
 

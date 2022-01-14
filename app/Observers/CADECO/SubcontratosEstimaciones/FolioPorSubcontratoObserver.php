@@ -19,6 +19,8 @@ class FolioPorSubcontratoObserver
      */
     public function creating(FolioPorSubcontrato $folioPorSubcontrato)
     {
-        $folioPorSubcontrato->IDObra = Context::getIdObra();
+        if (!is_null(Context::getIdObra())) {
+            $folioPorSubcontrato->IDObra = Context::getIdObra();
+        }
     }
 }
