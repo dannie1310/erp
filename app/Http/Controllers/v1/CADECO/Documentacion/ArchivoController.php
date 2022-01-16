@@ -58,7 +58,7 @@ class ArchivoController extends Controller
     }
 
     public function cargarArchivoSC(Request $request){
-        $archivo = $this->service->cargarArchivo($request->all());
+        $archivo = $this->service->cargarArchivo($request->all(), 1);
         return $this->respondWithItem($archivo);
     }
 
