@@ -6,7 +6,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <Upload v-if="id != undefined" v-bind:id="id" v-bind:permiso="permiso" v-bind:global="global" v-bind:base_datos="base_datos" v-bind:id_obra="id_obra"></Upload>
-                            <upload-archivo-invitacion v-else v-bind:id = "id_invitacion" v-bind:permiso="permiso" v-bind:global="global" ></upload-archivo-invitacion>
+                            <upload-archivo-invitacion v-else-if="global != true" v-bind:id = "id_invitacion" v-bind:permiso="permiso" v-bind:global="global" ></upload-archivo-invitacion>
                         </div>
                     </div>
                     <div class="row">

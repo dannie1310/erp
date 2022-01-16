@@ -119,7 +119,7 @@ export default {
         getTiposArchivo(context, payload){
             return new Promise((resolve, reject) => {
                 axios
-                    .get(URI + payload.id+ '/tipos-archivo', {params: payload.params})
+                    .get(URI + payload.params.id+ '/tipos-archivo', {params: payload.params})
                     .then(r => r.data)
                     .then(data => {
                         resolve(data);

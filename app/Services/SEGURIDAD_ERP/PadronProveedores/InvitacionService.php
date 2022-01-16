@@ -808,6 +808,8 @@ class InvitacionService
             $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
             $archivo_registrar['observaciones'] = $archivo["observaciones"];
             $archivo_registrar['id_invitacion'] = $id_invitacion;
+            $archivo_registrar['de_invitacion'] = 1;
+            $archivo_registrar['de_envio'] = 0;
             $archivo_registrar['usuario_registro'] = auth()->id();
             $archivos[] = $this->registraArchivo($archivo_registrar);
             $i++;
