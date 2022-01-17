@@ -16,7 +16,7 @@ class FacturaRepositorioTransformer extends TransformerAbstract
     public function transform(FacturaRepositorio $model) {
         return [
             'id' => (int) $model->id,
-            'base_datos' =>$model->proyecto->base_datos,
+            'base_datos' =>($model->proyecto)?$model->proyecto->base_datos:"",
             'obra'=>$model->obra,
             'fecha_hora_carga_format'=>$model->fecha_hora_registro_format
         ];
