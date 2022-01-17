@@ -2,14 +2,13 @@
 
 namespace App\Notifications;
 
-use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\PortalProveedores\InvitacionCotizarFormato;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class NotificacionInvitacionCotizar extends Notification
+class NotificacionInvitacionCotizarCopiados extends Notification
 {
     use Queueable;
     public $invitacion;
@@ -54,7 +53,7 @@ class NotificacionInvitacionCotizar extends Notification
         $pdf = new InvitacionCotizarFormato($this->invitacion);
         return (new MailMessage)
             ->subject($titulo)
-            ->view('emails.invitacion_cotizar',["invitacion"=>$this->invitacion])
+            ->view('emails.invitacion_cotizar_copiados',["invitacion"=>$this->invitacion])
             ->attachData($pdf->Output("S",$titulo . " ".$this->invitacion->transaccionAntecedente->numero_folio.".pdf"), $titulo . ' '.$this->invitacion->transaccionAntecedente->numero_folio.'.pdf',['mime' => 'application/pdf']);
     }
 

@@ -24,13 +24,23 @@ class InvitacionArchivoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'tipo_archivo' => $model->id_tipo_archivo,
-            'registro' => $model->registro,
-            'fecha_registro_format' => $model->fecha_registro_format,
+            'tipo_archivo_txt' => $model->tipo_archivo_txt,
+            'categoria' => '',
             'nombre' => $model->nombre,
-            'estatus' => $model->estatus,
             'extension' => $model->extension,
-            'observaciones' => $model->observaciones
+            'observaciones' => $model->observaciones,
+            'observaciones_format' => $model->observaciones_format,
+            'descripcion' => $model->descripcion,
+            'estatus' => $model->estatus,
+            'registro' => $model->registro,
+            'tamanio' => $model->tamanio_format,
+            'fecha_registro_format' => $model->fecha_registro_format,
+            'tipo_transaccion' => "Invitación a ".$model->invitacion->tipo_invitacion,
+            'folio_transaccion' => $model->invitacion->numero_folio_format,
+            'observaciones_transaccion' => $model->invitacion->observaciones,
+            'icono_transaccion' => $model->invitacion->icono,
+            'id_transaccion' => $model->invitacion->id,
+            'eliminable' => ($model->usuario_registro == auth()->user()->idusuario) ? 1 : 0,
         ];
     }
 
@@ -38,7 +48,7 @@ class InvitacionArchivoTransformer extends TransformerAbstract
     {
         if($item = $model->tipo)
         {
-            return $this->item($item, new CtgTipoArchivoTransformer);
+            return $this->item($item, new CtgTipoArchivoInvitacionTransformer);
         }
         return null;
     }

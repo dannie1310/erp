@@ -36,7 +36,8 @@ class InvitacionTransformer extends TransformerAbstract
         'cotizacionCompra',
         'contrato',
         'presupuesto',
-        'presupuesto_proveedor'
+        'presupuesto_proveedor',
+        'archivos_requeridos'
     ];
 
     public function transform(Invitacion $model)
@@ -217,6 +218,19 @@ class InvitacionTransformer extends TransformerAbstract
         if($presupuesto = $model->getPresupuesto())
         {
             return $this->item($presupuesto, new PresupuestoProveedorTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param Invitacion $model
+     * @return \League\Fractal\Resource\Item|null
+     */
+    public function includeArchivosRequeridos(Invitacion $model)
+    {
+        if($collection = $model->archivosRequeridos)
+        {
+            return $this->collection($collection, new InvitacionArchivoTransformer);
         }
         return null;
     }

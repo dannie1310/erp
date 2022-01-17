@@ -20,7 +20,7 @@ class EnvioCotizacion
     {
         $this->invitacion = $invitacion;
         $this->cotizacion = $cotizacion;
-        $this->tipo = 10;
+        $this->tipo = 12;
     }
 
     /**

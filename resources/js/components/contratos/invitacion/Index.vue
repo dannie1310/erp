@@ -38,7 +38,7 @@
                     { title: 'Proveedor Invitado', field: 'razon_social', sortable: false },
                     { title: 'Usuario Invitó', field: 'usuario_invito', sortable: true },
                     { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default},
-                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c80',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', tdClass: 'td_c100',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -123,7 +123,7 @@
                     self.$data.data = []
                     self.$data.data = invitaciones.map((invitacion, i) => ({
                         index: (i + 1) + self.query.offset,
-                        razon_social:invitacion.usuario_invitado,
+                        razon_social:invitacion.nombre_usuario_invitado,
                         id: invitacion.numero_folio_format,
                         numero_folio_contrato: invitacion.transaccion.numero_folio_format,
                         fecha_hora_invitacion: invitacion.fecha_format,

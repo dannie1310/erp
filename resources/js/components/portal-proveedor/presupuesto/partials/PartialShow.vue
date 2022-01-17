@@ -29,7 +29,6 @@
                                 <th class="cantidad_input">Moneda</th>
                                 <th v-if="multiples_monedas" class="cantidad_input">Precio Total Pesos (MXN)</th>
                                 <th>Observaciones</th>
-                                <th class="destino">Destino</th>
                             </tr>
                         </thead>
                         <tbody v-for="(concepto, i) in presupuesto.contratos">
@@ -42,7 +41,6 @@
                                 <td></td>
                                 <td></td>
                                 <td ></td>
-                                <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
@@ -63,7 +61,6 @@
                                 <td>{{concepto.moneda}}</td>
                                 <td style="text-align: right" v-if="multiples_monedas">{{concepto.total_despues_descuento_partida_mc_format}}</td>
                                 <td>{{concepto.observaciones}}</td>
-                                <td :title="concepto.path" style="text-decoration: underline">{{ concepto.path_corta }}</td>
                             </tr>
                         </tbody>
                         <tfoot>
@@ -444,7 +441,7 @@
                 return this.$store.dispatch('padronProveedores/invitacion/find', {
                     id: this.id,
                     params: {
-                        include: ['presupuesto_proveedor','formato_cotizacion'],
+                        include: ['presupuesto_proveedor','formato_cotizacion', 'archivos_requeridos'],
                         scope: ['invitadoAutenticado']
                     }
                 }).then(data => {

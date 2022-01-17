@@ -134,6 +134,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_ARCHIVOS_TRANSACCIONES')),
         ],
+        'archivos_invitaciones' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_ARCHIVOS_INVITACIONES')),
+        ],
         'polizas_pdf' =>[
             'driver' => 'local',
             'root' => storage_path(env('STORAGE_CONTABILIDAD_GENERAL_POLIZAS')),

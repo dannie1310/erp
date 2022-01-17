@@ -18,9 +18,16 @@
                         <encabezado-contrato-proyectado v-bind:contrato_proyectado="contrato"></encabezado-contrato-proyectado>
                     </div>
                 </div>
+                <div class="row" style="margin-bottom: 5px">
+                    <div class="col-md-6">
+                        <span><i class="fa fa-envelope"></i>Destinatarios de Invitación</span>
+                    </div>
+                    <div class="col-md-6">
+                        <button  type="button" class="btn btn-sm btn-outline-secondary pull-right" title="Editar Solicitud" @click="toggleCC" > <i class="fa fa-users"></i>CC</button>
+                    </div>
+                </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <span><i class="fa fa-envelope"></i>Destinatarios de Invitación</span>
                         <table class="table  table-sm table-bordered">
                             <tr>
                                 <th class="encabezado index_corto">
@@ -32,7 +39,7 @@
                                 <th class="encabezado c350">
                                     Proveedor
                                 </th>
-                                <th class="encabezado c250" >
+                                <th class="encabezado c200" >
                                     Sucursal
                                 </th>
                                 <th class="encabezado" >
@@ -40,6 +47,9 @@
                                 </th>
                                 <th class="encabezado" >
                                     Contacto
+                                </th>
+                                <th class="encabezado" v-if="con_copia == 1">
+                                    Con Copia
                                 </th>
                                 <th class="encabezado icono">
                                     <button type="button" class="btn btn-sm btn-outline-success" @click="agregarDestinatario" :disabled="cargando">
@@ -133,6 +143,15 @@
                                     />
                                     <div style="display:block" class="invalid-feedback" v-show="errors.has(`contacto_${i}`)">{{ errors.first(`contacto_${i}`) }}</div>
                                 </td>
+                                <td v-if="con_copia == 1">
+                                    <textarea
+                                        :name="`cc_${i}`"
+                                        :id="`cc_${i}`"
+                                        v-model="destinatario.cc"
+                                        type="text"
+                                        class="form-control"
+                                    />
+                                </td>
                                 <td style="text-align: center">
                                     <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="destinatarios.length == 1" >
                                         <i class="fa fa-trash"></i>
@@ -215,37 +234,150 @@
                     </div>
                 </div>
                 <br>
-
-                <div class="row" v-if="contrato">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label for="carta_terminos">Carta de Términos y Condiciones:</label>
-                            <input type="file" class="form-control" id="carta_terminos"
-                               @change="onFileChange"
-                               v-validate="{required:true, ext: ['pdf'],  size: 102400}"
-                               name="carta_terminos"
-                               data-vv-as="Carta de Términos y Condiciones"
-                               ref="carta_terminos"
-                               :class="{'is-invalid': errors.has('carta_terminos')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('carta_terminos')">{{ errors.first('carta_terminos') }} (pdf)</div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div >
+                            <div>
+                                <label class="col-form-label"><span><i class="fa fa-files-o"></i>Archivos Adjuntos</span></label>
+                            </div>
+                            <div>
+                                <div class="form-group error-content" >
+                                    <input type="file" class="form-control" id="archivo" @change="onFileChange" multiple="multiple"
+                                           row="3"
+                                           v-validate="{ }"
+                                           name="archivos"
+                                           data-vv-as="Archivos a Enviar"
+                                           ref="archivos"
+                                           :class="{'is-invalid': errors.has('archivos')}"
+                                    >
+                                    <div class="invalid-feedback" v-show="errors.has('archivos')">{{ errors.first('archivos') }}</div>
+                                </div>
+                            </div>
                         </div>
+
+
+
+                        <table class="table  table-sm table-bordered" v-if="names.length>0">
+                            <tr>
+                                <th class="encabezado index_corto">
+                                    #
+                                </th>
+
+                                <th class="encabezado">
+                                    Nombre de Archivo
+                                </th>
+                                <th class="encabezado c300" >
+                                    Tipo
+                                </th>
+                                <th class="encabezado c250" >
+                                    Observaciones
+                                </th>
+                                <th class="encabezado icono">
+
+                                </th>
+                            </tr>
+
+                            <tr v-for="(archivo, i) in this.archivos">
+                                <td>{{i+1}}</td>
+
+                                <td>
+                                    {{archivo.nombre}}
+                                </td>
+                                <td>
+                                    <model-list-select
+                                        :id="`tipo_archivo_${i}`"
+                                        :name="`tipo_archivo_${i}`"
+                                        option-value="id"
+                                        option-text="descripcion"
+                                        v-model="archivo.tipo"
+                                        :list="tipos_archivo_enviar"
+                                        :isError="archivo.errores_tipo">
+                                        :placeholder="!cargando?'Seleccionar tipo de archivo':'Cargando...'">
+                                    </model-list-select>
+                                </td>
+                                <td>
+                                    <textarea
+                                        :id="`observaciones_${i}`"
+                                        :name="`observaciones_${i}`"
+                                        class="form-control"
+                                        v-model="archivo.observaciones"
+                                        :data-vv-as="`Observaciones ${i+1}`"
+                                        :class="{'is-invalid': archivo.errores_observacion}"
+                                        rows="1"
+                                    ></textarea>
+                                </td>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarArchivo(i)" :disabled="archivos.length == 1" >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
                     </div>
-                     <div class="col-md-6">
-                         <div class="form-group">
-                            <label for="carta_terminos">Formato de Presupuesto:</label>
-                            <input type="file" class="form-control" id="formato_cotizacion"
-                                   @change="onFileChange"
-                                   v-validate="{ext: ['docx'],  size: 102400}"
-                                   name="formato_cotizacion"
-                                   data-vv-as="Formato de Cotización"
-                                   ref="formato_cotizacion"
-                                   :class="{'is-invalid': errors.has('formato_cotizacion')}"
-                            >
-                            <div class="invalid-feedback" v-show="errors.has('formato_cotizacion')">{{ errors.first('formato_cotizacion') }} (docx)</div>
-                         </div>
+                </div>
+
+                <br>
+
+                <div class="row">
+                    <div class="col-md-12 table-responsive">
+                        <span><label><i class="fa fa-files-o"></i>Archivos a Solicitar</label></span>
+                        <table class="table table-sm table-bordered">
+                            <tr>
+                                <th class="encabezado index_corto">
+                                    #
+                                </th>
+                                <th class="encabezado c300">
+                                    Tipo
+                                </th>
+                                <th class="encabezado">
+                                    Observaciones
+                                </th>
+                                <th class="encabezado icono">
+                                    <button type="button" class="btn btn-sm btn-outline-success" @click="agregarArchivoSolicitar" :disabled="cargando">
+                                        <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                        <i class="fa fa-plus" v-else></i>
+                                    </button>
+                                </th>
+                            </tr>
+
+                            <tr v-for="(archivo_solicitar, i) in this.archivos_solicitar">
+                                <td>{{i+1}}</td>
+                                <td >
+                                    <model-list-select
+                                        :id="`tipo_archivo_solicitar_${i}`"
+                                        :name="`tipo_archivo_solicitar_${i}`"
+                                        option-value="id"
+                                        option-text="descripcion"
+                                        v-model="archivo_solicitar.tipo"
+                                        :list="tipos_archivo_solicitar"
+                                        v-validate="{required:true}"
+                                        :isError="errors.has(`tipo_archivo_solicitar_${i}`)">
+                                        :placeholder="!cargando?'Seleccionar tipo de archivo':'Cargando...'">
+                                    </model-list-select>
+                                </td>
+                                <td>
+                                    <textarea
+                                        :id="`observaciones_solicitar_${i}`"
+                                        :name="`observaciones_solicitar_${i}`"
+                                        class="form-control"
+                                        rows="1"
+                                        v-model="archivo_solicitar.observaciones"
+                                        v-validate="{required:(archivo_solicitar.tipo == 14)?true:false}"
+                                        :data-vv-as="`Observaciones ${i+1}`"
+                                        :class="{'is-invalid': errors.has(`observaciones_solicitar_${i}`)}"
+                                    ></textarea>
+                                </td>
+                                <td style="text-align: center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarArchivoSolicitar(i)"  >
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </table>
+
                     </div>
-                 </div>
+                </div>
             </div>
             <div class="card-footer">
                 <div class="row" v-if="contrato">
@@ -374,10 +506,6 @@ export default {
             direccion_entrega : '',
             ubicacion_entrega_plataforma_digital : '',
             fechasDeshabilitadas: {},
-            archivo_carta_terminos_condiciones:'',
-            nombre_archivo_carta_terminos_condiciones:'',
-            archivo_formato_cotizacion:'',
-            nombre_archivo_formato_cotizacion:'',
             cuerpo_correo:'',
             usuarios_cargados : 0,
             sin_coincidencia_proveedor : 0,
@@ -393,9 +521,24 @@ export default {
                     'sucursales_cargadas' : 0,
                     'id_proveedor_seleccionado' : '',
                     'id_sucursal_seleccionada' : '',
-                    'proveedor' : null
+                    'proveedor' : null,
+                    'cc' : "",
                 }
-            ]
+            ],
+            files : [],
+            names : [],
+            archivos :[],
+            archivos_solicitar : [
+                {
+                    'tipo':null,
+                    'observaciones':''
+                }
+            ],
+            tipos_archivo_enviar : [],
+            tipos_archivo_enviados : [],
+            tipos_archivo_solicitar : [],
+            archivo : '',
+            con_copia : 0,
         }
     },
     mounted() {
@@ -436,8 +579,42 @@ export default {
                 this.cuerpo_correo = data;
             })
             .finally(()=>{
-                this.cargando = false;
+                this.getTiposArchivoEnviar();
             })
+        },
+        getTiposArchivoEnviar(){
+            this.cargando = true;
+            return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
+                params:{
+                    tipo : [1,3],
+                    area: [2,3],
+                    sort: 'descripcion',
+                    order: 'ASC'
+                }
+            })
+            .then(data => {
+                this.tipos_archivo_enviar = data;
+            })
+            .finally(()=>{
+                this.getTiposArchivoSolicitar();
+            })
+        },
+        getTiposArchivoSolicitar(){
+            this.cargando = true;
+            return this.$store.dispatch('contratos/invitacion/getTiposArchivo', {
+                params:{
+                    tipo : [2,3],
+                    area: [2,3],
+                    sort: 'descripcion',
+                    order: 'ASC'
+                }
+            })
+                .then(data => {
+                    this.tipos_archivo_solicitar = data;
+                })
+                .finally(()=>{
+                    this.cargando = false;
+                })
         },
         agregarDestinatario(){
             var array = {
@@ -450,12 +627,29 @@ export default {
                 'sucursales_cargadas' : 0,
                 'id_proveedor_seleccionado' : '',
                 'id_sucursal_seleccionada' : '',
-                'proveedor' : null
+                'proveedor' : null,
+                'cc':""
             }
             this.destinatarios.push(array);
         },
+        agregarArchivoSolicitar()
+        {
+            var array = {
+                'id_tipo' : null,
+                'observaciones' : ''
+            }
+            this.archivos_solicitar.push(array);
+        },
         quitarDestinatario(index){
             this.destinatarios.splice(index, 1);
+        },
+        quitarArchivo(index){
+            this.archivos.splice(index, 1);
+            this.files.splice(index, 1);
+            this.names.splice(index, 1);
+        },
+        quitarArchivoSolicitar(index){
+            this.archivos_solicitar.splice(index, 1);
         },
         razonSocialRFC (item)
         {
@@ -490,14 +684,8 @@ export default {
             this.post.fecha_cierre = null;
             this.post.direccion_entrega = null;
             this.post.ubicacion_entrega_plataforma_digital = null;
-            this.post.archivo_carta_terminos_condiciones = null;
-            this.post.nombre_archivo_carta_terminos_condiciones = null;
-            this.post.archivo_formato_cotizacion = null;
-            this.post.nombre_archivo_formato_cotizacion = null;
             this.post.requerir_fichas_tecnicas = null;
 
-
-            //this.id_contrato;
             this.id_proveedor = null;
             this.id_sucursal = null;
             this.observaciones = null;
@@ -517,7 +705,8 @@ export default {
                     'sucursales_cargadas' : 0,
                     'id_proveedor_seleccionado' : '',
                     'id_sucursal_seleccionada' : '',
-                    'proveedor' : null
+                    'proveedor' : null,
+                    'cc':""
                 }
             ];
             this.id_usuario = '';
@@ -534,8 +723,26 @@ export default {
         enviar()
         {
             let _self = this;
+
+            let errores = 0;
+            this.archivos.forEach(function(archivo, i) {
+                if(archivo.tipo == 14 && (archivo.observaciones) == "")
+                {
+                    archivo.errores_observacion = true;
+                    errores ++;
+                } else{
+                    archivo.errores_observacion = false;
+                }
+                if(archivo.tipo == null){
+                    archivo.errores_tipo = true;
+                    errores ++;
+                }else{
+                    archivo.errores_tipo = false;
+                }
+            });
+
             this.$validator.validate().then(result => {
-                if (result) {
+                if (result && errores == 0) {
 
                     let correos = [];
                     _self.destinatarios.forEach(function (destinatario, i) {
@@ -543,7 +750,6 @@ export default {
                             correos.push(destinatario.correo);
                         }
                     });
-
                     if (correos.length > 0 && _self.usuarios_cargados == 0) {
                         return this.$store.dispatch('igh/usuario/findPorCorreos', {
                             config: {sort: 'usuario',  order: 'asc'},
@@ -560,7 +766,6 @@ export default {
                                     this.store();
                                 }
                             });
-
                     }else {
                         this.store();
                     }
@@ -573,24 +778,17 @@ export default {
             this.$validator.validate().then(result => {
                 if (result) {
                     _self.post.id_transaccion = _self.id_contrato;
-                    /*_self.post.id_proveedor = _self.id_proveedor;
-                    _self.post.id_sucursal = _self.id_sucursal;
-                    _self.post.id_usuario = _self.id_usuario;
-                    _self.post.proveedor_en_catalogo = _self.proveedor_en_catalogo;
-                    _self.post.correo = _self.correo;
-                    _self.post.contacto = _self.contacto;*/
                     _self.post.observaciones = _self.observaciones;//
                     _self.post.fecha_cierre = _self.fecha_cierre;//
                     _self.post.direccion_entrega = _self.direccion_entrega;//
                     _self.post.ubicacion_entrega_plataforma_digital = _self.ubicacion_entrega_plataforma_digital;//
-                    _self.post.archivo_carta_terminos_condiciones = _self.archivo_carta_terminos_condiciones;//
-                    _self.post.nombre_archivo_carta_terminos_condiciones = _self.nombre_archivo_carta_terminos_condiciones;//
-                    _self.post.archivo_formato_cotizacion = _self.archivo_formato_cotizacion;//
-                    _self.post.nombre_archivo_formato_cotizacion = _self.nombre_archivo_formato_cotizacion;//
                     _self.post.cuerpo_correo = _self.cuerpo_correo;//
                     _self.post.requiere_fichas_tecnicas = _self.requiere_fichas_tecnicas;//
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.usuarios = _self.usuarios;
+                    _self.post.archivos_solicitar = _self.archivos_solicitar;
+                    _self.post.archivos = _self.archivos;
+                    _self.post.files = _self.files;
 
                     return this.$store.dispatch('compras/invitacion/store', _self.post)
                         .then((data) => {
@@ -604,36 +802,33 @@ export default {
         formatoFecha(date){
             return moment(date).format('DD/MM/YYYY');
         },
-        createImage(file, tipo) {
+
+        createImage(file) {
             var reader = new FileReader();
             var vm = this;
 
             reader.onload = (e) => {
-                if(tipo == "carta_terminos")
-                {
-                    vm.archivo_carta_terminos_condiciones = e.target.result;
-                }
-                if(tipo== 'formato_cotizacion')
-                {
-                    vm.archivo_formato_cotizacion = e.target.result;
-                }
+                vm.archivo = e.target.result;
+                vm.files.push(e.target.result);
             };
             reader.readAsDataURL(file);
         },
         onFileChange(e){
-            this.file = null;
             var files = e.target.files || e.dataTransfer.files;
             if (!files.length)
                 return;
+            let _self = this;
 
-            if(e.target.id == 'carta_terminos') {
-                this.nombre_archivo_carta_terminos_condiciones = files[0].name;
+            for(let i=0; i<files.length; i++) {
+                if(!this.names.includes(files[i].name))
+                {
+                    this.archivo_name = files[i].name;
+                    this.createImage(files[i]);
+                    this.names.push(files[i].name);
+                    this.archivos.push({nombre:files[i].name, tipo:null, observaciones:"", errores_tipo: false, errores_observacion : false});
+                }
             }
-            if(e.target.id == 'formato_cotizacion')
-            {
-                this.nombre_archivo_formato_cotizacion = files[0].name;
-            }
-            this.createImage(files[0], e.target.id);
+            this.$refs.archivos.value = '';
         },
         cambiaSucursal(destinatario)
         {
@@ -661,6 +856,13 @@ export default {
         toggleSinCoincidenciaProveedor(usuario){
             if(usuario.sin_coincidencia_proveedor == 1){
                 usuario.id_usuario = null;
+            }
+        },
+        toggleCC(){
+            if(this.con_copia == 1){
+                this.con_copia = 0;
+            }else{
+                this.con_copia = 1;
             }
         }
     },
@@ -691,55 +893,12 @@ export default {
                             destinatario.contacto = '';
                             destinatario.id_proveedor_seleccionado = destinatario.proveedor.id;
                             destinatario.sucursales_cargadas = 1;
-                        } /*else if(destinatario.sucursales.length > 1 &&  destinatario.id_sucursal != destinatario.id_sucursal_seleccionada){
-                            var busqueda_sucursal = destinatario.sucursales.find(x=>x.id === destinatario.id_sucursal);
-                            if(busqueda_sucursal  != undefined){
-                                destinatario.correo = busqueda_sucursal.email+'6';
-                                destinatario.contacto = busqueda_sucursal.contacto+'6';
-                            }
-                        }*/
+                        }
                     }
                 });
             },
             deep: true
         },
-       /* id_proveedor(value){
-            this.id_sucursal = null;
-            if(value !== '' && value !== null && value !== undefined){
-                var busqueda = this.proveedores.find(x=>x.id === value);
-                this.sucursales = busqueda.sucursales.data;
-                this.sucursal = (busqueda.sucursales.data.length) ? true : false;
-                if(this.sucursales.length == 1){
-                    this.id_sucursal = this.sucursales[0].id;
-                    this.correo = busqueda.email;
-                    this.contacto = busqueda.contacto;
-                }
-            }
-        },
-        id_sucursal(value){
-            this.correo = '';
-            this.contacto = '';
-            if(value !== '' && value !== null && value !== undefined){
-                var busqueda = this.sucursales.find(x=>x.id === value);
-                this.correo = busqueda.email;
-                this.contacto = busqueda.contacto;
-            }
-        },
-        proveedor_en_catalogo(value){
-            if(value == 1){
-
-            } else {
-                this.id_sucursal = null;
-                this.id_proveedor = null;
-            }
-        },
-        sin_coincidencia_proveedor(value){
-            if(value == 1){
-                this.id_usuario = '';
-            } else {
-
-            }
-        },*/
     }
 }
 </script>

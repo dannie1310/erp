@@ -4,6 +4,9 @@
         <router-link  :to="{ name: 'invitacion-contrato-show', params: {id: value.id}}" v-if="$root.can('consultar_invitacion_cotizar_contrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
             <i class="fa fa-eye"></i>
         </router-link>
+        <router-link  :to="{ name: 'invitacion-cotizar-contrato-documentos', params: {id: value.id}}" v-if="value.show && $root.can('consultar_invitacion_cotizar_contrato')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
+            <i class="fa fa-folder-open"></i>
+        </router-link>
         <!--
         <Relaciones v-bind:transaccion="value.transaccion"/>
         <router-link  :to="{ name: 'orden-compra-documentos', params: {id: value.id}}" v-if="$root.can('consultar_orden_compra') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver">
