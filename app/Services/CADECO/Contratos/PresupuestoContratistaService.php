@@ -103,7 +103,12 @@ class PresupuestoContratistaService
 
      public function update(array $data, $id)
      {
-         return $this->repository->show($id)->actualizar($data);
+         $presupuesto = $this->repository->show($id);
+         if($presupuesto->invitacion){
+             abort(399,"Esta cotización no puede ser editada porque proviene de un proceso de invitación a proveedores para cotizar.");
+         }else {
+             return $this->repository->show($id)->actualizar($data);
+         }
      }
 
      public function cargaLayout($file, $id, $name)
@@ -185,7 +190,12 @@ class PresupuestoContratistaService
 
      public function delete($data, $id)
     {
-        return $this->show($id)->eliminarPresupuesto($data['data']);
+        $presupuesto = $this->repository->show($id);
+        if($presupuesto->invitacion){
+            abort(399,"Esta cotización no puede ser eliminada porque proviene de un proceso de invitación a proveedores para cotizar.");
+        }else {
+            return $this->show($id)->eliminarPresupuesto($data['data']);
+        }
     }
 
     private function getFileXls($file, $name)

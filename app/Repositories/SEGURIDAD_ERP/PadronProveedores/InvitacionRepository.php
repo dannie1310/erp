@@ -39,7 +39,7 @@ class InvitacionRepository extends Repository implements RepositoryInterface
                 $areas =[1,3];
 
             } else
-            if($invitacion->id_area_contatante > 0)
+            if($invitacion->id_area_contratante > 0)
             {
                 $areas =[2,3];
 

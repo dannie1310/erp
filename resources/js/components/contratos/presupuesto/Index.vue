@@ -131,6 +131,8 @@
                         numero_folio_cp: presupuesto.contrato_proyectado.numero_folio_format,
                         buttons: $.extend({}, {
                             id: presupuesto.id,
+                            delete: self.$root.can('eliminar_presupuesto_contratista') && !presupuesto.asignada && !presupuesto.id_referente > 0 ? true : false,
+                            edit: (!presupuesto.asignada && !presupuesto.id_referente > 0) ? true : false,
                             transaccion: {id:presupuesto.id, tipo:50, opcion:1},
                         })
                     }));
