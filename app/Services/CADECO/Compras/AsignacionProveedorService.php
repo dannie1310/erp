@@ -115,9 +115,14 @@ class AsignacionProveedorService
         $this->validarProveedor($data['cotizaciones']);
         try{
             DB::connection('cadeco')->beginTransaction();
+            $origen = 0;
+            if(array_key_exists('origen', $data)){
+                $origen = $data['origen'];
+            }
             $asignacion = $this->repository->create([
                 'id_transaccion_solicitud' => $data['id_solicitud'],
                 'estado' => 1,
+                'origen' => $origen
             ]);
             $registradas = 0;
 

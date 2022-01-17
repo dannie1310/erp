@@ -216,7 +216,7 @@ export default {
             })
             .then((value) => {
                 if (value) {
-                    this.$router.push({name: 'asignacion-proveedor-create'});
+                    this.$router.push({name: 'seleccionar-solicitud-compra'});
                 }
             });
         },
@@ -224,6 +224,7 @@ export default {
             this.cargando = true;
             return this.$store.dispatch('compras/asignacion/store', {
                 id_solicitud:this.id_solicitud,
+                origen: this.data.origen,
                 cotizaciones:this.data.cotizaciones
             })
             .then((data) => {

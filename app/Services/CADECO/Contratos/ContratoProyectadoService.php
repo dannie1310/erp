@@ -611,7 +611,7 @@ class ContratoProyectadoService
             }
             
         }
-        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($cant_asignaciones), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas];
+        return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($cant_asignaciones), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas, 'origen' => 1];
     }
 
     private function getDatosAsignacionLayout($file_xls)
