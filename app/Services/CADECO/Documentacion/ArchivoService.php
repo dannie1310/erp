@@ -32,14 +32,23 @@ class ArchivoService
     }
 
     public function cargarArchivo($data, $sin_contexto = 0){
+        $transaccionService = new TransaccionService(new Transaccion());
+
         if($sin_contexto == 0)
         {
-            $transaccionService = new TransaccionService(new Transaccion());
             $transaccion = $transaccionService->show($data["id"]);
-
             if($transaccion->usuario->tipo_empresa)
             {
                 abort(403, 'No puede subir archivos a una transacción registrada por un proveedor.');
+            }
+        }
+
+        if($sin_contexto == 1)
+        {
+            $transaccion = $transaccionService->showSC($data["id"], $data["base_datos"]);
+            if($transaccion->invitacion && $transaccion->invitacion->cotizacionGenerada->opciones != 10)
+            {
+                abort(403, 'No puede subir archivos a una cotización liberada');
             }
         }
 
