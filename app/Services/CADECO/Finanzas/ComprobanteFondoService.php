@@ -194,7 +194,7 @@ class ComprobanteFondoService
         $arreglo["moneda"] = $arreglo_cfd["moneda"];
         $arreglo["no_certificado"] = $arreglo_cfd["no_certificado"];
         $arreglo["certificado"] = $arreglo_cfd["certificado"];
-        $arreglo["sello"] = $arreglo_cfd["Sello"];
+        $arreglo["sello"] = $arreglo_cfd["sello"];
 
         $arreglo["emisor"]["rfc"] = $arreglo_cfd["emisor"]["rfc"];
         $arreglo["emisor"]["nombre"] = $arreglo_cfd["emisor"]["nombre"];
