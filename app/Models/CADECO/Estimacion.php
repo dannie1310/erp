@@ -51,7 +51,7 @@ class Estimacion extends Transaccion
         'observaciones',
         'tipo_transaccion',
         'id_usuario',
-        'referencia'
+        'referencia',
         'id_usuario',
         'retencion',
         'id_empresa',
@@ -1374,5 +1374,4 @@ class Estimacion extends Transaccion
         $folio = str_pad($subcontrato->numero_folio, 5, 0, 0);
         return Excel::download(new EstimacionLayout($subcontrato), '#'.$folio.'.xlsx');
     }
-
 }

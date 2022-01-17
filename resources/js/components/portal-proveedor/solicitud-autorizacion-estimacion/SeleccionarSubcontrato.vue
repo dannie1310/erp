@@ -31,7 +31,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <datos-subcontrato v-else v-bind:subcontrato="subcontrato" />
+                                 <div v-else>
+                                     <datos-subcontrato v-bind:subcontrato="subcontrato" />
+                                     <div class="row">
+                                         <div class="col-md-12">
+                                             <div class="pull-right">
+                                                 <descarga-layout v-bind:id="id_subcontrato" v-bind:subcontrato="subcontrato" v-if="id_subcontrato != ''" />
+                                                 <!-- <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />-->
+                                             </div>
+                                         </div>
+                                     </div>
+                                </div>
                             </div>
                              <div class="card-footer">
                                  <div class="row">
@@ -59,11 +69,10 @@
 <script>
     import {ModelListSelect} from 'vue-search-select';
     import DatosSubcontrato from  "./partials/DatosSubcontrato";
+    import DescargaLayout from "./DescargaLayout";
     export default {
         name: "solicitud-autorizacion-avance-seleccionar-subcontrato",
-        components: {
-            DatosSubcontrato,
-            ModelListSelect},
+        components: { DatosSubcontrato, ModelListSelect, DescargaLayout },
         data() {
             return {
                 cargando: false,

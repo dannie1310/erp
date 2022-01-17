@@ -20,6 +20,7 @@ use DateTimeZone;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudAutorizacionAvance extends Transaccion
 {
@@ -911,5 +912,12 @@ class SolicitudAutorizacionAvance extends Transaccion
         $this->save();
         $this->recalculaDatosGenerales();
         return $this;
+    }
+
+    public function descargaLayout($id)
+    {
+        $subcontrato = Subcontrato::where('id_transaccion', $id)->first();
+        $folio = str_pad($subcontrato->numero_folio, 5, 0, 0);
+        return Excel::download(new EstimacionLayout($subcontrato), '#'.$folio.'.xlsx');
     }
 }

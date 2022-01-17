@@ -55,4 +55,9 @@ class SolicitudAutorizacionAvanceRepository extends Repository implements Reposi
         Config::set('database.connections.cadeco.database', $data['base']);
         return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->registrarIVARetenido($data);
     }
+
+    public function descargaLayout($id)
+    {
+        return $this->model->descargaLayout($id);
+    }
 }
