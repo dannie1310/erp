@@ -1,9 +1,21 @@
 <template>
     <span>
-        <div class="row">
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-if="solicitud_compra">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
+                        <DatosSolicitud  v-bind:solicitud_compra="solicitud_compra" v-if="solicitud_compra"></DatosSolicitud>
                         <div class="row">
                             <div class="col-md-12" v-for="cotizacion in data.cotizaciones" v-if="cotizacion.partidas_asignadas">
                                 <div class="col-12 table-responsive">
@@ -174,9 +186,10 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
+import DatosSolicitud from '../solicitud-compra/partials/DatosSolicitudCompra';
 export default {
     name: "asignacion-proveedor-create",
-    components: {ModelListSelect},
+    components: {ModelListSelect, DatosSolicitud},
     props:['data', 'id_empresa', 'id_solicitud'],
     data() {
         return {
@@ -185,9 +198,11 @@ export default {
             justificar:false,
             partidas_justificacion:[],
             replicar_justificacion:false,
+            solicitud_compra:null,
         }
     },
     mounted() {
+        this.find();
     },
     computed: {
 
@@ -221,7 +236,6 @@ export default {
             });
         },
         store() {
-            this.cargando = true;
             return this.$store.dispatch('compras/asignacion/store', {
                 id_solicitud:this.id_solicitud,
                 cotizaciones:this.data.cotizaciones
@@ -231,7 +245,6 @@ export default {
                 this.$router.push({name: 'asignacion-proveedor'});
             })
             .finally(() => {
-                this.cargando = false;
             })
         },
         validate() {
@@ -298,6 +311,16 @@ export default {
             let p_dif = 0;
             p_dif = ((importe_asignado - this.data.precios_menores[i]) / this.data.precios_menores[i])*100;
             return parseFloat(p_dif).formatMoney(2,'.',',');
+        },
+        find() {
+            this.cargando = true;
+            return this.$store.dispatch('compras/solicitud-compra/find', {
+                id: this.id_solicitud,
+                params:{}
+            }).then(data => {
+                this.solicitud_compra = data;
+                this.cargando = false;
+            })
         },
     },
     watch:{
