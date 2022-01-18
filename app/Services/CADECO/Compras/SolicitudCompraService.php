@@ -414,7 +414,7 @@ class SolicitudCompraService
                 }
             }
         }
-        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios, 'cantidad_cotizaciones'=>count($cant_cotizaciones), 'partidas_no_validas' => $partidas_no_validas];
+        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios, 'cantidad_cotizaciones'=>count($cant_cotizaciones), 'partidas_no_validas' => $partidas_no_validas, 'origen' => 1];
     }
 
     private function getDatosAsignacionLayout($file_xls)

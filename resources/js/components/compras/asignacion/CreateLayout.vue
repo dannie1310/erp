@@ -238,6 +238,7 @@ export default {
         store() {
             return this.$store.dispatch('compras/asignacion/store', {
                 id_solicitud:this.id_solicitud,
+                origen: this.data.origen,
                 cotizaciones:this.data.cotizaciones
             })
             .then((data) => {
