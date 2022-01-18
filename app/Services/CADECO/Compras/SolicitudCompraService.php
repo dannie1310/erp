@@ -410,7 +410,7 @@ class SolicitudCompraService
                 $items[$i]['asignadas_mayor_disponible'] = true;
                 $partidas_no_validas = true;
                 foreach($cotizaciones as $key => $cotizacion){
-                    $cotizacion['partidas'][$i]?$cotizaciones[$key]['partidas_no_validas'] = true:'';
+                    $cotizacion['partidas'] && $cotizacion['partidas'][$i]?$cotizaciones[$key]['partidas_no_validas'] = true:'';
                 }
             }
         }
