@@ -231,7 +231,7 @@ export default {
             })
             .then((value) => {
                 if (value) {
-                    this.$router.push({name: 'asignacion-proveedor-create'});
+                    this.$router.push({name: 'seleccionar-solicitud-compra'});
                 }
             });
         },
