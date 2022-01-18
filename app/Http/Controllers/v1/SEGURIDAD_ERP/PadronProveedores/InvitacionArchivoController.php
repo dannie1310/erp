@@ -4,6 +4,7 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores;
 
 use App\Http\Transformers\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoTransformer;
 use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoService;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
@@ -51,5 +52,23 @@ class InvitacionArchivoController extends Controller
 
     public function descargar($id){
         return $this->service->descargar($id);
+    }
+
+    public function getArchivosInvitacion($id)
+    {
+        $archivos = $this->service->getArchivosInvitacion($id);
+        return $this->respondWithCollection($archivos["archivos"]);
+    }
+
+    public function show(Request $request, $id)
+    {
+        $item = $this->service->show($id);
+        return $this->respondWithItem($item);
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        $this->service->delete($request->all(), $id);
+        return response()->json("{}", 200);
     }
 }

@@ -73,7 +73,9 @@ class PresupuestoContratistaTransformer extends TransformerAbstract
             'usuario_registro' => $model->usuario_registro,
             'moneda_conversion' => $model->moneda_conversion,
             'subtotal_mc_antes_descuento_global_format' =>$model->subtotal_mc_antes_descuento_global_format,
-            'colspan'=>$model->colspan
+            'colspan'=>$model->colspan,
+            'asignada' => $model->asignada,
+            'id_referente' => $model->id_referente,
         ];
     }
 

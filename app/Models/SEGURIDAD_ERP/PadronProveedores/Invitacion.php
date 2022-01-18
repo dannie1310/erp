@@ -80,6 +80,8 @@ class Invitacion extends Model
     //protected $dates = ["fecha_cierre_invitacion"];
     //protected $dateFormat = 'M d Y h:i:s A';
 
+    public const ICONO = "fa fa-envelope-open-text";
+
     /**
      * Relaciones
      */
@@ -169,6 +171,19 @@ class Invitacion extends Model
         return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id");
     }
 
+    public function archivosParaTransaccion()
+    {
+        return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id")
+            ->where("de_envio","=",1);
+    }
+
+    public function archivosRequeridos()
+    {
+        return $this->hasMany(InvitacionArchivo::class, "id_invitacion", "id")
+            ->where("requerido","=",1)
+            ->Where("hashfile","=","");
+    }
+
     public function obra()
     {
         DB::purge('cadeco');
@@ -196,6 +211,11 @@ class Invitacion extends Model
     {
         return $this->hasOne(InvitacionArchivo::class, "id_invitacion", "id")
             ->where("id_tipo_archivo","=",44);
+    }
+
+    public function copiados()
+    {
+        return $this->hasMany(InvitacionCopiados::class, "id_invitacion", "id");
     }
 
     /**
@@ -446,6 +466,11 @@ class Invitacion extends Model
             return "Contraofertar";
         }
 
+    }
+
+    public function getIconoAttribute()
+    {
+        return Invitacion::ICONO;
     }
 
     /**

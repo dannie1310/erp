@@ -4,6 +4,8 @@
 namespace App\Services\CADECO\Documentacion;
 
 
+use App\Models\CADECO\Transaccion;
+use App\Services\CADECO\TransaccionService;
 use App\Utils\Files;
 use Clegginabox\PDFMerger\PDFMerger;
 use Chumper\Zipper\Zipper;
@@ -29,7 +31,26 @@ class ArchivoService
         $this->repository = new Repository($model);
     }
 
-    public function cargarArchivo($data){
+    public function cargarArchivo($data, $sin_contexto = 0){
+        $transaccionService = new TransaccionService(new Transaccion());
+
+        if($sin_contexto == 0)
+        {
+            $transaccion = $transaccionService->show($data["id"]);
+            if($transaccion->usuario->tipo_empresa)
+            {
+                abort(403, 'No puede subir archivos a una transacción registrada por un proveedor.');
+            }
+        }
+
+        if($sin_contexto == 1)
+        {
+            $transaccion = $transaccionService->showSC($data["id"], $data["base_datos"]);
+            if($transaccion->invitacion && $transaccion->invitacion->cotizacionGenerada->opciones != 10)
+            {
+                abort(403, 'No puede subir archivos a una cotización liberada');
+            }
+        }
 
         if(key_exists('base_datos', $data))
         {
@@ -176,6 +197,51 @@ class ArchivoService
         }
     }
 
+    public function agregarArchivoDesdeInvitacion($data){
+
+        if(!key_exists("id_tipo_archivo", $data)){
+            $data["id_tipo_archivo"] = 1;
+        }
+
+        if(!key_exists("id_categoria", $data)){
+            $data["id_categoria"] = 1;
+        }
+
+        $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
+        $data_registro["id_categoria"] = $data["id_categoria"];
+        $data_registro["observaciones"] = $data["observaciones"];
+        $data_registro["descripcion"] = $data["descripcion"];
+        $data_registro["id_transaccion"] = $data["id_transaccion"];
+        $data_registro["tamanio_kb"] = $data["tamanio_kb"];
+        $data_registro["hashfile"] = $data["hashfile"];
+        $data_registro["nombre"] = $data["nombre"];
+        $data_registro["extension"] = $data["extension"];
+        $data_registro["usuario_registro"] = $data["usuario_registro"];
+        $data_registro["id_tipo_general_archivo"] = $data["id_tipo_general_archivo"];
+
+        Storage::disk('archivos_transacciones')->put( $data["hashfile"].".".$data["extension"]
+            , Storage::disk("archivos_invitaciones")->get($data["hashfile"].".".$data["extension"])
+        );
+
+        $archivoObj = $this->store($data_registro);
+
+        return $archivoObj;
+    }
+
+    public function store($data)
+    {
+        return $this->repository->create($data);
+    }
+
+    public function show($data,$id)
+    {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
+        return $this->repository->show($id);
+    }
+
     private function guardarArchivo( $data, $path, $archivo)
     {
         $hashfile = hash_file('sha1', $path.$archivo);
@@ -319,7 +385,10 @@ class ArchivoService
         }
         $nombre_archivo = $archivo->hashfile.".". $archivo->extension;
         if(is_file(Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix().'/'.$nombre_archivo)) {
-            Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+            $numero_transacciones = Archivo::where("hashfile","=",$archivo->hashfile)->count();
+            if($numero_transacciones == 1){
+                Storage::disk('archivos_transacciones')->delete($nombre_archivo);
+            }
             return $archivo->delete();
         }else{
             return $archivo->delete();
@@ -339,5 +408,15 @@ class ArchivoService
     public function setDB($base_datos){
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database',$base_datos);
+    }
+
+    public function descargar($data,$id)
+    {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
+        $archivo =  $this->repository->show($id);
+        return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->nombre_descarga);
     }
 }

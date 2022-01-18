@@ -28,7 +28,8 @@ class AsignacionContratista extends Model
         'fecha_hora_registro',
         'autorizo',
         'fecha_hora_autorizacion',
-        'estado'
+        'estado',
+        'origen'
     ];
 
     /**
@@ -487,9 +488,14 @@ class AsignacionContratista extends Model
     {
         try{
             DB::connection('cadeco')->beginTransaction();
+            $origen = 0;
+            if(array_key_exists('origen', $data)){
+                $origen = $data['origen'];
+            }
             $asignacion = AsignacionContratista::create([
                 'id_transaccion' => $data['id_contrato'],  // contrato proyectado
                 'estado' => 1,
+                'origen' => $origen
             ]);
             $registradas = 0;
             foreach($data['presupuestos'] as $presupuesto){

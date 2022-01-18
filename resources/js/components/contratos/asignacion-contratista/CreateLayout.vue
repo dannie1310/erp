@@ -232,6 +232,7 @@ export default {
             // this.cargando = true;
             return this.$store.dispatch('contratos/asignacion-contratista/store', {
                 id_contrato:this.id_contrato,
+                origen:this.data.origen,
                 presupuestos:this.data.presupuestos
             })
             .then((data) => {

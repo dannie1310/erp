@@ -27,6 +27,7 @@ class AsignacionProveedor extends Model
         'observaciones',
         'estado',
         'registro',
+        'origen'
     ];
 
     protected static function boot()

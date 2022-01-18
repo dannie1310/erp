@@ -6,6 +6,7 @@ namespace App\Models\CADECO\Documentacion;
 
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Utils\Util;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
@@ -35,7 +36,6 @@ class Archivo extends Model
     public function usuarioRegistro(){
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
-
 
     public function transaccion()
     {
@@ -99,4 +99,26 @@ class Archivo extends Model
         Config::set('database.connections.cadeco.database', $base_datos);
     }
 
+    public function getTamanioFormatAttribute()
+    {
+        return number_format($this->tamanio_kb/1024,"2",".", ",");
+    }
+
+    public function getNombreDescargaAttribute()
+    {
+        $nombre_explode = explode(".",$this->nombre);
+        $extension = ".".$nombre_explode[count($nombre_explode)-1];
+        $nombre = str_replace($extension,"",$this->nombre);
+
+        return implode("_",explode(" ",strtolower(Util::eliminaCaracteresEspeciales($nombre).$extension)));
+
+    }
+
+    public function  getObservacionesFormatAttribute(){
+        if(strlen($this->observaciones)>60){
+            return mb_substr($this->observaciones,0,60, 'UTF-8')."...";
+        } else {
+            return $this->observaciones;
+        }
+    }
 }

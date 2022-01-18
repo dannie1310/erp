@@ -182,6 +182,20 @@ export default {
                     });
             });
         },
+        getArchivosInvitacion(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id + '/invitacion',payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit("SET_ARCHIVOS", data.data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
         getArchivosTransaccionSC(context, payload){
             return new Promise((resolve, reject) => {
                 axios
@@ -318,6 +332,123 @@ export default {
                     })
                     .catch(error => {
                         reject(error);
+                    });
+            });
+        },
+        descargarArchivoInvitacion(context, payload){
+            var urr = URI +  'descargar-archivo-invitacion/'+payload.id+'?access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+        descargar(context, payload){
+            var urr = URI + payload.id+ '/descargar?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token='+ this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+        getArchivoInvitacion(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + 'consultar-archivo-invitacion/' + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        getArchivo(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
+        getArchivoSC(context, payload){
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id+ '/sc',{params:payload})
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        descargarSC(context, payload){
+            var urr = URI + payload.id+ '/descargar-sc?base_datos=' + payload.base_datos + '&id_obra=' + payload.id_obra + '&access_token='+ this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
+        eliminarArchivoInvitacion(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el Archivo",
+                    text: "¿Está seguro que desea eliminar el archivo previamente cargado?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + 'eliminar-archivo-invitacion/' + payload.id, payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Archivo eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit("DELETE_ARCHIVO", payload.id);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
                     });
             });
         },

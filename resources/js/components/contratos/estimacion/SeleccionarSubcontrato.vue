@@ -9,7 +9,7 @@
                                 <div class="row justify-content-between">
                                     <div class="col-md-12">
                                         <div class="form-group">
-                                            <label for="id_subcontrato">Buscar Subcontratox:</label>
+                                            <label for="id_subcontrato">Buscar Subcontrato:</label>
                                             <model-list-select
                                                 :disabled="cargando"
                                                 name="id_subcontrato"
