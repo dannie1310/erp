@@ -147,16 +147,6 @@ class FacturaService
         $cfd = new CFD($archivo_xml);
         $arreglo_cfd = $cfd->getArregloFactura();
 
-        /*try {
-            libxml_use_internal_errors(true);
-            $factura_xml = simplexml_load_file($archivo_xml);
-            if(!$factura_xml){
-                $factura_xml = new \SimpleXMLElement(file_get_contents($archivo_xml));
-            }
-        } catch (\Exception $e) {
-            abort(500, "Hubo un error al leer el archivo XML proporcionado: " . $e->getMessage());
-        }*/
-
         $arreglo["total"] = $arreglo_cfd["total"];
         $arreglo["impuesto"] = $arreglo_cfd["total_impuestos_trasladados"];
         $arreglo["tipo_comprobante"]  = $arreglo_cfd["tipo_comprobante"];

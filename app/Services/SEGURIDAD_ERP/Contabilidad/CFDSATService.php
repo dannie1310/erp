@@ -593,7 +593,7 @@ class CFDSATService
         if ((string)$factura_xml["version"] == "3.2") {
             $this->arreglo_factura["version"] = (string)$factura_xml["version"];
             return $this->setArreglo32($factura_xml);
-        } else if ($factura_xml["Version"] == "3.3") {
+        } else if ($factura_xml["Version"] == "3.3" || $factura_xml["Version"] == "4.0") {
             $this->arreglo_factura["version"] = (string)$factura_xml["Version"];
             return $this->setArreglo33($factura_xml);
         }
@@ -656,6 +656,9 @@ class CFDSATService
             $this->arreglo_factura["receptor"]["rfc"] = (string)$receptor["Rfc"][0];
             $this->arreglo_factura["receptor"]["nombre"] = (string)$receptor["Nombre"][0];
             $this->arreglo_factura["rfc_receptor"] = $this->arreglo_factura["receptor"]["rfc"];
+            $this->arreglo_factura["importe_iva"] = 0;
+            $this->arreglo_factura["tasa_iva"] = 0;
+            $this->arreglo_factura["traslados"] = [];
         } catch (\Exception $e) {
             $this->log["archivos_no_cargados_error_app"] += 1;
             $this->log["cfd_no_cargados_error_app"] += 1;
@@ -684,22 +687,40 @@ class CFDSATService
             } else {
                 $this->arreglo_factura["total_impuestos_trasladados"] = (float)0;
             }
-            $traslados = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos//cfdi:Traslado');
+            $traslados = $factura_xml->xpath('//cfdi:Comprobante/cfdi:Impuestos//cfdi:Traslado');
 
             $i = 0;
             foreach ($traslados as $traslado) {
-                if (!(float)$traslado["Base"] > 0) {
-                    if ($traslado["Impuesto"] == "002") {
-                        $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
-                        $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
-                    }
-                    $this->arreglo_factura["traslados"][$i]["impuesto"] = (float)$traslado["Impuesto"];
-                    $this->arreglo_factura["traslados"][$i]["tipo_factor"] = (string)$traslado["TipoFactor"];
-                    $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (float)$traslado["TasaOCuota"];
-                    $this->arreglo_factura["traslados"][$i]["importe"] = (float)$traslado["Importe"];
-                    $i++;
+                if ($traslado["Impuesto"] == "002") {
+                    $this->arreglo_factura["importe_iva"] = (float)$traslado["Importe"];
+                    $this->arreglo_factura["tasa_iva"] = (float)$traslado["TasaOCuota"];
                 }
+                $this->arreglo_factura["traslados"][$i]["impuesto"] = (string)$traslado["Impuesto"];
+                $this->arreglo_factura["traslados"][$i]["tipo_factor"] = (string)$traslado["TipoFactor"];
+                $this->arreglo_factura["traslados"][$i]["tasa_o_cuota"] = (float)$traslado["TasaOCuota"];
+                $this->arreglo_factura["traslados"][$i]["importe"] = (float)$traslado["Importe"];
+                $this->arreglo_factura["traslados"][$i]["base"] =  (float)$traslado["Base"];
+                $i++;
             }
+            if (count($impuestos) >= 1) {
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
+            } else {
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
+            }
+
+            $retenciones = $factura_xml->xpath('//cfdi:Comprobante/cfdi:Impuestos//cfdi:Retencion');
+
+            $iret = 0;
+            foreach ($retenciones as $retencion) {
+                if ($retencion["Impuesto"] == "002") {
+                    $this->arreglo_factura["importe_iva_retenido"] = (float)$retencion["Importe"];
+                    $this->arreglo_factura["tasa_iva_retenido"] = (float)$retencion["TasaOCuota"];
+                }
+                $this->arreglo_factura["retenciones"][$iret]["impuesto"] = (string)$retencion["Impuesto"];
+                $this->arreglo_factura["retenciones"][$iret]["importe"] = (float)$retencion["Importe"];
+                $iret++;
+            }
+
             $conceptos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Concepto');
             $i = 0;
             $ic = 1;
