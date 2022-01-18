@@ -8,7 +8,9 @@ use App\Events\EnvioPresupuesto;
 use App\Facades\Context;
 use App\Models\CADECO\Documentacion\Archivo;
 use App\Models\CADECO\Empresa;
+use App\Models\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivo;
 use App\Services\CADECO\Documentacion\ArchivoService;
+use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoService;
 use App\Services\SEGURIDAD_ERP\PadronProveedores\InvitacionService;
 use App\Utils\ValidacionSistema;
 use App\Imports\PresupuestoImport;
@@ -101,7 +103,12 @@ class PresupuestoContratistaService
 
      public function update(array $data, $id)
      {
-         return $this->repository->show($id)->actualizar($data);
+         $presupuesto = $this->repository->show($id);
+         if($presupuesto->invitacion){
+             abort(399,"Esta cotización no puede ser editada porque proviene de un proceso de invitación a proveedores para cotizar.");
+         }else {
+             return $this->repository->show($id)->actualizar($data);
+         }
      }
 
      public function cargaLayout($file, $id, $name)
@@ -183,7 +190,12 @@ class PresupuestoContratistaService
 
      public function delete($data, $id)
     {
-        return $this->show($id)->eliminarPresupuesto($data['data']);
+        $presupuesto = $this->repository->show($id);
+        if($presupuesto->invitacion){
+            abort(399,"Esta cotización no puede ser eliminada porque proviene de un proceso de invitación a proveedores para cotizar.");
+        }else {
+            return $this->show($id)->eliminarPresupuesto($data['data']);
+        }
     }
 
     private function getFileXls($file, $name)
@@ -336,51 +348,79 @@ class PresupuestoContratistaService
         $this->setDB($invitacion->base_datos);
         $presupuesto = $this->repository->withoutGlobalScopes()->show($id);
 
-        $archivos = $presupuesto->archivos()->where("id_categoria","=",2)->whereIn("id_tipo_archivo",[3,4,5])->get();
+        $archivos = $presupuesto->archivos()->where("id_tipo_general_archivo","=",1)->get();
         foreach($archivos as $archivo)
         {
             $archivoService = new ArchivoService(new Archivo());
             $archivoService->setDB($invitacion->base_datos);
             $archivoService->delete(["base_datos"=>$invitacion->base_datos], $archivo->id);
         }
-
+        $this->cargaArchivosRequeridosInvitacion($data);
+        $this->cargaArchivosAdicionalesInvitacion($data);
         $this->cargaArchivos($id, $data, $presupuesto);
         $presupuesto->envia();
+    }
+
+    public function cargaArchivosRequeridosInvitacion($data)
+    {
+        $i = 0;
+        foreach($data["archivos_requeridos"] as $archivo)
+        {
+            $archivo_actualizar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_actualizar['archivo'] = $data["files_requeridos"][$i]["file"];
+            $archivo_actualizar['id'] = $archivo["id"];
+            $archivo_actualizar['usuario_registro'] = auth()->id();
+
+            $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
+            $archivoService->actualizarArchivoRequerido($archivo_actualizar);
+
+            $i++;
+        }
+    }
+
+    public function cargaArchivosAdicionalesInvitacion($data)
+    {
+        $i = 0;
+        foreach($data["archivos"] as $archivo)
+        {
+            $archivo_registrar['archivo_nombre'] = $archivo["nombre"];
+            $archivo_registrar['archivo'] = $data["files"][$i];
+            $archivo_registrar['id_tipo_archivo'] = $archivo["tipo"];
+            $archivo_registrar['observaciones'] = $archivo["observaciones"];
+            $archivo_registrar['id_invitacion'] = $data["id_invitacion"];
+            $archivo_registrar['usuario_registro'] = auth()->id();
+            $archivo_registrar['de_invitacion'] = 0;
+            $archivo_registrar['de_envio'] = 1;
+
+            $archivoService = new InvitacionArchivoService(new InvitacionArchivo());
+            $archivoService->agregarArchivo($archivo_registrar);
+
+            $i++;
+        }
     }
 
     public function cargaArchivos($id, $data, $presupuesto)
     {
         $invitacionService = new InvitacionService(new Invitacion());
         $invitacion = $invitacionService->show($data["id_invitacion"]);
-
-        if(key_exists("nombre_archivo_carta_terminos_condiciones", $data)){
+        foreach ($invitacion->archivosParaTransaccion as $archivo)
+        {
             $archivoService = new ArchivoService(new Archivo());
             $archivoService->setDB($invitacion->base_datos);
-
             $data_archivos["id"] = $id;
             $data_archivos["id_transaccion"] = $id;
-            $data_archivos["id_tipo_archivo"] = 3;
-            $data_archivos["id_categoria"] = 2;
-            $data_archivos["descripcion"] = 'Carta asociada a la cotización '.$presupuesto->numero_folio_format;
-            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_carta_terminos_condiciones"]]]);
-            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_carta_terminos_condiciones"]]]);
+            $data_archivos["id_tipo_archivo"] = 1;
+            $data_archivos["id_categoria"] = $archivo->requerido == 1? 2:1;
+            $data_archivos["descripcion"] = $archivo->tipo->descripcion;
+            $data_archivos["observaciones"] = $archivo->observaciones;
+            $data_archivos['nombre'] = $archivo->nombre;
+            $data_archivos['extension'] = $archivo->extension;
+            $data_archivos['tamanio_kb'] = $archivo->tamanio_kb;
+            $data_archivos['hashfile'] = $archivo->hashfile;
+            $data_archivos['usuario_registro'] = $archivo->usuario_registro;
+            $data_archivos["id_tipo_general_archivo"] = 1;
+            $archivoService->agregarArchivoDesdeInvitacion($data_archivos);
 
-            $archivoService->cargarArchivosPDF($data_archivos);
-        }
-
-        if(key_exists("nombre_archivo_formato_cotizacion", $data)){
-            $archivoService = new ArchivoService(new Archivo());
-            $archivoService->setDB($invitacion->base_datos);
-
-            $data_archivos["id"] = $id;
-            $data_archivos["id_transaccion"] = $id;
-            $data_archivos["id_tipo_archivo"] = 4;
-            $data_archivos["id_categoria"] = 2;
-            $data_archivos["descripcion"] = 'Formato de cotización asociado a la cotización'.$presupuesto->numero_folio_format;
-            $data_archivos['archivos_nombres'] = \json_encode([["nombre"=>$data["nombre_archivo_formato_cotizacion"]]]);
-            $data_archivos['archivos'] = \json_encode([["archivo"=>$data["archivo_formato_cotizacion"]]]);
-
-            $archivoService->cargarArchivosPDF($data_archivos);
         }
     }
 

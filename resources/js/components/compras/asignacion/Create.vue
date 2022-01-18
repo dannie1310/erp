@@ -1,31 +1,26 @@
 <template>
     <span>
-        <div class="row">
+        <div class="card" v-if="cargando">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                            <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" v-if="data">
             <div class="col-12">
                 <div class="invoice p-3 mb-3">
                     <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
-                                <label for="id_solicitud">Seleccionar Solicitud de Compra:</label>
-                                    <model-list-select
-                                        :disabled="cargando"
-                                        name="id_solicitud"
-                                        option-value="id"
-                                        v-model="id_solicitud"
-                                        :custom-text="numeroFolioFormatAndObservaciones"
-                                        :list="solicitudes"
-                                        :placeholder="!cargando?'Seleccionar o buscar solicitud de compra por número de folio o observación':'Cargando...'"
-                                        :isError="errors.has(`id_solicitud`)">
-                                    </model-list-select>
-                                <div style="display:block" class="invalid-feedback" v-show="errors.has('id_solicitud')">{{ errors.first('id_solicitud') }}</div>
+                                <tabla-datos-solicitud-compra v-bind:solicitud_compra="solicitud_compra"></tabla-datos-solicitud-compra>
                             </div>
+                            
                         </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-12" v-if="data">
-                <div class="invoice p-3 mb-3">
-                    <div class="modal-body">
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="col-12 table-responsive">
@@ -228,15 +223,16 @@
 
 <script>
 import {ModelListSelect} from 'vue-search-select';
+import TablaDatosSolicitudCompra from "../solicitud-compra/partials/TablaDatosSolicitudCompra";
 export default {
     name: "asignacion-proveedor-create",
-    components: {ModelListSelect},
+    components: {ModelListSelect, TablaDatosSolicitudCompra},
+    props:['id_solicitud', 'solicitud_compra'],
     data() {
         return {
             cargando: false,
             solicitudes:[],
             data:null,
-            id_solicitud:'',
             id_empresa:'',
             justificar:false,
             partidas_justificacion:[],
@@ -244,7 +240,8 @@ export default {
         }
     },
     mounted() {
-        this.getSolicitudes();
+        // this.id_empresa = Object.keys(data.cotizaciones)[0];
+        this.getCotizaciones();
     },
     computed: {
 
@@ -300,28 +297,28 @@ export default {
                 }
             });
         },
-        getSolicitudes(){
-            this.cargando = true;
-            this.solicitudes = [];
-            this.data = null;
-            return this.$store.dispatch('compras/solicitud-compra/index', {
-                params: {
-                    scope: ['cotizacion', 'conComplemento', 'ultimoAnio'],
-                    order: 'DESC',
-                    sort: 'numero_folio'
-                }
-            })
-            .then(data => {
-                this.solicitudes = data.data;
-                this.cargando = false;
-            })
+        // getSolicitudes(){
+        //     this.cargando = true;
+        //     this.solicitudes = [];
+        //     this.data = null;
+        //     return this.$store.dispatch('compras/solicitud-compra/index', {
+        //         params: {
+        //             scope: ['cotizacion', 'conComplemento', 'ultimoAnio'],
+        //             order: 'DESC',
+        //             sort: 'numero_folio'
+        //         }
+        //     })
+        //     .then(data => {
+        //         this.solicitudes = data.data;
+        //         this.cargando = false;
+        //     })
 
-        },
-        getCotizaciones(id){
+        // },
+        getCotizaciones(){
             this.cargando = true;
             this.data = null;
             return this.$store.dispatch('compras/solicitud-compra/getCotizaciones', {
-                id: id,
+                id: this.id_solicitud,
                 params: {}
             })
             .then(data => {
@@ -442,11 +439,11 @@ export default {
         },
     },
     watch:{
-        id_solicitud(value){
-            if(value != ''){
-                this.getCotizaciones(value);
-            }
-        },
+        // id_solicitud(value){
+        //     if(value != ''){
+        //         // this.getCotizaciones(value);
+        //     }
+        // },
         replicar_justificacion(value){
             if(value){
                 this.keyupReplicarjustificacion();

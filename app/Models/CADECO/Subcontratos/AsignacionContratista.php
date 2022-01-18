@@ -523,7 +523,7 @@ class AsignacionContratista extends Model
 
     public function generarSubcontratos()
     {
-        $partidas = $this->partidas()->orderBy('id_concepto')->get();
+        $partidas = $this->partidas()->orderBy('id_transaccion')->get();
         $this->validarEmpresasAsignacion($partidas);
         try{
             DB::connection('cadeco')->beginTransaction();
@@ -531,8 +531,9 @@ class AsignacionContratista extends Model
             $subcontratos = [];
             foreach($partidas as $partida){
                 $subcontrato = null;
-                if(array_key_exists( $partida->presupuestoPartida->IdMoneda, $subcontratos) && array_key_exists($partida->id_transaccion, $subcontratos[1])){
-                    $subcontrato = $subcontratos[ $partida->presupuestoPartida->IdMoneda][$partida->id_transaccion];
+                $id_moneda = $partida->presupuestoPartida->IdMoneda;
+                if(array_key_exists($id_moneda , $subcontratos) && array_key_exists($partida->id_transaccion, $subcontratos[$id_moneda])){
+                    $subcontrato = $subcontratos[$id_moneda][$partida->id_transaccion];
                 }else{
                     $subcontratos[ $partida->presupuestoPartida->IdMoneda] = array();
                     $resp =
@@ -585,7 +586,7 @@ class AsignacionContratista extends Model
             $this->save();
             DB::connection('cadeco')->commit();
             return $this;
-        }catch(Exception $e){
+        }catch(\Exception $e){
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
             throw $e;

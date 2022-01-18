@@ -66,7 +66,7 @@
             loadOptions({ action, parentNode, callback }) {
                 return this.$store.dispatch('cadeco/concepto/find',{
                     id: parentNode.id,
-                    params: { include: 'hijos', scope: this.scope }
+                    params: { include: 'hijos', scope: this.scp_find }
                 })
                     .then(data => {
                         parentNode.children = data.hijos.data.map(concepto => ({
@@ -88,9 +88,16 @@
         computed: {
             scp() {
                 if (this.scope) {
-                    return Array.isArray(this.scope) ? [...this.scope, 'roots'] : [this.scope, 'roots']
+                    return Array.isArray(this.scope) ? [...this.scope, 'roots', 'conceptoActivo'] : [this.scope, 'roots', 'conceptoActivo']
                 } else {
-                    return 'roots'
+                    return ['roots', 'conceptoActivo']
+                }
+            },
+            scp_find() {
+                if (this.scope) {
+                    return Array.isArray(this.scope) ? [...this.scope, 'conceptoActivo'] : [this.scope, 'conceptoActivo']
+                } else {
+                    return ['conceptoActivo']
                 }
             }
         }
