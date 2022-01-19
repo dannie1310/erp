@@ -12,14 +12,14 @@
             </div>
         </div>
         <div v-else>
-            <div class="d-flex flex-row-reverse" v-if="!cargando">
-            <div class="p-2" v-if="estimacion.estado == 0">
+            <div class="d-flex flex-row-reverse">
+                <div class="p-2" v-if="estimacion.estado == 0">
                     <Penalizacion v-bind:id="id"></Penalizacion>
                 </div>
-            <div class="p-2">
+                <div class="p-2">
                     <Resumen v-bind:id="id" v-bind:cargando="cargando"></Resumen>
                 </div>
-            <div class="p-2" v-if="estimacion.estado == 0">
+                <div class="p-2" v-if="estimacion.estado == 0">
                     <Amortizacion v-bind:id="id"></Amortizacion>
                 </div>
                 <div class="p-2" v-if="estimacion.estado == 0">
@@ -32,7 +32,7 @@
                     <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
                 </div>
             </div>
-            <div class="row" v-if="!cargando">
+            <div class="row">
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header">
@@ -61,13 +61,13 @@
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">Objeto</label>
                                     <div class="col-md-9">
-                                        ({{estimacion.subcontrato.folio}}) {{ estimacion.subcontrato.referencia }}
+                                        ({{estimacion.subcontrato.numero_folio_format}}) {{ estimacion.subcontrato.referencia }}
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-md-3 col-form-label">Contratista</label>
                                     <div class="col-md-9">
-                                        {{ estimacion.razon_social }}
+                                        {{ estimacion.empresa.razon_social }}
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -98,6 +98,15 @@
                                     </div>
                                 </form>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <button type="button" class="btn btn-secondary pull-right" v-on:click="salir"><i class="fa fa-times"></i>Cerrar</button>
                         </div>
                     </div>
                 </div>
@@ -136,7 +145,7 @@
             find() {
                 return this.$store.dispatch('contratos/estimacion/find', {
                     id: this.id,
-                    params: {include:['subcontrato']}
+                    params: {include:['subcontrato', 'empresa']}
                 }).then(data => {
                     this.estimacion = data;
                 }).finally(() => {

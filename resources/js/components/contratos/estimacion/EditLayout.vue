@@ -194,12 +194,9 @@
 				</table>
 			</div>
 
-            <div class="modal-footer" v-if="estimacion.estado == 0">
-                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
-                <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0">Guardar </button>
-            </div>
-            <div class="modal-footer" v-else>
-                <button type="button" class="btn btn-secondary" v-on:click="salir">Cerrar</button>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Cerrar</button>
+                <button type="submit" class="btn btn-primary" @click="update" :disabled="errors.count() > 0"><i class="fa fa-save"></i>Guardar </button>
             </div>
         </div>
      </span>

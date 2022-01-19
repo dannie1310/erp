@@ -395,7 +395,6 @@ class EstimacionService
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['porcentaje_estimado'] = $celdas[$x][9]*100/$est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_subcontrato'];
                 }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > $vol_saldo){
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][9];
-                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][10];
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['partida_valida'] = false;
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['volumen_asignado_mayor'] = true;
                     $est_data['subcontrato']['partidas_validas'] = false;
