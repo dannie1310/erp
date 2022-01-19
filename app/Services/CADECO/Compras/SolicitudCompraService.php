@@ -410,11 +410,11 @@ class SolicitudCompraService
                 $items[$i]['asignadas_mayor_disponible'] = true;
                 $partidas_no_validas = true;
                 foreach($cotizaciones as $key => $cotizacion){
-                    $cotizacion['partidas'][$i]?$cotizaciones[$key]['partidas_no_validas'] = true:'';
+                    $cotizacion['partidas'] && $cotizacion['partidas'][$i]?$cotizaciones[$key]['partidas_no_validas'] = true:'';
                 }
             }
         }
-        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios, 'cantidad_cotizaciones'=>count($cant_cotizaciones), 'partidas_no_validas' => $partidas_no_validas];
+        return ['items'=>$items,'cotizaciones'=> $cotizaciones, 'precios_menores' => $precios, 'cantidad_cotizaciones'=>count($cant_cotizaciones), 'partidas_no_validas' => $partidas_no_validas, 'origen' => 1];
     }
 
     private function getDatosAsignacionLayout($file_xls)
