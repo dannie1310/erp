@@ -159,9 +159,9 @@ class SolicitudAutorizacionAvanceService
         $respuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
-            'fecha_estimacion' => $fecha_est,
-            'fecha_inicio_estimacion' => $fecha_est_ini,
-            'fecha_fin_estimacion' => $fecha_est_fin,
+            'fecha_solicitud' => $fecha_est,
+            'fecha_inicio_solicitud' => $fecha_est_ini,
+            'fecha_fin_solicitud' => $fecha_est_fin,
             'observaciones' => $observaciones,
             'partidas_invalidas' => $partidas_invalidas,
             'referencia' => 'XLY',
