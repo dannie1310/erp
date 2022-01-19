@@ -20,7 +20,7 @@
         methods: {
             descargar() {
                 this.cargando = true;
-                return this.$store.dispatch('portal-proveedor/solicitud-autorizacion-estimacion/descargaLayout', {id: this.id})
+                return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/descargaLayout', {id: this.id, base:this.subcontrato.base})
                     .then(() => {
                         this.$emit('success')
                         this.cargando = false;

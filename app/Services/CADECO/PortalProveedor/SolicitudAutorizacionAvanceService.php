@@ -65,10 +65,10 @@ class SolicitudAutorizacionAvanceService
         return $this->repository->registrarIVARetenido($id, $data);
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout($id, $base)
     {
-        ini_set('memory_limit', -1) ;
-        ini_set('max_execution_time', '7200') ;
-        return $this->repository->descargaLayout($id);
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
+        return $this->repository->descargaLayout($id, $base);
     }
 }

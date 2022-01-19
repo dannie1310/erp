@@ -91,10 +91,9 @@ class SolicitudAutorizacionAvanceController extends Controller
         return $this->service->registrarRetencionIva($request->all(), $id);
     }
 
-    public function descargaLayout($id)
+    public function descargaLayout(Request $request, $id)
     {
-        dd($id);
-        return $this->service->descargaLayout($id);
+        return $this->service->descargaLayout($id, $request->all()['db']);
     }
 
     public function cargaLayout(Request $request)
