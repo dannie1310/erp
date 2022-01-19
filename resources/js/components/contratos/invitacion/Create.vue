@@ -254,9 +254,10 @@
                                 </div>
                             </div>
                         </div>
-
-
-
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <table class="table  table-sm table-bordered" v-if="names.length>0">
                             <tr>
                                 <th class="encabezado index_corto">
@@ -320,7 +321,7 @@
                 <br>
 
                 <div class="row">
-                    <div class="col-md-12 table-responsive">
+                    <div class="col-md-12 ">
                         <span><label><i class="fa fa-files-o"></i>Archivos a Solicitar</label></span>
                         <table class="table table-sm table-bordered">
                             <tr>
@@ -906,6 +907,9 @@ export default {
 <style scoped>
 .encabezado{
     background-color: #f2f4f5;
+}
+.ui.selection.dropdown.active, .ui.selection.dropdown.visible{
+    z-index: 3000;
 }
 
 </style>
