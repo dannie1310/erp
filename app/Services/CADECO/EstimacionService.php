@@ -218,8 +218,8 @@ class EstimacionService
         $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Estimación');
         $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Estimación');
         $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Estimación');
-        if( strtotime($fecha_est_ini) > strtotime($fecha_est_fin) ){
-            abort(400, 'La fecha de inicio en posterior a la fecha de finalización.');
+        if( date_create_from_format('d/m/Y', $fecha_est_ini) > date_create_from_format('d/m/Y', $fecha_est_fin) ){
+            abort(400, 'La fecha de inicio es posterior a la fecha de finalización.');
         }
 
         $partidas_invalidas = false;
