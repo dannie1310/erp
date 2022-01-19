@@ -257,7 +257,10 @@
                                 </div>
                             </div>
                         </div>
-
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
                         <table class="table  table-sm table-bordered" v-if="names.length>0">
                             <tr>
                                 <th class="encabezado index_corto">
@@ -901,5 +904,7 @@ export default {
 .encabezado{
     background-color: #f2f4f5;
 }
-
+.ui.selection.dropdown.active, .ui.selection.dropdown.visible{
+    z-index: 3000;
+}
 </style>

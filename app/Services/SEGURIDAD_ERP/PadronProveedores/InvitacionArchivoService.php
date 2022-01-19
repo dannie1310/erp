@@ -114,37 +114,27 @@ class InvitacionArchivoService
         $archivo_nombre = $data['archivo_nombre'];
         $archivo = $data['archivo'];
         if($archivo_nombre != ""){
-            $paths = $this->generaDirectorioTemporal();
-
-            //1.-SE GUARDAN ARCHIVOS EN DIRECTORIOS TEMPORALES
-
-            $nombre_explode = \explode('.', $archivo_nombre);
 
             $exp = explode("base64,", $archivo);
             $decode = base64_decode($exp[1]);
-            $path = public_path($paths["dir_tempo"]);
-            file_put_contents($path . $archivo_nombre,$decode);
 
-            //2.-SE OBTIENE UN ARREGLO CON LOS NOMBRES DE ARCHIVOS DEL DIRECTORIO TEMPORAL OMITIENDO LOS ARCHIVOS . .. Y __MACOSX
-            $files = array_diff(scandir($paths["dir_tempo"]), array('.', '..','__MACOSX'));
-            //3.-SE ORDENAN LOS ARCHIVOS POR NOMBRE
-            sort($files, SORT_NUMERIC);
-
-            $hashfile = hash_file('sha1', $paths["dir_tempo"].$files[0]);
-            $nombre_archivo_exp = explode('.', $files[0]);
+            $hashfile = hash_file('sha1', $archivo);
+            $nombre_archivo_exp = explode('.', $archivo_nombre);
 
             $data_registro["id_tipo_archivo"] = $data["id_tipo_archivo"];
             $data_registro["observaciones"] = $data["observaciones"];
             $data_registro["id_invitacion"] = $data["id_invitacion"];
-            $data_registro["tamanio_kb"] = filesize($paths["dir_tempo"].$files[0])/1024;
             $data_registro["hashfile"] = $hashfile;
-            $data_registro["nombre"] = $files[0];
+            $data_registro["nombre"] = $archivo_nombre;
             $data_registro["extension"] = $nombre_archivo_exp[count($nombre_archivo_exp)-1];
             $data_registro["usuario_registro"] = $data["usuario_registro"];
             $data_registro["de_invitacion"] = $data["de_invitacion"];
             $data_registro["de_envio"] = $data["de_envio"];
 
-            $this->guardarArchivoDirectorio($data,$paths["dir_tempo"], $files[0]);
+            Storage::disk('archivos_invitaciones')->put( $hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1], $decode );
+
+            $size = Storage::disk('archivos_invitaciones')->size($hashfile.'.'.$nombre_archivo_exp[count($nombre_archivo_exp)-1]);
+            $data_registro["tamanio_kb"] = $size/1024;
 
             $archivoObj = $this->store($data_registro);
 
