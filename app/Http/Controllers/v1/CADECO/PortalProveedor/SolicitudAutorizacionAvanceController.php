@@ -98,7 +98,7 @@ class SolicitudAutorizacionAvanceController extends Controller
 
     public function cargaLayout(Request $request)
     {
-        $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
+        $res = $this->service->cargaLayout($request->file, $request->id, $request->name, $request->base);
         return response()->json($res, 200);
     }
 }

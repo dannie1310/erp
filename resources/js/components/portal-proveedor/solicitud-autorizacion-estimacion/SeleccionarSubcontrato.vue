@@ -37,7 +37,7 @@
                                          <div class="col-md-12">
                                              <div class="pull-right">
                                                  <descarga-layout v-bind:id="id_subcontrato" v-bind:subcontrato="subcontrato" v-if="id_subcontrato != ''" />
-                                                 <!-- <cargar-layout v-bind:id="id_subcontrato" v-if="id_subcontrato != ''" />-->
+                                                 <cargar-layout v-bind:id="id_subcontrato" v-bind:subcontrato="subcontrato" v-if="id_subcontrato != ''" />
                                              </div>
                                          </div>
                                      </div>
@@ -70,9 +70,10 @@
     import {ModelListSelect} from 'vue-search-select';
     import DatosSubcontrato from  "./partials/DatosSubcontrato";
     import DescargaLayout from "./DescargaLayout";
+    import CargarLayout from "./CargaLayout";
     export default {
         name: "solicitud-autorizacion-avance-seleccionar-subcontrato",
-        components: { DatosSubcontrato, ModelListSelect, DescargaLayout },
+        components: { DatosSubcontrato, ModelListSelect, DescargaLayout, CargarLayout },
         data() {
             return {
                 cargando: false,

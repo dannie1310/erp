@@ -59,7 +59,7 @@ class SolicitudAutorizacionAvanceRepository extends Repository implements Reposi
         return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->registrarIVARetenido($data);
     }
 
-    private function findSubcontratoProveedor($id, $base)
+    public function findSubcontratoProveedor($id, $base)
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
