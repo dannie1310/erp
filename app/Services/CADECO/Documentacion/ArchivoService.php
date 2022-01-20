@@ -368,6 +368,13 @@ class ArchivoService
             $this->setDB($db);
         }
         $archivo = $this->repository->show($id);
+        if(auth()->user()->tipo_empresa){
+            if($archivo->transaccion->id_usuario != auth()->id())
+            {
+                dd("No tiene autorización para consultar este archivo.");
+            }
+        }
+
         $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
     }
@@ -416,7 +423,13 @@ class ArchivoService
         {
             $this->setDB($data["base_datos"]);
         }
-        $archivo =  $this->repository->show($id);
+        $archivo = $this->repository->show($id);
+        if(auth()->user()->tipo_empresa){
+            if($archivo->transaccion->id_usuario != auth()->id())
+            {
+                dd("No tiene autorización para descargar este archivo.");
+            }
+        }
         return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->nombre_descarga);
     }
 }
