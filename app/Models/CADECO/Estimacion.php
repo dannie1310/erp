@@ -856,6 +856,7 @@ class Estimacion extends Transaccion
         return [
             'fecha_inicial'           => $this->getCumplimientoAttribute($this->cumplimiento),
             'fecha_final'             => $this->getCumplimientoAttribute($this->vencimiento),
+            'fecha_orig'              => $this->getCumplimientoAttribute($this->fecha),
             'fecha'                   => $this->fecha_format,
             'razon_social'            => $this->empresa->razon_social,
             'moneda'                  => $this->moneda->nombre,

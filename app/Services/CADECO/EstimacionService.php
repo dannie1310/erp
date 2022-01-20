@@ -9,20 +9,22 @@
 namespace App\Services\CADECO;
 
 
+use DateTime;
 use App\Facades\Context;
-use App\Imports\CotizacionImport;
-use App\Models\CADECO\Contrato;
+use Hamcrest\Type\IsNumeric;
+use App\CSV\EstimacionLayout;
 use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Subcontrato;
-use App\Repositories\CADECO\EstimacionRepository as Repository;
-use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Contrato;
 use App\Utils\ValidacionSistema;
+use App\Imports\CotizacionImport;
+use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use App\PDF\Contratos\EstimacionFormato;
 use App\PDF\Contratos\OrdenPagoEstimacion;
-use DateTime;
-use Hamcrest\Type\IsNumeric;
-use Maatwebsite\Excel\Facades\Excel;
+use App\CSV\Contratos\EstimacionLayoutEdicion;
+use App\Repositories\CADECO\EstimacionRepository as Repository;
 
 class EstimacionService
 {
@@ -327,5 +329,86 @@ class EstimacionService
             return $date;
         }
         abort(403, "La fecha de $type es inválida");
+    }
+
+    public function descargaLayoutEdicion($id){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        $estimacion = $this->show($id)->subcontratoAEstimar();
+        return Excel::download(new EstimacionLayoutEdicion($estimacion, $id), $estimacion['folio_consecutivo'].'.xlsx');
+    }
+
+    public function cargaLayoutEdicion($file, $id, $name){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+        $file_xls = $this->getFileXls($file, $name);
+        $celdas = $this->getDatosPartidas($file_xls);
+        $this->verifica = new ValidacionSistema();
+
+        if (count($celdas[0]) != 15) {
+            abort(400, 'Archivo XLS no compatible');
+        }
+
+        $estimacion = $this->show($id);
+        $est_data = $this->show($id)->subcontratoAEstimar();
+        
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_validar = $cadena_validacion_exp[2];
+
+        if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $id != $id_validar)
+        {
+            abort(400, 'El archivo  XLS no corresponde a la estimacion  ' . $estimacion['folio_consecutivo']);
+        }
+        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Estimación');
+        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Estimación');
+        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Estimación');
+        if( date_create_from_format('d/m/Y', $fecha_est_ini) > date_create_from_format('d/m/Y', $fecha_est_fin) ){
+            abort(400, 'La fecha de inicio en posterior a la fecha de finalización.');
+        }
+
+        $est_data['fecha'] = $fecha_est;
+        $est_data['fecha_inicial'] = $fecha_est_ini;
+        $est_data['fecha_final'] = $fecha_est_fin;
+
+        $x = 8;
+        $partidas = array();
+        $partidas_no_validas = array();
+        $partidas_invalidas = false;
+        $est_data['subcontrato']['partidas_validas'] = true;
+        while ($x < count($celdas) - 3) {
+            if (!is_null($celdas[$x][14])) {
+                $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
+                if($est_data['subcontrato']['partidas'][$celdas[$x][1]]['id'] != $decodificado){
+                    abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $estimacion->numero_folio_format);
+                }
+                $est_data['subcontrato']['partidas'][$celdas[$x][1]]['numero'] = true;
+                $est_data['subcontrato']['partidas'][$celdas[$x][1]]['partida_valida'] = true;
+                $est_data['subcontrato']['partidas'][$celdas[$x][1]]['volumen_asignado_mayor'] = false;
+                $vol_saldo = (float)str_replace(',', '', $celdas[$x][7]);
+                if(is_numeric($celdas[$x][9]) && $celdas[$x][9] <= $vol_saldo) {
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][9];
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['importe_estimacion'] = $celdas[$x][9]*$est_data['subcontrato']['partidas'][$celdas[$x][1]]['precio_unitario_subcontrato'];
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['porcentaje_estimado'] = $celdas[$x][9]*100/$est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_subcontrato'];
+                }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > $vol_saldo){
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][9];
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['partida_valida'] = false;
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['volumen_asignado_mayor'] = true;
+                    $est_data['subcontrato']['partidas_validas'] = false;
+                }else if(!is_numeric($celdas[$x][9])){
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = 'N/V';
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['partida_valida'] = false;
+                    $est_data['subcontrato']['partidas_validas'] = false;
+                }
+            }
+            $x++;
+        }
+        $observaciones = $celdas[$x + 2][3] == null ? '': (string)$celdas[$x + 2][3];
+        $est_data['observaciones'] = $observaciones;
+
+        return $est_data;
     }
 }

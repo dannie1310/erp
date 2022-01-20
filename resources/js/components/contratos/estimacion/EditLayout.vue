@@ -1,6 +1,6 @@
 <template>
      <span>
-       <div class="d-flex flex-row-reverse" v-if="!cargando">
+       <div class="d-flex flex-row-reverse" v-if="estimacion">
            <div class="p-2" v-if="estimacion.estado == 0">
                 <Penalizacion v-bind:id="id"></Penalizacion>
             </div>
@@ -20,7 +20,7 @@
                 <DeductivaEdit v-bind:id="id" v-bind:id_empresa="estimacion?estimacion.id_empresa:''"></DeductivaEdit>
             </div>
         </div>
-        <div class="row" v-if="!cargando">
+        <div class="row" v-if="estimacion">
             <div class="col-md-6">
 				<div class="card">
                     <div class="card-header">
@@ -60,14 +60,7 @@
 							</div>
 							<div class="form-group row">
 								<label class="col-md-3 col-form-label">Observaciones</label>
-								<div class="col-md-9">
-									<textarea
-                                        name="observaciones"
-                                        id="observaciones"
-                                        class="form-control"
-                                        v-model="estimacion.observaciones"
-                                    ></textarea>
-								</div>
+								<div class="col-md-9">{{estimacion.observaciones}}</div>
 							</div>
 						</form>
 					</div>
@@ -84,29 +77,11 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label">Inicio</label>
-                                        <datepicker v-model = "estimacion.fecha_inicial"
-                                                    name = "fecha_inicial"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :class="{'is-invalid': errors.has('fecha_inicial')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
+                                        {{estimacion.fecha_inicial}}
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label">Término</label>
-                                        <datepicker v-model = "estimacion.fecha_final"
-                                                    name = "fecha_final"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :class="{'is-invalid': errors.has('fecha_final')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
+                                        {{estimacion.fecha_final}}
                                     </div>
                                 </div>
                             </form>
@@ -201,51 +176,27 @@
                             </td>
                             <td class="centrado">{{concepto.unidad}}</td>
                             <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                            <td style="display: none" class="numerico contratado">${{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-volumen"></td>
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
+                            <td style="display: none" class="numerico avance-importe">${{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changeCantidad(concepto)"
-                                       class="text"
-                                       v-model="concepto.cantidad_estimacion"
-                                       :name="`cantidadEstimacion[${concepto.id}]`"
-                                       v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
-                                       :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
-                            </td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changePorcentaje(concepto)"
-                                       v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
-                                       class="text"
-                                       :name="`porcentaje[${concepto.id}]`"
-                                       v-model="concepto.porcentaje_estimado"
-                                       :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
-                            </td>
+                            <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
+                            <td class="editable-cell numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(4)}}</td>
+                            <td class="editable-cell numerico">{{concepto.porcentaje_estimado}}</td>
                             <td class="numerico">{{ concepto.precio_unitario_subcontrato_format }}</td>
-                            <td class="editable-cell numerico">
-                                <input v-on:change="changeImporte(concepto)"
-                                       class="text"
-                                       :name="`importe[${concepto.id}]`"
-                                       v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
-                                       v-model="concepto.importe_estimacion"
-                                       :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
-                            </td>
+                            <td class="editable-cell numerico">${{parseFloat(concepto.importe_estimacion).formatMoney(4, '.', ',')}}</td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
                     </tbody>
 				</table>
 			</div>
 
-            <div class="modal-footer" v-if="estimacion.estado == 0">
+            <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Cerrar</button>
-                <button type="submit" class="btn btn-primary" @click="validate" :disabled="errors.count() > 0"><i class="fa fa-save"></i>Guardar </button>
-            </div>
-            <div class="modal-footer" v-else>
-                <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Cerrar</button>
+                <button type="submit" class="btn btn-primary" @click="update" :disabled="errors.count() > 0"><i class="fa fa-save"></i>Guardar </button>
             </div>
         </div>
      </span>
@@ -262,59 +213,23 @@
     import Resumen from './resumen/Show'
 
     export default {
-        name: "estimacion-edit",
+        name: "estimacion-edit-layout",
         components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen, Penalizacion},
-        props: ['id'],
+        props: ['id', 'estimacion'],
         data() {
             return {
                 cargando: true,
                 es:es,
                 columnas: [],
-                estimacion : []
             }
         },
         mounted() {
-            this.cargando = true;
-            this.find()
+            this.init()
         },
         methods: {
-            changeCantidad(concepto) {
-                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
-            },
-            changePorcentaje(concepto) {
-                concepto.cantidad_estimacion = ((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100).toFixed(2);
-                concepto.importe_estimacion = (concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato).toFixed(4);
-            },
-            changeImporte(concepto) {
-                concepto.cantidad_estimacion = (concepto.importe_estimacion / concepto.precio_unitario_subcontrato).toFixed(2);
-                concepto.porcentaje_estimado = ((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100).toFixed(2);
-            },
-            formatoFecha(date){
-                return moment(date).format('DD/MM/YYYY');
-            },
-            find() {
-                return this.$store.dispatch('contratos/estimacion/ordenarConceptos', {
-                    id: this.id,
-                    params: {}
-                }).then(data => {
-                    this.estimacion = data;
-                    this.partidas = data.subcontrato.partidas
-                }).finally(() => {
-                    this.cargando = false;
-                })
-            },
-            validate() {
-                this.$validator.validate().then(result => {
-                    if (result) {
-                        if(moment(this.estimacion.fecha_final).format('YYYY/MM/DD') < moment(this.estimacion.fecha_inicial).format('YYYY/MM/DD'))
-                        {
-                                swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de término.', 'error')
-                        }else{
-                            this.update()
-                        }
-                    }
-                });
+            init() {
+                this.partidas = this.estimacion.subcontrato.partidas
+                this.cargando = false;
             },
             update() {
                 var datos = {

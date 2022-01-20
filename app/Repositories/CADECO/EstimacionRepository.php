@@ -34,4 +34,9 @@ class EstimacionRepository extends Repository implements RepositoryInterface
     {
         return $this->model->descargaLayout($id);
     }
+
+    public function descargaLayoutEdicion($id)
+    {
+        return $this->model->descargaLayoutEdicion($id);
+    }
 }
