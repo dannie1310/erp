@@ -47,8 +47,10 @@ $api->version('v1', function ($api) {
             $api->post('cargar-archivo-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@cargarArchivoSC');
             $api->post('{id}/destroy-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroySC')->where(['id' => '[0-9]+']);
             $api->get('{id}/invitacion/documento', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@documento')->where(['id' => '[0-9]+']);
+            $api->get('{id}/invitacion/documento-sc', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@documentoSC')->where(['id' => '[0-9]+']);
             $api->get('{id}/invitacion', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@getArchivosInvitacion')->where(['id' => '[0-9]+']);
             $api->get('/descargar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@descargar')->where(['id' => '[0-9]+']);
+            $api->get('/descargar-archivo-invitacion-sc/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@descargarSC')->where(['id' => '[0-9]+']);
             $api->get('/consultar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@show')->where(['id' => '[0-9]+']);
             $api->patch('/eliminar-archivo-invitacion/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\PadronProveedores\InvitacionArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@show')->where(['id' => '[0-9]+']);

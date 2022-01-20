@@ -347,6 +347,18 @@ export default {
                 })
             }
         },
+        descargarArchivoInvitacionSC(context, payload){
+            var urr = URI +  'descargar-archivo-invitacion-sc/'+payload.id+'?access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
         descargar(context, payload){
             var urr = URI + payload.id+ '/descargar?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token='+ this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");

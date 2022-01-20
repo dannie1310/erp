@@ -254,7 +254,7 @@ export const routes = [
                             },
                             {
                                 path: 'createLayout',
-                                name: 'asignacion-proveedor-layout-create',  
+                                name: 'asignacion-proveedor-layout-create',
                                 component: require('./components/compras/asignacion/CreateLayout').default,
                                 props:true,
                                 meta: {
@@ -1175,7 +1175,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create/seleccionar_contrato_proyectado',  
+                                path: 'create/seleccionar_contrato_proyectado',
                                 name: 'asignacion-contratista-selecciona-contrato-proyectado',
                                 component: require('./components/contratos/asignacion-contratista/SeleccionaContratoProyectado').default,
                                 meta: {
@@ -4342,7 +4342,8 @@ export const routes = [
                         props: route => ({
                             id_invitacion: route.params.id,
                             permiso: ['registrar_cotizacion_proveedor'],
-                            global: true
+                            global: true,
+                            sin_contexto: 1,
                         }),
                         meta: {
                             title: 'Documentos de Invitación a Cotizar',

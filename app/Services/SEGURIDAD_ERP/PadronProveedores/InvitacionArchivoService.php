@@ -164,27 +164,28 @@ class InvitacionArchivoService
 
     public function documento($id){
         $archivo = $this->repository->show($id);
+        if(auth()->user()->tipo_empresa){
+            if($archivo->invitacion->usuario_invitado != auth()->id())
+            {
+                dd("No tiene autorización para consultar este archivo.");
+            }
+        }
         $storagePath  = Storage::disk('archivos_invitaciones')->getDriver()->getAdapter()->getPathPrefix();
         return response()->file($storagePath . $archivo->hashfile . '.' . $archivo->extension );
     }
 
     public function descargar($id)
     {
+        $archivo = $this->repository->show($id);
+        if(auth()->user()->tipo_empresa){
+            if($archivo->invitacion->usuario_invitado != auth()->id())
+            {
+                dd("No tiene autorización para descargar este archivo.");
+            }
+        }
         $archivo =  $this->repository->show($id);
-        return Storage::disk('archivos_invitaciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->tipo->descripcion_descarga.'_'.$archivo->nombre_descarga);
-
-        $storagePath  = Storage::disk('archivos_invitaciones')->getDriver()->getAdapter()->getPathPrefix();
-        $descargaPath = "downloads/padron_contratistas/".date("Ymdhis")."/";
-        if (!file_exists($descargaPath) && !is_dir($descargaPath)) {
-            mkdir($descargaPath, 777, true);
-        }
-        try{
-            copy($storagePath.$archivo->hashfile . '.' . $archivo->extension, $descargaPath.$archivo->nombre);
-        }catch (\Exception $e){
-        }
-
-        if(file_exists(public_path($descargaPath.$archivo->nombre))){
-            return response()->download(public_path($descargaPath.$archivo->nombre));
+        if(Storage::disk('archivos_invitaciones')->exists($archivo->hashfile . '.' . $archivo->extension)){
+            return Storage::disk('archivos_invitaciones')->download($archivo->hashfile . '.' . $archivo->extension, $archivo->nombre_descarga);
         } else {
             return response()->json(["mensaje"=>"No existe el archivo para la descarga".$archivo->uuid]);
         }
