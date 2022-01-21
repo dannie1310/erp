@@ -46,44 +46,93 @@
                                     </select>
                                 </td>
                                 <td class="sin_borde" style="padding-top: 3px; width: 100px">
-                                    <button type="button" class="btn btn-secondary" v-on:click="getInforme" ><i class="fa fa-filter"></i>Filtrar</button>
+                                    <button type="button" class="btn btn-secondary" v-on:click="getInforme" :disabled="cargando" >
+                                        <i class="fa fa-filter" v-if="!cargando"></i>
+                                        <i class="fa fa-spinner fa-spin" v-else></i>
+                                        Filtrar
+                                    </button>
                                 </td>
                             </tr>
                         </table>
                     </div>
                 </div>
                 <hr />
-                <div class="row" >
+                <div class="row" v-if="!cargando">
                     <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
                         <span><b>{{this.empresa_sat_razon_social}}</b></span>
                         <table class="table table-sm" id="sticky">
                             <thead >
                                 <tr>
-                                    <th class="index_corto">#</th>
-                                    <th class="c100">Mes</th>
+                                    <th class="index_corto" rowspan="2">#</th>
+                                    <th class="c100" rowspan="2">Mes</th>
+
                                     <th class="c100">Costos y Gastos Deducibles <br>(según Balanza)</th>
+
+                                    <th class="c100">CFDI Recibidos Tipo I <br>Totales</th>
+                                    <th class="c100">(-) CFDI TIPO I <br>Sustitución de Ejercicios Anteriores</th>
+                                    <th class="c100">Neto de Recibidos <br> Tipo I</th>
+
+                                    <th class="c100">CFDI Recibidos Tipo E <br>Totales</th>
+                                    <th class="c100">(-) CFDI TIPO E <br>Relacionados a un ejercicio anterior</th>
+                                    <th class="c100">Neto de Recibidos <br> Tipo E</th>
+
                                     <th class="c100">CFDI recibidos <br>por mes (Neto)</th>
-                                    <th class="c100">(-) CFDI TIPO I <br>Sustitución de ejercicios anteriores</th>
-                                    <th class="c100">(+) CFDI TIPO E <br>Relacionados a un ejercicio anterior</th>
+
+                                    <th class="c100">Diferencia Vs. Balanza</th>
                                 </tr>
+                            <tr>
+
+                                <th class="c100">A</th>
+
+                                <th class="c100">B1</th>
+                                <th class="c100">B2</th>
+                                <th class="c100">B3= B1-B2</th>
+
+                                <th class="c100">C1</th>
+                                <th class="c100">C2</th>
+                                <th class="c100">C3= C1-C2</th>
+
+                                <th class="c100">D = B3-C3</th>
+
+                                <th class="c110">A - D</th>
+
+                            </tr>
                             </thead>
                             <tbody>
                                 <tr v-for="(partida, i) in informe.partidas">
                                     <td>{{i+1}}</td>
                                     <td>{{partida.mes}}</td>
-                                    <td style="text-align: right">{{partida.costo_balanza}}</td>
-                                    <td style="text-align: right; text-decoration: underline; cursor: pointer" v-on:click="verCFDI(partida)">{{partida.costo_cfdi}}</td>
-                                    <td style="text-align: right">{{partida.sustitucion_ejercicios_anteriores}}</td>
-                                    <td style="text-align: right">{{partida.relacion_ejercicios_anteriores}}</td>
+
+                                    <td_informe v-bind:value="partida.costo_balanza_sf" />
+
+                                    <td_informe v-bind:value="partida.costo_cfdi_i_sf" />
+                                    <td_informe v-bind:value="partida.sustitucion_ejercicios_anteriores_sf" />
+                                    <td_informe v-bind:value="partida.neto_tipo_i_sf" />
+
+
+                                    <td_informe v-bind:value="partida.costo_cfdi_e_sf" />
+                                    <td_informe v-bind:value="partida.relacion_ejercicios_anteriores_sf" />
+                                    <td_informe v-bind:value="partida.neto_tipo_e_sf" />
+
+                                    <td style="text-align: right; " :style="partida.costo_cfdi != '-'?`text-decoration: underline; cursor: pointer`:``" v-on:click="verCFDI(partida)">{{partida.costo_cfdi}}</td>
+                                    <td_informe v-bind:value="partida.diferencia_sf" />
                                 </tr>
                             </tbody>
                             <tfoot>
                             <tr>
                                 <td colspan="2"><b>Suma:</b></td>
-                                <td style="text-align: right">{{informe.sumatorias.suma_costos_balanza}}</td>
-                                <td style="text-align: right">{{informe.sumatorias.suma_costos_cfdi}}</td>
-                                <td style="text-align: right">{{informe.sumatorias.suma_sustitucion_ejercicios_anteriores}}</td>
-                                <td style="text-align: right">{{informe.sumatorias.suma_relacion_ejercicios_anteriores}}</td>
+                                <td_informe v-bind:value="informe.sumatorias.suma_costos_balanza_sf" />
+
+                                <td_informe v-bind:value="informe.sumatorias.suma_costos_cfdi_i_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_sustitucion_ejercicios_anteriores_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_neto_tipo_i_sf" />
+
+                                <td_informe v-bind:value="informe.sumatorias.suma_costos_cfdi_e_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_relacion_ejercicios_anteriores_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_neto_tipo_e_sf" />
+
+                                <td_informe v-bind:value="informe.sumatorias.suma_costos_cfdi_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_diferencia_sf" />
                             </tr>
                             </tfoot>
                         </table>
@@ -168,7 +217,6 @@
 
                                             </td>
 
-
                                             <template v-if="cfdi.moneda !='MXN'">
                                                  <td style="text-align: right" v-if="cfdi.tc_xls != null">
                                                     <span v-if="cfdi.total_xls != null">
@@ -252,10 +300,11 @@ import DescargaCFDI from "../../cfd/cfd-sat/DescargaCFDI";
 import PDFPoliza from "../../../contabilidad-general/poliza/partials/PDFPoliza";
 import {ModelListSelect} from 'vue-search-select';
 import PolizaShowModal from "../../../contabilidad-general/poliza/ShowModal";
+import Td_informe from "../../../globals/td_informe";
 
 export default {
     name: "Informe",
-    components: {PolizaShowModal, PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
+    components: {Td_informe, PolizaShowModal, PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
         return {
             informe : null,
