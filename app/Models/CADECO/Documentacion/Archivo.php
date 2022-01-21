@@ -10,6 +10,7 @@ use App\Utils\Util;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 
 class Archivo extends Model
@@ -106,6 +107,7 @@ class Archivo extends Model
 
     public function getNombreDescargaAttribute()
     {
+        return Str::ascii($this->nombre);
         $nombre_explode = explode(".",$this->nombre);
         $extension = ".".$nombre_explode[count($nombre_explode)-1];
         $nombre = str_replace($extension,"",$this->nombre);

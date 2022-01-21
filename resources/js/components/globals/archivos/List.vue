@@ -199,16 +199,33 @@ export default {
             this.getImagenes(archivo.id);
         },
         getImagenes(id) {
-            return this.$store.dispatch('documentacion/archivo/getImagenes', {
-                id: id,
-                params: {include: []}
-            }).then(data => {
-                this.imagenes = data;
-            }).finally( ()=>{
-                this.cargando_imagenes = false;
-                $(this.$refs.modalImagen).appendTo('body');
-                $(this.$refs.modalImagen).modal('show');
-            })
+            let _self = this;
+            if(this.sin_contexto) {
+                return this.$store.dispatch('documentacion/archivo/getImagenesSC', {
+                    id: id,
+                    id_obra : _self.id_obra,
+                    base_datos : _self.base_datos,
+                    params: {include: []}
+                }).then(data => {
+                    this.imagenes = data;
+                }).finally(() => {
+                    this.cargando_imagenes = false;
+                    $(this.$refs.modalImagen).appendTo('body');
+                    $(this.$refs.modalImagen).modal('show');
+                })
+            }
+            else {
+                return this.$store.dispatch('documentacion/archivo/getImagenes', {
+                    id: id,
+                    params: {include: []}
+                }).then(data => {
+                    this.imagenes = data;
+                }).finally(() => {
+                    this.cargando_imagenes = false;
+                    $(this.$refs.modalImagen).appendTo('body');
+                    $(this.$refs.modalImagen).modal('show');
+                })
+            }
         },
 
         eliminar(archivo){

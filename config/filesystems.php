@@ -122,6 +122,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_PADRON_CONTRATISTAS')),
         ],
+        'padron_contratista_hashfiles' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_PADRON_CONTRATISTAS').'/hashfiles'),
+        ],
         'xml_sat' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_SAT')),

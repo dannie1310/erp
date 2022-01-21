@@ -37,6 +37,11 @@ class Archivo extends ArchivoGeneralizacion
         return $this->belongsTo(Empresa::class, 'id_empresa_proveedor','id');
     }
 
+    public function empresa()
+    {
+        return $this->belongsTo(Empresa::class, 'id_empresa','id');
+    }
+
     public function representanteLegal()
     {
         return $this->belongsTo(RepresentanteLegal::class, 'id_representante_legal','id');

@@ -51,13 +51,13 @@ class Transaccion extends Model
     {
         parent::boot();
         self::addGlobalScope(function ($query) {
-            if(auth()->user()->id_contratista){
+            /*if(auth()->user()->id_contratista){
                 if(($contratista = CtgContratista::query()->find(auth()->user()->id_contratista)) && auth()->user()->usuario_estado == 3){
                     $query->where('id_empresa', '=', $contratista->empresa->id_empresa);
                 }else{
                     abort(403, 'Contratista no registrado.');
                 }
-            }
+            }*/
             return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
@@ -299,6 +299,27 @@ class Transaccion extends Model
             case  72: return SolicitudPagoAnticipado::ICONO;
             default:  return "";
         }
+    }
+
+    public function getTransaccionAttribute()
+    {
+
+        switch ($this->tipo_transaccion){
+            case  17: return SolicitudCompra::find($this->id_transaccion);
+            case  18: return CotizacionCompra::find($this->id_transaccion);
+            case  19: return OrdenCompra::find($this->id_transaccion);
+            case  33: return EntradaMaterial::find($this->id_transaccion);
+            case  34: return SalidaAlmacen::find($this->id_transaccion);
+            case  49: return ContratoProyectado::find($this->id_transaccion);
+            case  50: return PresupuestoContratista::find($this->id_transaccion);
+            case  51: return Subcontrato::find($this->id_transaccion);
+            case  52: return Estimacion::find($this->id_transaccion);
+            case  65: return Factura::find($this->id_transaccion);
+            case  82: return Pago::find($this->id_transaccion);
+            case  72: return SolicitudPagoAnticipado::find($this->id_transaccion);
+            default:  return "";
+        }
+
     }
 
     public function getRelacionesAttribute()
