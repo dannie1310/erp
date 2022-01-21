@@ -373,6 +373,8 @@ class ArchivoService
             {
                 dd("No tiene autorización para consultar este archivo.");
             }
+        } else if($archivo->transaccion->opciones == 10){
+            dd("No tiene autorización para consultar este archivo.");
         }
 
         $storagePath  = Storage::disk('archivos_transacciones')->getDriver()->getAdapter()->getPathPrefix();

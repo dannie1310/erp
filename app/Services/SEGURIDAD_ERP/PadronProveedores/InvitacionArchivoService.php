@@ -183,7 +183,6 @@ class InvitacionArchivoService
                 dd("No tiene autorización para descargar este archivo.");
             }
         }
-        $archivo =  $this->repository->show($id);
         if(Storage::disk('archivos_invitaciones')->exists($archivo->hashfile . '.' . $archivo->extension)){
             return Storage::disk('archivos_invitaciones')->download($archivo->hashfile . '.' . $archivo->extension, $archivo->nombre_descarga);
         } else {
