@@ -373,7 +373,12 @@ class ArchivoService
             {
                 dd("No tiene autorización para consultar este archivo.");
             }
-        } else if($archivo->transaccion->opciones == 10){
+        } else if(!$archivo->transaccion->transaccion)
+        {
+            //con esto se validan los scopes por áreas contratantes / compradoras
+            dd("No tiene autorización para consultar este archivo.");
+        } else if($archivo->transaccion->opciones == 10)
+        {
             dd("No tiene autorización para consultar este archivo.");
         }
 
