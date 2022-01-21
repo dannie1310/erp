@@ -404,8 +404,23 @@ class ArchivoService
         }
     }
 
-    public function imagenBase64($id)
+    public function imagenBase64($data, $id)
     {
+        if(key_exists('base_datos', $data))
+        {
+            $this->setDB($data["base_datos"]);
+        }
+        $archivo = $this->repository->show($id);
+        if(auth()->user()->tipo_empresa){
+            if($archivo->transaccion->id_usuario != auth()->id())
+            {
+                dd("No tiene autorización para consultar este archivo.");
+            }
+        }
+        else if($archivo->transaccion->opciones == 10){
+            dd("No tiene autorización para consultar este archivo.");
+        }
+
         $archivo = $this->repository->show($id);
         $imagenes = array();
 
@@ -431,6 +446,9 @@ class ArchivoService
             {
                 dd("No tiene autorización para descargar este archivo.");
             }
+        }
+        else if($archivo->transaccion->opciones == 10){
+            dd("No tiene autorización para descargar este archivo.");
         }
         return Storage::disk('archivos_transacciones')->download($archivo->hashfile.".".$archivo->extension, $archivo->nombre_descarga);
     }

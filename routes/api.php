@@ -41,6 +41,7 @@ $api->version('v1', function ($api) {
             $api->get('{tipo}/{id}/transaccion-relacionados', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccion')->where(['id' => '[0-9]+']);
             $api->post('{id}', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@destroy')->where(['id' => '[0-9]+']);
             $api->get('{id}/imagenes', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenes')->where(['id' => '[0-9]+']);
+            $api->get('{id}/imagenes-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@imagenesSC')->where(['id' => '[0-9]+']);
             $api->post('{id}/transaccion-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosTransaccionSC');
             $api->get('{tipo}/{id}/transaccion-relacionados-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@getArchivosRelacionadosTransaccionSC')->where(['id' => '[0-9]+']);
             $api->get('{id}/documento-sc', 'App\Http\Controllers\v1\CADECO\Documentacion\ArchivoController@documentoSC')->where(['id' => '[0-9]+']);
