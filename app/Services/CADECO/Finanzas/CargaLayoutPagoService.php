@@ -139,13 +139,13 @@ class CargaLayoutPagoService
         $pagos_validados = array();
         $moneda_obra = $this->getIdMonedaObra();
         foreach($pagos as $i=>$pago){
-            if($pago["cuenta_cargo_obj"]->id_moneda == $moneda_obra){
+
+            if($pago["cuenta_cargo_obj"]["id_moneda"] == $moneda_obra){
                 $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] / $pago["tipo_cambio"],2,".","");
             }
             else{
                 $pago["monto_pagado_documento"] = number_format($pago["monto_pagado"] * $pago["tipo_cambio"],2,".","");
             }
-
             $pagos_validados[] = $pago;
         }
         return $pagos_validados;
@@ -173,7 +173,10 @@ class CargaLayoutPagoService
         $contenido = array();
         foreach ($arreglo as $i=>$partida){
             if($i > 0) {
-                $contenido[] = $this->complementaPartida($partida);
+                if(str_replace(" ", "", $partida[0]) != "")
+                {
+                    $contenido[] = $this->complementaPartida($partida);
+                }
             }
         }
         $contenido = $this->validaTC($contenido);
@@ -227,7 +230,6 @@ class CargaLayoutPagoService
 
         );
         $partida_completa = array_merge($datos_pago,$datos_documento);
-
         return $partida_completa;
     }
     private function getEstadoDocumento($transaccion, $monto_pagado){

@@ -254,7 +254,7 @@ export const routes = [
                             },
                             {
                                 path: 'createLayout',
-                                name: 'asignacion-proveedor-layout-create',  
+                                name: 'asignacion-proveedor-layout-create',
                                 component: require('./components/compras/asignacion/CreateLayout').default,
                                 props:true,
                                 meta: {
@@ -1175,7 +1175,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'create/seleccionar_contrato_proyectado',  
+                                path: 'create/seleccionar_contrato_proyectado',
                                 name: 'asignacion-contratista-selecciona-contrato-proyectado',
                                 component: require('./components/contratos/asignacion-contratista/SeleccionaContratoProyectado').default,
                                 meta: {
@@ -1981,7 +1981,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'carga-create',
+                                path: 'carga-masiva-create',
                                 name: 'carga-masiva-create',
                                 component: require('./components/finanzas/gestion-pago/carga-masiva/Create').default,
                                 meta: {
