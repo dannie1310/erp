@@ -112,7 +112,7 @@ class OrdenCompraFormato extends FPDI
 
 
 
-        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO") {
+        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS") {
             $this->NuevoClausulado = 1;
             $this->archivo = 'Clausulado_2019.pdf';
         } // fin if comparación de fecha
@@ -192,6 +192,13 @@ class OrdenCompraFormato extends FPDI
                 case "SAO1814_TUNEL_MANZANILLO":
                     if($this->ordenCompra->obra->id_obra == 3){
                         $this->archivo = "ClausuladoTransitsmico.pdf";
+                    }else{
+                        $this->archivo = "Clausulado_2019.pdf";
+                    }
+                    break;
+                case "SAO1814_TROLEBUS":
+                    if($this->ordenCompra->obra->id_obra == 1){
+                        $this->archivo = "ClausuladoTrolebus.pdf";
                     }else{
                         $this->archivo = "Clausulado_2019.pdf";
                     }
@@ -434,6 +441,13 @@ class OrdenCompraFormato extends FPDI
                     case "SAO1814_TUNEL_MANZANILLO":
                         if($this->ordenCompra->obra->id_obra == 3){
                             $this->Ln(22);
+                        }else{
+                            $this->Ln(20);
+                        }
+                        break;
+                    case "SAO1814_TROLEBUS":
+                        if($this->ordenCompra->obra->id_obra == 1){
+                            $this->Ln(21);
                         }else{
                             $this->Ln(20);
                         }
