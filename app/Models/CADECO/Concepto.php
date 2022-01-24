@@ -13,6 +13,7 @@ use App\Facades\Context;
 use App\Models\CADECO\PresupuestoObra\PrecioVenta;
 use App\Scopes\ObraScope;
 use App\Scopes\ActivoScope;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\CADECO\Contabilidad\CuentaConcepto;
@@ -380,6 +381,13 @@ class Concepto extends Model
             ->orderBy('nivel', 'ASC');
     }
 
+    public function descendientes()
+    {
+        return $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '%')
+            ->orderBy('nivel', 'ASC');
+    }
+
     /**
      *  Se muestra la ruta desde 3er nivel (000.000.000.)
      * @return mixed|string
@@ -523,5 +531,32 @@ class Concepto extends Model
 
             }
         }
+    }
+
+    public function toggleActivo()
+    {
+        $size = strlen($this->nivel)/4;
+        $first = 4;
+        $activo = ($this->activo==0)?1:0;
+        $ancestros = new Collection();
+        $nivel = $this->nivel;
+
+        if($activo == 1){
+            for($i=0; $i<$size; $i++)
+            {
+                $aux = substr($nivel,0, $first);
+                $ancestro = Concepto::where('nivel', 'LIKE', $aux)->first();
+                $ancestro->update(["activo"=>$activo]);
+                $ancestros->push($ancestro);
+                $first+=4;
+            }
+        }
+
+        $this->update(["activo"=>$activo]);
+        $this->descendientes()->update(["activo"=>$activo]);
+        $descendientes = $this->descendientes;
+        $descendientes->push($this);
+        $conceptos = $descendientes->merge($ancestros);
+        return $conceptos;
     }
 }
