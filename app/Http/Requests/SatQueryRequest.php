@@ -43,7 +43,7 @@ class SatQueryRequest
                    <soapenv:Header/>
                    <soapenv:Body>
                       <tem:Consulta>
-                          <tem:expresionImpresa><![CDATA[?re=' . $rfcEmisor . '&rr=' . $rfcReceptor . '&tt=' . $total . '&id=' . $uuid . '&fe=' . $sello .']]></tem:expresionImpresa>
+                          <tem:expresionImpresa><![CDATA[?re=' . htmlentities($rfcEmisor) . '&rr=' . htmlentities($rfcReceptor) . '&tt=' . $total . '&id=' . $uuid . '&fe=' . $sello .']]></tem:expresionImpresa>
                       </tem:Consulta>
                    </soapenv:Body>
                 </soapenv:Envelope>';
