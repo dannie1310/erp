@@ -20,6 +20,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Utils\CFD;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -415,6 +416,28 @@ class CFDSAT extends Model
             if(!$archivo->hashfile){
                 $archivo->delete();
             }
+        }
+    }
+
+    public function validaVigencia()
+    {
+        try{
+            $cfd = new CFD($this->xml);
+        } catch (\Exception $e){
+            $this->no_verificable =  1;
+            $this->save();
+        }
+
+        $vigente = $cfd->validaVigente();
+
+        if(!$vigente)
+        {
+            $this->cancelado = 1;
+            $this->fecha_cancelacion =  date('Y-m-d H:i:s');
+            $this->save();
+        } else{
+            $this->ultima_verificacion =  date('Y-m-d H:i:s');
+            $this->save();
         }
     }
 }
