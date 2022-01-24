@@ -98,7 +98,7 @@ export default {
     components:{Info, Documento, Imagen},
     data(){
         return{
-            url : '/api/archivo/{id}/invitacion/documento?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
+            url : '/api/archivo/{id}/invitacion/{metodo}?access_token='+this.$session.get('jwt')+'&db={base_datos}&idobra={id_obra}',
             id_archivo:'',
             descripcion:'',
             archivo:'',
@@ -112,7 +112,7 @@ export default {
             eliminando_imagenes : false,
             id_obra_url : '',
             base_datos_url : '',
-            metodo : 'documento'
+            metodo : ''
         }
     },
     mounted() {
@@ -129,20 +129,41 @@ export default {
         }else{
             this.id_obra_url = this.$session.get('id_obra');
         }
+        if(this.sin_contexto)
+        {
+            this.metodo = 'documento-sc'
+        }
+        else  {
+            this.metodo = 'documento';
+        }
     },
     methods: {
         descargar(id)
         {
             this.descargando = true;
-            return this.$store.dispatch('documentacion/archivo/descargarArchivoInvitacion',
-                {
-                    id : id
-                })
-                .then(data => {
-                    this.$emit('success');
-                }).finally(() => {
-                    this.descargando = false;
-                });
+            if(this.sin_contexto)
+            {
+                return this.$store.dispatch('documentacion/archivo/descargarArchivoInvitacionSC',
+                    {
+                        id : id
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
+
+            }else{
+                return this.$store.dispatch('documentacion/archivo/descargarArchivoInvitacion',
+                    {
+                        id : id
+                    })
+                    .then(data => {
+                        this.$emit('success');
+                    }).finally(() => {
+                        this.descargando = false;
+                    });
+            }
         },
         createImage(file, tipo) {
             var reader = new FileReader();

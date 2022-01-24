@@ -45,7 +45,6 @@ class SubcontratoFormato extends FPDI
 
     function Header(){
         $ln = 0;
-        // dd($this->subcontrato->clasificacionSubcontrato);
         if($this->encola == 'clausulado' &&$this->subcontrato->clasificacionSubcontrato){
             if(Context::getDatabase()  == "SAO1814_TERMINAL_NAICM"){
                 $this->setSourceFile(public_path('pdf/ClausuladosPDF/Clausulado_ctvm.pdf'));
@@ -472,7 +471,7 @@ class SubcontratoFormato extends FPDI
                 // $this->Cell(3);
                 $this->CellFitScale(6.6, .5, utf8_decode($this->subcontrato->empresa->razon_social), 1, 0,'C');
                 $this->CellFitScale(13.3, .5, utf8_decode($this->obra->facturar), 1, 0,'C');
-                
+
                 $this->Ln(.5);
                 // $this->Cell(3);
                 $this->CellFitScale(6.6, 1.2, ' ', 1, 0,'R');

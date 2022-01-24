@@ -44,13 +44,25 @@ class InvitacionArchivoController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+
+        $this->middleware('permiso:consultar_invitacion_cotizar_compra|consultar_invitacion_cotizar_contrato')->only(['documento','descargar']);
+        $this->middleware('permisoGlobal:consultar_invitacion_cotizar_proveedor')->only(['documentoSC','descargarSC']);
+
     }
 
     public function documento($id){
         return $this->service->documento($id);
     }
 
+    public function documentoSC($id){
+        return $this->service->documento($id);
+    }
+
     public function descargar($id){
+        return $this->service->descargar($id);
+    }
+
+    public function descargarSC($id){
         return $this->service->descargar($id);
     }
 

@@ -41,6 +41,7 @@ class ArchivoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:actualizar_expediente_proveedor')->only('cargarArchivo');
         $this->middleware('permisoGlobal:eliminar_archivo_expediente')->only('destroy');
+        $this->middleware('permisoGlobal:consultar_expediente_proveedor')->only(['documento','imagenes']);
 
         $this->fractal = $fractal;
         $this->service = $service;

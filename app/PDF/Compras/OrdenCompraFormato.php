@@ -112,7 +112,7 @@ class OrdenCompraFormato extends FPDI
 
 
 
-        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO") {
+        if (strtotime($this->fecha) >= '2019-04-08' and Context::getDatabase() <> "SAO1814_TERMINAL_NAICM" and  Context::getDatabase() <> "SAO1814_TUNEL_MANZANILLO" and  Context::getDatabase() <> "SAO1814_TROLEBUS" and  Context::getDatabase() <> "SAO1814_CUTZAMALA") {
             $this->NuevoClausulado = 1;
             $this->archivo = 'Clausulado_2019.pdf';
         } // fin if comparación de fecha
@@ -192,6 +192,20 @@ class OrdenCompraFormato extends FPDI
                 case "SAO1814_TUNEL_MANZANILLO":
                     if($this->ordenCompra->obra->id_obra == 3){
                         $this->archivo = "ClausuladoTransitsmico.pdf";
+                    }else{
+                        $this->archivo = "Clausulado_2019.pdf";
+                    }
+                    break;
+                case "SAO1814_TROLEBUS":
+                    if($this->ordenCompra->obra->id_obra == 1){
+                        $this->archivo = "ClausuladoTrolebus.pdf";
+                    }else{
+                        $this->archivo = "Clausulado_2019.pdf";
+                    }
+                    break;
+                case "SAO1814_CUTZAMALA":
+                    if($this->ordenCompra->obra->id_obra == 4){
+                        $this->archivo = "ClausuladoCutzamala.pdf";
                     }else{
                         $this->archivo = "Clausulado_2019.pdf";
                     }
@@ -434,6 +448,20 @@ class OrdenCompraFormato extends FPDI
                     case "SAO1814_TUNEL_MANZANILLO":
                         if($this->ordenCompra->obra->id_obra == 3){
                             $this->Ln(22);
+                        }else{
+                            $this->Ln(20);
+                        }
+                        break;
+                    case "SAO1814_TROLEBUS":
+                        if($this->ordenCompra->obra->id_obra == 1){
+                            $this->Ln(21);
+                        }else{
+                            $this->Ln(20);
+                        }
+                        break;
+                    case "SAO1814_CUTZAMALA":
+                        if($this->ordenCompra->obra->id_obra == 4){
+                            $this->Ln(21.25);
                         }else{
                             $this->Ln(20);
                         }
@@ -893,7 +921,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Ln();
                 //$this->SetFillColor(180, 180, 180);
                 $this->Cell(5, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
-                $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 1);
+                $this->Cell(5, .4, utf8_decode('C.P. MARCO A. MALDONADO HERNANDEZ'), 'TRLB', 0, 'C', 1);
                 $this->Cell(5, .4, utf8_decode('ING. MIGUEL DE LA MANO URQUIZA'), 'TRLB', 0, 'C', 1);
                 $this->Cell(5, .4, utf8_decode('ING. HORACIO POSADAS HUERTA'), 'TRLB', 0, 'C', 1);
 

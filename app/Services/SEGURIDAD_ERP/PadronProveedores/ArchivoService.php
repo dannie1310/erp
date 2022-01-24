@@ -128,7 +128,7 @@ class ArchivoService
         if($archivo->usuario_registro && $archivo->usuario_registro != auth()->id()){
             abort(403, 'No puede actualizar el archivo porque fue registrado por otro usuario.');
         }
-        
+
         $paths = $this->generaDirectorioPDF();
         foreach($archivos_pdf as $key => $archivo_pdf){
             $nombre_explode = \explode('.', $archivos_nombres[$key]->nombre);
@@ -163,9 +163,9 @@ class ArchivoService
             $pdf_file = fopen($paths["dir_pdf"].$files[0], 'r');
             $hash_file = hash_file('sha1', $paths["dir_pdf"].$files[0]);
         }
-      
+
         $repetidos = $this->repository->where([['hash_file', '=', $hash_file]])->all();
-        
+
         if($repetidos->count() > 0 && $repetidos[0] != $archivo){
             abort(403, 'El archivo ya ha sido registrado previamente como '.$repetidos[0]->ctgTipoArchivo->descripcion . ' de la empresa '.$archivo->empresa->razon_social ." (".$archivo->empresa->rfc.")")
             ;
@@ -336,15 +336,34 @@ class ArchivoService
 
     public function documento($data, $id){
         $archivo = $this->repository->show($id);
-        if($archivo->prestadora)
+
+        if(auth()->user()->tipo_empresa){
+            if($archivo->empresa->rfc != auth()->user()->usuario)
+            {
+                dd("No tiene autorización para consultar este archivo.");
+            }
+        }
+
+        /*if($archivo->prestadora)
         {
             $directorio = $archivo->proveedor->rfc .'/'. $archivo->prestadora->rfc;
         } else {
             $directorio = $archivo->empresa->rfc;
         }
         $storagePath  = Storage::disk('padron_contratista')->getDriver()->getAdapter()->getPathPrefix();
-        // dd($storagePath . $directorio . '/' . $archivo->nombre_archivo);
         return response()->file($storagePath . $directorio . '/' . $archivo->nombre_archivo . '.' . $archivo->extension_archivo );
+        */
+        if($archivo){
+            $storagePath  = Storage::disk('padron_contratista_hashfiles')->getDriver()->getAdapter()->getPathPrefix();
+
+            if(Storage::disk('padron_contratista_hashfiles')->exists($archivo->hash_file . '.' . $archivo->extension_archivo)){
+                return response()->file($storagePath . $archivo->hash_file . '.' . $archivo->extension_archivo );
+            } else {
+                return response()->json(["mensaje"=>"El archivo no esta disponible: ".$archivo->hash_file]);
+            }
+        }else{
+            return response()->json(["mensaje"=>"El archivo no existe."]);
+        }
     }
 
     public function getArchivosPrestadora($data){
@@ -377,6 +396,14 @@ class ArchivoService
     public function imagenBase64($id)
     {
         $archivo = $this->repository->show($id);
+
+        if(auth()->user()->tipo_empresa){
+            if($archivo->empresa->rfc != auth()->user()->usuario)
+            {
+                dd("No tiene autorización para consultar este archivo.");
+            }
+        }
+
         $imagenes = array();
 
         if(count($archivo->archivosIntegrantes) > 0) {

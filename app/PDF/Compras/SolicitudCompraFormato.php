@@ -439,7 +439,7 @@ RFC: ' . $this->obra->rfc), '', 'J');
             //$this->Cell(4, .4, 'LIC. BRENDA ELIZABETH ESQUIVEL ESPINOZA', 'TRLB', 0, 'C', 1);
             $this->Cell(4.8, .4, '', 'TRLB', 0, 'C', 0);
             $this->Cell(4.8, .4, utf8_decode($this->solicitud->usuario_registro), 'TRLB', 0, 'C', 0);
-            $this->Cell(5, .4, utf8_decode('L.C.P. LUIS ANTONIO GARCÍA RAMOS'), 'TRLB', 0, 'C', 0);
+            $this->Cell(5, .4, utf8_decode('C.P. MARCO A. MALDONADO HERNANDEZ'), 'TRLB', 0, 'C', 0);
             $this->Cell(5, .4, '', 'TRLB', 0, 'C', 0);
         }
         else if (Context::getDatabase() == "SAO1814_TUNEL_MANZANILLO" && Context::getIdObra() == 3 && $this->solicitud->id_area_compradora == 4)
