@@ -10,6 +10,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
+use App\Jobs\ProcessCancelacionCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
@@ -1567,5 +1568,80 @@ class CFDSATService
                 $id++;
             }
         }
+    }
+
+    public function detectarCancelaciones()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            /*->whereIn("tipo_comprobante",["I","E"])*/
+            ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                /*->whereIn("tipo_comprobante",["I","E"])*/
+                ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessCancelacionCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                //$rcfd->validaVigencia();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+
+
+        /*$cantidad = CFDSAT::where("id_empresa_sat","=",1)
+            ->where("cancelado","=","0")
+            ->whereIn("tipo_comprobante",["I","E"])
+            ->whereBetween("fecha",["2021-01-01 00:00:00","2021-01-31 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("id_empresa_sat","=",1)
+                ->where("cancelado","=","0")
+                ->whereIn("tipo_comprobante",["I","E"])
+                ->whereBetween("fecha",["2021-01-01 00:00:00","2021-01-31 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->get();
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd = new CFD($rcfd->xml);
+                } catch (\Exception $e){
+                    $rcfd->no_verificable =  1;
+                    $rcfd->save();
+                }
+
+                $vigente = $cfd->validaVigente();
+                if(!$vigente)
+                {
+                    $rcfd->cancelado = 1;
+                    $rcfd->fecha_cancelacion =  date('Y-m-d H:i:s');
+                    $rcfd->save();
+                } else{
+                    $rcfd->ultima_verificacion =  date('Y-m-d H:i:s');
+                    $rcfd->save();
+                }
+            }
+        }*/
     }
 }

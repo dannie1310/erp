@@ -541,15 +541,13 @@ class CFD
         }
     }
 
-    public function validaVigente($datos)
+    public function validaVigente()
     {
-        $respuesta = $this->getValidacionCFDI33($datos);
+        $respuesta = $this->getValidacionCFDI33($this->arreglo_factura);
         $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
 
         if ($env_servicio === "production") {
-            $validacion_status_sat = $respuesta["statusSat"];
-
-            if ($validacion_status_sat !== "Vigente") {
+            if ($respuesta->Estado == 'Cancelado') {
                 return false;
             }
             return true;
