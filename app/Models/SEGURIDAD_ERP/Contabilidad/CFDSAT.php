@@ -66,7 +66,7 @@ class CFDSAT extends Model
         ,"id_tipo_transaccion"
     ];
 
-    protected $dates =["fecha", "fecha_cancelacion"];
+    protected $dates =["fecha", "fecha_cancelacion","ultima_verificacion"];
     //protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
@@ -471,10 +471,11 @@ class CFDSAT extends Model
         if(!$vigente)
         {
             $this->cancelado = 1;
-            $this->fecha_cancelacion =  date('Y-m-d H:i:s');
+            $this->fecha_cancelacion =  date('Y-m-d H:i:s.u');
+            $this->ultima_verificacion =  date('Y-m-d H:i:s.u');
             $this->save();
         } else{
-            $this->ultima_verificacion =  date('Y-m-d H:i:s');
+            $this->ultima_verificacion =  date('Y-m-d H:i:s.u');
             $this->save();
         }
     }
