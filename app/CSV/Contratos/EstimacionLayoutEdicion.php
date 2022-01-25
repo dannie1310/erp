@@ -67,13 +67,12 @@ class EstimacionLayoutEdicion implements WithHeadings, ShouldAutoSize, WithEvent
                 $event->sheet->getColumnDimension('C')->setWidth(18);
                 $event->sheet->getColumnDimension('H')->setAutoSize(false);
                 $event->sheet->getColumnDimension('H')->setWidth(15);
-                // dd($this->estimacion, new DateTime('12/12/2021'));
+                
                 $event->sheet->setCellValue("B3", 'Fecha de Estimación');
                 $event->sheet->getStyle('C3')->getNumberFormat()
                     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
                 $fecha = new DateTime($this->estimacion['fecha_orig']);
                 $event->sheet->setCellValue("C3", date_format($fecha, 'd/m/Y'));
-                $event->sheet->getStyle('C3')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getDelegate()->getStyle('B3:C3')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
@@ -95,7 +94,7 @@ class EstimacionLayoutEdicion implements WithHeadings, ShouldAutoSize, WithEvent
                 $event->sheet->getDelegate()->getStyle('B5:C5')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
-                $event->sheet->getStyle('C3:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
+                $event->sheet->getStyle('C4:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
                 $i = 8;
                 $verificacion_estimacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->id_estimacion);
                 $event->sheet->setCellValue("A1", $verificacion_estimacion);
@@ -125,7 +124,7 @@ class EstimacionLayoutEdicion implements WithHeadings, ShouldAutoSize, WithEvent
                         $event->sheet->setCellValue("G" . $i, '$'.number_format($item['precio_unitario_subcontrato'],2, '.', ','));
                         $event->sheet->setCellValue("H" . $i, number_format($item['cantidad_por_estimar'],3));
                         $event->sheet->setCellValue("I" . $i, '$'.number_format($item['importe_por_estimar'],2, '.', ','));
-                        $event->sheet->setCellValue("J" . $i, number_format($item['cantidad_estimacion'],3));
+                        $event->sheet->setCellValue("J" . $i, number_format($item['cantidad_estimacion'],3, '.', ''));
                         $event->sheet->setCellValue("K" . $i, 0);
                         $event->sheet->setCellValue("L" . $i, $item['precio_unitario_subcontrato_format']);
                         $event->sheet->setCellValue("M" . $i, 0);
