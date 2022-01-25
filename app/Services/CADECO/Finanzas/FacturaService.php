@@ -276,7 +276,7 @@ class FacturaService
             $this->validaReceptor($arreglo_cfd);
 
             $this->validaFolio($data["referencia"], $arreglo_cfd);
-            if($arreglo_cfd["version"] == 3.3){
+            if($arreglo_cfd["version"] == 3.3 || $arreglo_cfd["version"] == 4.0){
                 $this->validaCFDI33($data['archivo'], $arreglo_cfd);
             }
 
