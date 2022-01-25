@@ -682,9 +682,9 @@ class CFDSATService
 
         try {
             $ns = $factura_xml->getNamespaces(true);
-            $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
+            $impuestos = $factura_xml->xpath('//cfdi:Comprobante/cfdi:Impuestos');
             if (count($impuestos) >= 1) {
-                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosTrasladados"];
+                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[0]["TotalImpuestosTrasladados"];
             } else {
                 $this->arreglo_factura["total_impuestos_trasladados"] = (float)0;
             }
@@ -704,7 +704,7 @@ class CFDSATService
                 $i++;
             }
             if (count($impuestos) >= 1) {
-                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["TotalImpuestosRetenidos"];
             } else {
                 $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
             }
@@ -718,7 +718,10 @@ class CFDSATService
                     $this->arreglo_factura["tasa_iva_retenido"] = (float)$retencion["TasaOCuota"];
                 }
                 $this->arreglo_factura["retenciones"][$iret]["impuesto"] = (string)$retencion["Impuesto"];
+                $this->arreglo_factura["retenciones"][$iret]["tipo_factor"] = (string)$retencion["TipoFactor"];
+                $this->arreglo_factura["retenciones"][$iret]["tasa_o_cuota"] = (float)$retencion["TasaOCuota"];
                 $this->arreglo_factura["retenciones"][$iret]["importe"] = (float)$retencion["Importe"];
+                $this->arreglo_factura["retenciones"][$iret]["base"] = (float)$retencion["Base"];
                 $iret++;
             }
 

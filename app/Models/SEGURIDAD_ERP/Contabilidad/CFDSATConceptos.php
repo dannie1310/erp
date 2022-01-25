@@ -43,6 +43,11 @@ class CFDSATConceptos extends Model
         return $this->hasMany(CFDSATTraslados::class, 'id_cfd_sat_concepto', 'id');
     }
 
+    public function retenciones()
+    {
+        return $this->hasMany(CFDSATRetenciones::class, 'id_cfd_sat_concepto', 'id');
+    }
+
     public function claveProductoServicio()
     {
         return $this->belongsTo(ClaveProductoServicio::class, 'clave_prod_serv', 'clave');

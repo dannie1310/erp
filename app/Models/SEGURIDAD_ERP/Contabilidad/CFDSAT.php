@@ -89,6 +89,11 @@ class CFDSAT extends Model
         return $this->hasMany(CFDSATTraslados::class, 'id_cfd_sat', 'id');
     }
 
+    public function retenciones()
+    {
+        return $this->hasMany(CFDSATRetenciones::class, 'id_cfd_sat', 'id');
+    }
+
     public function proveedor()
     {
         return $this->belongsTo(ProveedorSAT::class, 'id_proveedor_sat', 'id');
@@ -270,12 +275,23 @@ class CFDSAT extends Model
                             $conceptoObj->traslados()->create($traslado);
                         }
                     }
+                    if(key_exists("retenciones",$concepto)){
+                        foreach($concepto["retenciones"] as $retencion){
+                            $conceptoObj->retenciones()->create($retencion);
+                        }
+                    }
                 }
             }
 
             if(key_exists("traslados",$data)){
                 foreach($data["traslados"] as $traslado){
                     $cfd->traslados()->create($traslado);
+                }
+            }
+
+            if(key_exists("retenciones",$data)){
+                foreach($data["retenciones"] as $retencion){
+                    $cfd->retenciones()->create($retencion);
                 }
             }
 
@@ -329,12 +345,23 @@ class CFDSAT extends Model
                                     $conceptoObj->traslados()->create($traslado);
                                 }
                             }
+                            if(key_exists("retenciones",$concepto)){
+                                foreach($concepto["retenciones"] as $retencion){
+                                    $conceptoObj->retenciones()->create($retencion);
+                                }
+                            }
                         }
                     }
                     if(key_exists("traslados",$data)){
                         $this->traslados()->delete();
                         foreach($data["traslados"] as $traslado){
                             $this->traslados()->create($traslado);
+                        }
+                    }
+                    if(key_exists("retenciones",$data)){
+                        $this->retenciones()->delete();
+                        foreach($data["retenciones"] as $retencion){
+                            $this->retenciones()->create($retencion);
                         }
                     }
                 }
@@ -348,12 +375,23 @@ class CFDSAT extends Model
                                 $conceptoObj->traslados()->create($traslado);
                             }
                         }
+                        if(key_exists("retenciones",$concepto)){
+                            foreach($concepto["retenciones"] as $retencion){
+                                $conceptoObj->retenciones()->create($retencion);
+                            }
+                        }
                     }
                 }
                 if(key_exists("traslados",$data)){
                     $this->traslados()->delete();
                     foreach($data["traslados"] as $traslado){
                         $this->traslados()->create($traslado);
+                    }
+                }
+                if(key_exists("retenciones",$data)){
+                    $this->retenciones()->delete();
+                    foreach($data["retenciones"] as $retenciones){
+                        $this->retenciones()->create($retenciones);
                     }
                 }
             }
