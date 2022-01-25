@@ -1966,8 +1966,14 @@ export const routes = [
                                     permission: 'cargar_distribucion_recursos_remesa'
                                 }
                             },
+                        ]
+                    },
+                    {
+                        path: 'carga-masiva',
+                        component: require('./components/finanzas/gestion-pago/Layout').default,
+                        children: [
                             {
-                                path: 'carga-masiva',
+                                path: '/',
                                 name: 'carga-masiva',
                                 component: require('./components/finanzas/gestion-pago/carga-masiva/Index').default,
                                 meta: {
