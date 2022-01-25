@@ -128,4 +128,13 @@ class EstimacionController extends Controller
         $res = $this->service->cargaLayout($request->file, $request->id, $request->name);
         return response()->json($res, 200);
     }
+
+    public function descargaLayoutEdicion($id){
+        return $this->service->descargaLayoutEdicion($id);
+    }
+
+    public function cargaLayoutEdicion(Request $request){
+        $res = $this->service->cargaLayoutEdicion($request->file, $request->id, $request->name);
+        return response()->json($res, 200);
+    }
 }

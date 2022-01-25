@@ -1159,6 +1159,9 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@cargaLayout');
+            $api->get('descargaLayoutEdicion/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@descargaLayoutEdicion')->where(['id' => '[0-9]+']);
+            $api->post('layoutEdit', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@cargaLayoutEdicion');
+
             /**
              * FORMATO ORDEN DE PAGO DE ESTIMACION
              */
