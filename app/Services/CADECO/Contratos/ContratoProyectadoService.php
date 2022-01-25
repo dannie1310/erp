@@ -153,12 +153,15 @@ class ContratoProyectadoService
     }
 
     public function getLayoutData($data){
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
         $file_xls = $this->getFileXLS($data->nombre_archivo, $data->pagos);
         $partidas = $this->getDatosPartidas($file_xls);
 
         $index_padre = 0;
         $nivel_anterior = 0;
         $contratos = array();
+        $partidas_error = false;
 
         foreach($partidas as $key => $partida){
             if(!$partida['descripcion'] || !$partida['nivel']){continue;}
@@ -228,7 +231,7 @@ class ContratoProyectadoService
 
         }
 
-        return $contratos;
+        return ['partidas_con_error' => $partidas_error, 'contratos' =>$contratos];
     }
 
     private function getDatosPartidas($file_xls)

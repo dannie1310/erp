@@ -272,7 +272,7 @@
         </div>
 
 
-        <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
+        <!-- <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" >
                 <div class="modal-content">
                     <div class="modal-header">
@@ -313,7 +313,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </span>
 </template>
