@@ -414,6 +414,7 @@ class CFDSATService
                         $this->log["archivos_no_cargados"] += 1;
                         $this->log["archivos_receptor_no_valido"] += 1;
                         $this->log["receptores_no_validos"][] = $this->arreglo_factura["receptor"];
+                        Storage::disk('xml_errores')->put($this->carga->id . '/receptor_no_valido/' . $current, fopen($ruta_archivo, "r"));
                         unlink($ruta_archivo);
                     }
                 } else {
