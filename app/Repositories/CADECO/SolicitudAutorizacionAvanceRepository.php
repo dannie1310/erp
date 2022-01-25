@@ -1,77 +1,65 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: EMartinez
- * Date: 25/02/2019
- * Time: 06:27 PM
- */
 
-namespace App\Repositories\CADECO\Subcontratos\Subcontrato;
+
+namespace App\Repositories\CADECO;
 
 
 use App\Models\CADECO\Contrato;
-use App\Models\CADECO\Empresa;
-use App\Models\CADECO\Item;
 use App\Models\CADECO\ItemSubcontrato;
-use App\Models\CADECO\Subcontrato;
+use App\Models\CADECO\SolicitudAutorizacionAvance;
 use App\Models\CADECO\Transaccion;
-use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Repositories\Repository;
+use App\Repositories\RepositoryInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-class Repository extends \App\Repositories\Repository implements RepositoryInterface
+class SolicitudAutorizacionAvanceRepository extends Repository implements RepositoryInterface
 {
-    /**
-     * @var Model
-     */
-    protected $model;
-
-    /**
-     * RepositoryInterface constructor.
-     * @param Model $model
-     */
-    public function __construct(Subcontrato $model)
+    public function __construct(SolicitudAutorizacionAvance $model)
     {
+        parent::__construct($model);
         $this->model = $model;
     }
 
-    /**
-     * Obtener subcontratos para el portal de proveedores
-     * @return array
-     */
-    public function indexSinContexto()
+    public function solicitudes()
     {
-        $datos = [];
-        $i = 0;
-        $configuracion_obra = ConfiguracionObra::withoutGlobalScopes()->where('vigencia', 1)->get();
-        foreach ($configuracion_obra as $proyecto) {
-            DB::purge('cadeco');
-            Config::set('database.connections.cadeco.database', $proyecto->proyecto->base_datos);
-            $datos_subcontratos = $this->getSubcontrato($proyecto->id_obra, $proyecto->proyecto->base_datos);
-            if ($datos_subcontratos->count() > 0) {
-                foreach ($datos_subcontratos as $key => $subcontrato) {
-                    $datos['data'][$i]['id'] = $subcontrato->getKey();
-                    $datos['data'][$i]['numero_folio_format'] = $subcontrato->numero_folio_format;
-                    $datos['data'][$i]['referencia'] = $subcontrato->referencia;
-                    $datos['data'][$i]['proyecto'] = $proyecto->nombre;
-                    $datos['data'][$i]['base'] = $proyecto->proyecto->base_datos;
-                    $datos['data'][$i]['num_partida'] = $i;
-                    $i++;
-                }
-            }
-        }
-        return $datos;
+        return $this->model->solicitudes();
     }
 
-    private function getSubcontrato($id_obra, $base)
+    public function create(array $datos)
+    {
+        return $this->model->registrar($datos);
+    }
+
+    public function subcontratoAEstimar($id, $base)
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
-        $empresas = Empresa::where('rfc', auth()->user()->usuario)->pluck('id_empresa');
-        return Transaccion::withoutGlobalScopes()->whereIn('id_empresa', $empresas)->where('id_obra', $id_obra)->where('tipo_transaccion', '=', 51)->whereIn("estado", [0, 1])->get();
+        return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->subcontratoAEstimar($base);
     }
 
-    private function findSubcontratoProveedor($id, $base)
+    public function update(array $data, $id)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $data['base']);
+        return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->editar($data);
+    }
+
+    public function eliminar($id, $data)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $data['base']);
+        return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->eliminar($data['base'],$data['motivo']);
+    }
+
+    public function registrarIVARetenido($id, $data)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $data['base']);
+        return $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first()->registrarIVARetenido($data);
+    }
+
+    public function findSubcontratoProveedor($id, $base)
     {
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base);
@@ -86,7 +74,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         $contrato = Transaccion::withoutGlobalScopes()->where('id_transaccion', $subcontrato->id_antecedente)->where('tipo_transaccion', '=', 49)->first();
         return [
             'id' => (int)$subcontrato->getKey(),
+            'id_obra' => $subcontrato->id_obra,
             'fecha_format' => (string)$subcontrato->fecha_format,
+            'empresa' => (string) $subcontrato->empresa->razon_social,
             'fecha' => (string)$subcontrato->fecha,
             'numero_folio_format'=>(string)$subcontrato->numero_folio_format,
             'referencia'=>(string)$subcontrato->referencia,
@@ -125,10 +115,12 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             $items [$partida->nivel] = $partida->partidasEstimadasSinContexto($id_estimacion, $subcontrato->id_antecedente, $contrato, $base);
         }
         return array(
-            'folio' => $subcontrato->numero_folio_format,
-            'referencia' => $subcontrato->referencia,
-            'fecha_format' => $subcontrato->fecha_format,
             'partidas' => $items
         );
+    }
+
+    public function descargaLayout($id,$base)
+    {
+        return $this->model->descargaLayout($this->findSinContexto($id, $base), $this->paraEstimarProveedor($id, $base, null));
     }
 }
