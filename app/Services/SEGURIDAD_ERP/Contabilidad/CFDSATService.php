@@ -1581,7 +1581,7 @@ class CFDSATService
 
         $cantidad = CFDSAT::where("cancelado","=","0")
             /*->whereIn("tipo_comprobante",["I","E"])*/
-            ->whereBetween("fecha",[$hace_1Y->format("Y-m-d") . " 00:00:00",$hoy_str." 23:59:59"])
+            ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
             ->count();
 
         $take = 1000;
@@ -1589,9 +1589,10 @@ class CFDSATService
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::where("cancelado","=","0")
                 /*->whereIn("tipo_comprobante",["I","E"])*/
-                ->whereBetween("fecha",[$hace_1Y->format("Y-m-d") . " 00:00:00",$hoy_str." 23:59:59"])
+                ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
                 ->skip($i)
                 ->take($take)
+                ->orderBy("id","asc")
                 ->get();
 
             $idistribucion = 0;
