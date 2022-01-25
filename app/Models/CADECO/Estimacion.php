@@ -879,9 +879,9 @@ class Estimacion extends Transaccion
     public function subcontratoAEstimar()
     {
         return [
-            'fecha_inicial'           => $this->getCumplimientoAttribute($this->cumplimiento),
-            'fecha_final'             => $this->getCumplimientoAttribute($this->vencimiento),
-            'fecha_orig'              => $this->getCumplimientoAttribute($this->fecha),
+            'fecha_inicial'           => $this->getOriginal('cumplimiento'),
+            'fecha_final'             => $this->vencimiento,
+            'fecha_orig'              => $this->fecha,
             'fecha'                   => $this->fecha_format,
             'razon_social'            => $this->empresa->razon_social,
             'moneda'                  => $this->moneda->nombre,
@@ -915,10 +915,20 @@ class Estimacion extends Transaccion
     public function editar($datos)
     {
         try {
-            $fecha_inicial = New DateTime($datos['fecha_inicial']);
-            $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fecha_final = New DateTime($datos['fecha_final']);
-            $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $format = 'd/m/Y';
+            if($fecha_inicial = DateTime::createFromFormat($format, $datos['fecha_inicial'])){
+                $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+            }else{
+                $fecha_inicial = New DateTime($datos['fecha_inicial']);
+                $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+            }
+            if($fecha_final = DateTime::createFromFormat($format, $datos['fecha_final'])){
+                $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+            }else{
+                $fecha_final = New DateTime($datos['fecha_final']);
+                $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+            }
+
             DB::connection('cadeco')->beginTransaction();
 
             foreach ($datos['partidas'] as $partida) {
