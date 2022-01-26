@@ -314,105 +314,67 @@ class CFDSAT extends Model
         }
     }
 
-    public function complementarDatos($data)
+    public function complementarDatos()
     {
-        try {
-            DB::connection('seguridad')->beginTransaction();
-            $this->metodo_pago = $data["metodo_pago"];
-            $this->tipo_cambio = $data["tipo_cambio"];
-            $this->save();
-            if($data["tipo_relacion"]>0){
-                $this->tipo_relacion = $data["tipo_relacion"];
-                $this->cfdi_relacionado = $data["cfdi_relacionado"];
-                $this->save();
-            }else{
-                $this->tipo_relacion = null;
-                $this->cfdi_relacionado = null;
-                $this->save();
-            }
+        $cfd = new CFD($this->xml);
+        $data = $cfd->getArregloFactura();
+        $this->subtotal = $data["subtotal"];
+        $this->descuento = $data["descuento"];
+        $this->metodo_pago = $data["metodo_pago"];
+        $this->tipo_cambio = $data["tipo_cambio"];
+        $this->total_impuestos_retenidos = $data["total_impuestos_retenidos"];
+        $this->total_impuestos_trasladados = $data["total_impuestos_trasladados"];
 
-            $concepto = $this->conceptos()->first();
-            $traslado = $concepto->traslados()->first();
-
-            if($traslado){
-                if($traslado->impuesto === null){
-                    if(key_exists("conceptos",$data)){
-                        $this->conceptos()->delete();
-                        foreach($data["conceptos"] as $concepto){
-                            $conceptoObj = $this->conceptos()->create($concepto);
-                            if(key_exists("traslados",$concepto)){
-                                foreach($concepto["traslados"] as $traslado){
-                                    $conceptoObj->traslados()->create($traslado);
-                                }
-                            }
-                            if(key_exists("retenciones",$concepto)){
-                                foreach($concepto["retenciones"] as $retencion){
-                                    $conceptoObj->retenciones()->create($retencion);
-                                }
-                            }
-                        }
-                    }
-                    if(key_exists("traslados",$data)){
-                        $this->traslados()->delete();
-                        foreach($data["traslados"] as $traslado){
-                            $this->traslados()->create($traslado);
-                        }
-                    }
-                    if(key_exists("retenciones",$data)){
-                        $this->retenciones()->delete();
-                        foreach($data["retenciones"] as $retencion){
-                            $this->retenciones()->create($retencion);
-                        }
-                    }
-                }
-            }else{
-                if(key_exists("conceptos",$data)){
-                    $this->conceptos()->delete();
-                    foreach($data["conceptos"] as $concepto){
-                        $conceptoObj = $this->conceptos()->create($concepto);
-                        if(key_exists("traslados",$concepto)){
-                            foreach($concepto["traslados"] as $traslado){
-                                $conceptoObj->traslados()->create($traslado);
-                            }
-                        }
-                        if(key_exists("retenciones",$concepto)){
-                            foreach($concepto["retenciones"] as $retencion){
-                                $conceptoObj->retenciones()->create($retencion);
-                            }
-                        }
-                    }
-                }
-                if(key_exists("traslados",$data)){
-                    $this->traslados()->delete();
-                    foreach($data["traslados"] as $traslado){
-                        $this->traslados()->create($traslado);
-                    }
-                }
-                if(key_exists("retenciones",$data)){
-                    $this->retenciones()->delete();
-                    foreach($data["retenciones"] as $retenciones){
-                        $this->retenciones()->create($retenciones);
-                    }
-                }
-            }
-
-            if(key_exists("documentos_pagados",$data)){
-                $this->documentosPagados()->delete();
-                foreach($data["documentos_pagados"] as $documento_pagado){
-                    $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
-                    if($cfdi_pagado){
-                        $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
-                    }
-                    $this->documentosPagados()->create($documento_pagado);
-                }
-            }
-            DB::connection('seguridad')->commit();
-        } catch (\Exception $e) {
-            //dd($e->getMessage(),$data);
-            DB::connection('seguridad')->rollBack();
-            abort(400, $e->getMessage());
+        if($data["tipo_relacion"]>0){
+            $this->tipo_relacion = $data["tipo_relacion"];
+            $this->cfdi_relacionado = $data["cfdi_relacionado"];
+        }else{
+            $this->tipo_relacion = null;
+            $this->cfdi_relacionado = null;
         }
 
+        $this->save();
+
+        if(key_exists("conceptos",$data)){
+            $this->conceptos()->update(["estado"=>0]);
+            foreach($data["conceptos"] as $concepto){
+                $conceptoObj = $this->conceptos()->create($concepto);
+                if(key_exists("traslados",$concepto)){
+                    foreach($concepto["traslados"] as $traslado){
+                        $conceptoObj->traslados()->create($traslado);
+                    }
+                }
+                if(key_exists("retenciones",$concepto)){
+                    foreach($concepto["retenciones"] as $retencion){
+                        $conceptoObj->retenciones()->create($retencion);
+                    }
+                }
+            }
+        }
+        if(key_exists("traslados",$data)){
+            $this->traslados()->update(["estado"=>0]);
+            foreach($data["traslados"] as $traslado){
+                $this->traslados()->create($traslado);
+            }
+        }
+        if(key_exists("retenciones",$data)){
+            $this->retenciones()->update(["estado"=>0]);
+            foreach($data["retenciones"] as $retencion){
+                $this->retenciones()->create($retencion);
+            }
+        }
+
+
+        if(key_exists("documentos_pagados",$data)){
+            $this->documentosPagados()->delete();
+            foreach($data["documentos_pagados"] as $documento_pagado){
+                $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
+                if($cfdi_pagado){
+                    $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
+                }
+                $this->documentosPagados()->create($documento_pagado);
+            }
+        }
     }
 
     public function generaDocumentos()
