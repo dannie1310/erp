@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\SEGURIDAD_ERP\Contabilidad\SolicitudAsociacionCFDIPartida;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
