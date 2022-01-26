@@ -25,7 +25,8 @@ class CFDSATConceptos extends Model
         "unidad",
         "valor_unitario",
         "clave_prod_serv",
-        "clave_unidad"
+        "clave_unidad",
+        "descuento"
     ];
 
     public function cfd_sat()
