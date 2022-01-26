@@ -1344,6 +1344,30 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/editarLayout',
+                                name: 'estimacion-edit-layout',
+                                props: true,
+                                component: require('./components/contratos/estimacion/EditLayout').default,
+                                meta: {
+                                    title: 'Editar Estimación Layout',
+                                    breadcrumb: {parent: 'estimacion', name: 'EDITAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_estimacion_subcontrato'
+                                }
+                            },
+                            {
+                                path: ':id/editarCondiciones',
+                                name: 'estimacion-edit-condiciones',
+                                props: true,
+                                component: require('./components/contratos/estimacion/EditCondiciones').default,
+                                meta: {
+                                    title: 'Editar Condiciones Estimación',
+                                    breadcrumb: {parent: 'estimacion', name: 'EDITAR CONDICIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_estimacion_subcontrato'
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'estimacion-documentos',
                                 component: require('./components/globals/archivos/Files').default,

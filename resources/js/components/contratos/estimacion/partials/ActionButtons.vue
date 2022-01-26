@@ -14,9 +14,10 @@
             <router-link  :to="{ name: 'estimacion-show', params: {id: value.id}}" v-if="$root.can('consultar_estimacion_subcontrato')" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
                 <i class="fa fa-eye"></i>
             </router-link>
-            <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)">
+            <!-- <button @click="edit" type="button" class="btn btn-sm btn-outline-info" title="Editar" v-if="value.edit && (value.estado == 0)">
                 <i class="fa fa-pencil"></i>
-            </button>
+            </button> -->
+            <EditDL v-bind:value="value" v-if="value.edit && (value.estado == 0)"></EditDL>
             <button @click="eliminar" type="button" class="btn btn-sm btn-outline-danger " title="Eliminar" v-if="value.delete && (value.estado == 0)"  v-bind:id="value.id">
                 <i class="fa fa-trash"></i>
             </button>
@@ -135,9 +136,10 @@
 <script>
     import PDF from '../FormatoEstimacion';
     import Relaciones from "../../../globals/ModalRelaciones";
+    import EditDL from './EditDropList';
     export default {
         name: "action-buttons",
-        components: {PDF, Relaciones},
+        components: {PDF, Relaciones, EditDL},
         props: ['value'],
         data() {
             return {
