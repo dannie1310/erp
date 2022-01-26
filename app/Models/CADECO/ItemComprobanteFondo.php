@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\Models\CADECO\Finanzas\ComprobanteFondoPartidaEliminada;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSATConceptos;
 
 class ItemComprobanteFondo extends Item
 {
@@ -27,6 +28,11 @@ class ItemComprobanteFondo extends Item
     public function concepto()
     {
         return $this->belongsTo(Concepto::class, 'id_concepto','id_concepto');
+    }
+
+    public function conceptoSAT()
+    {
+        return $this->belongsTo(CFDSATConceptos::class, 'item_antecedente','id');
     }
 
     public function partidaRespaldo()
