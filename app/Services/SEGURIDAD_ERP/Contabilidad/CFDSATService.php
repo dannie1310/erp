@@ -11,6 +11,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
 use App\Jobs\ProcessCancelacionCFDI;
+use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
@@ -305,6 +306,8 @@ class CFDSATService
                 $rcfd->descuento = $arreglo_cfd["descuento"];
                 $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
                 $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
+                $rcfd->total_impuestos_retenidos = $arreglo_cfd["total_impuestos_retenidos"];
+                $rcfd->total_impuestos_trasladados = $arreglo_cfd["total_impuestos_trasladados"];
                 $rcfd->save();
                 if($arreglo_cfd["tipo_relacion"]>0){
                     $rcfd->tipo_relacion = $arreglo_cfd["tipo_relacion"];
@@ -318,9 +321,9 @@ class CFDSATService
 
 
             }
-            if ($i > 15000) {
+            /*if ($i > 15000) {
                 break;
-            }
+            }*/
         }
     }
 
@@ -1248,7 +1251,7 @@ class CFDSATService
                 }
             } else {
                 $this->validaDisponibilidad($cfdi);
-                $cfdi->complementarDatos($arreglo_factura);
+                //$cfdi->complementarDatos($arreglo_factura);
                 if(key_exists("id_tipo_transaccion", $arreglo_factura))
                 {
                     if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
@@ -1572,6 +1575,45 @@ class CFDSATService
                 $id++;
             }
         }
+    }
+
+    public function reprocesaCFDIComplementarDatos()
+    {
+
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            /*->whereIn("tipo_comprobante",["I","E"])*/
+            ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                /*->whereIn("tipo_comprobante",["I","E"])*/
+                ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessComplementaDatosCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                //$rcfd->complementarDatos();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+
     }
 
     public function detectarCancelaciones()
