@@ -162,12 +162,15 @@ class ContratoProyectadoService
         $nivel_anterior = 0;
         $contratos = array();
         $partidas_error = false;
-
+        $partidas_errores = [];
         foreach($partidas as $key => $partida){
             if(!$partida['descripcion'] || !$partida['nivel']){continue;}
 
             $destino = '';
             $destino_path = '';
+            $partida_valida = true;
+            $cantidad = 0;
+            
             if(is_numeric($partida["destino"])){
                 if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
                     if($concepto->es_agrupador){
@@ -176,19 +179,32 @@ class ContratoProyectadoService
                         $destino_path =  $concepto->path_corta;
                     }
                 }
-            } else {
-                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
-                    if($concepto->es_agrupador){
-                        $path = explode('->', $concepto->path);
-                        $destino = $concepto->id_concepto;
-                        $destino_path =  $concepto->path_corta;
-                    }
+            }else if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                if($concepto->es_agrupador){
+                    $path = explode('->', $concepto->path);
+                    $destino = $concepto->id_concepto;
+                    $destino_path =  $concepto->path_corta;
                 }
+            }else{
+                $destino = 'N/V';
+                $destino_path = 'N/V';
+                $partida_valida = false;
+                $partidas_errores[0] = 'Destino no válido';
             }
 
+            if(!is_numeric($partida['cantidad'])){
+                $cantidad = 'N/V';
+                $partida_valida = false;
+                $partidas_errores[1] = 'Cantidad no válida';
+            }
+            if(strlen($partida['descripcion']) > 255){
+                $partida_valida = false;
+                $partidas_errores[2] = 'Descripción mayor a 255 caracteres';
+            }
+            $dsc_format = str_pad($partida['descripcion'], strlen($partida['descripcion']) + ($partida['nivel'] * 3), '_', STR_PAD_LEFT);
             $contratos[$key] = [
                     'clave' => $partida['clave'],
-                    'descripcion' => $partida['descripcion'],
+                    'descripcion' => $dsc_format,
                     'descripcion_sin_formato' => $partida['descripcion'],
                     'unidad' => $partida['unidad'],
                     'cantidad' => $partida['cantidad'],
@@ -197,6 +213,7 @@ class ContratoProyectadoService
                     'nivel' => (int) $partida['nivel'],
                     'es_hoja' => $partida['cantidad']?true:false,
                     'cantidad_hijos' => 0,
+                    'partida_valida' => $partida_valida,
                 ];
             if($key == 0){
 
@@ -231,13 +248,19 @@ class ContratoProyectadoService
 
         }
 
-        return ['partidas_con_error' => $partidas_error, 'contratos' =>$contratos];
+        if(count($partidas_errores) > 0){
+            $partidas_error = true;
+        }
+        return ['partidas_con_error' => $partidas_error, 'erores_partidas' => implode(', ', $partidas_errores), 'contratos' =>$contratos];
     }
 
     private function getDatosPartidas($file_xls)
     {
         $rows = Excel::toArray(new SolicitudEdicionImport, $file_xls);
         $partidas = [];
+        if(count($rows[0][0]) != 6){
+            abort(403, 'El archivo XLS no es compatible.');
+        }
         foreach ($rows[0] as $key => $row) {
             $partidas[$key] = [
                 'clave' => $row[0],

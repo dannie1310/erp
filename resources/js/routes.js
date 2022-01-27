@@ -911,7 +911,8 @@ export const routes = [
                             {
                                 path: 'createLayout',
                                 name: 'proyectado-layout-create',
-                                component: require('./components/contratos/proyectado/Create').default,
+                                component: require('./components/contratos/proyectado/CreateLayout').default,
+                                props:true,
                                 meta: {
                                     title: 'Registrar Contratos Proyectados Layout',
                                     breadcrumb: {parent: 'proyectado', name: 'REGISTRAR LAYOUT'},

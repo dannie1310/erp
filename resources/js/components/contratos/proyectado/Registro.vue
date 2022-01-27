@@ -104,11 +104,14 @@ export default {
                 if(data.partidas_con_error){
 
                 }else{
+                    this.procesando = false;
+                this.file_carga = null;
+                $(this.$refs.modal_carga).modal('hide');
+                this.$validator.reset();
                     this.$router.push({name: 'proyectado-layout-create', params: {partidas:data.contratos}});
                 }
             }).finally(() => {
-                this.procesando = false;
-                this.cerrarModalCarga();
+                
             });
         },
         registrar(){
@@ -116,10 +119,10 @@ export default {
             this.$router.push({name: 'proyectado-create'});
         },
         cerrarModalCarga(){
-            if(this.$refs.carga_layout.value !== ''){
+            if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
                 this.$refs.carga_layout.value = '';
-                this.file_carga = null;
             }
+            this.file_carga = null;
             $(this.$refs.modal_carga).modal('hide');
             this.$validator.reset();
         },
