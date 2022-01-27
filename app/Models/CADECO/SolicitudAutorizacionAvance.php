@@ -4,7 +4,8 @@
 namespace App\Models\CADECO;
 
 
-use App\CSV\SolicitudAutorizacionAvanceLayout;
+use App\CSV\PortalProveedores\SolicitudAutorizacionAvanceEditarLayout;
+use App\CSV\PortalProveedores\SolicitudAutorizacionAvanceLayout;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Estimaciones\ItemSolicitudAutorizacionAvanceEliminada;
 use App\Models\CADECO\Estimaciones\SolicitudAutorizacionAvanceEliminada;
@@ -918,5 +919,10 @@ class SolicitudAutorizacionAvance extends Transaccion
     public function descargaLayout(array $subcontrato, $partidas)
     {
         return Excel::download(new SolicitudAutorizacionAvanceLayout($subcontrato, $partidas), 'solicitud-autorizacion-avance'.$subcontrato['numero_folio_format'].'.xlsx');
+    }
+
+    public function descargaLayoutEdicion($solicitud, $partidas, $base)
+    {
+        return Excel::download(new SolicitudAutorizacionAvanceEditarLayout($solicitud, $partidas, $base), 'solicitud-autorizacion-avance'.$solicitud->numero_folio_format.'.xlsx');
     }
 }

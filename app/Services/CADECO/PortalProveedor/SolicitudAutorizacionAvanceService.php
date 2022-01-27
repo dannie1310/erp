@@ -79,8 +79,8 @@ class SolicitudAutorizacionAvanceService
 
     public function cargaLayout($file, $id, $name, $base)
     {
-        ini_set('memory_limit', -1) ;
-        ini_set('max_execution_time', '7200') ;
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
         $file_xls = $this->getFileXls($file, $name);
         $celdas = $this->getDatosPartidas($file_xls);
         $this->verifica = new ValidacionSistema();
@@ -100,14 +100,13 @@ class SolicitudAutorizacionAvanceService
         $id_obra = $cadena_validacion_exp[1];
         $id_validar = $cadena_validacion_exp[2];
 
-        if ($base_datos != $base || $id_obra != $subcontrato->id_obra || $id != $id_validar)
-        {
+        if ($base_datos != $base || $id_obra != $subcontrato->id_obra || $id != $id_validar) {
             abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
         }
-        $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Solicitud');
-        $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Solicitud');
-        $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Solicitud');
-        if( strtotime($fecha_est_ini) > strtotime($fecha_est_fin) ){
+        $fecha_est = is_numeric($celdas[2][2]) ? $this->convertToDate($celdas[2][2]) : $this->validateDate($celdas[2][2], 'Solicitud');
+        $fecha_est_ini = is_numeric($celdas[3][2]) ? $this->convertToDate($celdas[3][2]) : $this->validateDate($celdas[3][2], 'Inicio de Solicitud');
+        $fecha_est_fin = is_numeric($celdas[4][2]) ? $this->convertToDate($celdas[4][2]) : $this->validateDate($celdas[4][2], 'Fin de Solicitud');
+        if (strtotime($fecha_est_ini) > strtotime($fecha_est_fin)) {
             abort(400, 'La fecha de inicio en posterior a la fecha de finalización.');
         }
 
@@ -115,7 +114,7 @@ class SolicitudAutorizacionAvanceService
         while ($x < count($celdas) - 3) {
             if (!is_null($celdas[$x][13])) {
                 $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
-                $item =  ItemSubcontrato::where('id_transaccion',$subcontrato->id_transaccion)->where('id_item', $decodificado)->first();
+                $item = ItemSubcontrato::where('id_transaccion', $subcontrato->id_transaccion)->where('id_item', $decodificado)->first();
                 if (!$item) {
                     abort(400, 'El archivo  XLS no corresponde al subcontrato ' . $subcontrato->numero_folio_format);
                 }
@@ -127,14 +126,14 @@ class SolicitudAutorizacionAvanceService
                 $datos_partida = $item->partidasEstimadas(NULL, $subcontrato->id_antecedente, $contrato);
                 $datos_partida['no_partida'] = $celdas[$x][0];
                 $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
-                if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0 && $vol_saldo > 0 &&  $celdas[$x][9] <= $vol_saldo) {
+                if (is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0 && $vol_saldo > 0 && $celdas[$x][9] <= $vol_saldo) {
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
                     $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
                     $datos_partida['cantidad_valida'] = true;
                     $partidas[] = $datos_partida;
 
-                }else if(!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null){
+                } else if (!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null) {
                     $datos_partida['cantidad'] = 'N/V';
                     $datos_partida['porcentaje_estimado'] = 'N/V';
                     $datos_partida['importe'] = 'N/V';
@@ -142,7 +141,7 @@ class SolicitudAutorizacionAvanceService
                     $partidas_invalidas = true;
                     $partidas_no_validas[] = $datos_partida;
 
-                }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] != null && $celdas[$x][9] > $vol_saldo){
+                } else if (is_numeric($celdas[$x][9]) && $celdas[$x][9] != null && $celdas[$x][9] > $vol_saldo) {
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
                     $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
@@ -154,8 +153,8 @@ class SolicitudAutorizacionAvanceService
             $x++;
         }
 
-        $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas:$partidas;
-        $observaciones = $celdas[$x + 2][3] == null ? '': (string)$celdas[$x + 2][3];
+        $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas : $partidas;
+        $observaciones = $celdas[$x + 2][3] == null ? '' : (string)$celdas[$x + 2][3];
         $respuesta = [
             'id' => $subcontrato->getKey(),
             'contratista' => $celdas[0][7],
@@ -201,8 +200,9 @@ class SolicitudAutorizacionAvanceService
         return $rows[0];
     }
 
-    private function convertToDate($date){
-        $date = date('Y-m-d',(($date - 25569) * 86400));
+    private function convertToDate($date)
+    {
+        $date = date('Y-m-d', (($date - 25569) * 86400));
         $date = new DateTime($date);
         $date->modify('+1 day');
         return $date->format('d/m/Y');
@@ -212,9 +212,16 @@ class SolicitudAutorizacionAvanceService
     {
         $format = 'd/m/Y';
         $d = DateTime::createFromFormat($format, $date);
-        if($d && $d->format($format) === $date){
+        if ($d && $d->format($format) === $date) {
             return $date;
         }
         abort(403, "La fecha de $type es inválida");
+    }
+
+    public function descargaLayoutEdicion($id, $base)
+    {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
+        return $this->repository->descargaLayoutEdicion($id, $base);
     }
 }

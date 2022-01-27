@@ -1,14 +1,10 @@
 <?php
 
 
-namespace App\CSV;
+namespace App\CSV\PortalProveedores;
 
 
-use App\Facades\Context;
-use App\Models\CADECO\Transaccion;
 use App\Utils\ValidacionSistema;
-use App\Models\CADECO\Estimacion;
-use App\Models\CADECO\Subcontrato;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -16,7 +12,6 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
-use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
 class SolicitudAutorizacionAvanceLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {

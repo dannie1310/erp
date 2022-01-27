@@ -45,7 +45,7 @@ class SolicitudAutorizacionAvanceController extends Controller
     {
         $this->middleware('auth:api');
 
-        $this->middleware('permisoGlobal:consultar_solicitud_autorizacion_avance_proveedor')->only(['proveedorConceptos','index']);
+        $this->middleware('permisoGlobal:consultar_solicitud_autorizacion_avance_proveedor')->only(['proveedorConceptos', 'index']);
         $this->middleware('permisoGlobal:registrar_solicitud_autorizacion_avance_proveedor')->only('store');
         $this->middleware('permisoGlobal:editar_solicitud_autorizacion_avance_proveedor')->only('update');
         $this->middleware('permisoGlobal:eliminar_solicitud_autorizacion_avance_proveedor')->only('destroy');
@@ -101,4 +101,10 @@ class SolicitudAutorizacionAvanceController extends Controller
         $res = $this->service->cargaLayout($request->file, $request->id, $request->name, $request->base);
         return response()->json($res, 200);
     }
+
+    public function descargaLayoutEdicion(Request $request, $id)
+    {
+        return $this->service->descargaLayoutEdicion($id, $request->all()['db']);
+    }
+
 }

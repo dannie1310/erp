@@ -123,4 +123,12 @@ class SolicitudAutorizacionAvanceRepository extends Repository implements Reposi
     {
         return $this->model->descargaLayout($this->findSinContexto($id, $base), $this->paraEstimarProveedor($id, $base, null));
     }
+
+    public function descargaLayoutEdicion($id,$base)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base);
+        $solicitud = $this->model->withoutGlobalScopes()->where('id_transaccion', $id)->first();
+        return $this->model->descargaLayoutEdicion($solicitud, $this->paraEstimarProveedor($solicitud->id_antecedente, $base, $id),$base);
+    }
 }
