@@ -20,6 +20,7 @@ use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Proyecto;
+use App\Utils\CFD;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -65,7 +66,7 @@ class CFDSAT extends Model
         ,"id_tipo_transaccion"
     ];
 
-    protected $dates =["fecha", "fecha_cancelacion"];
+    protected $dates =["fecha", "fecha_cancelacion","ultima_verificacion"];
     //protected $dateFormat = 'Y-m-d H:i:s';
 
     public function carga()
@@ -86,6 +87,11 @@ class CFDSAT extends Model
     public function traslados()
     {
         return $this->hasMany(CFDSATTraslados::class, 'id_cfd_sat', 'id');
+    }
+
+    public function retenciones()
+    {
+        return $this->hasMany(CFDSATRetenciones::class, 'id_cfd_sat', 'id');
     }
 
     public function proveedor()
@@ -269,12 +275,23 @@ class CFDSAT extends Model
                             $conceptoObj->traslados()->create($traslado);
                         }
                     }
+                    if(key_exists("retenciones",$concepto)){
+                        foreach($concepto["retenciones"] as $retencion){
+                            $conceptoObj->retenciones()->create($retencion);
+                        }
+                    }
                 }
             }
 
             if(key_exists("traslados",$data)){
                 foreach($data["traslados"] as $traslado){
                     $cfd->traslados()->create($traslado);
+                }
+            }
+
+            if(key_exists("retenciones",$data)){
+                foreach($data["retenciones"] as $retencion){
+                    $cfd->retenciones()->create($retencion);
                 }
             }
 
@@ -297,83 +314,67 @@ class CFDSAT extends Model
         }
     }
 
-    public function complementarDatos($data)
+    public function complementarDatos()
     {
-        try {
-            DB::connection('seguridad')->beginTransaction();
-            $this->metodo_pago = $data["metodo_pago"];
-            $this->tipo_cambio = $data["tipo_cambio"];
-            $this->save();
-            if($data["tipo_relacion"]>0){
-                $this->tipo_relacion = $data["tipo_relacion"];
-                $this->cfdi_relacionado = $data["cfdi_relacionado"];
-                $this->save();
-            }else{
-                $this->tipo_relacion = null;
-                $this->cfdi_relacionado = null;
-                $this->save();
-            }
+        $cfd = new CFD($this->xml);
+        $data = $cfd->getArregloFactura();
+        $this->subtotal = $data["subtotal"];
+        $this->descuento = $data["descuento"];
+        $this->metodo_pago = $data["metodo_pago"];
+        $this->tipo_cambio = $data["tipo_cambio"];
+        $this->total_impuestos_retenidos = $data["total_impuestos_retenidos"];
+        $this->total_impuestos_trasladados = $data["total_impuestos_trasladados"];
 
-            $concepto = $this->conceptos()->first();
-            $traslado = $concepto->traslados()->first();
-
-            if($traslado){
-                if($traslado->impuesto === null){
-                    if(key_exists("conceptos",$data)){
-                        $this->conceptos()->delete();
-                        foreach($data["conceptos"] as $concepto){
-                            $conceptoObj = $this->conceptos()->create($concepto);
-                            if(key_exists("traslados",$concepto)){
-                                foreach($concepto["traslados"] as $traslado){
-                                    $conceptoObj->traslados()->create($traslado);
-                                }
-                            }
-                        }
-                    }
-                    if(key_exists("traslados",$data)){
-                        $this->traslados()->delete();
-                        foreach($data["traslados"] as $traslado){
-                            $this->traslados()->create($traslado);
-                        }
-                    }
-                }
-            }else{
-                if(key_exists("conceptos",$data)){
-                    $this->conceptos()->delete();
-                    foreach($data["conceptos"] as $concepto){
-                        $conceptoObj = $this->conceptos()->create($concepto);
-                        if(key_exists("traslados",$concepto)){
-                            foreach($concepto["traslados"] as $traslado){
-                                $conceptoObj->traslados()->create($traslado);
-                            }
-                        }
-                    }
-                }
-                if(key_exists("traslados",$data)){
-                    $this->traslados()->delete();
-                    foreach($data["traslados"] as $traslado){
-                        $this->traslados()->create($traslado);
-                    }
-                }
-            }
-
-            if(key_exists("documentos_pagados",$data)){
-                $this->documentosPagados()->delete();
-                foreach($data["documentos_pagados"] as $documento_pagado){
-                    $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
-                    if($cfdi_pagado){
-                        $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
-                    }
-                    $this->documentosPagados()->create($documento_pagado);
-                }
-            }
-            DB::connection('seguridad')->commit();
-        } catch (\Exception $e) {
-            //dd($e->getMessage(),$data);
-            DB::connection('seguridad')->rollBack();
-            abort(400, $e->getMessage());
+        if($data["tipo_relacion"]>0){
+            $this->tipo_relacion = $data["tipo_relacion"];
+            $this->cfdi_relacionado = $data["cfdi_relacionado"];
+        }else{
+            $this->tipo_relacion = null;
+            $this->cfdi_relacionado = null;
         }
 
+        $this->save();
+
+        if(key_exists("conceptos",$data)){
+            $this->conceptos()->update(["estado"=>0]);
+            foreach($data["conceptos"] as $concepto){
+                $conceptoObj = $this->conceptos()->create($concepto);
+                if(key_exists("traslados",$concepto)){
+                    foreach($concepto["traslados"] as $traslado){
+                        $conceptoObj->traslados()->create($traslado);
+                    }
+                }
+                if(key_exists("retenciones",$concepto)){
+                    foreach($concepto["retenciones"] as $retencion){
+                        $conceptoObj->retenciones()->create($retencion);
+                    }
+                }
+            }
+        }
+        if(key_exists("traslados",$data)){
+            $this->traslados()->update(["estado"=>0]);
+            foreach($data["traslados"] as $traslado){
+                $this->traslados()->create($traslado);
+            }
+        }
+        if(key_exists("retenciones",$data)){
+            $this->retenciones()->update(["estado"=>0]);
+            foreach($data["retenciones"] as $retencion){
+                $this->retenciones()->create($retencion);
+            }
+        }
+
+
+        if(key_exists("documentos_pagados",$data)){
+            $this->documentosPagados()->delete();
+            foreach($data["documentos_pagados"] as $documento_pagado){
+                $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
+                if($cfdi_pagado){
+                    $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
+                }
+                $this->documentosPagados()->create($documento_pagado);
+            }
+        }
     }
 
     public function generaDocumentos()
@@ -415,6 +416,29 @@ class CFDSAT extends Model
             if(!$archivo->hashfile){
                 $archivo->delete();
             }
+        }
+    }
+
+    public function validaVigencia()
+    {
+        try{
+            $cfd = new CFD($this->xml);
+        } catch (\Exception $e){
+            $this->no_verificable =  1;
+            $this->save();
+        }
+
+        $vigente = $cfd->validaVigente();
+
+        if(!$vigente)
+        {
+            $this->cancelado = 1;
+            $this->fecha_cancelacion =  date('Y-m-d H:i:s.u');
+            $this->ultima_verificacion =  date('Y-m-d H:i:s.u');
+            $this->save();
+        } else{
+            $this->ultima_verificacion =  date('Y-m-d H:i:s.u');
+            $this->save();
         }
     }
 }

@@ -67,7 +67,8 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             }
     }
 
-    public function getCuentaCargo($cuenta){
+    public function getCuentaCargo($cuenta)
+    {
         $cuenta = CuentaPagadora::where("numero",$cuenta)->first();
         if($cuenta){
             return $cuenta;

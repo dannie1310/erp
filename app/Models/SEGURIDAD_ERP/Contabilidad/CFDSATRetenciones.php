@@ -12,10 +12,10 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 use App\Scopes\EstadoActivoScope;
 use Illuminate\Database\Eloquent\Model;
 
-class CFDSATTraslados extends Model
+class CFDSATRetenciones extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Contabilidad.cfd_sat_traslados';
+    protected $table = 'SEGURIDAD_ERP.Contabilidad.cfd_sat_retenciones';
     public $timestamps = false;
     protected $fillable =[
         "tipo_factor",

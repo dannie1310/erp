@@ -237,7 +237,9 @@ export default {
                             buttons: false
                         })
                             .then(() => {
-                                context.commit("UPDATE_CONCEPTO", {id : data.id, activo : data.activo});
+                                data.data.forEach(concepto =>{
+                                    context.commit("UPDATE_CONCEPTO", {id : concepto.id, activo : concepto.activo});
+                                });
                                 resolve(data);
                             })
                     })

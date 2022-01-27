@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('procesa:listadoEFOS')->everyMinute();
         $schedule->command('procesa:listadoNoLocalizados')->everyMinute();
         $schedule->command('procesa:liberaCotizaciones')->everyMinute();
+        $schedule->command('valida:vigenciaCFDI')->weeklyOn(1,'22:00');
         // $schedule->command('inspire')
         //          ->hourly();
     }

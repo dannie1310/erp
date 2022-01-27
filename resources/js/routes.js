@@ -1356,6 +1356,30 @@ export const routes = [
                                 }
                             },
                             {
+                                path: ':id/editarLayout',
+                                name: 'estimacion-edit-layout',
+                                props: true,
+                                component: require('./components/contratos/estimacion/EditLayout').default,
+                                meta: {
+                                    title: 'Editar Estimación Layout',
+                                    breadcrumb: {parent: 'estimacion', name: 'EDITAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_estimacion_subcontrato'
+                                }
+                            },
+                            {
+                                path: ':id/editarCondiciones',
+                                name: 'estimacion-edit-condiciones',
+                                props: true,
+                                component: require('./components/contratos/estimacion/EditCondiciones').default,
+                                meta: {
+                                    title: 'Editar Condiciones Estimación',
+                                    breadcrumb: {parent: 'estimacion', name: 'EDITAR CONDICIONES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'editar_estimacion_subcontrato'
+                                }
+                            },
+                            {
                                 path: ':id/documentos',
                                 name: 'estimacion-documentos',
                                 component: require('./components/globals/archivos/Files').default,
@@ -1978,8 +2002,14 @@ export const routes = [
                                     permission: 'cargar_distribucion_recursos_remesa'
                                 }
                             },
+                        ]
+                    },
+                    {
+                        path: 'carga-masiva',
+                        component: require('./components/finanzas/gestion-pago/Layout').default,
+                        children: [
                             {
-                                path: 'carga-masiva',
+                                path: '/',
                                 name: 'carga-masiva',
                                 component: require('./components/finanzas/gestion-pago/carga-masiva/Index').default,
                                 meta: {
@@ -1993,7 +2023,7 @@ export const routes = [
                                 }
                             },
                             {
-                                path: 'carga-create',
+                                path: 'carga-masiva-create',
                                 name: 'carga-masiva-create',
                                 component: require('./components/finanzas/gestion-pago/carga-masiva/Create').default,
                                 meta: {

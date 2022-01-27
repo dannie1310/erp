@@ -10,6 +10,8 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
+use App\Jobs\ProcessCancelacionCFDI;
+use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
@@ -304,6 +306,8 @@ class CFDSATService
                 $rcfd->descuento = $arreglo_cfd["descuento"];
                 $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
                 $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
+                $rcfd->total_impuestos_retenidos = $arreglo_cfd["total_impuestos_retenidos"];
+                $rcfd->total_impuestos_trasladados = $arreglo_cfd["total_impuestos_trasladados"];
                 $rcfd->save();
                 if($arreglo_cfd["tipo_relacion"]>0){
                     $rcfd->tipo_relacion = $arreglo_cfd["tipo_relacion"];
@@ -317,9 +321,9 @@ class CFDSATService
 
 
             }
-            if ($i > 15000) {
+            /*if ($i > 15000) {
                 break;
-            }
+            }*/
         }
     }
 
@@ -413,6 +417,7 @@ class CFDSATService
                         $this->log["archivos_no_cargados"] += 1;
                         $this->log["archivos_receptor_no_valido"] += 1;
                         $this->log["receptores_no_validos"][] = $this->arreglo_factura["receptor"];
+                        Storage::disk('xml_errores')->put($this->carga->id . '/receptor_no_valido/' . $current, fopen($ruta_archivo, "r"));
                         unlink($ruta_archivo);
                     }
                 } else {
@@ -681,9 +686,9 @@ class CFDSATService
 
         try {
             $ns = $factura_xml->getNamespaces(true);
-            $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
+            $impuestos = $factura_xml->xpath('//cfdi:Comprobante/cfdi:Impuestos');
             if (count($impuestos) >= 1) {
-                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosTrasladados"];
+                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[0]["TotalImpuestosTrasladados"];
             } else {
                 $this->arreglo_factura["total_impuestos_trasladados"] = (float)0;
             }
@@ -703,7 +708,7 @@ class CFDSATService
                 $i++;
             }
             if (count($impuestos) >= 1) {
-                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["TotalImpuestosRetenidos"];
             } else {
                 $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
             }
@@ -717,7 +722,10 @@ class CFDSATService
                     $this->arreglo_factura["tasa_iva_retenido"] = (float)$retencion["TasaOCuota"];
                 }
                 $this->arreglo_factura["retenciones"][$iret]["impuesto"] = (string)$retencion["Impuesto"];
+                $this->arreglo_factura["retenciones"][$iret]["tipo_factor"] = (string)$retencion["TipoFactor"];
+                $this->arreglo_factura["retenciones"][$iret]["tasa_o_cuota"] = (float)$retencion["TasaOCuota"];
                 $this->arreglo_factura["retenciones"][$iret]["importe"] = (float)$retencion["Importe"];
+                $this->arreglo_factura["retenciones"][$iret]["base"] = (float)$retencion["Base"];
                 $iret++;
             }
 
@@ -1243,7 +1251,7 @@ class CFDSATService
                 }
             } else {
                 $this->validaDisponibilidad($cfdi);
-                $cfdi->complementarDatos($arreglo_factura);
+                //$cfdi->complementarDatos($arreglo_factura);
                 if(key_exists("id_tipo_transaccion", $arreglo_factura))
                 {
                     if($cfdi->id_tipo_transaccion != $arreglo_factura["id_tipo_transaccion"])
@@ -1567,5 +1575,119 @@ class CFDSATService
                 $id++;
             }
         }
+    }
+
+    public function reprocesaCFDIComplementarDatos()
+    {
+
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            /*->whereIn("tipo_comprobante",["I","E"])*/
+            ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                /*->whereIn("tipo_comprobante",["I","E"])*/
+                ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessComplementaDatosCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                //$rcfd->complementarDatos();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+
+    }
+
+    public function detectarCancelaciones()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            /*->whereIn("tipo_comprobante",["I","E"])*/
+            ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                /*->whereIn("tipo_comprobante",["I","E"])*/
+                ->whereBetween("fecha",[$hace_1Y->format("Y-m-") . "01 00:00:00",$hoy_str." 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessCancelacionCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                //$rcfd->validaVigencia();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
+            }
+        }
+
+
+        /*$cantidad = CFDSAT::where("id_empresa_sat","=",1)
+            ->where("cancelado","=","0")
+            ->whereIn("tipo_comprobante",["I","E"])
+            ->whereBetween("fecha",["2021-01-01 00:00:00","2021-01-31 23:59:59"])
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("id_empresa_sat","=",1)
+                ->where("cancelado","=","0")
+                ->whereIn("tipo_comprobante",["I","E"])
+                ->whereBetween("fecha",["2021-01-01 00:00:00","2021-01-31 23:59:59"])
+                ->skip($i)
+                ->take($take)
+                ->get();
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd = new CFD($rcfd->xml);
+                } catch (\Exception $e){
+                    $rcfd->no_verificable =  1;
+                    $rcfd->save();
+                }
+
+                $vigente = $cfd->validaVigente();
+                if(!$vigente)
+                {
+                    $rcfd->cancelado = 1;
+                    $rcfd->fecha_cancelacion =  date('Y-m-d H:i:s');
+                    $rcfd->save();
+                } else{
+                    $rcfd->ultima_verificacion =  date('Y-m-d H:i:s');
+                    $rcfd->save();
+                }
+            }
+        }*/
     }
 }

@@ -136,9 +136,9 @@ class CFD
 
         try {
             $ns = $factura_xml->getNamespaces(true);
-            $impuestos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Impuestos');
+            $impuestos = $factura_xml->xpath('//cfdi:Comprobante/cfdi:Impuestos');
             if (count($impuestos) >= 1) {
-                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosTrasladados"];
+                $this->arreglo_factura["total_impuestos_trasladados"] = (float)$impuestos[0]["TotalImpuestosTrasladados"];
             } else {
                 $this->arreglo_factura["total_impuestos_trasladados"] = (float)0;
             }
@@ -158,7 +158,7 @@ class CFD
                 $i++;
             }
             if (count($impuestos) >= 1) {
-                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[count($impuestos) - 1]["TotalImpuestosRetenidos"];
+                $this->arreglo_factura["total_impuestos_retenidos"] = (float)$impuestos[0]["TotalImpuestosRetenidos"];
             } else {
                 $this->arreglo_factura["total_impuestos_retenidos"] = (float)0;
             }
@@ -172,7 +172,10 @@ class CFD
                     $this->arreglo_factura["tasa_iva_retenido"] = (float)$retencion["TasaOCuota"];
                 }
                 $this->arreglo_factura["retenciones"][$iret]["impuesto"] = (string)$retencion["Impuesto"];
+                $this->arreglo_factura["retenciones"][$iret]["tipo_factor"] = (string)$retencion["TipoFactor"];
+                $this->arreglo_factura["retenciones"][$iret]["tasa_o_cuota"] = (float)$retencion["TasaOCuota"];
                 $this->arreglo_factura["retenciones"][$iret]["importe"] = (float)$retencion["Importe"];
+                $this->arreglo_factura["retenciones"][$iret]["base"] = (float)$retencion["Base"];
                 $iret++;
             }
 
@@ -541,15 +544,13 @@ class CFD
         }
     }
 
-    public function validaVigente($datos)
+    public function validaVigente()
     {
-        $respuesta = $this->getValidacionCFDI33($datos);
+        $respuesta = $this->getValidacionCFDI33($this->arreglo_factura);
         $env_servicio = config('app.env_variables.SERVICIO_CFDI_ENV');
 
         if ($env_servicio === "production") {
-            $validacion_status_sat = $respuesta["statusSat"];
-
-            if ($validacion_status_sat !== "Vigente") {
+            if ($respuesta->Estado == 'Cancelado') {
                 return false;
             }
             return true;
