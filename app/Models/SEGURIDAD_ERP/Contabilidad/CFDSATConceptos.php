@@ -10,6 +10,8 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
 use App\Models\SEGURIDAD_ERP\catCFDI\ClaveProductoServicio;
+use App\Scopes\EstadoActivoScope;
+use App\Scopes\EstatusActivoScope;
 use Illuminate\Database\Eloquent\Model;
 
 class CFDSATConceptos extends Model
@@ -28,6 +30,12 @@ class CFDSATConceptos extends Model
         "clave_unidad",
         "descuento"
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstadoActivoScope);
+    }
 
     public function cfd_sat()
     {
