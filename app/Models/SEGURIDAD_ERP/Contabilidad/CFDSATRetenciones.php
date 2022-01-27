@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Scopes\EstadoActivoScope;
 use Illuminate\Database\Eloquent\Model;
 
 class CFDSATRetenciones extends Model
@@ -24,6 +25,12 @@ class CFDSATRetenciones extends Model
         "base",
         "id_cfd_sat",
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstadoActivoScope);
+    }
 
     public function cfd_sat()
     {
