@@ -61,6 +61,8 @@ class ContratoProyectadoService
 
     public function store($data){
         try {
+            ini_set('memory_limit', -1) ;
+            ini_set('max_execution_time', '7200') ;
             DB::connection('cadeco')->beginTransaction();
             $fecha_cp = strtotime($data['fecha']);
             $fecha_cump = strtotime($data['cumplimineto']);
@@ -168,8 +170,8 @@ class ContratoProyectadoService
 
             $destino = '';
             $destino_path = '';
-            $partida_valida = true;
             $cantidad = 0;
+            $tipo_error = [];
             
             if(is_numeric($partida["destino"])){
                 if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
@@ -179,42 +181,52 @@ class ContratoProyectadoService
                         $destino_path =  $concepto->path_corta;
                     }
                 }
-            }else if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
-                if($concepto->es_agrupador){
-                    $path = explode('->', $concepto->path);
-                    $destino = $concepto->id_concepto;
-                    $destino_path =  $concepto->path_corta;
+            }else{ 
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
+                    if($concepto->es_agrupador){
+                        $path = explode('->', $concepto->path);
+                        $destino = $concepto->id_concepto;
+                        $destino_path =  $concepto->path_corta;
+                    }
                 }
-            }else{
-                $destino = 'N/V';
-                $destino_path = 'N/V';
-                $partida_valida = false;
-                $partidas_errores[0] = 'Destino no válido';
             }
 
-            if(!is_numeric($partida['cantidad'])){
+            if($partida['cantidad'] && !is_numeric($partida['cantidad'])){
                 $cantidad = 'N/V';
-                $partida_valida = false;
                 $partidas_errores[1] = 'Cantidad no válida';
+                $tipo_error['cantidad'] = true;
+            }else{
+                $cantidad = $partida['cantidad'];
             }
             if(strlen($partida['descripcion']) > 255){
-                $partida_valida = false;
-                $partidas_errores[2] = 'Descripción mayor a 255 caracteres';
+                $partidas_errores[0] = 'Descripción mayor a 255 caracteres';
+                $tipo_error['descripcion'] = true;
             }
-            $dsc_format = str_pad($partida['descripcion'], strlen($partida['descripcion']) + ($partida['nivel'] * 3), '_', STR_PAD_LEFT);
+            
+            $dsc_format = str_pad($partida['descripcion'], strlen($partida['descripcion']) + ($partida['nivel'] * 2), '_', STR_PAD_LEFT);
             $contratos[$key] = [
                     'clave' => $partida['clave'],
                     'descripcion' => $dsc_format,
                     'descripcion_sin_formato' => $partida['descripcion'],
                     'unidad' => $partida['unidad'],
-                    'cantidad' => $partida['cantidad'],
+                    'cantidad' => $cantidad,
                     'destino' => $destino,
                     'destino_path' => $destino_path,
                     'nivel' => (int) $partida['nivel'],
                     'es_hoja' => $partida['cantidad']?true:false,
                     'cantidad_hijos' => 0,
-                    'partida_valida' => $partida_valida,
+                    'partida_valida' => true,
+                    'tipo_error' => [],
                 ];
+            if($contratos[$key]['es_hoja']){
+                if($destino == ''){
+                    $contratos[$key]['destino_path'] = 'N/V';
+                    $tipo_error['destino'] = true;
+                    $partidas_errores[2] = 'Destino no válido';
+                }
+                $contratos[$key]['partida_valida'] = count($tipo_error) > 0?false:true;
+                $contratos[$key]['tipo_error'] = $tipo_error;
+            }
             if($key == 0){
 
                 $index_padre = $key;
@@ -236,7 +248,6 @@ class ContratoProyectadoService
 
             if($nivel_anterior == $partida['nivel']){
                 $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
-
                 continue;
             }
 
@@ -246,12 +257,13 @@ class ContratoProyectadoService
                 $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
             }
 
+            
         }
 
         if(count($partidas_errores) > 0){
             $partidas_error = true;
         }
-        return ['partidas_con_error' => $partidas_error, 'erores_partidas' => implode(', ', $partidas_errores), 'contratos' =>$contratos];
+        return ['partidas_con_error' => $partidas_error, 'errores_partidas' => implode(', ', $partidas_errores), 'contratos' =>$contratos];
     }
 
     private function getDatosPartidas($file_xls)

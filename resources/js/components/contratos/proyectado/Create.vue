@@ -107,7 +107,7 @@
                                 <div class="col-md-12">
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar Partida</button>
-                                        <button type="button" class="btn btn-success" @click="modalCarga()"><i class="fa fa-file-excel-o"></i>Cargar Layout</button>
+                                        <!-- <button type="button" class="btn btn-success" @click="modalCarga()"><i class="fa fa-file-excel-o"></i>Cargar Layout</button> -->
                                     </div>
                                 </div>
                             </div>

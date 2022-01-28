@@ -107,7 +107,7 @@
                             <div class="row">
                                 <div  class="col-12">
                                     <div class="table-responsive">
-                                        <table class="table table-striped table-sm">
+                                        <table class="table table-striped table-bordered table-sm">
                                             <thead>
                                             <tr>
                                                 <th class="c120">Clave</th>
@@ -117,7 +117,7 @@
                                                 <th >Destinos</th>
                                             </tr>
                                             </thead>
-                                            <tbody>
+                                           <tbody>
                                             <tr v-for="(partida, i) in partidas">
                                                 <td>{{partida.clave}}</td>
                                                 <td>{{partida.descripcion}}</td>
@@ -128,7 +128,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+                            </div> 
                         </div>
                         </div>
                         <div class="card-footer">
@@ -141,51 +141,6 @@
                 </form>
             </div>
         </div>
-
-
-        <!-- <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-lg" >
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-file-excel-o"></i> Seleccionar Archivo de Layout</h5>
-                        <button type="button" class="close" v-on:click="cerrarModalCarga" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <form role="form">
-                        <div class="modal-body">
-                            <div class="row">
-                                <div class="col-12">
-                                    <div class="row justify-content-between">
-                                        <div class="col-md-12">
-                                            <div class="col-lg-12">
-                                                <input type="file" class="form-control" id="carga_layout"
-                                                    @change="onFileChange"
-                                                    row="3"
-                                                    v-validate="{ ext: ['xlsx']}"
-                                                    name="carga_layout"
-                                                    data-vv-as="Layout"
-                                                    ref="carga_layout"
-                                                    :class="{'is-invalid': errors.has('carga_layout')}"
-                                                >
-                                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando"><i class="fa fa-times"></i>Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="procesarLayout()" :disabled="errors.has('carga_layout') || file_carga === null">
-                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                <i class="fa fa-upload" v-else ></i> Cargar</button>
-                         </div>
-                    </form>
-                </div>
-            </div>
-        </div> -->
-
     </span>
 </template>
 
@@ -208,20 +163,6 @@
                 referencia: '',
                 areas_subcontratantes:[],
                 id_area:'',
-                // partidas:[],
-                partidas_store:[],
-                unidades:[],
-                edit_concepto_index:'',
-                edit_destino_index:'',
-                descrip_temporal:'',
-                destino_temp:'',
-                partida_copia:{
-                    destino:'',
-                    destino_path:''
-                },
-                partida_index:'',
-                file_carga : null,
-                file_carga_name : '',
             }
         },
         mounted(){
@@ -279,7 +220,7 @@
                     'vencimiento':this.$data.fecha_contrato,
                     'referencia':this.$data.referencia,
                     'id_area_subcontratante':this.$data.id_area,
-                    'contratos':this.$data.partidas
+                    'contratos':this.partidas
                 };
                 return this.$store.dispatch('contratos/contrato-proyectado/store',  datos)
                     .then((data) => {
@@ -289,18 +230,7 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result){
-                        let tam_desc = false;
-                        let ip = 0;
-                        this.partidas.forEach(partida => {
-                            if(partida.descripcion_sin_formato.length > 255){
-                                tam_desc = true;
-                            }
-                            ip++;
-                        });
-                        if(tam_desc){
-                            swal('Atención', 'La longitud de la descripción de una partida es mayor a la permitida de 255 caracteres.', 'warning');
-                        }
-                        else if(this.partidas.length === 0){
+                        if(this.partidas.length === 0){
                             swal('Atención', 'Debe agregar al menos una partida', 'warning');
                         }else if(this.validarFechas()){
                             swal('Atención', 'La fecha de contratación no debe ser anterior a la fecha de cotización', 'warning');
