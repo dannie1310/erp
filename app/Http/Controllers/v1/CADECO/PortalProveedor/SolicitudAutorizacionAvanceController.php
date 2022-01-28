@@ -107,4 +107,9 @@ class SolicitudAutorizacionAvanceController extends Controller
         return $this->service->descargaLayoutEdicion($id, $request->all()['db']);
     }
 
+    public function cargaEditarLayout(Request $request)
+    {
+        $res = $this->service->cargaEditarLayout($request->file, $request->id, $request->name, $request->base);
+        return response()->json($res, 200);
+    }
 }

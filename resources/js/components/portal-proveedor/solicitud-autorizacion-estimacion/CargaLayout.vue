@@ -241,13 +241,11 @@
                 $(this.$refs.modal_datos).modal('hide');
             },
             cargarLayout(){
-
                 var formData = new FormData();
                 formData.append('file',  this.file);
                 formData.append('id',  this.id);
                 formData.append('name', this.nombre);
                 formData.append('base', this.subcontrato.base);
-
                 return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/cargaLayout',
                     {
                         data: formData,
@@ -260,7 +258,6 @@
                         this.datos_archivo = data;
                         $(this.$refs.modal_datos).appendTo('body')
                         $(this.$refs.modal_datos).modal('show');
-
                     }).finally(() => {
                         this.$refs.carga_layout.value = '';
                         this.file = null;

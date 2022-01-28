@@ -66,7 +66,6 @@ class SolicitudAutorizacionAvanceEditarLayout implements WithHeadings, ShouldAut
                     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
                 $fecha = date("d/m/Y");
                 $event->sheet->setCellValue("C3", $this->solicitud->fecha_format);
-                $event->sheet->getStyle('C3')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getDelegate()->getStyle('B3:C3')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
@@ -88,7 +87,7 @@ class SolicitudAutorizacionAvanceEditarLayout implements WithHeadings, ShouldAut
                 $event->sheet->getDelegate()->getStyle('B5:C5')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
-                $event->sheet->getStyle('C3:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
+                $event->sheet->getStyle('C4:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
                 $i = 8;
                 $verificacion_estimacion = $this->verifica->encripta($this->base . "|" . $this->solicitud->id_obra . "|" . $this->solicitud->getKey());
                 $event->sheet->setCellValue("A1", $verificacion_estimacion);

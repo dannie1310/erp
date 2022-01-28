@@ -11,6 +11,8 @@ use App\Models\CADECO\SolicitudAutorizacionAvance;
 use App\PDF\PortalProveedores\SolicitudAvanceFormato;
 use App\Repositories\CADECO\SolicitudAutorizacionAvanceRepository as Repository;
 use App\Utils\ValidacionSistema;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use DateTime;
 
@@ -224,4 +226,90 @@ class SolicitudAutorizacionAvanceService
         ini_set('max_execution_time', '7200');
         return $this->repository->descargaLayoutEdicion($id, $base);
     }
+
+    public function cargaEditarLayout($file, $id, $name, $base)
+    {
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
+        $file_xls = $this->getFileXls($file, $name);
+        $celdas = $this->getDatosPartidas($file_xls);
+        $this->verifica = new ValidacionSistema();
+        $solicitud = $this->repository->findSolicitud($id, $base);
+        $x = 8;
+        $partidas = array();
+        $partidas_no_validas = array();
+        if (count($celdas[0]) != 15) {
+            abort(400, 'Archivo XLS no compatible');
+        }
+        $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
+        $cadena_validacion_exp = explode("|", $cadena_validacion);
+        $base_datos = $cadena_validacion_exp[0];
+        $id_obra = $cadena_validacion_exp[1];
+        $id_validar = $cadena_validacion_exp[2];
+        if ($base_datos != $base || $id_obra != $solicitud->id_obra || $id != $id_validar) {
+            abort(400, 'El archivo  XLS no corresponde a la solicitud ' . $solicitud->numero_folio_format);
+        }
+        $fecha_est = $solicitud->fecha_format;
+        $fecha_est_ini = is_numeric($celdas[3][2]) ? $this->convertToDate($celdas[3][2]) : $this->validateDate($celdas[3][2], 'Inicio de Solicitud');
+        $fecha_est_fin = is_numeric($celdas[4][2]) ? $this->convertToDate($celdas[4][2]) : $this->validateDate($celdas[4][2], 'Fin de Solicitud');
+        if (strtotime($fecha_est_ini) > strtotime($fecha_est_fin)) {
+            abort(400, 'La fecha de inicio en posterior a la fecha de finalización.');
+        }
+        $partidas_invalidas = false;
+        while ($x < count($celdas) - 3) {
+            if (!is_null($celdas[$x][13])) {
+                $decodificado = intval(preg_replace('/[^0-9]+/', '', $this->verifica->desencripta($celdas[$x][14])), 10);
+                $item = ItemSubcontrato::where('id_transaccion', $solicitud->id_antecedente)->where('id_item', $decodificado)->first();
+                if (!$item) {
+                    abort(400, 'El archivo  XLS no corresponde a la solicitud ' . $solicitud->numero_folio_format);
+                }
+                $contrato = Contrato::where('id_transaccion', '=', $solicitud->subcontrato->id_antecedente)->where("id_concepto", "=", $item->id_concepto)->first();
+                if ($contrato == null) {
+                    $contrato = Contrato::where('id_transaccion', '=', $solicitud->subcontrato->id_antecedente)->where("nivel", "=", $item->nivel)->first();
+                }
+                $vol_saldo = (float)str_replace(',', '', $celdas[$x][7]);
+                $datos_partida = $item->partidasEstimadas($id, $solicitud->subcontrato->id_antecedente, $contrato);
+                $datos_partida['no_partida'] = $celdas[$x][0];
+                $datos_partida['item_antecedente'] = $datos_partida['id_concepto'];
+                if (is_numeric($celdas[$x][9]) && $celdas[$x][9] > 0 && $vol_saldo > 0 && $celdas[$x][9] <= $vol_saldo) {
+                    $datos_partida['cantidad'] = $celdas[$x][9];
+                    $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
+                    $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
+                    $datos_partida['cantidad_valida'] = true;
+                    $partidas[] = $datos_partida;
+                } else if (!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null) {
+                    $datos_partida['cantidad'] = 'N/V';
+                    $datos_partida['porcentaje_estimado'] = 'N/V';
+                    $datos_partida['importe'] = 'N/V';
+                    $datos_partida['cantidad_valida'] = false;
+                    $partidas_invalidas = true;
+                    $partidas_no_validas[] = $datos_partida;
+                } else if (is_numeric($celdas[$x][9]) && $celdas[$x][9] != null && $celdas[$x][9] > $vol_saldo) {
+                    $datos_partida['cantidad'] = $celdas[$x][9];
+                    $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
+                    $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
+                    $datos_partida['cantidad_valida'] = false;
+                    $partidas_invalidas = true;
+                    $partidas_no_validas[] = $datos_partida;
+                }
+            }
+            $x++;
+        }
+
+        $partidas_filtradas = count($partidas_no_validas) > 0 ? $partidas_no_validas : $partidas;
+        $observaciones = $celdas[$x + 2][3] == null ? '' : (string)$celdas[$x + 2][3];
+        $respuesta = [
+            'id' => $id,
+            'contratista' => $celdas[0][7],
+            'fecha_solicitud' => $fecha_est,
+            'fecha_inicio_solicitud' => $fecha_est_ini,
+            'fecha_fin_solicitud' => $fecha_est_fin,
+            'observaciones' => $observaciones,
+            'partidas_invalidas' => $partidas_invalidas,
+            'referencia' => 'XLY',
+            'partidas' => $partidas_filtradas
+        ];
+        return $respuesta;
+    }
 }
+

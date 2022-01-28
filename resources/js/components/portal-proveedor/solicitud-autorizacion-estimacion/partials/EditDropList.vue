@@ -14,7 +14,7 @@
                 <i class="fa fa-download" v-if="!cargando"></i>
                 <i class="fa fa-spinner fa-spin" v-else></i>Descargar Layout
             </button>
-            <!--<cargar-layout v-bind:id="value.id" />-->
+            <cargar-layout v-bind:id="value.id" v-bind:base="value.base" />
             <router-link  :to="{ name: 'solicitud-autorizacion-avance-edit', params: {id: value.id, base: value.base}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Editar">
                 <i class="fa fa-pencil"></i>Ir al Formulario
             </router-link>
@@ -23,10 +23,10 @@
 </template>
 
 <script>
-//import CargarLayout from "../CargaLayoutEdit";
+import CargarLayout from "../CargaLayoutEdit";
 export default {
     name: "edit-drop-list",
-    //components: {CargarLayout},
+    components: {CargarLayout},
     props: ['value'],
     data() {
         return {
@@ -39,7 +39,6 @@ export default {
     methods: {
         descargar() {
             this.cargando = true;
-            console.log(this.value)
             return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/descargaEdicionLayout', {id: this.value.id, base: this.value.base })
                 .then(() => {
                     this.$emit('success')

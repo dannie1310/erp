@@ -520,6 +520,7 @@ $api->version('v1', function ($api) {
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@descargaLayout')->where(['id' => '[0-9]+']);
             $api->post('layout', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@cargaLayout');
             $api->get('descargaLayoutEdicion/{id}', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@descargaLayoutEdicion')->where(['id' => '[0-9]+']);
+            $api->post('layoutEdit', 'App\Http\Controllers\v1\CADECO\PortalProveedor\SolicitudAutorizacionAvanceController@cargaEditarLayout');
         });
     });
 
