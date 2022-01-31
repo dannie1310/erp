@@ -10,7 +10,7 @@
             <span><i class="fa fa-pencil"></i></span>
         </button>
         <div class="dropdown-menu">
-            <button @click="descargar" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Descargar LAyout" >
+            <button @click="descargar" type="button" class="btn btn-sm btn-outline-success dropdown-item" title="Descargar Layout" >
                 <i class="fa fa-download" v-if="!cargando"></i>
                 <i class="fa fa-spinner fa-spin" v-else></i>Descargar Layout
             </button>

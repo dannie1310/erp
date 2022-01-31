@@ -1,10 +1,11 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <button @click="registrar" v-if="$root.can('registrar_contrato_proyectado')" class="btn btn-app pull-right" :disabled="cargando">
+            <!-- <button @click="registrar" v-if="$root.can('registrar_contrato_proyectado')" class="btn btn-app pull-right" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i> Registrar
-            </button>
+            </button> -->
+            <Registro v-if="$root.can('registrar_contrato_proyectado')" v-bind:cargando="cargando"></Registro>
         </div>
         <div class="col-12">
             <div class="card">
@@ -23,8 +24,10 @@
 </template>
 
 <script>
+    import Registro from './Registro';
     export default {
         name: "contrato-proyectado-index",
+        components:{Registro},
         data() {
             return {
                 HeaderSettings: false,
