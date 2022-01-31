@@ -22,18 +22,18 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h6 class="card-title">Periodo de Estimación</h6>
+                            <h6 class="card-title">Periodo de Solicitud</h6>
                         </div>
                         <div class="card-body">
                             <form>
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label">Inicio</label>
-                                        {{estimacion.fecha_inicial}}
+                                        {{solicitud.fecha_inicio}}
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label class="col-form-label">Término</label>
-                                        {{estimacion.fecha_final}}
+                                        {{solicitud.fecha_fin}}
                                     </div>
                                 </div>
                             </form>
@@ -99,28 +99,7 @@
 						</tr>
 					</thead>
 					<tbody v-for="(concepto, i) in partidas">
-                        <tr v-if="concepto.para_estimar == 0">
-                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                            <td :title="concepto.descripcion">
-                                <span v-for="n in concepto.nivel">&nbsp;</span>
-                                <b>{{concepto.descripcion}}</b></td>
-                            <td></td>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico contratado"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-volumen"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico avance-importe"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td style="display: none" class="numerico saldo"/>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td style="display: none" class="destino"/>
-                        </tr>
-					    <tr v-else>
+					    <tr>
 						    <td :title="concepto.clave">{{ concepto.clave }}</td>
                             <td :title="concepto.descripcion_concepto">
                                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -136,10 +115,10 @@
                             <td style="display: none" class="numerico avance-importe">${{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="editable-cell numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(4)}}</td>
-                            <td class="editable-cell numerico">{{concepto.porcentaje_estimado}}</td>
+                            <td class="numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(4)}}</td>
+                            <td class="numerico">{{concepto.porcentaje_estimado}}</td>
                             <td class="numerico">{{ concepto.precio_unitario_subcontrato_format }}</td>
-                            <td class="editable-cell numerico">${{parseFloat(concepto.importe_estimacion).formatMoney(4, '.', ',')}}</td>
+                            <td class="numerico">${{parseFloat(concepto.importe_estimacion).formatMoney(4, '.', ',')}}</td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
                     </tbody>
@@ -161,7 +140,7 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     import Encabezado from './partials/EncabezadoSolicitud';
     export default {
-        name: "estimacion-edit-layout",
+        name: "solicitud-edit-layout",
         components: {RetencionIVA, Datepicker, es, Resumen, Encabezado},
         props: ['id', 'base_b64', 'solicitud'],
         data() {
@@ -169,15 +148,22 @@
                 cargando: true,
                 es:es,
                 columnas: [],
+                base : ''
             }
         },
         mounted() {
             this.init()
+            this.base = atob(this.base_b64)
         },
         methods: {
             init() {
-                this.partidas = this.solicitud.subcontrato.partidas
-                this.cargando = false;
+                if(this.solicitud == undefined)
+                {
+                    this.salir()
+                }else {
+                    this.partidas = this.solicitud.partidas
+                    this.cargando = false;
+                }
             },
             update() {
                 this.solicitud.base =  this.base;

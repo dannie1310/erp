@@ -71,11 +71,11 @@
                                         </div>
                                         <div class="col-md-4">
                                             <label class="col-form-label">Fecha Inicio de Solicitud</label>
-                                            {{datos_archivo.fecha_inicial}}
+                                            {{datos_archivo.fecha_inicio}}
                                         </div>
                                         <div class="col-md-4">
                                             <label class="col-form-label">Fecha Término de Solicitud</label>
-                                            {{datos_archivo.fecha_final}}
+                                            {{datos_archivo.fecha_fin}}
                                         </div>
                                     </div>
 
@@ -143,29 +143,8 @@
                                                             <th style="display: none" class="destino">Destino</th>
                                                         </tr>
                                                     </thead>
-                                                    <tbody v-for="(concepto, i) in datos_archivo.subcontrato.partidas">
-                                                        <tr v-if="concepto.para_estimar == 0">
-                                                            <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                                                            <td :title="concepto.descripcion">
-                                                                <span v-for="n in concepto.nivel">&nbsp;</span>
-                                                                <b>{{concepto.descripcion}}</b></td>
-                                                            <td></td>
-                                                            <td style="display: none" class="numerico contratado"/>
-                                                            <td style="display: none" class="numerico contratado"/>
-                                                            <td style="display: none" class="numerico avance-volumen"/>
-                                                            <td style="display: none" class="numerico avance-volumen"/>
-                                                            <td style="display: none" class="numerico avance-volumen"/>
-                                                            <td style="display: none" class="numerico avance-importe"/>
-                                                            <td style="display: none" class="numerico avance-importe"/>
-                                                            <td style="display: none" class="numerico saldo"/>
-                                                            <td style="display: none" class="numerico saldo"/>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td></td>
-                                                            <td style="display: none" class="destino"/>
-                                                        </tr>
-                                                        <tr v-else-if="!concepto.partida_valida">
+                                                    <tbody v-for="(concepto, i) in datos_archivo.partidas">
+                                                        <tr v-if="concepto.estimado">
                                                             <td :title="concepto.clave">{{ concepto.clave }}</td>
                                                             <td :title="concepto.descripcion_concepto">
                                                                 <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -272,9 +251,9 @@
                         }
                     })
                     .then(data => {
-                        if(data.subcontrato.partidas_validas){
+                        if(!data.partidas_invalidas){
                             this.cerrarModal();
-                            this.$router.push({name: 'estimacion-edit-layout', params: {id: this.id, estimacion:data}});
+                            this.$router.push({name: 'solicitud-autorizacion-avance-edit-layout', params: {id: this.id, solicitud:data, base: this.base}});
                         }else{
                             this.$refs.carga_layout.value = '';
                             this.file = null;

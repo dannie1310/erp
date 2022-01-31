@@ -651,13 +651,29 @@ class SolicitudAutorizacionAvance extends Transaccion
     public function editar($datos)
     {
         try {
-            $fecha_inicial = New DateTime($datos['fecha_cumplimiento']);
-            $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fecha_final = New DateTime($datos['fecha_vencimiento']);
-            $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+            if(array_key_exists('fecha_cumplimiento', $datos)) {
+                $fecha_inicial = New DateTime($datos['fecha_cumplimiento']);
+                $fecha_inicial->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $fecha_inicial = $fecha_inicial->format("Y-m-d");
+                $fecha_final = New DateTime($datos['fecha_vencimiento']);
+                $fecha_final->setTimezone(new DateTimeZone('America/Mexico_City'));
+                $fecha_final = $fecha_final->format("Y-m-d");
+            }else{
+
+                $DateTime = DateTime::createFromFormat('d/m/Y', $datos['fecha_inicio']);
+                $fecha_inicial = $DateTime->format('Y-m-d');
+                $DateTime = DateTime::createFromFormat('d/m/Y',$datos['fecha_fin']);
+                $fecha_final = $DateTime->format('Y-m-d');
+            }
             DB::connection('cadeco')->beginTransaction();
 
-            foreach ($datos['subcontrato']['partidas'] as $partida) {
+            if(array_key_exists('subcontrato',$datos)){
+                $partidas = $datos['subcontrato']['partidas'];
+            }else{
+                $partidas = $datos['partidas'];
+            }
+
+            foreach ($partidas as $partida) {
 
                 if (array_key_exists('id', $partida)) {
 
@@ -693,13 +709,11 @@ class SolicitudAutorizacionAvance extends Transaccion
                     }
                 }
             }
-
             $this->update([
-                'cumplimiento' => $fecha_inicial->format("Y-m-d"),
-                'vencimiento' => $fecha_final->format("Y-m-d"),
+                'cumplimiento' => $fecha_inicial,
+                'vencimiento' => $fecha_final,
                 'observaciones' => $datos['observaciones']
             ]);
-
             $this->recalculaDatosGenerales();
             DB::connection('cadeco')->commit();
             return $this;

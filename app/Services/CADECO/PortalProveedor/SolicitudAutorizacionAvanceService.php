@@ -275,8 +275,11 @@ class SolicitudAutorizacionAvanceService
                     $datos_partida['cantidad'] = $celdas[$x][9];
                     $datos_partida['porcentaje_estimado'] = $celdas[$x][9] * 100 / $celdas[$x][5];
                     $datos_partida['importe'] = $celdas[$x][9] * $celdas[$x][6];
+                    $datos_partida['cantidad_estimacion'] = $celdas[$x][9];
+                    $datos_partida['importe_estimacion'] = $celdas[$x][9] * $celdas[$x][6];
                     $datos_partida['cantidad_valida'] = true;
                     $partidas[] = $datos_partida;
+
                 } else if (!is_numeric($celdas[$x][9]) && $celdas[$x][9] != null) {
                     $datos_partida['cantidad'] = 'N/V';
                     $datos_partida['porcentaje_estimado'] = 'N/V';
@@ -301,9 +304,10 @@ class SolicitudAutorizacionAvanceService
         $respuesta = [
             'id' => $id,
             'contratista' => $celdas[0][7],
-            'fecha_solicitud' => $fecha_est,
-            'fecha_inicio_solicitud' => $fecha_est_ini,
-            'fecha_fin_solicitud' => $fecha_est_fin,
+            'folio' => $solicitud->numero_folio_format,
+            'fecha' => $fecha_est,
+            'fecha_inicio' => $fecha_est_ini,
+            'fecha_fin' => $fecha_est_fin,
             'observaciones' => $observaciones,
             'partidas_invalidas' => $partidas_invalidas,
             'referencia' => 'XLY',

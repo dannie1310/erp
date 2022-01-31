@@ -223,7 +223,7 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
-        name: "estimacion-edit",
+        name: "solicitud-edit",
         props: ["id", "base_b64"],
         components: {Encabezado, RetencionIVA, Resumen, Datepicker, es},
         data() {

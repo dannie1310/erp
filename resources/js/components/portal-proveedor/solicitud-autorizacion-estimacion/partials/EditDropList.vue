@@ -34,12 +34,12 @@ export default {
         }
     },
     mounted() {
-        this.value.base = atob(this.value.base);
+
     },
     methods: {
         descargar() {
             this.cargando = true;
-            return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/descargaEdicionLayout', {id: this.value.id, base: this.value.base })
+            return this.$store.dispatch('portalProveedor/solicitud-autorizacion-avance/descargaEdicionLayout', {id: this.value.id, base: atob(this.value.base) })
                 .then(() => {
                     this.$emit('success')
                     this.cargando = false;

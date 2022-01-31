@@ -4635,17 +4635,19 @@ export const routes = [
                     },
                     {
                         path: ':id/:base/editarLayout',
-                        name: 'estimacion-edit-layout',
+                        name: 'solicitud-autorizacion-avance-edit-layout',
                         props: route => ({
                             base_b64: route.params.base,
                             id: route.params.id,
+                            solicitud: route.params.solicitud
                         }),
                         component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/EditLayout').default,
                         meta: {
-                            title: 'Editar Estimación Layout',
-                            breadcrumb: {parent: 'estimacion', name: 'EDITAR LAYOUT'},
-                            middleware: [auth, context, permission],
-                            permission: 'editar_estimacion_subcontrato'
+                            title: 'Editar Solicitud Layout',
+                            breadcrumb: {parent: 'solicitud-autorizacion-avance', name: 'EDITAR LAYOUT'},
+                            middleware: [auth, permission],
+                            permission: 'editar_solicitud_autorizacion_avance_proveedor',
+                            general: true
                         }
                     },
                     {
