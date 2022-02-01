@@ -103,6 +103,12 @@ class SolicitudPagoAnticipadoService
     public function pdfPagoAnticipado($id){
         $pdf = new PagoAnticipado($id);
         return $pdf;
+    }
 
+    public function getIndicadorAplicadas()
+    {
+        $base_datos = Context::getDatabase() ;
+        $id_obra = Context::getIdObra();
+        return $this->repository->getIndicadorAplicadas($base_datos,$id_obra);
     }
 }
