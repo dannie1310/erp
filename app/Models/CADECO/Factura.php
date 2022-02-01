@@ -1276,6 +1276,7 @@ class Factura extends Transaccion
                     "referencia" => $partida['concepto'],
                     "id_concepto" => $partida['destino']['id'],
                     "cantidad" => $partida['cantidad'],
+                    "precio_unitario" => $partida['precio'],
                     "importe" => $monto_partida,
                     "saldo" => $monto_partida,
                     "numero" => 7,
