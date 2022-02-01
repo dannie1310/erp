@@ -216,7 +216,8 @@ class InformeCostosCFDIvsCostosBalanza
             ->first();
 
         if($empresa_contpaq){
-            Config::set('database.connections.cntpq.database',$empresa_contpaq->AliasBDD);
+            Config::set('database.connections.cntpq_inf.database',$empresa_contpaq->AliasBDD);
+
             $cuentas = CuentaCosto::where("tipo_costo","=",1)->
             where("base_datos_contpaq","=",$empresa_contpaq->AliasBDD)->pluck("codigo_cuenta")->toArray();
 
@@ -235,7 +236,7 @@ class InformeCostosCFDIvsCostosBalanza
             GROUP by Periodo
             ";
 
-            $informe = DB::connection("cntpq")->select($informe_qry);
+            $informe = DB::connection("cntpq_inf")->select($informe_qry);
             $informe = array_map(function ($value) {
                 return (array)$value;
             }, $informe);
