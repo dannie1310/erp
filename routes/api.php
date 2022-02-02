@@ -239,6 +239,7 @@ $api->version('v1', function ($api) {
         $api->get('avance-cuentas-contables', 'App\Http\Controllers\v1\ChartController@avanceCuentasContables');
         $api->get('prepolizas-semanal', 'App\Http\Controllers\v1\ChartController@prepolizasSemanal');
         $api->get('prepolizas-acumulado', 'App\Http\Controllers\v1\ChartController@polizasDoughnut');
+        $api->get('pagos-anticipados', 'App\Http\Controllers\v1\ChartController@pagosAnticipados');
     });
 
     /**
@@ -1310,6 +1311,17 @@ $api->version('v1', function ($api) {
 
     });
 
+
+    $api->group(['middleware' => 'api', 'prefix' => 'finanzas-general'], function ($api) {
+        $api->group(['prefix' => 'solicitud-pago'], function ($api) {
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@paginate');
+            $api->get('indicador-aplicadas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@getIndicadorAplicadas');
+            $api->get('descarga-excel', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@descargarExcel');
+        });
+    });
+
+
+
     /**
      * FINANZAS
      */
@@ -1480,6 +1492,9 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id' => '[0-9]+']);
+            $api->get('indicador-aplicadas', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@getIndicadorAplicadas');
+            $api->get('indicador-aplicadas-general', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@getIndicadorAplicadas');
+
         });
 
         /**

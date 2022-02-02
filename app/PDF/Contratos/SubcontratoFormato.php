@@ -122,7 +122,7 @@ class SubcontratoFormato extends FPDI
             }
         }else{
             $postTitle=.7;
-            if( Context::getDatabase() == "SAO1814" && ID_OBRA == 41){
+            if( Context::getDatabase() == "SAO1814" && Context::getIdObra() == 41){
                 $this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
                 $postTitle=3.5;
             }
