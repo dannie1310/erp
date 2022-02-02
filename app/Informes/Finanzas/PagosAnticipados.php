@@ -131,11 +131,11 @@ WHERE
         //pagos anticipados pagados / pagos anticipados registrados
 
         $total_solicitudes = SolicitudPagoAplicada::where("estado_registro","=",1)
-            ->where("fecha_solicitud",">=",'2022-01-01 00:00:00')
+            //->where("fecha_solicitud",">=",'2022-01-01 00:00:00')
             ->count();
 
         $total_solicitudes_con_orden_pago = SolicitudPagoAplicada::where("estado_registro","=",1)
-            ->where("fecha_solicitud",">=",'2022-01-01 00:00:00')
+            //->where("fecha_solicitud",">=",'2022-01-01 00:00:00')
             ->where("pendiente","<=",0.99)->count();
         $razon_solicitudes = number_format($total_solicitudes_con_orden_pago / $total_solicitudes *100, "0") ;
 

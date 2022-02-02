@@ -7,7 +7,13 @@
                     <span class="info-box-icon"><i class="fa fa-file-powerpoint"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Solicitudes de Pago Anticipado Aplicadas</span>
+                        <router-link :to="{name: 'detalle-indicador-solicitudes-pago'}" style="color: #FFFFFF; text-decoration: underline" >
+                            <span class="info-box-text">
+
+                                Solicitudes de Pago Anticipado Aplicadas
+
+                            </span>
+                        </router-link>
                         <span class="info-box-number">{{indicador.aplicados}} {{indicador.pendientes}}</span>
 
                         <div class="progress">

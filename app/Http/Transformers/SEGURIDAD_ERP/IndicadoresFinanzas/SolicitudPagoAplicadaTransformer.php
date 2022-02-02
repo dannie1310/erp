@@ -30,6 +30,12 @@ class SolicitudPagoAplicadaTransformer extends TransformerAbstract
         //dd($transaccion);
         //$solicitud =["estado"=>$model->estado,"id_transaccion"=>$model->id_transaccion];
         $complemento = [
+            'fecha_solicitud_format'=>$model->fecha_solicitud_format,
+            'numero_folio_format'=>$model->numero_folio_format,
+            'monto_format'=>$model->monto_format,
+            'monto_aplicado_format'=>$model->monto_aplicado_format,
+            'monto_pagado_format'=>$model->monto_pagado_format,
+            'pendiente_format'=>$model->pendiente_format,
 
         ];
         return array_merge($solicitud, $complemento);

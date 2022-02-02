@@ -28,6 +28,12 @@ class SolicitudPagoAplicadaService
         if (isset($data['folio'])) {
             $this->repository->where([["numero_folio","=",$data["folio"]]]);
         }
+        if (isset($data['base_datos'])) {
+            $this->repository->where([["base_datos","like","%".$data["base_datos"]."%"]]);
+        }
+        if (isset($data['nombre_obra'])) {
+            $this->repository->where([["nombre_obra","like","%".$data["nombre_obra"]."%"]]);
+        }
 
         return $this->repository->paginate();
     }
