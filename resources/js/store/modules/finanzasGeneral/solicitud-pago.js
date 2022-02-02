@@ -80,6 +80,20 @@ export default {
             });
         },
 
+        descargaExcel(context, payload)
+        {
+            var urr = URI + 'descarga-excel?access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Información descargada correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        }
+
     },
 
     getters: {

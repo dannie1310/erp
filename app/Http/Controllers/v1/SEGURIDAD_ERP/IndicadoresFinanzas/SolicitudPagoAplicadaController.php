@@ -28,4 +28,9 @@ class SolicitudPagoAplicadaController extends Controller
         return $this->service->getIndicadorAplicadas();
     }
 
+    public function descargarExcel()
+    {
+        return $this->service->descargarExcel();
+    }
+
 }

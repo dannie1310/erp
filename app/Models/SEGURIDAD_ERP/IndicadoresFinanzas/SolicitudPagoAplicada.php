@@ -36,6 +36,10 @@ class SolicitudPagoAplicada extends Model
     {
         return $query->where("pendiente",">=","0.99");
     }
+    public function scopeRegistrosActivos($query)
+    {
+        return $query->where("estado_registro","=","1");
+    }
     //atributos
     public function getNumeroFolioFormatAttribute()
     {

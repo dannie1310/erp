@@ -1316,7 +1316,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'solicitud-pago'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@paginate');
             $api->get('indicador-aplicadas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@getIndicadorAplicadas');
-
+            $api->get('descarga-excel', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@descargarExcel');
         });
     });
 

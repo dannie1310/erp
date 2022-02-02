@@ -3,8 +3,10 @@
 
 namespace App\Services\SEGURIDAD_ERP\IndicadoresFinanzas;
 
+use App\Exports\FinanzasGlobal\SolicitudesPagoAplicadasExport;
 use App\Models\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicada;
 use App\Repositories\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaRepository;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SolicitudPagoAplicadaService
 {
@@ -47,6 +49,16 @@ class SolicitudPagoAplicadaService
     public function getIndicadorAplicadas()
     {
         return $this->repository->getIndicadorAplicadas();
+    }
+
+    public function descargarExcel()
+    {
+
+        $solicitudes_pago_pendientes_aplicar = SolicitudPagoAplicada::pendientes()
+            ->registrosActivos()
+            ->select("base_datos","nombre_obra","fecha_solicitud", "numero_folio","monto","monto_pagado"
+            ,"monto_aplicado","pendiente")->get()->toArray();
+        return Excel::download(new SolicitudesPagoAplicadasExport($solicitudes_pago_pendientes_aplicar), 'solicitudes_pago_pendientes_aplicar'."_".date('dmY_His').'.xlsx');
     }
 
 }

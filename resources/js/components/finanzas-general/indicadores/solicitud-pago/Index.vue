@@ -1,28 +1,34 @@
 <template>
     <span>
         <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <!-- /.card-header -->
-                <div class="card-body">
-                    <div class="table-responsive">
-                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
-                    </div>
-                </div>
-                <!-- /.card-body -->
+            <div class="col-md-12">
+                <descarga-solicitud-pago v-bind:query="query"></descarga-solicitud-pago>
             </div>
-            <!-- /.card -->
         </div>
-            <!-- /.col -->
-    </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+                <!-- /.col -->
+        </div>
     </span>
 </template>
 
 <script>
 
-
+    import DescargaSolicitudPago from "./DescargaExcel";
     export default {
         name: "finanzas-general-indicador-solicitud-pago-index",
+        components: {DescargaSolicitudPago},
         data() {
             return {
                 HeaderSettings: false,
