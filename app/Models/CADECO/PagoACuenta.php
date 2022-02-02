@@ -47,4 +47,9 @@ class PagoACuenta extends Pago
     public function solicitud(){
         return $this->belongsTo(SolicitudPagoAnticipado::class, 'id_antecedente', 'id_transaccion');
     }
+
+    public function ordenesPago()
+    {
+        return $this->hasMany(OrdenesPago::class, 'numero_folio', 'numero_folio');
+    }
 }

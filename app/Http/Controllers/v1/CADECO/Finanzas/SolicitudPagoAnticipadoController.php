@@ -75,4 +75,8 @@ class SolicitudPagoAnticipadoController extends Controller
         return $this->service->pdfPagoAnticipado($id)->create();
     }
 
+    public function getIndicadorAplicadas()
+    {
+        return $this->service->getIndicadorAplicadas();
+    }
 }
