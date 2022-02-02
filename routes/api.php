@@ -1482,6 +1482,8 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id' => '[0-9]+']);
             $api->get('indicador-aplicadas', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@getIndicadorAplicadas');
+            $api->get('indicador-aplicadas-general', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@getIndicadorAplicadas');
+
         });
 
         /**

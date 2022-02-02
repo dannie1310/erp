@@ -5,8 +5,10 @@ namespace App\Informes\Finanzas;
 
 
 use App\Models\CADECO\SolicitudPagoAnticipado;
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
+use App\Models\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicada;
 use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -73,18 +75,90 @@ WHERE
             "color" => $color
         ];
     }
-    public static function  getInforme()
+
+    public static function getSolicitudesPagoAnticipadoParaIndicador(ConfiguracionObra $obra)
     {
-        $informe["informe"][] = PagosAnticipados::getPartidasProyectoEmpresa();
-        $informe["fechas"] = PagosAnticipados::getFechasInforme();
-        return $informe;
+        $nombre_obra = $obra->nombre;
+        $base_datos = $obra->proyecto->base_datos;
+        $id_obra = $obra->id_obra;
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $base_datos);
+        $solicitudes_para_indicador = DB::connection("cadeco")->select("
+SELECT
+       '".$base_datos."' as base_datos,
+       '".$nombre_obra."' as nombre_obra,
+	spa.id_obra,
+    spa.id_transaccion,
+    --spa.tipo_transaccion,
+    spa.fecha as fecha_solicitud,
+    spa.numero_folio,
+    spa.opciones,
+    spa.monto as monto,
+    abs(isnull(pag.monto,0)) as monto_pagado,
+    abs(sum(isnull(opag.monto,0))) as monto_aplicado,
+    isnull(spa.monto,0)+sum(isnull(opag.monto,0)) as pendiente
+
+FROM
+    dbo.transacciones as spa
+LEFT JOIN dbo.transacciones pag ON
+    spa.id_transaccion = pag.id_antecedente and pag.tipo_transaccion =82
+LEFT JOIN dbo.transacciones opag ON
+    opag.numero_folio = pag.numero_folio and opag.tipo_transaccion = 68 and opag.id_obra = $id_obra
+WHERE
+    spa.tipo_transaccion = 72
+    AND spa.opciones = 327681
+   and spa.id_obra = $id_obra
+   and spa.estado >=0
+
+   group by spa.id_obra,
+    spa.id_transaccion,
+    spa.tipo_transaccion,
+    spa.opciones,
+    spa.monto,
+    pag.monto,
+    spa.numero_folio,
+    spa.fecha
+        ")
+        ;
+        $solicitudes_para_indicador = array_map(function ($value) {
+            return (array)$value;
+        }, $solicitudes_para_indicador);
+        return $solicitudes_para_indicador;
     }
 
-    public static function  getInformeEmpresaProyecto()
+    public static function getIndicadorAplicadasCompletas()
     {
-        $informe["informe"][] = PagosAnticipados::getPartidasEmpresaProyecto();
-        $informe["fechas"] = PagosAnticipados::getFechasInforme();
-        return $informe;
+        //pagos anticipados pagados / pagos anticipados registrados
+
+        $total_solicitudes = SolicitudPagoAplicada::where("estado_registro","=",1)
+            ->where("fecha_solicitud",">=",'2022-01-01 00:00:00')
+            ->count();
+
+        $total_solicitudes_con_orden_pago = SolicitudPagoAplicada::where("estado_registro","=",1)
+            ->where("fecha_solicitud",">=",'2022-01-01 00:00:00')
+            ->where("pendiente","<=",0.99)->count();
+        $razon_solicitudes = number_format($total_solicitudes_con_orden_pago / $total_solicitudes *100, "0") ;
+
+        if($razon_solicitudes>=90)
+        {
+            $color = "bg-success";
+        }else if($razon_solicitudes<90 && $razon_solicitudes>=50)
+        {
+            $color = "bg-warning";
+        }else if($razon_solicitudes<50)
+        {
+            $color = "bg-danger";
+        }
+
+        return ["porcentaje"=>$razon_solicitudes,
+            "aplicados"=> number_format($total_solicitudes_con_orden_pago,0) . " aplicadas",
+            "pendientes"=> number_format($total_solicitudes-$total_solicitudes_con_orden_pago,0) . " pendientes",
+            "dividendo" => number_format($total_solicitudes,0) . " registradas",
+            "color" => $color
+        ];
     }
+
+
+
 
 }

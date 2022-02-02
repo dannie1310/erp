@@ -4082,96 +4082,13 @@ export const routes = [
         },
         children: [
             {
-                path: '',
+                path: '/',
                 name: 'finanzas-general',
+                component: require('./components/finanzas-general/Index').default,
                 meta: {
                     title: 'FINANZAS',
                     middleware: [auth],
                 }
-            },
-            {
-                path: 'configuracion',
-                component: require('./components/remesas/configuracion/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'configuracion-remesa',
-                        component: require('./components/remesas/configuracion/Index').default,
-                        meta: {
-                            title: 'Configuración',
-                            breadcrumb: {parent: 'remesas', name: 'CONFIGURACIÓN'},
-                            middleware: [auth, permission],
-                            permission: 'consultar_limite_remesa',
-                            general: true,
-                        }
-                    },
-                    {
-                        path: 'limite-remesa',
-                        name: 'limite-remesa',
-                        component: require('./components/remesas/configuracion/limite-remesa/Index').default,
-                        meta: {
-                            title: 'Configuración de Límites de Remesas Extraordinarias',
-                            breadcrumb: {name: 'LÍMITE SEMANAL', parent: 'configuracion'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_limite_remesa'],
-                            general: true
-                        }
-                    },
-                    {
-                        path: 'limite-remesa-proyecto',
-                        name: 'limite-remesa-proyecto',
-                        component: require('./components/remesas/configuracion/limite-remesa-proyecto/Index').default,
-                        meta: {
-                            title: 'Configuración de Límites de Remesas Extraordinarias por Proyecto',
-                            breadcrumb: {name: 'LÍMITE POR PROYECTO', parent: 'configuracion'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_limite_remesa_proyecto'],
-                            general: true
-                        }
-                    },
-                ]
-            },
-            {
-                path: 'proveedor-no-localizado',
-                component: require('./components/remesas/proveedor-no-localizado/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'proveedor-no-localizado',
-                        component: require('./components/remesas/proveedor-no-localizado/Index').default,
-                        meta: {
-                            title: 'Proveedor No Localizado',
-                            breadcrumb: {parent: 'remesas', name: 'PROVEEDOR NO LOCALIZADO'},
-                            middleware: [auth, permission],
-                            permission: 'consultar_limite_remesa',
-                            general: true,
-                        }
-                    },
-                    {
-                        path: 'transacciones',
-                        name: 'enlistar-transacciones-no-localizados',
-                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/Index').default,
-                        meta: {
-                            title: 'Lista de Transacciones de  Proveedores No Localizados en Remesa',
-                            breadcrumb: {name: 'AUTORIZAR TRANSACCIÓN', parent: 'proveedor-no-localizado'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_transaccion_proveedor_no_localizado'],
-                            general: true
-                        }
-                    },
-                    {
-                        path: 'autorizar',
-                        name: 'autorizar-transacciones-no-localizados',
-                        component: require('./components/remesas/proveedor-no-localizado/autorizar-pago-factura/IndexAutorizacion').default,
-                        meta: {
-                            title: 'Autorizar Transacciones de  Proveedores No Localizados en Remesa',
-                            breadcrumb: {name: 'AUTORIZAR TRANSACCIONES', parent: 'proveedor-no-localizado'},
-                            middleware: [auth, permission],
-                            permission: ['autorizar_rechazar_transaccion_proveedor_no_localizado'],
-                            general: true
-                        }
-                    },
-                ]
             },
         ]
     },

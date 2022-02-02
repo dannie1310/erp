@@ -15,6 +15,7 @@ use App\Models\CADECO\Obra;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\CADECO\Transaccion;
 use App\PDF\Finanzas\PagoAnticipado;
+use App\Repositories\CADECO\Finanzas\SolicitudPagoAnticipadoRepository;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,7 @@ class SolicitudPagoAnticipadoService
      */
     public function __construct(SolicitudPagoAnticipado $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new SolicitudPagoAnticipadoRepository($model);
     }
 
     public function store(array $data)
