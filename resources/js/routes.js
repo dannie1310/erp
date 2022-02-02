@@ -4075,6 +4075,40 @@ export const routes = [
         ]
     },
     {
+        path: '/finanzas-general',
+        components:  {
+            default: require('./components/finanzas-general/partials/Layout.vue').default,
+            menu: require('./components/finanzas-general/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'finanzas-general',
+                component: require('./components/finanzas-general/Index').default,
+                meta: {
+                    title: 'FINANZAS',
+                    middleware: [auth],
+                }
+            },
+            {
+                path: 'indicadores',
+                component: require('./components/finanzas-general/indicadores/Layout').default,
+                children: [
+                    {
+                        path: 'solicitudes-pago',
+                        name: 'detalle-indicador-solicitudes-pago',
+                        component: require('./components/finanzas-general/indicadores/solicitud-pago/Index').default,
+                        meta: {
+                            title: 'Solicitudes de Pago Pendientes de Aplicar',
+                            breadcrumb: {parent: 'finanzas-general', name: 'SOLICITUDES DE PAGO PENDIENTES'},
+                            middleware: [auth],
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/remesas',
         components:  {
             default: require('./components/remesas/partials/Layout.vue').default,
@@ -4105,30 +4139,6 @@ export const routes = [
                             middleware: [auth, permission],
                             permission: 'consultar_limite_remesa',
                             general: true,
-                        }
-                    },
-                    {
-                        path: 'limite-remesa',
-                        name: 'limite-remesa',
-                        component: require('./components/remesas/configuracion/limite-remesa/Index').default,
-                        meta: {
-                            title: 'Configuración de Límites de Remesas Extraordinarias',
-                            breadcrumb: {name: 'LÍMITE SEMANAL', parent: 'configuracion'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_limite_remesa'],
-                            general: true
-                        }
-                    },
-                    {
-                        path: 'limite-remesa-proyecto',
-                        name: 'limite-remesa-proyecto',
-                        component: require('./components/remesas/configuracion/limite-remesa-proyecto/Index').default,
-                        meta: {
-                            title: 'Configuración de Límites de Remesas Extraordinarias por Proyecto',
-                            breadcrumb: {name: 'LÍMITE POR PROYECTO', parent: 'configuracion'},
-                            middleware: [auth, permission],
-                            permission: ['consultar_limite_remesa_proyecto'],
-                            general: true
                         }
                     },
                 ]
