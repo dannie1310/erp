@@ -170,6 +170,8 @@ export default {
                     $(this.$refs.modal_errores).appendTo('body')
                     $(this.$refs.modal_errores).modal('show');
                 }else{
+                    this.procesando = false;
+                    this.cerrarModalCarga();
                     this.$router.push({name: 'proyectado-layout-create', params: {partidas:data.contratos}});
                 }
             }).finally(() => {
