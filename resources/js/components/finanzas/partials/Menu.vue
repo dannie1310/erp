@@ -76,6 +76,12 @@
                     <p>Pagos</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('registrar_pagos_manuales') || true">
+                <router-link :to="{name: 'pago-manual'}" class="nav-link" :class="{active: this.$route.name == 'pago-manual'}">
+                    &nbsp;<i class="fa fa-money-bill-wave nav-icon"></i>
+                    <p>Pagos Pendientes Aplicar</p>
+                </router-link>
+            </li>
 
             <li class="nav-item" v-if="$root.can('consultar_factura')">
                 <router-link :to="{name: 'factura'}" class="nav-link" :class="{active: this.$route.name == 'factura'}">

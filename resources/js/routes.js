@@ -1993,6 +1993,26 @@ export const routes = [
                         ]
                     },
                     {
+                        path: 'pago-manual',
+                        component: require('./components/finanzas/pago-manual/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'pago-manual',
+                                component: require('./components/finanzas/pago-manual/Index').default,
+                                meta: {
+                                    title: 'Pagos Pendientes por Aplicar',
+                                    breadcrumb: {
+                                        parent: 'finanzas',
+                                        name: 'PAGOS PENDIENTES APLICAR'
+                                    },
+                                    middleware: [auth, context],
+                                    permission: 'registrar_pagos_manuales'
+                                },
+                            },
+                        ]
+                    },
+                    {
                         path: 'carga-masiva',
                         component: require('./components/finanzas/gestion-pago/Layout').default,
                         children: [
