@@ -67,7 +67,7 @@
             </div>
         </div>
         <div class="modal fade" ref="modal_errores" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal modal-xl" >
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal modal-xl" >
                 <div class="modal-content" v-if="data">
                     <div class="modal-header">
                         <h5 class="modal-title" id="modal-carga"> <i class="fa fa-close"></i> ERRORES EN LAYOUT DE CONTRATO PROYECTADO</h5>
@@ -82,7 +82,7 @@
                         <br />
                         <div class="row">
                             <div  class="col-12">
-                                <div class="table-responsive">
+                                <div class="table-responsive" style="overflow-y: auto; height:350px">
                                     <table class="table table-striped table-bordered table-sm">
                                         <thead>
                                             <tr>
@@ -169,16 +169,12 @@ export default {
                     this.data = data;
                     $(this.$refs.modal_errores).appendTo('body')
                     $(this.$refs.modal_errores).modal('show');
-                    this.procesando = false;
                 }else{
-                    this.procesando = false;
-                    this.file_carga = null;
-                    $(this.$refs.modal_carga).modal('hide');
-                    this.$validator.reset();
                     this.$router.push({name: 'proyectado-layout-create', params: {partidas:data.contratos}});
                 }
             }).finally(() => {
-                
+                this.procesando = false;
+                this.cerrarModalCarga();
             });
         },
         registrar(){
