@@ -352,9 +352,6 @@ class EstimacionService
         if (count($celdas[0]) != 15) {
             abort(400, 'Archivo XLS no compatible');
         }
-
-        $estimacion = $this->show($id);
-        $est_data = $this->show($id)->subcontratoAEstimar();
         
         $cadena_validacion = $this->verifica->desencripta($celdas[0][0]);
         $cadena_validacion_exp = explode("|", $cadena_validacion);
@@ -362,11 +359,13 @@ class EstimacionService
         $base_datos = $cadena_validacion_exp[0];
         $id_obra = $cadena_validacion_exp[1];
         $id_validar = $cadena_validacion_exp[2];
+        $estimacion = $this->show($id);
 
         if ($base_datos != Context::getDatabase() || $id_obra != Context::getIdObra() || $id != $id_validar)
         {
             abort(400, 'El archivo  XLS no corresponde a la estimacion  ' . $estimacion['folio_consecutivo']);
         }
+        
         $fecha_est = is_numeric($celdas[2][2])?$this->convertToDate($celdas[2][2]):$this->validateDate($celdas[2][2], 'Estimación');
         $fecha_est_ini = is_numeric($celdas[3][2])?$this->convertToDate($celdas[3][2]):$this->validateDate($celdas[3][2], 'Inicio de Estimación');
         $fecha_est_fin = is_numeric($celdas[4][2])?$this->convertToDate($celdas[4][2]):$this->validateDate($celdas[4][2], 'Fin de Estimación');
@@ -377,6 +376,8 @@ class EstimacionService
         $est_data['fecha'] = $fecha_est;
         $est_data['fecha_inicial'] = $fecha_est_ini;
         $est_data['fecha_final'] = $fecha_est_fin;
+
+        $est_data = $this->show($id)->subcontratoAEstimar();
 
         $x = 8;
         $partidas = array();
@@ -394,9 +395,13 @@ class EstimacionService
                 $est_data['subcontrato']['partidas'][$celdas[$x][1]]['volumen_asignado_mayor'] = false;
                 $vol_saldo = (float)str_replace(',', '', $celdas[$x][7]);
                 if(is_numeric($celdas[$x][9]) && $celdas[$x][9] <= $vol_saldo) {
+                    $porcentaje = 0;
+                    if($vol_saldo > 0){
+                        $porcentaje = $celdas[$x][9]*100/$est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_subcontrato'];
+                    }
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][9];
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['importe_estimacion'] = $celdas[$x][9]*$est_data['subcontrato']['partidas'][$celdas[$x][1]]['precio_unitario_subcontrato'];
-                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['porcentaje_estimado'] = $celdas[$x][9]*100/$est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_subcontrato'];
+                    $est_data['subcontrato']['partidas'][$celdas[$x][1]]['porcentaje_estimado'] = $porcentaje;
                 }else if(is_numeric($celdas[$x][9]) && $celdas[$x][9] > $vol_saldo){
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][9];
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['partida_valida'] = false;
