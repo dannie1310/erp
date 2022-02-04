@@ -33,9 +33,14 @@ class SolicitudPagoAplicadaTransformer extends TransformerAbstract
             'fecha_solicitud_format'=>$model->fecha_solicitud_format,
             'numero_folio_format'=>$model->numero_folio_format,
             'monto_format'=>$model->monto_format,
+            'remesa_relacionada'=>$model->remesa_relacionada,
+            'monto_autorizado'=>$model->monto_autorizado_remesa,
+            'monto_autorizado_format'=>$model->monto_autorizado_format,
             'monto_aplicado_format'=>$model->monto_aplicado_format,
             'monto_pagado_format'=>$model->monto_pagado_format,
             'pendiente_format'=>$model->pendiente_format,
+            'observaciones'=>$model->observaciones,
+            'usuario_valido'=>$model->usuario_valido
 
         ];
         return array_merge($solicitud, $complemento);

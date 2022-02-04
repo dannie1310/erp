@@ -83,6 +83,12 @@ WHERE
         $id_obra = $obra->id_obra;
         DB::purge('cadeco');
         Config::set('database.connections.cadeco.database', $base_datos);
+
+        $pdo = DB::connection('cadeco')->getPdo();
+        $pdo->exec('SET ANSI_WARNINGS ON');
+        $pdo->exec('SET ANSI_PADDING ON');
+        $pdo->exec('SET ANSI_NULLS ON');
+
         $solicitudes_para_indicador = DB::connection("cadeco")->select("
 SELECT
        '".$base_datos."' as base_datos,
@@ -96,7 +102,23 @@ SELECT
     spa.monto as monto,
     abs(isnull(pag.monto,0)) as monto_pagado,
     abs(sum(isnull(opag.monto,0))) as monto_aplicado,
-    isnull(spa.monto,0)+sum(isnull(opag.monto,0)) as pendiente
+    isnull(spa.monto,0)+sum(isnull(opag.monto,0)) as pendiente,
+       e.razon_social,
+    spa.id_usuario,
+
+	substring(replace(replace(spa.comentario,'SAO|',''),'SCR|',''),
+    (CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1),
+    abs(CHARINDEX('|',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1))-(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1))
+    ) as usuario_comentario,
+    case
+        when usuario_int2.nombre_completo is not null then usuario_int2.nombre_completo
+        when usuario_int1.nombre_completo is not null then usuario_int1.nombre_completo
+    else spa.comentario collate Latin1_General_CI_AS
+    end usuario_registro,
+    spa.observaciones,
+padr.MontoAutorizado as monto_autorizado_remesa,
+r.FolioRemesa as remesa_relacionada,
+ruv.usuario_valido
 
 FROM
     dbo.transacciones as spa
@@ -104,6 +126,34 @@ LEFT JOIN dbo.transacciones pag ON
     spa.id_transaccion = pag.id_antecedente and pag.tipo_transaccion =82
 LEFT JOIN dbo.transacciones opag ON
     opag.numero_folio = pag.numero_folio and opag.tipo_transaccion = 68 and opag.id_obra = $id_obra
+LEFT JOIN dbo.empresas as e on e.id_empresa = spa.id_empresa
+
+left join SEGURIDAD_ERP.dbo.vwUsuariosIntranetCompletos as usuario_int1
+on usuario_int1.usuario collate Latin1_General_CI_AS
+= substring(
+replace(replace(spa.comentario,'SAO|',''),'SCR|',''),(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1),abs(CHARINDEX('|',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1))-(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1))
+)
+left join SEGURIDAD_ERP.dbo.vwUsuariosIntranetCompletos as usuario_int2
+              on usuario_int2.idusuario = spa.id_usuario
+
+              ---
+
+left join SEGURIDAD_ERP.Finanzas.vwUltimaRemesaDocumentoSAO vurds on(
+vurds.IDTransaccionCDC= spa.id_transaccion and
+vurds.IDObra = spa.id_obra and
+vurds.BaseDatos = '".$base_datos."')
+
+left join SEGURIDAD_ERP.Finanzas.vwPagoAutorizadoXDocumentoRemesa as padr
+on padr.IDDocumento = vurds.IDDocumento
+
+left join SEGURIDAD_ERP.Finanzas.vwRemesas as r
+on r.IDRemesa = vurds.IDRemesa
+
+left join SEGURIDAD_ERP.Finanzas.vwRemesasUsuarioValido as ruv
+on r.IDRemesa = ruv.IDRemesa
+
+---
+
 WHERE
     spa.tipo_transaccion = 72
     AND spa.opciones = 327681
@@ -117,7 +167,20 @@ WHERE
     spa.monto,
     pag.monto,
     spa.numero_folio,
-    spa.fecha
+    spa.fecha,
+    e.razon_social,
+    spa.id_usuario,
+    substring(replace(replace(spa.comentario,'SAO|',''),'SCR|',''),(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1),abs(CHARINDEX('|',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1))-(CHARINDEX(';',replace(replace(spa.comentario,'SAO|',''),'SCR|',''),5)+1)))
+,
+case
+	when usuario_int2.nombre_completo is not null then usuario_int2.nombre_completo
+	when usuario_int1.nombre_completo is not null then usuario_int1.nombre_completo
+else spa.comentario collate Latin1_General_CI_AS
+end,
+spa.comentario, spa.observaciones,
+padr.MontoAutorizado,
+r.FolioRemesa,
+ruv.usuario_valido
         ")
         ;
         $solicitudes_para_indicador = array_map(function ($value) {

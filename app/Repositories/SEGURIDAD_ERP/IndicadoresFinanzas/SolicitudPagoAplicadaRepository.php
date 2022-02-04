@@ -26,6 +26,10 @@ class SolicitudPagoAplicadaRepository extends Repository implements RepositoryIn
 
     public function procesaSolicitudesPagoParaIndicador()
     {
+        $pdo = DB::connection('seguridad')->getPdo();
+        $pdo->exec('SET ANSI_WARNINGS ON');
+        $pdo->exec('SET ANSI_PADDING ON');
+        $pdo->exec('SET ANSI_NULLS ON');
         DB::connection('seguridad')->beginTransaction();
         SolicitudPagoAplicada::where("estado_registro","=",1)
             ->update(["estado_registro"=>0]);
