@@ -396,7 +396,7 @@ class EstimacionService
                 $vol_saldo = (float)str_replace(',', '', $celdas[$x][7]);
                 if(is_numeric($celdas[$x][9]) && $celdas[$x][9] <= $vol_saldo) {
                     $porcentaje = 0;
-                    if($vol_saldo > 0){
+                    if($$est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_subcontrato'] > 0){
                         $porcentaje = $celdas[$x][9]*100/$est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_subcontrato'];
                     }
                     $est_data['subcontrato']['partidas'][$celdas[$x][1]]['cantidad_estimacion'] = $celdas[$x][9];
