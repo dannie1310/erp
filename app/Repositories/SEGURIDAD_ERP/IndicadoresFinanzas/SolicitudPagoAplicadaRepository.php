@@ -34,25 +34,35 @@ class SolicitudPagoAplicadaRepository extends Repository implements RepositoryIn
         SolicitudPagoAplicada::where("estado_registro","=",1)
             ->update(["estado_registro"=>0]);
         try{
+            $i = 0;
             $insertados = 0;
             $obras = ConfiguracionObra::withoutGlobalScopes()->where("tipo_obra","!=",2)
                 ->where("nombre","not like","%prueba%")->get();
             foreach($obras as $obra){
-                $values = PagosAnticipados::getSolicitudesPagoAnticipadoParaIndicador($obra);
+                if ($i == 0) {
 
-                if (count($values) > 0) {
-                    try {
-                        $cantidad = count($values);
-                        for ($i = 0; $i <= $cantidad + 100; $i += 100) {
-                            $values_new = array_slice($values, $i, 100);
-                            if (count($values_new) > 0) {
-                                SolicitudPagoAplicada::insert($values_new);
-                                $insertados += count($values_new);
+                    if($obra->proyecto->base_datos =='SAO1814_PISTA_AEROPUERTO'){
+                        $values = PagosAnticipados::getSolicitudesPagoAnticipadoParaIndicador($obra);
+
+                        if (count($values) > 0) {
+                            dd(count($values));
+                            try {
+                                $cantidad = count($values);
+                                for ($i = 0; $i <= $cantidad + 100; $i += 100) {
+                                    $values_new = array_slice($values, $i, 100);
+                                    if (count($values_new) > 0) {
+                                        SolicitudPagoAplicada::insert($values_new);
+                                        $insertados += count($values_new);
+                                    }
+                                }
+                            } catch (\Exception $e) {
+                                abort(500, $e->getMessage());
                             }
+                            $i++;
+
                         }
-                    } catch (\Exception $e) {
-                        abort(500, $e->getMessage());
                     }
+
                 }
 
             }

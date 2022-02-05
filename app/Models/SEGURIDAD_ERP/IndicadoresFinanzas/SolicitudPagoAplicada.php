@@ -34,7 +34,8 @@ class SolicitudPagoAplicada extends Model
         'usuario_comentario',
         'remesa_relacionada',
         'observaciones',
-        'usuario_valido'
+        'usuario_valido',
+        'id_documento_remesa',
     ];
 
     //relaciones

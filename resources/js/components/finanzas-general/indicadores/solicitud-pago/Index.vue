@@ -11,7 +11,7 @@
                     <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
-                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 9px'" />
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -40,12 +40,12 @@
                     { title: 'Folio de Solicitud', tdClass:'center', field: 'numero_folio', sortable: true, thClass:'th_c70', },
                     { title: 'Proveedor', field: 'razon_social',  sortable: true},
                     { title: 'Usuario Registro Solicitud', field: 'usuario_registro',  sortable: true},
-                    { title: 'Monto de Solicitud', field: 'monto', tdClass: 'money', thClass: 'th_money, th_c100',  sortable: true},
-                    { title: 'Remesa Relacionada', field: 'remesa_relacionada', thClass: 'th_c100',  sortable: true},
-                    { title: 'Monto Autorizado', field: 'monto_autorizado', tdClass: 'money', thClass: 'th_money, th_c100',  sortable: true},
-                    { title: 'Monto Pagado', field: 'monto_pagado', tdClass: 'money', thClass: 'th_money, th_c100',  sortable: true},
-                    { title: 'Monto Aplicado', field: 'monto_aplicado',  tdClass: 'money', thClass: 'th_money, th_c100', sortable: true},
-                    { title: 'Saldo', field: 'pendiente', tdClass: 'money', thClass: 'th_money, th_c100', sortable: true},
+                    { title: 'Monto de Solicitud', field: 'monto', tdClass: 'money', thClass: 'th_money, th_c90',  sortable: true},
+                    { title: 'Remesa Relacionada', field: 'remesa_relacionada', thClass: 'th_c120',  sortable: true},
+                    { title: 'Monto Autorizado en Remesa', field: 'monto_autorizado', tdClass: 'money', thClass: 'th_money, th_c90',  sortable: true},
+                    { title: 'Monto Pagado', field: 'monto_pagado', tdClass: 'money', thClass: 'th_money, th_c90',  sortable: true},
+                    { title: 'Monto Aplicado', field: 'monto_aplicado',  tdClass: 'money', thClass: 'th_money, th_c90', sortable: true},
+                    { title: 'Saldo', field: 'pendiente', tdClass: 'money', thClass: 'th_money, th_c90', sortable: true},
                 ],
                 data: [],
                 total: 0,
