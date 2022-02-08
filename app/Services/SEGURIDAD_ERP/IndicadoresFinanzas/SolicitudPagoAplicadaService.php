@@ -42,8 +42,8 @@ class SolicitudPagoAplicadaService
 
     public function procesaSolicitudesPagoParaIndicador()
     {
-        return $this->repository->procesaSolicitudesPagoParaIndicador();
-
+        //esto se traslada a ETL en pentaho
+        //return $this->repository->procesaSolicitudesPagoParaIndicador();
     }
 
     public function getIndicadorAplicadas()
@@ -56,7 +56,8 @@ class SolicitudPagoAplicadaService
 
         $solicitudes_pago_pendientes_aplicar = SolicitudPagoAplicada::pendientes()
             ->registrosActivos()
-            ->select("base_datos","nombre_obra","fecha_solicitud", "numero_folio","monto","monto_pagado"
+            ->select("base_datos","nombre_obra","fecha_solicitud", "numero_folio","razon_social"
+                ,"monto","usuario_registro","observaciones","remesa_relacionada","monto_autorizado_remesa","monto_pagado"
             ,"monto_aplicado","pendiente")->get()->toArray();
         return Excel::download(new SolicitudesPagoAplicadasExport($solicitudes_pago_pendientes_aplicar), 'solicitudes_pago_pendientes_aplicar'."_".date('dmY_His').'.xlsx');
     }
