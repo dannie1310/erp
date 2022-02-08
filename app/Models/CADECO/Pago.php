@@ -181,6 +181,14 @@ class Pago extends Transaccion
         }
     }
 
+    public function getSaldoFormatAttribute(){
+        return '$' . number_format(abs($this->saldo * -1), 2, '.', ',');
+    }
+
+    public function scopeOrdenPago($query){
+        return $query->where('opciones', '=', 327681);
+    }
+
     public function eliminar($motivo)
     {
         try {

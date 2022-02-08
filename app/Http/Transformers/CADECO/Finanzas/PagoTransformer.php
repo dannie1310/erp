@@ -59,7 +59,9 @@ class PagoTransformer extends TransformerAbstract
           'observaciones'=>$model->observaciones,
           'id_moneda'=>$model->id_moneda,
           'estado_string'=>$model->estado_string,
-          'tipo_pago' => $model->tipo_pago
+          'tipo_pago' => $model->tipo_pago,
+          'referencia' => $model->referencia,
+          'saldo_format' => $model->saldo_format
       ];
     }
 

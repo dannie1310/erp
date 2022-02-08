@@ -25,17 +25,18 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field:'index',sortable: false},
-                    { title: 'Tipo', field: 'id_tipo', thComp: require('../../globals/th-Filter').default, sortable: true },
-                    { title: 'Descripción', field: 'descripcion', thComp: require('../../globals/th-Filter').default, sortable:true},
-                    { title: 'Responsable', field:'nombre', thComp: require('../../globals/th-Filter').default, sortable:true},
+                    { title: 'Folio', field: 'numero_folio', thComp: require('../../globals/th-Filter').default, sortable: true },
+                    { title: 'Empresa', field: 'razon_social', sortable:true},
+                    { title: 'Fecha', field:'fecha', sortable:true},
+                    { title: 'Moneda',field: 'moneda', tdClass: 'td_c100', thClass: 'th_c100', sortable: true},
+                    { title: 'Cheque',field: 'referencia', tdClass: 'td_c120', thClass: 'th_c120', sortable: true},
                     { title: 'Saldo',field: 'saldo', tdClass: 'td_money', thClass: 'th_money', sortable: true},
-                    { title: 'Fecha',field:'fecha',sortable:true},
                     // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
                 query: {
-                    include: 'tipo_fondo', scope:'ConResponsable', sort: 'id_fondo',  order: 'desc'
+                    include: ['moneda', 'empresa'], scope:'OrdenPago', sort: 'id_transaccion',  order: 'desc'
 
                 },
                 cargando: false
@@ -52,10 +53,10 @@
         methods: {
             paginate(){
                 this.cargando=true;
-                return this.$store.dispatch('cadeco/fondo/paginate', {params: this.query})
+                return this.$store.dispatch('finanzas/pago/paginate', {params: this.query})
                     .then(data=>{
-                        this.$store.commit('cadeco/fondo/SET_FONDOS', data.data);
-                        this.$store.commit('cadeco/fondo/SET_META',data.meta)
+                        this.$store.commit('finanzas/pago/SET_PAGOS', data.data);
+                        this.$store.commit('finanzas/pago/SET_META',data.meta)
                     })
                     .finally(()=>{
                         this.cargando=false;
@@ -64,32 +65,33 @@
             }
         },
         computed: {
-            fondos(){
-              return this.$store.getters['cadeco/fondo/fondos'];
+            pagos(){
+              return this.$store.getters['finanzas/pago/pagos'];
             },
             meta(){
-              return this.$store.getters['cadeco/fondo/meta']
+              return this.$store.getters['finanzas/pago/meta']
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
             }
         },
         watch: {
-            fondos: {
-                handler(fondos) {
+            pagos: {
+                handler(pagos) {
                     let self = this
                     self.$data.data = []
-                    fondos.forEach(function (fondo, i) {
+                    pagos.forEach(function (pago, i) {
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            id_tipo: fondo.tipo_fondo.descripcion,
-                            nombre: fondo.nombre.toUpperCase(),
-                            fecha: fondo.fecha_format,
-                            saldo: `$ ${parseFloat(fondo.saldo).formatMoney(2)}`,
-                            descripcion: fondo.descripcion.toUpperCase(),
+                            numero_folio: pago.numero_folio_format,
+                            razon_social: pago.empresa.razon_social,
+                            fecha: pago.fecha_format,
+                            moneda: pago.moneda.nombre,
+                            referencia: pago.referencia,
+                            saldo: pago.saldo_format,
                             buttons: $.extend({}, {
                                 show: true,
-                                id: fondo.id
+                                id: pago.id
                             })
                         })
 
