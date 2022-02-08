@@ -55,4 +55,14 @@ class PagoController extends Controller
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function documentosParaPagar()
+    {
+        return $this->service->documentosParaPagar();
+    }
+
+    public function documentoParaPagar($id)
+    {
+        return $this->service->documentoParaPagar($id);
+    }
 }

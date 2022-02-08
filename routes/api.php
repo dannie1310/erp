@@ -1447,6 +1447,8 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@destroy')->where(['id' => '[0-9]+']);
+            $api->get('/documentosParaPagar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@documentosParaPagar');
+            $api->get('{id}/documentoParaPagar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@documentoParaPagar')->where(['id' => '[0-9]+']);
 
             $api->group(['prefix' => 'carga-masiva'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');
