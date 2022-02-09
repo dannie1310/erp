@@ -112,13 +112,13 @@
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico avance-importe"></td>
-                            <td style="display: none" class="numerico avance-importe">${{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
+                            <td style="display: none" class="numerico avance-importe">${{ parseFloat(concepto.importe_estimado_anterior).formatMoney(2) }}</td>
                             <td style="display: none" class="numerico saldo">{{  parseFloat(concepto.cantidad_por_estimar).formatMoney(2) }}</td>
-                            <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
-                            <td class="numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(4)}}</td>
-                            <td class="numerico">{{concepto.porcentaje_estimado}}</td>
+                            <td style="display: none" class="numerico saldo">${{ parseFloat(concepto.importe_por_estimar).formatMoney(2) }}</td>
+                            <td class="numerico">{{parseFloat(concepto.cantidad_estimacion).formatMoney(2)}}</td>
+                            <td class="numerico">{{parseFloat(concepto.porcentaje_estimado).formatMoney(2, '.', ',')}}</td>
                             <td class="numerico">{{ concepto.precio_unitario_subcontrato_format }}</td>
-                            <td class="numerico">${{parseFloat(concepto.importe_estimacion).formatMoney(4, '.', ',')}}</td>
+                            <td class="numerico">${{parseFloat(concepto.importe_estimacion).formatMoney(2, '.', ',')}}</td>
                             <td style="display: none" class="destino" :title="concepto.destino_path">{{ concepto.destino_path }}</td>
                         </tr>
                     </tbody>
@@ -126,7 +126,9 @@
 			</div>
 
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-times"></i>Cerrar</button>
+                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                    <i class="fa fa-angle-left"></i>Regresar
+                </button>
                 <button type="submit" class="btn btn-primary" @click="update" :disabled="errors.count() > 0"><i class="fa fa-save"></i>Guardar </button>
             </div>
         </div>

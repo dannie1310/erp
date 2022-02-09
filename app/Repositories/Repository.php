@@ -227,4 +227,6 @@ class Repository implements RepositoryInterface
     {
         return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
+
+
 }
