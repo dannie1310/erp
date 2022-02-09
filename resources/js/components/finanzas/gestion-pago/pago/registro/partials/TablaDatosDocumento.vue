@@ -36,7 +36,7 @@
                         <td style="text-align: center">
                             {{solicitud.fecha}}
                         </td>
-                        <td style="text-align: center">
+                        <td style="text-align: right">
                             ${{solicitud.autorizado_format}}
                         </td>
                         <td style="text-align: center">

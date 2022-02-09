@@ -697,4 +697,10 @@ class Pago extends Transaccion
             $this->crearLogRespaldo($consulta);
         }
     }
+
+    public function registrar($data)
+    {
+        dd("aqui",$data);
+
+    }
 }

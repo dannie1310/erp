@@ -27,6 +27,7 @@
                                                 name="id_cuenta"
                                                 option-value="id"
                                                 v-model="id_cuenta"
+                                                v-validate="{required: true}"
                                                 :custom-text="numeroCuenta"
                                                 :list="cuentas"
                                                 :placeholder="!cargando?'Seleccionar o buscar por número, banco o saldo':'Cargando...'"
@@ -96,19 +97,7 @@
                                 <table class="table table-bordered table-sm">
                                     <tr>
                                         <th class="encabezado">
-                                            Documento
-                                        </th>
-                                        <th class="encabezado">
-                                            Fecha
-                                        </th>
-                                        <th class="encabezado">
-                                            Vencimiento
-                                        </th>
-                                        <th class="encabezado">
-                                            Moneda
-                                        </th>
-                                        <th class="encabezado">
-                                            Saldo
+                                            Folio
                                         </th>
                                         <th class="encabezado">
                                             Autorizado
@@ -124,20 +113,8 @@
                                         </th>
                                     </tr>
                                     <tr>
-                                        <td>
+                                        <td style="text-align: center">
                                             {{solicitud.numero_folio}}
-                                        </td>
-                                        <td style="text-align: center">
-                                            {{solicitud.fecha}}
-                                        </td>
-                                        <td style="text-align: center">
-                                            {{solicitud.fecha_vencimiento_format}}
-                                        </td>
-                                        <td style="text-align: center">
-                                            {{solicitud.moneda}}
-                                        </td>
-                                        <td style="text-align: right">
-                                            {{solicitud.saldo}}
                                         </td>
                                         <td style="text-align: right">
                                             {{solicitud.autorizado_format}}
@@ -160,6 +137,16 @@
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>
+                        Regresar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i>
+                        Guardar
+                    </button>
                 </div>
             </form>
         </div>
@@ -196,7 +183,7 @@
             this.cuentas = [];
             this.$validator.reset();
             this.find();
-            this.fechasDeshabilitadas.from= new Date();
+            this.fechasDeshabilitadas.to= new Date();
         },
         methods : {
             formatoFecha(date){
@@ -206,6 +193,7 @@
                 return `[${item.numero}] - [Moneda: ${item.moneda.nombre}]- [Banco: ${item.empresa.razon_social}] - [Saldo - ${item.saldo_real}]`
             },
             find() {
+                this.cargando = true
                 return this.$store.dispatch('finanzas/pago/documentoParaPagar', {
                     id: this.id,
                 }).then(data => {
@@ -229,10 +217,31 @@
                     this.cuenta = data;
                 });
             },
+            salir(){
+                this.$router.push({name: 'registro-pago'});
+            },
+            validate(){
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        this.solicitud.fecha_cobro = this.fecha_cobro;
+                        this.solicitud.fecha_emision = this.fecha_emision;
+                        this.solicitud.id_cuenta = this.id_cuenta;
+                        this.solicitud.referencia_pago = this.referencia;
+                        this.guardar()
+                    }
+                });
+            },
+            guardar() {
+                return this.$store.dispatch('finanzas/pago/store', {
+                    id: this.id,
+                    solicitud: this.solicitud
+                }).then((data) => {
+                    this.salir();
+                });
+            },
         },
         watch: {
-            id_cuenta(value)
-            {
+            id_cuenta(value){
                 if(value !== '' && value !== null && value !== undefined)
                 {
                     this.getCuenta();

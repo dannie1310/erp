@@ -14,7 +14,7 @@ use App\Models\CADECO\Moneda;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Transaccion;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Finanzas\PagoRepository as Repository;
 
 class PagoService
 {
@@ -24,7 +24,7 @@ class PagoService
     protected $repository;
 
     /**
-     * PagoServicevice constructor
+     * PagoService constructor
      *
      * @param Pago $model
      */
@@ -196,5 +196,14 @@ class PagoService
             'id_costo' => $solicitud->id_costo,
             'observaciones' => $solicitud->observaciones
         ];
+    }
+
+    public function store($data)
+    {
+        try {
+            return $this->repository->create($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }
