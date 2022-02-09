@@ -5,9 +5,9 @@
 </template>
 
 <script>
-    import PagoAnticipadoIndicadorAplicados from "./solicitud/pago-anticipado/partials/IndicadorAplicados";
+    import PagoAnticipadoIndicadorAplicados from "./partials/IndicadorAplicadasGeneral";
     export default {
-        name: "finanzas-index",
+        name: "finanzas-general-index",
         components: {PagoAnticipadoIndicadorAplicados},
     }
 </script>

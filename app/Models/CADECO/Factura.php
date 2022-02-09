@@ -1270,13 +1270,15 @@ class Factura extends Transaccion
             $this->complemento->save();
 
             foreach($data['partidas'] as $partida){
+                $monto_partida = $partida['cantidad'] * $partida['precio'];
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "referencia" => $partida['concepto'],
                     "id_concepto" => $partida['destino']['id'],
                     "cantidad" => $partida['cantidad'],
-                    "importe" => $partida['precio'],
-                    "saldo" => $partida['precio'],
+                    "precio_unitario" => $partida['precio'],
+                    "importe" => $monto_partida,
+                    "saldo" => $monto_partida,
                     "numero" => 7,
                 ]);
 
@@ -1285,7 +1287,7 @@ class Factura extends Transaccion
                     "id_item" => $item->id_item,
                     "numero" => 0,
                     "cantidad" => $partida['cantidad'],
-                    "monto_total" => $partida['precio'],
+                    "monto_total" => $monto_partida,
                     "fecha_inicio" => date("Y-m-d h:i:s"),
                     "fecha_fin" => date("Y-m-d h:i:s"),
                 ]);
