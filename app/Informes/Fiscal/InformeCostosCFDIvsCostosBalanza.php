@@ -11,6 +11,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto;
 use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
+use DateTime;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
@@ -18,12 +19,48 @@ class InformeCostosCFDIvsCostosBalanza
 {
     public static function  get($data)
     {
+        $informe["ultima_verificacion"] = InformeCostosCFDIvsCostosBalanza::getUltimaVerificacionCFDI();
         $informe["anio"] = $data["anio"];
         $informe["partidas"] = InformeCostosCFDIvsCostosBalanza::getInforme($data);
         $informe["empresas_sat"] = InformeCostosCFDIvsCostosBalanza::getEmpresasSAT();
         $informe["empresa"] = InformeCostosCFDIvsCostosBalanza::getEmpresa($data);
         $informe["sumatorias"] = InformeCostosCFDIvsCostosBalanza::getSumatoria($informe["partidas"]);
         return $informe;
+    }
+
+    public static function getUltimaVerificacionCFDI()
+    {
+
+        $ultima_fecha = DB::connection("seguridad")->select("
+            select max(ultima_verificacion) as ultima_verificacion
+            from Contabilidad.cfd_sat
+        ");
+
+
+        $ultima_verificacion_dt = new DateTime($ultima_fecha[0]->ultima_verificacion);
+
+
+
+        $fechas_cfdi = DB::connection("seguridad")->select("
+            select min(fecha) as fecha_minima,  max(fecha) as fecha_maxima
+            from Contabilidad.cfd_sat
+where ultima_verificacion between '".$ultima_verificacion_dt->format("Y-m-d")." 00:00:00'
+and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
+        ");
+
+        $fecha_inicial_cfdi_dt = new DateTime($fechas_cfdi[0]->fecha_minima);
+        $fecha_final_cfdi_dt = new DateTime($fechas_cfdi[0]->fecha_maxima);
+
+        $ultima_fecha_verificacion = $ultima_verificacion_dt->format("d/m/Y");
+        $fecha_inicial_cfdi = $fecha_inicial_cfdi_dt->format("d/m/Y");
+        $fecha_final_cfdi = $fecha_final_cfdi_dt->format("d/m/Y");
+
+        return [
+            "ultima_fecha_verificacion" => $ultima_fecha_verificacion,
+            "fecha_inicial_cfdi" =>$fecha_inicial_cfdi,
+            "fecha_final_cfdi" =>$fecha_final_cfdi
+        ];
+
     }
 
     public static function getEmpresa($data)
@@ -110,7 +147,7 @@ class InformeCostosCFDIvsCostosBalanza
     public static function getInforme($data)
     {
         $informe = [];
-        $costos_cfdi_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDI($data);
+        //$costos_cfdi_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDI($data);
         $costos_cfdi_i_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDII($data);
         $costos_cfdi_e_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDIE($data);
         $costos_balanza_ini = InformeCostosCFDIvsCostosBalanza::getCostoBalanza($data);
@@ -131,42 +168,38 @@ class InformeCostosCFDIvsCostosBalanza
         {
             $costo_cfdi_i[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
             $neto_tipo_i[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
-        }
-
-        foreach($costos_balanza_ini as $costo_balanza_ini)
-        {
-            $costo_balanza[$costo_balanza_ini["periodo"]] = $costo_balanza_ini["costo_bza"];
-            $diferencia[$costo_balanza_ini["periodo"]] = $costo_balanza_ini["costo_bza"];
-        }
-
-        foreach($costos_cfdi_ini as $costo_cfdi_ini)
-        {
-            $costo_cfdi[$costo_cfdi_ini["mes"]] = $costo_cfdi_ini["cfdi_recibidos"];
-            if(key_exists($costo_cfdi_ini["mes"], $diferencia))
-            {
-                $diferencia[$costo_cfdi_ini["mes"]] -= $costo_cfdi_ini["cfdi_recibidos"];
-            }else{
-                $diferencia[$costo_cfdi_ini["mes"]] = $costo_cfdi_ini["cfdi_recibidos"] * -1;
-            }
-
+            $costo_cfdi[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
+            $diferencia[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
         }
 
         foreach($sustituciones_ejercicios_anteriores_ini as $sustitucion_ejercicios_anteriores_ini)
         {
             $sustitucion_ejercicios_anteriores[$sustitucion_ejercicios_anteriores_ini["mes"]] = $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
-            $neto_tipo_i[$costo_cfdi_i_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
+            $neto_tipo_i[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
+            $costo_cfdi[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
+            $diferencia[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
         }
 
         foreach($costos_cfdi_e_ini as $costo_cfdi_e_ini)
         {
             $costo_cfdi_e[$costo_cfdi_e_ini["mes"]] = $costo_cfdi_e_ini["cfdi_e_recibidos"];
             $neto_tipo_e[$costo_cfdi_e_ini["mes"]] = $costo_cfdi_e_ini["cfdi_e_recibidos"];
+            $costo_cfdi[$costo_cfdi_e_ini["mes"]] -= $costo_cfdi_e_ini["cfdi_e_recibidos"];
+            $diferencia[$costo_cfdi_e_ini["mes"]] -= $costo_cfdi_e_ini["cfdi_e_recibidos"];
         }
 
         foreach($relaciones_ejercicios_anteriores_ini as $relacion_ejercicios_anteriores_ini)
         {
             $relacion_ejercicios_anteriores[$relacion_ejercicios_anteriores_ini["mes"]] = $relacion_ejercicios_anteriores_ini["neto_subtotal"];
-            $neto_tipo_e[$costo_cfdi_e_ini["mes"]] -= $relacion_ejercicios_anteriores_ini["neto_subtotal"];
+            $neto_tipo_e[$relacion_ejercicios_anteriores_ini["mes"]] -= $relacion_ejercicios_anteriores_ini["neto_subtotal"];
+            $costo_cfdi[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
+            $diferencia[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
+        }
+
+        foreach($costos_balanza_ini as $costo_balanza_ini)
+        {
+            $costo_balanza[$costo_balanza_ini["periodo"]] = $costo_balanza_ini["costo_bza"];
+            $diferencia[$costo_balanza_ini["periodo"]] -= $costo_balanza_ini["costo_bza"];
         }
 
         $meses = CFDICompleto::getMeses();
@@ -218,7 +251,7 @@ class InformeCostosCFDIvsCostosBalanza
         if($empresa_contpaq){
             Config::set('database.connections.cntpq_inf.database',$empresa_contpaq->AliasBDD);
 
-            $cuentas = CuentaCosto::where("tipo_costo","=",1)->
+            $cuentas = CuentaCosto::where("tipo_costo","=",1)->where("estatus","=",1)->
             where("base_datos_contpaq","=",$empresa_contpaq->AliasBDD)->pluck("codigo_cuenta")->toArray();
 
             $informe_qry = "
@@ -262,8 +295,8 @@ distinct
 	cfd_sat.fecha,
 
 		CASE
-			WHEN cfd_sat.moneda_xls != 'MXN'
-			AND cfd_sat.tc_xls > 0 THEN
+			WHEN cfd_sat.moneda != 'MXN'
+			AND cfd_sat.tipo_cambio > 0 THEN
 			CASE
 				WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
 				WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
@@ -313,8 +346,8 @@ distinct
 	cfd_sat.fecha,
 
 		CASE
-			WHEN cfd_sat.moneda_xls != 'MXN'
-			AND cfd_sat.tc_xls > 0 THEN
+			WHEN cfd_sat.moneda != 'MXN'
+			AND cfd_sat.tipo_cambio > 0 THEN
 			CASE
 				WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) *  cfd_sat.tipo_cambio
 				WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
