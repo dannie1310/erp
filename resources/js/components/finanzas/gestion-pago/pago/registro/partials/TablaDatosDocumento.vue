@@ -37,7 +37,7 @@
                             {{solicitud.fecha}}
                         </td>
                         <td style="text-align: right">
-                            ${{solicitud.autorizado_format}}
+                            ${{parseFloat(solicitud.remesa.monto_autorizado_remesa).formatMoney(2, '.', ',')}}
                         </td>
                         <td style="text-align: center">
                             {{solicitud.fecha_vencimiento_format}}

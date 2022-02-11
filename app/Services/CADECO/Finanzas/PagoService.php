@@ -11,6 +11,7 @@ namespace App\Services\CADECO\Finanzas;
 
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Moneda;
+use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\Cuenta;
 use App\Models\CADECO\Transaccion;
@@ -87,7 +88,7 @@ class PagoService
 
     public function documentosParaPagar()
     {
-        $solicitudes = Transaccion::whereIn('tipo_transaccion', [65,72])->where('estado', '!=', 2)->where('autorizado','>',0)->where('saldo', '>', 0.99)
+        $solicitudes = Transaccion::whereIn('tipo_transaccion', [65,72])->where('estado', '!=', 2)->where('saldo', '>', 0.99)
             ->orderBy('id_transaccion', 'desc')->get();
         $respuesta = [];
         foreach ($solicitudes as $key => $solicitud)
@@ -170,7 +171,18 @@ class PagoService
 
     public function documentoParaPagar($id)
     {
+        $remesa = $this->repository->getImporteAutorizado($id);
+        $suma_historico_remesa = $this->repository->getImporteTotalAutorizado($id);
+        if ($remesa == []) {
+            return [ 'error' => "No se encuentra el documento autorizado en remesa."];
+        }
+        $remesa = $remesa[0];
         $solicitud = Transaccion::where('id_transaccion', $id)->where('estado', '!=', 2)->where('saldo', '>', 0.99)->first();
+        $validaciones = $this->validarMontoAutorizado($solicitud, $remesa, $suma_historico_remesa);
+        if(!is_null($validaciones))
+        {
+            return $validaciones;
+        }
         return [
             'id' => $solicitud->getKey(),
             'tipo_transaccion' => $solicitud->tipo_transaccion,
@@ -194,7 +206,9 @@ class PagoService
             'autorizado_format' => number_format(($solicitud->autorizado),2),
             'costo' => $solicitud->costo ? $solicitud->costo->descripcion : '',
             'id_costo' => $solicitud->id_costo,
-            'observaciones' => $solicitud->observaciones
+            'observaciones' => $solicitud->observaciones,
+            'remesa' => $remesa,
+            'suma_historico_remesa' => $suma_historico_remesa
         ];
     }
 
@@ -205,5 +219,38 @@ class PagoService
         } catch (\Exception $e) {
             throw $e;
         }
+    }
+
+    private function validarMontoAutorizado($solicitud, $remesa,$suma_historico_remesa)
+    {
+        if($solicitud->tipo_transaccion == 65)
+        {
+            $orden_pago =  OrdenPago::where('id_referente', $solicitud->getKey())->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($orden_pago)
+            {
+                if ((float)$suma_historico_remesa == (float)$orden_pago->suma) {
+                    return ['error' => "Esta factura " . $solicitud->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico_remesa < (float)$orden_pago->suma) {
+                    return ['error' => "El monto pagado de esta factura " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
+                }
+            }
+        }
+        if($solicitud->tipo_transaccion == 72)
+        {
+            $pago =  Pago::where('id_antecedente', $solicitud->getKey())->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($pago)
+            {
+                if ((float)$suma_historico_remesa == (float)$pago->suma) {
+                    return ['error' => "Esta solicitud " . $solicitud->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico_remesa < (float)$pago->suma) {
+                    return ['error' => "El monto pagado de esta solicitud " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
+                }
+            }
+        }
+        return null;
     }
 }
