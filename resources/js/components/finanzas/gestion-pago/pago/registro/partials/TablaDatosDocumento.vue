@@ -5,7 +5,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-sm">
                     <tr>
-                        <th class="encabezado" colspan="5">
+                        <th class="encabezado" colspan="6">
                             {{solicitud.empresa}}
                         </th>
                     </tr>
@@ -20,10 +20,13 @@
                             Fecha
                         </th>
                         <th class="encabezado">
-                            Importe Autorizado
+                            Vencimiento
                         </th>
                         <th class="encabezado">
-                            Vencimiento
+                            Remesa
+                        </th>
+                        <th class="encabezado">
+                            Importe Autorizado
                         </th>
                     </tr>
                     <tr>
@@ -36,21 +39,25 @@
                         <td style="text-align: center">
                             {{solicitud.fecha}}
                         </td>
-                        <td style="text-align: right">
-                            ${{parseFloat(solicitud.remesa.monto_autorizado_remesa).formatMoney(2, '.', ',')}}
-                        </td>
                         <td style="text-align: center">
                             {{solicitud.fecha_vencimiento_format}}
                         </td>
+                        <td>
+                            {{solicitud.remesa}}
+                        </td>
+                        <td style="text-align: right">
+                           {{solicitud.monto_autorizado_remesa_format}}
+                        </td>
+
                     </tr>
                     <template v-if="solicitud.observaciones!=''">
                         <tr>
-                            <th colspan="5" class="encabezado">
+                            <th colspan="6" class="encabezado">
                                 Observaciones
                             </th>
                         </tr>
                         <tr>
-                            <td colspan="5">
+                            <td colspan="6">
                                 {{solicitud.observaciones}}
                             </td>
                         </tr>

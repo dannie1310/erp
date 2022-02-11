@@ -19,19 +19,19 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group error-content">
-                                    <label for="fecha_emision">Fecha:</label>
-                                    <datepicker v-model = "fecha_emision"
-                                                id="fecha_emision"
-                                                name = "fecha_emision"
+                                    <label for="fecha">Fecha:</label>
+                                    <datepicker v-model = "fecha"
+                                                id="fecha"
+                                                name = "fecha"
                                                 :format = "formatoFecha"
                                                 :language = "es"
                                                 :bootstrap-styling = "true"
                                                 class = "form-control"
                                                 v-validate="{required: true}"
                                                 :disabled-dates="fechasDeshabilitadas"
-                                                :class="{'is-invalid': errors.has('fecha_emision')}"
+                                                :class="{'is-invalid': errors.has('fecha')}"
                                     ></datepicker>
-                                    <div class="invalid-feedback" v-show="errors.has('fecha_emision')">{{ errors.first('fecha_emision') }}</div>
+                                    <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                                 </div>
                             </div>
                             <div class="col-md-3" v-if="cuentas">
@@ -43,16 +43,17 @@
                                                    name="id_cuenta"
                                                    id="id_cuenta"
                                                    @click="abrirModal"
+                                                   v-validate="{required: true}"
                                                    class="form-control"
                                                    data-vv-as="Cuenta"
                                                    :class="{'is-invalid': errors.has('id_cuenta')}"
-                                                   v-model="cuenta.numero" />
+                                                   v-model="id_cuenta" />
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has('id_cuenta')">{{ errors.first('id_cuenta') }}</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-2" v-if="cuenta">
+                            <div class="col-md-2" v-if="cuenta != ''">
                                <div class="form-group error-content">
                                    <label>Moneda:</label>
                                    <label>{{ cuenta.moneda.abreviatura }}</label>
@@ -96,13 +97,10 @@
                                         <td style="text-align: center">
                                             {{solicitud.numero_folio}}
                                         </td>
-                                        <td style="text-align: right">
-                                            {{solicitud.remesa.monto_autorizado_remesa}}
+                                        <td style="text-align: right" >
+                                            {{solicitud.monto_autorizado_remesa_format}}
                                         </td>
-                                        <td style="text-align: right" v-if="solicitud.tipo_transaccion == 72">
-                                            {{solicitud.saldo}}
-                                        </td>
-                                        <td>
+                                        <td v-if="solicitud.tipo_transaccion == 65">
                                             <input
                                                  type="text" @change="calcular"
                                                  class="form-control"
@@ -110,20 +108,33 @@
                                                  style="text-align: right"
                                                  data-vv-as="Monto a Pagar"
                                                  v-model="monto_pagar"
-                                                 v-validate="{max_value:solicitud.remesa.monto_autorizado_remesa, min_value:0}"
+                                                 v-validate="{max_value:solicitud.monto_autorizado, min_value:0}"
                                                  :class="{'is-invalid': errors.has('monto_pagar')}"
                                                  id="monto_pagar">
                                             <div class="invalid-feedback" v-show="errors.has('monto_pagar')">{{ errors.first('monto_pagar') }}</div>
                                         </td>
-                                        <td v-if="cuenta != ''" style="text-align: right">
-                                            {{ parseFloat(cuenta.moneda.tipo_cambio).formatMoney(2, '.', ',') }}
+                                        <td v-if="solicitud.tipo_transaccion == 72" style="text-align: right">
+                                            {{ solicitud.monto_autorizado_remesa_format }}
+                                        </td>
+                                        <td v-if="cuenta != '' && solicitud.tipo_transaccion == 65 && tipo_cambio_actual != 1" style="text-align: right">
+                                            <input
+                                                type="text" @change="calcular"
+                                                class="form-control"
+                                                name="tipo_cambio"
+                                                style="text-align: right"
+                                                data-vv-as="Tipo de Cambio"
+                                                v-model="tipo_cambio"
+                                                v-validate="{max_value: tipo_cambio_actual, min_value:0}"
+                                                :class="{'is-invalid': errors.has('tipo_cambio')}"
+                                                id="tipo_cambio">
+                                            <div class="invalid-feedback" v-show="errors.has('tipo_cambio')">{{ errors.first('tipo_cambio') }}</div>
+                                        </td>
+                                        <td style="text-align: right" v-else-if="cuenta != ''">
+                                            {{ parseFloat(tipo_cambio_actual).formatMoney(2, '.', ',') }}
                                         </td>
                                         <td style="text-align: right" v-else>0.00</td>
-                                        <td style="text-align: right" v-if="cuenta != ''">
-                                            {{ parseFloat(calcular).formatMoney(2, '.', ',') }}
-                                        </td>
-                                        <td style="text-align: right" v-else>
-                                            {{ parseFloat(solicitud.remesa.monto_autorizado_remesa).formatMoney(2, '.', ',') }}
+                                        <td style="text-align: right">
+                                            {{ parseFloat(monto_calculado).formatMoney(2, '.', ',') }}
                                         </td>
                                     </tr>
                                 </table>
@@ -197,25 +208,43 @@
                 es: es,
                 cargando: false,
                 fechasDeshabilitadas:{},
-                fecha_cobro : '',
-                fecha_emision : '',
+                fecha : '',
                 solicitud : [],
                 cuentas : [],
                 cuenta : '',
                 referencia : '',
-                monto_pagar : 0
+                monto_pagar : 0,
+                tipo_cambio : 0,
+                tipo_cambio_actual : 0,
+                id_cuenta : '',
+                monto_calculado : 0
             }
         },
         mounted() {
-            this.fecha_emision = new Date();
-            this.fecha_cobro = new Date();
+            this.fecha = new Date();
+            this.fechasDeshabilitadas.from= new Date();
+            this.monto_pagar = 0;
+            this.tipo_cambio = 0;
+            this.tipo_cambio_actual = 0;
+            this.monto_calculado = 0;
+            this.referencia = '';
+            this.cuenta = '';
             this.solicitud = [];
             this.cuentas = [];
             this.$validator.reset();
             this.find();
-            this.fechasDeshabilitadas.to= new Date();
         },
         methods : {
+            init() {
+                this.fecha = new Date();
+                this.fechasDeshabilitadas.from= new Date();
+                this.monto_pagar = 0;
+                this.tipo_cambio = 0;
+                this.referencia = '';
+                this.cuenta = '';
+                this.solicitud = [];
+                this.cuentas = [];
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
@@ -243,7 +272,7 @@
                             });
                     }else {
                         this.solicitud = data;
-                        this.monto_pagar = data.remesa.monto_autorizado_remesa
+                        this.monto_pagar = data.monto_autorizado
                         this.getCuentas()
                     }
                 });
@@ -265,23 +294,27 @@
             {
                 $(this.$refs.modal).modal('hide');
                 this.cuenta = item
+                this.tipo_cambio = item.moneda.tipo_cambio
+                this.tipo_cambio_actual = item.moneda.tipo_cambio
+                this.id_cuenta = item.numero
                 this.calcular();
             },
             calcular()
             {
                 if(this.cuenta != '') {
-                    this.solicitud.monto_calculado = this.monto_pagar * this.cuenta.moneda.tipo_cambio
-                    return this.solicitud.monto_calculado
+                    this.monto_calculado = this.monto_pagar * this.tipo_cambio
+                    return this.monto_pagar * this.tipo_cambio
                 }
             },
             salir(){
                 this.$router.push({name: 'registro-pago'});
             },
             validate(){
+                this.calcular()
                 this.$validator.validate().then(result => {
                     if (result) {
-                        this.solicitud.fecha_cobro = this.fecha_cobro;
-                        this.solicitud.fecha_emision = this.fecha_emision;
+                        this.solicitud.fecha_pago = this.fecha;
+                        this.solicitud.tipo_cambio = this.tipo_cambio;
                         this.solicitud.id_cuenta = this.cuenta.id;
                         this.solicitud.referencia_pago = this.referencia;
                         this.solicitud.monto_pagar = this.monto_pagar;
@@ -297,6 +330,18 @@
                     this.salir();
                 });
             },
+        },
+        watch : {
+            monto_pagar (value){
+                if(value){
+                    this.calcular();
+                }
+            },
+            tipo_cambio (value){
+                if(value){
+                    this.calcular();
+                }
+            }
         }
     }
 </script>

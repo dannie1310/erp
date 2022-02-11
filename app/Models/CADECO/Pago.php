@@ -700,7 +700,10 @@ class Pago extends Transaccion
 
     public function registrar($data)
     {
-        dd("aqui",$data);
-
+        if($data['solicitud']['tipo_transaccion'] == 65 && $data['solicitud']['opciones'] == 0 )
+        {
+            $factura = Factura::where('id_transaccion', $data['id'])->first();
+            dd($factura);
+        }
     }
 }

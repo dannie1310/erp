@@ -178,8 +178,9 @@ class PagoService
         }
         $remesa = $remesa[0];
         $solicitud = Transaccion::where('id_transaccion', $id)->where('estado', '!=', 2)->where('saldo', '>', 0.99)->first();
+        $costo = $this->getCosto($solicitud);
         $validaciones = $this->validarMontoAutorizado($solicitud, $remesa, $suma_historico_remesa);
-        if(!is_null($validaciones))
+        if(array_key_exists('error', $validaciones))
         {
             return $validaciones;
         }
@@ -204,11 +205,14 @@ class PagoService
             'saldo_format' => $solicitud->saldo_format,
             'autorizado' => $solicitud->autorizado,
             'autorizado_format' => number_format(($solicitud->autorizado),2),
-            'costo' => $solicitud->costo ? $solicitud->costo->descripcion : '',
-            'id_costo' => $solicitud->id_costo,
+            'costo' => $solicitud->costo ? $solicitud->costo->descripcion : $costo['descripcion'],
+            'id_costo' => $solicitud->costo ? $solicitud->id_costo : $costo['id_costo'],
             'observaciones' => $solicitud->observaciones,
-            'remesa' => $remesa,
-            'suma_historico_remesa' => $suma_historico_remesa
+            'remesa' => $remesa->remesa_relacionada,
+            'suma_historico_remesa' => $suma_historico_remesa,
+            'monto_autorizado' => array_key_exists('saldo', $validaciones) ? (float) $validaciones['saldo'] : (float) $remesa->monto_autorizado_remesa,
+            'monto_autorizado_remesa' => number_format($remesa->monto_autorizado_remesa, 2),
+            'monto_autorizado_remesa_format' => '$'.number_format($remesa->monto_autorizado_remesa,2),
         ];
     }
 
@@ -235,6 +239,7 @@ class PagoService
                     return ['error' => "El monto pagado de esta factura " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
                         " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
                 }
+                return ['saldo' => $solicitud->saldo];
             }
         }
         if($solicitud->tipo_transaccion == 72)
@@ -251,6 +256,16 @@ class PagoService
                 }
             }
         }
-        return null;
+    }
+
+    private function getCosto($solicitud)
+    {
+        if($solicitud->tipo_transaccion == 65) {
+            $item = $solicitud->items[0];
+            return [
+                'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
+                'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion
+            ];
+        }
     }
 }
