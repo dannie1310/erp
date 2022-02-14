@@ -84,7 +84,7 @@
                                              <i class="fa fa-file-code"></i> Cargar x CFDI
                                          </button>
                                          <button type="button" class="btn btn-success btn-sm pull-right mr-1" @click="modalDestino()" v-if="id_concepto" :disabled="partidas.length == 0">
-                                             <i class="fa fa-sign-in"></i> Destino 
+                                             <i class="fa fa-sign-in"></i> Destino
                                          </button>
                                      </div>
                                  </div>
@@ -100,6 +100,7 @@
                                                      <th class="c70">Cantidad</th>
                                                      <th class="c70">Precio</th>
                                                      <th class="c100">Monto</th>
+                                                     <th class="c100"  v-if="con_descuento">Descuento</th>
                                                      <th class="c250">Destino</th>
                                                      <th class="icono">
                                                          <button type="button" class="btn btn-success btn-sm" v-if="cargando"  title="Cargando..." :disabled="cargando">
@@ -162,7 +163,15 @@
                                                                 v-model="partida.precio"/>
                                                          <div class="invalid-feedback" v-show="errors.has(`precio[${i}]`)">{{ errors.first(`precio[${i}]`) }}</div>
                                                      </td>
-                                                     <td style="text-align: right">${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
+                                                     <td style="text-align: right"  v-if="partida.id_concepto_sat>0">
+                                                         ${{parseFloat(partida.monto).formatMoney(2,'.',',')}}
+                                                     </td>
+                                                     <td style="text-align: right" v-else>${{parseFloat(monto(partida, i)).formatMoney(2,'.',',')}}</td>
+
+                                                     <td style="text-align: right" v-if="con_descuento">
+                                                         ${{parseFloat(partida.descuento).formatMoney(2,'.',',')}}
+                                                     </td>
+
                                                      <td >
                                                          <span v-if="partida.cambio_concepto == 0">
                                                             <span class="underline-cursored" v-on:click="seleccionarDestino(i)">{{partida.destino}}</span>
@@ -186,7 +195,7 @@
                                                         ></ConceptoSelectHijo>
                                                          <div class="error-label" v-show="errors.has(`id_concepto[${i}]`)">{{ errors.first(`id_concepto[${i}]`) }}</div>
                                                          </span>
-                                                        
+
                                                     </td>
                                                     <td >
                                                         <button  type="button" class="btn btn-outline-danger btn-sm" @click="destroy(i)"><i class="fa fa-trash"></i></button>
@@ -223,6 +232,10 @@
                                                          <tr>
                                                              <th style="text-align: left">Subtotal:</th>
                                                              <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaMontos)).formatMoney(2,'.',',')}}</b></td>
+                                                         </tr>
+                                                         <tr  v-if="con_descuento">
+                                                             <th style="text-align: left">Descuento:</th>
+                                                             <td style="text-align: right; font-size: 15px"><b>${{(parseFloat(sumaDescuentos)).formatMoney(2,'.',',')}}</b></td>
                                                          </tr>
                                                          <tr>
                                                              <th style="text-align: left">IVA:</th>
@@ -382,6 +395,7 @@ export default {
             subtotal : 0,
             iva : 0,
             total : 0,
+            descuento : 0,
             archivo:null,
             archivo_name:null,
             files : [],
@@ -391,6 +405,7 @@ export default {
             id_concepto_temporal:'',
             p_holder:'',
             destino:'',
+            con_descuento: false
         }
     },
     computed: {
@@ -405,8 +420,19 @@ export default {
             this.iva = iva;
             return result
         },
+        sumaDescuentos() {
+
+            let result = 0;
+            this.partidas.forEach(function (doc, i) {
+                result += parseFloat(doc.descuento);
+            })
+            this.descuento = result;
+
+            return result
+        },
         sumaTotal() {
-            this.total = parseFloat(this.subtotal) + parseFloat(this.iva)
+            this.total = parseFloat(parseFloat(this.subtotal).toFixed(2)) + parseFloat(parseFloat(this.iva).toFixed(2))
+                - parseFloat(parseFloat(this.descuento).toFixed(2))
             return this.total
         },
         no_cfdi()
@@ -469,10 +495,13 @@ export default {
                 uuid : "",
                 cambio_concepto:1,
                 destino:"",
+                descuento:0,
             });
             this.index = this.index+1;
         },
         destroy(index){
+            let _self = this;
+            _self.con_descuento = false;
             if(this.partidas[index].id_concepto_sat > 0){
                 let id_conceptos_sat_borrar = [];
                 let id_cfdi = this.partidas[index].id_cfdi;
@@ -508,6 +537,12 @@ export default {
             }else {
                 this.partidas.splice(index, 1);
             }
+            _self.partidas.forEach(function (partida, i) {
+                if(partida.descuento > 0)
+                {
+                    _self.con_descuento = true;
+                }
+            });
         },
         monto(partida, key) {
             var monto = 0;
@@ -617,6 +652,10 @@ export default {
                 var busqueda = _self.partidas.find(x=>x.id_concepto_sat === concepto.id);
                 if(busqueda == undefined)
                 {
+                    if(concepto.descuento>0)
+                    {
+                        _self.con_descuento = true;
+                    }
                     _self.partidas.splice(_self.partidas.length + 1, 0, {
                         referencia : concepto.cfdi.serie + concepto.cfdi.folio + "-" + concepto.descripcion,
                         cantidad : concepto.cantidad,
@@ -629,6 +668,7 @@ export default {
                         uuid : concepto.cfdi.uuid,
                         cambio_concepto:1,
                         destino:"",
+                        descuento:concepto.descuento,
                     });
                     _self.index = _self.index+1;
                 }
@@ -707,7 +747,7 @@ export default {
                     partida.destino = data.clave_concepto_select + ' ' + data.descripcion;
                     partida.cambio_concepto = 0;
                 }
-                
+
             });
             self.cerrarModalDestino();
         },
