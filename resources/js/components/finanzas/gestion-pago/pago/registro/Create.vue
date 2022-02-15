@@ -315,9 +315,11 @@
                     if (result) {
                         this.solicitud.fecha_pago = this.fecha;
                         this.solicitud.tipo_cambio = this.tipo_cambio;
-                        this.solicitud.id_cuenta = this.cuenta.id;
+                        this.solicitud.id_cuenta_cargo = this.cuenta.id;
                         this.solicitud.referencia_pago = this.referencia;
-                        this.solicitud.monto_pagar = this.monto_pagar;
+                        this.solicitud.id_moneda_cuenta_cargo = this.cuenta.moneda.id
+                        this.solicitud.monto_pagado = this.monto_pagar;
+                        this.solicitud.monto_pagado_transaccion = this.solicitud.monto_sin_formato
                         this.guardar()
                     }
                 });

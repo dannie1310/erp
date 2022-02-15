@@ -658,11 +658,11 @@ class AppServiceProvider extends ServiceProvider
             OrdenCompra::observe(OrdenCompraObserver::class);
             OrdenPago::observe(OrdenPagoObserver::class);
             OrdenCompraPartida::observe(OrdenCompraPartidaObserver::class);
+            Pago::observe(PagoObserver::class);
             PagoACuenta::observe(PagoACuentaObserver::class);
             PagoACuentaPorAplicar::observe(PagoACuentaPorAplicarObserver::class);
             PagoAnticipoDestajo::observe(PagoAnticipoDestajoObserver::class);
             PagoFactura::observe(PagoFacturaObserver::class);
-            Pago::observe(PagoObserver::class);
             PagoReposicionFF::observe(PagoReposicionFFObserver::class);
             PagoVario::observe(PagoVarioObserver::class);
             PresupuestoContratista::observe(PresupuestoContratistaObserver::class);

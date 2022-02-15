@@ -393,7 +393,7 @@ class Factura extends Transaccion
             $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
             $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
             $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
-
+dd($saldo_esperado, $saldo_esperado_cuenta);
             $datos = [
                 'id_antecedente' => $this->id_antecedente,
                 'id_referente' => $this->id_transaccion,

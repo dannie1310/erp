@@ -200,6 +200,7 @@ class PagoService
             'moneda' => $solicitud->moneda->nombre,
             'opciones' => $solicitud->opciones,
             'monto' => number_format(($solicitud->monto),2),
+            'monto_sin_formato' => $solicitud->monto,
             'monto_format' => $solicitud->monto_format,
             'saldo' => number_format(($solicitud->saldo),2),
             'saldo_format' => $solicitud->saldo_format,

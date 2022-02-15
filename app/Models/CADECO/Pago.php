@@ -12,6 +12,8 @@ use App\Facades\Context;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class Pago extends Transaccion
@@ -700,10 +702,12 @@ class Pago extends Transaccion
 
     public function registrar($data)
     {
-        if($data['solicitud']['tipo_transaccion'] == 65 && $data['solicitud']['opciones'] == 0 )
-        {
-            $factura = Factura::where('id_transaccion', $data['id'])->first();
-            dd($factura);
+        $fecha_pago = New DateTime($data['solicitud']['fecha_pago']);
+        $fecha_pago->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['solicitud']['fecha_pago'] =  $fecha_pago->format('Y-m-d');
+        if ($data['solicitud']['tipo_transaccion'] == 65 && $data['solicitud']['opciones'] == 0) {
+            $pago = Factura::find($data['id'])->generaOrdenPago($data['solicitud']);
+            return $pago;
         }
     }
 }

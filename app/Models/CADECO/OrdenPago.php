@@ -71,7 +71,7 @@ class OrdenPago extends Transaccion
                     'cumplimiento'=>$data["fecha_pago"],
                     'vencimiento'=>$data["fecha_pago"],
                 ];
-                $pago = PagoFactura::query()->create($datos);
+                $pago = PagoFactura::create($datos);
                 return $pago;
             }else{
 
