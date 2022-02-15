@@ -345,6 +345,10 @@ class Pago extends Transaccion
         ]);
     }
 
+    public function aplicarPago($data){
+        dd(1, $data);
+    }
+
     /**
      * Este método implementa la lógica del procedimiento almacenado
      * sp_desaplicar_cheque

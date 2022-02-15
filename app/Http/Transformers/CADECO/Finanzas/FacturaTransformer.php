@@ -4,14 +4,15 @@
 namespace App\Http\Transformers\CADECO\Finanzas;
 
 
-use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Models\CADECO\Factura;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\CambioTransformer;
 use App\Http\Transformers\CADECO\MonedaTransformer;
 use App\Http\Transformers\CADECO\EmpresaTransformer;
+use App\Http\Transformers\Auxiliares\RelacionTransformer;
 use App\Http\Transformers\CADECO\ContraReciboTransformer;
 use App\Http\Transformers\CADECO\Contabilidad\PolizaTransformer;
+use App\Http\Transformers\CADECO\Finanzas\ItemFacturaTransformer;
 use App\Http\Transformers\MODULOSSAO\ControlRemesas\DocumentoTransformer;
 
 class FacturaTransformer extends TransformerAbstract
@@ -27,7 +28,8 @@ class FacturaTransformer extends TransformerAbstract
         'complemento',
         'cambio',
         'poliza',
-        'relaciones'
+        'relaciones',
+        'partidas'
     ];
 
     /**
@@ -148,6 +150,13 @@ class FacturaTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    public function includePartidas(Factura $model){
+        if($partidas = $model->partidas){
+            return $this->collection($partidas, new ItemFacturaTransformer);
         }
         return null;
     }

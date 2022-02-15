@@ -62,6 +62,28 @@ class ItemFactura extends Item
         return $this->importe / $this->factura->monto;
     }
 
+    public function getImporteFormatAttribute(){
+        return number_format($this->importe, 2, '.', ',');
+    }
+
+    public function getSaldoFormatAttribute(){
+        return number_format($this->saldo, 2, '.', ',');
+    }
+
+    public function getDescripcionAntecedenteAttribute(){
+        // dd($this);
+        switch ($this->antecedente->tipo_transaccion){
+            case 51:
+                return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
+                break;
+            case 52:
+                return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
+                break;
+            default:
+                return '';
+        }
+    }
+
     /**
      * Este método implementa la lógica actualización de control de obra del procedimiento almacenado sp_aplicar_pagos
      * y se detona al registrar una orden de pago

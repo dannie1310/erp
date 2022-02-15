@@ -31,7 +31,7 @@
                     { title: 'Moneda',field: 'moneda', tdClass: 'td_c100', thClass: 'th_c100', sortable: true},
                     { title: 'Cheque',field: 'referencia', tdClass: 'td_c120', thClass: 'th_c120', sortable: true},
                     { title: 'Saldo',field: 'saldo', tdClass: 'td_money', thClass: 'th_money', sortable: true},
-                    // { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -90,8 +90,14 @@
                             referencia: pago.referencia,
                             saldo: pago.saldo_format,
                             buttons: $.extend({}, {
-                                show: true,
-                                id: pago.id
+                                aplicar: true,
+                                id: pago.id,
+                                id_empresa: pago.id_empresa,
+                                pago: {
+                                    numero_folio: pago.numero_folio_format,
+                                    razon_social: pago.empresa.razon_social,
+                                    referencia: pago.referencia,
+                                }
                             })
                         })
 

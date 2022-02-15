@@ -2010,6 +2010,18 @@ export const routes = [
                                     permission: 'registrar_pagos_manuales'
                                 },
                             },
+                            {
+                                path: ':id/aplicar',
+                                name: 'pago-aplicar',
+                                props: true,
+                                component: require('./components/finanzas/pago-manual/Aplicar').default,
+                                meta: {
+                                    title: 'Pago Pendiente Aplicación',
+                                    breadcrumb: {name: 'APLICAR PAGO', parent: 'finanzas'},
+                                    middleware: [auth, context],
+                                    permission: 'consultar_carga_layout_pago'
+                                }
+                            }
                         ]
                     },
                     {
