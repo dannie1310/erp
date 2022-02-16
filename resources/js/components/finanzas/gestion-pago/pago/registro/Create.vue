@@ -116,7 +116,7 @@
                                         <td v-if="solicitud.tipo_transaccion == 72" style="text-align: right">
                                             {{ solicitud.monto_autorizado_remesa_format }}
                                         </td>
-                                        <td v-if="cuenta != '' && solicitud.tipo_transaccion == 65 && tipo_cambio_actual != 1" style="text-align: right">
+                                        <td v-if="cuenta != '' && cuenta.moneda.tipo_cambio != 1 && solicitud.tipo_transaccion == 65 && tipo_cambio_actual != 1" style="text-align: right">
                                             <input
                                                 type="text" @change="calcular"
                                                 class="form-control"
@@ -318,8 +318,8 @@
                         this.solicitud.id_cuenta_cargo = this.cuenta.id;
                         this.solicitud.referencia_pago = this.referencia;
                         this.solicitud.id_moneda_cuenta_cargo = this.cuenta.moneda.id
-                        this.solicitud.monto_pagado = this.monto_pagar;
-                        this.solicitud.monto_pagado_transaccion = this.solicitud.monto_sin_formato
+                        this.solicitud.monto_pagado = this.monto_calculado;
+                        this.solicitud.monto_pagado_transaccion = this.monto_pagar
                         this.guardar()
                     }
                 });

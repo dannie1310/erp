@@ -17,9 +17,9 @@ class PagoRepository extends Repository implements RepositoryInterface
         $this->model = $model;
     }
 
-    public function create(array $datos)
+    public function registrar(array $datos, $suma, $remesa_relacionada)
     {
-        return $this->model->registrar($datos);
+        return $this->model->registrar($datos, $suma, $remesa_relacionada);
     }
 
     public function getImporteAutorizado($id)

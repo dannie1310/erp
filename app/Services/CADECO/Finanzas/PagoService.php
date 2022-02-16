@@ -200,7 +200,6 @@ class PagoService
             'moneda' => $solicitud->moneda->nombre,
             'opciones' => $solicitud->opciones,
             'monto' => number_format(($solicitud->monto),2),
-            'monto_sin_formato' => $solicitud->monto,
             'monto_format' => $solicitud->monto_format,
             'saldo' => number_format(($solicitud->saldo),2),
             'saldo_format' => $solicitud->saldo_format,
@@ -220,7 +219,9 @@ class PagoService
     public function store($data)
     {
         try {
-            return $this->repository->create($data);
+            $remesa = $this->repository->getImporteAutorizado($data['id']);
+            $suma_historico_remesa = $this->repository->getImporteTotalAutorizado($data['id']);
+            return $this->repository->registrar($data, $suma_historico_remesa,$remesa[0]->remesa_relacionada);
         } catch (\Exception $e) {
             throw $e;
         }
