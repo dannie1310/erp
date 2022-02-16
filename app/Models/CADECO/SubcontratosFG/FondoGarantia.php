@@ -22,7 +22,7 @@ class FondoGarantia extends Model
     public $timestamps = false;
     public $usuario_registra = 0;
     public $incrementing = false;
-    protected $with = array('movimientos', 'subcontrato');
+   // protected $with = array('movimientos', 'subcontrato');
 
     protected static function boot()
     {
@@ -112,6 +112,7 @@ class FondoGarantia extends Model
 
     public function generaMovimientoRegistro()
     {
+        dd("Aqukjkdjfi");
         $this->movimientos()->create(
             [
                 'id_fondo_garantia' => $this->id_subcontrato,

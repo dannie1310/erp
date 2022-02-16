@@ -178,6 +178,9 @@ import giro from './modules/padronProveedores/giro';
 import invitacion  from "./modules/padronProveedores/invitacion";
 import empresaBoletinada from './modules/padronProveedores/empresa-boletinada';
 
+//PORTAL PROVEEDOR
+import solicitudAutorizacionAvance from './modules/portalProveedor/solicitud-autorizacion-avance';
+
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
 import incidencia from './modules/seguridad/control-interno/incidencia'
@@ -434,6 +437,8 @@ export default new Vuex.Store({
         'padronProveedores/giro' : giro,
         'padronProveedores/invitacion' : invitacion,
         'padronProveedores/empresa-boletinada' : empresaBoletinada,
+
+        'portalProveedor/solicitud-autorizacion-avance' : solicitudAutorizacionAvance,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 

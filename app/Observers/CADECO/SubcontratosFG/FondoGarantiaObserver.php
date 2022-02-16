@@ -9,8 +9,10 @@
 namespace App\Observers\CADECO\SubcontratosFG;
 
 
+use App\Facades\Context;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\SubcontratosFG\FondoGarantia;
+use App\Models\CADECO\Transaccion;
 
 class FondoGarantiaObserver
 {
@@ -20,22 +22,30 @@ class FondoGarantiaObserver
      */
     public function creating(FondoGarantia $fondoGarantia)
     {
-        /*
-            * se valida que la retención establecida en el subcontrato sea mayor a 0 para que el fondo de garantía pueda ser generado
-            * */
-        $subcontrato = Subcontrato::find($fondoGarantia->id_subcontrato);
+        /**
+         * se valida que la retención establecida en el subcontrato sea mayor a 0 para que el fondo de garantía pueda ser generado
+         **/
+        if(!is_null(Context::getIdObra())) {
+            $subcontrato = Subcontrato::find($fondoGarantia->id_subcontrato);
+        }else{
+            $subcontrato = Transaccion::where('id_transaccion',$fondoGarantia->id_subcontrato)->withoutGlobalScopes()->first();
+        }
+
         if(!(float) $subcontrato->retencion>0){
             throw New \Exception('La retención de fondo de garantía establecida en el subcontrato no es mayor a 0, el fondo de garantía no puede generarse');
         }
 
-        /*
+        /**
          * se valida que no exista un fondo de garantía registrado previamente para el subcontrato
-         * */
-        $fondo_previo = Subcontrato::find($fondoGarantia->id_subcontrato)->fondo_garantia;
+         **/
+        if(!is_null(Context::getIdObra())){
+            $fondo_previo = Subcontrato::find($fondoGarantia->id_subcontrato)->fondo_garantia;
+        }else{
+            $fondo_previo = FondoGarantia::withoutGlobalScopes()->where('id_subcontrato',$fondoGarantia->id_subcontrato)->first();
+        }
         if($fondo_previo){
             throw New \Exception('El subcontrato selecciondo ya tiene un fondo de garantía generado');
         }
-
         $fondoGarantia->created_at = date('Y-m-d h:i:s');
         $fondoGarantia->usuario_registra = auth()->id();
     }

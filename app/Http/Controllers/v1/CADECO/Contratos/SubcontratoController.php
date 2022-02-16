@@ -45,10 +45,11 @@ class SubcontratoController extends Controller
     public function __construct(SubcontratoService $service, Manager $fractal, SubcontratoTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('context');
+        $this->middleware('context')->except(['indexSinContexto','showSinContexto','ordenarConceptosProveedor']);
         $this->middleware('permiso:consultar_subcontrato')->only(['show', 'paginate', 'pdf']);
         $this->middleware('permiso:eliminar_subcontrato')->only('destroy');
         $this->middleware('permiso:editar_subcontrato')->only(['updateContrato']);
+        $this->middleware('permisoGlobal:registrar_solicitud_autorizacion_avance_proveedor')->only(['indexSinContexto','showSinContexto','ordenarConceptosProveedor']);
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -72,5 +73,20 @@ class SubcontratoController extends Controller
 
     public function descargarLayoutCambiosPrecioVolumen($id){
         return $this->service->descargarLayoutCambiosPrecioVolumen($id);
+    }
+
+    public function indexSinContexto(Request $request)
+    {
+        return $this->service->indexSinContexto($request->all());
+    }
+
+    public function showSinContexto(Request $request, $id)
+    {
+        return $this->service->showSinContexto($id, $request->all());
+    }
+
+    public function ordenarConceptosProveedor(Request $request,$id)
+    {
+        return $this->service->paraEstimarProveedor($id, $request->all());
     }
 }
