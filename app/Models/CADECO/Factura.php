@@ -687,7 +687,16 @@ class Factura extends Transaccion
 
     private function generaPrepoliza()
     {
-        DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+        try{
+            $obra = Obra::query()->find(Context::getIdObra());
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+                }
+            }
+        }catch (\Exception $e) {
+            
+        }
         return $this;
     }
 
@@ -1229,16 +1238,8 @@ class Factura extends Transaccion
         }
         DB::connection('cadeco')->commit();
 
-        $obra = Obra::query()->find(Context::getIdObra());
-        try{
-            if ($obra->datosContables) {
-                if ($obra->datosContables->BDContPaq != "") {
-                    $this->generaPrepoliza();
-                }
-            }
-        }catch (\Exception $e) {
-            abort(400, $e->getMessage().$e->getFile().$e->getLine());
-        }
+        $this->generaPrepoliza();
+        
         return $this;
     }
 
@@ -1301,17 +1302,7 @@ class Factura extends Transaccion
 
         DB::connection('cadeco')->commit();
 
-        $obra = Obra::query()->find(Context::getIdObra());
-
-        try{
-            if ($obra->datosContables) {
-                if ($obra->datosContables->BDContPaq != "") {
-                    $this->generaPrepoliza();
-                }
-            }
-        }catch (\Exception $e) {
-            abort(400, $e->getMessage().$e->getFile().$e->getLine());
-        }
+        $this->generaPrepoliza();
 
         return $this;
     }
