@@ -58,11 +58,12 @@
             return{
                 cargando: false,
                 fin_carga: 0,
-                motivo: ''
+                motivo: '',
+                base : ''
             }
         },
         mounted() {
-
+            this.base = atob(this.base_b64)
         },
         methods: {
             iniciar() {
