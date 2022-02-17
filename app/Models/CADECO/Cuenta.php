@@ -123,4 +123,9 @@ class Cuenta extends Model
         $this->saldo_real = $this->saldo_real - $pago->monto;
         $this->save();
     }
+
+    public function aumentaSaldoPorEliminacionPago(Transaccion $pago){
+        $this->saldo_real = $this->saldo_real + (-1 * $pago->monto);
+        $this->save();
+    }
 }

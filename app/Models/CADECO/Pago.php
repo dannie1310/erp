@@ -91,6 +91,16 @@ class Pago extends Transaccion
         return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'id_transaccion', 'id_transaccion_pago');
     }
 
+    public function solicitud()
+    {
+        return $this->belongsTo(Solicitud::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function ordenPago()
+    {
+        return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
+    }
+
     public function getEstadoStringAttribute()
     {
         $estado = "";
@@ -123,6 +133,7 @@ class Pago extends Transaccion
 
         return $datos;
     }
+
     public function getRelacionesAttribute()
     {
         $relaciones = [];
@@ -387,9 +398,6 @@ class Pago extends Transaccion
         }
     }
 
-    /**
-     * @param $orden_pago
-     */
     private function desaplicarPago($pago)
     {
         if(is_null($pago))

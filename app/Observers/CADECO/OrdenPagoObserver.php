@@ -24,4 +24,9 @@ class OrdenPagoObserver extends TransaccionObserver
         $ordenPago->tipo_transaccion = 68;
         $ordenPago->opciones = 0;
     }
+
+    public function deleted(OrdenPago $ordenPago)
+    {
+        $ordenPago->regresarSaldo();
+    }
 }
