@@ -96,4 +96,18 @@ class OrdenPago extends Transaccion
         }
 
     }
+
+    public function regresarSaldo()
+    {
+        $saldo = $this->factura->saldo + ((-1) * $this->monto);
+        $this->factura->saldo = $saldo;
+        $this->factura->contra_recibo->saldo = $saldo;
+        if($this->factura->estado == 2)
+        {
+            $this->factura->estado = 1;
+            $this->factura->contra_recibo->estado = 1;
+        }
+        $this->factura->save();
+        $this->factura->contra_recibo->save();
+    }
 }

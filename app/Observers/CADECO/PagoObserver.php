@@ -32,7 +32,6 @@ class PagoObserver extends TransaccionObserver
 
     public function deleting(Pago $pago)
     {
-
         if(is_null($pago->pagoEliminadoRespaldo))
         {
             abort(400, "Error al respaldar el pago a eliminar");
@@ -43,6 +42,14 @@ class PagoObserver extends TransaccionObserver
         {
             $pago->distribucionPartida->desvincularPago();
         }
+        if($pago->ordenPago)
+        {
+            $pago->ordenPago->delete();
+        }
+        if($pago->solicitud)
+        {
+            $pago->solicitud->regresarSaldo($pago);
+        }
     }
 
     public function deleted(Pago $pago)
@@ -51,5 +58,6 @@ class PagoObserver extends TransaccionObserver
         {
             $pago->pagoAnticipoDestajo->ajustarOC();
         }
+        $pago->cuenta->aumentaSaldoPorDeposito($pago);
     }
 }
