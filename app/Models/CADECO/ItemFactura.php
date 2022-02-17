@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Item;
 use mysql_xdevapi\Exception;
 use App\Models\CADECO\Concepto;
 
@@ -71,13 +72,15 @@ class ItemFactura extends Item
     }
 
     public function getDescripcionAntecedenteAttribute(){
-        // dd($this);
         switch ($this->antecedente->tipo_transaccion){
             case 51:
                 return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
                 break;
             case 52:
                 return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
+                break;
+            case 33:
+                return $this->material->descripcion;
                 break;
             default:
                 return '';

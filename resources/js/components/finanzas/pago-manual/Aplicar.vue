@@ -13,7 +13,46 @@
             <div class="invoice p-3 mb-3">
                 <div class="modal-body" v-if="pago">
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-12">
+                            <span><i class="fa fa-envelope"></i>Datos de Pago</span>
+                            <div class="table-responsive">
+                                <table class="table  table-sm">
+                                    <!-- <tr>
+                                        <th colspan="4" class="encabezado">
+                                            Observaciones
+                                        </th>
+                                    </tr> -->
+                                    <tr>
+                                        <td colspan="3" class="encabezado centrado">
+                                            {{pago.empresa.razon_social}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="encabezado" >
+                                            Pago
+                                        </th>
+                                        <th class="encabezado">
+                                            Referencia
+                                        </th>
+                                        <th class="encabezado">
+                                            Fecha
+                                        </th>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            {{pago.numero_folio_format}}
+                                        </td>
+                                        <td>
+                                            {{pago.referencia}}
+                                        </td>
+                                        <td>
+                                            {{pago.fecha_format}}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- <div class="col-md-3">
                             <div class="form-group">
                                 <label><b>Pago: </b></label>
                                 <b>{{pago.numero_folio_format}}</b>
@@ -30,7 +69,7 @@
                                 <label><b>Razón Social: </b></label>
                                 <b>{{pago.empresa.razon_social}}</b>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                     <hr>
                     <div class="row">
@@ -56,13 +95,13 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><b>Fecha: </b></label>
-                                <span v-if="index_factura != ''"><b>{{facturas[index_factura].fecha_format}}</b></span>
+                                <span v-if="partidas"><b>{{facturas[index_factura].fecha_format}}</b></span>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><b>Moneda: </b></label>
-                                <span v-if="index_factura != ''"><b>{{facturas[index_factura].moneda}}</b></span>
+                                <span v-if="partidas"><b>{{facturas[index_factura].moneda}}</b></span>
                             </div>
                         </div>
                     </div>
@@ -78,7 +117,7 @@
                                         </tr>
                                     </thead>
                                     <tbody v-if="partidas">
-                                        <tr v-for="(fac, i) in partidas">
+                                        <tr v-for="(fac, i) in partidas" v-if="fac.saldo > 0">
                                             <td>{{fac.descripcion_antecedente}}</td>
                                             <td class="td_money">${{fac.saldo_format}}</td>
                                             <td>
@@ -92,7 +131,7 @@
                                                     v-validate="{required: true, min:0.01}"
                                                     class="form-control"
                                                     id="aplicar"
-                                                    v-model="fac.saldo"
+                                                    v-model="fac.saldo_format"
                                                     :class="{'is-invalid': errors.has('aplicar')}">
                                                 <div class="invalid-feedback" v-show="errors.has('aplicar')">{{ errors.first('aplicar') }}</div>
                                             </td>
@@ -242,7 +281,7 @@ export default {
             cargando:false,
             facturas:null,
             factura:'',
-            index_factura:'',
+            index_factura:null,
             observaciones:'',
             partidas:null,
             pago:null,
@@ -250,7 +289,8 @@ export default {
             iva:'',
             total:'',
             aplicado:'',
-            guardando:false
+            guardando:false,
+
         }
     },
     mounted() {
@@ -290,12 +330,13 @@ export default {
             let sbt = 0;
             if(this.partidas){
                 this.partidas.forEach(partida => {
-                    sbt = sbt + parseFloat(partida.saldo);
+                    sbt = sbt + parseFloat(partida.saldo_format);
                 });
             }
             this.subtotal = sbt
             this.iva = sbt * 0.16;
-            this.total = this.subtotal + this.iva
+            this.total = this.subtotal + this.iva;
+            this.aplicado = this.total * this.facturas[this.index_factura]['tipo_cambio'];
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -310,7 +351,11 @@ export default {
                 id:this.id,
                 partidas:this.partidas,
                 id_factura:this.factura,
-                observaciones:this.observaciones
+                observaciones:this.observaciones,
+                subtotal:this.subtotal,
+                impuesto: this.iva,
+                monto: this.total,
+                aplicado: this.aplicado
             }).then(data=>{
                 console.log('ok')
             })
@@ -335,6 +380,11 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+    .encabezado{
+        text-align: center; background-color: #f2f4f5
+    }
+    td, th{
+        border: 1px #dee2e6 solid;
+    }
 </style>

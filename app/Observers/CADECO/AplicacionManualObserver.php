@@ -16,6 +16,9 @@ class AplicacionManualObserver extends TransaccionObserver
     public function creating(Transaccion $aplicacion)
     {
         parent::creating($aplicacion);
+        $aplicacion->tipo_transaccion = 70;
+        $aplicacion->opciones = 0;
+        $aplicacion->estado = 1;
     }
 
     public function deleting(AplicacionManual $aplicacion)
