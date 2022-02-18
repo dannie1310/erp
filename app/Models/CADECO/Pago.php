@@ -197,6 +197,18 @@ class Pago extends Transaccion
         }
     }
 
+    public function getEsReemplazoAttribute()
+    {
+        if($this->transaccionReferente)
+        {
+            if($this->transaccionReferente->tipo_transaccion == 82 && $this->transaccionReferente->estado == -1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function eliminar($motivo)
     {
         try {
