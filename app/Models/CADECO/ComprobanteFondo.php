@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\Contabilidad\Poliza;
 use App\Models\CADECO\Finanzas\ComprobanteFondoEliminado;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Proyecto;
@@ -73,6 +74,11 @@ class ComprobanteFondo extends Transaccion
         return $this->hasMany(FacturaRepositorio::class, 'id_transaccion', 'id_transaccion')
             ->where('id_proyecto', '=', Proyecto::query()->where('base_datos', '=', Context::getDatabase())
                 ->first()->getKey());
+    }
+
+    public function polizas()
+    {
+        return $this->hasMany(Poliza::class,'id_transaccion_sao', 'id_transaccion');
     }
 
     /**
@@ -191,6 +197,7 @@ class ComprobanteFondo extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
+            $this->validarPolizas();
             foreach ($this->partidas()->get() as $item) {
                 $item->delete();
             }
@@ -202,6 +209,17 @@ class ComprobanteFondo extends Transaccion
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function validarPolizas()
+    {
+        $polizas = $this->polizas;
+        foreach($polizas as $poliza)
+        {
+            if ($poliza->estatus != -3) {
+                throw New \Exception("El comprobante de fondo se encuentra asociado a la Prepoliza: #" . $this->poliza->id_int_poliza.", favor de omitirla e intentar nuevamente.");
+            };
         }
     }
 

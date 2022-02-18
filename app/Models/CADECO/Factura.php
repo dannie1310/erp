@@ -690,7 +690,16 @@ class Factura extends Transaccion
 
     private function generaPrepoliza()
     {
-        DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+        try{
+            $obra = Obra::query()->find(Context::getIdObra());
+            if ($obra->datosContables) {
+                if ($obra->datosContables->BDContPaq != "") {
+                    DB::connection('cadeco')->update("EXEC [Contabilidad].[generaPolizaFactura] {$this->id_transaccion}");
+                }
+            }
+        }catch (\Exception $e) {
+            
+        }
         return $this;
     }
 
@@ -1232,16 +1241,8 @@ class Factura extends Transaccion
         }
         DB::connection('cadeco')->commit();
 
-        $obra = Obra::query()->find(Context::getIdObra());
-        try{
-            if ($obra->datosContables) {
-                if ($obra->datosContables->BDContPaq != "") {
-                    $this->generaPrepoliza();
-                }
-            }
-        }catch (\Exception $e) {
-            abort(400, $e->getMessage().$e->getFile().$e->getLine());
-        }
+        $this->generaPrepoliza();
+        
         return $this;
     }
 
@@ -1273,13 +1274,15 @@ class Factura extends Transaccion
             $this->complemento->save();
 
             foreach($data['partidas'] as $partida){
+                $monto_partida = $partida['cantidad'] * $partida['precio'];
                 $item = Item::create([
                     "id_transaccion" => $this->id_transaccion,
                     "referencia" => $partida['concepto'],
                     "id_concepto" => $partida['destino']['id'],
                     "cantidad" => $partida['cantidad'],
-                    "importe" => $partida['precio'],
-                    "saldo" => $partida['precio'],
+                    "precio_unitario" => $partida['precio'],
+                    "importe" => $monto_partida,
+                    "saldo" => $monto_partida,
                     "numero" => 7,
                 ]);
 
@@ -1288,7 +1291,7 @@ class Factura extends Transaccion
                     "id_item" => $item->id_item,
                     "numero" => 0,
                     "cantidad" => $partida['cantidad'],
-                    "monto_total" => $partida['precio'],
+                    "monto_total" => $monto_partida,
                     "fecha_inicio" => date("Y-m-d h:i:s"),
                     "fecha_fin" => date("Y-m-d h:i:s"),
                 ]);
@@ -1302,17 +1305,7 @@ class Factura extends Transaccion
 
         DB::connection('cadeco')->commit();
 
-        $obra = Obra::query()->find(Context::getIdObra());
-
-        try{
-            if ($obra->datosContables) {
-                if ($obra->datosContables->BDContPaq != "") {
-                    $this->generaPrepoliza();
-                }
-            }
-        }catch (\Exception $e) {
-            abort(400, $e->getMessage().$e->getFile().$e->getLine());
-        }
+        $this->generaPrepoliza();
 
         return $this;
     }

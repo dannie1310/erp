@@ -59,6 +59,20 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
   min-width: 100px;
 }
 
+.td_money70, td.money70{
+    text-align: right;
+    width: 70px;
+    max-width: 70px;
+    min-width: 70px;
+}
+
+.td_money80, td.money80{
+    text-align: right;
+    width: 80px;
+    max-width: 80px;
+    min-width: 80px;
+}
+
 .th_rfc, th.rfc, .th_c100, th.c100
 {
   width: 100px;
