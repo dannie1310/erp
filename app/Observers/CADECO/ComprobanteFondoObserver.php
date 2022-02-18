@@ -30,6 +30,7 @@ class ComprobanteFondoObserver extends TransaccionObserver
 
     public function deleting(ComprobanteFondo $comprobanteFondo)
     {
+        $comprobanteFondo->desvincularPolizas();
         if($comprobanteFondo->comprobanteEliminado == null)
         {
             abort(400, "Error al eliminar, respaldo incorrecto.");
