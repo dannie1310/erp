@@ -67,16 +67,11 @@ class Solicitud extends Transaccion
     /**
      * Regresar saldo por eliminación de pago
      */
-    public function regresarSaldo($pago)
+    public function cambiarEstadoPorEliminacion()
     {
-        if($this->opciones != 65537)
-        {
-            $this->saldo = $this->saldo + (-1 * $pago->monto);
-        }
-
         if($this->estado == 2)
         {
-            $this->estado = 1;
+            $this->estado = 0;
         }
         $this->save();
     }
