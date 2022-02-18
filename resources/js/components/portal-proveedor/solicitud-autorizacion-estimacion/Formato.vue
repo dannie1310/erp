@@ -29,7 +29,7 @@
                 this.pdf()
             },
             pdf(){
-                var url = '/api/portal-proveedor/solicitud-autorizacion-avance/' + this.id +'/formato?db=' + this.base +'&access_token='+this.$session.get('jwt');
+                var url = '/api/portal-proveedor/solicitud-autorizacion-avance/' + this.id +'/formato?db=' + atob(this.base) +'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Formato Estimación</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
