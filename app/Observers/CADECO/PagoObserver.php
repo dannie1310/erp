@@ -58,6 +58,6 @@ class PagoObserver extends TransaccionObserver
         {
             $pago->pagoAnticipoDestajo->ajustarOC();
         }
-        $pago->cuenta->aumentaSaldoPorDeposito($pago);
+        $pago->cuenta->aumentaSaldoPorEliminacionPago($pago);
     }
 }

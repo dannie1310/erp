@@ -69,7 +69,11 @@ class Solicitud extends Transaccion
      */
     public function regresarSaldo($pago)
     {
-        $this->saldo = $this->saldo + (-1 * $pago->monto);
+        if($this->opciones != 65537)
+        {
+            $this->saldo = $this->saldo + (-1 * $pago->monto);
+        }
+
         if($this->estado == 2)
         {
             $this->estado = 1;
