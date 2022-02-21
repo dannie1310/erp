@@ -87,6 +87,11 @@ class EFOSEmpresaInforme
            ON (Subquery.id = ListaEmpresasSAT.id))
        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
           ON (ctg_efos.rfc = efos.rfc)
+       INNER JOIN (
+          select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+          ON (ctg_efos.id = ctg_efos_maximo.id)
  WHERE (efos.estado = 2) and cfd_sat.tipo_comprobante != 'P' and cfd_sat.cancelado != 1 and ctg_efos.estado_registro = 1 and cfd_sat.tipo_comprobante != 'T'
 GROUP BY ctg_estados_efos.descripcion,
          efos.rfc,
@@ -144,7 +149,13 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
          INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
             ON (efos.estado = ctg_estados_efos.id))
         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-           ON (ctg_efos.rfc = efos.rfc))
+           ON (ctg_efos.rfc = efos.rfc)
+        INNER JOIN (
+          select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+          ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
@@ -203,7 +214,13 @@ ORDER BY 7 DESC
          INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
             ON (efos.estado = ctg_estados_efos.id))
         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-           ON (ctg_efos.rfc = efos.rfc))
+           ON (ctg_efos.rfc = efos.rfc)
+        INNER JOIN (
+          select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+          ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
@@ -262,7 +279,13 @@ ORDER BY 7 DESC
          INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
             ON (efos.estado = ctg_estados_efos.id))
         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-           ON (ctg_efos.rfc = efos.rfc))
+           ON (ctg_efos.rfc = efos.rfc)
+        INNER JOIN (
+          select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+          ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
        INNER JOIN
        SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
           ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
@@ -334,7 +357,13 @@ ORDER BY 7 DESC
            INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
               ON (efos.rfc = cfd_sat.rfc_emisor))
           INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-             ON (ctg_efos.rfc = efos.rfc))
+             ON (ctg_efos.rfc = efos.rfc)
+          INNER JOIN (
+              select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+             ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
          INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
             ON     (efos.estado = ctg_estados_efos.id)
                AND (ctg_efos.estado = ctg_estados_efos.id))
@@ -420,7 +449,13 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
            INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
               ON (efos.rfc = cfd_sat.rfc_emisor))
           INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
-             ON (ctg_efos.rfc = efos.rfc))
+             ON (ctg_efos.rfc = efos.rfc)
+          INNER JOIN (
+              select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+             ) as ctg_efos_maximo
+             ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
          INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
             ON     (efos.estado = ctg_estados_efos.id)
                AND (ctg_efos.estado = ctg_estados_efos.id))
