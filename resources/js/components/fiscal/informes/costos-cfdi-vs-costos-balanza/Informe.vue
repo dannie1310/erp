@@ -59,7 +59,15 @@
                 <hr />
                 <div class="row" v-if="!cargando">
                     <div class="col-md-12 table-responsive" style="overflow-y: auto;height: 600px;">
-                        <span><b>{{this.empresa_sat_razon_social}}</b></span>
+                        <div class="row">
+                            <div class="col-md-7">
+                                <span style="font-size: 12px"><b>{{this.empresa_sat_razon_social}}</b></span>
+                            </div>
+                            <div class="col-md-5">
+                                <small style="color: #5a6268; font-style: italic" class="pull-right">Última verificación de vigencia {{informe.ultima_verificacion.ultima_fecha_verificacion}} sobre CFDI del {{informe.ultima_verificacion.fecha_inicial_cfdi}} al {{informe.ultima_verificacion.fecha_final_cfdi}}</small>
+                            </div>
+                        </div>
+
                         <table class="table table-sm" id="sticky">
                             <thead >
                                 <tr>
@@ -94,7 +102,7 @@
 
                                 <th class="c100">D = B3-C3</th>
 
-                                <th class="c110">A - D</th>
+                                <th class="c110">D - A</th>
 
                             </tr>
                             </thead>
@@ -443,8 +451,8 @@ table {
     border-collapse: collapse;
     clear: both;
 }
-table.table-fs-sm{
-    font-size: 8px;
+table.table-sm{
+    font-size: 12px;
 }
 
 .ui.dropdown, .ui.dropdown input {

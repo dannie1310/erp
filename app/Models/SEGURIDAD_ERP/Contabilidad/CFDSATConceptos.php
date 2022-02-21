@@ -31,6 +31,13 @@ class CFDSATConceptos extends Model
         "descuento"
     ];
 
+    protected $casts = [
+        "cantidad" => "float",
+        "importe" => "float",
+        "valor_unitario" => "float",
+        "descuento" => "float"
+    ];
+
     protected static function boot()
     {
         parent::boot();

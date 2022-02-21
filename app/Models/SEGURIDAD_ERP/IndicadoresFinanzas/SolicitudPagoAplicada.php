@@ -27,7 +27,15 @@ class SolicitudPagoAplicada extends Model
         'fecha_aplicacion_manual',
         'monto_aplicado',
         'pendiente',
-        'estado_registro'
+        'estado_registro',
+        'razon_social',
+        'usuario_registro',
+        'id_usuario',
+        'usuario_comentario',
+        'remesa_relacionada',
+        'observaciones',
+        'usuario_valido',
+        'id_documento_remesa',
     ];
 
     //relaciones
@@ -59,6 +67,11 @@ class SolicitudPagoAplicada extends Model
     public function getMontoPagadoFormatAttribute()
     {
         return '$' . number_format(($this->monto_pagado),2);
+    }
+
+    public function getMontoAutorizadoFormatAttribute()
+    {
+        return '$' . number_format(($this->monto_autorizado_remesa),2);
     }
 
     public function getPendienteFormatAttribute()
