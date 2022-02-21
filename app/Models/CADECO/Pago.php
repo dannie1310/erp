@@ -363,13 +363,15 @@ class Pago extends Transaccion
             $fac_iva = $factura->monto/ ($factura->monto - $factura->impuesto);
             $apl_manual = AplicacionManual::create([
                 'saldo' => $this->saldo,
+                'fecha' => date('Y-m-d'),
                 'monto' => $data['aplicado'],
                 'impuesto' => $data['impuesto'],
                 'referencia' => $this->referencia,
                 'observaciones' => $data['observaciones'],
                 'id_antecedente' => $this->id_transaccion,
+                'numero_folio' => $this->numero_folio
             ]);
-
+            // dd(2);
             $orden_pago = OrdenPago::create([
                 'id_antecedente' => $factura->id_antecedente,
                 'id_referente' => $factura->id_transaccion,
@@ -418,13 +420,10 @@ class Pago extends Transaccion
 
             }
 
-            if(abs($factura->saldo - $data['monto']) > 0.01){
-                $factura->saldo = $factura->saldo - $data['monto'];
-                $factura->contra_recibo->saldo = $factura->contra_recibo->saldo - $data['monto'];
-            }else{
+            if(abs($factura->saldo) < 0.01){
                 $factura->saldo = 0;
                 $factura->estado = 2;
-                $factura->contra_recibo->saldo = $factura->contra_recibo->saldo - $data['monto'];
+                $factura->contra_recibo->saldo = $factura->contra_recibo->saldo - $factura->saldo;
             }
             $factura->save();
             if($factura->contra_recibo->saldo < 0.01){

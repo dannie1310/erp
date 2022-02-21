@@ -16,6 +16,7 @@ class AplicacionManualObserver extends TransaccionObserver
     public function creating(Transaccion $aplicacion)
     {
         parent::creating($aplicacion);
+        $aplicacion->fecha = date('Y-m-d');
         $aplicacion->tipo_transaccion = 70;
         $aplicacion->opciones = 0;
         $aplicacion->estado = 1;

@@ -17,11 +17,6 @@
                             <span><i class="fa fa-envelope"></i>Datos de Pago</span>
                             <div class="table-responsive">
                                 <table class="table  table-sm">
-                                    <!-- <tr>
-                                        <th colspan="4" class="encabezado">
-                                            Observaciones
-                                        </th>
-                                    </tr> -->
                                     <tr>
                                         <td colspan="3" class="encabezado centrado">
                                             {{pago.empresa.razon_social}}
@@ -52,24 +47,6 @@
                                 </table>
                             </div>
                         </div>
-                        <!-- <div class="col-md-3">
-                            <div class="form-group">
-                                <label><b>Pago: </b></label>
-                                <b>{{pago.numero_folio_format}}</b>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="form-group">
-                                <label><b>Referencia: </b></label>
-                                <b>{{pago.referencia}}</b>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label><b>Razón Social: </b></label>
-                                <b>{{pago.empresa.razon_social}}</b>
-                            </div>
-                        </div> -->
                     </div>
                     <hr>
                     <div class="row">
@@ -357,7 +334,7 @@ export default {
                 monto: this.total,
                 aplicado: this.aplicado
             }).then(data=>{
-                console.log('ok')
+                this.$router.push({name: 'pago-manual'});
             })
             .finally(()=>{
                 this.guardando=false;

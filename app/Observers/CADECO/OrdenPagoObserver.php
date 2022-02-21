@@ -20,6 +20,7 @@ class OrdenPagoObserver extends TransaccionObserver
     public function creating(Transaccion $ordenPago)
     {
         parent::creating($ordenPago);
+        $ordenPago->fecha = date('Y-m-d');
         $ordenPago->numero_folio = $ordenPago->calcularFolio();
         $ordenPago->tipo_transaccion = 68;
         $ordenPago->opciones = 0;

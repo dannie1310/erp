@@ -82,7 +82,11 @@ class ItemFactura extends Item
             case 33:
                 return $this->material->descripcion;
                 break;
+            case 19:
+                return $this->material->descripcion;
+                break;
             default:
+            dd($this->antecedente->tipo_transaccion, $this);
                 return '';
         }
     }
