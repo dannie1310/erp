@@ -2006,8 +2006,8 @@ export const routes = [
                                         parent: 'finanzas',
                                         name: 'PAGOS PENDIENTES APLICAR'
                                     },
-                                    middleware: [auth, context],
-                                    permission: 'registrar_pagos_manuales'
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_pago_manual'
                                 },
                             },
                             {
