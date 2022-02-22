@@ -22,7 +22,7 @@ class ItemPrestacion extends Item
 
     public function inventario()
     {
-        return $this->hasOne(Inventario::class, 'id_item', 'id_item');
+        return $this->hasOne(Inventario::class, 'id_item', 'item_antecedente');
     }
 
     public function prestacion()

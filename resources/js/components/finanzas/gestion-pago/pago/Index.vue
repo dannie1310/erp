@@ -116,7 +116,7 @@
                             id_moneda:pago.moneda.nombre,
                             buttons: $.extend({}, {
                                 id: pago.id,
-                                delete: self.$root.can('eliminar_pagos') ? true : false,
+                                delete: self.$root.can('eliminar_pagos') && (pago.es_reemplazo == false) ? true : false,
                                 transaccion: {id:pago.id, tipo:82},
                             })
                         })

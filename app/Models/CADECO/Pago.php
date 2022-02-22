@@ -96,6 +96,11 @@ class Pago extends Transaccion
         return $this->belongsTo(Solicitud::class, 'id_antecedente', 'id_transaccion');
     }
 
+    public function anticipoTransaccion()
+    {
+        return $this->belongsTo(Anticipo::class, 'id_transaccion','id_antecedente');
+    }
+
     public function ordenPago()
     {
         return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
@@ -201,6 +206,18 @@ class Pago extends Transaccion
                 return 'Pago Lista Raya';
                 break;
         }
+    }
+
+    public function getEsReemplazoAttribute()
+    {
+        if($this->transaccionReferente)
+        {
+            if($this->transaccionReferente->tipo_transaccion == 82 && $this->transaccionReferente->estado == -1)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public function eliminar($motivo)
