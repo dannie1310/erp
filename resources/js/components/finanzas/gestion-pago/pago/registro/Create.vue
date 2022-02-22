@@ -114,7 +114,7 @@
                                             <div class="invalid-feedback" v-show="errors.has('monto_pagar')">{{ errors.first('monto_pagar') }}</div>
                                         </td>
                                         <td v-if="solicitud.tipo_transaccion == 72" style="text-align: right">
-                                            {{ solicitud.monto_autorizado_remesa_format }}
+                                            {{ solicitud.saldo_format }}
                                         </td>
                                         <td v-if="cuenta != '' && cuenta.moneda.tipo_cambio != 1 && solicitud.tipo_transaccion == 65 && tipo_cambio_actual != 1" style="text-align: right">
                                             <input

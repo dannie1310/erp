@@ -31,10 +31,10 @@
                     </tr>
                     <tr>
                         <td>
-                            {{solicitud.empresa}}
+                            {{solicitud.destinatario}}
                         </td>
                         <td style="text-align: center">
-                            {{solicitud.costo}}
+                            {{solicitud.costo ? solicitud.costo : solicitud.concepto}}
                         </td>
                         <td style="text-align: center">
                             {{solicitud.fecha}}

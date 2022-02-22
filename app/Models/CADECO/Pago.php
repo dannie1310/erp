@@ -101,6 +101,11 @@ class Pago extends Transaccion
         return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
     }
 
+    public function pagoListaRaya()
+    {
+        return $this->belongsTo(PagoListaRaya::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function getEstadoStringAttribute()
     {
         $estado = "";
@@ -190,6 +195,10 @@ class Pago extends Transaccion
 
             case 131073:
                 return 'Pago Anticipo Destajo';
+                break;
+
+            case 65537:
+                return 'Pago Lista Raya';
                 break;
         }
     }

@@ -88,7 +88,7 @@ class PagoService
 
     public function documentosParaPagar()
     {
-        $solicitudes = Transaccion::whereIn('tipo_transaccion', [65,72])->where('estado', '!=', 2)->where('saldo', '>', 0.99)
+        $solicitudes = Transaccion::whereIn('tipo_transaccion', [65,72])->whereIn('estado', [0,1])->where('saldo', '>', 0.99)
             ->orderBy('id_transaccion', 'desc')->get();
         $respuesta = [];
         foreach ($solicitudes as $key => $solicitud)
@@ -166,6 +166,14 @@ class PagoService
             {
                 return 'Solicitud Pago Anticipo';
             }
+            if($opciones == 65537)
+            {
+                return 'Solicitud Pago de Lista de Raya';
+            }
+            if($opciones == 262145)
+            {
+                return 'Solicitud Pago Reemplazo de Cheque';
+            }
         }
     }
 
@@ -184,6 +192,24 @@ class PagoService
         {
             return $validaciones;
         }
+        $empresa = '';
+        if(!is_null($solicitud->empresa))
+        {
+            $empresa = $solicitud->empresa->razon_social;
+        }
+        if(!is_null($solicitud->fondoFijo))
+        {
+            $empresa = $solicitud->fondoFijo->nombre;
+        }
+        $concepto = '';
+        if($solicitud->tipo_transaccion == 72) {
+            if ($solicitud->opciones == 1) {
+                $concepto = 'Reposición de Fondo Fijo';
+            }
+            if ($solicitud->opciones == 65537) {
+                $concepto = 'Pago de Nóminas';
+            }
+        }
         return [
             'id' => $solicitud->getKey(),
             'tipo_transaccion' => $solicitud->tipo_transaccion,
@@ -195,7 +221,9 @@ class PagoService
             'estado' => $solicitud->estado,
             'estado_format' => $this->getEstadoDocumentoPorPagar($solicitud->tipo_transaccion, $solicitud->estado),
             'id_empresa' => $solicitud->id_empresa,
-            'empresa' => $solicitud->empresa ? $solicitud->empresa->razon_social : '',
+            'id_fondo' => $solicitud->id_referente,
+            'empresa' => $empresa,
+            'destinatario' => !is_null($solicitud->empresa) ? $solicitud->empresa->razon_social : $solicitud->destino,
             'id_moneda' => $solicitud->id_moneda,
             'moneda' => $solicitud->moneda->nombre,
             'opciones' => $solicitud->opciones,
@@ -206,6 +234,7 @@ class PagoService
             'autorizado' => $solicitud->autorizado,
             'autorizado_format' => number_format(($solicitud->autorizado),2),
             'costo' => $solicitud->costo ? $solicitud->costo->descripcion : $costo['descripcion'],
+            'concepto' => $concepto,
             'id_costo' => $solicitud->costo ? $solicitud->id_costo : $costo['id_costo'],
             'observaciones' => $solicitud->observaciones,
             'remesa' => $remesa->remesa_relacionada,
@@ -246,7 +275,12 @@ class PagoService
         }
         if($solicitud->tipo_transaccion == 72)
         {
-            $pago =  Pago::where('id_antecedente', $solicitud->getKey())->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($solicitud->opciones == 1)
+            {
+                $pago =  Pago::where('id_referente', $solicitud->id_referente)->selectRaw('(SUM(monto)*-1) as suma')->first();
+            }else {
+                $pago = Pago::where('id_antecedente', $solicitud->getKey())->selectRaw('(SUM(monto)*-1) as suma')->first();
+            }
             if($pago)
             {
                 if ((float)$suma_historico_remesa == (float)$pago->suma) {
@@ -256,6 +290,7 @@ class PagoService
                     return ['error' => "El monto pagado de esta solicitud " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
                         " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
                 }
+                return ['saldo' => $solicitud->saldo];
             }
         }
     }
