@@ -1984,7 +1984,7 @@ export const routes = [
                                         name: 'LISTADO DE REGISTRO'
                                     },
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_carga_layout_pago'
+                                    permission: 'registrar_pago'
                                 }
                             },
                             {
@@ -1996,7 +1996,7 @@ export const routes = [
                                     title: 'Registrar Pago',
                                     breadcrumb: {name: 'REGISTRAR', parent: 'registro-pago'},
                                     middleware: [auth, context, permission],
-                                    permission: 'cargar_distribucion_recursos_remesa'
+                                    permission: 'registrar_pago'
                                 }
                             },
                         ]

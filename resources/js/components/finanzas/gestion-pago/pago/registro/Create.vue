@@ -329,7 +329,7 @@
                     id: this.id,
                     solicitud: this.solicitud
                 }).then((data) => {
-                    this.salir();
+                    this.$router.push({name: 'pago'});
                 });
             },
         },

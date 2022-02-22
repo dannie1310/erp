@@ -7,7 +7,7 @@
                 Bitácora
                 (SANTANDER)
             </button>
-            <router-link  :to="{ name: 'registro-pago'}" v-if="$root.can('consultar_carga_layout_pago')" type="button" class="btn btn-app btn-info float-right" title="Registrar Pagos">
+            <router-link  :to="{ name: 'registro-pago'}" v-if="$root.can('registrar_pago')" type="button" class="btn btn-app btn-info float-right" title="Registrar Pagos">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-money" v-else></i>
                 Registrar
