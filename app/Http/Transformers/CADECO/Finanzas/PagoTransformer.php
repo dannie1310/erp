@@ -60,7 +60,8 @@ class PagoTransformer extends TransformerAbstract
           'id_moneda'=>$model->id_moneda,
           'estado_string'=>$model->estado_string,
           'tipo_pago' => $model->tipo_pago,
-          'es_reemplazo' => $model->es_reemplazo
+          'es_reemplazo' => $model->es_reemplazo,
+          'tipo_antecedente' => $model->tipo_antecedente
       ];
     }
 

@@ -26,8 +26,8 @@ class PagoObserver extends TransaccionObserver
         $pago->estado = 1;
     }
 
-    public function created(Pago $pago){
-        dd("teni que pasar aqui........l.");
+    public function created(Pago $pago)
+    {
         $pago->cuenta->disminuyeSaldo($pago);
     }
 

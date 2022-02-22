@@ -176,35 +176,41 @@ class Pago extends Transaccion
 
     public function getTipoPagoAttribute()
     {
-        switch ($this->tipo_antecedente)
+
+        if($this->ordenPago)
         {
-            case 0:
-                if($this->opciones == 0)
-                {
-                    return 'Pago Factura';
-                }
-                return 'Pago';
-                break;
-
-            case 1:
-                return 'Pago Varios';
-                break;
-
-            case 327681:
-                if(is_null($this->id_antecedente) && is_null($this->id_referente))
-                {
-                    return 'Pago a Cuenta por Aplicar';
-                }
-                return 'Pago a Cuenta';
-                break;
-
-            case 131073:
-                return 'Pago Anticipo Destajo';
-                break;
-
-            case 65537:
-                return 'Pago Lista Raya';
-                break;
+            if ($this->opciones == 0) {
+                return 'Pago Factura';
+            }
+            if ($this->opciones == 1) {
+                return 'Pago Factura Gastos Varios';
+            }
+            if ($this->opciones == 65537) {
+                return 'Pago Factura Materiales / Servicios';
+            }
+        }
+        if($this->solicitud)
+        {
+            if($this->opciones == 1)
+            {
+                return 'Pago de Reposición Fondo Fijo';
+            }
+            if($this->opciones == 131073)
+            {
+                return 'Pago de Anticipo Destajo';
+            }
+            if($this->opciones == 327681)
+            {
+                return 'Pago Anticipo';
+            }
+            if($this->opciones == 65537)
+            {
+                return 'Pago de Lista de Raya';
+            }
+            if($this->opciones == 262145)
+            {
+                return 'Pago Reemplazo de Cheque';
+            }
         }
     }
 
@@ -218,6 +224,45 @@ class Pago extends Transaccion
             }
         }
         return false;
+    }
+
+    public function getTipoAntecedenteAttribute()
+    {
+        if($this->ordenPago)
+        {
+            if ($this->opciones == 0) {
+                return 'Factura';
+            }
+            if ($this->opciones == 1) {
+                return 'Factura Gastos Varios';
+            }
+            if ($this->opciones == 65537) {
+                return 'Factura Materiales / Servicios';
+            }
+        }
+        if($this->solicitud)
+        {
+            if($this->opciones == 1)
+            {
+                return 'Solicitud Reposición Fondo Fijo';
+            }
+            if($this->opciones == 131073)
+            {
+                return 'Solicitud Anticipo Destajo';
+            }
+            if($this->opciones == 327681)
+            {
+                return 'Solicitud Pago Anticipo';
+            }
+            if($this->opciones == 65537)
+            {
+                return 'Solicitud Pago de Lista de Raya';
+            }
+            if($this->opciones == 262145)
+            {
+                return 'Solicitud Pago Reemplazo de Cheque';
+            }
+        }
     }
 
     public function eliminar($motivo)

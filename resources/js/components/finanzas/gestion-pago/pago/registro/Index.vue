@@ -26,7 +26,7 @@
                     { title: '#', field: 'index', sortable: false },
                     { title: 'Folio', field: 'numero_folio', sortable: false},
                     { title: 'Fecha', field: 'fecha', sortable: false},
-                    { title: 'Empresa', field: 'empresa',sortable: false},
+                    { title: 'Beneficiario', field: 'empresa',sortable: false},
                     { title: 'Tipo', field: 'tipo', sortable: false},
                     { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: false},
                     { title: 'Moneda', field: 'id_moneda', sortable: false },

@@ -93,6 +93,19 @@ class PagoService
         $respuesta = [];
         foreach ($solicitudes as $key => $solicitud)
         {
+            $empresa = '';
+            if(!is_null($solicitud->empresa))
+            {
+                $empresa = $solicitud->empresa->razon_social;
+            }
+            if(!is_null($solicitud->fondoFijo))
+            {
+                $empresa = $solicitud->fondoFijo->nombre;
+            }
+            if(!is_null($solicitud->referente))
+            {
+                $empresa = $solicitud->referente->empresa ? $solicitud->referente->empresa->razon_social : '';
+            }
             $respuesta[$key] = [
                 'id' => $solicitud->getKey(),
                 'tipo_transaccion' => $solicitud->tipo_transaccion,
@@ -103,7 +116,7 @@ class PagoService
                 'estado' => $solicitud->estado,
                 'estado_format' => $this->getEstadoDocumentoPorPagar($solicitud->tipo_transaccion, $solicitud->estado),
                 'id_empresa' => $solicitud->id_empresa,
-                'empresa' => $solicitud->empresa ? $solicitud->empresa->razon_social : '',
+                'empresa' => $empresa,
                 'id_moneda' => $solicitud->id_moneda,
                 'moneda' => $solicitud->moneda->nombre,
                 'opciones' => $solicitud->opciones,
@@ -200,6 +213,10 @@ class PagoService
         if(!is_null($solicitud->fondoFijo))
         {
             $empresa = $solicitud->fondoFijo->nombre;
+        }
+        if(!is_null($solicitud->referente->empresa))
+        {
+            $empresa = $solicitud->referente->empresa->razon_social;
         }
         $concepto = '';
         if($solicitud->tipo_transaccion == 72) {

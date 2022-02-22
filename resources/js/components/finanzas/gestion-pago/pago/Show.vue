@@ -66,7 +66,7 @@
                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                     <td class="bg-gray-light">{{pago.antecedente.fecha.substr(0, 10)}}</td>
                                     <td class="bg-gray-light"><b>Tipo:</b></td>
-                                    <td class="bg-gray-light">{{pago.antecedente.tipo.descripcion}}</td>
+                                    <td class="bg-gray-light">{{pago.tipo_antecedente}}</td>
                                     <td class="bg-gray-light"><b>Importe:</b></td>
                                     <td class="bg-gray-light">{{ '$ '+parseFloat(pago.antecedente.monto).formatMoney(2)}}</td>
                                 </tr>
