@@ -29,5 +29,4 @@ class ItemListaRaya extends Item
     {
         return $this->belongsTo(ListaRaya::class, 'id_transaccion', 'id_transaccion');
     }
-
 }
