@@ -9,7 +9,6 @@
 namespace App\Services\CADECO\Finanzas;
 
 
-use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Moneda;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
@@ -98,11 +97,11 @@ class PagoService
             {
                 $empresa = $solicitud->empresa->razon_social;
             }
-            if(!is_null($solicitud->fondoFijo))
+            elseif(!is_null($solicitud->fondoFijo))
             {
                 $empresa = $solicitud->fondoFijo->nombre;
             }
-            if(!is_null($solicitud->referente))
+            elseif(!is_null($solicitud->referente))
             {
                 $empresa = $solicitud->referente->empresa ? $solicitud->referente->empresa->razon_social : '';
             }
@@ -210,11 +209,11 @@ class PagoService
         {
             $empresa = $solicitud->empresa->razon_social;
         }
-        if(!is_null($solicitud->fondoFijo))
+        elseif(!is_null($solicitud->fondoFijo))
         {
             $empresa = $solicitud->fondoFijo->nombre;
         }
-        if(!is_null($solicitud->referente->empresa))
+        elseif(!is_null($solicitud->referente->empresa))
         {
             $empresa = $solicitud->referente->empresa->razon_social;
         }
@@ -250,9 +249,9 @@ class PagoService
             'saldo_format' => $solicitud->saldo_format,
             'autorizado' => $solicitud->autorizado,
             'autorizado_format' => number_format(($solicitud->autorizado),2),
-            'costo' => $solicitud->costo ? $solicitud->costo->descripcion : $costo['descripcion'],
+            'costo' => $solicitud->costo ? $solicitud->costo->descripcion : $costo != '' ? $costo['descripcion'] : null,
             'concepto' => $concepto,
-            'id_costo' => $solicitud->costo ? $solicitud->id_costo : $costo['id_costo'],
+            'id_costo' => $solicitud->costo ? $solicitud->id_costo : $costo != '' ? $costo['id_costo'] : null,
             'observaciones' => $solicitud->observaciones,
             'remesa' => $remesa->remesa_relacionada,
             'suma_historico_remesa' => $suma_historico_remesa,
@@ -315,11 +314,14 @@ class PagoService
     private function getCosto($solicitud)
     {
         if($solicitud->tipo_transaccion == 65) {
-            $item = $solicitud->items[0];
-            return [
-                'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
-                'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion
-            ];
+            if($solicitud->items->count() > 0) {
+                $item = $solicitud->items[0];
+                return [
+                    'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
+                    'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion
+                ];
+            }
         }
+        return '';
     }
 }

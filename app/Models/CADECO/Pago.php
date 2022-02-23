@@ -800,10 +800,12 @@ class Pago extends Transaccion
     {
         if($transaccion->tipo_transaccion == 65)
         {
-            $antecedente = $transaccion->items[0]->antecedente;
-            if($antecedente->estado != 2)
+            if($transaccion->items->count() > 0)
             {
-                return ['error' => "La " . $antecedente->tipo_transaccion_str . " a pagar ".$antecedente->numero_folio_format." tiene un estado no aprobado."];
+                $antecedente = $transaccion->items[0]->antecedente;
+                if ($antecedente->estado != 2) {
+                    return ['error' => "La " . $antecedente->tipo_transaccion_str . " a pagar " . $antecedente->numero_folio_format . " tiene un estado no aprobado."];
+                }
             }
 
             $orden_pago =  OrdenPago::where('id_referente', $solicitud['id'])->selectRaw('(SUM(monto)*-1) as suma')->first();
