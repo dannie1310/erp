@@ -83,4 +83,8 @@ class PagoService
     {
         return $this->show($id)->eliminar($data['data'][0]);
     }
+
+    public function aplicarPago($data){
+        $this->repository->show($data['id'])->aplicarPago($data);
+    }
 }

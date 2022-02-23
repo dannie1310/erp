@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Item;
 use mysql_xdevapi\Exception;
 use App\Models\CADECO\Concepto;
 
@@ -60,6 +61,34 @@ class ItemFactura extends Item
     public function getProporcionItemAttribute()
     {
         return $this->importe / $this->factura->monto;
+    }
+
+    public function getImporteFormatAttribute(){
+        return number_format($this->importe, 2, '.', ',');
+    }
+
+    public function getSaldoFormatAttribute(){
+        return number_format($this->saldo, 2, '.', ',');
+    }
+
+    public function getDescripcionAntecedenteAttribute(){
+        switch ($this->antecedente->tipo_transaccion){
+            case 51:
+                return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
+                break;
+            case 52:
+                return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
+                break;
+            case 33:
+                return $this->material->descripcion;
+                break;
+            case 19:
+                return $this->material->descripcion;
+                break;
+            default:
+            dd($this->antecedente->tipo_transaccion, $this);
+                return '';
+        }
     }
 
     /**

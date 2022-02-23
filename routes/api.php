@@ -1388,6 +1388,7 @@ $api->version('v1', function ($api) {
             $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
             $api->get('/leerQR', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@leerQR');
+            $api->get('{id}/aplicacionManual', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@aplicacionManual');
 
 
             /**
@@ -1459,6 +1460,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('/aplicarPago', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@aplicarPago');
 
             $api->group(['prefix' => 'carga-masiva'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');

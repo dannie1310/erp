@@ -9,11 +9,12 @@
 namespace App\Http\Controllers\v1\CADECO\Finanzas;
 
 
-use App\Http\Controllers\Controller;
-use App\Http\Transformers\CADECO\Finanzas\PagoTransformer;
-use App\Services\CADECO\Finanzas\PagoService;
-use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
+use Illuminate\Http\Request;
+use App\Traits\ControllerTrait;
+use App\Http\Controllers\Controller;
+use App\Services\CADECO\Finanzas\PagoService;
+use App\Http\Transformers\CADECO\Finanzas\PagoTransformer;
 
 class PagoController extends Controller
 {
@@ -54,5 +55,9 @@ class PagoController extends Controller
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function aplicarPago(Request $request){
+        return $this->service->aplicarPago($request->all());
     }
 }

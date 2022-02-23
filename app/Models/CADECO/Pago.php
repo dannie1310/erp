@@ -9,10 +9,14 @@
 namespace App\Models\CADECO;
 
 use App\Facades\Context;
-use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Inventario;
+use App\Models\CADECO\Movimiento;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
-use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 
 class Pago extends Transaccion
 {
@@ -181,6 +185,14 @@ class Pago extends Transaccion
         }
     }
 
+    public function getSaldoFormatAttribute(){
+        return '$' . number_format(abs($this->saldo * -1), 2, '.', ',');
+    }
+
+    public function scopeOrdenPago($query){
+        return $query->where('opciones', '=', 327681);
+    }
+
     public function eliminar($motivo)
     {
         try {
@@ -335,6 +347,97 @@ class Pago extends Transaccion
             'id_transaccion' => $this->id_transaccion,
             'consulta' => $consulta
         ]);
+    }
+
+    public function aplicarPago($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            if(($this->saldo * -1) < $data['monto']){
+                abort(403, 'El total a aplicar es mayor al saldo del pago.');
+            }
+            $factura = Factura::find($data['id_factura']);
+            if($factura->saldo < $data['monto']){
+                abort(403, 'El total a aplicar es mayor al saldo de la factura.');
+            }
+
+            $fac_iva = $factura->monto/ ($factura->monto - $factura->impuesto);
+            $apl_manual = AplicacionManual::create([
+                'saldo' => $this->saldo,
+                'fecha' => date('Y-m-d'),
+                'monto' => $data['aplicado'],
+                'impuesto' => $data['impuesto'],
+                'referencia' => $this->referencia,
+                'observaciones' => $data['observaciones'],
+                'id_antecedente' => $this->id_transaccion,
+                'numero_folio' => $this->numero_folio
+            ]);
+            // dd(2);
+            $orden_pago = OrdenPago::create([
+                'id_antecedente' => $factura->id_antecedente,
+                'id_referente' => $factura->id_transaccion,
+                'estado' => 1,
+                'id_empresa' => $factura->id_empresa,
+                'id_moneda' => $factura->id_moneda,
+                'monto' => -1 * $data['monto'],
+                'referencia' => $this->referencia,
+            ]);
+
+            $partidas = $factura->partidas->where('saldo', '>', 0);
+
+            foreach($partidas as $index => $partida_fact){
+                $apl_manual->partidas()->create([
+                    'item_antecedente' => $partida_fact->id_item,
+                    'importe' => $data['partidas'][$index]['saldo'],
+                    'saldo' => $partida_fact->importe
+                ]);
+
+                $orden_pago->partidas()->create([
+                    'item_antecedente' => $partida_fact->id_item,
+                    'importe' => $data['partidas'][$index]['saldo'],
+                ]);
+                $factura->saldo = $factura->saldo - ($data['partidas'][$index]['saldo'] * $fac_iva);
+                $this->saldo = $this->saldo + ($data['partidas'][$index]['saldo'] * $fac_iva);
+
+                if($partida_fact->numero == 0){
+                    if($inventario = Inventario::where('id_item', '=', $partida_fact->item_antecedente)->first()){
+                        $inventario->monto_pagado = $inventario->monto_pagado + ($data['partidas'][$index]['saldo'] * $factura->tipo_cambio);
+                        DB::connection('cadeco')->update("EXEC [dbo].[sp_distribuir_pagado_inventarios] {$inventario->id_lote}");
+                        $inventario->save();
+                    }else{
+                        $movimiento = Movimiento::where('id_item', '=', $partida_fact->item_antecedente)->first();
+                        $movimiento->monto_pagado = $movimiento->monto_pagado + ($data['partidas'][$index]['saldo'] * $factura->tipo_cambio);
+                        $movimiento->save();
+                    }
+                    $partida_fact->saldo = $partida_fact->saldo - $data['partidas'][$index]['saldo'];
+                }
+                else if($partida_fact->numero == 1){
+                    $tipo_ant = Transaccion::where('id_transaccion', '=', $partida_fact->id_antecedente)->select('tipo_transaccion')->first();
+                    if($tipo_ant == 51){
+
+                    }
+                }
+                
+
+            }
+
+            if(abs($factura->saldo) < 0.01){
+                $factura->saldo = 0;
+                $factura->estado = 2;
+                $factura->contra_recibo->saldo = $factura->contra_recibo->saldo - $factura->saldo;
+            }
+            $factura->save();
+            if($factura->contra_recibo->saldo < 0.01){
+                $factura->contra_recibo->estado = 2;
+            }
+            $factura->contra_recibo->save();
+            $this->save();
+            DB::connection('cadeco')->commit();
+        }catch(\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error al aplicar pago pendiente.' . $e->getMessage());
+            throw $e;
+        }
+        
     }
 
     /**
