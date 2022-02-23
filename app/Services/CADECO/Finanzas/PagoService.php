@@ -98,11 +98,11 @@ class PagoService
             {
                 $empresa = $solicitud->empresa->razon_social;
             }
-            if(!is_null($solicitud->fondoFijo))
+            elseif(!is_null($solicitud->fondoFijo))
             {
                 $empresa = $solicitud->fondoFijo->nombre;
             }
-            if(!is_null($solicitud->referente))
+            elseif(!is_null($solicitud->referente))
             {
                 $empresa = $solicitud->referente->empresa ? $solicitud->referente->empresa->razon_social : '';
             }
@@ -210,11 +210,11 @@ class PagoService
         {
             $empresa = $solicitud->empresa->razon_social;
         }
-        if(!is_null($solicitud->fondoFijo))
+        elseif(!is_null($solicitud->fondoFijo))
         {
             $empresa = $solicitud->fondoFijo->nombre;
         }
-        if(!is_null($solicitud->referente->empresa))
+        elseif(!is_null($solicitud->referente->empresa))
         {
             $empresa = $solicitud->referente->empresa->razon_social;
         }
