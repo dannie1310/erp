@@ -307,7 +307,7 @@ export default {
             let sbt = 0;
             if(this.partidas){
                 this.partidas.forEach(partida => {
-                    sbt = sbt + parseFloat(partida.saldo_format);
+                    sbt = sbt + parseFloat(partida.importe);
                 });
             }
             this.subtotal = sbt
