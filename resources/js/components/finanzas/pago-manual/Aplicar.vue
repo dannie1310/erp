@@ -94,21 +94,21 @@
                                         </tr>
                                     </thead>
                                     <tbody v-if="partidas">
-                                        <tr v-for="(fac, i) in partidas" v-if="fac.saldo > 0">
+                                        <tr v-for="(fac, i) in partidas" v-if="fac.saldo_format != 0">
                                             <td>{{fac.descripcion_antecedente}}</td>
                                             <td class="td_money">${{fac.saldo_format}}</td>
                                             <td>
                                                 <input
-                                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                                                    type="number"
+                                                    step="any"
                                                     v-on:keyup="getSubtotal()"
                                                     style="text-align: right"
-                                                    type="text"
                                                     name="aplicar"
                                                     data-vv-as="Aplicar"
-                                                    v-validate="{required: true, min:0.01}"
+                                                    v-validate="{required: true, min_value:0.01, max_value:fac.saldo_base, decimal:2}"
                                                     class="form-control"
                                                     id="aplicar"
-                                                    v-model="fac.saldo_format"
+                                                    v-model="fac.saldo"
                                                     :class="{'is-invalid': errors.has('aplicar')}">
                                                 <div class="invalid-feedback" v-show="errors.has('aplicar')">{{ errors.first('aplicar') }}</div>
                                             </td>
@@ -177,8 +177,8 @@
                                 <div class="col-md-7">
                                     <input 
                                         style="width: 100%; text-align: right"
-                                        onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                                        type="text"
+                                        type="number"
+                                        step="any"
                                         id="impuesto"
                                         name="impuesto"
                                         v-model="iva">
@@ -238,7 +238,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary pull-right" @click="cerrar()"><i class="fa fa-close"></i>Cerrar</button>
-                    <button type="button" class="btn btn-primary pull-right" @click="validate"><i class="fa fa-save"></i>Aplicar</button>
+                    <button type="button" class="btn btn-primary pull-right" @click="validate" :disabled="validaPartidas()"><i class="fa fa-save"></i>Aplicar</button>
                 </div>
                 
             </div>
@@ -307,7 +307,7 @@ export default {
             let sbt = 0;
             if(this.partidas){
                 this.partidas.forEach(partida => {
-                    sbt = sbt + parseFloat(partida.importe);
+                    sbt = sbt + parseFloat(partida.saldo);
                 });
             }
             this.subtotal = sbt
@@ -340,7 +340,17 @@ export default {
                 this.guardando=false;
             })
 
-        }
+        },
+        validaPartidas(){
+            if(!this.partidas){
+                return true;
+            }
+            let subtotal = 0;
+            this.partidas.forEach(partida => {
+                subtotal = subtotal + parseFloat(partida.saldo);
+            });
+            return subtotal == 0;
+        },
     },
     watch:{
         factura(value){

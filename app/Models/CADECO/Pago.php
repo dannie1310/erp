@@ -11,9 +11,11 @@ namespace App\Models\CADECO;
 use Exception;
 use App\Facades\Context;
 use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Inventario;
 use App\Models\CADECO\Movimiento;
 use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\Subcontrato;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Finanzas\PagoEliminado;
@@ -415,12 +417,48 @@ class Pago extends Transaccion
                 else if($partida_fact->numero == 1){
                     $tipo_ant = Transaccion::where('id_transaccion', '=', $partida_fact->id_antecedente)->select('tipo_transaccion')->first();
                     if($tipo_ant == 51){
+                        $subcontrato = Subcontrato::withoutGlobalScopes()->find($this->id_antecedente);
+                        $importe = $data['partidas'][$index]['saldo'];
+                        $factor = 0;
+                        if ($subcontrato->anticipo_monto > 0) {
+                            $factor = $importe / $subcontrato->anticipo_monto;
+                        }
+                        $estimaciones = $this->estimaciones;
+                        if ($estimaciones) {
+                            foreach ($estimaciones as $estimacion) {
+                                $movimientos = $estimacion->movimientos;
+                                foreach ($movimientos as $movimiento) {
+                                    $movimiento->monto_pagado = $movimiento->monto_pagado + round($movimiento->monto_total * $factor
+                                            * ((100 - $estimacion->retencion) / 100 - ($estimacion->monto - $estimacion->impuesto) / $estimacion->suma_importes)
+                                            , 2);
+                                    $movimiento->save();
+                                }
+                            }
+                        }
+                    }else if($tipo_ant == 52){
+                        $estimacion = Estimacion::withoutGlobalScopes()->find($this->id_antecedente);
+                        $importe = $data['partidas'][$index]['saldo'];
+                        $tipo_cambio = $factura->tipo_cambio;
+                        $monto_total = 0;
+                        if ($estimacion->movimientos) {
+                            $monto_total = $estimacion->movimientos->sum("monto_total");
+                        }
+                        if ($monto_total > 0) {
+                            if ($estimacion->movimientos) {
+                                foreach ($estimacion->movimientos as $movimiento) {
+                                    $movimiento->monto_pagado = round(($movimiento->monto_pagado + $movimiento->monto_total * $importe
+                                        * $tipo_cambio / $monto_total), 2);
+                                    $movimiento->save();
+                                }
+                            }
+                        }
 
                     }
                 }else if($partida_fact->numero == 2){
                     $importe = $data['partidas'][$index]['saldo'] * $fac_iva;
                     $o_com = OrdenCompra::where('id_transaccion', '=', $partida_fact->id_antecedente)->first();
                     $o_com->anticipo_saldo = $o_com->anticipo_saldo - $importe;
+                    $o_com->save();
                     $item_oc = ItemOrdenCompra::where('id_item', '=', $partida_fact->item_antecedente)->first();
                     $item_oc->amortizaAnticipo($data['partidas'][$index]['saldo']);
                 }else if($partida_fact->numero == 3){
