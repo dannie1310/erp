@@ -72,22 +72,25 @@ class ItemFactura extends Item
     }
 
     public function getDescripcionAntecedenteAttribute(){
-        switch ($this->antecedente->tipo_transaccion){
-            case 51:
-                return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
-                break;
-            case 52:
-                return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
-                break;
-            case 33:
-                return $this->material->descripcion;
-                break;
-            case 19:
-                return $this->material->descripcion;
-                break;
-            default:
-            dd($this->antecedente->tipo_transaccion, $this);
-                return '';
+        if($this->numero == 3){
+            return 'Renta de ' . $this->material->descripcion;
+        }else{
+            switch ($this->antecedente->tipo_transaccion){
+                case 51:
+                    return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
+                    break;
+                case 52:
+                    return 'ESTIMACIÓN ' . $this->antecedente->numero_folio_format;
+                    break;
+                case 33:
+                    return $this->material->descripcion;
+                    break;
+                case 19:
+                    return $this->material->descripcion;
+                    break;
+                default:
+                    return 'Item';
+            }
         }
     }
 

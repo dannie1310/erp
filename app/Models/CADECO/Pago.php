@@ -8,10 +8,12 @@
 
 namespace App\Models\CADECO;
 
+use Exception;
 use App\Facades\Context;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Inventario;
 use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\OrdenCompra;
 use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Finanzas\PagoEliminado;
@@ -415,9 +417,44 @@ class Pago extends Transaccion
                     if($tipo_ant == 51){
 
                     }
+                }else if($partida_fact->numero == 2){
+                    $importe = $data['partidas'][$index]['saldo'] * $fac_iva;
+                    $o_com = OrdenCompra::where('id_transaccion', '=', $partida_fact->id_antecedente)->first();
+                    $o_com->anticipo_saldo = $o_com->anticipo_saldo - $importe;
+                    $item_oc = ItemOrdenCompra::where('id_item', '=', $partida_fact->item_antecedente)->first();
+                    $item_oc->amortizaAnticipo($data['partidas'][$index]['saldo']);
+                }else if($partida_fact->numero == 3){
+                    $pago_renta = $data['partidas'][$index]['saldo'] * $factura->tipo_cambio;
+                    $inventario = $partida_fact->inventario;
+                    $inventarios = [];
+                    if($partida_fact->material->tipo_material == 4){
+                        $inventarios = Inventario::where('id_almacen', '=', $inventario->id_almacen)
+                                    ->where('id_material', '=', $inventario->id_material)
+                                    ->where('monto_total', '>', 'monto_pagado')->get();
+                    }else{
+                        $inventarios = Inventario::where('id_almacen', '=', $inventario->id_almacen)
+                            ->where('id_material', '=', $inventario->id_material)
+                            ->where('referencia', '=', $inventario->referencia)
+                            ->where('monto_total', '>', 'monto_pagado')->get();
+                    }
+                    foreach($inventarios as $inv){
+                        $pago = 0;
+                        if($inv->saldo > $pago_renta){
+                            $pago = $pago_renta;
+                        }else{
+                            $pago = $inv->saldo;
+                        }
+                        $pago_inv = Inventario::where('id_lote', '=', $inv->id_lote)->first();
+                        $pago_inv->monto_pagado = $pago_inv->monto_pagado + $pago;
+                        $pago_inv->save();
+                        $pago_inv->distribuirPagoInventarios();
+                        $pago_renta = $pago_renta - $pago;
+                    }
+                    if($pago_renta > 0.01){
+                        throw new Exception("Sobreaplicacion de pagos de rentas" . $inventario->id_almacen . '-' . $inventario->id_material);
+                    }
                 }
                 
-
             }
 
             if(abs($factura->saldo) < 0.01){
