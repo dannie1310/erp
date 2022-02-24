@@ -93,7 +93,6 @@ class OrdenPago extends Transaccion
             $items_factura = $this->factura->items;
             foreach($items_factura as $item_factura)
             {
-                dd('wtf');
                 $item_factura->actualizaControlObra($this);
             }
         } else {
