@@ -237,7 +237,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary pull-right" @click="cerrar()"><i class="fa fa-close"></i>Cerrar</button>
+                    <button type="button" class="btn btn-secondary pull-right" @click="regresar()"><i class="fa fa-angle-left"></i>Regresar</button>
                     <button type="button" class="btn btn-primary pull-right" @click="validate" :disabled="validaPartidas()"><i class="fa fa-save"></i>Aplicar</button>
                 </div>
                 
@@ -274,7 +274,27 @@ export default {
         this.find();
     },
     methods: {
-        cerrar(){
+        regresar(){
+            swal({
+                title: "Salir de Aplicación de Pagos Pendientes",
+                text: "¿Está seguro de que quiere salir del registro de pagos pendientes?",
+                icon: "info",
+                buttons: {
+                    cancel: {
+                        text: 'Cancelar',
+                        visible: true
+                    },
+                    confirm: {
+                        text: 'Si, Salir',
+                        closeModal: true,
+                    }
+                }
+            })
+            .then((value) => {
+                if (value) {
+                    this.$router.push({name: 'pago-manual'});
+                }
+            });
         },
         find(){
             this.cargando=true;
