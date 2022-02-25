@@ -27,8 +27,8 @@ class ItemFacturaTransformer extends TransformerAbstract
             'id' => $model->getKey(),
             'importe' => $model->importe,
             'importe_format' => $model->importe_format,
-            'saldo' => $model->saldo,
-            'saldo_base' => $model->saldo,
+            'saldo' => number_format($model->saldo, 2,'.', ''),
+            'saldo_base' => number_format($model->saldo, 2,'.', ''),
             'saldo_format' => $model->saldo_format,
             'descripcion_antecedente' => $model->descripcion_antecedente
         ];
