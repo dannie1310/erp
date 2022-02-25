@@ -491,6 +491,31 @@ class Pago extends Transaccion
                     if($pago_renta > 0.01){
                         throw new Exception("Sobreaplicacion de pagos de rentas" . $inventario->id_almacen . '-' . $inventario->id_material);
                     }
+                }else if($partida_fact->numero == 4){
+                    if ($partida_fact->antecedente->tipo_transaccion == 99) {
+                        $lista_raya = ListaRaya::where('id_transaccion', '=', $partida_fact->id_antecedente)->first();
+                        if($lista_raya->items) {
+                            foreach($lista_raya->items as $item)
+                            {
+                                $item->inventario->monto_pagado = $data['partidas'][$index]['saldo'];
+                                $item->inventario->save();
+                                $item->inventario->distribuirPagoInventarios();
+                            }
+                        }
+    
+                    } else {
+                        $prestacion = Prestacion::where('id_transaccion', '=', $this->id_antecedente)->first();
+                        $importe = $data['partidas'][$index]['saldo'];
+                        $factor = $importe / $prestacion->monto;
+                        if ($prestacion->items) {
+                            foreach ($prestacion->items as $item) {
+                                $pago = round(($item->inventario->monto_pagado + $item->importe * $factor), 2);
+                                $item->inventario->monto_pagado = $pago;
+                                $item->inventario->save();
+                                $item->inventario->distribuirPagoInventarios();
+                            }
+                        }
+                    }
                 }else if($partida_fact->numero == 7){
                     $importe = $data['partidas'][$index]['saldo'];
                     $tipo_cambio = $factura->tipo_cambio;

@@ -103,14 +103,14 @@
                                                     step="any"
                                                     v-on:keyup="getSubtotal()"
                                                     style="text-align: right"
-                                                    name="aplicar"
+                                                    :name="`aplicar[${i}]`"
                                                     data-vv-as="Aplicar"
                                                     v-validate="{required: true, min_value:0.01, max_value:fac.saldo_base, decimal:2}"
                                                     class="form-control"
                                                     id="aplicar"
                                                     v-model="fac.saldo"
-                                                    :class="{'is-invalid': errors.has('aplicar')}">
-                                                <div class="invalid-feedback" v-show="errors.has('aplicar')">{{ errors.first('aplicar') }}</div>
+                                                    :class="{'is-invalid': errors.has(`aplicar[${i}]`)}">
+                                                <div class="invalid-feedback" v-show="errors.has(`aplicar[${i}]`)">{{ errors.first(`aplicar[${i}]`) }}</div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -330,10 +330,10 @@ export default {
                     sbt = sbt + parseFloat(partida.saldo);
                 });
             }
-            this.subtotal = sbt
-            this.iva = sbt * 0.16;
-            this.total = this.subtotal + this.iva;
-            this.aplicado = this.total * this.facturas[this.index_factura]['tipo_cambio'];
+            this.subtotal = parseFloat(sbt).formatMoney(2,'.','');
+            this.iva = parseFloat(sbt * 0.16).formatMoney(2,'.','');
+            this.total = parseFloat(this.subtotal + this.iva).formatMoney(2,'.','');
+            this.aplicado = parseFloat(this.total * this.facturas[this.index_factura]['tipo_cambio']).formatMoney(2,'.','');
         },
         validate() {
             this.$validator.validate().then(result => {
