@@ -909,6 +909,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'createLayout',
+                                name: 'proyectado-layout-create',
+                                component: require('./components/contratos/proyectado/CreateLayout').default,
+                                props:true,
+                                meta: {
+                                    title: 'Registrar Contratos Proyectados Layout',
+                                    breadcrumb: {parent: 'proyectado', name: 'REGISTRAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_contrato_proyectado'
+                                }
+                            },
+                            {
                                 path: 'create',
                                 name: 'proyectado-create',
                                 component: require('./components/contratos/proyectado/Create').default,
@@ -4562,6 +4574,117 @@ export const routes = [
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'ENVIAR'},
                             middleware: [auth, permission],
                             permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'solicitud-autorizacion-avance',
+                component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-autorizacion-avance',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Index').default,
+                        meta: {
+                            title: 'Lista de Solicitud de Autorización de Avance',
+                            breadcrumb: {parent: 'proveedor', name: 'SOLICITUD DE AUTORIZACIÓN DE AVANCE DE ESTIMACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_autorizacion_avance_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'seleccionar-subcontrato',
+                        name: 'solicitud-autorizacion-avance-seleccionar-subcontrato',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/SeleccionarSubcontrato').default,
+                        meta: {
+                            title: 'Seleccionar Subcontrato',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'SELECCIONAR SUBCONTRATO'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/create',
+                        name: 'solicitud-autorizacion-avance-create',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Create').default,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        meta: {
+                            title: 'Registrar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base',
+                        name: 'solicitud-autorizacion-avance-show',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Show').default,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        meta: {
+                            title: 'Consultar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_autorizacion_avance_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/editar',
+                        name: 'solicitud-autorizacion-avance-edit',
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: ['editar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/editarLayout',
+                        name: 'solicitud-autorizacion-avance-edit-layout',
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                            solicitud: route.params.solicitud
+                        }),
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/EditLayout').default,
+                        meta: {
+                            title: 'Editar Solicitud Layout',
+                            breadcrumb: {parent: 'solicitud-autorizacion-avance', name: 'EDITAR LAYOUT'},
+                            middleware: [auth, permission],
+                            permission: 'editar_solicitud_autorizacion_avance_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/delete',
+                        name: 'solicitud-autorizacion-avance-delete',
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Delete').default,
+                        meta: {
+                            title: 'Eliminar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: ['eliminar_solicitud_autorizacion_avance_proveedor'],
                             general: true
                         }
                     },
