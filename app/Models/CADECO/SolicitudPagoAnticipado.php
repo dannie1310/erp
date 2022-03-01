@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Finanzas\SolicitudPagoAutorizacion;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,11 @@ class SolicitudPagoAnticipado extends Solicitud
     public function pago()
     {
         return $this->HasOne(PagoACuenta::class,'id_antecedente','id_transaccion');
+    }
+
+    public function solicitudPagoAutorizacion()
+    {
+        return $this->HasOne(SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion');
     }
 
     public function getDatosParaRelacionAttribute()
@@ -257,5 +263,16 @@ class SolicitudPagoAnticipado extends Solicitud
         $this->saldo = number_format(abs($this->pago->monto * (1/$this->pago->tipo_cambio)),2,".","");
         $this->save();
         DB::connection('cadeco')->commit();
+    }
+
+    public function solicitarAutorizacion()
+    {
+        $this->solicitudPagoAutorizacion()->update(["estatus"=>0]);
+        $this->solicitudPagoAutorizacion()->create([
+            "usuario_registro"=>auth()->id(),
+        ]);
+
+        return $this;
+
     }
 }

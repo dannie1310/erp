@@ -112,4 +112,9 @@ class SolicitudPagoAnticipadoService
         $id_obra = Context::getIdObra();
         return $this->repository->getIndicadorAplicadas($base_datos,$id_obra);
     }
+
+    public function solicitarAutorizacion(array $data, $id){
+        $solicitud = $this->repository->show($id)->solicitarAutorizacion();
+        return $solicitud;
+    }
 }
