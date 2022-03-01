@@ -36,10 +36,12 @@ class EstimacionObserver extends TransaccionObserver
 
     public function created(Estimacion $estimacion)
     {
-        if ($estimacion->retencion > 0) {
-            $fondo_garantia = $estimacion->fondoGarantiaSinContexto;
-            if (is_null($fondo_garantia)) {
-                $estimacion->generaFondoGarantia();
+        if ($estimacion->retencion > 0)
+        {
+            $fondo_garantia = $estimacion->subcontrato->fondo_garantia;
+            if(is_null($fondo_garantia))
+            {
+                $estimacion->subcontrato->generaFondoGarantia();
             }
         }
         $estimacion->creaSubcontratoEstimacion();

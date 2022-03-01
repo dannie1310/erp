@@ -231,13 +231,16 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <button class="btn btn-info float-right" type="submit" @click="validate"
-                            :disabled="errors.count() > 0">
-                        Guardar
-                    </button>
+                <div class="modal-footer">
+                    <div class="pull-right">
+                        <button type="button" class="btn btn-secondary" v-on:click="salir">
+                            <i class="fa fa-angle-left"></i>
+                            Regresar</button>
+                        <button type="button" @click="validate" :disabled="errors.count() > 0" class="btn btn-primary">
+                            <i class="fa fa-save"></i>
+                            Guardar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -379,6 +382,10 @@
                 fixed = fixed || 0;
                 fixed = Math.pow(10, fixed);
                 return Math.floor(num * fixed) / fixed;
+            },
+            salir()
+            {
+                this.$router.go(-1);
             },
 		},
         watch: {
