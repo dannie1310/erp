@@ -112,7 +112,6 @@ class FondoGarantia extends Model
 
     public function generaMovimientoRegistro()
     {
-        dd("Aqukjkdjfi");
         $this->movimientos()->create(
             [
                 'id_fondo_garantia' => $this->id_subcontrato,
