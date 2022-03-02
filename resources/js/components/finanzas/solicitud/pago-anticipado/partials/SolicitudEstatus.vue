@@ -1,5 +1,5 @@
 <template>
-    <small class="badge" :class="{'badge-danger': value==-2, 'badge-success': value==0, 'badge-warning': value==1, 'badge-info': value==2}">
+    <small class="badge" :class="{'badge-danger': value==-2, 'badge-success': value==2, 'badge-warning': value==0, 'badge-info': value==1}">
         {{getEstado(value)}}
     </small>
 </template>

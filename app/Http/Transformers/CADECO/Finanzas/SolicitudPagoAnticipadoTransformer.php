@@ -150,7 +150,7 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
     {
         if($relaciones = $model->solicitudPagoAutorizacion)
         {
-            return $this->item($relaciones, new SolicitudPagoAutoizacionTransformer);
+            return $this->item($relaciones, new SolicitudPagoAutorizacionTransformer);
         }
         return null;
     }

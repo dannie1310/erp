@@ -165,6 +165,9 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 import CFDSATObra from './modules/finanzas/cfd-sat';
 
+//FINANZAS GENERAL
+
+import solicitudPagoAplicada from './modules/finanzasGeneral/solicitud-pago-aplicada';
 import solicitudPago from './modules/finanzasGeneral/solicitud-pago';
 
 //PADRON PROVEEDORES
@@ -352,6 +355,7 @@ export default new Vuex.Store({
         'finanzas/cfdi-sat': CFDSATObra,
 
         'finanzas-general/solicitud-pago': solicitudPago,
+        'finanzas-general/solicitud-pago-aplicada': solicitudPagoAplicada,
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,

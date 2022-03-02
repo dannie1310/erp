@@ -1334,11 +1334,20 @@ $api->version('v1', function ($api) {
 
 
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas-general'], function ($api) {
-        $api->group(['prefix' => 'solicitud-pago'], function ($api) {
+        $api->group(['prefix' => 'solicitud-pago-aplicada'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@paginate');
             $api->get('indicador-aplicadas', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@getIndicadorAplicadas');
             $api->get('descarga-excel', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@descargarExcel');
         });
+
+        $api->group(['prefix' => 'solicitud-pago'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@paginate');
+            $api->get('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@index');
+            $api->patch('{id}/rechazar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@rechazar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@autorizar')->where(['id' => '[0-9]+']);
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@show')->where(['id' => '[0-9]+']);
+        });
+
     });
 
 

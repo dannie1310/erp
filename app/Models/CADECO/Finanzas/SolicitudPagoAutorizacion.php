@@ -8,7 +8,7 @@
 
 namespace App\Models\CADECO\Finanzas;
 
-use App\Scopes\EstatusActivoScope;
+use App\Scopes\EstatusMayorCeroScope;
 use Illuminate\Database\Eloquent\Model;
 
 class SolicitudPagoAutorizacion extends Model
@@ -30,6 +30,11 @@ class SolicitudPagoAutorizacion extends Model
     protected static function boot()
     {
         parent::boot();
-        static::addGlobalScope(new EstatusActivoScope);
+        static::addGlobalScope(new EstatusMayorCeroScope);
+    }
+
+    public function scopeRegistrada($query)
+    {
+        return $query->where("estatus","=",0);
     }
 }

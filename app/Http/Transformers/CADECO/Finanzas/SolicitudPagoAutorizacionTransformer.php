@@ -11,7 +11,7 @@ namespace App\Http\Transformers\CADECO\Finanzas;
 use App\Models\CADECO\Finanzas\SolicitudPagoAutorizacion;
 use League\Fractal\TransformerAbstract;
 
-class SolicitudPagoAutoizacionTransformer extends TransformerAbstract
+class SolicitudPagoAutorizacionTransformer extends TransformerAbstract
 {
 
     /**
