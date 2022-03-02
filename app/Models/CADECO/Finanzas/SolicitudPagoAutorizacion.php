@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO\Finanzas;
 
+use App\Models\IGH\Usuario;
 use App\Scopes\EstatusMayorCeroScope;
 use Illuminate\Database\Eloquent\Model;
 
@@ -37,4 +38,10 @@ class SolicitudPagoAutorizacion extends Model
     {
         return $query->where("estatus","=",0);
     }
+
+    public function usuarioRegistro(){
+        return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
+    }
+
+
 }
