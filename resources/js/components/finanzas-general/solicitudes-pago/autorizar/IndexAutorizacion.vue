@@ -31,9 +31,9 @@
                     { title: 'Proyecto', field: 'proyecto',sortable: false},
                     { title: 'Número Folio', field: 'numero_folio', tdClass:'center', thClass: 'th_c80', sortable: false},
                     { title: 'Fecha', tdClass:'center', field: 'fecha', thClass: 'th_c80', sortable: false},
-                    { title: 'Proveedor', tdClass:'center', field: 'razon_social', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'RFC', tdClass:'center', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Moneda', tdClass:'center', field: 'moneda', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Proveedor', field: 'razon_social', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'RFC', field: 'rfc', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Moneda', field: 'moneda', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Monto', field: 'monto',  tdClass: 'money', thClass: 'th_c100', sortable: true},
                     { title: 'Acciones', field: 'buttons',  thClass:'th_c100', tdClass:'center', tdComp: require('./partials/ActionButtons').default}
                 ],

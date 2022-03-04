@@ -20,6 +20,7 @@ class SolicitudPagoAutorizacion extends Model
         'base_datos',
         'proyecto',
         'id_transaccion',
+        'id_solicitud_autorizacion',
         'opciones',
         'numero_folio',
         'fecha',

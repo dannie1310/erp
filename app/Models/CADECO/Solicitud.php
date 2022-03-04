@@ -54,6 +54,12 @@ class Solicitud extends Transaccion
         return $this->HasOne(SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion');
     }
 
+    public function solicitudPagoAutorizacionActiva()
+    {
+        return $this->HasOne(SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
+            ->where("estatus","=",0);
+    }
+
     public function solicitudPagoAutorizacionGeneral()
     {
         return $this->HasOne(\App\Models\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
@@ -138,7 +144,7 @@ class Solicitud extends Transaccion
     {
         $this->solicitudPagoAutorizacionGeneral()->registrada()->update(["estatus"=>-1]);
         $this->solicitudPagoAutorizacion()->registrada()->update(["estatus"=>-1]);
-        $this->solicitudPagoAutorizacion()->create([
+        $solicitud_1814 = $this->solicitudPagoAutorizacion()->create([
             "usuario_registro"=>auth()->id(),
         ]);
 
@@ -156,7 +162,8 @@ class Solicitud extends Transaccion
             'rfc'=>$this->rfc,
             'observaciones'=>$this->observaciones,
             'monto'=>$this->monto,
-            'moneda'=>$this->moneda->abreviatura
+            'moneda'=>$this->moneda->abreviatura,
+            'id_solicitud_autorizacion' => $solicitud_1814->id
         ]);
 
         return $this;
