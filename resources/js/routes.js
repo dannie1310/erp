@@ -4118,6 +4118,48 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'solicitud-pago',
+                component: require('./components/finanzas-general/solicitudes-pago/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-pago',
+                        component: require('./components/finanzas-general/solicitudes-pago/Index').default,
+                        meta: {
+                            title: 'Solicitudes de Pago',
+                            breadcrumb: {parent: 'finanzas-general', name: 'SOLICITUDES DE PAGO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitudes_pago_global',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'transacciones',
+                        name: 'enlistar-solicitudes-pago',
+                        component: require('./components/finanzas-general/solicitudes-pago/autorizar/Index').default,
+                        meta: {
+                            title: 'Lista de Solicitudes de Pago a Autorizar',
+                            breadcrumb: {name: 'AUTORIZAR SOLICITUD', parent: 'solicitud-pago'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_solicitudes_pago_global'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-solicitudes-pago',
+                        component: require('./components/finanzas-general/solicitudes-pago/autorizar/IndexAutorizacion').default,
+                        meta: {
+                            title: 'Autorizar Solicitudes de Pago',
+                            breadcrumb: {name: 'AUTORIZAR SOLICITUDES', parent: 'solicitud-pago'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_rechazar_solicitud_pago'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {

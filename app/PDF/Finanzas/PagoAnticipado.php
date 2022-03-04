@@ -47,7 +47,7 @@ class PagoAnticipado extends Rotation
         $this->pagoAnticipado = SolicitudPagoAnticipado::with("subcontrato", "empresa", "usuario", "orden_compra")->find($id);
 
         /*Header*/
-        $this->folio = $this->pagoAnticipado->numero_folio;
+        $this->folio = $this->pagoAnticipado->numero_folio_format;
         $this->fechaCompleta = str_replace("/", "-", substr($this->pagoAnticipado->fecha_format, 0, 10));
         $this->hora = substr($this->pagoAnticipado->FechaHoraRegistro, 11, 18);
         $this->fecha_limite = substr($this->pagoAnticipado->vencimiento, 0, 10);
@@ -55,7 +55,7 @@ class PagoAnticipado extends Rotation
         $this->empresa_razon = $this->pagoAnticipado->empresa->razon_social;
         $this->observaciones = $this->pagoAnticipado->observaciones;
 
-        
+
 
         if (!empty($this->pagoAnticipado->subcontrato)){
 
@@ -126,7 +126,19 @@ class PagoAnticipado extends Rotation
         $this->empresa_direccion = $this->obra->direccion;
         $this->rfc = strtoupper($this->obra->rfc);
 
-
+        $this->SetMargins(1, 0.5, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->SetAutoPageBreak(true,3.75);
+        $this->fechas();
+        $this->EmpresaPagoAnticipado();
+        $this->antecedente();
+        $this->observaciones();
+        if($this->y > 18.05) {
+            $this->AddPage();
+            $this->Ln(.8);
+        }
+        $this->costos();
     }
     function Header()
     {
@@ -198,7 +210,7 @@ class PagoAnticipado extends Rotation
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
-        $this->Multicell(9.5, .5, utf8_decode($this->empresa_direccion) . ' 
+        $this->Multicell(9.5, .5, utf8_decode($this->empresa_direccion) . '
 RFC: ' . $this->rfc, '', 'J');
         $y_final = $this->getY();
         $alto = $y_final - $y_inicial;
@@ -222,7 +234,7 @@ RFC: ' . $this->rfc, '', 'J');
         $this->Ln(.5);
         $this->Cell(10);
         $this->SetFont('Arial', '', 10);
-        $this->Multicell(9.5, .5, utf8_decode($this->empresa_direccion . ' 
+        $this->Multicell(9.5, .5, utf8_decode($this->empresa_direccion . '
 RFC: ' . $this->rfc), '', 'J');
 
 
@@ -574,24 +586,6 @@ RFC: ' . $this->rfc), '', 'J');
     }
 
     function create() {
-        $this->SetMargins(1, 0.5, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->SetAutoPageBreak(true,3.75);
-        $this->fechas();
-        $this->EmpresaPagoAnticipado();
-        $this->antecedente();
-        $this->observaciones();
-        if($this->y > 18.05) {
-            $this->AddPage();
-            $this->Ln(.8);
-        }
-        $this->costos();
-
-
-
-
-
         try {
             $this->Output('I', 'Formato - Pago Anticipado.pdf', 1);
         } catch (\Exception $ex) {

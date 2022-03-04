@@ -42,6 +42,7 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
      * @var array
      */
     protected $defaultIncludes = [
+        'solicitud_pago_autorizacion'
 
     ];
 
@@ -141,6 +142,15 @@ class SolicitudPagoAnticipadoTransformer extends TransformerAbstract
         if($relaciones = $model->relaciones)
         {
             return $this->collection($relaciones, new RelacionTransformer);
+        }
+        return null;
+    }
+
+    public function includeSolicitudPagoAutorizacion(SolicitudPagoAnticipado $model)
+    {
+        if($relaciones = $model->solicitudPagoAutorizacion)
+        {
+            return $this->item($relaciones, new SolicitudPagoAutorizacionTransformer);
         }
         return null;
     }
