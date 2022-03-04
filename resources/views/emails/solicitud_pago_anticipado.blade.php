@@ -106,6 +106,10 @@
                     </div>
 
                     @endif
+                    @if($token)
+                        <br>
+                        <a href="http://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->solicitudPagoAutorizacion->id}}?access_token={{$token}}">[VER]</a>
+                    @endif
 
 
 

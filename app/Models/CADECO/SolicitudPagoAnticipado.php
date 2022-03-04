@@ -60,12 +60,20 @@ class SolicitudPagoAnticipado extends Solicitud
         return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente');
     }
 
+    public function ordenCompraSinGlobalScope(){
+        return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
+    }
+
     public function subcontrato(){
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
     }
 
     public function transaccionAntecedente(){
         return $this->hasOne(Transaccion::class,'id_transaccion', 'id_antecedente');
+    }
+
+    public function transaccionAntecedenteSinGlobalScope(){
+        return $this->hasOne(Transaccion::class,'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
     }
 
     public function subcontratoSinGlobalScope()
@@ -98,10 +106,10 @@ class SolicitudPagoAnticipado extends Solicitud
 
     public function getTransaccionAntecedenteTxtAttribute()
     {
-        if($this->orden_compra){
-            return "Orden de Compra " . $this->orden_compra->numero_folio_format;
-        }else if($this->subcontrato){
-            return "Subcontrato " . $this->subcontrato->numero_folio_format;
+        if($this->ordenCompraSinGlobalScope){
+            return "Orden de Compra " . $this->ordenCompraSinGlobalScope->numero_folio_format;
+        }else if($this->subcontratoSinGlobalScope){
+            return "Subcontrato " . $this->subcontratoSinGlobalScope->numero_folio_format;
         }else{
             return "Sin transacción antecedente";
         }
@@ -109,8 +117,8 @@ class SolicitudPagoAnticipado extends Solicitud
 
     public function getTransaccionAntecedenteObseravcionesAttribute()
     {
-        if($this->transaccionAntecedente){
-            return $this->transaccionAntecedente->observaciones;
+        if($this->transaccionAntecedenteSinGlobalScope){
+            return $this->transaccionAntecedenteSinGlobalScope->observaciones;
         }else{
             return "-";
         }

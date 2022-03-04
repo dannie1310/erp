@@ -3,6 +3,7 @@
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
 use App\Models\CADECO\Solicitud;
+use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\IGH\Usuario;
 use App\Scopes\EstatusMayorCeroScope;
 use Illuminate\Database\Eloquent\Model;
@@ -145,13 +146,29 @@ class SolicitudPagoAutorizacion extends Model
         }
 
     }
+
+    public function getSolicitudPagoAnticipadoAttribute()
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $this->base_datos);
+        $solicitud = SolicitudPagoAnticipado::withoutGlobalScopes()->where("id_transaccion","=",$this->id_transaccion)
+            ->first();
+        return $solicitud;
+    }
     /**
      * Métodos
      */
 
     public function autorizar(){
-        if($this->estatus != 0){
-            throw New \Exception('La solicitud no puede ser autorizada, porque no tiene el estatus "generada".');
+
+        if($this->estatus == 1){
+            throw New \Exception('La solicitud ya fue autorizada por '.$this->usuarioAutorizo->nombre_completo." [".$this->fecha_hora_autorizacion_format ."]");
+        }
+        else if($this->estatus == 2){
+            throw New \Exception('La solicitud ya fue rechazada por '.$this->usuarioRechazo->nombre_completo." [".$this->fecha_hora_rechazo_format ."]");
+        }
+        else if($this->estatus != 0){
+            throw New \Exception('La solicitud no puede ser autorizada, porque no tiene el estatus correcto.');
         }
         $this->estatus = 1;
         $this->fecha_hora_autorizacion = date('Y-m-d H:i:s');
@@ -170,8 +187,14 @@ class SolicitudPagoAutorizacion extends Model
     }
 
     public function rechazar($motivo){
-        if($this->estatus != 0){
-            throw New \Exception('La solicitud no puede ser rechazada, porque no tiene el estatus "generada".');
+        if($this->estatus == 1){
+            throw New \Exception('La solicitud ya fue autorizada por '.$this->usuarioAutorizo->nombre_completo." [".$this->fecha_hora_autorizacion_format ."]");
+        }
+        else if($this->estatus == 2){
+            throw New \Exception('La solicitud ya fue rechazada por '.$this->usuarioRechazo->nombre_completo." [".$this->fecha_hora_rechazo_format ."]");
+        }
+        else if($this->estatus != 0){
+            throw New \Exception('La solicitud no puede ser autorizada, porque no tiene el estatus correcto.');
         }
         $this->motivo = $motivo;
         $this->usuario_rechazo = auth()->id();

@@ -40,19 +40,13 @@ class SolicitudPagoAutorizacionController extends Controller
     public function __construct(SolicitudPagoAutorizacionService $service, Manager $fractal, SolicitudPagoAutorizacionTransformer $transformer)
     {
         $this->middleware('auth:api');
-        //$this->middleware('context');
-
-        /*$this->middleware('permiso:registrar_solicitud_pago_anticipado')->only('store');
-        $this->middleware('permiso:cancelar_solicitud_pago_anticipado')->only('cancelar');
-        $this->middleware('permiso:editar_solicitud_pago_anticipado')->only('update');
-        $this->middleware('permiso:consultar_solicitud_pago_anticipado')->only(['pdfPagoAnticipado','show','paginate','index','find']);
-*/
+        $this->middleware('permisoGlobal:autorizar_rechazar_solicitud_pago')->only(['autorizar','rechazar']);
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
     }
 
-    public function autorizar($id)
+    public function autorizar(Request $request,$id)
     {
         $this->service->show($id)->autorizar();
     }
@@ -60,5 +54,50 @@ class SolicitudPagoAutorizacionController extends Controller
     public function rechazar(Request $request, $id)
     {
         $this->service->show($id)->rechazar($request->motivo);
+    }
+
+    public function autorizarVista(Request $request,$id)
+    {
+        $solicitud = $this->service->show($id);
+        try{
+            $solicitud->autorizar();
+        }catch (\Exception $e)
+        {
+            return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
+                , "error" => $e->getMessage(),"token"=>null, "mensaje"=>null
+            ]);
+        }
+        return view('finanzas.solicitud_pago_anticipado', [
+            'solicitud' => $solicitud
+            , "token"=>null
+            , "error"=>null, "mensaje"=>"Solicitud Autorizada Correctamente"
+        ]);
+
+    }
+
+    public function rechazarVista(Request $request,$id)
+    {
+        $solicitud = $this->service->show($id);
+        try{
+            $this->service->show($id)->rechazar($request->motivo);
+        }catch (\Exception $e)
+        {
+            return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
+                , "error" => $e->getMessage(),"token"=>null, "mensaje"=>null
+            ]);
+        }
+        return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud,"token"=>null
+            , "error"=>null, "mensaje"=>"Solicitud Rechazada Correctamente"
+        ]);
+
+    }
+
+    public function showVista(Request $request,$id)
+    {
+        $solicitud = $this->service->show($id);
+        return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
+            , "token" => $request->get('access_token')
+            , "error" => null, "mensaje"=>null
+        ]);
     }
 }

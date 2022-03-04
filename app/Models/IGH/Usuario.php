@@ -182,6 +182,14 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
         return $query->whereIn("idusuario",$usuarios);
     }
 
+    public function scopeUsuarioPermisoGlobal($query, $permiso_txt){
+        $permiso = \App\Models\SEGURIDAD_ERP\Permiso::whereIn("name", $permiso_txt)->pluck("id")->toArray();
+        $roles = \App\Models\SEGURIDAD_ERP\PermisoRol::whereIn("permission_id",$permiso)->pluck("role_id")->toArray();
+        $usuarios = RoleUserGlobal::whereIn("role_id",$roles)->pluck("user_id")->toArray();
+        $usuarios = array_unique($usuarios);
+        return $query->whereIn("idusuario",$usuarios)->where("usuario_estado","=",2);
+    }
+
     public function scopeNotificacionCI($query){
         $usuarios = UsuarioNotificacion::all();
         $usuarios->transform(function($item, $key){
@@ -612,5 +620,10 @@ class Usuario extends Model implements JWTSubject, AuthenticatableContract,
                         @usuario = '$this->usuario',
                         @password = '$clave_nueva'
                         SELECT	'res' = @return_value"));
+    }
+
+    public function findForPassport($usuario)
+    {
+        return $this->where('usuario', $usuario)->first();
     }
 }

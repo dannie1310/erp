@@ -16,15 +16,17 @@ class NotificacionSolicitudAutorizacionPagoAnticipado extends Notification
 {
     use Queueable;
     public $solicitud;
+    public $token;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct(SolicitudPagoAnticipado $solicitud)
+    public function __construct(SolicitudPagoAnticipado $solicitud, $token = null)
     {
         $this->solicitud = $solicitud;
+        $this->token = $token;
     }
 
     /**
@@ -49,9 +51,8 @@ class NotificacionSolicitudAutorizacionPagoAnticipado extends Notification
         $pdf = new PagoAnticipado($this->solicitud->id_transaccion);
         return (new MailMessage)
             ->subject("Solicitud de Autorización de Pago Anticipado")
-            ->view('emails.solicitud_pago_anticipado',["solicitud"=>$this->solicitud])
+            ->view('emails.solicitud_pago_anticipado',["solicitud"=>$this->solicitud, "token"=>$this->token])
             ->attachData($pdf->Output("S","solicitud_pago_anticipado_".$this->solicitud->numero_folio.".pdf"), 'solicitud_pago_anticipado_'.$this->solicitud->numero_folio.'.pdf',['mime' => 'application/pdf']);
-            /*->attach($this->xml);*/
     }
 
     /**

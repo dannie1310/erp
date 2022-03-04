@@ -19,7 +19,6 @@ use App\PDF\Finanzas\PagoAnticipado;
 use App\Repositories\CADECO\Finanzas\SolicitudPagoAnticipadoRepository;
 use App\Repositories\Repository;
 use Illuminate\Support\Facades\DB;
-//use Twilio\Rest\Client;
 
 class SolicitudPagoAnticipadoService
 {
@@ -116,14 +115,6 @@ class SolicitudPagoAnticipadoService
     }
 
     public function solicitarAutorizacion(array $data, $id){
-        /*$recipient = "whatsapp:+5215546347020";
-        $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
-        $account_sid = config('app.env_variables.TWILIO_SID');
-        $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
-
-        $client = new Client($account_sid, $auth_token);
-        $client->messages->create($recipient, array('from' => "whatsapp:$twilio_whatsapp_number", 'body' => "Solicitud de autorizacion necesaria"));
-        */
         $solicitud = $this->repository->show($id);
         $solicitud->solicitarAutorizacion();
         event(new SolicitudAutorizacionPagoAnticipado($solicitud));
