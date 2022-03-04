@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Se le informa que {{$solicitud->solicitudPagoAutorizacion->usuarioRegistro->nombre_completo}} ha solicitado que se autorice el pago anticipado que se describe a continuación:
+        Estimado {{$nombre_usuario}} se le informa que {{$solicitud->solicitudPagoAutorizacion->usuarioRegistro->nombre_completo}} ha solicitado que se autorice el pago anticipado que se describe a continuación:
         <br>
         <br>
         <div class="card" >

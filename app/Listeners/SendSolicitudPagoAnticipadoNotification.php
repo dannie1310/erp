@@ -33,9 +33,9 @@ class SendSolicitudPagoAnticipadoNotification
         $usuarios_suscripcion = Usuario::suscripcion($suscripciones)->get();
         $permiso = ["autorizar_rechazar_solicitud_pago"];
 
-        $usuarios_interesados_permisos = usuario::usuarioPermisoGlobal(
+        $usuarios_interesados_permisos = Usuario::usuarioPermisoGlobal(
             $permiso
-            , $event->solicitud->id_proyecto_obra)->get();
+            )->get();
 
         $usuarios_notificacion = $usuarios_suscripcion->diff($usuarios_interesados_permisos);
 
@@ -50,7 +50,7 @@ class SendSolicitudPagoAnticipadoNotification
                 $token = $tokenobj->accessToken;
                 $token_id = $tokenobj->token->id;
 
-                Notification::send($event->solicitud->usuario, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud, $token));
+                Notification::send($usuario_interesado_permiso, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud, $token, $usuario_interesado_permiso->nombre_completo));
 
             //}
         }
