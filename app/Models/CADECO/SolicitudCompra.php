@@ -20,7 +20,7 @@ use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
-use App\PDF\CADECO\Compras\SolicitudCompraFormato;
+use App\PDF\Compras\SolicitudCompraFormato;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
