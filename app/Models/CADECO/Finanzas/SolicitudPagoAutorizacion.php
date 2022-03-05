@@ -8,9 +8,12 @@
 
 namespace App\Models\CADECO\Finanzas;
 
+use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\IGH\Usuario;
 use App\Scopes\EstatusMayorCeroScope;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 class SolicitudPagoAutorizacion extends Model
 {
@@ -43,5 +46,9 @@ class SolicitudPagoAutorizacion extends Model
         return $this->belongsTo(Usuario::class, 'usuario_registro', 'idusuario');
     }
 
+    public function solicitudPagoAnticipado()
+    {
+        return $this->belongsTo(SolicitudPagoAnticipado::class, "id_transaccion", "id_transaccion");
+    }
 
 }
