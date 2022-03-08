@@ -7,7 +7,7 @@
  */
 
 
-namespace App\PDF\CADECO\Compras;
+namespace App\PDF\Compras;
 
 
 use App\Facades\Context;

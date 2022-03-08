@@ -298,8 +298,10 @@ class AvanceObra extends Transaccion
     private function revertirCambioAnteriorEstatus()
     {
         $avance = self::where('estado', 2)->where('id_transaccion', '<', $this->id_transaccion)->orderBy('id_transaccion', 'desc')->first();
-        $avance->estado = 1;
-        $avance->save();
+        if($avance) {
+            $avance->estado = 1;
+            $avance->save();
+        }
     }
 
     private function revertirEdicionCantidadConceptos()

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
-use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Notifications\Messages\MailMessage;
