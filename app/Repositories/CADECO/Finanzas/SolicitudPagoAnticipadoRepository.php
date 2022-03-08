@@ -30,4 +30,8 @@ class SolicitudPagoAnticipadoRepository extends Repository implements Repository
         return $informe;
     }
 
+    public function solicitarAutorizacion($id){
+        return $this->model->solicitarAutorizacion($id);
+    }
+
 }

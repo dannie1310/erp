@@ -4,6 +4,8 @@
 namespace App\Services\CADECO\Finanzas;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
 use App\Repositories\Repository;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 
 class ConfiguracionEstimacionService
@@ -29,5 +31,12 @@ class ConfiguracionEstimacionService
     public function index()
     {
         return  $this->repository->all();
+    }
+
+    public function indexProveedor($data)
+    {
+        DB::purge('cadeco');
+        Config::set('database.connections.cadeco.database', $data['base']);
+        return ConfiguracionEstimacion::where("id_obra", $data['obra'])->first()->toArray();
     }
 }

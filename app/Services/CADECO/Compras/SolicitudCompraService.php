@@ -13,7 +13,6 @@ use App\CSV\Compras\AsignacionProveedorLayout;
 use App\Models\CADECO\CotizacionCompra;
 use App\Models\CADECO\CotizacionCompraPartida;
 use App\Models\CADECO\ItemSolicitudCompra;
-use App\PDF\CADECO\Compras\SolicitudCompraFormato;
 use App\PDF\Compras\CotizacionTablaComparativaFormato;
 use App\Repositories\CADECO\Compras\Solicitud\Repository;
 
@@ -277,7 +276,7 @@ class SolicitudCompraService
             return "Error de lectura";
         }
     }
-    
+
     public function getLayoutAsignacion($id){
         $cotizaciones = $this->getCotizaciones($id);
         $file_name = $this->show($id)->numero_folio_format.'.xlsx';

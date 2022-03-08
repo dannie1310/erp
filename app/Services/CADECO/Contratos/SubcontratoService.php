@@ -156,4 +156,19 @@ class SubcontratoService
     {
         return $this->repository->show($id)->pdf();
     }
+
+    public function indexSinContexto($data)
+    {
+        return $this->repository->indexSinContexto();
+    }
+
+    public function showSinContexto($id, $data)
+    {
+        return $this->repository->findSinContexto($id,$data['base']);
+    }
+
+    public function paraEstimarProveedor($id, $data)
+    {
+        return $this->repository->paraEstimarProveedor($id,$data['base'], null);
+    }
 }

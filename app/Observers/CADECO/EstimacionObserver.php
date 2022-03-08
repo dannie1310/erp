@@ -24,14 +24,14 @@ class EstimacionObserver extends TransaccionObserver
     {
         parent::creating($estimacion);
         $subcontrato = Subcontrato::find($estimacion->id_antecedente);
-        $estimacion->tipo_transaccion = 52;
         $estimacion->id_empresa = $subcontrato->id_empresa;
         $estimacion->id_moneda = $subcontrato->id_moneda;
-        $estimacion->saldo = $estimacion->monto;
         $estimacion->retencion = $subcontrato->retencion;
         $estimacion->anticipo = $subcontrato->anticipo;
-        $estimacion->fecha = $estimacion->fecha;
         $estimacion->numero_folio = $estimacion->calcularFolio();
+        $estimacion->tipo_transaccion = 52;
+        $estimacion->saldo = $estimacion->monto;
+        $estimacion->fecha = $estimacion->fecha;
     }
 
     public function created(Estimacion $estimacion)

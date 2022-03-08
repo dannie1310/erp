@@ -79,4 +79,10 @@ class SolicitudPagoAnticipadoController extends Controller
     {
         return $this->service->getIndicadorAplicadas();
     }
+
+    public function solicitarAutorizacion(Request $request, $id)
+    {
+        $item = $this->service->solicitarAutorizacion($request->all(), $id);
+        return $this->respondWithItem($item);
+    }
 }

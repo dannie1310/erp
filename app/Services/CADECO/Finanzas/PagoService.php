@@ -316,10 +316,12 @@ class PagoService
         if($solicitud->tipo_transaccion == 65) {
             if($solicitud->items->count() > 0) {
                 $item = $solicitud->items[0];
-                return [
-                    'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
-                    'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion
-                ];
+                if ($item->transaccionAntecedente) {
+                    return [
+                        'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
+                        'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion
+                    ];
+                }
             }
         }
         return '';
