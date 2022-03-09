@@ -59,6 +59,12 @@
                     <div class="card-header">
                         <h6>
                             <i class="fa fa-file-powerpoint"></i>Solicitud de Pago Anticipado {{$solicitud->solicitud_pago_anticipado->numero_folio_format}}
+                            <form id="frm_pendientes" action="/api/solicitud-pago-anticipado" method="GET" style="display: inline;" class="pull-right">
+                                @csrf
+                                <input type="hidden" name="access_token" value ="{{$token}}">
+                                <input type="hidden" name="scope" value ="autorizacionPendiente">
+                                <button type="button" class="btn btn-secondary"  v-on:click="ir_pendientes">Ver Pendientes</button>
+                            </form>
                         </h6>
                     </div>
                     <div class="card-body">
@@ -221,20 +227,14 @@
                     @if($token)
                     <div class="card-footer">
                         <div class="pull-right">
-                            <form id="frm_autorizar" action="/api/solicitud-pago-anticipado/{{$solicitud->id}}/autorizar" method="GET" style="display: inline;"
-
-                            >
+                            <form id="frm_autorizar" action="/api/solicitud-pago-anticipado/{{$solicitud->id}}/autorizar" method="GET" style="display: inline;"  >
                                 @csrf
-
                                 <input type="hidden" name="access_token" value ="{{$token}}">
-
                                 <button type="button" class="btn btn-danger" v-on:click="autorizar"><i class="fa fa-thumbs-o-up"></i>Autorizar</button>
                             </form>
                             <form id="frm_rechazar" action="/api/solicitud-pago-anticipado/{{$solicitud->id}}/rechazar" method="GET" style="display: inline;">
                                 @csrf
-
                                 <input type="hidden" name="access_token" value ="{{$token}}">
-
                                 <button type="button" class="btn btn-warning"  v-on:click="cancelar"><i class="fa fa-thumbs-o-down"></i>Rechazar</button>
                             </form>
                         </div>
@@ -256,6 +256,11 @@
             id : '',
         },
         methods:{
+            ir_pendientes:function(event){
+                event.preventDefault();
+                $("#frm_pendientes").submit();
+            }
+            ,
             autorizar:function(event){
                 event.preventDefault();
                 return new Promise((resolve, reject) => {
