@@ -101,6 +101,12 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>
+                        Regresar
+                    </button>
+                </div>
             </div>
         </div>
     </span>
@@ -114,6 +120,9 @@
             this.find();
         },
         methods: {
+            salir(){
+                this.$router.push({name: 'pago'});
+            },
             find() {
                 this.$store.commit('finanzas/pago/SET_PAGO', null);
                 return this.$store.dispatch('finanzas/pago/find', {

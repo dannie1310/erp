@@ -226,6 +226,25 @@ class PagoService
                 $concepto = 'Pago de Nóminas';
             }
         }
+        if($solicitud->costo){
+            $costo_descripcion = $solicitud->costo->descripcion;
+        }
+        elseif($costo != '') {
+            $costo_descripcion = $costo['descripcion'];
+        }else{
+            $costo_descripcion = null;
+        }
+
+        if($solicitud->costo)
+        {
+            $id_costo =  $solicitud->id_costo;
+        }elseif ($costo != '')
+        {
+            $id_costo = $costo['id_costo'];
+        }else{
+            $id_costo = null;
+        }
+
         return [
             'id' => $solicitud->getKey(),
             'tipo_transaccion' => $solicitud->tipo_transaccion,
@@ -249,9 +268,9 @@ class PagoService
             'saldo_format' => $solicitud->saldo_format,
             'autorizado' => $solicitud->autorizado,
             'autorizado_format' => number_format(($solicitud->autorizado),2),
-            'costo' => $solicitud->costo ? $solicitud->costo->descripcion : $costo != '' ? $costo['descripcion'] : null,
+            'costo' => $costo_descripcion,
             'concepto' => $concepto,
-            'id_costo' => $solicitud->costo ? $solicitud->id_costo : $costo != '' ? $costo['id_costo'] : null,
+            'id_costo' => $id_costo,
             'observaciones' => $solicitud->observaciones,
             'remesa' => $remesa->remesa_relacionada,
             'suma_historico_remesa' => $suma_historico_remesa,
