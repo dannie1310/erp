@@ -49,4 +49,9 @@ class SolicitudPagoAutorizacionService
     {
         return $this->repository->show($id);
     }
+
+    public function index()
+    {
+        return $this->repository->all();
+    }
 }

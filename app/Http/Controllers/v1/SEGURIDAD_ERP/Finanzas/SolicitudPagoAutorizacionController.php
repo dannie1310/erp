@@ -100,4 +100,12 @@ class SolicitudPagoAutorizacionController extends Controller
             , "error" => null, "mensaje"=>null
         ]);
     }
+
+    public function indexVista(Request $request)
+    {
+        $solicitudes = $this->service->index();
+        return view('finanzas.solicitudes_pago_anticipado', ['solicitudes' => $solicitudes
+            , "token" => $request->get('access_token')
+        ]);
+    }
 }

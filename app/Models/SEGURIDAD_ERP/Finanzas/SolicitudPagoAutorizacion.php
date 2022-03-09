@@ -2,6 +2,8 @@
 
 namespace App\Models\SEGURIDAD_ERP\Finanzas;
 
+use App\Events\AutorizacionPagoAnticipado;
+use App\Events\RechazoPagoAnticipado;
 use App\Models\CADECO\Solicitud;
 use App\Models\CADECO\SolicitudPagoAnticipado;
 use App\Models\IGH\Usuario;
@@ -184,6 +186,7 @@ class SolicitudPagoAutorizacion extends Model
         $solicitud->usuario_autorizo = auth()->id();
         $solicitud->estatus = 1;
         $solicitud->save();
+        event(new AutorizacionPagoAnticipado($this, $this->solicitud_pago_anticipado));
         return $this;
     }
 
@@ -212,7 +215,7 @@ class SolicitudPagoAutorizacion extends Model
         $solicitud->usuario_rechazo = auth()->id();
         $solicitud->fecha_hora_rechazo = date('Y-m-d H:i:s');
         $solicitud->save();
-
+        event(new RechazoPagoAnticipado($this, $this->solicitud_pago_anticipado));
         return $this;
     }
 }

@@ -57,7 +57,7 @@ class Solicitud extends Transaccion
     public function solicitudPagoAutorizacionActiva()
     {
         return $this->HasOne(SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
-            ->where("estatus","=",0);
+            ->whereIn("estatus",[0,1]);
     }
 
     public function solicitudPagoAutorizacionGeneral()

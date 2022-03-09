@@ -95,6 +95,14 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendSolicitudPagoAnticipadoNotificationSMS',
         ],
 
+        'App\Events\AutorizacionPagoAnticipado' => [
+            'App\Listeners\SendAutorizacionPagoAnticipadoNotification',
+        ],
+
+        'App\Events\RechazoPagoAnticipado' => [
+            'App\Listeners\SendRechazoPagoAnticipadoNotification',
+        ],
+
 
             Registered::class => [
             SendEmailVerificationNotification::class,
