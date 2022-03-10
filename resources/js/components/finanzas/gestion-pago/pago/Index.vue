@@ -7,11 +7,11 @@
                 Bitácora
                 (SANTANDER)
             </button>
-            <button  @click="create_pago" title="Crear" class="btn btn-app btn-info float-right"   v-if="$root.can('registrar_pago')">
+            <router-link  :to="{ name: 'registro-pago'}" v-if="$root.can('registrar_pago')" type="button" class="btn btn-app btn-info float-right" title="Registrar Pagos">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-money" v-else></i>
-                Registrar Pago
-            </button>
+                Registrar
+            </router-link>
             <router-link  :to="{ name: 'carga-masiva'}" v-if="$root.can('consultar_carga_layout_pago')" type="button" class="btn btn-app btn-info float-right" title="Carga masiva">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-file-upload" v-else></i>
@@ -110,7 +110,7 @@
                             fecha: pago.fecha_format,
                             destino: pago.destino,
                             numero_cuenta: pago.cuenta.numero,
-                            observaciones: pago.observaciones.toLocaleUpperCase(),
+                            observaciones: pago.observaciones,
                             monto: pago.monto_format,
                             estado: pago.estado_string,
                             id_moneda:pago.moneda.nombre,

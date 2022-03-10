@@ -114,6 +114,8 @@ class Solicitud extends Transaccion
             $pago = SolicitudPagoAnticipado::find($this->id_transaccion)->generaPago($data);
         }elseif($this->opciones == 131073){
             $pago = SolicitudAnticipoDestajo::find($this->id_transaccion)->generaPago($data);
+        }elseif ($this->opciones == 65537){
+            $pago = SolicitudListaRaya::find($this->id_transaccion)->generaPago($data);
         }
         return $pago;
     }
