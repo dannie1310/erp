@@ -37,6 +37,7 @@ class Kernel extends HttpKernel
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
         ],
 
         'api' => [
@@ -70,6 +71,8 @@ class Kernel extends HttpKernel
         'addAccessToken' => \App\Http\Middleware\AddHeaderAccessToken::class,
         'googleAuth' => \App\Http\Middleware\TwoFactorAuth::class,
         'lectura' => \App\Http\Middleware\Lectura::class,
+        'scopes' => \Laravel\Passport\Http\Middleware\CheckScopes::class,
+        'scope' => \Laravel\Passport\Http\Middleware\CheckForAnyScope::class,
     ];
 
     /**

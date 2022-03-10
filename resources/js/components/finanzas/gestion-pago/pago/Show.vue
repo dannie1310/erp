@@ -66,7 +66,7 @@
                                     <td class="bg-gray-light"><b>Fecha:</b></td>
                                     <td class="bg-gray-light">{{pago.antecedente.fecha.substr(0, 10)}}</td>
                                     <td class="bg-gray-light"><b>Tipo:</b></td>
-                                    <td class="bg-gray-light">{{pago.antecedente.tipo.descripcion}}</td>
+                                    <td class="bg-gray-light">{{pago.tipo_antecedente}}</td>
                                     <td class="bg-gray-light"><b>Importe:</b></td>
                                     <td class="bg-gray-light">{{ '$ '+parseFloat(pago.antecedente.monto).formatMoney(2)}}</td>
                                 </tr>
@@ -101,6 +101,12 @@
                         </div>
                     </div>
                 </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>
+                        Regresar
+                    </button>
+                </div>
             </div>
         </div>
     </span>
@@ -114,6 +120,9 @@
             this.find();
         },
         methods: {
+            salir(){
+                this.$router.push({name: 'pago'});
+            },
             find() {
                 this.$store.commit('finanzas/pago/SET_PAGO', null);
                 return this.$store.dispatch('finanzas/pago/find', {

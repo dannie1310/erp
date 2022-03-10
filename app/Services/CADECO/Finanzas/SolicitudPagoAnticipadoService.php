@@ -9,6 +9,7 @@
 namespace App\Services\CADECO\Finanzas;
 
 
+use App\Events\SolicitudAutorizacionPagoAnticipado;
 use App\Facades\Context;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Obra;
@@ -111,5 +112,12 @@ class SolicitudPagoAnticipadoService
         $base_datos = Context::getDatabase() ;
         $id_obra = Context::getIdObra();
         return $this->repository->getIndicadorAplicadas($base_datos,$id_obra);
+    }
+
+    public function solicitarAutorizacion(array $data, $id){
+        $solicitud = $this->repository->show($id);
+        $solicitud->solicitarAutorizacion();
+        event(new SolicitudAutorizacionPagoAnticipado($solicitud));
+        return $solicitud;
     }
 }

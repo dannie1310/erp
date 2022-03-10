@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Finanzas\SolicitudPagoAutorizacion;
 use App\Models\CADECO\OrdenCompra;
 use App\Models\CADECO\Finanzas\TransaccionRubro;
 use Illuminate\Support\Facades\DB;
@@ -59,8 +60,20 @@ class SolicitudPagoAnticipado extends Solicitud
         return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente');
     }
 
+    public function ordenCompraSinGlobalScope(){
+        return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
+    }
+
     public function subcontrato(){
         return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente');
+    }
+
+    public function transaccionAntecedente(){
+        return $this->hasOne(Transaccion::class,'id_transaccion', 'id_antecedente');
+    }
+
+    public function transaccionAntecedenteSinGlobalScope(){
+        return $this->hasOne(Transaccion::class,'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
     }
 
     public function subcontratoSinGlobalScope()
@@ -89,6 +102,26 @@ class SolicitudPagoAnticipado extends Solicitud
         $datos["consulta"] = 0;
 
         return $datos;
+    }
+
+    public function getTransaccionAntecedenteTxtAttribute()
+    {
+        if($this->ordenCompraSinGlobalScope){
+            return "Orden de Compra " . $this->ordenCompraSinGlobalScope->numero_folio_format;
+        }else if($this->subcontratoSinGlobalScope){
+            return "Subcontrato " . $this->subcontratoSinGlobalScope->numero_folio_format;
+        }else{
+            return "Sin transacción antecedente";
+        }
+    }
+
+    public function getTransaccionAntecedenteObseravcionesAttribute()
+    {
+        if($this->transaccionAntecedenteSinGlobalScope){
+            return $this->transaccionAntecedenteSinGlobalScope->observaciones;
+        }else{
+            return "-";
+        }
     }
 
     public function getRelacionesAttribute()

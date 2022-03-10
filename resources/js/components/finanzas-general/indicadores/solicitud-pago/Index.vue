@@ -64,10 +64,10 @@
             paginate() {
                 this.cargando = true;
 
-                return this.$store.dispatch('finanzas-general/solicitud-pago/paginate', { params: this.query})
+                return this.$store.dispatch('finanzas-general/solicitud-pago-aplicada/paginate', { params: this.query})
                     .then(data => {
-                        this.$store.commit('finanzas-general/solicitud-pago/SET_SOLICITUDES', data.data);
-                        this.$store.commit('finanzas-general/solicitud-pago/SET_META', data.meta);
+                        this.$store.commit('finanzas-general/solicitud-pago-aplicada/SET_SOLICITUDES', data.data);
+                        this.$store.commit('finanzas-general/solicitud-pago-aplicada/SET_META', data.meta);
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -76,10 +76,10 @@
         },
         computed: {
             solicitudes(){
-                return this.$store.getters['finanzas-general/solicitud-pago/solicitudes'];
+                return this.$store.getters['finanzas-general/solicitud-pago-aplicada/solicitudes'];
             },
             meta(){
-                return this.$store.getters['finanzas-general/solicitud-pago/meta'];
+                return this.$store.getters['finanzas-general/solicitud-pago-aplicada/meta'];
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}

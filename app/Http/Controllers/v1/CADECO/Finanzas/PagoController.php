@@ -51,10 +51,21 @@ class PagoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:consultar_pagos')->only(['paginate', 'show']);
         $this->middleware('permiso:eliminar_pagos')->only(['destroy']);
+        $this->middleware('permiso:registrar_pago')->only(['documentosParaPagar', 'documentoParaPagar','store']);
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function documentosParaPagar()
+    {
+        return $this->service->documentosParaPagar();
+    }
+
+    public function documentoParaPagar($id)
+    {
+        return $this->service->documentoParaPagar($id);
     }
 
     public function aplicarPago(Request $request){

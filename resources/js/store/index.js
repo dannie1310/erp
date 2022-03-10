@@ -165,6 +165,9 @@ import traspaso from './modules/finanzas/traspaso-entre-cuentas';
 import rubro from './modules/finanzas/rubro';
 import CFDSATObra from './modules/finanzas/cfd-sat';
 
+//FINANZAS GENERAL
+
+import solicitudPagoAplicada from './modules/finanzasGeneral/solicitud-pago-aplicada';
 import solicitudPago from './modules/finanzasGeneral/solicitud-pago';
 
 //PADRON PROVEEDORES
@@ -177,6 +180,9 @@ import especialidad from './modules/padronProveedores/especialidad';
 import giro from './modules/padronProveedores/giro';
 import invitacion  from "./modules/padronProveedores/invitacion";
 import empresaBoletinada from './modules/padronProveedores/empresa-boletinada';
+
+//PORTAL PROVEEDOR
+import solicitudAutorizacionAvance from './modules/portalProveedor/solicitud-autorizacion-avance';
 
 //SEGURIDAD
 import configuracionObra from './modules/seguridad/configuracion-obra';
@@ -349,6 +355,7 @@ export default new Vuex.Store({
         'finanzas/cfdi-sat': CFDSATObra,
 
         'finanzas-general/solicitud-pago': solicitudPago,
+        'finanzas-general/solicitud-pago-aplicada': solicitudPagoAplicada,
 
         'contabilidad/cierre-periodo': cierrePeriodo,
         'contabilidad/cuenta-almacen': cuentaAlmacen,
@@ -434,6 +441,8 @@ export default new Vuex.Store({
         'padronProveedores/giro' : giro,
         'padronProveedores/invitacion' : invitacion,
         'padronProveedores/empresa-boletinada' : empresaBoletinada,
+
+        'portalProveedor/solicitud-autorizacion-avance' : solicitudAutorizacionAvance,
 
         'recepcion-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDIProyecto,
 

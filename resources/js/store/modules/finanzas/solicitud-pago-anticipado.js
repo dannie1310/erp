@@ -104,6 +104,46 @@ export default {
                     });
             });
         },
+        solicitarAutorizacionParaRemesa(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Solicitar Autorización",
+                    text: "¿Está seguro de que desea pedir la autorización de esta solicitud para incluirla en remesa?",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Solicitar',
+                            closeModal: false,
+                        }
+                    },
+                    dangerMode: true,
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id +'/solicitar-autorizacion',{id:payload.id}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Solicitud generada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_SOLICITUD', data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
         store(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

@@ -393,7 +393,6 @@ class Factura extends Transaccion
             $cuenta_cargo = Cuenta::find($data["id_cuenta_cargo"]);
             $saldo_esperado = $this->saldo - ($data["monto_pagado_transaccion"]);
             $saldo_esperado_cuenta = $cuenta_cargo->saldo_real - ($data["monto_pagado"]);
-
             $datos = [
                 'id_antecedente' => $this->id_antecedente,
                 'id_referente' => $this->id_transaccion,
@@ -587,6 +586,10 @@ class Factura extends Transaccion
     {
         $this->estado = 2;
         $this->save();
+        $this->refresh();
+        $this->contra_recibo->estado = 2;
+        $this->contra_recibo->saldo = $this->saldo;
+        $this->contra_recibo->save();
     }
 
     public function getFactorIvaAttribute()

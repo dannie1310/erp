@@ -46,7 +46,8 @@ class CuentaTransformer extends TransformerAbstract
             'fecha' => $model->fecha_format,
             'chequera' => (int)$model->chequera,
             'tipo_cuentas_obra' => $model->id_tipo_cuentas_obra,
-            'abreviatura' => $model->abreviatura
+            'abreviatura' => $model->abreviatura,
+            'saldo_format_cadeco' => $model->saldo_format_cadeco
         ];
     }
 
