@@ -1410,7 +1410,7 @@ class Estimacion extends Transaccion
         $imp_items = array_sum(array_column($partidas, 'importe'));
         $imp_anticipo_esta_estimacion = $imp_items * $anticipo_subc / 100;
         if($importe_anticipo >= $imp_anticipo_esta_estimacion){
-            return $this->subcontrato->anticipo;
+            return $subcontrato->anticipo;
         }else{
             return $importe_anticipo * 100 / $imp_items;
         }
