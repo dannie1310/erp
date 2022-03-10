@@ -219,6 +219,7 @@ class Estimacion extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
+            $data['anticipo'] = $this->calculaAnticipo($data['id_antecedente'], $data['conceptos']);
             $estimacion = $this->create($data);
             $estimacion->estimaConceptos($data['conceptos']);
             $estimacion->recalculaDatosGenerales();
@@ -1384,5 +1385,34 @@ class Estimacion extends Transaccion
         $subcontrato = Subcontrato::where('id_transaccion', $id)->first();
         $folio = str_pad($subcontrato->numero_folio, 5, 0, 0);
         return Excel::download(new EstimacionLayout($subcontrato), '#'.$folio.'.xlsx');
+    }
+
+    public function calculaAnticipo($id_antecedente, $partidas){
+        $subcontrato = Subcontrato::find($id_antecedente);
+        $anticipo_subc = $subcontrato->anticipo;
+        if($anticipo_subc == 0){
+            return 0;
+        }
+        
+        $importe_anticipo = $subcontrato->anticipo_monto;
+        $estimaciones = $subcontrato->estimaciones;
+        foreach($estimaciones as $estimacion){
+            if($estimacion->anticipo == 0){
+                continue;
+            }
+            $imp_estimacion = $estimacion->sumaImportes;
+            $anticipo_estimacion_monto = $imp_estimacion * $estimacion->anticipo / 100;
+            $importe_anticipo = $importe_anticipo - $anticipo_estimacion_monto;
+        }
+        if($importe_anticipo == 0){
+            return 0;
+        }
+        $imp_items = array_sum(array_column($partidas, 'importe'));
+        $imp_anticipo_esta_estimacion = $imp_items * $anticipo_subc / 100;
+        if($importe_anticipo >= $imp_anticipo_esta_estimacion){
+            return $this->subcontrato->anticipo;
+        }else{
+            return $importe_anticipo * 100 / $imp_items;
+        }
     }
 }
