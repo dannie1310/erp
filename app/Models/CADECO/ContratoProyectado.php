@@ -423,7 +423,7 @@ class ContratoProyectado extends Transaccion
                 'vencimiento' => $data['vencimiento'],
                 'referencia' => strtoupper($data['referencia'])
             ]);
-
+            dd($data);
             if($this->puede_editar_partidas)
             {
                 $partidas_viejas = [];
@@ -498,7 +498,8 @@ class ContratoProyectado extends Transaccion
                         $this->conceptos()->create($datos);
                     }
                 }
-            }else{
+            }
+            else{
                 foreach ($data['contratos']['data'] as $key => $contrato)
                 {
                     if($contrato['es_hoja'] && array_key_exists('id_destino',$contrato))
