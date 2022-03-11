@@ -826,7 +826,25 @@ class ContratoProyectado extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
-            dd($data);
+
+            foreach ($this->subcontratos as $subcontrato)
+            {
+                foreach ($subcontrato->estimaciones as $estimacion)
+                {
+                    foreach ($estimacion->partidas as $partida)
+                    {
+                        foreach ($data['contratos']['data'] as $contrato)
+                        {
+                           // $contrato['es_hoja'] && array_key_exists('id_destino', $contrato)
+                            if($contrato['id_concepto'] == $partida->item_antecedente)
+                            {
+                                dd($contrato, $partida);
+                            }
+                        }
+                    }
+                }
+                dd($subcontrato);
+            }
 
             $this->editarDestinos($data['contratos']['data']);
 
