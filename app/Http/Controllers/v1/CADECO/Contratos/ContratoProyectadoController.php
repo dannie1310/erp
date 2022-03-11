@@ -116,4 +116,9 @@ class ContratoProyectadoController extends Controller
     public function procesaLayoutAsigancion(Request $request){
         return $this->service->procesaLayoutAsigancion($request->all());
     }
+
+    public function reclasificacion(Request $request, $id)
+    {
+        return $this->respondWithItem($this->service->reclasificacion($request->all(), $id));
+    }
 }
