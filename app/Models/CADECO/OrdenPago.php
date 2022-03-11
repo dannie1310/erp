@@ -49,6 +49,10 @@ class OrdenPago extends Transaccion
         return $this->belongsTo(PagoFactura::class, 'numero_folio', 'numero_folio');
     }
 
+    public function partidas(){
+        return $this->hasMany(ItemOrdenPago::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public static function calcularFolio()
     {
         $pago = Pago::orderBy('numero_folio', 'DESC')->first();

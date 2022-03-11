@@ -111,4 +111,8 @@ class FacturaController extends Controller
     {
         return $this->service->leerQR($request->all()['data']);
     }
+
+    public function aplicacionManual($id_empresa){
+        return $this->respondWithCollection($this->service->aplicacionManualFacturas($id_empresa));
+    }
 }

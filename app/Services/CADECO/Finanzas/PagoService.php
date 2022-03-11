@@ -345,4 +345,8 @@ class PagoService
         }
         return '';
     }
+
+    public function aplicarPago($data){
+        $this->repository->show($data['id'])->aplicarPago($data);
+    }
 }
