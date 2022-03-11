@@ -141,7 +141,7 @@
                                                                         <span v-else>
                                                                             {{pago.pago_a_generar}}, Referencia: {{pago.referencia_docto}}, Folio:{{pago.folio}}, Saldo: {{pago.saldo}}
                                                                         </span>
-                                                                        
+
                                                                     </span>
                                                                 </td>
                                                                 <td>
@@ -165,11 +165,12 @@
 
                         <div class="modal-footer">
                             <div class="col-md-12">
+                                <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                    <i class="fa fa-angle-left"></i>Regresar
+                                </button>
                                 <button type="button" class="btn btn-primary float-right" style="margin-left:10px" @click="validate_pagos" v-if="bitacora.length > 0 && resumen.pagables > 0 && $root.can('registrar_pagos_bitacora')">Registrar</button>
-                                <button type="button" class="btn btn-secondary float-right" @click="salir">Cerrar</button>
-                                
                             </div>
-                            
+
                         </div>
                     </form>
                 </div>

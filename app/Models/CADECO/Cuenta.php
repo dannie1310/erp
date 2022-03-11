@@ -74,6 +74,15 @@ class Cuenta extends Model
         return '$ ' . number_format($this->saldo_real,2);
     }
 
+    public function getSaldoFormatCadecoAttribute()
+    {
+        if($this->saldo_real < 0)
+        {
+            return "(".number_format((-1*$this->saldo_real),2).")";
+        }
+        return number_format($this->saldo_real,2);
+    }
+
     public function moneda(){
         return $this->belongsTo(Moneda::class, 'id_moneda', 'id_moneda');
     }
@@ -112,6 +121,11 @@ class Cuenta extends Model
 
     public function disminuyeSaldoPorDeposito(Transaccion $pago){
         $this->saldo_real = $this->saldo_real - $pago->monto;
+        $this->save();
+    }
+
+    public function aumentaSaldoPorEliminacionPago(Transaccion $pago){
+        $this->saldo_real = $this->saldo_real + (-1 * $pago->monto);
         $this->save();
     }
 }

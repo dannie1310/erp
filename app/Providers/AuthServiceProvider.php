@@ -42,5 +42,9 @@ class AuthServiceProvider extends ServiceProvider
         Passport::useClientModel(Client::class);
         Passport::usePersonalAccessClientModel(PersonalAccessClient::class);
         Passport::useTokenModel(Token::class);
+        Passport::tokensCan([
+            'autorizar-solicitudes-pago-anticipado' => 'Autorizar Solicitudes de Pago Anticipado',
+            'solicitudes-pago-anticipado' => 'Solicitudes de Pago Anticipado'
+        ]);
     }
 }

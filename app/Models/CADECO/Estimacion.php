@@ -7,7 +7,8 @@
  */
 
 namespace App\Models\CADECO;
-use App\CSV\EstimacionLayout;
+use App\CSV\Contratos\EstimacionLayout;
+use App\Facades\Context;
 use App\Models\CADECO\Acarreos\ConciliacionEstimacion;
 use App\Models\CADECO\Compras\ItemContratista;
 use App\Models\CADECO\Contabilidad\Poliza;
@@ -15,13 +16,13 @@ use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Estimaciones\EstimacionEliminada;
 use App\Models\CADECO\Estimaciones\EstimacionPartidaEliminada;
 use App\Models\CADECO\Finanzas\ConfiguracionEstimacion;
-use App\Models\CADECO\Moneda;
 use App\Models\CADECO\SubcontratosEstimaciones\Descuento;
 use App\Models\CADECO\SubcontratosEstimaciones\FolioPorSubcontrato;
 use App\Models\CADECO\SubcontratosEstimaciones\Liberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Penalizacion;
 use App\Models\CADECO\SubcontratosEstimaciones\PenalizacionLiberacion;
 use App\Models\CADECO\SubcontratosEstimaciones\Retencion;
+use App\Models\CADECO\SubcontratosFG\FondoGarantia;
 use App\Models\CADECO\SubcontratosFG\RetencionFondoGarantia;
 use DateTime;
 use DateTimeZone;
@@ -50,7 +51,12 @@ class Estimacion extends Transaccion
         'observaciones',
         'tipo_transaccion',
         'id_usuario',
-        'referencia'
+        'referencia',
+        'id_usuario',
+        'retencion',
+        'id_empresa',
+        'id_moneda',
+        'numero_folio'
     ];
 
     public $searchable = [
@@ -94,6 +100,11 @@ class Estimacion extends Transaccion
     public function subcontratoSinGlobalScope()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+    }
+
+    public function subcontratoSinGlobal()
+    {
+        return $this->belongsTo(Transaccion::class, 'id_antecedente','id_transaccion')->withoutGlobalScopes()->where('tipo_transaccion', '=', 51)->where('opciones', '=', 2);
     }
 
     public function itemsXContratistas()
@@ -192,6 +203,15 @@ class Estimacion extends Transaccion
         return $this->hasOne(ConciliacionEstimacion::class, "id_estimacion", "id_transaccion");
     }
 
+    public function fondoGarantiaSinContexto()
+    {
+        return $this->belongsTo(\App\Models\CADECO\SubcontratosFG\FondoGarantia::class,  'id_antecedente','id_subcontrato')->withoutGlobalScopes();
+    }
+
+    /**
+     * Scope
+     */
+
     /**
      * Acciones
      */
@@ -199,6 +219,7 @@ class Estimacion extends Transaccion
     {
         try {
             DB::connection('cadeco')->beginTransaction();
+            $data['anticipo'] = $this->calculaAnticipo($data['id_antecedente'], $data['conceptos']);
             $estimacion = $this->create($data);
             $estimacion->estimaConceptos($data['conceptos']);
             $estimacion->recalculaDatosGenerales();
@@ -250,7 +271,11 @@ class Estimacion extends Transaccion
 
     private function generaFolioConsecutivo()
     {
-        $folio = FolioPorSubcontrato::where('IDSubcontrato', '=', $this->id_antecedente)->first();
+        if(!is_null(Context::getIdObra())) {
+            $folio = FolioPorSubcontrato::where('IDSubcontrato', '=', $this->id_antecedente)->first();
+        }else{
+            $folio = FolioPorSubcontrato::withoutGlobalScopes()->where('IDSubcontrato', '=', $this->id_antecedente)->first();
+        }
 
         if ($folio) {
             $folio->UltimoFolio += 1;
@@ -258,7 +283,8 @@ class Estimacion extends Transaccion
         } else {
             $folio = FolioPorSubcontrato::create([
                 'IDSubcontrato' => $this->id_antecedente,
-                'UltimoFolio' => 1
+                'UltimoFolio' => 1,
+                'IDObra' => $this->id_obra
             ]);
         }
         return $folio->UltimoFolio;
@@ -615,7 +641,7 @@ class Estimacion extends Transaccion
 
     public function getIvaOrdenPagoAttribute()
     {
-        if ($this->subcontrato_sgc->impuesto != 0)
+        if ($this->subcontratoSinGlobal->impuesto != 0)
         {
             return $this->subtotal_orden_pago * 0.16;
         } else {
@@ -1361,4 +1387,32 @@ class Estimacion extends Transaccion
         return Excel::download(new EstimacionLayout($subcontrato), '#'.$folio.'.xlsx');
     }
 
+    public function calculaAnticipo($id_antecedente, $partidas){
+        $subcontrato = Subcontrato::find($id_antecedente);
+        $anticipo_subc = $subcontrato->anticipo;
+        if($anticipo_subc == 0){
+            return 0;
+        }
+        
+        $importe_anticipo = $subcontrato->anticipo_monto;
+        $estimaciones = $subcontrato->estimaciones;
+        foreach($estimaciones as $estimacion){
+            if($estimacion->anticipo == 0){
+                continue;
+            }
+            $imp_estimacion = $estimacion->sumaImportes;
+            $anticipo_estimacion_monto = $imp_estimacion * $estimacion->anticipo / 100;
+            $importe_anticipo = $importe_anticipo - $anticipo_estimacion_monto;
+        }
+        if($importe_anticipo == 0){
+            return 0;
+        }
+        $imp_items = array_sum(array_column($partidas, 'importe'));
+        $imp_anticipo_esta_estimacion = $imp_items * $anticipo_subc / 100;
+        if($importe_anticipo >= $imp_anticipo_esta_estimacion){
+            return $this->subcontrato->anticipo;
+        }else{
+            return $importe_anticipo * 100 / $imp_items;
+        }
+    }
 }

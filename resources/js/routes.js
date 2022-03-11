@@ -909,6 +909,18 @@ export const routes = [
                                 }
                             },
                             {
+                                path: 'createLayout',
+                                name: 'proyectado-layout-create',
+                                component: require('./components/contratos/proyectado/CreateLayout').default,
+                                props:true,
+                                meta: {
+                                    title: 'Registrar Contratos Proyectados Layout',
+                                    breadcrumb: {parent: 'proyectado', name: 'REGISTRAR LAYOUT'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_contrato_proyectado'
+                                }
+                            },
+                            {
                                 path: 'create',
                                 name: 'proyectado-create',
                                 component: require('./components/contratos/proyectado/Create').default,
@@ -1834,7 +1846,7 @@ export const routes = [
                                 component: require('./components/finanzas/fondo/Create').default,
                                 meta: {
                                     title: 'Registrar Fondo',
-                                    breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'fondo'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_fondos'
                                 }
@@ -1846,7 +1858,7 @@ export const routes = [
                                 component: require('./components/finanzas/fondo/Show').default,
                                 meta: {
                                     title: 'Ver Fondo',
-                                    breadcrumb: {name: 'VER', parent: 'finanzas'},
+                                    breadcrumb: {name: 'VER', parent: 'fondo'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_fondos'
                                 }
@@ -1918,24 +1930,12 @@ export const routes = [
                         children: [
                             {
                                 path: '/',
-                                name: 'gestion-pago',
-                                component: require('./components/finanzas/gestion-pago/Index').default,
-                                meta: {
-                                    title: 'Gestión de Pagos',
-                                    breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
-                                    middleware: [auth, context],
-
-                                }
-                            },
-                            {
-                                path: 'pago',
                                 name: 'pago',
                                 component: require('./components/finanzas/gestion-pago/pago/Index').default,
                                 meta: {
-                                    title: 'Gestión de Pagos',
+                                    title: 'Listado de Pagos',
                                     breadcrumb: {
-                                        parent: 'gestion-pago',
-                                        name: 'PAGOS'
+                                        parent: 'finanzas', name: 'PAGOS'
                                     },
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_pagos'
@@ -1979,15 +1979,36 @@ export const routes = [
                                     permission: 'consultar_pagos'
                                 }
                             },
+                        ]
+                    },
+                    {
+                        path: 'registro-pago',
+                        component: require('./components/finanzas/gestion-pago/Layout').default,
+                        children: [
                             {
-                                path: 'registro-pago',
-                                name: 'gestion-registro-pago',
-                                component: require('./components/finanzas/gestion-pago/pago/RegistrarPago').default,
+                                path: '/',
+                                name: 'registro-pago',
+                                component: require('./components/finanzas/gestion-pago/pago/registro/Index').default,
                                 meta: {
-                                    title: 'Registrar Pagos',
-                                    breadcrumb: {name: 'REGISTRAR PAGOS', parent: 'pago'},
+                                    title: 'Listado de registro de pagos',
+                                    breadcrumb: {
+                                        parent: 'pago',
+                                        name: 'LISTADO DE REGISTRO'
+                                    },
                                     middleware: [auth, context, permission],
-                                    permission: 'cargar_distribucion_recursos_remesa'
+                                    permission: 'registrar_pago'
+                                }
+                            },
+                            {
+                                path: ':id/pago',
+                                name: 'registrar-pago',
+                                component: require('./components/finanzas/gestion-pago/pago/registro/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Pago',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'registro-pago'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_pago'
                                 }
                             },
                         ]
@@ -2035,7 +2056,7 @@ export const routes = [
                                 meta: {
                                     title: 'Carga Masiva',
                                     breadcrumb: {
-                                        parent: 'gestion-pago',
+                                        parent: 'pago',
                                         name: 'CARGA MASIVA'
                                     },
                                     middleware: [auth, context, permission],
@@ -4138,6 +4159,48 @@ export const routes = [
                     },
                 ]
             },
+            {
+                path: 'solicitud-pago',
+                component: require('./components/finanzas-general/solicitudes-pago/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-pago',
+                        component: require('./components/finanzas-general/solicitudes-pago/Index').default,
+                        meta: {
+                            title: 'Solicitudes de Pago',
+                            breadcrumb: {parent: 'finanzas-general', name: 'SOLICITUDES DE PAGO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitudes_pago_global',
+                            general: true,
+                        }
+                    },
+                    {
+                        path: 'transacciones',
+                        name: 'enlistar-solicitudes-pago',
+                        component: require('./components/finanzas-general/solicitudes-pago/autorizar/Index').default,
+                        meta: {
+                            title: 'Lista de Solicitudes de Pago a Autorizar',
+                            breadcrumb: {name: 'AUTORIZAR SOLICITUD', parent: 'solicitud-pago'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_solicitudes_pago_global'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'autorizar',
+                        name: 'autorizar-solicitudes-pago',
+                        component: require('./components/finanzas-general/solicitudes-pago/autorizar/IndexAutorizacion').default,
+                        meta: {
+                            title: 'Autorizar Solicitudes de Pago',
+                            breadcrumb: {name: 'AUTORIZAR SOLICITUDES', parent: 'solicitud-pago'},
+                            middleware: [auth, permission],
+                            permission: ['autorizar_rechazar_solicitud_pago'],
+                            general: true
+                        }
+                    },
+                ]
+            },
         ]
     },
     {
@@ -4594,6 +4657,117 @@ export const routes = [
                             breadcrumb: { parent: 'cotizacion-proveedor', name: 'ENVIAR'},
                             middleware: [auth, permission],
                             permission: ['registrar_cotizacion_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+            {
+                path: 'solicitud-autorizacion-avance',
+                component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'solicitud-autorizacion-avance',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Index').default,
+                        meta: {
+                            title: 'Lista de Solicitud de Autorización de Avance',
+                            breadcrumb: {parent: 'proveedor', name: 'SOLICITUD DE AUTORIZACIÓN DE AVANCE DE ESTIMACIONES'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_autorizacion_avance_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'seleccionar-subcontrato',
+                        name: 'solicitud-autorizacion-avance-seleccionar-subcontrato',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/SeleccionarSubcontrato').default,
+                        meta: {
+                            title: 'Seleccionar Subcontrato',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'SELECCIONAR SUBCONTRATO'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/create',
+                        name: 'solicitud-autorizacion-avance-create',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Create').default,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        meta: {
+                            title: 'Registrar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'REGISTRAR'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base',
+                        name: 'solicitud-autorizacion-avance-show',
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Show').default,
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        meta: {
+                            title: 'Consultar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'VER'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_solicitud_autorizacion_avance_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/editar',
+                        name: 'solicitud-autorizacion-avance-edit',
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Edit').default,
+                        meta: {
+                            title: 'Editar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'EDITAR'},
+                            middleware: [auth, permission],
+                            permission: ['editar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/editarLayout',
+                        name: 'solicitud-autorizacion-avance-edit-layout',
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                            solicitud: route.params.solicitud
+                        }),
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/EditLayout').default,
+                        meta: {
+                            title: 'Editar Solicitud Layout',
+                            breadcrumb: {parent: 'solicitud-autorizacion-avance', name: 'EDITAR LAYOUT'},
+                            middleware: [auth, permission],
+                            permission: 'editar_solicitud_autorizacion_avance_proveedor',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/:base/delete',
+                        name: 'solicitud-autorizacion-avance-delete',
+                        props: route => ({
+                            base_b64: route.params.base,
+                            id: route.params.id,
+                        }),
+                        component: require('./components/portal-proveedor/solicitud-autorizacion-estimacion/Delete').default,
+                        meta: {
+                            title: 'Eliminar Solicitud de Autorización de Avance de Estimación',
+                            breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: ['eliminar_solicitud_autorizacion_avance_proveedor'],
                             general: true
                         }
                     },

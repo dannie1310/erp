@@ -107,7 +107,7 @@
                                 <div class="col-md-12">
                                     <div class="pull-right">
                                         <button type="button" class="btn btn-success" @click="agregarPartida('')"><i class="fa fa-plus"></i>Agregar Partida</button>
-                                        <button type="button" class="btn btn-success" @click="modalCarga()"><i class="fa fa-file-excel-o"></i>Cargar Layout</button>
+                                        <!-- <button type="button" class="btn btn-success" @click="modalCarga()"><i class="fa fa-file-excel-o"></i>Cargar Layout</button> -->
                                     </div>
                                 </div>
                             </div>
@@ -272,7 +272,7 @@
         </div>
 
 
-        <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
+        <!-- <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" >
                 <div class="modal-content">
                     <div class="modal-header">
@@ -313,7 +313,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> -->
 
     </span>
 </template>

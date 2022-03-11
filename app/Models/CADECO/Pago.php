@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
+use DateTime;
+use DateTimeZone;
+use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 
 class Pago extends Transaccion
@@ -97,6 +100,26 @@ class Pago extends Transaccion
         return $this->belongsTo(DistribucionRecursoRemesaPartida::class, 'id_transaccion', 'id_transaccion_pago');
     }
 
+    public function solicitud()
+    {
+        return $this->belongsTo(Solicitud::class, 'id_antecedente', 'id_transaccion');
+    }
+
+    public function anticipoTransaccion()
+    {
+        return $this->belongsTo(Anticipo::class, 'id_transaccion','id_antecedente');
+    }
+
+    public function ordenPago()
+    {
+        return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
+    }
+
+    public function pagoListaRaya()
+    {
+        return $this->belongsTo(PagoListaRaya::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function getEstadoStringAttribute()
     {
         $estado = "";
@@ -129,6 +152,7 @@ class Pago extends Transaccion
 
         return $datos;
     }
+
     public function getRelacionesAttribute()
     {
         $relaciones = [];
@@ -161,31 +185,91 @@ class Pago extends Transaccion
 
     public function getTipoPagoAttribute()
     {
-        switch ($this->tipo_antecedente)
+        if($this->ordenPago)
         {
-            case 0:
-                if($this->opciones == 0)
-                {
-                    return 'Pago Factura';
-                }
-                return 'Pago';
-                break;
+            if ($this->opciones == 0) {
+                return 'Pago Factura';
+            }
+            if ($this->opciones == 1) {
+                return 'Pago Factura Gastos Varios';
+            }
+            if ($this->opciones == 65537) {
+                return 'Pago Factura Materiales / Servicios';
+            }
+        }
+        if($this->solicitud)
+        {
+            if($this->opciones == 1)
+            {
+                return 'Pago de Reposición Fondo Fijo';
+            }
+            if($this->opciones == 131073)
+            {
+                return 'Pago de Anticipo Destajo';
+            }
+            if($this->opciones == 327681)
+            {
+                return 'Pago Anticipo';
+            }
+            if($this->opciones == 65537)
+            {
+                return 'Pago de Lista de Raya';
+            }
+            if($this->opciones == 262145)
+            {
+                return 'Pago Reemplazo de Cheque';
+            }
+        }
+    }
 
-            case 1:
-                return 'Pago Varios';
-                break;
+    public function getEsReemplazoAttribute()
+    {
+        if($this->transaccionReferente)
+        {
+            if($this->transaccionReferente->tipo_transaccion == 82 && $this->transaccionReferente->estado == -1)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
-            case 327681:
-                if(is_null($this->id_antecedente) && is_null($this->id_referente))
-                {
-                    return 'Pago a Cuenta por Aplicar';
-                }
-                return 'Pago a Cuenta';
-                break;
-
-            case 131073:
-                return 'Pago Anticipo Destajo';
-                break;
+    public function getTipoAntecedenteAttribute()
+    {
+        if($this->ordenPago)
+        {
+            if ($this->opciones == 0) {
+                return 'Factura';
+            }
+            if ($this->opciones == 1) {
+                return 'Factura Gastos Varios';
+            }
+            if ($this->opciones == 65537) {
+                return 'Factura Materiales / Servicios';
+            }
+        }
+        if($this->solicitud)
+        {
+            if($this->opciones == 1)
+            {
+                return 'Solicitud Reposición Fondo Fijo';
+            }
+            if($this->opciones == 131073)
+            {
+                return 'Solicitud Anticipo Destajo';
+            }
+            if($this->opciones == 327681)
+            {
+                return 'Solicitud Pago Anticipo';
+            }
+            if($this->opciones == 65537)
+            {
+                return 'Solicitud Pago de Lista de Raya';
+            }
+            if($this->opciones == 262145)
+            {
+                return 'Solicitud Pago Reemplazo de Cheque';
+            }
         }
     }
 
@@ -502,7 +586,7 @@ class Pago extends Transaccion
                                 $item->inventario->distribuirPagoInventarios();
                             }
                         }
-    
+
                     } else {
                         $prestacion = Prestacion::where('id_transaccion', '=', $this->id_antecedente)->first();
                         $importe = $data['partidas'][$index]['saldo'];
@@ -554,7 +638,7 @@ class Pago extends Transaccion
             abort(400, 'Error al aplicar pago pendiente.' . $e->getMessage());
             throw $e;
         }
-        
+
     }
 
     /**
@@ -605,9 +689,6 @@ class Pago extends Transaccion
         }
     }
 
-    /**
-     * @param $orden_pago
-     */
     private function desaplicarPago($pago)
     {
         if(is_null($pago))
@@ -915,6 +996,79 @@ class Pago extends Transaccion
             $movimiento->monto_pagado = $monto_pagado;
             $movimiento->save();
             $this->crearLogRespaldo($consulta);
+        }
+    }
+
+    public function registrar($data, $suma_historico, $remesa_folio)
+    {
+        $fecha_pago = New DateTime($data['solicitud']['fecha_pago']);
+        $fecha_pago->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['solicitud']['fecha_pago'] =  $fecha_pago->format('Y-m-d');
+        if ($data['solicitud']['tipo_transaccion'] == 65) {
+            $transaccion = Factura::find($data['id']);
+            $this->validarMontoPorPagar($data['solicitud'], $transaccion, $suma_historico, $remesa_folio);
+            $pago = Factura::find($data['id'])->generaOrdenPago($data['solicitud']);
+        }
+
+        if ($data['solicitud']['tipo_transaccion'] == 72) {
+            $pago = Solicitud::find($data['id'])->generaPago($data['solicitud']);
+        }
+        return $pago;
+    }
+
+    private function validarMontoPorPagar($solicitud, $transaccion, $suma_historico, $remesa_folio)
+    {
+        if($transaccion->tipo_transaccion == 65)
+        {
+            if($transaccion->items->count() > 0)
+            {
+                $antecedente = $transaccion->items[0]->antecedente;
+                if ($antecedente->estado != 2) {
+                    return ['error' => "La " . $antecedente->tipo_transaccion_str . " a pagar " . $antecedente->numero_folio_format . " tiene un estado no aprobado."];
+                }
+            }
+
+            $orden_pago =  OrdenPago::where('id_referente', $solicitud['id'])->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($orden_pago)
+            {
+                if ((float)$suma_historico == (float)$orden_pago->suma) {
+                    return ['error' => "Esta factura " . $transaccion->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico < (float)$orden_pago->suma) {
+                    return ['error' => "El monto pagado de esta factura " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+                if ((float)$suma_historico < ((float)$orden_pago->suma + (float)$solicitud['monto_pagado_transaccion'])) {
+                    return ['error' => "El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+            }
+        }
+        if($transaccion->tipo_transaccion == 72)
+        {
+            if($transaccion->antecedente->estado != 2)
+            {
+                return ['error' => "La " . $transaccion->antecedente->tipo_transaccion_str . " a pagar ".$transaccion->antecedente->numero_folio_format." tiene un estado no aprobado."];
+            }
+            $pago =  Pago::where('id_antecedente', $solicitud['id'])->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($pago)
+            {
+                if ((float)$suma_historico == (float)$pago->suma) {
+                    return ['error' => "Esta solicitud " . $transaccion->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico < (float)$pago->suma) {
+                    return ['error' => "El monto pagado de esta solicitud " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+                if ((float)$suma_historico < ((float)$pago->suma + (float)$solicitud['monto_pagado_transaccion'])) {
+                    return ['error' => "El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+            }
+        }
+        if($solicitud['monto_pagado'] > $solicitud['monto_autorizado'])
+        {
+            return ['error' => "El monto a pagar " . $solicitud['monto_pagado'] . "  supera el monto autorizado ".$solicitud['monto_autorizado']."."];
         }
     }
 }

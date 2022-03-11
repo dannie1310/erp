@@ -1,13 +1,11 @@
 <?php
 
 
-namespace App\CSV;
+namespace App\CSV\PortalProveedores;
 
 
-use App\Facades\Context;
+use App\Models\CADECO\Transaccion;
 use App\Utils\ValidacionSistema;
-use App\Models\CADECO\Estimacion;
-use App\Models\CADECO\Subcontrato;
 use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -15,21 +13,20 @@ use PhpOffice\PhpSpreadsheet\Style\Border;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use PhpOffice\PhpSpreadsheet\Style\Protection;
-use PhpOffice\PhpSpreadsheet\Cell\DataValidation;
 
-class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
+class SolicitudAutorizacionAvanceEditarLayout implements WithHeadings, ShouldAutoSize, WithEvents
 {
-    protected $subcontrato;
-    protected $moneda;
-    protected $tipo_cambio;
+    protected $solicitud;
+    protected $partidas;
     protected $verifica;
-    protected $tc_partida_euro;
-    protected $tc_partida_dlls;
+    protected $base;
 
-    public function __construct(Subcontrato $subcontrato)
+    public function __construct(Transaccion $solicitud, $partidas, $base)
     {
         $this->verifica = new ValidacionSistema();
-        $this->subcontrato = $subcontrato;
+        $this->solicitud = $solicitud;
+        $this->partidas = $partidas;
+        $this->base = $base;
     }
 
     public function registerEvents(): array
@@ -64,45 +61,41 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getColumnDimension('C')->setWidth(18);
                 $event->sheet->getColumnDimension('H')->setAutoSize(false);
                 $event->sheet->getColumnDimension('H')->setWidth(15);
-
-                $event->sheet->setCellValue("B3", 'Fecha de Estimación');
+                $event->sheet->setCellValue("B3", 'Fecha de Solicitud');
                 $event->sheet->getStyle('C3')->getNumberFormat()
                     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
                 $fecha = date("d/m/Y");
-                $event->sheet->setCellValue("C3", $fecha);
-                $event->sheet->getStyle('C3')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->setCellValue("C3", $this->solicitud->fecha_format);
                 $event->sheet->getDelegate()->getStyle('B3:C3')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
-                $event->sheet->setCellValue("B4", 'Fecha Inicio de Estimación');
+                $event->sheet->setCellValue("B4", 'Fecha Inicio de Solicitud');
                 $event->sheet->getStyle('C4')->getNumberFormat()
                     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
                 $fecha = date("d/m/Y");
-                $event->sheet->setCellValue("C4", $fecha);
+                $event->sheet->setCellValue("C4", $this->solicitud->cumplimiento_format);
                 $event->sheet->getStyle('C4')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getDelegate()->getStyle('B4:C4')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
-                $event->sheet->setCellValue("B5", 'Fecha Fin de Estimación');
+                $event->sheet->setCellValue("B5", 'Fecha Fin de Solicitud');
                 $event->sheet->getStyle('C5')->getNumberFormat()
                     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
                 $fecha = date("d/m/Y");
-                $event->sheet->setCellValue("C5", $fecha);
+                $event->sheet->setCellValue("C5", $this->solicitud->vencimiento_format);
                 $event->sheet->getStyle('C5')->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getDelegate()->getStyle('B5:C5')->applyFromArray([
                     'font' => ['bold' => true]
                 ]);
-                $event->sheet->getStyle('C3:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
+                $event->sheet->getStyle('C4:C5')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
                 $i = 8;
-                $verificacion_estimacion = $this->verifica->encripta(Context::getDatabase()."|".Context::getIdObra()."|".$this->subcontrato->id_transaccion);
+                $verificacion_estimacion = $this->verifica->encripta($this->base . "|" . $this->solicitud->id_obra . "|" . $this->solicitud->getKey());
                 $event->sheet->setCellValue("A1", $verificacion_estimacion);
-                $datos_subcontrato = $this->subcontrato->subcontratoParaEstimar(null);
-
                 $event->sheet->getColumnDimension('D')->setAutoSize(false);
                 $event->sheet->getColumnDimension('D')->setWidth(90);
                 $event->sheet->getColumnDimension('K')->setAutoSize(false);
                 $event->sheet->getColumnDimension('K')->setWidth(4);
-                foreach ($datos_subcontrato['partidas'] as $key => $item) {
+                foreach ($this->partidas['partidas'] as $key => $item) {
                     if (array_key_exists('id', $item)) {
                         $datos = $item['id'];
                     } else {
@@ -122,10 +115,10 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                         $event->sheet->setCellValue("G" . $i, $item['precio_unitario_subcontrato']);
                         $event->sheet->setCellValue("H" . $i, number_format($item['cantidad_por_estimar'],3));
                         $event->sheet->setCellValue("I" . $i, number_format($item['importe_por_estimar'],2));
-                        $event->sheet->setCellValue("J" . $i, 0);
-                        $event->sheet->setCellValue("K" . $i, 0);
+                        $event->sheet->setCellValue("J" . $i, $item['cantidad_estimacion']);
+                        $event->sheet->setCellValue("K" . $i, $item['porcentaje_estimado']);
                         $event->sheet->setCellValue("L" . $i, $item['precio_unitario_subcontrato_format']);
-                        $event->sheet->setCellValue("M" . $i, 0);
+                        $event->sheet->setCellValue("M" . $i, $item['importe_estimacion']);
                         $event->sheet->setCellValue("N" . $i, $item['destino_path']);
                         $event->sheet->setCellValue("O" . $i, $firmada);
                         $event->sheet->getStyle('J'.$i)->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
@@ -145,7 +138,7 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                     'font' => ['bold' => true]
                 ]);
                 $event->sheet->setCellValue("C" . ($i+3), 'OBSERVACIONES');
-                $event->sheet->setCellValue("D" . ($i+3), $this->subcontrato->presupuesto->observaciones);
+                $event->sheet->setCellValue("D" . ($i+3), $this->solicitud->observaciones_format);
                 $event->sheet->getStyle("D" . ($i+3))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle("D" . ($i+3))->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E2E2');
             },
@@ -155,7 +148,7 @@ class EstimacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-        return array([' ','',' ',' ',' ',' ',' ',($this->subcontrato->empresa) ? $this->subcontrato->empresa->razon_social : '----- Proveedor Desconocido ----- '],[],[],[],[],[],[],
+        return array([' ','',' ',' ',' ',' ',' ',($this->solicitud->empresa) ? $this->solicitud->empresa->razon_social : '----- Proveedor Desconocido ----- '],[' ','',' ',' ',' ',' ',' ','Solicitud Autorización de Avance' ,$this->solicitud->numero_folio_format],[],[],[],[],[],
             ['#','','CLAVE','CONCEPTO','UM','VOLUMEN CONTRATADO','P.U. CONTRATADO','VOLUMEN SALDO','IMPORTE SALDO','VOLUMEN','%','PRECIO UNITARIO','IMPORTE',
                 'DISTRIBUCIÓN DESTINO']);
     }
