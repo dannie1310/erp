@@ -22,7 +22,6 @@ use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
 use DateTime;
 use DateTimeZone;
-use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 
 class Pago extends Transaccion
