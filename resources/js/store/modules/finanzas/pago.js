@@ -169,7 +169,7 @@ export default {
                             .post(URI, payload)
                             .then(r => r.data)
                             .then(data => {
-                                swal("Pago registrada correctamente", {
+                                swal("Pago registrado correctamente", {
                                     icon: "success",
                                     timer: 1500,
                                     buttons: false
