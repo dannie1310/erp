@@ -103,7 +103,7 @@
                     <div class="row" v-if="contrato.puede_editar_partidas == false && reclasificar_destinos">
                         <div class="col-md-12">
                             <div class="pull-right">
-                                <button type="button" class="btn btn-secondary" @click="validarReclasificacion">
+                                <button type="button" class="btn btn-secondary" @click="reclasificar">
                                     <i class="fa fa-random" aria-hidden="true"></i> Reclasificar Destino
                                 </button>
                             </div>
@@ -555,19 +555,6 @@ export default {
                 this.cargando = false;
                 $(this.$refs.modal_destino).modal('hide');
             })
-        },
-        validarReclasificacion() {
-            var validar = false;
-            Object.entries(this.contrato.contratos.data).forEach(([id_transaccion, contrato]) =>{
-                if(contrato.es_hoja && contrato.id_destino != undefined) {
-                    validar = true;
-                }
-            });
-            if(validar) {
-                this.reclasificar();
-            }else{
-                swal('¡Error!', 'Debe cambiar algún destino para poder realizar la reclasificación.', 'error')
-            }
         },
         reclasificar() {
             return this.$store.dispatch('contratos/contrato-proyectado/reclasificarDestino', {
