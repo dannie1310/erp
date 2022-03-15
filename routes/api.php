@@ -39,7 +39,6 @@ $api->version('v1', function ($api) {
     /**
      * DBO
      */
-
     $api->group(['middleware' => 'api'], function ($api) {
         // ARCHIVO
         $api->group(['prefix' => 'archivo'], function ($api){
@@ -1428,6 +1427,7 @@ $api->version('v1', function ($api) {
             $api->post('/storeRevisionVarios', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@storeRevisionVarios');
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@update')->where(['id' => '[0-9]+']);
             $api->get('/leerQR', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@leerQR');
+            $api->get('{id}/aplicacionManual', 'App\Http\Controllers\v1\CADECO\Finanzas\FacturaController@aplicacionManual');
 
 
             /**
@@ -1499,6 +1499,10 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@show')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@destroy')->where(['id' => '[0-9]+']);
+            $api->post('/aplicarPago', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@aplicarPago');
+            $api->get('/documentosParaPagar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@documentosParaPagar');
+            $api->get('{id}/documentoParaPagar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@documentoParaPagar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@store');
 
             $api->group(['prefix' => 'carga-masiva'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');
@@ -1531,13 +1535,10 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@store');
             $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@cancelar')->where(['id' => '[0-9]+']);
+            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id' => '[0-9]+']);
             $api->get('indicador-aplicadas', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@getIndicadorAplicadas');
             $api->get('indicador-aplicadas-general', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@getIndicadorAplicadas');
             $api->patch('{id}/solicitar-autorizacion', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@solicitarAutorizacion')->where(['id' => '[0-9]+']);
-        });
-
-        $api->group(['prefix' => 'solicitud-pago-anticipado',/*'middleware' => ['auth:api','scope:solicitudes-pago-anticipado']*/], function ($api) {
-            $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Finanzas\SolicitudPagoAnticipadoController@pdfPagoAnticipado')->where(['id' => '[0-9]+']);
         });
 
         /**

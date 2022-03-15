@@ -8,11 +8,21 @@
 
 namespace App\Models\CADECO;
 
+use Exception;
 use App\Facades\Context;
-use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
+use App\Models\CADECO\OrdenPago;
+use App\Models\CADECO\Estimacion;
+use App\Models\CADECO\Inventario;
+use App\Models\CADECO\Movimiento;
+use App\Models\CADECO\OrdenCompra;
+use App\Models\CADECO\Subcontrato;
+use Illuminate\Support\Facades\DB;
+use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
-use Illuminate\Support\Facades\DB;
+use DateTime;
+use DateTimeZone;
+use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 
 class Pago extends Transaccion
 {
@@ -104,6 +114,11 @@ class Pago extends Transaccion
         return $this->belongsTo(OrdenPago::class, 'numero_folio', 'numero_folio');
     }
 
+    public function pagoListaRaya()
+    {
+        return $this->belongsTo(PagoListaRaya::class, 'id_transaccion', 'id_transaccion');
+    }
+
     public function getEstadoStringAttribute()
     {
         $estado = "";
@@ -169,31 +184,40 @@ class Pago extends Transaccion
 
     public function getTipoPagoAttribute()
     {
-        switch ($this->tipo_antecedente)
+        if($this->ordenPago)
         {
-            case 0:
-                if($this->opciones == 0)
-                {
-                    return 'Pago Factura';
-                }
-                return 'Pago';
-                break;
-
-            case 1:
-                return 'Pago Varios';
-                break;
-
-            case 327681:
-                if(is_null($this->id_antecedente) && is_null($this->id_referente))
-                {
-                    return 'Pago a Cuenta por Aplicar';
-                }
-                return 'Pago a Cuenta';
-                break;
-
-            case 131073:
-                return 'Pago Anticipo Destajo';
-                break;
+            if ($this->opciones == 0) {
+                return 'Pago Factura';
+            }
+            if ($this->opciones == 1) {
+                return 'Pago Factura Gastos Varios';
+            }
+            if ($this->opciones == 65537) {
+                return 'Pago Factura Materiales / Servicios';
+            }
+        }
+        if($this->solicitud)
+        {
+            if($this->opciones == 1)
+            {
+                return 'Pago de Reposición Fondo Fijo';
+            }
+            if($this->opciones == 131073)
+            {
+                return 'Pago de Anticipo Destajo';
+            }
+            if($this->opciones == 327681)
+            {
+                return 'Pago Anticipo';
+            }
+            if($this->opciones == 65537)
+            {
+                return 'Pago de Lista de Raya';
+            }
+            if($this->opciones == 262145)
+            {
+                return 'Pago Reemplazo de Cheque';
+            }
         }
     }
 
@@ -207,6 +231,53 @@ class Pago extends Transaccion
             }
         }
         return false;
+    }
+
+    public function getTipoAntecedenteAttribute()
+    {
+        if($this->ordenPago)
+        {
+            if ($this->opciones == 0) {
+                return 'Factura';
+            }
+            if ($this->opciones == 1) {
+                return 'Factura Gastos Varios';
+            }
+            if ($this->opciones == 65537) {
+                return 'Factura Materiales / Servicios';
+            }
+        }
+        if($this->solicitud)
+        {
+            if($this->opciones == 1)
+            {
+                return 'Solicitud Reposición Fondo Fijo';
+            }
+            if($this->opciones == 131073)
+            {
+                return 'Solicitud Anticipo Destajo';
+            }
+            if($this->opciones == 327681)
+            {
+                return 'Solicitud Pago Anticipo';
+            }
+            if($this->opciones == 65537)
+            {
+                return 'Solicitud Pago de Lista de Raya';
+            }
+            if($this->opciones == 262145)
+            {
+                return 'Solicitud Pago Reemplazo de Cheque';
+            }
+        }
+    }
+
+    public function getSaldoFormatAttribute(){
+        return '$' . number_format(abs($this->saldo * -1), 2, '.', ',');
+    }
+
+    public function scopePendientePorAplicar($query){
+        return $query->where('opciones', '=', 327681);
     }
 
     public function eliminar($motivo)
@@ -363,6 +434,210 @@ class Pago extends Transaccion
             'id_transaccion' => $this->id_transaccion,
             'consulta' => $consulta
         ]);
+    }
+
+    public function aplicarPago($data){
+        try{
+            DB::connection('cadeco')->beginTransaction();
+            if(($this->saldo * -1) < $data['monto']){
+                abort(403, 'El total a aplicar es mayor al saldo del pago.');
+            }
+            $factura = Factura::find($data['id_factura']);
+            if($factura->saldo < $data['monto']){
+                abort(403, 'El total a aplicar es mayor al saldo de la factura.');
+            }
+
+            $fac_iva = $factura->monto/ ($factura->monto - $factura->impuesto);
+            $apl_manual = AplicacionManual::create([
+                'saldo' => $this->saldo,
+                'fecha' => date('Y-m-d'),
+                'monto' => $data['aplicado'],
+                'impuesto' => $data['impuesto'],
+                'referencia' => $this->referencia,
+                'observaciones' => $data['observaciones'],
+                'id_antecedente' => $this->id_transaccion,
+                'numero_folio' => $this->numero_folio
+            ]);
+            // dd(2);
+            $orden_pago = OrdenPago::create([
+                'id_antecedente' => $factura->id_antecedente,
+                'id_referente' => $factura->id_transaccion,
+                'estado' => 1,
+                'id_empresa' => $factura->id_empresa,
+                'id_moneda' => $factura->id_moneda,
+                'monto' => -1 * $data['monto'],
+                'referencia' => $this->referencia,
+            ]);
+
+            $partidas = $factura->partidas->where('saldo', '>', 0);
+
+            foreach($partidas as $index => $partida_fact){
+                $apl_manual->partidas()->create([
+                    'item_antecedente' => $partida_fact->id_item,
+                    'importe' => $data['partidas'][$index]['saldo'],
+                    'saldo' => $partida_fact->importe
+                ]);
+
+                $orden_pago->partidas()->create([
+                    'item_antecedente' => $partida_fact->id_item,
+                    'importe' => $data['partidas'][$index]['saldo'],
+                ]);
+                $factura->saldo = $factura->saldo - ($data['partidas'][$index]['saldo'] * $fac_iva);
+                $this->saldo = $this->saldo + ($data['partidas'][$index]['saldo'] * $fac_iva);
+
+                if($partida_fact->numero == 0){
+                    if($inventario = Inventario::where('id_item', '=', $partida_fact->item_antecedente)->first()){
+                        $inventario->monto_pagado = $inventario->monto_pagado + ($data['partidas'][$index]['saldo'] * $factura->tipo_cambio);
+                        DB::connection('cadeco')->update("EXEC [dbo].[sp_distribuir_pagado_inventarios] {$inventario->id_lote}");
+                        $inventario->save();
+                    }else{
+                        $movimiento = Movimiento::where('id_item', '=', $partida_fact->item_antecedente)->first();
+                        $movimiento->monto_pagado = $movimiento->monto_pagado + ($data['partidas'][$index]['saldo'] * $factura->tipo_cambio);
+                        $movimiento->save();
+                    }
+                    $partida_fact->saldo = $partida_fact->saldo - $data['partidas'][$index]['saldo'];
+                }
+                else if($partida_fact->numero == 1){
+                    $tipo_ant = Transaccion::where('id_transaccion', '=', $partida_fact->id_antecedente)->select('tipo_transaccion')->first();
+                    if($tipo_ant == 51){
+                        $subcontrato = Subcontrato::withoutGlobalScopes()->find($this->id_antecedente);
+                        $importe = $data['partidas'][$index]['saldo'];
+                        $factor = 0;
+                        if ($subcontrato->anticipo_monto > 0) {
+                            $factor = $importe / $subcontrato->anticipo_monto;
+                        }
+                        $estimaciones = $this->estimaciones;
+                        if ($estimaciones) {
+                            foreach ($estimaciones as $estimacion) {
+                                $movimientos = $estimacion->movimientos;
+                                foreach ($movimientos as $movimiento) {
+                                    $movimiento->monto_pagado = $movimiento->monto_pagado + round($movimiento->monto_total * $factor
+                                            * ((100 - $estimacion->retencion) / 100 - ($estimacion->monto - $estimacion->impuesto) / $estimacion->suma_importes)
+                                            , 2);
+                                    $movimiento->save();
+                                }
+                            }
+                        }
+                    }else if($tipo_ant == 52){
+                        $estimacion = Estimacion::withoutGlobalScopes()->find($this->id_antecedente);
+                        $importe = $data['partidas'][$index]['saldo'];
+                        $tipo_cambio = $factura->tipo_cambio;
+                        $monto_total = 0;
+                        if ($estimacion->movimientos) {
+                            $monto_total = $estimacion->movimientos->sum("monto_total");
+                        }
+                        if ($monto_total > 0) {
+                            if ($estimacion->movimientos) {
+                                foreach ($estimacion->movimientos as $movimiento) {
+                                    $movimiento->monto_pagado = round(($movimiento->monto_pagado + $movimiento->monto_total * $importe
+                                        * $tipo_cambio / $monto_total), 2);
+                                    $movimiento->save();
+                                }
+                            }
+                        }
+
+                    }
+                }else if($partida_fact->numero == 2){
+                    $importe = $data['partidas'][$index]['saldo'] * $fac_iva;
+                    $o_com = OrdenCompra::where('id_transaccion', '=', $partida_fact->id_antecedente)->first();
+                    $o_com->anticipo_saldo = $o_com->anticipo_saldo - $importe;
+                    $o_com->save();
+                    $item_oc = ItemOrdenCompra::where('id_item', '=', $partida_fact->item_antecedente)->first();
+                    $item_oc->amortizaAnticipo($data['partidas'][$index]['saldo']);
+                }else if($partida_fact->numero == 3){
+                    $pago_renta = $data['partidas'][$index]['saldo'] * $factura->tipo_cambio;
+                    $inventario = $partida_fact->inventario;
+                    $inventarios = [];
+                    if($partida_fact->material->tipo_material == 4){
+                        $inventarios = Inventario::where('id_almacen', '=', $inventario->id_almacen)
+                                    ->where('id_material', '=', $inventario->id_material)
+                                    ->where('monto_total', '>', 'monto_pagado')->get();
+                    }else{
+                        $inventarios = Inventario::where('id_almacen', '=', $inventario->id_almacen)
+                            ->where('id_material', '=', $inventario->id_material)
+                            ->where('referencia', '=', $inventario->referencia)
+                            ->where('monto_total', '>', 'monto_pagado')->get();
+                    }
+                    foreach($inventarios as $inv){
+                        $pago = 0;
+                        if($inv->saldo > $pago_renta){
+                            $pago = $pago_renta;
+                        }else{
+                            $pago = $inv->saldo;
+                        }
+                        $pago_inv = Inventario::where('id_lote', '=', $inv->id_lote)->first();
+                        $pago_inv->monto_pagado = $pago_inv->monto_pagado + $pago;
+                        $pago_inv->save();
+                        $pago_inv->distribuirPagoInventarios();
+                        $pago_renta = $pago_renta - $pago;
+                    }
+                    if($pago_renta > 0.01){
+                        throw new Exception("Sobreaplicacion de pagos de rentas" . $inventario->id_almacen . '-' . $inventario->id_material);
+                    }
+                }else if($partida_fact->numero == 4){
+                    if ($partida_fact->antecedente->tipo_transaccion == 99) {
+                        $lista_raya = ListaRaya::where('id_transaccion', '=', $partida_fact->id_antecedente)->first();
+                        if($lista_raya->items) {
+                            foreach($lista_raya->items as $item)
+                            {
+                                $item->inventario->monto_pagado = $data['partidas'][$index]['saldo'];
+                                $item->inventario->save();
+                                $item->inventario->distribuirPagoInventarios();
+                            }
+                        }
+
+                    } else {
+                        $prestacion = Prestacion::where('id_transaccion', '=', $this->id_antecedente)->first();
+                        $importe = $data['partidas'][$index]['saldo'];
+                        $factor = $importe / $prestacion->monto;
+                        if ($prestacion->items) {
+                            foreach ($prestacion->items as $item) {
+                                $pago = round(($item->inventario->monto_pagado + $item->importe * $factor), 2);
+                                $item->inventario->monto_pagado = $pago;
+                                $item->inventario->save();
+                                $item->inventario->distribuirPagoInventarios();
+                            }
+                        }
+                    }
+                }else if($partida_fact->numero == 7){
+                    $importe = $data['partidas'][$index]['saldo'];
+                    $tipo_cambio = $factura->tipo_cambio;
+                    if ($partida_fact->inventario) {
+                        $partida_fact->inventario->monto_pagado = $partida_fact->inventario->monto_pagado +
+                            round($importe * $partida_fact->factura->tipo_cambio, 2);
+                        $partida_fact->inventario->monto_pagado->save();
+                        $partida_fact->inventario->distribuirPagoInventarios();
+
+                    } elseif ($partida_fact->movimiento) {
+                        $partida_fact->movimiento->monto_pagado = $partida_fact->movimiento->monto_pagado +
+                            round($importe * $tipo_cambio, 2);
+                        $partida_fact->movimiento->save();
+                    }
+                }
+                $saldo_item = (($partida_fact->saldo - $data['partidas'][$index]['saldo']) > 0.01) ? round(($partida_fact->saldo - $data['partidas'][$index]['saldo']), 2) : 0;
+                $partida_fact->autorizado = $partida_fact->autorizado - $data['partidas'][$index]['saldo'];
+                $partida_fact->saldo = $saldo_item;
+                $partida_fact->save();
+            }
+
+            if(abs($factura->saldo) < 0.01){
+                $factura->saldo = 0;
+                $factura->estado = 2;
+                $factura->contra_recibo->saldo = $factura->contra_recibo->saldo - $factura->saldo;
+            }
+            $factura->save();
+            if($factura->contra_recibo->saldo < 0.01){
+                $factura->contra_recibo->estado = 2;
+            }
+            $factura->contra_recibo->save();
+            $this->save();
+            DB::connection('cadeco')->commit();
+        }catch(\Exception $e){
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error al aplicar pago pendiente.' . $e->getMessage());
+            throw $e;
+        }
+
     }
 
     /**
@@ -720,6 +995,79 @@ class Pago extends Transaccion
             $movimiento->monto_pagado = $monto_pagado;
             $movimiento->save();
             $this->crearLogRespaldo($consulta);
+        }
+    }
+
+    public function registrar($data, $suma_historico, $remesa_folio)
+    {
+        $fecha_pago = New DateTime($data['solicitud']['fecha_pago']);
+        $fecha_pago->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data['solicitud']['fecha_pago'] =  $fecha_pago->format('Y-m-d');
+        if ($data['solicitud']['tipo_transaccion'] == 65) {
+            $transaccion = Factura::find($data['id']);
+            $this->validarMontoPorPagar($data['solicitud'], $transaccion, $suma_historico, $remesa_folio);
+            $pago = Factura::find($data['id'])->generaOrdenPago($data['solicitud']);
+        }
+
+        if ($data['solicitud']['tipo_transaccion'] == 72) {
+            $pago = Solicitud::find($data['id'])->generaPago($data['solicitud']);
+        }
+        return $pago;
+    }
+
+    private function validarMontoPorPagar($solicitud, $transaccion, $suma_historico, $remesa_folio)
+    {
+        if($transaccion->tipo_transaccion == 65)
+        {
+            if($transaccion->items->count() > 0)
+            {
+                $antecedente = $transaccion->items[0]->antecedente;
+                if ($antecedente->estado != 2) {
+                    return ['error' => "La " . $antecedente->tipo_transaccion_str . " a pagar " . $antecedente->numero_folio_format . " tiene un estado no aprobado."];
+                }
+            }
+
+            $orden_pago =  OrdenPago::where('id_referente', $solicitud['id'])->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($orden_pago)
+            {
+                if ((float)$suma_historico == (float)$orden_pago->suma) {
+                    return ['error' => "Esta factura " . $transaccion->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico < (float)$orden_pago->suma) {
+                    return ['error' => "El monto pagado de esta factura " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+                if ((float)$suma_historico < ((float)$orden_pago->suma + (float)$solicitud['monto_pagado_transaccion'])) {
+                    return ['error' => "El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+            }
+        }
+        if($transaccion->tipo_transaccion == 72)
+        {
+            if($transaccion->antecedente->estado != 2)
+            {
+                return ['error' => "La " . $transaccion->antecedente->tipo_transaccion_str . " a pagar ".$transaccion->antecedente->numero_folio_format." tiene un estado no aprobado."];
+            }
+            $pago =  Pago::where('id_antecedente', $solicitud['id'])->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($pago)
+            {
+                if ((float)$suma_historico == (float)$pago->suma) {
+                    return ['error' => "Esta solicitud " . $transaccion->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico < (float)$pago->suma) {
+                    return ['error' => "El monto pagado de esta solicitud " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+                if ((float)$suma_historico < ((float)$pago->suma + (float)$solicitud['monto_pagado_transaccion'])) {
+                    return ['error' => "El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                }
+            }
+        }
+        if($solicitud['monto_pagado'] > $solicitud['monto_autorizado'])
+        {
+            return ['error' => "El monto a pagar " . $solicitud['monto_pagado'] . "  supera el monto autorizado ".$solicitud['monto_autorizado']."."];
         }
     }
 }

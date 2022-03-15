@@ -9,11 +9,12 @@
 namespace App\Services\CADECO\Finanzas;
 
 
-use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Moneda;
+use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Pago;
 use App\Models\CADECO\Cuenta;
-use App\Repositories\Repository;
+use App\Models\CADECO\Transaccion;
+use App\Repositories\CADECO\Finanzas\PagoRepository as Repository;
 
 class PagoService
 {
@@ -23,7 +24,7 @@ class PagoService
     protected $repository;
 
     /**
-     * PagoServicevice constructor
+     * PagoService constructor
      *
      * @param Pago $model
      */
@@ -82,5 +83,270 @@ class PagoService
     public function delete($data, $id)
     {
         return $this->show($id)->eliminar($data['data'][0]);
+    }
+
+    public function documentosParaPagar()
+    {
+        $solicitudes = Transaccion::whereIn('tipo_transaccion', [65,72])->whereIn('estado', [0,1])->where('saldo', '>', 0.99)
+            ->orderBy('id_transaccion', 'desc')->get();
+        $respuesta = [];
+        foreach ($solicitudes as $key => $solicitud)
+        {
+            $empresa = '';
+            if(!is_null($solicitud->empresa))
+            {
+                $empresa = $solicitud->empresa->razon_social;
+            }
+            elseif(!is_null($solicitud->fondoFijo))
+            {
+                $empresa = $solicitud->fondoFijo->nombre;
+            }
+            elseif(!is_null($solicitud->referente))
+            {
+                $empresa = $solicitud->referente->empresa ? $solicitud->referente->empresa->razon_social : '';
+            }
+            $respuesta[$key] = [
+                'id' => $solicitud->getKey(),
+                'tipo_transaccion' => $solicitud->tipo_transaccion,
+                'tipo' => $this->getTipoDocumentoPorPagar($solicitud->tipo_transaccion,$solicitud->opciones),
+                'numero_folio' => $solicitud->numero_folio_format,
+                'fecha' => $solicitud->fecha_format,
+                'fecha_vencimiento' => $solicitud->vencimiento,
+                'estado' => $solicitud->estado,
+                'estado_format' => $this->getEstadoDocumentoPorPagar($solicitud->tipo_transaccion, $solicitud->estado),
+                'id_empresa' => $solicitud->id_empresa,
+                'empresa' => $empresa,
+                'id_moneda' => $solicitud->id_moneda,
+                'moneda' => $solicitud->moneda->nombre,
+                'opciones' => $solicitud->opciones,
+                'monto' => $solicitud->monto,
+                'monto_format' => $solicitud->monto_format,
+                'saldo' => $solicitud->saldo,
+                'saldo_format' => $solicitud->saldo_format
+            ];
+        }
+        return $respuesta;
+    }
+
+    public function getEstadoDocumentoPorPagar($tipo,$estado)
+    {
+        if($tipo == 65)
+        {
+            if ($estado == 0) {
+                return 'Registrada';
+            } elseif ($estado == 1) {
+                return 'Revisada';
+            } elseif ($estado == 2) {
+                return'Pagada';
+            }
+        }
+        if($tipo == 72)
+        {
+            if($estado != 2) {
+                return 'Pendiente de Pago';
+            } elseif ($estado == 2) {
+                return'Pagada';
+            }
+        }
+    }
+
+    public function getTipoDocumentoPorPagar($tipo, $opciones)
+    {
+        if($tipo == 65)
+        {
+            if ($opciones == 0) {
+                return 'Factura';
+            }
+            if ($opciones == 1) {
+                return 'Factura Gastos Varios';
+            }
+            if ($opciones == 65537) {
+                return 'Factura Materiales / Servicios';
+            }
+        }
+        if($tipo == 72)
+        {
+            if($opciones == 1)
+            {
+                return 'Solicitud Reposición Fondo Fijo';
+            }
+            if($opciones == 131073)
+            {
+                return 'Solicitud Anticipo Destajo';
+            }
+            if($opciones == 327681)
+            {
+                return 'Solicitud Pago Anticipo';
+            }
+            if($opciones == 65537)
+            {
+                return 'Solicitud Pago de Lista de Raya';
+            }
+            if($opciones == 262145)
+            {
+                return 'Solicitud Pago Reemplazo de Cheque';
+            }
+        }
+    }
+
+    public function documentoParaPagar($id)
+    {
+        $remesa = $this->repository->getImporteAutorizado($id);
+        $suma_historico_remesa = $this->repository->getImporteTotalAutorizado($id);
+        if ($remesa == []) {
+            return [ 'error' => "No se encuentra el documento autorizado en remesa."];
+        }
+        $remesa = $remesa[0];
+        $solicitud = Transaccion::where('id_transaccion', $id)->where('estado', '!=', 2)->where('saldo', '>', 0.99)->first();
+        $costo = $this->getCosto($solicitud);
+        $validaciones = $this->validarMontoAutorizado($solicitud, $remesa, $suma_historico_remesa);
+        if(array_key_exists('error', $validaciones))
+        {
+            return $validaciones;
+        }
+        $empresa = '';
+        if(!is_null($solicitud->empresa))
+        {
+            $empresa = $solicitud->empresa->razon_social;
+        }
+        elseif(!is_null($solicitud->fondoFijo))
+        {
+            $empresa = $solicitud->fondoFijo->nombre;
+        }
+        elseif(!is_null($solicitud->referente->empresa))
+        {
+            $empresa = $solicitud->referente->empresa->razon_social;
+        }
+        $concepto = '';
+        if($solicitud->tipo_transaccion == 72) {
+            if ($solicitud->opciones == 1) {
+                $concepto = 'Reposición de Fondo Fijo';
+            }
+            if ($solicitud->opciones == 65537) {
+                $concepto = 'Pago de Nóminas';
+            }
+        }
+        if($solicitud->costo){
+            $costo_descripcion = $solicitud->costo->descripcion;
+        }
+        elseif($costo != '') {
+            $costo_descripcion = $costo['descripcion'];
+        }else{
+            $costo_descripcion = null;
+        }
+
+        if($solicitud->costo)
+        {
+            $id_costo =  $solicitud->id_costo;
+        }elseif ($costo != '')
+        {
+            $id_costo = $costo['id_costo'];
+        }else{
+            $id_costo = null;
+        }
+
+        return [
+            'id' => $solicitud->getKey(),
+            'tipo_transaccion' => $solicitud->tipo_transaccion,
+            'tipo' => $this->getTipoDocumentoPorPagar($solicitud->tipo_transaccion, $solicitud->opciones),
+            'numero_folio' => $solicitud->numero_folio_format,
+            'fecha' => $solicitud->fecha_format,
+            'fecha_vencimiento' => $solicitud->vencimiento,
+            'fecha_vencimiento_format' => $solicitud->vencimiento_format,
+            'estado' => $solicitud->estado,
+            'estado_format' => $this->getEstadoDocumentoPorPagar($solicitud->tipo_transaccion, $solicitud->estado),
+            'id_empresa' => $solicitud->id_empresa,
+            'id_fondo' => $solicitud->id_referente,
+            'empresa' => $empresa,
+            'destinatario' => !is_null($solicitud->empresa) ? $solicitud->empresa->razon_social : $solicitud->destino,
+            'id_moneda' => $solicitud->id_moneda,
+            'moneda' => $solicitud->moneda->nombre,
+            'opciones' => $solicitud->opciones,
+            'monto' => number_format(($solicitud->monto),2),
+            'monto_format' => $solicitud->monto_format,
+            'saldo' => number_format(($solicitud->saldo),2),
+            'saldo_format' => $solicitud->saldo_format,
+            'autorizado' => $solicitud->autorizado,
+            'autorizado_format' => number_format(($solicitud->autorizado),2),
+            'costo' => $costo_descripcion,
+            'concepto' => $concepto,
+            'id_costo' => $id_costo,
+            'observaciones' => $solicitud->observaciones,
+            'remesa' => $remesa->remesa_relacionada,
+            'suma_historico_remesa' => $suma_historico_remesa,
+            'monto_autorizado' => array_key_exists('saldo', $validaciones) ? (float) $validaciones['saldo'] : (float) $remesa->monto_autorizado_remesa,
+            'monto_autorizado_remesa' => number_format($remesa->monto_autorizado_remesa, 2),
+            'monto_autorizado_remesa_format' => '$'.number_format($remesa->monto_autorizado_remesa,2),
+        ];
+    }
+
+    public function store($data)
+    {
+        try {
+            $remesa = $this->repository->getImporteAutorizado($data['id']);
+            $suma_historico_remesa = $this->repository->getImporteTotalAutorizado($data['id']);
+            return $this->repository->registrar($data, $suma_historico_remesa,$remesa[0]->remesa_relacionada);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    private function validarMontoAutorizado($solicitud, $remesa,$suma_historico_remesa)
+    {
+        if($solicitud->tipo_transaccion == 65)
+        {
+            $orden_pago =  OrdenPago::where('id_referente', $solicitud->getKey())->selectRaw('(SUM(monto)*-1) as suma')->first();
+            if($orden_pago)
+            {
+                if ((float)$suma_historico_remesa == (float)$orden_pago->suma) {
+                    return ['error' => "Esta factura " . $solicitud->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico_remesa < (float)$orden_pago->suma) {
+                    return ['error' => "El monto pagado de esta factura " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
+                }
+                return ['saldo' => $solicitud->saldo];
+            }
+        }
+        if($solicitud->tipo_transaccion == 72)
+        {
+            if($solicitud->opciones == 1)
+            {
+                $pago =  Pago::where('id_referente', $solicitud->id_referente)->selectRaw('(SUM(monto)*-1) as suma')->first();
+            }else {
+                $pago = Pago::where('id_antecedente', $solicitud->getKey())->selectRaw('(SUM(monto)*-1) as suma')->first();
+            }
+            if($pago)
+            {
+                if ((float)$suma_historico_remesa == (float)$pago->suma) {
+                    return ['error' => "Esta solicitud " . $solicitud->numero_folio_format . " se encuentra pagada completamente."];
+                }
+                if ((float)$suma_historico_remesa < (float)$pago->suma) {
+                    return ['error' => "El monto pagado de esta solicitud " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
+                }
+                return ['saldo' => $solicitud->saldo];
+            }
+        }
+    }
+
+    private function getCosto($solicitud)
+    {
+        if($solicitud->tipo_transaccion == 65) {
+            if($solicitud->items->count() > 0) {
+                $item = $solicitud->items[0];
+                if ($item->transaccionAntecedente && $item->transaccionAntecedente->antecedente && $item->transaccionAntecedente->antecedente->costo) {
+                    return [
+                        'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
+                        'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion
+                    ];
+                }
+            }
+        }
+        return '';
+    }
+
+    public function aplicarPago($data){
+        $this->repository->show($data['id'])->aplicarPago($data);
     }
 }

@@ -638,5 +638,9 @@ class FacturaService
         }
     }
 
+    public function aplicacionManualFacturas($id_empresa){
+        return $this->repository->getFacturasAplicacionManual($id_empresa);
+    }
+
 }
 

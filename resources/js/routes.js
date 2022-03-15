@@ -1846,7 +1846,7 @@ export const routes = [
                                 component: require('./components/finanzas/fondo/Create').default,
                                 meta: {
                                     title: 'Registrar Fondo',
-                                    breadcrumb: {name: 'REGISTRAR', parent: 'finanzas'},
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'fondo'},
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_fondos'
                                 }
@@ -1858,7 +1858,7 @@ export const routes = [
                                 component: require('./components/finanzas/fondo/Show').default,
                                 meta: {
                                     title: 'Ver Fondo',
-                                    breadcrumb: {name: 'VER', parent: 'finanzas'},
+                                    breadcrumb: {name: 'VER', parent: 'fondo'},
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_fondos'
                                 }
@@ -1930,24 +1930,12 @@ export const routes = [
                         children: [
                             {
                                 path: '/',
-                                name: 'gestion-pago',
-                                component: require('./components/finanzas/gestion-pago/Index').default,
-                                meta: {
-                                    title: 'Gestión de Pagos',
-                                    breadcrumb: {parent: 'finanzas', name: 'GESTIÓN DE PAGOS'},
-                                    middleware: [auth, context],
-
-                                }
-                            },
-                            {
-                                path: 'pago',
                                 name: 'pago',
                                 component: require('./components/finanzas/gestion-pago/pago/Index').default,
                                 meta: {
-                                    title: 'Gestión de Pagos',
+                                    title: 'Listado de Pagos',
                                     breadcrumb: {
-                                        parent: 'gestion-pago',
-                                        name: 'PAGOS'
+                                        parent: 'finanzas', name: 'PAGOS'
                                     },
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_pagos'
@@ -1991,17 +1979,70 @@ export const routes = [
                                     permission: 'consultar_pagos'
                                 }
                             },
+                        ]
+                    },
+                    {
+                        path: 'registro-pago',
+                        component: require('./components/finanzas/gestion-pago/Layout').default,
+                        children: [
                             {
-                                path: 'registro-pago',
-                                name: 'gestion-registro-pago',
-                                component: require('./components/finanzas/gestion-pago/pago/RegistrarPago').default,
+                                path: '/',
+                                name: 'registro-pago',
+                                component: require('./components/finanzas/gestion-pago/pago/registro/Index').default,
                                 meta: {
-                                    title: 'Registrar Pagos',
-                                    breadcrumb: {name: 'REGISTRAR PAGOS', parent: 'pago'},
+                                    title: 'Listado de registro de pagos',
+                                    breadcrumb: {
+                                        parent: 'pago',
+                                        name: 'LISTADO DE REGISTRO'
+                                    },
                                     middleware: [auth, context, permission],
-                                    permission: 'cargar_distribucion_recursos_remesa'
+                                    permission: 'registrar_pago'
                                 }
                             },
+                            {
+                                path: ':id/pago',
+                                name: 'registrar-pago',
+                                component: require('./components/finanzas/gestion-pago/pago/registro/Create').default,
+                                props: true,
+                                meta: {
+                                    title: 'Registrar Pago',
+                                    breadcrumb: {name: 'REGISTRAR', parent: 'registro-pago'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_pago'
+                                }
+                            },
+                        ]
+                    },
+                    {
+                        path: 'pago-manual',
+                        component: require('./components/finanzas/pago-manual/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'pago-manual',
+                                component: require('./components/finanzas/pago-manual/Index').default,
+                                meta: {
+                                    title: 'Pagos Pendientes por Aplicar',
+                                    breadcrumb: {
+                                        parent: 'finanzas',
+                                        name: 'PAGOS PENDIENTES APLICAR'
+                                    },
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_pago_manual'
+                                },
+                            },
+                            {
+                                path: ':id/aplicar',
+                                name: 'pago-aplicar',
+                                props: true,
+                                component: require('./components/finanzas/pago-manual/Aplicar').default,
+                                meta: {
+                                    title: 'Pago Pendiente Aplicación',
+                                    breadcrumb: {name: 'APLICAR PAGO', parent: 'finanzas'},
+                                    middleware: [auth, context],
+                                    permission: 'consultar_carga_layout_pago'
+                                }
+                            }
                         ]
                     },
                     {
@@ -2015,7 +2056,7 @@ export const routes = [
                                 meta: {
                                     title: 'Carga Masiva',
                                     breadcrumb: {
-                                        parent: 'gestion-pago',
+                                        parent: 'pago',
                                         name: 'CARGA MASIVA'
                                     },
                                     middleware: [auth, context, permission],

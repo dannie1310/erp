@@ -426,4 +426,9 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
         descriptionValidation="En cargar Recibidos: El RFC del comprobante Recibido corresponde con el RFC de la empresa " codeValidation="5.1" /></ValidationResult></Document>
         </Document><MetadataApp><SourceFile Value="'.$guid.'.xml" xmlns="" /></MetadataApp></Metadata>';
     }
+
+    public function getFacturasAplicacionManual($id_empresa){
+        $this->where([['id_empresa', '=', $id_empresa]]);
+        return $this->all();
+    }
 }
