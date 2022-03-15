@@ -36,7 +36,7 @@
                 data: [],
                 total: 0,
                 query: {
-                    include: ['moneda', 'empresa'], scope:'OrdenPago', sort: 'id_transaccion',  order: 'desc'
+                    include: ['moneda', 'empresa'], scope:'pendientePorAplicar', sort: 'id_transaccion',  order: 'desc'
 
                 },
                 cargando: false
