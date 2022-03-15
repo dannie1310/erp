@@ -100,7 +100,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" v-if="reclasificar_destinos">
+                    <div class="row" v-if="contrato.puede_editar_partidas == false && reclasificar_destinos">
                         <div class="col-md-12">
                             <div class="pull-right">
                                 <button type="button" class="btn btn-secondary" @click="validarReclasificacion">
