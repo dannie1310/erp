@@ -335,7 +335,7 @@ class PagoService
         if($solicitud->tipo_transaccion == 65) {
             if($solicitud->items->count() > 0) {
                 $item = $solicitud->items[0];
-                if ($item->transaccionAntecedente) {
+                if ($item->transaccionAntecedente && $item->transaccionAntecedente->antecedente && $item->transaccionAntecedente->antecedente->costo) {
                     return [
                         'id_costo' => $item->transaccionAntecedente->antecedente->costo->id_costo,
                         'descripcion' => $item->transaccionAntecedente->antecedente->costo->descripcion

@@ -122,7 +122,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label><b>Saldo: </b></label>
-                                <input 
+                                <input
                                     style="text-align: right"
                                     type="text"
                                     id="saldo"
@@ -134,7 +134,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label for="moneda">Moneda:</label>
-                                <input 
+                                <input
                                     style="text-align: center"
                                     type="text"
                                     id="moneda"
@@ -146,7 +146,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label id="tipo_cambio"><b>Tipo de Cambio</b></label>
-                                <input 
+                                <input
                                     style="text-align: right"
                                     type="text"
                                     id="tipo_cambio"
@@ -159,7 +159,7 @@
                             <div class="form-group row">
                                 <label id="subtotal"  class="col-sm-5 col-form-label"><b>Subtotal</b></label>
                                 <div class="col-md-7">
-                                    <input 
+                                    <input
                                         style="width: 100%; text-align: right"
                                         type="text"
                                         id="subtotal"
@@ -175,7 +175,7 @@
                             <div class="form-group row">
                                 <label id="impuesto" class="col-sm-5 col-form-label"><b>IVA</b></label>
                                 <div class="col-md-7">
-                                    <input 
+                                    <input
                                         style="width: 100%; text-align: right"
                                         type="number"
                                         step="any"
@@ -191,7 +191,7 @@
                             <div class="form-group row">
                                 <label id="total" class="col-sm-5 col-form-label"><b>Total</b></label>
                                 <div class="col-md-7">
-                                    <input 
+                                    <input
                                         style="width: 100%; text-align: right"
                                         type="text"
                                         id="total"
@@ -207,7 +207,7 @@
                             <div class="form-group row">
                                 <label id="aplicado" class="col-sm-5 col-form-label"><b>Aplicado</b></label>
                                 <div class="col-md-7">
-                                    <input 
+                                    <input
                                         style="width: 100%; text-align: right"
                                         type="text"
                                         id="aplicado"
@@ -240,10 +240,10 @@
                     <button type="button" class="btn btn-secondary pull-right" @click="regresar()"><i class="fa fa-angle-left"></i>Regresar</button>
                     <button type="button" class="btn btn-primary pull-right" @click="validate" :disabled="validaPartidas()"><i class="fa fa-save"></i>Aplicar</button>
                 </div>
-                
+
             </div>
         </div>
-        
+
     </span>
 </template>
 
@@ -300,7 +300,7 @@ export default {
             this.cargando=true;
             return this.$store.dispatch('finanzas/pago/find', {
                 id:this.id,
-                params: {include: ['moneda', 'empresa'], scope:'OrdenPago'}
+                params: {include: ['moneda', 'empresa'], scope:'pendientePorAplicar'}
                 }).then(data=>{
                     this.pago = data;
                     this.findFacturas(data.id_empresa);
