@@ -24,7 +24,7 @@ class PagoRepository extends Repository implements RepositoryInterface
 
     public function getImporteAutorizado($id)
     {
-        return DB::connection('cadeco')->select(DB::raw("
+        return DB::connection('modulosao')->select(DB::raw("
             SELECT TOP 1 d.IDDocumento AS id_documento_remesa, d.IDTransaccionCDC as id_transaccion, upo.id_obra AS id_obra, bdo.BaseDatos as base_datos,
                 dp.MontoAutorizadoPrimerEnvio + MontoAutorizadoSegundoEnvio as monto_autorizado_remesa,
                 cast(r.Anio as varchar(4))+'-'+ cast(r.NumeroSemana as varchar(4)) +'-'+ SUBSTRING( rtr.TipoRemesa,1,3) + '-'+ cast(r.Folio as varchar(4)) AS remesa_relacionada,
@@ -43,7 +43,7 @@ class PagoRepository extends Repository implements RepositoryInterface
 
     public function getImporteTotalAutorizado($id)
     {
-        $suma =  DB::connection('cadeco')->select(DB::raw("
+        $suma =  DB::connection('modulosao')->select(DB::raw("
             SELECT SUM(dp.MontoAutorizadoPrimerEnvio + MontoAutorizadoSegundoEnvio) as suma
                 FROM [ModulosSAO].[ControlRemesas].[Documentos] d
                 INNER JOIN [ModulosSAO].[ControlRemesas].[Remesas] r ON d.IDRemesa = r.IDRemesa and d.Seleccionado =1

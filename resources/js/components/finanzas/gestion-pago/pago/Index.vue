@@ -1,18 +1,18 @@
 <template>
     <div class="row">
         <div class="col-12"  :disabled="cargando">
-            <button  @click="create" title="Crear" class="btn btn-app btn-info float-right"  v-if="$root.can('cargar_bitacora')">
+            <router-link  :to="{ name: 'pago-create'}" v-if="$root.can('cargar_bitacora')" type="button" class="btn btn-app float-right" title="Registrar Pagos" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-plus" v-else></i>
                 Bitácora
                 (SANTANDER)
-            </button>
-            <router-link  :to="{ name: 'registro-pago'}" v-if="$root.can('registrar_pago')" type="button" class="btn btn-app btn-info float-right" title="Registrar Pagos">
+            </router-link>
+            <router-link  :to="{ name: 'registro-pago'}" v-if="$root.can('registrar_pago')" type="button" class="btn btn-app float-right" title="Registrar Pagos" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-money" v-else></i>
+                <i class="fa fa-plus" v-else></i>
                 Registrar
             </router-link>
-            <router-link  :to="{ name: 'carga-masiva'}" v-if="$root.can('consultar_carga_layout_pago')" type="button" class="btn btn-app btn-info float-right" title="Carga masiva">
+            <router-link  :to="{ name: 'carga-masiva'}" v-if="$root.can('consultar_carga_layout_pago')" type="button" class="btn btn-app float-right" title="Carga masiva" :disabled="cargando">
                 <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
                 <i class="fa fa-file-upload" v-else></i>
                 Carga Masiva
@@ -23,7 +23,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -47,9 +47,9 @@
                     { title: 'Beneficiario', field: 'destino', thComp:require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Cuenta', field: 'numero_cuenta',  thComp:require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Concepto', field: 'observaciones',  thComp:require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: true},
+                    { title: 'Monto', field: 'monto', thClass: 'th_c80', tdClass: 'td_money80', sortable: true},
                     { title: 'Moneda', field: 'id_moneda',  thComp:require('../../../globals/th-Filter').default, sortable: true },
-                    { title: 'Estado', field: 'estado',  thComp:require('../../../globals/th-Filter').default, sortable: true },
+                    { title: 'Estado', field: 'estado', thClass: 'th_c80',  thComp:require('../../../globals/th-Filter').default, sortable: true },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],

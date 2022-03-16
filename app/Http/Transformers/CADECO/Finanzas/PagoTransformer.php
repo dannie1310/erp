@@ -54,6 +54,8 @@ class PagoTransformer extends TransformerAbstract
           'fecha_format'=>$model->fecha_format,
           'monto'=>abs($model->monto),
           'monto_format'=>($model->monto_format),
+          'monto'=>abs($model->monto),
+          'monto_positivo_format'=>($model->monto_positivo_format),
           'id_empresa'=>$model->id_empresa,
           'destino'=>$model->destino,
           'observaciones'=>$model->observaciones ? strtoupper($model->observaciones) : '',
