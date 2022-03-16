@@ -14,11 +14,11 @@
                 <div class="modal-body" v-if="pago">
                     <div class="row">
                         <div class="col-md-12">
-                            <span><i class="fa fa-envelope"></i>Datos de Pago</span>
+                            <span><i class="fa fa-dollar-sign"></i>Datos del Pago</span>
                             <div class="table-responsive">
                                 <table class="table  table-sm">
                                     <tr>
-                                        <td colspan="3" class="encabezado centrado">
+                                        <td colspan="6" class="encabezado centrado">
                                             {{pago.empresa.razon_social}}
                                         </td>
                                     </tr>
@@ -32,6 +32,15 @@
                                         <th class="encabezado">
                                             Fecha
                                         </th>
+                                        <th class="encabezado">
+                                            Monto
+                                        </th>
+                                        <th class="encabezado">
+                                            Saldo
+                                        </th>
+                                        <th class="encabezado">
+                                            Moneda
+                                        </th>
                                     </tr>
                                     <tr>
                                         <td>
@@ -42,6 +51,15 @@
                                         </td>
                                         <td>
                                             {{pago.fecha_format}}
+                                        </td>
+                                        <td style="text-align: right">
+                                            {{pago.monto_positivo_format}}
+                                        </td>
+                                        <td style="text-align: right">
+                                            {{pago.saldo_format}}
+                                        </td>
+                                        <td>
+                                            {{pago.moneda.nombre}}
                                         </td>
                                     </tr>
                                 </table>
@@ -55,14 +73,15 @@
                                 <label for="factura" class="col-sm-2 col-form-label">Aplicar a: </label>
                                 <div class="col-sm-10">
                                     <model-list-select
+                                            id="factura"
                                             :disabled="cargando"
                                             name="factura"
                                             v-validate="{required: true}"
                                             v-model="factura"
                                             option-value="id"
-                                            option-text="referencia"
+                                            :custom-text="referenciaNumeroFolio"
                                             :list="facturas"
-                                            :placeholder="!cargando?'Seleccionar o buscar factura por referencia':'Cargando...'"
+                                            :placeholder="!cargando?'Seleccionar o buscar la transacción factura por referencia o folio':'Cargando...'"
                                             >
                                     </model-list-select>
                                     <div class="invalid-feedback" v-show="errors.has('factura')">{{ errors.first('factura') }}</div>
@@ -72,13 +91,13 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><b>Fecha: </b></label>
-                                <span v-if="partidas"><b>{{facturas[index_factura].fecha_format}}</b></span>
+                                <span v-if="partidas">{{facturas[index_factura].fecha_format}}</span>
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label><b>Moneda: </b></label>
-                                <span v-if="partidas"><b>{{facturas[index_factura].moneda}}</b></span>
+                                <span v-if="partidas">{{facturas[index_factura].moneda}}</span>
                             </div>
                         </div>
                     </div>
@@ -99,13 +118,12 @@
                                             <td class="td_money">${{fac.saldo_format}}</td>
                                             <td>
                                                 <input
-                                                    type="number"
-                                                    step="any"
+                                                    type="text"
                                                     v-on:keyup="getSubtotal()"
-                                                    style="text-align: right"
+                                                    style="text-align: right; padding: 3px"
                                                     :name="`aplicar[${i}]`"
                                                     data-vv-as="Aplicar"
-                                                    v-validate="{required: true, min_value:0.01, max_value:fac.saldo_base, decimal:2}"
+                                                    v-validate="{required: true, min_value:0.01, max_value:fac.saldo_base, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                     class="form-control"
                                                     id="aplicar"
                                                     v-model="fac.saldo"
@@ -145,7 +163,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label id="tipo_cambio"><b>Tipo de Cambio</b></label>
+                                <label for="tipo_cambio"><b>T.C.:</b></label>
                                 <input
                                     style="text-align: right"
                                     type="text"
@@ -157,7 +175,7 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group row">
-                                <label id="subtotal"  class="col-sm-5 col-form-label"><b>Subtotal</b></label>
+                                <label for="subtotal"  class="col-sm-5 col-form-label"><b>Subtotal:</b></label>
                                 <div class="col-md-7">
                                     <input
                                         style="width: 100%; text-align: right"
@@ -173,15 +191,18 @@
                     <div class="row">
                         <div class="col-md-3 offset-9">
                             <div class="form-group row">
-                                <label id="impuesto" class="col-sm-5 col-form-label"><b>IVA</b></label>
+                                <label for="impuesto" class="col-sm-5 col-form-label"><b>IVA:</b></label>
                                 <div class="col-md-7">
                                     <input
-                                        style="width: 100%; text-align: right"
-                                        type="number"
-                                        step="any"
+                                        style="width: 100%; text-align: right; padding: 3px"
+                                        type="text"
                                         id="impuesto"
                                         name="impuesto"
-                                        v-model="iva">
+                                        v-validate="{regex: /^[0-9]\d*(\.\d+)?$/}"
+                                        class="form-control"
+                                        :class="{'is-invalid': errors.has('impuesto')}"
+                                        v-model="iva"
+                                    >
                                 </div>
                             </div>
                         </div>
@@ -189,7 +210,7 @@
                     <div class="row">
                         <div class="col-md-3 offset-9">
                             <div class="form-group row">
-                                <label id="total" class="col-sm-5 col-form-label"><b>Total</b></label>
+                                <label for="total" class="col-sm-5 col-form-label"><b>Total:</b></label>
                                 <div class="col-md-7">
                                     <input
                                         style="width: 100%; text-align: right"
@@ -205,7 +226,7 @@
                     <div class="row">
                         <div class="col-md-3 offset-9">
                             <div class="form-group row">
-                                <label id="aplicado" class="col-sm-5 col-form-label"><b>Aplicado</b></label>
+                                <label for="aplicado" class="col-sm-5 col-form-label"><b>Aplicado:</b></label>
                                 <div class="col-md-7">
                                     <input
                                         style="width: 100%; text-align: right"
@@ -308,6 +329,10 @@ export default {
                 .finally(()=>{
                 })
 
+        },
+        referenciaNumeroFolio(item)
+        {
+            return `[${item.numero_folio_format}] - [ ${item.referencia} ]`;
         },
         findFacturas(id_empresa){
             return this.$store.dispatch('finanzas/factura/facturasAplicacionManual', {

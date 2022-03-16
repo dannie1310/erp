@@ -1933,7 +1933,7 @@ export const routes = [
                                 name: 'pago',
                                 component: require('./components/finanzas/gestion-pago/pago/Index').default,
                                 meta: {
-                                    title: 'Listado de Pagos',
+                                    title: 'Listado de Pagos Registrados',
                                     breadcrumb: {
                                         parent: 'finanzas', name: 'PAGOS'
                                     },
@@ -1990,10 +1990,10 @@ export const routes = [
                                 name: 'registro-pago',
                                 component: require('./components/finanzas/gestion-pago/pago/registro/Index').default,
                                 meta: {
-                                    title: 'Listado de registro de pagos',
+                                    title: 'Listado de Transacciones Pendientes de Pago',
                                     breadcrumb: {
                                         parent: 'pago',
-                                        name: 'LISTADO DE REGISTRO'
+                                        name: 'TRANSACCIONES PENDIENTES DE PAGO'
                                     },
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_pago'
@@ -2022,10 +2022,10 @@ export const routes = [
                                 name: 'pago-manual',
                                 component: require('./components/finanzas/pago-manual/Index').default,
                                 meta: {
-                                    title: 'Pagos Pendientes por Aplicar',
+                                    title: 'Lista de Pagos Pendientes de Aplicar Manualmente',
                                     breadcrumb: {
                                         parent: 'finanzas',
-                                        name: 'PAGOS PENDIENTES APLICAR'
+                                        name: 'PAGOS PENDIENTES DE APLICAR'
                                     },
                                     middleware: [auth, context, permission],
                                     permission: 'registrar_pago_manual'
@@ -2037,8 +2037,8 @@ export const routes = [
                                 props: true,
                                 component: require('./components/finanzas/pago-manual/Aplicar').default,
                                 meta: {
-                                    title: 'Pago Pendiente Aplicación',
-                                    breadcrumb: {name: 'APLICAR PAGO', parent: 'finanzas'},
+                                    title: 'Pago Pendiente de Aplicación',
+                                    breadcrumb: {name: 'APLICAR PAGO MANUAL', parent: 'finanzas'},
                                     middleware: [auth, context],
                                     permission: 'consultar_carga_layout_pago'
                                 }

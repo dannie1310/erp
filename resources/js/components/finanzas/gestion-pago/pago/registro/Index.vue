@@ -5,7 +5,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -24,13 +24,12 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
+                    { title: 'Tipo de Transacción', field: 'tipo', sortable: false},
                     { title: 'Folio', field: 'numero_folio', sortable: false},
                     { title: 'Fecha', field: 'fecha', sortable: false},
                     { title: 'Beneficiario', field: 'empresa',sortable: false},
-                    { title: 'Tipo', field: 'tipo', sortable: false},
-                    { title: 'Monto', field: 'monto', thClass: 'th_money', tdClass: 'td_money', sortable: false},
+                    { title: 'Monto', field: 'monto', thClass: 'th_c80', tdClass: 'td_money80', sortable: false},
                     { title: 'Moneda', field: 'id_moneda', sortable: false },
-                    { title: 'Estado', field: 'estado',  sortable: false },
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
