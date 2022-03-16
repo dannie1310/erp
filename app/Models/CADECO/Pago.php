@@ -282,7 +282,11 @@ class Pago extends Transaccion
     }
 
     public function scopePendientePorAplicar($query){
-        return $query->where('opciones', '=', 327681);
+        return $query->where('opciones', '=', 327681)->whereRaw('abs(saldo) > 0.1');
+    }
+
+    public function scopeConSaldo($query){
+        return $query->whereRaw('abs(saldo) > 0.1');
     }
 
     public function eliminar($motivo)
@@ -463,7 +467,7 @@ class Pago extends Transaccion
                 'id_antecedente' => $this->id_transaccion,
                 'numero_folio' => $this->numero_folio
             ]);
-            // dd(2);
+
             $orden_pago = OrdenPago::create([
                 'id_antecedente' => $factura->id_antecedente,
                 'id_referente' => $factura->id_transaccion,
