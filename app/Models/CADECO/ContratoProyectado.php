@@ -498,16 +498,13 @@ class ContratoProyectado extends Transaccion
                         $this->conceptos()->create($datos);
                     }
                 }
-            }else{
-                foreach ($data['contratos']['data'] as $key => $contrato)
+            }
+            else{
+                if($data['editar_destinos'])
                 {
-                    if($contrato['es_hoja'] && array_key_exists('id_destino',$contrato))
-                    {
-                        $con = Contrato::where('id_concepto', $contrato['id'])->first();
-                        $con->update([
-                           'id_destino' => $contrato['id_destino']
-                        ]);
-                    }
+                    $this->editarDestinos($data['contratos']['data']);
+                }else {
+                    $this->editarDestinos($data['contratos']['data']);
                 }
             }
             DB::connection('cadeco')->commit();
@@ -811,5 +808,49 @@ class ContratoProyectado extends Transaccion
             $partidas[$key]['partidas'] = $item;
         }
         return $partidas;
+    }
+
+    private function editarDestinos($contratos)
+    {
+        foreach ($contratos as $key => $contrato) {
+            if ($contrato['es_hoja'] && array_key_exists('id_destino', $contrato)) {
+                $con = Contrato::where('id_concepto', $contrato['id'])->first();
+                $con->update([
+                    'id_destino' => $contrato['id_destino']
+                ]);
+            }
+        }
+    }
+
+    public function reclasificacion($data)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            foreach ($this->subcontratos as $subcontrato)
+            {
+                foreach ($subcontrato->estimaciones as $estimacion)
+                {
+                    foreach ($estimacion->partidas as $partida)
+                    {
+                        foreach ($data['contratos']['data'] as $contrato)
+                        {
+                            if($contrato['es_hoja'] && $contrato['id_concepto'] == $partida->item_antecedente)
+                            {
+                                $partida->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
+                                $partida->save();
+
+                            }
+                        }
+                    }
+                }
+            }
+            $this->editarDestinos($data['contratos']['data']);
+
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            throw $e;
+        }
     }
 }

@@ -1143,6 +1143,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/comparativa-cotizaciones/pdf', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@pdfComparativaCotizaciones')->where(['id' => '[0-9]+']);
             $api->get('{id}/descargaLayoutAsignacion', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@descargaLayoutAsignacion')->where(['id' => '[0-9]+']);
             $api->post('cargalayout','App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@procesaLayoutAsigancion');
+            $api->patch('{id}/reclasificacion', 'App\Http\Controllers\v1\CADECO\Contratos\ContratoProyectadoController@reclasificacion');
         });
 
         /**
