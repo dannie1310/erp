@@ -383,20 +383,20 @@ class PresupuestoContratista extends Transaccion
         $salida = [];
         foreach ($this->partidas as $partida) {
             $monedas [] = $partida->IdMoneda;
-            if(key_exists($partida->IdMoneda, $subtotales)){
-                $subtotales[$partida->IdMoneda] += $partida->importe_moneda_original_despues_descuento_global ;
+            if (key_exists($partida->IdMoneda, $subtotales)) {
+                $subtotales[$partida->IdMoneda] += $partida->importe_moneda_original_despues_descuento_global;
             } else {
-                $subtotales[] = [$partida->IdMoneda=>$partida->importe_moneda_original_despues_descuento_global];
+                $subtotales = [$partida->IdMoneda => $partida->importe_moneda_original_despues_descuento_global];
             }
         }
-        foreach($subtotales as $subtotal){
-            foreach($subtotal as $k=>$v){
-                $moneda = Moneda::find($k);
-                $salida[] = [
-                    "moneda" =>$moneda ? $monedas->nombre : '',
-                    "subtotal_format" => "$ " . number_format($v, 2)
-                ];
-            }
+        dd($subtotales);
+
+        foreach ($subtotales as $k => $v) {
+            $moneda = Moneda::find($k);
+            $salida[] = [
+                "moneda" => $moneda ? $moneda->nombre : '',
+                "subtotal_format" => "$ " . number_format($v, 2)
+            ];
         }
         return $salida;
     }
