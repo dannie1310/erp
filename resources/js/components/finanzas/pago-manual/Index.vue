@@ -5,7 +5,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -30,7 +30,7 @@
                     { title: 'Fecha', field:'fecha', sortable:true},
                     { title: 'Moneda',field: 'moneda', tdClass: 'td_c100', thClass: 'th_c100', sortable: true},
                     { title: 'Cheque',field: 'referencia', tdClass: 'td_c120', thClass: 'th_c120', sortable: true},
-                    { title: 'Saldo',field: 'saldo', tdClass: 'td_money', thClass: 'th_money', sortable: true},
+                    { title: 'Saldo',field: 'saldo', thClass: 'th_c80', tdClass: 'td_money80', sortable: true},
                     { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],

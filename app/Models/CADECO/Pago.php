@@ -276,6 +276,11 @@ class Pago extends Transaccion
         return '$' . number_format(abs($this->saldo * -1), 2, '.', ',');
     }
 
+    public function getMontoPositivoFormatAttribute()
+    {
+        return '$' . number_format(abs($this->monto),2);
+    }
+
     public function scopePendientePorAplicar($query){
         return $query->where('opciones', '=', 327681);
     }
