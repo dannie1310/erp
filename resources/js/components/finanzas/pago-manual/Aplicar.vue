@@ -194,6 +194,7 @@
                                 <label for="impuesto" class="col-sm-5 col-form-label"><b>IVA:</b></label>
                                 <div class="col-md-7">
                                     <input
+                                        v-on:keyup="recalculaTotal()"
                                         style="width: 100%; text-align: right; padding: 3px"
                                         type="text"
                                         id="impuesto"
@@ -355,10 +356,13 @@ export default {
                     sbt = sbt + parseFloat(partida.saldo);
                 });
             }
-            this.subtotal = parseFloat(sbt).formatMoney(2,'.','');
-            this.iva = parseFloat(sbt * 0.16).formatMoney(2,'.','');
+            this.subtotal = parseFloat(sbt);
+            this.iva = parseFloat(sbt * 0.16);
             this.total = parseFloat(this.subtotal + this.iva).formatMoney(2,'.','');
             this.aplicado = parseFloat(this.total * this.facturas[this.index_factura]['tipo_cambio']).formatMoney(2,'.','');
+            this.subtotal = parseFloat(this.subtotal).formatMoney(2,'.','');
+            this.iva = parseFloat(this.iva).formatMoney(2,'.','');
+            
         },
         validate() {
             this.$validator.validate().then(result => {
@@ -395,6 +399,11 @@ export default {
                 subtotal = subtotal + parseFloat(partida.saldo);
             });
             return subtotal == 0;
+        },
+        recalculaTotal(){
+            let total = parseFloat(this.subtotal) + parseFloat(this.iva);
+            this.total = total.formatMoney(2,'.','')
+            this.aplicado = parseFloat(total * this.facturas[this.index_factura]['tipo_cambio']).formatMoney(2,'.','');
         },
     },
     watch:{

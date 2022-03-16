@@ -74,7 +74,10 @@ class ItemFactura extends Item
     public function getDescripcionAntecedenteAttribute(){
         if($this->numero == 3){
             return 'Renta de ' . $this->material->descripcion;
+        }else if($this->numero == 7){
+            return 'Seguros y Fianzas';
         }else{
+            
             switch ($this->antecedente->tipo_transaccion){
                 case 51:
                     return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
