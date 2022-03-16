@@ -322,7 +322,7 @@ class PagoService
                     return ['error' => "Esta solicitud " . $solicitud->numero_folio_format . " se encuentra pagada completamente."];
                 }
                 if ((float)$suma_historico_remesa < (float)$pago->suma) {
-                    return ['error' => "El monto pagado de esta solicitud " . $solicitud->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                    return ['error' => "El monto pagado de esta solicitud " . $solicitud->numero_folio_format . ": $" . number_format($pago->suma, 2) .
                         " excedió el monto autorizado $" . number_format($suma_historico_remesa, 2) . " en la remesa " . $remesa->remesa_relacionada . "."];
                 }
                 return ['saldo' => $solicitud->saldo];
