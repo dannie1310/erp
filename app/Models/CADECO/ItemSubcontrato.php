@@ -156,7 +156,7 @@ class ItemSubcontrato extends Item
             $destino = Destino::where('id_transaccion', '=', $id_contrato)->where('id_concepto_contrato', '=', $contrato->id_concepto)->first();
             $path_corta = $destino->concepto ? $destino->concepto->path_corta : $destino->concepto_sgv->path_corta_proveedor;
             $path =  $destino->concepto ? $destino->concepto->path : $destino->concepto_sgv->path_sgv;
-            $id_destino = $contrato->id_concepto;
+            $id_destino = $destino->id_concepto;
         }
         return array(
             'id' => $this->id_item,
