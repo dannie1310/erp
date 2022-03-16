@@ -386,10 +386,9 @@ class PresupuestoContratista extends Transaccion
             if (key_exists($partida->IdMoneda, $subtotales)) {
                 $subtotales[$partida->IdMoneda] += $partida->importe_moneda_original_despues_descuento_global;
             } else {
-                $subtotales = [$partida->IdMoneda => $partida->importe_moneda_original_despues_descuento_global];
+                $subtotales[$partida->IdMoneda] = $partida->importe_moneda_original_despues_descuento_global;
             }
         }
-        dd($subtotales);
 
         foreach ($subtotales as $k => $v) {
             $moneda = Moneda::find($k);
