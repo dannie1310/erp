@@ -100,6 +100,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row" v-if="contrato.puede_editar_partidas == false && reclasificar_destinos">
+                        <div class="col-md-12">
+                            <div class="pull-right">
+                                <button type="button" class="btn btn-secondary" @click="reclasificar">
+                                    <i class="fa fa-random" aria-hidden="true"></i> Reclasificar Destino
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                     <br />
                     <div class="row">
                         <div  class="col-12">
@@ -223,15 +232,15 @@
                                 </table>
                                 <table v-else class="table table-striped table-sm">
                                     <thead>
-                                    <tr>
-                                        <th class="index_corto">#</th>
-                                        <th class="c120">Clave</th>
-                                        <th >Descripción</th>
-                                        <th class="c150">Unidad</th>
-                                        <th class="cantidad_input">Cantidad</th>
-                                        <th>Destinos</th>
-                                        <th class="c100"></th>
-                                    </tr>
+                                        <tr>
+                                            <th class="index_corto">#</th>
+                                            <th class="c120">Clave</th>
+                                            <th >Descripción</th>
+                                            <th class="c150">Unidad</th>
+                                            <th class="cantidad_input">Cantidad</th>
+                                            <th>Destinos</th>
+                                            <th class="c100"></th>
+                                        </tr>
                                     </thead>
                                     <tbody v-for="(concepto, i) in contrato.contratos.data">
                                         <tr>
@@ -243,14 +252,14 @@
                                             <td v-if="concepto.unidad == null"></td>
                                             <td v-else class="cantidad_input">{{concepto.cantidad_original_format}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else-if="concepto.destino == undefined || concepto.id_destino">
+                                            <td v-else-if="concepto.destino == undefined || concepto.id_destino || editar_destinos">
                                                 <input type="text" class="form-control"
                                                        value=""
                                                        readonly="readonly"
-                                                       :title="concepto.destino"
+                                                       :title="concepto.destino.concepto ? concepto.destino.concepto.path : concepto.destino"
                                                        :name="`destino_path[${i}]`"
                                                        data-vv-as="Destino"
-                                                       v-model="concepto.destino"
+                                                       v-model="concepto.destino.concepto ? concepto.destino.concepto.path : concepto.destino"
                                                        v-validate="{required: concepto.es_hoja}"
                                                        :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
                                                        :id="`destino_path[${i}]`">
@@ -261,10 +270,10 @@
                                             </td>
                                             <td class="icono" v-if="concepto.es_hoja">
                                                 <small class="badge badge-secondary">
-                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
+                                                    <i class="fa fa-sign-in button" aria-hidden="true" v-on:click="modalDestino(i)" v-if="concepto.destino == undefined || concepto.id_destino || editar_destinos" title="Seleccionar Destino"></i>
                                                 </small>
-                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
-                                                <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.destino == undefined || concepto.id_destino"></i>
+                                                <i class="far fa-copy button" v-on:click="copiar_destino(concepto)" v-if="concepto.destino == undefined || concepto.id_destino || editar_destinos" title="Copiar"></i>
+                                                <i class="fas fa-paste button" v-on:click="pegar_destino(i)" v-if="concepto.destino == undefined || concepto.id_destino || editar_destinos" title="Pegar"></i>
                                             </td>
                                             <td v-else></td>
                                         </tr>
@@ -352,6 +361,8 @@ export default {
                 destino:'',
                 id_destino:''
             },
+            editar_destinos: false,
+            reclasificar_destinos: false,
         }
     },
     mounted() {
@@ -363,6 +374,7 @@ export default {
             this.$router.push({name: 'proyectado'});
         },
         save() {
+            this.contrato.editar_destinos = this.editar_destinos;
             return this.$store.dispatch('contratos/contrato-proyectado/update', {
                 id: this.id,
                 data: this.contrato,
@@ -371,8 +383,7 @@ export default {
                     this.salir()
                 })
         },
-        formatoFecha(date)
-        {
+        formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
         },
         getUnidades() {
@@ -383,8 +394,7 @@ export default {
                     this.unidades= data.data;
                 })
         },
-        find()
-        {
+        find() {
             this.cargando = true;
             return this.$store.dispatch('contratos/contrato-proyectado/find', {
                 id: this.id,
@@ -400,6 +410,14 @@ export default {
                 this.referencia = data.referencia;
                 this.cumplimiento = data.cumplimiento;
                 this.vencimiento = data.vencimiento;
+                if(this.$root.can('editar_destinos_contrato_proyectado') != undefined)
+                {
+                    this.editar_destinos = true;
+                }
+                if(this.$root.can('reclasificar_destinos_contrato_proyectado') != undefined)
+                {
+                    this.reclasificar_destinos = true;
+                }
             }).finally(() => {
                 this.cargando = false;
             })
@@ -536,6 +554,14 @@ export default {
                 this.partida_index = '';
                 this.cargando = false;
                 $(this.$refs.modal_destino).modal('hide');
+            })
+        },
+        reclasificar() {
+            return this.$store.dispatch('contratos/contrato-proyectado/reclasificarDestino', {
+                id: this.id,
+                data: this.contrato,
+            }).then(() => {
+                this.salir()
             })
         },
     },

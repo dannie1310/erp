@@ -172,7 +172,7 @@ class ContratoProyectadoService
             $destino_path = '';
             $cantidad = 0;
             $tipo_error = [];
-            
+
             if(is_numeric($partida["destino"])){
                 if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
                     if($concepto->es_agrupador){
@@ -181,7 +181,7 @@ class ContratoProyectadoService
                         $destino_path =  $concepto->path_corta;
                     }
                 }
-            }else{ 
+            }else{
                 if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
                     if($concepto->es_agrupador){
                         $path = explode('->', $concepto->path);
@@ -202,7 +202,7 @@ class ContratoProyectadoService
                 $partidas_errores[0] = 'Descripción mayor a 255 caracteres';
                 $tipo_error['descripcion'] = true;
             }
-            
+
             $dsc_format = str_pad($partida['descripcion'], strlen($partida['descripcion']) + ($partida['nivel'] * 2), '_', STR_PAD_LEFT);
             $contratos[$key] = [
                     'clave' => $partida['clave'],
@@ -257,7 +257,7 @@ class ContratoProyectadoService
                 $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
             }
 
-            
+
         }
 
         if(count($partidas_errores) > 0){
@@ -552,7 +552,7 @@ class ContratoProyectadoService
 
         $cant_pres =(count($celdas[0]) - 6) / 9;
         $cant_asignaciones = [];
-        
+
         for($i = 3; $i < count($celdas);$i++){
             $id_contrato = $this->verifica->desencripta($celdas[$i][0]);
             $contrato = Contrato::where('id_concepto', '=', $id_contrato)->first();
@@ -572,7 +572,7 @@ class ContratoProyectadoService
                 'cotizado' => false,
                 'asignadas_mayor_disponible' => false,
             ];
-            
+
             $indx_id_contrato = 6;
             $cant_asignada = 0;
             for($j = 0; $j < $cant_pres; $j++){
@@ -647,7 +647,7 @@ class ContratoProyectadoService
                     }
                 }
             }
-            
+
         }
         return ['items'=>$items,'presupuestos'=> $presupuestos, 'cantidad_presupuestos'=>count($cant_asignaciones), 'precios_menores' => $precios, 'partidas_no_validas' => $partidas_no_validas, 'origen' => 1];
     }
@@ -657,5 +657,10 @@ class ContratoProyectadoService
         $rows = Excel::toArray(new CotizacionImport, $file_xls);
         unlink($file_xls);
         return $rows[0];
+    }
+
+    public function reclasificacion(array $data, $id)
+    {
+        return $this->repository->show($id)->reclasificacion($data);
     }
 }
