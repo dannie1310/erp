@@ -1825,6 +1825,23 @@ export const routes = [
                         ]
                     },
                     {
+                        path:'conciliacion-bancaria',
+                        component: require('./components/finanzas/conciliacion-bancaria/Layout').default,
+                        children: [
+                            {
+                                path:'/',
+                                name: 'conciliacion-bancaria',
+                                component: require('./components/finanzas/conciliacion-bancaria/Index').default,
+                                meta:{
+                                    title: 'Conciliación Bancaria',
+                                    breadcrumb: {name: 'CONCILIACION BANCARIA', parent: 'finanzas'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_factura'
+                                }
+                            }
+                        ]
+                    },
+                    {
                         path:'fondo',
                         component: require('./components/finanzas/fondo/Layout.vue').default,
                         children: [
