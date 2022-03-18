@@ -1019,6 +1019,8 @@ class Pago extends Transaccion
         }
 
         if ($data['solicitud']['tipo_transaccion'] == 72) {
+            $transaccion = Solicitud::find($data['id']);
+            $this->validarMontoPorPagar($data['solicitud'], $transaccion, $suma_historico, $remesa_folio);
             $pago = Solicitud::find($data['id'])->generaPago($data['solicitud']);
         }
         return $pago;
@@ -1028,11 +1030,15 @@ class Pago extends Transaccion
     {
         if($transaccion->tipo_transaccion == 65)
         {
+            if($transaccion->estado != 1)
+            {
+                abort(400,  "Esta factura " . $transaccion->numero_folio_format . " se encuentra ".$transaccion->estado_string.".");
+            }
             if($transaccion->items->count() > 0)
             {
                 $antecedente = $transaccion->items[0]->antecedente;
-                if ($antecedente->estado != 2) {
-                    return ['error' => "La " . $antecedente->tipo_transaccion_str . " a pagar " . $antecedente->numero_folio_format . " tiene un estado no aprobado."];
+                if ($antecedente != 0 && $antecedente->estado != 2) {
+                    abort( 400,"La " . $antecedente->tipo_transaccion_str . " a pagar " . $antecedente->numero_folio_format . " tiene un estado no aprobado.");
                 }
             }
 
@@ -1040,15 +1046,15 @@ class Pago extends Transaccion
             if($orden_pago)
             {
                 if ((float)$suma_historico == (float)$orden_pago->suma) {
-                    return ['error' => "Esta factura " . $transaccion->numero_folio_format . " se encuentra pagada completamente."];
+                    abort("Esta factura " . $transaccion->numero_folio_format . " se encuentra pagada completamente.");
                 }
                 if ((float)$suma_historico < (float)$orden_pago->suma) {
-                    return ['error' => "El monto pagado de esta factura " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
-                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                    abort(400,"El monto pagado de esta factura " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . ".");
                 }
                 if ((float)$suma_historico < ((float)$orden_pago->suma + (float)$solicitud['monto_pagado_transaccion'])) {
-                    return ['error' => "El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
-                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                    abort("El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . ".");
                 }
             }
         }
@@ -1056,27 +1062,27 @@ class Pago extends Transaccion
         {
             if($transaccion->antecedente->estado != 2)
             {
-                return ['error' => "La " . $transaccion->antecedente->tipo_transaccion_str . " a pagar ".$transaccion->antecedente->numero_folio_format." tiene un estado no aprobado."];
+                abort(400,"La " . $transaccion->antecedente->tipo_transaccion_str . " a pagar ".$transaccion->antecedente->numero_folio_format." tiene un estado no aprobado.");
             }
             $pago =  Pago::where('id_antecedente', $solicitud['id'])->selectRaw('(SUM(monto)*-1) as suma')->first();
             if($pago)
             {
                 if ((float)$suma_historico == (float)$pago->suma) {
-                    return ['error' => "Esta solicitud " . $transaccion->numero_folio_format . " se encuentra pagada completamente."];
+                    abort(400,"Esta solicitud " . $transaccion->numero_folio_format . " se encuentra pagada completamente.");
                 }
                 if ((float)$suma_historico < (float)$pago->suma) {
-                    return ['error' => "El monto pagado de esta solicitud " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
-                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                    abort(400,"El monto pagado de esta solicitud " . $transaccion->numero_folio_format . ": $" . number_format($orden_pago->suma, 2) .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . ".");
                 }
                 if ((float)$suma_historico < ((float)$pago->suma + (float)$solicitud['monto_pagado_transaccion'])) {
-                    return ['error' => "El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
-                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . "."];
+                    abort(400,"El monto pagado a pagar $".number_format($solicitud['monto_pagado_transaccion'],2)." de la factura " . $transaccion->numero_folio_format .
+                        " excedió el monto autorizado $" . number_format($suma_historico, 2) . " en la remesa " . $remesa_folio . ".");
                 }
             }
         }
         if($solicitud['monto_pagado'] > $solicitud['monto_autorizado'])
         {
-            return ['error' => "El monto a pagar " . $solicitud['monto_pagado'] . "  supera el monto autorizado ".$solicitud['monto_autorizado']."."];
+            abort(400,"El monto a pagar " . $solicitud['monto_pagado'] . "  supera el monto autorizado ".$solicitud['monto_autorizado'].".");
         }
     }
 }

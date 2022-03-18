@@ -586,10 +586,6 @@ class Factura extends Transaccion
     {
         $this->estado = 2;
         $this->save();
-        $this->refresh();
-        $this->contra_recibo->estado = 2;
-        $this->contra_recibo->saldo = $this->saldo;
-        $this->contra_recibo->save();
     }
 
     public function getFactorIvaAttribute()
@@ -698,7 +694,7 @@ class Factura extends Transaccion
                 }
             }
         }catch (\Exception $e) {
-            
+
         }
         return $this;
     }
@@ -1242,7 +1238,7 @@ class Factura extends Transaccion
         DB::connection('cadeco')->commit();
 
         $this->generaPrepoliza();
-        
+
         return $this;
     }
 
