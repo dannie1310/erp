@@ -2,7 +2,7 @@
     <span>
         <div class="row">
 
-            <div class="col-md-3 col-sm-6 col-12">
+            <div class="col-md-4 col-sm-6 col-12">
                 <div class="info-box" :class="indicador.color">
                     <span class="info-box-icon"><i class="fa fa-file-powerpoint"></i></span>
 
