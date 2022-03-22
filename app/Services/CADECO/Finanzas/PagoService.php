@@ -34,6 +34,11 @@ class PagoService
         $this->repository = new Repository($model);
     }
 
+    public function index($data)
+    {
+        dd( $this->repository->all($data));
+    }
+
     public function paginate($data){
         $pagos = $this->repository;
 
@@ -348,5 +353,15 @@ class PagoService
 
     public function aplicarPago($data){
         $this->repository->show($data['id'])->aplicarPago($data);
+    }
+
+    public function porConciliar($data)
+    {
+        return $this->repository->porConciliar($data);
+    }
+
+    public function conciliar($data)
+    {
+        return $this->repository->show($data['pago']['id'])->conciliar($data['pago']);
     }
 }

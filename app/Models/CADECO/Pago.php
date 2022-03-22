@@ -281,6 +281,31 @@ class Pago extends Transaccion
         return '$' . number_format(abs($this->monto),2);
     }
 
+    public function getConciliadoAttribute()
+    {
+        return $this->estado == 2 ? true : false;
+    }
+
+    public function getEmpresaDescripcionAttribute()
+    {
+        try{
+            return $this->empresa->razon_social;
+        }catch (Exception $e)
+        {
+            return null;
+        }
+    }
+
+    public function getImporteCadecoAttribute()
+    {
+        if($this->monto < 0)
+        {
+            return '('.number_format(abs($this->monto),2) .')';
+        }else{
+            return number_format($this->monto,2);
+        }
+    }
+
     public function scopePendientePorAplicar($query){
         return $query->where('opciones', '=', 327681)->whereRaw('abs(saldo) > 0.1');
     }
@@ -1078,5 +1103,23 @@ class Pago extends Transaccion
         {
             return ['error' => "El monto a pagar " . $solicitud['monto_pagado'] . "  supera el monto autorizado ".$solicitud['monto_autorizado']."."];
         }
+    }
+
+    public function porConciliar($data)
+    {
+        return self::where('id_cuenta', $data['id_cuenta'])->whereRaw("fecha between '".$data['fecha_inicial']." 00:00:00' and '".$data['fecha_final']." 23:59:59'")->orderBy('fecha', 'asc')->get();
+    }
+
+    public function conciliar($data)
+    {
+        if(!$data['conciliado'])
+        {
+            $this->estado = 2;
+            $this->save();
+        }else{
+            $this->estado = 1;
+            $this->save();
+        }
+        return $this;
     }
 }

@@ -56,4 +56,14 @@ class PagoRepository extends Repository implements RepositoryInterface
         "));
         return (float) $suma[0]->suma;
     }
+
+    public function porConciliar($data)
+    {
+        return $this->model->porConciliar($data);
+    }
+
+    public function conciliar($data)
+    {
+        return $this->model->conciliar($data);
+    }
 }

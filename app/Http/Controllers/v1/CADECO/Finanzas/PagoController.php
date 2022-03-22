@@ -71,4 +71,14 @@ class PagoController extends Controller
     public function aplicarPago(Request $request){
         return $this->service->aplicarPago($request->all());
     }
+
+    public function porConciliar(Request $request)
+    {
+        return $this->respondWithCollection($this->service->porConciliar($request->all()));
+    }
+
+    public function conciliar(Request $request)
+    {
+        return $this->service->conciliar($request->all());
+    }
 }

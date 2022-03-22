@@ -54,9 +54,9 @@ class PagoTransformer extends TransformerAbstract
           'fecha_format'=>$model->fecha_format,
           'monto'=>abs($model->monto),
           'monto_format'=>($model->monto_format),
-          'monto'=>abs($model->monto),
           'monto_positivo_format'=>($model->monto_positivo_format),
           'id_empresa'=>$model->id_empresa,
+          'empresa_nombre' => $model->empresa_descripcion,
           'destino'=>$model->destino,
           'observaciones'=>$model->observaciones ? strtoupper($model->observaciones) : '',
           'id_moneda'=>$model->id_moneda,
@@ -65,7 +65,9 @@ class PagoTransformer extends TransformerAbstract
           'es_reemplazo' => $model->es_reemplazo,
           'tipo_antecedente' => $model->tipo_antecedente,
           'referencia' => $model->referencia,
-          'saldo_format' => $model->saldo_format
+          'saldo_format' => $model->saldo_format,
+          'conciliado' => $model->conciliado,
+          'importe_cadeco' => $model->importe_cadeco
       ];
     }
 
