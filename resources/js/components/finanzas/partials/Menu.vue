@@ -89,6 +89,12 @@
                     <p>Facturas</p>
                 </router-link>
             </li>
+            <li class="nav-item" v-if="$root.can('consultar_conciliacion_bancaria')">
+                <router-link :to="{name: 'conciliacion-bancaria'}" class="nav-link" :class="{active: this.$route.name == 'conciliacion-bancaria'}">
+                    &nbsp;<i class="fa fa-hand-holding-usd nav-icon"></i>
+                    <p>Conciliación Bancaria</p>
+                </router-link>
+            </li>
             <li class="nav-item" v-if="$root.can('consultar_movimiento_bancario')">
                 <router-link :to="{name: 'movimiento-bancario'}" class="nav-link" :class="{active: this.$route.name == 'movimiento-bancario'}">
                     &nbsp;<i class="fa fa-receipt nav-icon"></i>

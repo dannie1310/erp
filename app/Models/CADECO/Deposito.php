@@ -12,6 +12,7 @@ namespace App\Models\CADECO;
 class Deposito extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
+    public const NOMBRE = "Deposito";
 
     protected static function boot()
     {

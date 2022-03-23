@@ -222,6 +222,45 @@ export default {
                     });
             });
         },
+        porConciliar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI+'porConciliar', payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        conciliar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI+'conciliar', payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+        totalesConciliar(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI+'totalesConciliar', payload)
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        }
     },
 
     getters: {

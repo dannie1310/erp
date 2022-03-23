@@ -52,6 +52,8 @@ class PagoController extends Controller
         $this->middleware('permiso:consultar_pagos')->only(['paginate', 'show']);
         $this->middleware('permiso:eliminar_pagos')->only(['destroy']);
         $this->middleware('permiso:registrar_pago')->only(['documentosParaPagar', 'documentoParaPagar','store']);
+        $this->middleware('permiso:consultar_conciliacion_bancaria')->only(['porConciliar', 'totalesConciliar']);
+        $this->middleware('permiso:registrar_conciliacion_bancaria')->only('conciliar');
 
         $this->fractal = $fractal;
         $this->service = $service;
@@ -70,5 +72,20 @@ class PagoController extends Controller
 
     public function aplicarPago(Request $request){
         return $this->service->aplicarPago($request->all());
+    }
+
+    public function porConciliar(Request $request)
+    {
+        return $this->service->porConciliar($request->all());
+    }
+
+    public function conciliar(Request $request)
+    {
+        return $this->service->conciliar($request->all());
+    }
+
+    public function totalesConciliar(Request $request)
+    {
+        return $this->service->totalesConciliar($request->all());
     }
 }

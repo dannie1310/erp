@@ -14,6 +14,7 @@ class Debito extends Transaccion
 {
     public const TIPO_ANTECEDENTE = null;
     public const OPCION_ANTECEDENTE = null;
+    public const NOMBRE = "Débito";
 
     protected $fillable = [
         'cumplimiento',
