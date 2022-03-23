@@ -58,8 +58,9 @@ class Solicitud extends Transaccion
 
     public function solicitudPagoAutorizacionActiva()
     {
-        return $this->HasOne(SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
-            ->whereIn("estatus",[0,1]);
+        return $this->HasOne(\App\Models\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
+            ->whereIn("estado",[0,1,2])
+            ->where("base_datos","=",Context::getDatabase());
     }
 
     public function solicitudPagoAutorizacionGeneral()
@@ -166,6 +167,11 @@ class Solicitud extends Transaccion
 
     public function solicitarAutorizacion()
     {
+
+        if($this->solicitudPagoAutorizacionActiva){
+            throw New \Exception("Ya existe una solicitud de autorización para este pago anticipado.");
+        }
+
         DB::connection('cadeco')->beginTransaction();
         DB::connection('seguridad')->beginTransaction();
 

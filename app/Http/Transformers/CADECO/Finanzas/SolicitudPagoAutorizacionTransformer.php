@@ -33,7 +33,7 @@ class SolicitudPagoAutorizacionTransformer extends TransformerAbstract
 
     ];
 
-    public function transform(SolicitudPagoAutorizacion $model)
+    public function transform(\App\Models\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacion $model)
     {
         return [
             'id' => $model->getKey(),
