@@ -247,7 +247,7 @@ class Solicitud extends Transaccion
         {
             DB::connection('seguridad')->rollBack();
             DB::connection('cadeco')->rollBack();
-            abort(500, $e->getMessage()."-".$e->getFile()."-".$e->getLine());
+            abort(500, $e->getMessage()/*."-".$e->getFile()."-".$e->getLine()*/);
         }
 
         DB::connection('seguridad')->commit();

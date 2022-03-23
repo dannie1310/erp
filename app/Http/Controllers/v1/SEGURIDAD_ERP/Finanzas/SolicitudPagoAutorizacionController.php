@@ -64,12 +64,13 @@ class SolicitudPagoAutorizacionController extends Controller
         }catch (\Exception $e)
         {
             return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
-                , "error" => $e->getMessage().$e->getFile().$e->getLine(),"token"=>null, "mensaje"=>null
+                , "error" => $e->getMessage(),
+                "token"=>$request->access_token, "mensaje"=>null
             ]);
         }
         return view('finanzas.solicitud_pago_anticipado', [
             'solicitud' => $solicitud
-            , "token"=>null
+            , "token"=>$request->access_token
             , "error"=>null, "mensaje"=>"Solicitud Autorizada Correctamente"
         ]);
 
@@ -83,10 +84,11 @@ class SolicitudPagoAutorizacionController extends Controller
         }catch (\Exception $e)
         {
             return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
-                , "error" => $e->getMessage(),"token"=>null, "mensaje"=>null
+                , "error" => $e->getMessage(),"token"=>$request->access_token, "mensaje"=>null
             ]);
         }
-        return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud,"token"=>null
+        return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
+            ,"token"=>$request->access_token
             , "error"=>null, "mensaje"=>"Solicitud Rechazada Correctamente"
         ]);
 
@@ -103,8 +105,10 @@ class SolicitudPagoAutorizacionController extends Controller
 
     public function indexVista(Request $request)
     {
-        $solicitudes = $this->service->index();
-        return view('finanzas.solicitudes_pago_anticipado', ['solicitudes' => $solicitudes
+        $solicitudes = $this->service->porAutorizar();
+        return view('finanzas.solicitudes_pago_anticipado',
+            [
+                'solicitudes' => $solicitudes
             , "token" => $request->get('access_token')
         ]);
     }

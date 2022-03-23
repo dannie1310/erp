@@ -18,32 +18,6 @@ use Illuminate\Support\Facades\DB;
 
 class SolicitudPagoAutorizacion extends Transaccion
 {
-    /*protected $connection = 'seguridad';
-    protected $table = 'Finanzas.solicitud_pago_autorizacion';
-
-    public $timestamps = false;
-    protected $fillable = [
-        'base_datos',
-        'proyecto',
-        'id_transaccion',
-        'id_solicitud_autorizacion',
-        'opciones',
-        'numero_folio',
-        'fecha',
-        'fecha_registro',
-        'razon_social',
-        'rfc',
-        'observaciones',
-        'monto',
-        'moneda',
-        'usuario_autorizo',
-        'fecha_hora_autorizacion',
-        'usuario_rechazo',
-        'fecha_hora_rechazo',
-        'usuario_registro',
-        'estado'
-    ];
-    */
 
     protected static function boot()
     {
@@ -223,7 +197,7 @@ class SolicitudPagoAutorizacion extends Transaccion
                     throw new \Exception('La solicitud ya fue autorizada por ' . $ultima_autorizacion->usuarioAutorizo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_autorizacion_format . "]");
                 }
                 if ($ultima_autorizacion && $ultima_autorizacion->id_usuario_rechazo) {
-                    throw new \Exception('La solicitud ya fue rchazada por ' . $ultima_autorizacion->usuarioRechazo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_rechazo_format . "]");
+                    throw new \Exception('La solicitud ya fue rechazada por ' . $ultima_autorizacion->usuarioRechazo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_rechazo_format . "]");
                 }
             }
 
