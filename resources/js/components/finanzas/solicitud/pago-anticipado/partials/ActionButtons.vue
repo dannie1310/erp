@@ -5,7 +5,7 @@
         </router-link>
         <PDF  v-if="value.id" v-bind:id="value.id" @click="value.id"></PDF>
         <button @click="cancelar"  v-if="value.cancelar && value.estado === 0" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>
-        <button @click="solicitarAutorizacionParaRemesa"  v-if="value.solicitud_autorizacion && value.estado === 0" type="button" class="btn btn-sm btn-outline-primary" title="Solicitar autorización para incluir en remesa"><i class="fa fa-funnel-dollar"></i></button>
+        <button @click="solicitarAutorizacionParaRemesa"  v-if="value.solicitud_autorizacion && value.estado === 0" type="button" class="btn btn-sm btn-outline-primary" title="Solicitar autorización para incluir en remesa"><i class="fa fa-unlock"></i></button>
         <Relaciones v-bind:transaccion="value.transaccion"/>
         <router-link  :to="{ name: 'solicitud-pago-anticipado-documentos', params: {id: value.id}}" v-if="$root.can('consultar_solicitud_pago_anticipado') && $root.can('consultar_archivos_transaccion')" type="button" class="btn btn-sm btn-outline-primary" title="Ver Archivos">
             <i class="fa fa-folder-open"></i>

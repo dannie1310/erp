@@ -35,24 +35,11 @@ class SendSolicitudPagoAnticipadoNotification
 
         $usuarios_interesados_permisos = Usuario::usuarioPermisoGlobal(
             $permiso
-            )->get();
+        )->get();
 
         $usuarios_notificacion = $usuarios_suscripcion->diff($usuarios_interesados_permisos);
-
         Notification::send($usuarios_notificacion, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud));
         Notification::send($event->solicitud->usuario, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud));
 
-        foreach($usuarios_interesados_permisos as $usuario_interesado_permiso)
-        {
-            //if($usuario_interesado_permiso->numero_celular)
-            //{
-                $tokenobj = $usuario_interesado_permiso->createToken('autorizar-solicitud-pago-anticipado',['autorizar-solicitudes-pago-anticipado']);
-                $token = $tokenobj->accessToken;
-                $token_id = $tokenobj->token->id;
-
-                Notification::send($usuario_interesado_permiso, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud, $token, $usuario_interesado_permiso->nombre_completo));
-
-            //}
-        }
     }
 }

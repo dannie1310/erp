@@ -73,6 +73,14 @@ td.numero_folio, th.numero_folio, .td_numero_folio, .th_numero_folio
     min-width: 80px;
 }
 
+.td_money90,
+td.money90 {
+    text-align: right;
+    width: 90px;
+    max-width: 90px;
+    min-width: 90px;
+}
+
 .th_rfc, th.rfc, .th_c100, th.c100
 {
   width: 100px;

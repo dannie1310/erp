@@ -64,7 +64,7 @@ class SolicitudPagoAutorizacionController extends Controller
         }catch (\Exception $e)
         {
             return view('finanzas.solicitud_pago_anticipado', ['solicitud' => $solicitud
-                , "error" => $e->getMessage(),"token"=>null, "mensaje"=>null
+                , "error" => $e->getMessage().$e->getFile().$e->getLine(),"token"=>null, "mensaje"=>null
             ]);
         }
         return view('finanzas.solicitud_pago_anticipado', [

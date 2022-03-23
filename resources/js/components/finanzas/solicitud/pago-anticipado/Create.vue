@@ -17,7 +17,7 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="form-group error-content">
                                         <div class="form-group">
                                             <label><b>Fecha de Solicitud:</b></label>
@@ -34,7 +34,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-3">
                                     <div class="form-group error-content">
                                         <div class="form-group">
                                             <label><b>Fecha Limite de Pago:</b></label>

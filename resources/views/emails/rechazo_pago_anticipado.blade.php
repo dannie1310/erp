@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Estimado {{$solicitud_pago_autorizacion->usuarioRegistro->nombre_completo}} se le informa que {{$solicitud_pago_autorizacion->usuarioRechazo->nombre_completo}} ha rechazado que se solicite en remesa el pago anticipado que se describe a continuación:
+        Estimado {{$solicitud_pago_autorizacion->usuarioRegistro->nombre_completo}} se le informa que se ha rechazado que se solicite en remesa el pago anticipado que se describe a continuación:
         <br>
         <br>
         <div class="card" >

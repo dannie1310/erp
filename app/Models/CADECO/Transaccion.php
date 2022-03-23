@@ -105,6 +105,12 @@ class Transaccion extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getFechaVencimientoFormatAttribute()
+    {
+        $date = date_create($this->vencimiento);
+        return date_format($date,"d/m/Y");
+    }
+
     public function tipo()
     {
         return $this->belongsTo(TipoTransaccion::class, 'tipo_transaccion', 'tipo_transaccion');
@@ -551,6 +557,36 @@ class Transaccion extends Model
         else{
             abort(500, "No hay cotización para la moneda");
         }
+    }
+
+    public function getTipoDeCambioAttribute()
+    {
+        if($this->id_moneda > 0)
+        {
+            if($this->id_moneda > 1)
+            {
+                $cambio = Cambio::query()->where("id_moneda","=", $this->id_moneda)
+                    ->orderBy("fecha","desc")->first();
+                if($cambio)
+                {
+                    return $cambio->cambio;
+                }else{
+                    return 1;
+                }
+            }
+            else
+            {
+                return 1;
+            }
+        } else
+        {
+            return 1;
+        }
+    }
+
+    public function getMontoPesosAttribute()
+    {
+        return $this->monto * $this->tipo_de_cambio;
     }
 
     public function getFactorConversionAttribute()

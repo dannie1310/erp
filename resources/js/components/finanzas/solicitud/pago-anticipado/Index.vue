@@ -8,7 +8,7 @@
                 <!-- /.card-header -->
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -29,14 +29,13 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', sortable: false },
-                    { title: 'Número de Folio', field: 'numero_folio', thComp: require('../../../globals/th-Filter').default, sortable: true },
-                    { title: 'Transacción Antecedente', field: 'id_antecedente', sortable: true },
-                    { title: 'Monto', field: 'monto', sortable: true },
+                    { title: 'Antecedente de Solicitud', field: 'id_antecedente', sortable: true },
+                    { title: 'Folio de Solicitud', field: 'numero_folio', thComp: require('../../../globals/th-Filter').default, thClass:'th_c60', sortable: true },
+                    { title: 'Fecha de Solicitud', field: 'fecha', thComp: require('../../../globals/th-Filter').default, thClass:'th_c60', sortable: true },
                     { title: 'Empresa', field: 'id_empresa', thComp: require('../../../globals/th-Filter').default, sortable: true },
-                    { title: 'Fecha y Hora de Registro', field: 'FechaHoraRegistro', sortable: true },
-                    { title: 'Observaciones', field: 'observaciones', thComp: require('../../../globals/th-Filter').default, sortable: true },
+                    { title: 'Monto de Solicitud', field: 'monto', tdClass: 'td_money90', thClass: 'th_c90', sortable: true },
                     { title: 'Estatus', field: 'estado', tdComp: require('./partials/SolicitudEstatus').default},
-                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default, thClass: 'th_c150'},
                 ],
                 data: [],
                 total: 0,
@@ -86,30 +85,20 @@
                     solicitudes.forEach(function (solicitud, i) {
 
                         if(solicitud.subcontrato){
-                            self.$data.id_antecedente = '('+solicitud.subcontrato.tipo_nombre+') '+solicitud.subcontrato.numero_folio_format;
-                            if(solicitud.subcontrato.referencia!=""){
-                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.subcontrato.dato_transaccion+')';
-                            }else{
-                                self.$data.id_antecedente = self.$data.id_antecedente+' ---';
-                            }
+                            self.$data.id_antecedente = solicitud.subcontrato.tipo_nombre+' - '+solicitud.subcontrato.numero_folio_format;
                         }else if(solicitud.orden_compra){
-                            self.$data.id_antecedente = '('+solicitud.orden_compra.tipo_nombre+') '+solicitud.orden_compra.numero_folio_format;
-                            if(solicitud.orden_compra.referencia!=""){
-                                self.$data.id_antecedente = self.$data.id_antecedente+' ('+solicitud.orden_compra.dato_transaccion+')';
-                            }else{
-                                self.$data.id_antecedente = self.$data.id_antecedente+'---';
-                            }
+                            self.$data.id_antecedente = solicitud.orden_compra.tipo_nombre+' - '+solicitud.orden_compra.numero_folio_format;
                         }else{
                             self.$data.id_antecedente = '';
                         }
 
                         self.$data.data.push({
                             index: (i + 1) + self.query.offset,
-                            numero_folio: '# ' + solicitud.numero_folio,
+                            numero_folio: solicitud.numero_folio,
                             id_antecedente: self.$data.id_antecedente,
                             monto: solicitud.monto_format,
                             id_empresa: solicitud.empresa.razon_social,
-                            FechaHoraRegistro: solicitud.fecha_format,
+                            fecha: solicitud.fecha_solicitud_format,
                             observaciones: solicitud.observaciones,
                             estado: solicitud.estado,
                             buttons: $.extend({}, {
@@ -120,7 +109,7 @@
                                 id: solicitud.id,
                                 estado: solicitud.estado,
                                 transaccion: {id:solicitud.id, tipo:72},
-                                solicitud_autorizacion : solicitud.solicitud_pago_autorizacion_activa ? 0 : 1
+                                solicitud_autorizacion : solicitud.requiere_autorizacion ? solicitud.solicitud_pago_autorizacion_activa ? 0 : 1 : 0
                             })
                         })
                     });
