@@ -203,8 +203,12 @@ class SolicitudPagoAutorizacion extends Transaccion
 
                 if(count($autorizaciones_pendientes) == 0)
                 {
+                    $this->estado = 2;
+                    $this->save();
                     event(new AutorizacionPagoAnticipado($this, $this->solicitud_pago_anticipado));
                 }else{
+                    $this->estado = 1;
+                    $this->save();
                     event(new SolicitudAutorizacionPagoAnticipadoSinContexto($this));
                 }
 
@@ -222,8 +226,7 @@ class SolicitudPagoAutorizacion extends Transaccion
                     throw new \Exception('La solicitud ya fue rchazada por ' . $ultima_autorizacion->usuarioRechazo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_rechazo_format . "]");
                 }
             }
-            $this->estado = 1;
-            $this->save();
+
             return $this;
         }
         else{
