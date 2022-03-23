@@ -15,43 +15,43 @@
                     <table class="table table-striped">
                         <tbody>
                         <tr>
-                            <th>Fecha de Solicitud:</th>
+                            <th style="text-align: left">Fecha de Solicitud:</th>
                             <td>{{pagoAnticipado.cumplimiento}}</td>
-                            <th>Fecha Limite de Pago:</th>
+                            <th style="text-align: left">Fecha Limite de Pago:</th>
                             <td>{{ pagoAnticipado.vencimiento}}</td>
                         </tr>
                         <tr>
-                            <th v-if="pagoAnticipado.empresa">Empresa:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.empresa">Empresa:</th>
                             <td v-if="pagoAnticipado.empresa">{{ pagoAnticipado.empresa.razon_social}}</td>
-                            <th v-if="pagoAnticipado.orden_compra || pagoAnticipado.subcontrato">Referencia:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.orden_compra || pagoAnticipado.subcontrato">Referencia:</th>
                             <td v-if="pagoAnticipado.subcontrato">{{pagoAnticipado.subcontrato.referencia}}</td>
                             <td v-if="pagoAnticipado.orden_compra">{{pagoAnticipado.orden_compra.referencia}}</td>
                         </tr>
                         <tr>
-                            <th v-if="pagoAnticipado.subcontrato">Tipo de Transacción:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.subcontrato">Tipo de Transacción:</th>
                             <td v-if="pagoAnticipado.subcontrato">{{pagoAnticipado.subcontrato.tipo_nombre}}</td>
-                            <th v-if="pagoAnticipado.orden_compra">Tipo de Transacción:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.orden_compra">Tipo de Transacción:</th>
                             <td v-if="pagoAnticipado.orden_compra">{{pagoAnticipado.orden_compra.tipo_nombre}}</td>
-                            <th v-if="pagoAnticipado.subcontrato">Transacción:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.subcontrato">Transacción:</th>
                             <td v-if="pagoAnticipado.subcontrato">({{pagoAnticipado.subcontrato.tipo_nombre}}){{pagoAnticipado.subcontrato.numero_folio_format}}({{pagoAnticipado.subcontrato.referencia}})</td>
-                            <th  v-if="pagoAnticipado.orden_compra">Transacción:</th>
+                            <th style="text-align: left"  v-if="pagoAnticipado.orden_compra">Transacción:</th>
                             <td  v-if="pagoAnticipado.orden_compra">({{pagoAnticipado.orden_compra.tipo_nombre}}){{pagoAnticipado.orden_compra.numero_folio_format}}({{pagoAnticipado.orden_compra.referencia}})</td>
                         </tr>
                         <tr>
-                            <th v-if="pagoAnticipado.costo">Costos:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.costo">Costos:</th>
                             <td v-if="pagoAnticipado.costo">{{pagoAnticipado.costo.descripcion}}</td>
-                             <th>Estado:</th>
+                            <th style="text-align: left">Estado:</th>
                             <td v-if="pagoAnticipado.estado === 0">Registrada</td>
                             <td v-if="pagoAnticipado.estado === 2 || pagoAnticipado.estado === -2 ">Cancelada</td>
                         </tr>
                         <tr>
-                            <th>Fecha y Hora de Registro:</th>
+                            <th style="text-align: left">Fecha y Hora de Registro:</th>
                             <td>{{pagoAnticipado.fecha_format}}</td>
-                            <th v-if="pagoAnticipado.usuario">Registro:</th>
+                            <th style="text-align: left" v-if="pagoAnticipado.usuario">Registro:</th>
                             <td v-if="pagoAnticipado.usuario">{{ pagoAnticipado.usuario.nombre}}</td>
                         </tr>
                         <tr>
-                            <th>Observaciones:</th>
+                            <th style="text-align: left">Observaciones:</th>
                             <td>{{pagoAnticipado.observaciones}}</td>
                             <th></th>
                             <td></td>
@@ -68,8 +68,8 @@
                             <table class="table">
                                 <tbody>
                                     <tr class="bg-white">
-                                        <th>Monto Solicitado:</th>
-                                        <td>{{ pagoAnticipado.monto_format}}</td>
+                                        <th style="text-align: left">Monto Solicitado:</th>
+                                        <td style="text-align: right">{{ pagoAnticipado.monto_format}}</td>
                                     </tr>
                                     <!--<tr v-if="pagoAnticipado.subcontrato">-->
                                     <!--<th style="width:50%" class="bg-gray-light">Subtotal:</th>-->

@@ -61,7 +61,9 @@ class SolicitudPagoAnticipado extends Solicitud
     }
 
     public function ordenCompraSinGlobalScope(){
-        return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
+        return $this->hasOne(OrdenCompra::class, 'id_transaccion', 'id_antecedente')
+            ->where("tipo_transaccion","=", "19")
+            ->withoutGlobalScopes();
     }
 
     public function subcontrato(){
@@ -78,7 +80,9 @@ class SolicitudPagoAnticipado extends Solicitud
 
     public function subcontratoSinGlobalScope()
     {
-        return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente')->withoutGlobalScopes();
+        return $this->hasOne(Subcontrato::class,'id_transaccion', 'id_antecedente')
+            ->where("tipo_transaccion","=", "51")
+            ->withoutGlobalScopes();
     }
 
     public function pago()
@@ -106,10 +110,10 @@ class SolicitudPagoAnticipado extends Solicitud
 
     public function getTransaccionAntecedenteTxtAttribute()
     {
-        if($this->ordenCompraSinGlobalScope){
-            return "Orden de Compra " . $this->ordenCompraSinGlobalScope->numero_folio_format;
-        }else if($this->subcontratoSinGlobalScope){
-            return "Subcontrato " . $this->subcontratoSinGlobalScope->numero_folio_format;
+        if($this->transaccionAntecedenteSinGlobalScope && $this->transaccionAntecedenteSinGlobalScope->tipo_transaccion == 19 ){
+            return "Orden de Compra " . $this->transaccionAntecedenteSinGlobalScope->numero_folio_format;
+        }else if($this->transaccionAntecedenteSinGlobalScope && $this->transaccionAntecedenteSinGlobalScope->tipo_transaccion == 51){
+            return "Subcontrato " . $this->transaccionAntecedenteSinGlobalScope->numero_folio_format;
         }else{
             return "Sin transacción antecedente";
         }
@@ -171,12 +175,19 @@ class SolicitudPagoAnticipado extends Solicitud
 
         }
 
-
-
         $orden1 = array_column($relaciones, 'orden');
 
         array_multisort($orden1, SORT_ASC, $relaciones);
         return $relaciones;
+    }
+
+    public function getRequiereAutorizacionAttribute()
+    {
+        if($this->monto_pesos >= 50000)
+        {
+            return true;
+        }
+        return false;
     }
 
     public function cancelar($id){

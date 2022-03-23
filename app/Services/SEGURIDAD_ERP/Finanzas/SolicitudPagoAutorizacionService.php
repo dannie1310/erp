@@ -54,4 +54,9 @@ class SolicitudPagoAutorizacionService
     {
         return $this->repository->all();
     }
+
+    public function porAutorizar()
+    {
+        return $this->repository->porAutorizar();
+    }
 }

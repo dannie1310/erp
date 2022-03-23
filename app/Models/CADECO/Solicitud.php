@@ -10,7 +10,9 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Models\CADECO\EsquemaAutorizacion\AutorizacionRequerida;
 use App\Models\CADECO\Finanzas\SolicitudPagoAutorizacion;
+use Illuminate\Support\Facades\DB;
 
 class Solicitud extends Transaccion
 {
@@ -56,14 +58,35 @@ class Solicitud extends Transaccion
 
     public function solicitudPagoAutorizacionActiva()
     {
-        return $this->HasOne(SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
-            ->whereIn("estatus",[0,1]);
+        return $this->HasOne(\App\Models\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
+            ->whereIn("estado",[0,1,2])
+            ->where("base_datos","=",Context::getDatabase());
     }
 
     public function solicitudPagoAutorizacionGeneral()
     {
         return $this->HasOne(\App\Models\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacion::class,'id_transaccion','id_transaccion')
             ->where("base_datos","=",Context::getDatabase());
+    }
+
+    public function transaccionGeneral()
+    {
+        return $this->HasOne(\App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Transaccion::class,'id_transaccion','id_transaccion')
+            ->where("base_datos","=",Context::getDatabase())
+            ->where("estado",">=",0);
+    }
+
+    public function autorizacionesRequeridas()
+    {
+        return $this->HasMany(AutorizacionRequerida::class,'id_transaccion','id_transaccion')
+            ->where("estado",">=",0);
+    }
+
+    public function autorizacionesRequeridasGenerales()
+    {
+        return $this->HasMany(\App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\AutorizacionRequerida::class,'id_transaccion','id_transaccion')
+            ->where("base_datos","=",Context::getDatabase())
+            ->where("estado",">=",0);
     }
 
     /**
@@ -143,6 +166,97 @@ class Solicitud extends Transaccion
     }
 
     public function solicitarAutorizacion()
+    {
+
+        if($this->solicitudPagoAutorizacionActiva){
+            throw New \Exception("Ya existe una solicitud de autorización para este pago anticipado.");
+        }
+
+        DB::connection('cadeco')->beginTransaction();
+        DB::connection('seguridad')->beginTransaction();
+
+        try {
+
+            $this->transaccionGeneral()->registrada()->update(["estado"=>-1]);
+            $this->autorizacionesRequeridasGenerales()->registrada()->update(["estado"=>-1]);
+            $this->autorizacionesRequeridas()->registrada()->update(["estado"=>-1]);
+
+            $proyecto = Obra::find(Context::getIdObra());
+
+            $transaccion_general = \App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Transaccion::create([
+                "id_transaccion"=>$this->id_transaccion,
+                "id_tipo_transaccion"=>1,
+                "base_datos"=>Context::getDatabase(),
+                'proyecto'=>$proyecto->nombre,
+                "opciones"=>$this->opciones,
+                'numero_folio'=>$this->numero_folio,
+                'fecha'=>$this->fecha,
+                'fecha_registro'=>$this->FechaHoraRegistro,
+                'razon_social'=>$this->razon_social,
+                'rfc'=>$this->rfc,
+                'observaciones'=>$this->observaciones,
+                'monto'=>$this->monto,
+                'moneda'=>$this->moneda->abreviatura,
+                "usuario_registro"=>auth()->id(),
+                "hash"=>'-'
+            ]);
+
+            $autorizacion_1814 = AutorizacionRequerida::create([
+                "id_transaccion"=>$this->id_transaccion,
+                "id_nivel_requerido"=>2,
+                "nivel_requerido"=>4,
+                "usuario_registro"=>auth()->id(),
+            ]);
+
+            \App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\AutorizacionRequerida::create(
+                [
+                    "base_datos"=>Context::getDatabase(),
+                    "id_transaccion_general" => $transaccion_general->id,
+                    "id_transaccion" => $this->id_transaccion,
+                    "id_autorizacion_requerida" => $autorizacion_1814->id,
+                    "id_nivel_requerido"=>2,
+                    "nivel_requerido"=>4,
+                    "usuario_registro"=>auth()->id(),
+                ]
+
+            );
+
+            if($this->monto_pesos >= 100000)
+            {
+                $autorizacion_1814_2 = AutorizacionRequerida::create([
+                    "id_transaccion"=>$this->id_transaccion,
+                    "id_nivel_requerido"=>1,
+                    "nivel_requerido"=>2,
+                    "usuario_registro"=>auth()->id(),
+                ]);
+
+                \App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\AutorizacionRequerida::create(
+                    [
+                        "base_datos"=>Context::getDatabase(),
+                        "id_transaccion_general" => $transaccion_general->id,
+                        "id_transaccion" => $this->id_transaccion,
+                        "id_autorizacion_requerida" => $autorizacion_1814_2->id,
+                        "id_nivel_requerido"=>1,
+                        "nivel_requerido"=>2,
+                        "usuario_registro"=>auth()->id(),
+                    ]
+                );
+            }
+
+        }catch (\Exception $e)
+        {
+            DB::connection('seguridad')->rollBack();
+            DB::connection('cadeco')->rollBack();
+            abort(500, $e->getMessage()/*."-".$e->getFile()."-".$e->getLine()*/);
+        }
+
+        DB::connection('seguridad')->commit();
+        DB::connection('cadeco')->commit();
+
+        return $this;
+    }
+
+    public function solicitarAutorizacion1()
     {
         $this->solicitudPagoAutorizacionGeneral()->registrada()->update(["estatus"=>-1]);
         $this->solicitudPagoAutorizacion()->registrada()->update(["estatus"=>-1]);

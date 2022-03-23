@@ -92,7 +92,12 @@ class EventServiceProvider extends ServiceProvider
 
         'App\Events\SolicitudAutorizacionPagoAnticipado' => [
             'App\Listeners\SendSolicitudPagoAnticipadoNotification',
+            'App\Listeners\SendSolicitudPagoAnticipadoNotificationParaAutorizacion',
             'App\Listeners\SendSolicitudPagoAnticipadoNotificationSMS',
+        ],
+
+        'App\Events\SolicitudAutorizacionPagoAnticipadoSinContexto' => [
+            'App\Listeners\SendSolicitudPagoAnticipadoNotificationParaAutorizacionSinContexto',
         ],
 
         'App\Events\AutorizacionPagoAnticipado' => [

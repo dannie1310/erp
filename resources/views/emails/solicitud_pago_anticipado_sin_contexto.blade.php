@@ -11,7 +11,7 @@
 
     </head>
     <div id="app">
-        Estimado {{$nombre_usuario}} se le informa que {{$solicitud->transaccionGeneral->usuarioRegistro->nombre_completo}} ha solicitado que se autorice el pago anticipado que se describe a continuación:
+        Estimado {{$nombre_usuario}} se le informa que {{$solicitud->usuarioRegistro->nombre_completo}} ha solicitado que se autorice el pago anticipado que se describe a continuación:
         <br>
         <br>
         <div class="card" >
@@ -21,13 +21,13 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label >Proyecto:</label>
-                                <b>{{$solicitud->obra->nombre}}</b>
+                                <b>{{$solicitud->solicitud_pago_anticipado->obra->nombre}}</b>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label >Proveedor / Contratista:</label>
-                                <b>{{$solicitud->empresa->razon_social}}</b>
+                                <b>{{$solicitud->solicitud_pago_anticipado->empresa->razon_social}}</b>
                             </div>
                         </div>
 
@@ -35,7 +35,7 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Monto Solicitado:</label>
-                                <b>{{$solicitud->monto_format}}</b>
+                                <b>{{$solicitud->solicitud_pago_anticipado->monto_format}}</b>
                             </div>
                         </div>
                         <br>
@@ -46,19 +46,19 @@
                         <div class="col-md-2">
                             <div class="form-group">
                             <label >Fecha:</label>
-                                {{$solicitud->fecha_format}}
+                                {{$solicitud->solicitud_pago_anticipado->fecha_format}}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label >Folio:</label>
-                                {{$solicitud->numero_folio_format}}
+                                {{$solicitud->solicitud_pago_anticipado->numero_folio_format}}
                             </div>
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label >Monto:</label>
-                                <b>{{$solicitud->monto_format}}</b>
+                                <b>{{$solicitud->solicitud_pago_anticipado->monto_format}}</b>
                             </div>
                         </div>
                     </div>
@@ -66,13 +66,13 @@
                         <div class="col-md-12">
                             <div class="form-group error-content">
                                 <label >Observaciones:</label>
-                                {{$solicitud->observaciones}}
+                                {{$solicitud->solicitud_pago_anticipado->observaciones}}
                             </div>
                         </div>
                     </div>
                     <br>
 
-                    @if($solicitud->transaccionAntecedente)
+                    @if($solicitud->solicitud_pago_anticipado->transaccionAntecedente)
                         <b>
                         Transacción Antecedente<br>
                         --------------------------------------
@@ -82,25 +82,25 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label >Fecha:</label>
-                                {{$solicitud->transaccionAntecedente->fecha_format}}
+                                {{$solicitud->solicitud_pago_anticipado->transaccionAntecedente->fecha_format}}
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label >Folio:</label>
-                                {{$solicitud->transaccion_antecedente_txt}}
+                                {{$solicitud->solicitud_pago_anticipado->transaccion_antecedente_txt}}
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group error-content">
                                 <label >Monto:</label>
-                                {{$solicitud->transaccionAntecedente->monto_format}}
+                                {{$solicitud->solicitud_pago_anticipado->transaccionAntecedente->monto_format}}
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group error-content">
                                 <label >Observaciones:</label>
-                                {{$solicitud->transaccion_antecedente_observaciones}}
+                                {{$solicitud->solicitud_pago_anticipado->transaccion_antecedente_observaciones}}
                             </div>
                         </div>
                     </div>
@@ -108,7 +108,7 @@
                     @endif
                     @if($token)
                         <br>
-                        <a href="http://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->transaccionGeneral->id}}?access_token={{$token}}">[AUTORIZAR / RECHAZAR]</a>
+                        <a href="http://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->id}}?access_token={{$token}}">[AUTORIZAR / RECHAZAR]</a>
                     @endif
 
                 </span>

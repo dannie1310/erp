@@ -2119,7 +2119,7 @@ export const routes = [
                                 name: 'pago-anticipado',
                                 component: require('./components/finanzas/solicitud/pago-anticipado/Index').default,
                                 meta: {
-                                    title: 'Solicitud de Pago Anticipado',
+                                    title: 'Lista de Solicitudes de Pago Anticipado Registradas',
                                     breadcrumb: {
                                         parent: 'solicitud',
                                         name: 'PAGO ANTICIPADO'

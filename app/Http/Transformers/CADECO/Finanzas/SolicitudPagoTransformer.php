@@ -45,7 +45,7 @@ class SolicitudPagoTransformer extends TransformerAbstract
     {
         return [
             'id' => $model->getKey(),
-            'numero_folio' => $model->numero_folio,
+            'numero_folio' => $model->numero_folio_format,
             'antecedente' => $model->id_antecedente,
             'subtotal'=>(float)$model->subtotal,
             'subtotal_format'=>(string) '$ '.number_format(($model->subtotal),2,".",","),
@@ -58,6 +58,8 @@ class SolicitudPagoTransformer extends TransformerAbstract
             'observaciones'=>(string)$model->observaciones,
             'tipo_solicitud'=>(int) $model->tipo_transaccion,
             'fecha_format' => (string)$model->fecha_hora_registro_format,
+            'fecha_registro_format' => (string)$model->fecha_hora_registro_format,
+            'fecha_solicitud_format' => (string)$model->fecha_format,
             'estado' => (int)$model->estado,
             'cumplimiento' => (string)$model->cumplimiento_form,
             'vencimiento' => $model->vencimiento_form,
