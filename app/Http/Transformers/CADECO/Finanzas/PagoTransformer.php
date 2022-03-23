@@ -17,6 +17,7 @@ use App\Http\Transformers\CADECO\OrdenPagoTransformer;
 use App\Http\Transformers\CADECO\TransaccionTransformer;
 use App\Http\Transformers\IGH\UsuarioTransformer;
 use App\Models\CADECO\Pago;
+use App\Utils\Util;
 use League\Fractal\TransformerAbstract;
 
 class PagoTransformer extends TransformerAbstract
@@ -58,16 +59,14 @@ class PagoTransformer extends TransformerAbstract
           'id_empresa'=>$model->id_empresa,
           'empresa_nombre' => $model->empresa_descripcion,
           'destino'=>$model->destino,
-          'observaciones'=>$model->observaciones ? strtoupper($model->observaciones) : '',
+          'observaciones'=>$model->observaciones ? strtoupper(Util::eliminaCaracteresEspeciales($model->observaciones)) : '',
           'id_moneda'=>$model->id_moneda,
           'estado_string'=>$model->estado_string,
           'tipo_pago' => $model->tipo_pago,
           'es_reemplazo' => $model->es_reemplazo,
           'tipo_antecedente' => $model->tipo_antecedente,
           'referencia' => $model->referencia,
-          'saldo_format' => $model->saldo_format,
-          'conciliado' => $model->conciliado,
-          'importe_cadeco' => $model->importe_cadeco
+          'saldo_format' => $model->saldo_format
       ];
     }
 

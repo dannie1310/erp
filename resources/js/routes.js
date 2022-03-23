@@ -1836,7 +1836,7 @@ export const routes = [
                                     title: 'Conciliación Bancaria',
                                     breadcrumb: {name: 'CONCILIACION BANCARIA', parent: 'finanzas'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_factura'
+                                    permission: 'consultar_conciliacion_bancaria'
                                 }
                             }
                         ]

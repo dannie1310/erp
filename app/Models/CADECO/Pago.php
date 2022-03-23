@@ -8,6 +8,7 @@
 
 namespace App\Models\CADECO;
 
+use App\Utils\Util;
 use Exception;
 use App\Facades\Context;
 use App\Models\CADECO\OrdenPago;
@@ -1107,19 +1108,87 @@ class Pago extends Transaccion
 
     public function porConciliar($data)
     {
-        return self::where('id_cuenta', $data['id_cuenta'])->whereRaw("fecha between '".$data['fecha_inicial']." 00:00:00' and '".$data['fecha_final']." 23:59:59'")->orderBy('fecha', 'asc')->get();
+        $pagos = Transaccion::withoutGlobalScopes()->whereIn('tipo_transaccion', [81,82, 83, 84])->whereIn('estado', [0,1,2])->where('id_cuenta', $data['id_cuenta'])
+            ->whereRaw("fecha between '".$data['fecha_inicial']." 00:00:00' and '".$data['fecha_final']." 23:59:59'")->orderBy('fecha', 'asc')->orderBy('referencia', 'asc')->get();
+        $datos = array();
+        foreach ($pagos as $k => $pago) {
+            $datos[$k]= [
+                'id' =>$pago->getKey(),
+                'numero_folio_format' =>$pago->numero_folio_format,
+                'fecha_format'=>$pago->fecha_format,
+                'monto'=>abs($pago->monto),
+                'monto_format'=>($pago->monto_format),
+                'monto_positivo_format'=>($pago->monto_positivo_format),
+                'id_empresa'=>$pago->id_empresa,
+                'empresa_nombre' => $pago->empresa_descripcion,
+                'destino'=>$pago->destino,
+                'observaciones'=>$pago->observaciones ? strtoupper(Util::eliminaCaracteresEspeciales($pago->observaciones_format)) : '',
+                'id_moneda'=>$pago->id_moneda,
+                'estado_string'=>$pago->estado_string,
+                'referencia' => $pago->referencia,
+                'saldo_format' => $pago->saldo_format,
+                'conciliado' => $pago->conciliado,
+                'importe_cadeco' => $pago->importe_cadeco,
+                'tipo_transaccion_str' => $pago->tipo_transaccion_str,
+                'tipo_transaccion' => $pago->tipo_transaccion
+            ];
+        }
+        return $datos;
     }
 
     public function conciliar($data)
     {
+        $transaccion = Transaccion::withoutGlobalScopes()->where('id_transaccion', $data['id'])->first();
         if(!$data['conciliado'])
         {
-            $this->estado = 2;
-            $this->save();
+            $transaccion->estado = 2;
+            $transaccion->save();
         }else{
-            $this->estado = 1;
-            $this->save();
+            $transaccion->estado = 1;
+            $transaccion->save();
         }
-        return $this;
+        return $transaccion;
+    }
+
+    public function totalesConciliar($data)
+    {
+        $saldo_anterior = Transaccion::withoutGlobalScopes()->whereIn('tipo_transaccion', [81,82, 83, 84])->where('estado', 2)
+            ->where('id_cuenta', $data['id_cuenta'])->where('fecha', '<',$data["fecha_inicial"].' 00:00:00')->where('id_obra', '=', Context::getIdObra())
+            ->selectRaw('sum(monto) as saldo_anterior_conciliado')->first();
+
+        $importe_movimiento_anteriores = Transaccion::withoutGlobalScopes()->whereIn('tipo_transaccion', [81,82, 83, 84])->whereIn('estado', [0,1])
+            ->where('id_cuenta', $data['id_cuenta'])->where('fecha', '<',$data["fecha_inicial"].' 00:00:00')->where('id_obra', '=', Context::getIdObra())
+            ->selectRaw('sum(monto) as movimiento_anterior_no_conciliado')->first();
+
+        $suma_movimientos = Transaccion::withoutGlobalScopes()->whereIn('tipo_transaccion', [81,82, 83, 84])->whereIn('estado', [0,1,2])->where('id_cuenta', $data['id_cuenta'])
+            ->where('id_obra', '=', Context::getIdObra())->whereRaw("fecha between '".$data['fecha_inicial']." 00:00:00' and '".$data['fecha_final']." 23:59:59'")
+            ->selectRaw('sum(monto) as suma_movimientos')->first();
+
+        $cargos_periodo = Transaccion::withoutGlobalScopes()->where('tipo_transaccion', 82)->where('estado', 2)->where('id_cuenta', $data['id_cuenta'])
+            ->where('id_obra', '=', Context::getIdObra())->whereRaw("fecha between '".$data['fecha_inicial']." 00:00:00' and '".$data['fecha_final']." 23:59:59'")
+            ->selectRaw('sum(monto) as cargos_periodo')->first();
+
+        $abonos_periodo = Transaccion::withoutGlobalScopes()->whereIn('tipo_transaccion', [81, 83, 84])->where('estado', 2)->where('id_cuenta', $data['id_cuenta'])
+            ->where('id_obra', '=', Context::getIdObra())->whereRaw("fecha between '".$data['fecha_inicial']." 00:00:00' and '".$data['fecha_final']." 23:59:59'")
+            ->selectRaw('sum(monto) as abonos_periodo')->first();
+
+        return [
+            'saldo_anterior_conciliado' => $saldo_anterior->saldo_anterior_conciliado ? $this->modificarImporte($saldo_anterior->saldo_anterior_conciliado) : '0.00',
+            'movimiento_anterior_no_conciliado' => $importe_movimiento_anteriores->movimiento_anterior_no_conciliado ? $this->modificarImporte($importe_movimiento_anteriores->movimiento_anterior_no_conciliado) : null,
+            'suma_movimientos' => $suma_movimientos->suma_movimientos ? $this->modificarImporte($suma_movimientos->suma_movimientos) : $suma_movimientos->suma_movimientos,
+            'cargos_periodo' => $cargos_periodo->cargos_periodo ? $this->modificarImporte($cargos_periodo->cargos_periodo) : $cargos_periodo->cargos_periodo,
+            'abonos_periodo' => $abonos_periodo->abonos_periodo ? $this->modificarImporte($abonos_periodo->abonos_periodo) : '0.00',
+            'nuevo_saldo_conciliado' => $this->modificarImporte($cargos_periodo->cargos_periodo + $abonos_periodo->abonos_periodo)
+        ];
+    }
+
+    public function modificarImporte($saldo)
+    {
+        if($saldo < 0)
+        {
+            return '('.number_format(abs($saldo),2,'.',',') .')';
+        }else{
+            return number_format($saldo,2,'.',',');
+        }
     }
 }

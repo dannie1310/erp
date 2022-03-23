@@ -362,6 +362,11 @@ class PagoService
 
     public function conciliar($data)
     {
-        return $this->repository->show($data['pago']['id'])->conciliar($data['pago']);
+        return $this->repository->conciliar($data['pago']);
+    }
+
+    public function totalesConciliar($data)
+    {
+        return $this->repository->totalesConciliar($data);
     }
 }

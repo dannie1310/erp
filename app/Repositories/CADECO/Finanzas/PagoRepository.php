@@ -66,4 +66,9 @@ class PagoRepository extends Repository implements RepositoryInterface
     {
         return $this->model->conciliar($data);
     }
+
+    public function totalesConciliar($data)
+    {
+        return $this->model->totalesConciliar($data);
+    }
 }

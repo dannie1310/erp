@@ -24,11 +24,9 @@
                             </div>
                         </div>
                         <div class="col-md-1"></div>
-                        <div class="col-md-1">
-                            <label>Periodo</label>
-                        </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="form-group error-content">
+                                <label for="fecha_inicial">Periodo:</label>
                                 <datepicker v-model = "fecha_inicial"
                                             name = "fecha_inicial"
                                             :format = "formatoFecha"
@@ -42,8 +40,9 @@
                                 <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="form-group error-content">
+                                 <label for="fecha_final"> </label>
                                 <datepicker v-model = "fecha_final"
                                             name = "fecha_final"
                                             :format = "formatoFecha"
@@ -96,12 +95,24 @@
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody v-for="(pago, i) in pagos">
+                                <tbody>
                                     <tr>
+                                        <td colspan="3"></td>
+                                        <td style="text-align: right"><strong>{{totales.saldo_anterior_conciliado}}</strong></td>
+                                        <td><strong>PESOS</strong></td>
+                                        <td colspan="3"><strong>Saldo Anterior (Conciliado)</strong></td>
+                                    </tr>
+                                    <tr v-if="totales.movimiento_anterior_no_conciliado">
+                                        <td colspan="3"></td>
+                                        <td style="text-align: right"><strong>{{totales.movimiento_anterior_no_conciliado}}</strong></td>
+                                        <td><strong>PESOS</strong></td>
+                                        <td colspan="3"><strong>Movimientos anteriores (NO Conciliados)</strong></td>
+                                    </tr>
+                                    <tr v-for="(pago, i) in pagos">
                                         <td style="text-align: center">
                                             {{i + 1}}
                                         </td>
-                                        <td style="text-align: right" >
+                                        <td style="text-align: center" v-if="$root.can('registrar_conciliacion_bancaria')">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="true" :id="pago.conciliado" v-model="pago.conciliado" v-if="pago.conciliado" checked @click="conciliar(pago)">
                                                 <input class="form-check-input" type="checkbox" value="false" :id="pago.conciliado" v-model="pago.conciliado" v-else @click="conciliar(pago)">
@@ -110,11 +121,11 @@
                                         <td>
                                             {{pago.fecha_format}}
                                         </td>
-                                        <td>
+                                        <td style="text-align: right">
                                             {{pago.importe_cadeco}}
                                         </td>
                                         <td>
-                                            Cheque
+                                            {{pago.tipo_transaccion_str}}
                                         </td>
                                         <td>
                                             [{{pago.referencia}}]
@@ -125,6 +136,30 @@
                                         <td>
                                             {{pago.observaciones}}
                                         </td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td style="text-align: right"><strong>{{totales.suma_movimientos}}</strong></td>
+                                        <td><strong>PESOS</strong></td>
+                                        <td colspan="3"><strong>Suma de Movimientos</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td style="text-align: right"><strong>{{totales.cargos_periodo}}</strong></td>
+                                        <td><strong>PESOS</strong></td>
+                                        <td colspan="3"><strong>Cargos del período</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td style="text-align: right"><strong>{{totales.abonos_periodo}}</strong></td>
+                                        <td><strong>PESOS</strong></td>
+                                        <td colspan="3"><strong>Abonos del período</strong></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="3"></td>
+                                        <td style="text-align: right"><strong>{{totales.nuevo_saldo_conciliado}}</strong></td>
+                                        <td><strong>PESOS</strong></td>
+                                        <td colspan="3"><strong>Nuevo Saldo Conciliado</strong></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -152,7 +187,8 @@
                 fecha_inicial: '',
                 fecha_final: '',
                 fechasDeshabilitadas:{},
-                datos: {}
+                datos: {},
+                totales: {}
             }
         },
         mounted() {
@@ -177,7 +213,8 @@
                     'id_cuenta' : this.id_cuenta
                 })
                     .then(data => {
-                        this.pagos = data.data;
+                        this.pagos = data;
+                        this.totalesConciliar();
                     })
                     .finally(() => {
                         this.cargando = false;
@@ -185,19 +222,27 @@
             },
             getCuentas() {
                 return this.$store.dispatch('cadeco/cuenta/index', {
-                    params:{include:['empresa']}
+                    params:{include:['empresa'], sort: 'numero', order: 'asc'}
                 }).then(data => {
                     this.cuentas = data.data;
                 });
             },
             conciliar(pago) {
-                console.log(pago);
                 return this.$store.dispatch('finanzas/pago/conciliar', {
                     'pago' : pago
                 })
                 .then(data => {
-                    console.log(pago);
-                   // this.pagos = data.data;
+                    this.totalesConciliar();
+                })
+            },
+            totalesConciliar() {
+                return this.$store.dispatch('finanzas/pago/totalesConciliar', {
+                    'fecha_inicial' : moment(this.fecha_inicial).format('YYYY-MM-DD'),
+                    'fecha_final' : moment(this.fecha_final).format('YYYY-MM-DD'),
+                    'id_cuenta' : this.id_cuenta
+                })
+                .then(data => {
+                    this.totales = data
                 })
             }
         },

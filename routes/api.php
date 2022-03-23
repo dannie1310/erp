@@ -1506,6 +1506,7 @@ $api->version('v1', function ($api) {
             $api->post('/', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@store');
             $api->post('/porConciliar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@porConciliar');
             $api->post('/conciliar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@conciliar');
+            $api->post('/totalesConciliar', 'App\Http\Controllers\v1\CADECO\Finanzas\PagoController@totalesConciliar');
 
             $api->group(['prefix' => 'carga-masiva'], function ($api) {
                 $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Finanzas\CargaLayoutPagoController@paginate');
