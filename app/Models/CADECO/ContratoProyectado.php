@@ -838,14 +838,14 @@ class ContratoProyectado extends Transaccion
                             {
                                 $partida->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
                                 $partida->save();
-
+                                $partida->movimiento->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
+                                $partida->movimiento->save();
                             }
                         }
                     }
                 }
             }
             $this->editarDestinos($data['contratos']['data']);
-
             DB::connection('cadeco')->commit();
             return $this;
         } catch (\Exception $e) {
