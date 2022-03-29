@@ -252,7 +252,19 @@
                                             <td v-if="concepto.unidad == null"></td>
                                             <td v-else class="cantidad_input">{{concepto.cantidad_original_format}}</td>
                                             <td v-if="concepto.unidad == null"></td>
-                                            <td v-else-if="concepto.destino == undefined || concepto.id_destino || editar_destinos">
+                                            <td v-else-if="editar_destinos && (concepto.destino == undefined || concepto.id_destino)">
+                                               <input type="text" class="form-control"
+                                                       value=""
+                                                       readonly="readonly"
+                                                       :name="`destino_path[${i}]`"
+                                                       data-vv-as="Destino"
+                                                       v-model="concepto.destino"
+                                                       v-validate="{required: concepto.es_hoja}"
+                                                       :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                       :id="`destino_path[${i}]`">
+                                                <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                            </td>
+                                            <td v-else-if="concepto.destino|| editar_destinos">
                                                 <input type="text" class="form-control"
                                                        value=""
                                                        readonly="readonly"
