@@ -8,9 +8,12 @@
 
 namespace App\Models\CADECO;
 
-use App\Utils\Util;
+use DateTime;
 use Exception;
+use DateTimeZone;
+use App\Utils\Util;
 use App\Facades\Context;
+use App\Models\CADECO\Cambio;
 use App\Models\CADECO\OrdenPago;
 use App\Models\CADECO\Estimacion;
 use App\Models\CADECO\Inventario;
@@ -21,8 +24,6 @@ use Illuminate\Support\Facades\DB;
 use App\Models\CADECO\AplicacionManual;
 use App\Models\CADECO\Finanzas\PagoEliminado;
 use App\Models\CADECO\Finanzas\PagoEliminadoLog;
-use DateTime;
-use DateTimeZone;
 use App\Models\CADECO\Finanzas\DistribucionRecursoRemesaPartida;
 
 class Pago extends Transaccion
@@ -307,6 +308,10 @@ class Pago extends Transaccion
         }
     }
 
+    public function getCambioFechaAttribute(){
+        return Cambio::where('fecha', '=', $this->fecha)->get();
+    }
+
     public function scopePendientePorAplicar($query){
         return $query->where('opciones', '=', 327681)->whereRaw('abs(saldo) > 0.1');
     }
@@ -491,7 +496,10 @@ class Pago extends Transaccion
                 'referencia' => $this->referencia,
                 'observaciones' => $data['observaciones'],
                 'id_antecedente' => $this->id_transaccion,
-                'numero_folio' => $this->numero_folio
+                'numero_folio' => $this->numero_folio,
+                'tipo_cambio' => $data['tipo_cambio'],
+                'id_empresa' => $factura->id_empresa,
+                'id_moneda' => $this->id_moneda,
             ]);
 
             $orden_pago = OrdenPago::create([
@@ -499,9 +507,10 @@ class Pago extends Transaccion
                 'id_referente' => $factura->id_transaccion,
                 'estado' => 1,
                 'id_empresa' => $factura->id_empresa,
-                'id_moneda' => $factura->id_moneda,
+                'id_moneda' => $this->id_moneda,
                 'monto' => -1 * $data['monto'],
                 'referencia' => $this->referencia,
+                'tipo_cambio' => $data['tipo_cambio']
             ]);
 
             $partidas = $factura->partidas->where('saldo', '>', 0);
@@ -522,12 +531,12 @@ class Pago extends Transaccion
 
                 if($partida_fact->numero == 0){
                     if($inventario = Inventario::where('id_item', '=', $partida_fact->item_antecedente)->first()){
-                        $inventario->monto_pagado = $inventario->monto_pagado + ($data['partidas'][$index]['saldo'] * $factura->tipo_cambio);
+                        $inventario->monto_pagado = $inventario->monto_pagado + ($data['partidas'][$index]['saldo'] * $data['tipo_cambio']);
                         DB::connection('cadeco')->update("EXEC [dbo].[sp_distribuir_pagado_inventarios] {$inventario->id_lote}");
                         $inventario->save();
                     }else{
                         $movimiento = Movimiento::where('id_item', '=', $partida_fact->item_antecedente)->first();
-                        $movimiento->monto_pagado = $movimiento->monto_pagado + ($data['partidas'][$index]['saldo'] * $factura->tipo_cambio);
+                        $movimiento->monto_pagado = $movimiento->monto_pagado + ($data['partidas'][$index]['saldo'] * $data['tipo_cambio']);
                         $movimiento->save();
                     }
                     $partida_fact->saldo = $partida_fact->saldo - $data['partidas'][$index]['saldo'];
@@ -556,7 +565,7 @@ class Pago extends Transaccion
                     }else if($tipo_ant == 52){
                         $estimacion = Estimacion::withoutGlobalScopes()->find($this->id_antecedente);
                         $importe = $data['partidas'][$index]['saldo'];
-                        $tipo_cambio = $factura->tipo_cambio;
+                        $tipo_cambio = $data['tipo_cambio'];
                         $monto_total = 0;
                         if ($estimacion->movimientos) {
                             $monto_total = $estimacion->movimientos->sum("monto_total");
@@ -580,7 +589,7 @@ class Pago extends Transaccion
                     $item_oc = ItemOrdenCompra::where('id_item', '=', $partida_fact->item_antecedente)->first();
                     $item_oc->amortizaAnticipo($data['partidas'][$index]['saldo']);
                 }else if($partida_fact->numero == 3){
-                    $pago_renta = $data['partidas'][$index]['saldo'] * $factura->tipo_cambio;
+                    $pago_renta = $data['partidas'][$index]['saldo'] * $data['tipo_cambio'];
                     $inventario = $partida_fact->inventario;
                     $inventarios = [];
                     if($partida_fact->material->tipo_material == 4){
@@ -636,7 +645,7 @@ class Pago extends Transaccion
                     }
                 }else if($partida_fact->numero == 7){
                     $importe = $data['partidas'][$index]['saldo'];
-                    $tipo_cambio = $factura->tipo_cambio;
+                    $tipo_cambio = $data['tipo_cambio'];
                     if ($partida_fact->inventario) {
                         $partida_fact->inventario->monto_pagado = $partida_fact->inventario->monto_pagado +
                             round($importe * $partida_fact->factura->tipo_cambio, 2);
