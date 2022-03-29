@@ -165,12 +165,13 @@
                             <div class="form-group">
                                 <label for="tipo_cambio"><b>T.C.:</b></label>
                                 <input
+                                    v-on:keyup="recalculaTotal()"
                                     style="text-align: right"
                                     type="text"
                                     id="tipo_cambio"
                                     name="tipo_cambio"
-                                    v-model="pago.moneda.tipo_cambio"
-                                    disabled="true">
+                                    v-model="tipo_cambio_factura"
+                                    :disabled="tipo_cambio_factura == 1">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -289,6 +290,8 @@ export default {
             total:'',
             aplicado:'',
             guardando:false,
+            cambioPago: null,
+            tipo_cambio_factura: 1,
 
         }
     },
@@ -322,9 +325,10 @@ export default {
             this.cargando=true;
             return this.$store.dispatch('finanzas/pago/find', {
                 id:this.id,
-                params: {include: ['moneda', 'empresa'], scope:'pendientePorAplicar'}
+                params: {include: ['moneda', 'empresa', 'cambioFecha'], scope:'pendientePorAplicar'}
                 }).then(data=>{
                     this.pago = data;
+                    this.cambioPago = data.cambioFecha.data;
                     this.findFacturas(data.id_empresa);
                 })
                 .finally(()=>{
@@ -359,7 +363,7 @@ export default {
             this.subtotal = parseFloat(sbt);
             this.iva = parseFloat(sbt * 0.16);
             this.total = parseFloat(this.subtotal + this.iva).formatMoney(2,'.','');
-            this.aplicado = parseFloat(this.total * this.facturas[this.index_factura]['tipo_cambio']).formatMoney(2,'.','');
+            this.aplicado = parseFloat(this.total * this.tipo_cambio_factura).formatMoney(2,'.','');
             this.subtotal = parseFloat(this.subtotal).formatMoney(2,'.','');
             this.iva = parseFloat(this.iva).formatMoney(2,'.','');
             
@@ -381,7 +385,8 @@ export default {
                 subtotal:this.subtotal,
                 impuesto: this.iva,
                 monto: this.total,
-                aplicado: this.aplicado
+                aplicado: this.aplicado,
+                tipo_cambio: this.tipo_cambio_factura,
             }).then(data=>{
                 this.$router.push({name: 'pago-manual'});
             })
@@ -403,15 +408,20 @@ export default {
         recalculaTotal(){
             let total = parseFloat(this.subtotal) + parseFloat(this.iva);
             this.total = total.formatMoney(2,'.','')
-            this.aplicado = parseFloat(total * this.facturas[this.index_factura]['tipo_cambio']).formatMoney(2,'.','');
+            this.aplicado = parseFloat(total * this.tipo_cambio_factura).formatMoney(2,'.','');
         },
     },
     watch:{
         factura(value){
             if(value != ''){
+                let idx_cambioFecha = 0;
                 let idx = this.facturas.findIndex(f => f.id == value);
                 this.partidas = this.facturas[idx].partidas.data;
                 this.index_factura = this.facturas.findIndex(f => f.id == value);
+                if(this.facturas[this.index_factura]['id_moneda'] != 1){
+                    idx_cambioFecha = this.cambioPago.findIndex(cp => cp.id == this.facturas[this.index_factura]['id_moneda']);
+                    this.tipo_cambio_factura = parseFloat(this.cambioPago[idx_cambioFecha]['cambio']).formatMoney(4,'.','');
+                }
                 this.getSubtotal();
             }else{
                 this.partidas = null;
