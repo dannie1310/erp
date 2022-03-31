@@ -371,7 +371,11 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result){
-                    this.store();
+                    if(this.pago.saldo < this.aplicado){
+                    swal('¡Error!', 'El total a aplicar es mayor al saldo del pago.', 'error')
+                    }else{
+                        this.store();
+                    }
                 }
             });
         },

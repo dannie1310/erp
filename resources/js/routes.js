@@ -2055,9 +2055,9 @@ export const routes = [
                                 component: require('./components/finanzas/pago-manual/Aplicar').default,
                                 meta: {
                                     title: 'Pago Pendiente de Aplicación',
-                                    breadcrumb: {name: 'APLICAR PAGO MANUAL', parent: 'finanzas'},
-                                    middleware: [auth, context],
-                                    permission: 'consultar_carga_layout_pago'
+                                    breadcrumb: {name: 'APLICAR PAGO MANUAL', parent: 'pago-manual'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_pago_manual'
                                 }
                             }
                         ]
