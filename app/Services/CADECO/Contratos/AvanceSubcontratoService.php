@@ -1,0 +1,48 @@
+<?php
+
+
+namespace App\Services\CADECO\Contratos;
+
+
+use App\Models\CADECO\AvanceSubcontrato;
+use App\Models\CADECO\Subcontrato;
+use App\Repositories\Repository;
+
+class AvanceSubcontratoService
+{
+    /**
+     * @var Repository
+     */
+    protected $repository;
+
+    public function __construct(AvanceSubcontrato $model)
+    {
+        $this->repository = new Repository($model);
+    }
+
+    public function paginate($data)
+    {
+        if(isset($data['numero_folio'])){
+            $this->repository->where([['numero_folio', 'LIKE', '%'.$data['numero_folio'].'%']]);
+        }
+
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+
+        if(isset($data['id_empresa'])){
+            $empresa = Empresa::where([['descripcion', 'LIKE', '%'.$data['id_empresa'].'%']])->pluck("id_empresa");
+            $this->repository->whereIn(['id_empresa',  $empresa]);
+        }
+
+        if(isset($data['subcontrato__numero_folio'])){
+            $subcontrato = Subcontrato::where([['descripcion', 'LIKE', '%'.$data['subcontrato__numero_folio'].'%']])->pluck("id_transaccion");
+            $this->repository->whereIn(['id_antecedente',  $subcontrato]);
+        }
+
+        if (isset($data['monto'])) {
+            $this->repository->where([['monto', 'LIKE', '%'.$data['monto'].'%']]);
+        }
+        return $this->repository->paginate($data);
+    }
+}

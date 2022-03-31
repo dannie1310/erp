@@ -1123,6 +1123,13 @@ $api->version('v1', function ($api) {
         });
 
         /**
+         * AVANCE SUBCONTRATOS
+         */
+        $api->group(['prefix' => 'avance-subcontrato'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@paginate');
+        });
+
+        /**
          * CONTRATO PROYECTADO
          */
         $api->group(['prefix' => 'contrato-proyectado'], function ($api){

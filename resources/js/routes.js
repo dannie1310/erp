@@ -894,6 +894,23 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'avance-subcontrato',
+                        component: require('./components/contratos/avance-subcontrato/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'avance-subcontrato',
+                                component: require('./components/contratos/avance-subcontrato/Index').default,
+                                meta: {
+                                    title: 'Listado de Avance de Subcontratos',
+                                    breadcrumb: {parent: 'contratos', name: 'AVANCE DE SUBCONTRATO'},
+                                    middleware: [auth, context],
+
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'proyectado',
                         component: require('./components/contratos/proyectado/partials/Layout').default,
                         children: [
@@ -1509,7 +1526,6 @@ export const routes = [
                             }
                         ]
                     },
-
                     {
                         path: 'solicitud-movimiento',
                         components: {
