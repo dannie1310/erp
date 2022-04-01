@@ -479,7 +479,7 @@ class Pago extends Transaccion
     public function aplicarPago($data){
         try{
             DB::connection('cadeco')->beginTransaction();
-            if(($this->saldo * -1) < $data['monto']){
+            if(($this->saldo * -1) < $data['aplicado']){
                 abort(403, 'El total a aplicar es mayor al saldo del pago.');
             }
             $factura = Factura::find($data['id_factura']);
@@ -505,7 +505,7 @@ class Pago extends Transaccion
             $orden_pago = OrdenPago::create([
                 'id_antecedente' => $factura->id_antecedente,
                 'id_referente' => $factura->id_transaccion,
-                'estado' => 1,
+                'estado' => 0,
                 'id_empresa' => $factura->id_empresa,
                 'id_moneda' => $this->id_moneda,
                 'monto' => -1 * $data['monto'],
@@ -516,18 +516,19 @@ class Pago extends Transaccion
             $partidas = $factura->partidas->where('saldo', '>', 0);
 
             foreach($partidas as $index => $partida_fact){
-                $apl_manual->partidas()->create([
-                    'item_antecedente' => $partida_fact->id_item,
-                    'importe' => $data['partidas'][$index]['saldo'],
-                    'saldo' => $partida_fact->importe
-                ]);
+                if($data['partidas'][$index]['saldo'] > 0){
+                    $apl_manual->partidas()->create([
+                        'item_antecedente' => $partida_fact->id_item,
+                        'importe' => $data['partidas'][$index]['saldo'],
+                        'saldo' => $partida_fact->saldo
+                    ]);
+                }
 
                 $orden_pago->partidas()->create([
                     'item_antecedente' => $partida_fact->id_item,
                     'importe' => $data['partidas'][$index]['saldo'],
                 ]);
                 $factura->saldo = $factura->saldo - ($data['partidas'][$index]['saldo'] * $fac_iva);
-                $this->saldo = $this->saldo + ($data['partidas'][$index]['saldo'] * $fac_iva);
 
                 if($partida_fact->numero == 0){
                     if($inventario = Inventario::where('id_item', '=', $partida_fact->item_antecedente)->first()){
@@ -673,6 +674,11 @@ class Pago extends Transaccion
             if($factura->contra_recibo->saldo < 0.01){
                 $factura->contra_recibo->estado = 2;
             }
+            
+            $orden_pago->opciones = 2;
+            $this->saldo = $this->saldo + $data['aplicado'];
+
+            $orden_pago->save();
             $factura->contra_recibo->save();
             $this->save();
             DB::connection('cadeco')->commit();
