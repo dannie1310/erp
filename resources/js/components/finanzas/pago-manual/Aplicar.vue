@@ -123,7 +123,7 @@
                                                     style="text-align: right; padding: 3px"
                                                     :name="`aplicar[${i}]`"
                                                     data-vv-as="Aplicar"
-                                                    v-validate="{required: true, min_value:0.01, max_value:fac.saldo_base, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                                    v-validate="{required: true, max_value:fac.saldo_base, regex: /^[0-9]\d*(\.\d+)?$/}"
                                                     class="form-control"
                                                     id="aplicar"
                                                     v-model="fac.saldo"
@@ -171,7 +171,7 @@
                                     id="tipo_cambio"
                                     name="tipo_cambio"
                                     v-model="tipo_cambio_factura"
-                                    :disabled="tipo_cambio_factura == 1">
+                                    :disabled="id_moneda_factura == 1">
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -292,6 +292,7 @@ export default {
             guardando:false,
             cambioPago: null,
             tipo_cambio_factura: 1,
+            id_moneda_factura:1
 
         }
     },
@@ -371,7 +372,7 @@ export default {
         validate() {
             this.$validator.validate().then(result => {
                 if (result){
-                    if(this.pago.saldo < this.aplicado){
+                    if((this.pago.saldo * -1) < this.aplicado){
                     swal('¡Error!', 'El total a aplicar es mayor al saldo del pago.', 'error')
                     }else{
                         this.store();
@@ -425,6 +426,7 @@ export default {
                 if(this.facturas[this.index_factura]['id_moneda'] != 1){
                     idx_cambioFecha = this.cambioPago.findIndex(cp => cp.id == this.facturas[this.index_factura]['id_moneda']);
                     this.tipo_cambio_factura = parseFloat(this.cambioPago[idx_cambioFecha]['cambio']).formatMoney(4,'.','');
+                    this.id_moneda_factura = this.facturas[this.index_factura]['id_moneda'];
                 }
                 this.getSubtotal();
             }else{

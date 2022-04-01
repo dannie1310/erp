@@ -520,7 +520,7 @@ class Pago extends Transaccion
                     $apl_manual->partidas()->create([
                         'item_antecedente' => $partida_fact->id_item,
                         'importe' => $data['partidas'][$index]['saldo'],
-                        'saldo' => $partida_fact->importe
+                        'saldo' => $partida_fact->saldo
                     ]);
                 }
 
