@@ -115,11 +115,12 @@
                                         <td style="text-align: center" v-if="$root.can('registrar_conciliacion_bancaria')">
                                             <div class="form-check">
                                                 <input class="form-check-input" type="checkbox" value="true" :id="pago.conciliado" v-model="pago.conciliado" v-if="pago.conciliado" checked @click="conciliar(pago)">
+                                                <input class="form-check-input" type="checkbox" value="null" :id="pago.conciliado" v-model="pago.conciliado" v-else-if="pago.estado < 0" disabled>
                                                 <input class="form-check-input" type="checkbox" value="false" :id="pago.conciliado" v-model="pago.conciliado" v-else @click="conciliar(pago)">
                                             </div>
                                         </td>
                                         <td>
-                                            {{pago.fecha_format}}
+                                            {{pago.cumplimiento_format}}
                                         </td>
                                         <td style="text-align: right">
                                             {{pago.importe_cadeco}}
@@ -128,7 +129,7 @@
                                             {{pago.tipo_transaccion_str}}
                                         </td>
                                         <td>
-                                            [{{pago.referencia}}]
+                                            {{pago.referencia}}
                                         </td>
                                         <td>
                                             {{pago.empresa_nombre ? pago.empresa_nombre : pago.destino}}
