@@ -68,7 +68,8 @@ class PagoTransformer extends TransformerAbstract
           'es_reemplazo' => $model->es_reemplazo,
           'tipo_antecedente' => $model->tipo_antecedente,
           'referencia' => $model->referencia,
-          'saldo_format' => $model->saldo_format
+          'saldo_format' => $model->saldo_format,
+          'saldo' => $model->saldo,
       ];
     }
 
