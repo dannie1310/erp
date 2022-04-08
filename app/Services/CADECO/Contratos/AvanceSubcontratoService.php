@@ -6,7 +6,7 @@ namespace App\Services\CADECO\Contratos;
 
 use App\Models\CADECO\AvanceSubcontrato;
 use App\Models\CADECO\Subcontrato;
-use App\Repositories\Repository;
+use App\Repositories\CADECO\Contratos\AvanceSubcontratoRepository as Repository;
 
 class AvanceSubcontratoService
 {
@@ -44,5 +44,14 @@ class AvanceSubcontratoService
             $this->repository->where([['monto', 'LIKE', '%'.$data['monto'].'%']]);
         }
         return $this->repository->paginate($data);
+    }
+
+    public function store($data)
+    {
+        try {
+            return $this->repository->create($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

@@ -464,7 +464,7 @@
 		font-weight: bold;
 	}
 
-	table tbody .numerico
+	table tbody .changeCantidad
 	{
 		text-align: right;
 		padding-left: 0;

@@ -112,4 +112,8 @@ class AvanceSubcontrato extends Transaccion
     /**
      * Métodos
      */
+    public function registrar($data)
+    {
+        dd("a", $data);
+    }
 }

@@ -261,6 +261,15 @@ class Subcontrato extends Transaccion
         return $query->whereHas('fondo_garantia');
     }
 
+    public function scopeAvanceSubcontrato($query)
+    {
+        return $query->withoutGlobalScopes()->whereHas('contratoProyectado',function ($q){
+            return $q->whereHas('contratoAreaSubcontratante', function ($q1) {
+                return $q1->whereIn('id_area_subcontratante', [1, 2]);
+            });
+        })->where('tipo_transaccion', '=', 51)->where('opciones', '=', 2)->whereIn('estado', [0, 1]);
+    }
+
     public function getNombre()
     {
         return 'SUBCONTRATO';

@@ -908,6 +908,29 @@ export const routes = [
 
                                 }
                             },
+                            {
+                                path: 'create',
+                                name: 'avance-subcontrato-seleccionar-create',
+                                component: require('./components/contratos/avance-subcontrato/SeleccionarSubcontrato').default,
+                                meta: {
+                                    title: 'Seleccionar Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'SELECCIONAR SUBCONTRATO'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_estimacion_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id/create',
+                                name: 'avance-subcontrato-create',
+                                props: true,
+                                component: require('./components/contratos/avance-subcontrato/Create').default,
+                                meta: {
+                                    title: 'Registrar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato-seleccionar-create', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_estimacion_subcontrato']
+                                }
+                            },
                         ]
                     },
                     {
