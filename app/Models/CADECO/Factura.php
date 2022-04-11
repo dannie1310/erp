@@ -575,7 +575,12 @@ class Factura extends Transaccion
 
     public function disminuyeSaldo(Transaccion $pago)
     {
-        $this->saldo = number_format($this->saldo - ($pago->orden_pago->monto * -1), 2, ".", "");
+        $saldo = number_format($this->saldo - ($pago->orden_pago->monto * -1), 2, ".", "");
+        if($saldo < -0.1)
+        {
+            abort(400,'La  factura '.$this->numero_folio_format.' con referencia "'.$this->referencia.'" tiene saldo pendiente de '.$this->saldo.' y le desea realizar un pago de '.number_format(abs( $saldo), 2, ".", ",").', el cual supera el saldo pendiente.');
+        }
+        $this->saldo = $saldo;
         $this->save();
         if ($this->saldo < 1) {
             $this->actualizaEstadoPagada();
