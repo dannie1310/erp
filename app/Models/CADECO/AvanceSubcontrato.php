@@ -4,6 +4,9 @@
 namespace App\Models\CADECO;
 
 
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+
 class AvanceSubcontrato extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 51;
@@ -114,6 +117,22 @@ class AvanceSubcontrato extends Transaccion
      */
     public function registrar($data)
     {
-        dd("a", $data);
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $subcontrato = Subcontrato::where('id_transaccion', $data['id_antecedente'])->first();
+            dd($subcontrato);
+            $data['id_obra'] = $subcontrato->id_obra;
+            $data['id_empresa'] = $subcontrato->id_empresa;
+            $data['id_moneda'] = $subcontrato->id_moneda;
+            $data['numero_folio'] = $this->calcularFolio($subcontrato->id_obra);
+            $solicitud = $this->create($data);
+            $solicitud->estimaConceptos($data['conceptos']);
+            $solicitud->recalculaDatosGenerales();
+            DB::connection('cadeco')->commit();
+            return $solicitud;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
     }
 }
