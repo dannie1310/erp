@@ -32,7 +32,7 @@ class FacturaObserver extends TransaccionObserver
     public function updating(Factura $factura){
         if($factura->saldo<-0.1)
         {
-            throw New \Exception('El saldo de la factura '.$factura->saldo.' no puede ser menor a 0');
+            throw New \Exception('La  factura '.$this->numero_folio_format.' con referencia "'.$this->referencia.'" tiene saldo '.$factura->saldo.' no puede ser menor a 0');
         }
     }
 
