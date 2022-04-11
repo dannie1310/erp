@@ -221,7 +221,7 @@ class Solicitud extends Transaccion
 
             );
 
-            if($this->monto_pesos >= 100000)
+            if($this->monto_pesos >= 50000)
             {
                 $autorizacion_1814_2 = AutorizacionRequerida::create([
                     "id_transaccion"=>$this->id_transaccion,

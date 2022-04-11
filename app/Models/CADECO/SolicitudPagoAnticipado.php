@@ -183,11 +183,12 @@ class SolicitudPagoAnticipado extends Solicitud
 
     public function getRequiereAutorizacionAttribute()
     {
-        if($this->monto_pesos >= 50000)
+        $this->load("solicitudPagoAutorizacionActiva");
+        if($this->solicitudPagoAutorizacionActiva)
         {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
     public function cancelar($id){
