@@ -40,11 +40,11 @@ class LayoutPagoPartidaTransformer extends TransformerAbstract
                 $estado = "Por Autorizar";
             }else{
                 if(($model->documento_pagable->saldo_pagable + 0.99) < $model->monto_pagado_documento){
-                    $clase_badge_estado = "badge badge-secondary";
+                    $clase_badge_estado = "badge badge-danger";
                     $estado = "Saldo Insuficiente";
                 }else{
-                    $clase_badge_estado = "badge badge-secondary";
-                    $estado = "Pago Mayor al Saldo";
+                    $clase_badge_estado = "badge badge-warning";
+                    $estado = "Saldo Mayor al Pago";
                 }
             }
 
