@@ -26,7 +26,7 @@ class ContrareciboObserver  extends TransaccionObserver
     }
 
     public function updating(ContraRecibo $contrarecibo){
-        if($contrarecibo->saldo<-0.10)
+        if($contrarecibo->saldo<-1)
         {
             throw New \Exception('El saldo del contrarecibo '.$contrarecibo->numero_folio_format.' no puede ser menor a 0. Saldo Resultante: '.$contrarecibo->saldo_format.' ');
         }

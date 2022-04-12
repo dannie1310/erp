@@ -414,8 +414,7 @@ class ContratoProyectadoService
                         }
                         array_key_exists($presupuesto->id_transaccion, $presupuestos)?'': $presupuestos[$presupuesto->id_transaccion] = array();
                         $partida_presupuestada = PresupuestoContratistaPartida::where('id_transaccion', '=',$presupuesto->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
-                        $desc = 1;
-                        $partida_presupuestada->descuento > 0?$desc = $partida_presupuestada->descuento / 100:'';
+
                         if($partida_presupuestada && $partida_presupuestada->precio_unitario_despues_descuento > 0){
                             if (key_exists($partida_presupuestada->id_concepto, $precios)) {
                                 if ($partida_presupuestada->precio_unitario_despues_descuento > 0 && $precios[$partida_presupuestada->id_concepto] > $partida_presupuestada->precio_unitario_despues_descuento)
