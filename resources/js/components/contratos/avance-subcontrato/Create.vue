@@ -16,113 +16,100 @@
                 <datos v-bind:subcontrato="this.subcontrato" />
                 <div class="row">
                     <div class="col-md-8"></div>
-                    <div class="col-md-1"><b>Fecha del avance:</b></div>
-                    <div class="col-md-3">
-                        <div class="form-group error-content">
-                            <datepicker v-model = "fecha"
-                                        id="fecha"
-                                        name = "fecha"
-                                        :format = "formatoFecha"
-                                        :language = "es"
-                                        :bootstrap-styling = "true"
-                                        class = "form-control"
-                                        v-validate="{required: true}"
-                                        :disabled-dates="fechasDeshabilitadas"
-                                        :class="{'is-invalid': errors.has('fecha')}"
-                            ></datepicker>
-                            <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
-                        </div>
+                    <div class="col-md-2">
+                        <h6><b>Fecha del avance:</b></h6>
+                    </div>
+                    <div class="col-md-2">
+                        <datepicker v-model = "fecha"
+                                    id="fecha"
+                                    name = "fecha"
+                                    :format = "formatoFecha"
+                                    :language = "es"
+                                    :bootstrap-styling = "true"
+                                    class = "form-control"
+                                    v-validate="{required: true}"
+                                    :disabled-dates="fechasDeshabilitadas"
+                                    :class="{'is-invalid': errors.has('fecha')}"
+                        ></datepicker>
+                        <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
                     </div>
                 </div>
+                <br>
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <tr>
-                                    <th class="encabezado" colspan="4">
-                                        Periodo de avance
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Inicio:
-                                    </td>
-                                    <td>
-                                        <datepicker v-model = "fecha_inicial"
-                                                    name = "fecha_inicial"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha_inicial')}"
-                                        ></datepicker>
+                        <div class="row">
+                            <h6><b>Periodo de avance</b></h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h7>Inicio:</h7>
+                            </div>
+                            <div class="col-md-4">
+                                <datepicker v-model = "fecha_inicial"
+                                            name = "fecha_inicial"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :class="{'is-invalid': errors.has('fecha_inicial')}"
+                                ></datepicker>
                                         <div class="invalid-feedback" v-show="errors.has('fecha_inicial')">{{ errors.first('fecha_inicial') }}</div>
-                                    </td>
-                                    <td>
-                                        Término:
-                                    </td>
-                                    <td>
-                                        <datepicker v-model = "fecha_final"
-                                                    name = "fecha_final"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha_final')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
-                                    </td>
-                                </tr>
-                            </table>
+                            </div>
+                            <div class="col-md-2">
+                                <h7>Término:</h7>
+                            </div>
+                            <div class="col-md-4">
+                                <datepicker v-model = "fecha_final"
+                                            name = "fecha_final"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :class="{'is-invalid': errors.has('fecha_final')}"
+                                ></datepicker>
+                                <div class="invalid-feedback" v-show="errors.has('fecha_final')">{{ errors.first('fecha_final') }}</div>
+                            </div>
                         </div>
                     </div>
                     <div class="col-md-6">
-                        <div class="table-responsive">
-                            <table class="table table-sm">
-                                <tr>
-                                    <th class="encabezado" colspan="4">
-                                        Fechas de Reconocimiento de Avance
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        Ejecución:
-                                    </td>
-                                    <td>
-                                        <datepicker v-model = "fecha_ejecucion"
-                                                    name = "fecha_ejecucion"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha_ejecucion')}"
-                                        ></datepicker>
-                                        <div class="invalid-feedback" v-show="errors.has('fecha_ejecucion')">{{ errors.first('fecha_ejecucion') }}</div>
-                                    </td>
-                                    <td>
-                                        Contable:
-                                    </td>
-                                    <td>
-                                        <datepicker v-model = "fecha_contable"
-                                                    name = "fecha_contable"
-                                                    :format = "formatoFecha"
-                                                    :language = "es"
-                                                    :bootstrap-styling = "true"
-                                                    class = "form-control"
-                                                    v-validate="{required: true}"
-                                                    :disabled-dates="fechasDeshabilitadas"
-                                                    :class="{'is-invalid': errors.has('fecha_contable')}"
-                                        ></datepicker>
+                        <div class="row">
+                            <h6><b>Fechas de Reconocimiento de Avance</b></h6>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-2">
+                                <h7>Ejecución:</h7>
+                            </div>
+                            <div class="col-md-4">
+                                <datepicker v-model = "fecha_ejecucion"
+                                            name = "fecha_ejecucion"
+                                            :format = "formatoFecha"
+                                            :language = "es"
+                                            :bootstrap-styling = "true"
+                                            class = "form-control"
+                                            v-validate="{required: true}"
+                                            :class="{'is-invalid': errors.has('fecha_ejecucion')}"
+                                ></datepicker>
+                                <div class="invalid-feedback" v-show="errors.has('fecha_ejecucion')">{{ errors.first('fecha_ejecucion') }}</div>
+                            </div>
+                            <div class="col-md-2">
+                                <h7>Contable:</h7>
+                            </div>
+                            <div class="col-md-4">
+                               <datepicker v-model = "fecha_contable"
+                                           name = "fecha_contable"
+                                           :format = "formatoFecha"
+                                           :language = "es"
+                                           :bootstrap-styling = "true"
+                                           class = "form-control"
+                                           v-validate="{required: true}"
+                                           :class="{'is-invalid': errors.has('fecha_contable')}"
+                               ></datepicker>
                                         <div class="invalid-feedback" v-show="errors.has('fecha_contable')">{{ errors.first('fecha_contable') }}</div>
-                                    </td>
-                                </tr>
-                            </table>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -159,34 +146,18 @@
                                     <td>{{concepto.unidad}}</td>
                                     <td style="text-align: right">{{concepto.cantidad_subcontrato}}</td>
                                     <td style="text-align: right">{{concepto.precio_unitario_subcontrato_format}}</td>
-                                    <td  style="text-align:right">
+                                    <td>
                                         <input class="text"
-                                               v-on:keyup="changeCantidad(concepto)"
+                                               style="text-align: right"
                                                v-model="concepto.cantidad_avance"
                                                :name="`cantidadAvance[${i}]`"
                                                data-vv-as="'Cantidad'"
+                                               v-validate="{max_value: parseFloat(concepto.cantidad_subcontrato).toFixed(4) }"
                                                :class="{'is-invalid': errors.has(`cantidadAvance[${i}]`)}" />
                                          <div class="invalid-feedback" v-show="errors.has(`cantidadAvance[${i}]`)">{{ errors.first(`cantidadAvance[${i}]`) }}</div>
                                     </td>
                                 </tr>
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td style="border:none" colspan="4"></td>
-                                    <td><b>Subtotal</b></td>
-                                    <td style="text-align: right"><b>{{parseFloat(subtotal).formatMoney(2)}}</b></td>
-                                </tr>
-                                <tr>
-                                    <td style="border: none" colspan="4"></td>
-                                    <td><b>IVA</b></td>
-                                    <td style="text-align: right"><b>{{parseFloat(iva).formatMoney(2)}}</b></td>
-                                </tr>
-                                <tr>
-                                    <td style="border: none" colspan="4"></td>
-                                    <td><b>Total</b></td>
-                                    <td style="text-align: right"><b>{{parseFloat(total).formatMoney(2)}}</b></td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -247,9 +218,6 @@
                 fecha_ejecucion: '',
                 fecha_contable: '',
                 conceptos: null,
-                subtotal: 0,
-                iva: 0,
-                total: 0,
                 observaciones: null
             }
         },
@@ -291,17 +259,20 @@
                     this.cargando = false;
                 })
             },
-            changeCantidad(concepto) {
-                if(concepto.cantidad_avance) {
-                    this.subtotal += concepto.cantidad_avance * concepto.precio_unitario_subcontrato;
-                }
-            },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
                         if(moment(this.fecha_final).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
                         {
                             swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de término.', 'error')
+                        }
+                        else if(moment(this.fecha_ejecucion).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
+                        {
+                            swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de ejecución.', 'error')
+                        }
+                        else if(moment(this.fecha_contable).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
+                        {
+                            swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha contable.', 'error')
                         }
                         else {
                             this.store()
@@ -323,14 +294,6 @@
                    // this.salir();
                 })
             },
-        },
-        watch: {
-            subtotal(value) {
-                if (value) {
-                    this.iva = this.subtotal * 0.16;
-                    this.total = this.subtotal + this.iva;
-                }
-            }
         },
     }
 </script>

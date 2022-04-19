@@ -4,7 +4,7 @@
 namespace App\Models\CADECO;
 
 
-use Illuminate\Support\Facades\Config;
+use App\Facades\Context;
 use Illuminate\Support\Facades\DB;
 
 class AvanceSubcontrato extends Transaccion
@@ -18,22 +18,22 @@ class AvanceSubcontrato extends Transaccion
 
     protected $fillable = [
         'id_antecedente',
+        'tipo_transaccion',
+        'numero_folio',
         'fecha',
+        'estado',
         'id_obra',
         'id_empresa',
-        'id_sucursal',
         'id_moneda',
-        'anticipo',
-        'anticipo_monto',
-        'anticipo_saldo',
+        'cumplimiento',
+        'vencimiento',
+        'opciones',
         'monto',
-        'PorcentajeDescuento',
         'impuesto',
-        'impuesto_retenido',
-        'id_costo',
-        'retencion',
         'referencia',
         'observaciones',
+        'fecha_ejecucion',
+        'fecha_contable',
         'id_usuario'
     ];
 
@@ -53,6 +53,11 @@ class AvanceSubcontrato extends Transaccion
     public function subcontrato()
     {
         return $this->belongsTo(Subcontrato::class, 'id_antecedente','id_transaccion');
+    }
+
+    public function itemsAvance()
+    {
+        return $this->hasMany(ItemAvanceSubcontrato::class, 'id_transaccion', 'id_transaccion');
     }
 
     /**
@@ -112,27 +117,67 @@ class AvanceSubcontrato extends Transaccion
         }
     }
 
+    public function getSumaImportePartidasAttribute()
+    {
+        return (float) $this->itemsAvance->sum('importe');
+    }
+
     /**
      * Métodos
      */
     public function registrar($data)
     {
+        $datos = [];
         try {
             DB::connection('cadeco')->beginTransaction();
-            $subcontrato = Subcontrato::where('id_transaccion', $data['id_antecedente'])->first();
-            dd($subcontrato);
-            $data['id_obra'] = $subcontrato->id_obra;
-            $data['id_empresa'] = $subcontrato->id_empresa;
-            $data['id_moneda'] = $subcontrato->id_moneda;
-            $data['numero_folio'] = $this->calcularFolio($subcontrato->id_obra);
-            $solicitud = $this->create($data);
-            $solicitud->estimaConceptos($data['conceptos']);
-            $solicitud->recalculaDatosGenerales();
+            $datos['id_antecedente'] = $data['id_antecedente'];
+            $datos['fecha'] = $data['fecha'];
+            $datos['cumplimiento'] = $data['cumplimiento'];
+            $datos['vencimiento'] = $data['vencimiento'];
+            $datos['fecha_ejecucion'] = $data['fecha_ejecucion'];
+            $datos['fecha_contable'] = $data['fecha_contable'];
+            $datos['observaciones'] = $data['observaciones'];
+            $datos['referencia'] = $data['observaciones'];
+            $avance = $this->create($datos);
+            $avance->agregaConceptos($data['conceptos']);
+            $avance->calcularSubtotal();
             DB::connection('cadeco')->commit();
-            return $solicitud;
+            return $avance ;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e->getMessage());
         }
+    }
+
+    public static function calcularFolio()
+    {
+        $est = Transaccion::withoutGlobalScopes()->where('tipo_transaccion', '=', self::TIPO)->where('id_obra','=', Context::getIdObra())->orderBy('numero_folio', 'DESC')->first();
+        return $est ? $est->numero_folio + 1 : 1;
+    }
+
+    public function agregaConceptos($conceptos)
+    {
+        foreach ($conceptos as $concepto)
+        {
+            if(!array_key_exists('para_estimar', $concepto) && (array_key_exists('cantidad_avance', $concepto) && $concepto['cantidad_avance'] > 0))
+            {
+                $this->itemsAvance()->create([
+                    'id_transaccion' => $this->id_transaccion,
+                    'id_antecedente' => $this->id_antecedente,
+                    'id_concepto' => $concepto['id_concepto'],
+                    'cantidad' => (float) $concepto['cantidad_avance'],
+                    'precio_unitario' => (float) $concepto['precio_unitario_subcontrato'],
+                    'importe' => (float) $concepto['cantidad_avance'] * (float) $concepto['precio_unitario_subcontrato'],
+                ]);
+            }
+        }
+    }
+
+    public function calcularSubtotal()
+    {
+        $this->refresh('itemsAvance');
+        $this->monto = (1 + ($this->obra->iva / 100)) * $this->suma_importe_partidas;
+        $this->impuesto = $this->suma_importe_partidas * ($this->obra->iva / 100);
+        $this->save();
     }
 }
