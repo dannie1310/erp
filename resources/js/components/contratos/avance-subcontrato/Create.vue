@@ -291,7 +291,7 @@
                     conceptos: this.conceptos,
                     observaciones: this.observaciones
                 }).then(data=> {
-                   // this.salir();
+                    this.salir();
                 })
             },
         },
