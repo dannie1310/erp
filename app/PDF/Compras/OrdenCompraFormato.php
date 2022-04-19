@@ -952,7 +952,7 @@ class OrdenCompraFormato extends FPDI
                 $this->Cell(3.92, 1.2, '', 'TRLB', 0, 'C');
                 $this->Ln();
                 $this->SetFont('Arial', '', 5);
-                $this->Cell(3.92, .4, utf8_decode('LIC. HECTOR FERNANDEZ ROMERO'), 'TRLB', 0, 'C', 1);
+                $this->Cell(3.92, .4, '', 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('DIR. PROYECTO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('LIC. MARIA LUCIA MARTINEZ BALADO'), 'TRLB', 0, 'C', 1);
                 $this->Cell(3.92, .4, utf8_decode('ING. MANUEL TOBAR VIDA'), 'TRLB', 0, 'C', 1);
