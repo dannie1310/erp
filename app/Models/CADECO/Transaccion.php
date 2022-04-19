@@ -171,7 +171,7 @@ class Transaccion extends Model
 
     public function obra()
     {
-        if($this->invitacion && ($this->tipo_transaccio == 18 || $this->tipo_transaccio == 50))
+        if($this->invitacion && ($this->tipo_transaccion == 18 || $this->tipo_transaccion == 50))
         {
             DB::purge('cadeco');
             Config::set('database.connections.cadeco.database', $this->invitacion->base_datos);
