@@ -39,7 +39,8 @@ class AvanceSubcontratoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('context');
-        //$this->middleware('permiso:consultar_formato_orden_pago_estimacion')->only('pdfOrdenPago');
+        $this->middleware('permiso:registrar_avance_subcontrato')->only('store');
+        $this->middleware('permiso:consultar_avance_subcontrato')->only(['index', 'paginate', 'show']);
 
         $this->service = $service;
         $this->fractal = $fractal;

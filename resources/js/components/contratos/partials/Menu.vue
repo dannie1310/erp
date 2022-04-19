@@ -8,12 +8,7 @@
                 <b>SISTEMA DE CONTRATOS</b>
                 <hr style="border-color: #9e9e9e; margin-bottom: 3px">
             </li>
-            <li class="nav-item" v-if="$root.can('modificar_area_subcontratante_cp')">
-                <router-link :to="{name: 'avance-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'avance-subcontrato'}">
-                    <i class="fa fa-clipboard-list nav-icon"></i>
-                    <p>Avance de Subcontrato</p>
-                </router-link>
-            </li>
+
             <li class="nav-item" v-if="$root.can(['modificar_area_subcontratante_cp', 'consultar_contrato_proyectado'])">
                 <router-link :to="{name: 'proyectado'}" class="nav-link" :class="{active: this.$route.name == 'proyectado'}">
                     <i class="fa fa-clipboard-list nav-icon"></i>
@@ -48,6 +43,12 @@
                 <router-link :to="{name: 'subcontrato'}" v-if="$root.can(['consultar_subcontrato'])" class="nav-link" :class="{active: this.$route.name == 'subcontrato'}">
                     <i class="fa fa-file-contract nav-icon"></i>
                     <p>Subcontratos</p>
+                </router-link>
+            </li>
+            <li class="nav-item" v-if="$root.can('consultar_avance_subcontrato')">
+                <router-link :to="{name: 'avance-subcontrato'}" class="nav-link" :class="{active: this.$route.name == 'avance-subcontrato'}">
+                    <i class="fa fa-clipboard-list nav-icon"></i>
+                    <p>Avance de Subcontrato</p>
                 </router-link>
             </li>
             <li class="nav-item">

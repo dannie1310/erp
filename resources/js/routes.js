@@ -916,7 +916,7 @@ export const routes = [
                                     title: 'Seleccionar Subcontrato',
                                     breadcrumb: { parent: 'avance-subcontrato', name: 'SELECCIONAR SUBCONTRATO'},
                                     middleware: [auth, context, permission],
-                                    permission: ['registrar_estimacion_subcontrato']
+                                    permission: ['registrar_avance_subcontrato']
                                 }
                             },
                             {
@@ -928,7 +928,7 @@ export const routes = [
                                     title: 'Registrar Avance de Subcontrato',
                                     breadcrumb: { parent: 'avance-subcontrato-seleccionar-create', name: 'REGISTRAR'},
                                     middleware: [auth, context, permission],
-                                    permission: ['registrar_estimacion_subcontrato']
+                                    permission: ['registrar_avance_subcontrato']
                                 }
                             },
                         ]
