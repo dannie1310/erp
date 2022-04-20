@@ -487,7 +487,8 @@ class Pago extends Transaccion
                 abort(403, 'El total a aplicar es mayor al saldo de la factura.');
             }
 
-            $fac_iva = $factura->monto/ ($factura->monto - $factura->impuesto);
+            $fac_iva = $factura->saldo/ $factura->partidas->sum('saldo');
+            
             $apl_manual = AplicacionManual::create([
                 'saldo' => $this->saldo,
                 'fecha' => date('Y-m-d'),
