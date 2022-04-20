@@ -212,6 +212,24 @@
                     <div class="row">
                         <div class="col-md-3 offset-9">
                             <div class="form-group row">
+                                <label for="impuesto" class="col-sm-5 col-form-label"><b>Impuestos Retenidos:</b></label>
+                                <div class="col-md-7">
+                                    <input
+                                        disabled="true"
+                                        style="width: 100%; text-align: right; padding: 3px"
+                                        type="text"
+                                        id="impuesto_retenido"
+                                        name="impuesto_retenido"
+                                        class="form-control"
+                                        v-model="impuesto_retenido_format"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 offset-9">
+                            <div class="form-group row">
                                 <label for="total" class="col-sm-5 col-form-label"><b>Total:</b></label>
                                 <div class="col-md-7">
                                     <input
