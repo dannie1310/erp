@@ -734,7 +734,7 @@ class Estimacion extends Transaccion
         $monto_pagar = $this->total_orden_pago + $this->anticipo_a_liberar;
         if ($this->configuracion->retenciones_antes_iva == 0) {
             $monto_pagar -= $this->retenciones->sum("importe");
-            $monto_pagar -= $this->IVARetenido;
+            // $monto_pagar -= $this->IVARetenido;
             $monto_pagar += $this->liberaciones->sum("importe");
         }
         if ($this->configuracion->desc_pres_mat_antes_iva == 0) {
