@@ -591,24 +591,25 @@ class Pago extends Transaccion
                     $item_oc->amortizaAnticipo($data['partidas'][$index]['saldo']);
                 }else if($partida_fact->numero == 3){
                     $pago_renta = $data['partidas'][$index]['saldo'] * $data['tipo_cambio'];
-                    $inventario = $partida_fact->inventario;
+                    $inventario = $partida_fact->inventarioAplicacionManual;
                     $inventarios = [];
                     if($partida_fact->material->tipo_material == 4){
                         $inventarios = Inventario::where('id_almacen', '=', $inventario->id_almacen)
                                     ->where('id_material', '=', $inventario->id_material)
-                                    ->where('monto_total', '>', 'monto_pagado')->get();
+                                    ->whereRaw('monto_total > monto_pagado')->get();
                     }else{
                         $inventarios = Inventario::where('id_almacen', '=', $inventario->id_almacen)
                             ->where('id_material', '=', $inventario->id_material)
                             ->where('referencia', '=', $inventario->referencia)
-                            ->where('monto_total', '>', 'monto_pagado')->get();
+                            ->whereRaw('monto_total > monto_pagado')->get();
                     }
+                    
                     foreach($inventarios as $inv){
                         $pago = 0;
-                        if($inv->saldo > $pago_renta){
+                        if(($inv->monto_total - $inv->monto_pagado) > $pago_renta){
                             $pago = $pago_renta;
                         }else{
-                            $pago = $inv->saldo;
+                            $pago = ($inv->monto_total - $inv->monto_pagado);
                         }
                         $pago_inv = Inventario::where('id_lote', '=', $inv->id_lote)->first();
                         $pago_inv->monto_pagado = $pago_inv->monto_pagado + $pago;
