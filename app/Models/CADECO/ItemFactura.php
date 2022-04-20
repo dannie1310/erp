@@ -34,6 +34,11 @@ class ItemFactura extends Item
         return $this->belongsTo(Inventario::class, 'id_item', 'id_item');
     }
 
+    public function inventarioAplicacionManual()
+    {
+        return $this->belongsTo(Inventario::class, 'item_antecedente', 'id_item');
+    }
+
     public function material()
     {
         return $this->belongsTo(Material::class, 'id_material');
