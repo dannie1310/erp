@@ -431,9 +431,10 @@ export default {
             return subtotal == 0;
         },
         recalculaTotal(){
-            let total = parseFloat(this.subtotal) + parseFloat(this.iva);
+            let total = parseFloat(this.getCantidadFloat(this.subtotal)) + parseFloat(this.getCantidadFloat(this.iva)) - parseFloat(this.impuesto_retenido);
             this.total = total.formatMoney(2,'.','')
-            this.aplicado = parseFloat(total * this.tipo_cambio_factura).formatMoney(2,'.','');
+            this.aplicado = parseFloat(total * this.tipo_cambio_factura).formatMoney(2,'.',',');
+            this.total = total.formatMoney(2,'.',',')
         },
         getCantidadFloat(cantidad){
             return parseFloat(cantidad.replace(",", "")).formatMoney(2,'.','');
