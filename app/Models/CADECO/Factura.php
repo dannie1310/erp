@@ -620,7 +620,7 @@ class Factura extends Transaccion
     }
 
     public function getImpuestoRetenidoFormatAttribute(){
-        return '$' . number_format($this->impuesto_retenido, 2);
+        return number_format($this->impuesto_retenido, 2);
     }
 
     public function getRetencionesSubcontratoAttribute(){

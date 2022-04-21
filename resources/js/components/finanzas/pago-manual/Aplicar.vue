@@ -220,7 +220,6 @@
                                         type="text"
                                         id="impuesto_retenido"
                                         name="impuesto_retenido"
-                                        class="form-control"
                                         v-model="impuesto_retenido_format"
                                     >
                                 </div>
@@ -307,6 +306,8 @@ export default {
             iva:'',
             total:'',
             aplicado:'',
+            impuesto_retenido: '',
+            impuesto_retenido_format: '',
             guardando:false,
             cambioPago: null,
             tipo_cambio_factura: 1,
@@ -381,10 +382,11 @@ export default {
             }
             this.subtotal = parseFloat(sbt);
             this.iva = parseFloat(sbt * 0.16);
-            this.total = parseFloat(this.subtotal + this.iva).formatMoney(2,'.','');
-            this.aplicado = parseFloat(this.total * this.tipo_cambio_factura).formatMoney(2,'.','');
-            this.subtotal = parseFloat(this.subtotal).formatMoney(2,'.','');
-            this.iva = parseFloat(this.iva).formatMoney(2,'.','');
+            this.total = parseFloat(this.subtotal + this.iva - this.impuesto_retenido).formatMoney(2,'.','');
+            this.aplicado = parseFloat((this.total * this.tipo_cambio_factura)).formatMoney(2,'.',',');
+            this.subtotal = parseFloat(this.subtotal).formatMoney(2,'.',',');
+            this.iva = parseFloat(this.iva).formatMoney(2,'.',',');
+            this.total = parseFloat(this.total).formatMoney(2,'.',',');
             
         },
         validate() {
@@ -405,10 +407,10 @@ export default {
                 partidas:this.partidas,
                 id_factura:this.factura,
                 observaciones:this.observaciones,
-                subtotal:this.subtotal,
-                impuesto: this.iva,
-                monto: this.total,
-                aplicado: this.aplicado,
+                subtotal:this.getCantidadFloat(this.subtotal),
+                impuesto: this.getCantidadFloat(this.iva),
+                monto: this.getCantidadFloat(this.total),
+                aplicado: this.getCantidadFloat(this.aplicado),
                 tipo_cambio: this.tipo_cambio_factura,
             }).then(data=>{
                 this.$router.push({name: 'pago-manual'});
@@ -433,6 +435,9 @@ export default {
             this.total = total.formatMoney(2,'.','')
             this.aplicado = parseFloat(total * this.tipo_cambio_factura).formatMoney(2,'.','');
         },
+        getCantidadFloat(cantidad){
+            return parseFloat(cantidad.replace(",", "")).formatMoney(2,'.','');
+        },
     },
     watch:{
         factura(value){
@@ -446,6 +451,8 @@ export default {
                     this.tipo_cambio_factura = parseFloat(this.cambioPago[idx_cambioFecha]['cambio']).formatMoney(4,'.','');
                     this.id_moneda_factura = this.facturas[this.index_factura]['id_moneda'];
                 }
+                this.impuesto_retenido = this.facturas[this.index_factura]['impuesto_retenido'];
+                this.impuesto_retenido_format = this.facturas[this.index_factura]['impuesto_retenido_format'];
                 this.getSubtotal();
             }else{
                 this.partidas = null;
