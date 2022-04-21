@@ -619,6 +619,10 @@ class Factura extends Transaccion
         return '$' . number_format($this->fondo_garantia, 2);
     }
 
+    public function getImpuestoRetenidoFormatAttribute(){
+        return number_format($this->impuesto_retenido, 2);
+    }
+
     public function getRetencionesSubcontratoAttribute(){
         $antecedente = $this->partidas->pluck('id_antecedente');
         if($estimaciones = Estimacion::whereIn('id_transaccion', $antecedente)->get()){
