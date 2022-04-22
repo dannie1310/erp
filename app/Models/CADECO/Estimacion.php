@@ -1393,7 +1393,7 @@ class Estimacion extends Transaccion
         if($anticipo_subc == 0){
             return 0;
         }
-        
+
         $importe_anticipo = $subcontrato->anticipo_monto;
         $estimaciones = $subcontrato->estimaciones;
         foreach($estimaciones as $estimacion){
@@ -1402,9 +1402,9 @@ class Estimacion extends Transaccion
             }
             $imp_estimacion = $estimacion->sumaImportes;
             $anticipo_estimacion_monto = $imp_estimacion * $estimacion->anticipo / 100;
-            $importe_anticipo = $importe_anticipo - $anticipo_estimacion_monto;
+            $importe_anticipo -= $anticipo_estimacion_monto;
         }
-        if($importe_anticipo == 0){
+        if($importe_anticipo <= 1){
             return 0;
         }
         $imp_items = array_sum(array_column($partidas, 'importe'));
