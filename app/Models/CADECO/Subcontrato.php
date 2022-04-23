@@ -643,26 +643,27 @@ class Subcontrato extends Transaccion
     {
 
         $saldo = 0;
-        $anticipo_saldo = 0;
         $subtotal = 0;
         foreach($this->partidas as $partida){
             $subtotal += $partida->cantidad * $partida->precio_unitario  - ($partida->cantidad * $partida->precio_unitario * $this->PorcentajeDescuento /100);
         }
         $monto = $subtotal * 1.16;
         $impuesto = $subtotal * 0.16;
-        $anticipo_monto = $subtotal * ($this->anticipo /100);
 
         $diferencia_monto = $monto - $this->monto;
-        $diferencia_anticipo_monto = $anticipo_monto - $this->anticipo_monto;
 
         $saldo = $this->saldo + $diferencia_monto;
-        $anticipo_saldo = $this->anticipo_saldo + $diferencia_anticipo_monto;
+
+        if($this->anticipo_monto > 0)
+        {
+            $nuevo_anticipo_porcentaje = $this->anticipo_monto / $subtotal * 100;
+            $this->anticipo = $nuevo_anticipo_porcentaje;
+        }
 
         $this->monto = $monto;
         $this->saldo = $saldo;
         $this->impuesto = $impuesto;
-        $this->anticipo_monto = $anticipo_monto;
-        $this->anticipo_saldo = $anticipo_saldo;
+
         $this->save();
 
     }
