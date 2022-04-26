@@ -386,4 +386,39 @@ class ItemSubcontrato extends Item
             'precio_modificado' => 0,
         );
     }
+
+    public function partidasAvanceSubcontrato($id_avance)
+    {
+        $avance = ItemAvanceSubcontrato::where('id_transaccion', '=', $id_avance)->where('id_concepto', $this->id_concepto)->first();
+dd($this->contrato);
+        $precio_unitario = $avance ? $avance->precio_unitario : $this->precio_unitario;
+        $cantidad_estimada_total = $this->cantidad_total_estimada ? $this->cantidad_total_estimada : 0;
+        $cantidad_estimado_anterior = $avance ?  $cantidad_estimada_total - $avance->cantidad : $cantidad_estimada_total;
+        $porcentaje_avance = $this->cantidad > 0? $cantidad_estimado_anterior / $this->cantidad:0;
+        $porcentaje_estimado = 0;
+        $avance && $this->cantidad > 0 ? $porcentaje_estimado = $avance->cantidad  / $this->cantidad:'';
+
+        return array(
+            'id' => $avance->id_item,
+            'id_concepto' => $this->id_concepto,
+            'unidad' => $this->contrato->unidad,
+            'clave' => $this->contrato->clave,
+            'descripcion_concepto' => $this->contrato->descripcion,
+            'cantidad_subcontrato' => $this->cantidad,
+            'precio_unitario_subcontrato' => $this->precio_unitario,
+            'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
+            'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
+            'id_item_estimacion' =>  $avance ? $avance->id_item : 0,
+            'cantidad_estimacion' => $avance ? number_format($avance->cantidad, 2, '.', '') : 0,
+            'porcentaje_avance' => (float) number_format((($porcentaje_avance) * 100), 2, '.', ''),
+            'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
+            'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
+            'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
+            'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
+            'cantidad_por_estimar' => $this->cantidad -$cantidad_estimado_anterior,
+            'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
+            'porcentaje_estimado' => (float) number_format((($porcentaje_estimado) * 100), 2, '.', ''),
+            'importe_estimacion' => $avance ? number_format($avance->importe, 2, '.', '') : 0,
+        );
+    }
 }

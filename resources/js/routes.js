@@ -931,6 +931,18 @@ export const routes = [
                                     permission: ['registrar_avance_subcontrato']
                                 }
                             },
+                            {
+                                path: ':id',
+                                name: 'avance-subcontrato-show',
+                                props: true,
+                                component: require('./components/contratos/avance-subcontrato/Show').default,
+                                meta: {
+                                    title: 'Consultar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'CONSULTAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_avance_subcontrato']
+                                }
+                            },
                         ]
                     },
                     {

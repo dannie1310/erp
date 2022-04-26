@@ -54,4 +54,14 @@ class AvanceSubcontratoService
             throw $e;
         }
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function obtenerPartida($id)
+    {
+        return $this->repository->show($id)->partidasSubcontrato();
+    }
 }

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Transformers\CADECO\Contrato\AvanceSubcontratoTransformer;
 use App\Services\CADECO\Contratos\AvanceSubcontratoService;
 use App\Traits\ControllerTrait;
+use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
 class AvanceSubcontratoController extends Controller
@@ -40,10 +41,15 @@ class AvanceSubcontratoController extends Controller
         $this->middleware('auth:api');
         $this->middleware('context');
         $this->middleware('permiso:registrar_avance_subcontrato')->only('store');
-        $this->middleware('permiso:consultar_avance_subcontrato')->only(['index', 'paginate', 'show']);
+        $this->middleware('permiso:consultar_avance_subcontrato')->only(['index', 'paginate', 'show', 'obtenerAvance']);
 
         $this->service = $service;
         $this->fractal = $fractal;
         $this->transformer = $transformer;
+    }
+
+    public function obtenerAvance(Request $request, $id)
+    {
+        return $this->service->obtenerPartida($id);
     }
 }

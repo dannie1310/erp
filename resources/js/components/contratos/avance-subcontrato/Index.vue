@@ -37,7 +37,7 @@
                     { title: 'Folio Subcontrato', field: 'subcontrato__numero_folio',  thComp:require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Total', field: 'monto', thClass: 'th_c80', tdClass: 'td_money80', sortable: true},
                     { title: 'Estado', field: 'estado', sortable: false, tdClass: 'th_c100', tdComp: require('./partials/EstatusLabel').default},
-                    //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -97,7 +97,10 @@
                         id_empresa: avance.empresa.razon_social,
                         subcontrato__numero_folio: avance.subcontrato.numero_folio_format,
                         monto: avance.total_format,
-                        estado: this.getEstado(avance.color_estado, avance.descripcion_estado)
+                        estado: this.getEstado(avance.color_estado, avance.descripcion_estado),
+                        buttons: $.extend({}, {
+                            id: avance.id,
+                        })
                     }));
                 },
                 deep: true

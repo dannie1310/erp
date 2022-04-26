@@ -5,6 +5,7 @@ namespace App\Models\CADECO;
 
 
 use App\Facades\Context;
+use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
 use Illuminate\Support\Facades\DB;
 
 class AvanceSubcontrato extends Transaccion
@@ -122,6 +123,18 @@ class AvanceSubcontrato extends Transaccion
         return (float) $this->itemsAvance->sum('importe');
     }
 
+    public function getFechaEjecucionFormatAttribute()
+    {
+        $date = date_create($this->fecha_ejecucion);
+        return date_format($date,"d/m/Y");
+    }
+
+    public function getFechaContableFormatAttribute()
+    {
+        $date = date_create($this->fecha_contable);
+        return date_format($date,"d/m/Y");
+    }
+
     /**
      * Métodos
      */
@@ -179,5 +192,60 @@ class AvanceSubcontrato extends Transaccion
         $this->monto = (1 + ($this->obra->iva / 100)) * $this->suma_importe_partidas;
         $this->impuesto = $this->suma_importe_partidas * ($this->obra->iva / 100);
         $this->save();
+    }
+
+    public function partidasOrdenadas()
+    {
+        return $this->itemsAvance()->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
+            ->where('items.id_transaccion', '=', $this->id_transaccion)
+            ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel');
+    }
+
+    public function partidasSubcontrato()
+    {
+        $respuesta = array();
+        $items = array();
+        $nivel_ancestros = '';
+
+        foreach ($this->partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->ancestros as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            $contrato = Contrato::where('id_transaccion', '=', $this->subcontrato->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            $items [$partida->nivel] = $partida->partidasAvanceSubcontrato($this->id_transaccion, $contrato);
+        }
+        $subcontratoTransformer=  new SubcontratoTransformer();
+        $respuesta = array(
+            'id' => $this->getKey(),
+            'razon_social' => $this->empresa->razon_social,
+            'numero_folio_format' => $this->numero_folio_format,
+            'observaciones' => $this->observaciones,
+            'fecha_format' => $this->fecha_format,
+            'estado' => (int) $this->estado,
+            'color_estado' => $this->color_estado,
+            'descripcion_estado' => $this->descripcion_estado,
+            'nombre_usuario' => $this->nombre_usuario,
+            'cumplimiento' => $this->getOriginal('cumplimiento'),
+            'cumplimiento_format' => $this->cumplimiento_format,
+            'vencimiento' => $this->vencimiento,
+            'vencimiento_format' => $this->vencimiento_format,
+            'subtotal_format' => $this->subtotal_format,
+            'impuesto_format' => $this->impuesto_format,
+            'total_format' => $this->total_format,
+            'fecha_ejecucion_format' => $this->fecha_ejecucion_format,
+            'fecha_contable_format' => $this->fecha_contable_format,
+            'subcontrato' => $subcontratoTransformer->transform($this->subcontrato),
+            'partidas' => $items
+        );
+        return $respuesta;
+    }
+
+    public function partidasAvance()
+    {
+
     }
 }

@@ -15,7 +15,10 @@ class AvanceSubcontratoTransformer extends TransformerAbstract
      *
      * @var array
      */
-    protected $availableIncludes = [];
+    protected $availableIncludes = [
+
+        'partidas'
+    ];
 
     /**
      * List of resources to automatically include
@@ -24,7 +27,7 @@ class AvanceSubcontratoTransformer extends TransformerAbstract
      */
     protected $defaultIncludes = [
         'empresa',
-        'subcontrato'
+        'subcontrato',
     ];
 
     public function transform(AvanceSubcontrato $model)
@@ -47,7 +50,9 @@ class AvanceSubcontratoTransformer extends TransformerAbstract
             'vencimiento_format' => $model->vencimiento_format,
             'subtotal_format' => $model->subtotal_format,
             'impuesto_format' => $model->impuesto_format,
-            'total_format' => $model->total_format
+            'total_format' => $model->total_format,
+            'fecha_ejecucion_format' => $model->fecha_ejecucion_format,
+            'fecha_contable_format' => $model->fecha_contable_format
         ];
     }
 
@@ -73,6 +78,19 @@ class AvanceSubcontratoTransformer extends TransformerAbstract
         if($subcontrato = $model->subcontrato)
         {
             return $this->item($subcontrato, new SubcontratoTransformer);
+        }
+        return null;
+    }
+
+    /**
+     * @param AvanceSubcontrato $model
+     * @return \League\Fractal\Resource\Collection|null
+     */
+    public function includePartidas(AvanceSubcontrato $model)
+    {
+        if($partidas = $model->itemsAvance)
+        {
+            return $this->collection($partidas, new ItemAvanceSubcontratoTransformer);
         }
         return null;
     }
