@@ -265,6 +265,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
                 join ".$empresa_contpaq->AliasBDD.".dbo.Cuentas ct on(ct.Id = mp.IdCuenta)
                 where Ejercicio = ".$data["anio"]." and ct.Codigo
                 in('".implode("','", $cuentas)."')
+                and Periodo not in(13,14)
             ) AS qry
             GROUP by Periodo
             ";
