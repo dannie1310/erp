@@ -734,7 +734,7 @@ class Estimacion extends Transaccion
         $monto_pagar = $this->total_orden_pago + $this->anticipo_a_liberar;
         if ($this->configuracion->retenciones_antes_iva == 0) {
             $monto_pagar -= $this->retenciones->sum("importe");
-            $monto_pagar -= $this->IVARetenido;
+            // $monto_pagar -= $this->IVARetenido;
             $monto_pagar += $this->liberaciones->sum("importe");
         }
         if ($this->configuracion->desc_pres_mat_antes_iva == 0) {
@@ -1393,7 +1393,7 @@ class Estimacion extends Transaccion
         if($anticipo_subc == 0){
             return 0;
         }
-        
+
         $importe_anticipo = $subcontrato->anticipo_monto;
         $estimaciones = $subcontrato->estimaciones;
         foreach($estimaciones as $estimacion){
@@ -1402,9 +1402,9 @@ class Estimacion extends Transaccion
             }
             $imp_estimacion = $estimacion->sumaImportes;
             $anticipo_estimacion_monto = $imp_estimacion * $estimacion->anticipo / 100;
-            $importe_anticipo = $importe_anticipo - $anticipo_estimacion_monto;
+            $importe_anticipo -= $anticipo_estimacion_monto;
         }
-        if($importe_anticipo == 0){
+        if($importe_anticipo <= 1){
             return 0;
         }
         $imp_items = array_sum(array_column($partidas, 'importe'));

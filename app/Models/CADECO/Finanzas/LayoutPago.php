@@ -138,7 +138,7 @@ class LayoutPago extends Model
                 $partida_arr = $this->getTC($partida_arr);
                 if (is_null($partida->id_transaccion_pago)) {
                     $documento_pagable = $partida->documento_pagable;
-                    if (abs($documento_pagable->saldo_pagable - $partida->monto_pagado_documento) <= 0.99) {
+                    if (abs($documento_pagable->saldo_pagable - $partida->monto_pagado_documento) <= 0.99 || $documento_pagable->saldo_pagable >= $partida->monto_pagado_documento) {
                         $transaccion = $partida->transaccion;
 
                         if ($transaccion->tipo_transaccion === '65') {
