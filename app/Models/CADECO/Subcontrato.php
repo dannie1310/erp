@@ -653,14 +653,6 @@ class Subcontrato extends Transaccion
         }
     }
 
-    public function partidasAvanceOrdenadas()
-    {
-        dd($this->avance());
-        return $this->avance()->itemsAvance()->leftJoin('dbo.contratos', 'contratos.id_concepto', 'items.id_concepto')
-            ->where('items.id_transaccion', '=', $this->id_transaccion)
-            ->orderBy('contratos.nivel', 'asc')->select('items.*', 'contratos.nivel');
-    }
-
     public function recalcula()
     {
 
@@ -999,14 +991,13 @@ class Subcontrato extends Transaccion
         return number_format($this->getPorcentajeCambio($id_solicitud),4,"." ,","). "%";
     }
 
-    public function subcontratoParaAvance($id_avance)
+    public function subcontratoParaAvance($avance)
     {
         $respuesta = array();
         $items = array();
         $nivel_ancestros = '';
 
-        foreach ($this->partidasAvanceOrdenadas as $partida) {
-            dd($this->partidasAvanceOrdenadas);
+        foreach ($this->partidasOrdenadas as $partida) {
             $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
             if ($nivel != $nivel_ancestros) {
                 $nivel_ancestros = $nivel;
@@ -1019,8 +1010,9 @@ class Subcontrato extends Transaccion
             {
                 $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
                 $partida = ItemSubcontrato::where('id_transaccion', '=',  $this->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+                dd($contrato, $partida);
             }
-            $items [$partida->nivel] = $partida->partidasAvanceSubcontrato($id_avance, $this->id_antecedente, $contrato);
+            $items [$partida->nivel] = $partida->partidasAvanceSubcontrato($avance);
         }
         $respuesta = array(
             'folio' => $this->numero_folio_format,

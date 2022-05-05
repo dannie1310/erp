@@ -9,6 +9,7 @@
 namespace App\Repositories\CADECO\Subcontratos\Subcontrato;
 
 
+use App\Models\CADECO\AvanceSubcontrato;
 use App\Models\CADECO\Contrato;
 use App\Models\CADECO\Empresa;
 use App\Models\CADECO\Item;
@@ -130,5 +131,11 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
             'fecha_format' => $subcontrato->fecha_format,
             'partidas' => $items
         );
+    }
+
+    public function subcontratoParaAvance($id_avance)
+    {
+        $avance = AvanceSubcontrato::find($id_avance);
+        return $this->model->where('id_transaccion', $avance->id_antecedente)->first()->subcontratoParaAvance($avance);
     }
 }

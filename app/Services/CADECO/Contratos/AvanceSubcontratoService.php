@@ -64,4 +64,9 @@ class AvanceSubcontratoService
     {
         return $this->repository->show($id)->partidasSubcontrato();
     }
+
+    public function update($data, $id)
+    {
+        return $this->repository->show($id)->editar($data);
+    }
 }

@@ -89,4 +89,9 @@ class SubcontratoController extends Controller
     {
         return $this->service->paraEstimarProveedor($id, $request->all());
     }
+
+    public function ordenarConceptosAvance($id)
+    {
+        return $this->service->ordenadoAvance($id);
+    }
 }

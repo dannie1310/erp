@@ -6,6 +6,8 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\DB;
 
 class AvanceSubcontrato extends Transaccion
@@ -143,12 +145,23 @@ class AvanceSubcontrato extends Transaccion
         $datos = [];
         try {
             DB::connection('cadeco')->beginTransaction();
+            $fecha =New DateTime($data['fecha']);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $cumplimiento =New DateTime($data['cumplimiento']);
+            $cumplimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $vencimiento =New DateTime($data['vencimiento']);
+            $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_ejecucion =New DateTime($data['fecha_ejecucion']);
+            $fecha_ejecucion->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fecha_contable =New DateTime($data['fecha_contable']);
+            $fecha_contable->setTimezone(new DateTimeZone('America/Mexico_City'));
+
             $datos['id_antecedente'] = $data['id_antecedente'];
-            $datos['fecha'] = $data['fecha'];
-            $datos['cumplimiento'] = $data['cumplimiento'];
-            $datos['vencimiento'] = $data['vencimiento'];
-            $datos['fecha_ejecucion'] = $data['fecha_ejecucion'];
-            $datos['fecha_contable'] = $data['fecha_contable'];
+            $datos['fecha'] = $fecha->format("Y-m-d");
+            $datos['cumplimiento'] = $cumplimiento->format("Y-m-d");
+            $datos['vencimiento'] = $vencimiento->format("Y-m-d");
+            $datos['fecha_ejecucion'] = $fecha_ejecucion->format("Y-m-d");
+            $datos['fecha_contable'] = $fecha_contable->format("Y-m-d");
             $datos['observaciones'] = $data['observaciones'];
             $datos['referencia'] = $data['observaciones'];
             $avance = $this->create($datos);
@@ -174,14 +187,7 @@ class AvanceSubcontrato extends Transaccion
         {
             if(!array_key_exists('para_estimar', $concepto) && (array_key_exists('cantidad_avance', $concepto) && $concepto['cantidad_avance'] > 0))
             {
-                $this->itemsAvance()->create([
-                    'id_transaccion' => $this->id_transaccion,
-                    'id_antecedente' => $this->id_antecedente,
-                    'id_concepto' => $concepto['id_concepto'],
-                    'cantidad' => (float) $concepto['cantidad_avance'],
-                    'precio_unitario' => (float) $concepto['precio_unitario_subcontrato'],
-                    'importe' => (float) $concepto['cantidad_avance'] * (float) $concepto['precio_unitario_subcontrato'],
-                ]);
+                $this->agregarItem($concepto);
             }
         }
     }
@@ -221,6 +227,7 @@ class AvanceSubcontrato extends Transaccion
         $subcontratoTransformer=  new SubcontratoTransformer();
         $respuesta = array(
             'id' => $this->getKey(),
+            'id_antecedente' => $this->id_antecedente,
             'razon_social' => $this->empresa->razon_social,
             'numero_folio_format' => $this->numero_folio_format,
             'observaciones' => $this->observaciones,
@@ -236,6 +243,8 @@ class AvanceSubcontrato extends Transaccion
             'subtotal_format' => $this->subtotal_format,
             'impuesto_format' => $this->impuesto_format,
             'total_format' => $this->total_format,
+            'fecha_ejecucion' => $this->fecha_ejecucion.' 00:00:00',
+            'fecha_contable' => $this->fecha_contable.' 00:00:00',
             'fecha_ejecucion_format' => $this->fecha_ejecucion_format,
             'fecha_contable_format' => $this->fecha_contable_format,
             'subcontrato' => $subcontratoTransformer->transform($this->subcontrato),
@@ -244,8 +253,70 @@ class AvanceSubcontrato extends Transaccion
         return $respuesta;
     }
 
-    public function partidasAvance()
+    public function editar($data)
     {
+        $cumplimiento = New DateTime($data['cumplimiento']);
+        $cumplimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $vencimiento = New DateTime($data['vencimiento']);
+        $vencimiento->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_ejecucion = New DateTime($data['fecha_ejecucion']);
+        $fecha_ejecucion->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_contable = New DateTime($data['fecha_contable']);
+        $fecha_contable->setTimezone(new DateTimeZone('America/Mexico_City'));
 
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $data['cumplimiento'] = $cumplimiento->format("Y-m-d");
+            $data['vencimiento'] = $vencimiento->format("Y-m-d");
+            $data['fecha_ejecucion'] = $fecha_ejecucion->format("Y-m-d");
+            $data['fecha_contable'] = $fecha_contable->format("Y-m-d");
+            $this->update(array_except($data, 'conceptos'));
+            foreach ($data['conceptos'] as $concepto) {
+                if (!array_key_exists('para_estimar', $concepto)) {
+                    if ($concepto['cantidad_avance'] == 0 && $concepto['id_item_avance'] != 0) {
+                        $item = ItemAvanceSubcontrato::where('id_item', $concepto['id_item_avance'])->first();
+                        $item->delete();
+                    }
+                    if ($concepto['cantidad_avance'] != 0 && $concepto['id_item_avance'] != 0)
+                    {
+                        $item = ItemAvanceSubcontrato::where('id_item', $concepto['id_item_avance'])->first();
+                        if($item)
+                        {
+                            if($item->cantidad != $concepto['cantidad_avance'])
+                            {
+                                $item->update([
+                                    'cantidad' => (float)$concepto['cantidad_avance'],
+                                    'importe' => (float)$concepto['cantidad_avance'] * (float)$concepto['precio_unitario_subcontrato'],
+                                ]);
+                            }
+                        }else{
+                            $this->agregarItem($concepto);
+                        }
+                    }
+                    if ($concepto['cantidad_avance'] != 0 && $concepto['id_item_avance'] == 0)
+                    {
+                        $this->agregarItem($concepto);
+                    }
+                }
+            }
+            $this->calcularSubtotal();
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function agregarItem($item)
+    {
+        $this->itemsAvance()->create([
+            'id_transaccion' => $this->id_transaccion,
+            'id_antecedente' => $this->id_antecedente,
+            'id_concepto' => $item['id_concepto'],
+            'cantidad' => (float) $item['cantidad_avance'],
+            'precio_unitario' => (float) $item['precio_unitario_subcontrato'],
+            'importe' => (float) $item['cantidad_avance'] * (float) $item['precio_unitario_subcontrato'],
+        ]);
     }
 }

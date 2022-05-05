@@ -943,6 +943,20 @@ export const routes = [
                                     permission: ['consultar_avance_subcontrato']
                                 }
                             },
+                            {
+                                path: ':id/editar',
+                                name: 'avance-subcontrato-edit',
+                                props: route => ({
+                                    id: route.params.id,
+                                }),
+                                component: require('./components/contratos/avance-subcontrato/Edit').default,
+                                meta: {
+                                    title: 'Editar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_avance_subcontrato']
+                                }
+                            },
                         ]
                     },
                     {
