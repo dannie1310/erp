@@ -954,7 +954,21 @@ export const routes = [
                                     title: 'Editar Avance de Subcontrato',
                                     breadcrumb: { parent: 'avance-subcontrato', name: 'EDITAR'},
                                     middleware: [auth, context, permission],
-                                    permission: ['registrar_avance_subcontrato']
+                                    permission: ['editar_avance_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'avance-subcontrato-delete',
+                                props: route => ({
+                                    id: route.params.id,
+                                }),
+                                component: require('./components/contratos/avance-subcontrato/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_avance_subcontrato'],
                                 }
                             },
                         ]

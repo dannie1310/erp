@@ -6,6 +6,8 @@ namespace App\Models\CADECO;
 
 use App\Facades\Context;
 use App\Http\Transformers\CADECO\Contrato\SubcontratoTransformer;
+use App\Models\CADECO\Subcontratos\AvanceSubcontratoEliminado;
+use App\Models\CADECO\Subcontratos\AvanceSubcontratoPartidaEliminada;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Support\Facades\DB;
@@ -318,5 +320,88 @@ class AvanceSubcontrato extends Transaccion
             'precio_unitario' => (float) $item['precio_unitario_subcontrato'],
             'importe' => (float) $item['cantidad_avance'] * (float) $item['precio_unitario_subcontrato'],
         ]);
+    }
+
+    public function eliminar($motivo)
+    {
+        try {
+            DB::connection('cadeco')->beginTransaction();
+            $this->validarEliminacion();
+            $this->delete();
+            $this->revisarRespaldos($motivo);
+            DB::connection('cadeco')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    /**
+     * Validar la eliminación del avance para poder realizar los cambios.
+     */
+    private function validarEliminacion()
+    {
+        if($this->estado != 0)
+        {
+            abort(500, "Este avance de subcontrato se encuentra ".$this->descripcion_estado.".");
+        }
+    }
+
+    /**
+     * Elimina las partidas
+     */
+    public function eliminarPartidas()
+    {
+        foreach ($this->itemsAvance()->get() as $item) {
+            $item->respaldar();
+            $item->delete();
+        }
+    }
+
+    public function respaldar()
+    {
+        AvanceSubcontratoEliminado::create([
+            'id_transaccion' => $this->id_transaccion,
+            'id_antecedente' => $this->id_antecedente,
+            'tipo_transaccion' => $this->tipo_transaccion,
+            'numero_folio' => $this->numero_folio,
+            'fecha' => $this->fecha,
+            'estado' => $this->estado,
+            'id_obra' => $this->id_obra,
+            'id_empresa' => $this->id_empresa,
+            'id_moneda' => $this->id_moneda,
+            'cumplimiento' => $this->cumplimiento,
+            'vencimiento' => $this->vencimiento,
+            'opciones' => $this->opciones,
+            'monto' => $this->monto,
+            'saldo' => $this->saldo,
+            'impuesto' => $this->impuesto,
+            'referencia'=> $this->referencia,
+            'comentario' => $this->comentario,
+            'observaciones' => $this->observaciones,
+            'FechaHoraRegistro' => $this->FechaHoraRegistro,
+            'fecha_ejecucion' => $this->fecha_ejecucion,
+            'fecha_contable' => $this->fecha_contable,
+            'id_usuario' => $this->id_usuario,
+            'motivo' => '',
+            'id_usuario_elimino' => auth()->id(),
+            'fecha_eliminacion' => date('Y-m-d H:i:s')
+        ]);
+    }
+
+    private function revisarRespaldos($motivo)
+    {
+        if (($avance = AvanceSubcontratoEliminado::where('id_transaccion', $this->id_transaccion)->first()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación del avance de subcontrato, no se respaldo el avance correctamente.');
+        } else {
+            $avance->motivo = $motivo;
+            $avance->save();
+        }
+        if (($item = AvanceSubcontratoPartidaEliminada::where('id_transaccion', $this->id_transaccion)->get()) == null) {
+            DB::connection('cadeco')->rollBack();
+            abort(400, 'Error en el proceso de eliminación del avance de subcontrato, no se respaldo los items correctamente.');
+        }
     }
 }

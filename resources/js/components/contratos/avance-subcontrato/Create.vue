@@ -115,50 +115,52 @@
                 </div>
                 <br>
                 <div class="row">
-                    <div class="col-md-12 table-responsive">
-                        <table class="table-responsive table-bordered">
-                            <thead>
-                                <tr>
-                                    <th  class="encabezado c120">Clave</th>
-                                    <th class="encabezado">Concepto</th>
-                                    <th class="encabezado c100">Unidad</th>
-                                    <th class="encabezado">Cantidad Contratada</th>
-                                    <th class="encabezado">Precio Unitario</th>
-                                    <th class="encabezado">Cantidad</th>
-                                </tr>
-                            </thead>
-                            <tbody v-for="(concepto, i) in conceptos">
-                                <tr v-if="concepto.para_estimar == 0">
-                                    <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
-                                    <td :title="concepto.descripcion">
-                                        <b>{{concepto.descripcion}}</b></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                </tr>
-                                <tr v-else>
-                                    <td :title="concepto.clave">{{ concepto.clave }}</td>
-                                    <td :title="concepto.descripcion_concepto">
-                                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                        {{concepto.descripcion_concepto}}
-                                    </td>
-                                    <td>{{concepto.unidad}}</td>
-                                    <td style="text-align: right">{{concepto.cantidad_subcontrato}}</td>
-                                    <td style="text-align: right">{{concepto.precio_unitario_subcontrato_format}}</td>
-                                    <td>
-                                        <input class="text"
-                                               style="text-align: right"
-                                               v-model="concepto.cantidad_avance"
-                                               :name="`cantidadAvance[${i}]`"
-                                               data-vv-as="'Cantidad'"
-                                               v-validate="{max_value: parseFloat(concepto.cantidad_subcontrato).toFixed(4) }"
-                                               :class="{'is-invalid': errors.has(`cantidadAvance[${i}]`)}" />
-                                         <div class="invalid-feedback" v-show="errors.has(`cantidadAvance[${i}]`)">{{ errors.first(`cantidadAvance[${i}]`) }}</div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th  class="encabezado c120">Clave</th>
+                                        <th class="encabezado">Concepto</th>
+                                        <th class="encabezado c100">Unidad</th>
+                                        <th class="encabezado">Cantidad Contratada</th>
+                                        <th class="encabezado">Precio Unitario</th>
+                                        <th class="encabezado">Cantidad</th>
+                                    </tr>
+                                </thead>
+                                <tbody v-for="(concepto, i) in conceptos">
+                                    <tr v-if="concepto.para_estimar == 0">
+                                        <td :title="concepto.clave"><b>{{concepto.clave}}</b></td>
+                                        <td :title="concepto.descripcion">
+                                            <b>{{concepto.descripcion}}</b></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr v-else>
+                                        <td :title="concepto.clave">{{ concepto.clave }}</td>
+                                        <td :title="concepto.descripcion_concepto">
+                                            <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            {{concepto.descripcion_concepto}}
+                                        </td>
+                                        <td>{{concepto.unidad}}</td>
+                                        <td style="text-align: right">{{concepto.cantidad_subcontrato}}</td>
+                                        <td style="text-align: right">{{concepto.precio_unitario_subcontrato_format}}</td>
+                                        <td style="text-align: center">
+                                            <input class="text"
+                                                   style="text-align: right"
+                                                   v-model="concepto.cantidad_avance"
+                                                   :name="`cantidadAvance[${i}]`"
+                                                   data-vv-as="'Cantidad'"
+                                                   v-validate="{max_value: parseFloat(concepto.cantidad_subcontrato).toFixed(4) }"
+                                                   :class="{'is-invalid': errors.has(`cantidadAvance[${i}]`)}" />
+                                             <div class="invalid-feedback" v-show="errors.has(`cantidadAvance[${i}]`)">{{ errors.first(`cantidadAvance[${i}]`) }}</div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
                 <br>

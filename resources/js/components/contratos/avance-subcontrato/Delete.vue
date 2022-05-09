@@ -7,7 +7,8 @@
 			            <div class="card-body">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <partial-show v-bind:id="id" v-bind:base_b64="this.base_b64" @cargaFinalizada="iniciar" />
+                                    <encabezado v-bind:avance="avance" />
+                                    <tabla-datos v-bind:avance="avance" />
                                 </div>
                             </div>
                             <hr />
@@ -36,7 +37,7 @@
                                 <button type="button" class="btn btn-secondary" v-on:click="salir">
                                     <i class="fa fa-angle-left"></i>Regresar
                                 </button>
-                                <button type="submit" class="btn btn-danger" @click="validate" :disabled="errors.count() > 0 || fin_carga == 0 || motivo == ''">
+                                <button type="submit" class="btn btn-danger" @click="validate" :disabled="errors.count() > 0 || motivo == ''">
                                     <i class="fa fa-trash"></i>Eliminar
                                 </button>
                             </div>
@@ -58,7 +59,8 @@
         data(){
             return{
                 cargando: false,
-                motivo: ''
+                motivo: '',
+                avance: null
             }
         },
         mounted() {
@@ -93,11 +95,9 @@
                 });
             },
             eliminar() {
-                var data = {};
-                data['motivo'] = this.motivo;
                 return this.$store.dispatch('contratos/avance-subcontrato/eliminar', {
                     id: this.id,
-                    data: data
+                    params: {data: this.$data.motivo}
                 }).then(data => {
                     this.salir();
                 })

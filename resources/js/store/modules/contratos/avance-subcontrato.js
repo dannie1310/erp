@@ -137,6 +137,47 @@ export default {
                     });
             });
         },
+        eliminar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Eliminar el avance de subcontrato",
+                    text: "¿Está seguro de que desea eliminar este avance?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .delete(URI + payload.id, {params: payload.params})
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Avance de Subcontrato eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

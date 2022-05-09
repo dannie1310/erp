@@ -42,6 +42,8 @@ class AvanceSubcontratoController extends Controller
         $this->middleware('context');
         $this->middleware('permiso:registrar_avance_subcontrato')->only('store');
         $this->middleware('permiso:consultar_avance_subcontrato')->only(['index', 'paginate', 'show', 'obtenerAvance']);
+        $this->middleware('permiso:editar_avance_subcontrato')->only('update');
+        $this->middleware('permiso:eliminar_avance_subcontrato')->only('destroy');
 
         $this->service = $service;
         $this->fractal = $fractal;

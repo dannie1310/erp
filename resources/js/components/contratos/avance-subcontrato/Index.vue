@@ -100,7 +100,8 @@
                         estado: this.getEstado(avance.color_estado, avance.descripcion_estado),
                         buttons: $.extend({}, {
                             id: avance.id,
-                            edit : this.$root.can('editar_contrato_proyectado') ? true : false,
+                            edit : this.$root.can('editar_avance_subcontrato') ? true : false,
+                            delete: (self.$root.can('eliminar_avance_subcontrato',true) && avance.estado == 0) ? true : false,
                         })
                     }));
                 },

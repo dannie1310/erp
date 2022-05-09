@@ -4,6 +4,8 @@
 namespace App\Models\CADECO;
 
 
+use App\Models\CADECO\Subcontratos\AvanceSubcontratoPartidaEliminada;
+
 class ItemAvanceSubcontrato extends Item
 {
 
@@ -73,5 +75,18 @@ class ItemAvanceSubcontrato extends Item
             'id_item_estimacion' =>  $avance ? $avance->id_item : 0,
             'cantidad_avance_format' => $avance ? number_format($avance->cantidad, 2, '.', '') : 0,
         );
+    }
+
+    public function respaldar()
+    {
+        AvanceSubcontratoPartidaEliminada::create([
+            'id_item' => $this->id_item,
+            'id_transaccion' => $this->id_transaccion,
+            'id_antecedente' => $this->id_antecedente,
+            'id_concepto' => $this->id_concepto,
+            'cantidad' => $this->cantidad,
+            'importe' => $this->importe,
+            'precio_unitario' => $this->precio_unitario
+        ]);
     }
 }

@@ -4,6 +4,7 @@
 namespace App\Observers\CADECO;
 
 
+use App\Models\CADECO\AvanceSubcontrato;
 use App\Models\CADECO\Subcontrato;
 use App\Models\CADECO\Transaccion;
 
@@ -25,5 +26,11 @@ class AvanceSubcontratoObserver extends TransaccionObserver
         $avance->tipo_transaccion = 105;
         $avance->opciones = 0;
         $avance->estado = 0;
+    }
+
+    public function deleting(AvanceSubcontrato $avanceSubcontrato)
+    {
+        $avanceSubcontrato->eliminarPartidas();
+        $avanceSubcontrato->respaldar();
     }
 }

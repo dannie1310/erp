@@ -69,4 +69,9 @@ class AvanceSubcontratoService
     {
         return $this->repository->show($id)->editar($data);
     }
+
+    public function delete($data, $id)
+    {
+        return $this->show($id)->eliminar($data['data']);
+    }
 }
