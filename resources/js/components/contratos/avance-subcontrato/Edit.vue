@@ -134,7 +134,7 @@
                 <br>
                 <div class="row">
                     <div class="col-md-12 table-responsive">
-                        <table class="table-responsive table-bordered">
+                        <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th  class="encabezado c120">Clave</th>
@@ -164,7 +164,7 @@
                                     <td>{{concepto.unidad}}</td>
                                     <td style="text-align: right">{{concepto.cantidad_subcontrato}}</td>
                                     <td style="text-align: right">{{concepto.precio_unitario_subcontrato_format}}</td>
-                                    <td>
+                                    <td style="text-align: center">
                                         <input class="text"
                                                style="text-align: right"
                                                v-model="concepto.cantidad_avance"
