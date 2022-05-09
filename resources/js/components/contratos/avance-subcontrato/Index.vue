@@ -101,7 +101,7 @@
                         buttons: $.extend({}, {
                             id: avance.id,
                             edit : this.$root.can('editar_avance_subcontrato') ? true : false,
-                            delete: (self.$root.can('eliminar_avance_subcontrato',true) && avance.estado == 0) ? true : false,
+                            delete: (this.$root.can('eliminar_avance_subcontrato') && avance.estado == 0) ? true : false,
                         })
                     }));
                 },
