@@ -98,9 +98,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         $suma_costos_cfdi = 0;
         $suma_costos_cfdi_i = 0;
         $suma_sustitucion_ejercicios_anteriores = 0;
+        $suma_compraventa_divisas = 0;
+        $suma_dispersion_vales = 0;
         $suma_neto_tipo_i = 0;
         $suma_costos_cfdi_e = 0;
         $suma_relacion_ejercicios_anteriores = 0;
+        $suma_relacion_ejercicios_posteriores = 0;
         $suma_neto_tipo_e = 0;
         $suma_diferencia = 0;
 
@@ -110,9 +113,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $suma_costos_cfdi += $partida["costo_cfdi_sf"];
             $suma_costos_cfdi_i += $partida["costo_cfdi_i_sf"];
             $suma_sustitucion_ejercicios_anteriores += $partida["sustitucion_ejercicios_anteriores_sf"];
+            $suma_compraventa_divisas += $partida["compraventa_divisas_sf"];
+            $suma_dispersion_vales+=  $partida["dispersion_vales_sf"]  ;
             $suma_neto_tipo_i += $partida["neto_tipo_i_sf"];
             $suma_costos_cfdi_e += $partida["costo_cfdi_e_sf"];
             $suma_relacion_ejercicios_anteriores += $partida["relacion_ejercicios_anteriores_sf"];
+            $suma_relacion_ejercicios_posteriores += $partida["relacion_ejercicios_posteriores_sf"];
             $suma_neto_tipo_e += $partida["neto_tipo_e_sf"];
             $suma_diferencia += $partida["diferencia_sf"];
         }
@@ -122,9 +128,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             "suma_costos_cfdi"=>number_format($suma_costos_cfdi,2),
             "suma_costos_cfdi_i"=>number_format($suma_costos_cfdi_i,2),
             "suma_sustitucion_ejercicios_anteriores"=>number_format($suma_sustitucion_ejercicios_anteriores,2),
+            "suma_compraventa_divisas"=>number_format($suma_compraventa_divisas,2),
+            "suma_dispersion_vales"=>number_format($suma_dispersion_vales,2),
             "suma_neto_tipo_i"=>number_format($suma_neto_tipo_i,2),
             "suma_costos_cfdi_e"=>number_format($suma_costos_cfdi_e,2),
             "suma_relacion_ejercicios_anteriores"=>number_format($suma_relacion_ejercicios_anteriores,2),
+            "suma_relacion_ejercicios_posteriores"=>number_format($suma_relacion_ejercicios_posteriores,2),
             "suma_neto_tipo_e"=>number_format($suma_neto_tipo_e,2),
             "suma_diferencia"=>number_format($suma_diferencia,2),
 
@@ -136,7 +145,10 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
 
 
             "suma_sustitucion_ejercicios_anteriores_sf"=>$suma_sustitucion_ejercicios_anteriores,
+            "suma_compraventa_divisas_sf"=>$suma_compraventa_divisas,
+            "suma_dispersion_vales_sf"=>$suma_dispersion_vales,
             "suma_relacion_ejercicios_anteriores_sf"=>$suma_relacion_ejercicios_anteriores,
+            "suma_relacion_ejercicios_posteriores_sf"=>$suma_relacion_ejercicios_posteriores,
             "suma_neto_tipo_i_sf"=>$suma_neto_tipo_i,
             "suma_neto_tipo_e_sf"=>$suma_neto_tipo_e,
             "suma_diferencia_sf"=>$suma_diferencia,
@@ -152,14 +164,20 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         $costos_cfdi_e_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDIE($data);
         $costos_balanza_ini = InformeCostosCFDIvsCostosBalanza::getCostoBalanza($data);
         $sustituciones_ejercicios_anteriores_ini = InformeCostosCFDIvsCostosBalanza::getSustitucionEjerciciosAnteriores($data);
+        $compraventas_divisas_ini = InformeCostosCFDIvsCostosBalanza::getCompraVentaDivisas($data);
+        $dispersiones_vales_ini = InformeCostosCFDIvsCostosBalanza::getDispersionVales($data);
         $relaciones_ejercicios_anteriores_ini = InformeCostosCFDIvsCostosBalanza::getRelacionEjerciciosAnteriores($data);
+        $relaciones_ejercicios_posteriores_ini = InformeCostosCFDIvsCostosBalanza::getRelacionEjerciciosPosteriores($data);
 
         $costo_cfdi = [];
         $costo_cfdi_i = [];
         $costo_cfdi_e = [];
         $costo_balanza = [];
         $sustitucion_ejercicios_anteriores = [];
+        $compraventa_divisas = [];
+        $dispersion_vales = [];
         $relacion_ejercicios_anteriores = [];
+        $relacion_ejercicios_posteriores = [];
         $neto_tipo_i = [];
         $neto_tipo_e = [];
         $diferencia = [];
@@ -180,6 +198,22 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $diferencia[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
         }
 
+        foreach($compraventas_divisas_ini as $compraventa_divisas_ini)
+        {
+            $compraventa_divisas[$compraventa_divisas_ini["mes"]] = $compraventa_divisas_ini["neto_subtotal"];
+            $neto_tipo_i[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
+            $costo_cfdi[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
+            $diferencia[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
+        }
+
+        foreach($dispersiones_vales_ini as $dispersion_vales_ini)
+        {
+            $dispersion_vales[$dispersion_vales_ini["mes"]] = $dispersion_vales_ini["neto_subtotal"];
+            $neto_tipo_i[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
+            $costo_cfdi[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
+            $diferencia[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
+        }
+
         foreach($costos_cfdi_e_ini as $costo_cfdi_e_ini)
         {
             $costo_cfdi_e[$costo_cfdi_e_ini["mes"]] = $costo_cfdi_e_ini["cfdi_e_recibidos"];
@@ -194,6 +228,14 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_e[$relacion_ejercicios_anteriores_ini["mes"]] -= $relacion_ejercicios_anteriores_ini["neto_subtotal"];
             $costo_cfdi[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
             $diferencia[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
+        }
+
+        foreach($relaciones_ejercicios_posteriores_ini as $relacion_ejercicios_posteriores_ini)
+        {
+            $relacion_ejercicios_posteriores[$relacion_ejercicios_posteriores_ini["mes"]] = $relacion_ejercicios_posteriores_ini["neto_subtotal"];
+            $neto_tipo_e[$relacion_ejercicios_posteriores_ini["mes"]] -= $relacion_ejercicios_posteriores_ini["neto_subtotal"];
+            $costo_cfdi[$relacion_ejercicios_posteriores_ini["mes"]] +=$relacion_ejercicios_posteriores_ini["neto_subtotal"];
+            $diferencia[$relacion_ejercicios_posteriores_ini["mes"]] +=$relacion_ejercicios_posteriores_ini["neto_subtotal"];
         }
 
         foreach($costos_balanza_ini as $costo_balanza_ini)
@@ -212,9 +254,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
                 , "costo_cfdi_i"=>key_exists($mes["id"], $costo_cfdi_i)? number_format($costo_cfdi_i[$mes["id"]],2):"-"
                 , "costo_balanza"=>key_exists($mes["id"], $costo_balanza)? number_format($costo_balanza[$mes["id"]],2):"-"
                 , "sustitucion_ejercicios_anteriores"=>key_exists($mes["id"], $sustitucion_ejercicios_anteriores)? number_format($sustitucion_ejercicios_anteriores[$mes["id"]],2):"-"
+                , "compraventa_divisas"=>key_exists($mes["id"], $compraventa_divisas)? number_format($compraventa_divisas[$mes["id"]],2):"-"
+                , "dispersion_vales"=>key_exists($mes["id"], $dispersion_vales)? number_format($dispersion_vales[$mes["id"]],2):"-"
                 , "neto_tipo_i"=>key_exists($mes["id"], $neto_tipo_i)? number_format($neto_tipo_i[$mes["id"]],2):"-"
                 , "costo_cfdi_e"=>key_exists($mes["id"], $costo_cfdi_e)? number_format($costo_cfdi_e[$mes["id"]],2):"-"
                 , "relacion_ejercicios_anteriores"=>key_exists($mes["id"], $relacion_ejercicios_anteriores)? number_format($relacion_ejercicios_anteriores[$mes["id"]],2):"-"
+                , "relacion_ejercicios_posteriores"=>key_exists($mes["id"], $relacion_ejercicios_posteriores)? number_format($relacion_ejercicios_posteriores[$mes["id"]],2):"-"
                 , "neto_tipo_e"=>key_exists($mes["id"], $neto_tipo_e)? number_format($neto_tipo_e[$mes["id"]],2):"-"
                 , "diferencia"=>key_exists($mes["id"], $diferencia)? number_format($diferencia[$mes["id"]],2):"-"
 
@@ -223,7 +268,10 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
                 , "costo_cfdi_e_sf"=>key_exists($mes["id"], $costo_cfdi_e)? $costo_cfdi_e[$mes["id"]]:"0"
                 , "costo_balanza_sf"=>key_exists($mes["id"], $costo_balanza)? $costo_balanza[$mes["id"]]:"0"
                 , "sustitucion_ejercicios_anteriores_sf"=>key_exists($mes["id"], $sustitucion_ejercicios_anteriores)? $sustitucion_ejercicios_anteriores[$mes["id"]]:"0"
+                , "compraventa_divisas_sf"=>key_exists($mes["id"], $compraventa_divisas)? $compraventa_divisas[$mes["id"]]:"0"
+                , "dispersion_vales_sf"=>key_exists($mes["id"], $dispersion_vales)? $dispersion_vales[$mes["id"]]:"0"
                 , "relacion_ejercicios_anteriores_sf"=>key_exists($mes["id"], $relacion_ejercicios_anteriores)? $relacion_ejercicios_anteriores[$mes["id"]]:"0"
+                , "relacion_ejercicios_posteriores_sf"=>key_exists($mes["id"], $relacion_ejercicios_posteriores)? $relacion_ejercicios_posteriores[$mes["id"]]:"0"
                 , "neto_tipo_i_sf"=>key_exists($mes["id"], $neto_tipo_i)? $neto_tipo_i[$mes["id"]]:"0"
                 , "neto_tipo_e_sf"=>key_exists($mes["id"], $neto_tipo_e)? $neto_tipo_e[$mes["id"]]:"0"
                 , "diferencia_sf"=>key_exists($mes["id"], $diferencia)? $diferencia[$mes["id"]]:"0"
@@ -333,6 +381,115 @@ distinct
         return $informe;
     }
 
+    private static function getCompraVentaDivisas($data)
+    {
+        $informe_qry = "
+        select mes, sum(neto_subtotal) as neto_subtotal from (
+SELECT
+cfd_sat.id,
+    cfd_sat.numero_empresa AS numero_empresa,
+    cfd_sat.id_proveedor_sat,
+    CASE
+        WHEN cfd_sat.tipo_comprobante = 'E' THEN 2
+        WHEN cfd_sat.tipo_comprobante = 'I' THEN 1
+    END id_tipo_cfdi,
+    cfd_sat.fecha,
+    cfd_sat.descuento AS descuento,
+    cfd_sat.subtotal AS subtotal,
+    CASE
+        WHEN cfd_sat.moneda != 'MXN'
+        AND cfd_sat.tipo_cambio > 0 THEN
+        CASE
+            WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
+            WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+        END
+        ELSE
+        CASE
+            WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1)
+            WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0))
+        END
+    END AS neto_subtotal
+    , cfd_sat.id_empresa_sat,
+		month(fecha) as mes
+
+FROM
+    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+INNER JOIN
+
+(select distinct id_cfd_sat from SEGURIDAD_ERP.Contabilidad.cfd_sat_conceptos  where clave_prod_serv in('84121600','84121603') ) as csc
+on(csc.id_cfd_sat = cfd_sat.id)
+
+	WHERE
+		(((cfd_sat.cancelado = 0
+			AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"].")
+		AND cfd_sat.tipo_comprobante IN ('I','E'))
+			) AND year(cfd_sat.fecha) = ".$data["anio"]."
+
+	) as qry
+	GROUP by mes
+        ";
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+    private static function getDispersionVales($data)
+    {
+        $informe_qry = "
+        select mes, sum(neto_subtotal) as neto_subtotal from (
+SELECT
+cfd_sat.id,
+    cfd_sat.numero_empresa AS numero_empresa,
+    cfd_sat.id_proveedor_sat,
+    CASE
+        WHEN cfd_sat.tipo_comprobante = 'E' THEN 2
+        WHEN cfd_sat.tipo_comprobante = 'I' THEN 1
+    END id_tipo_cfdi,
+    cfd_sat.fecha,
+    cfd_sat.descuento_xls AS descuento,
+    cfd_sat.subtotal_xls AS subtotal,
+     CASE
+        WHEN cfd_sat.moneda != 'MXN'
+        AND cfd_sat.tipo_cambio > 0 THEN
+        CASE
+            WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
+            WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+        END
+        ELSE
+        CASE
+            WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1)
+            WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0))
+        END
+    END AS neto_subtotal
+    , cfd_sat.id_empresa_sat,
+		month(fecha) as mes
+FROM
+    SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+INNER JOIN
+
+(select distinct id_cfd_sat from SEGURIDAD_ERP.Contabilidad.cfd_sat_conceptos  where clave_prod_serv = '84141602') as csc
+on(csc.id_cfd_sat = cfd_sat.id)
+
+	WHERE
+		(((cfd_sat.cancelado = 0
+			AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"].")
+		AND cfd_sat.tipo_comprobante IN ('E','I'))
+			) AND year(cfd_sat.fecha) = ".$data["anio"]."
+
+	) as qry
+	GROUP by mes
+        ";
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
     private static function getRelacionEjerciciosAnteriores($data)
     {
         $informe_qry = "
@@ -376,6 +533,55 @@ distinct
 	) as qry
 	GROUP by mes
         ";
+        $informe = DB::connection("seguridad")->select($informe_qry);
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        return $informe;
+    }
+
+    private static function getRelacionEjerciciosPosteriores($data)
+    {
+        $informe_qry = "
+        select mes, sum(neto_subtotal) as neto_subtotal from (
+SELECT
+distinct
+	cfd_sat.id_proveedor_sat,
+	CASE
+		WHEN cfd_sat_posteriores.tipo_comprobante = 'E' THEN 2
+		WHEN cfd_sat_posteriores.tipo_comprobante = 'I' THEN 1
+	END id_tipo_cfdi,
+	cfd_sat_posteriores.fecha,
+
+		CASE
+			WHEN cfd_sat_posteriores.moneda != 'MXN'
+			AND cfd_sat_posteriores.tipo_cambio > 0 THEN
+			CASE
+				WHEN cfd_sat_posteriores.tipo_comprobante = 'E' THEN (cfd_sat_posteriores.subtotal - isnull(cfd_sat_posteriores.descuento,0)) *  cfd_sat_posteriores.tipo_cambio
+				WHEN cfd_sat_posteriores.tipo_comprobante = 'I' THEN (cfd_sat_posteriores.subtotal - isnull(cfd_sat_posteriores.descuento,0)) * cfd_sat_posteriores.tipo_cambio
+			END
+			ELSE
+			CASE
+				WHEN cfd_sat_posteriores.tipo_comprobante = 'E' THEN (cfd_sat_posteriores.subtotal - isnull(cfd_sat_posteriores.descuento,0))
+				WHEN cfd_sat_posteriores.tipo_comprobante = 'I' THEN (cfd_sat_posteriores.subtotal - isnull(cfd_sat_posteriores.descuento,0))
+			END
+		END AS neto_subtotal,
+		month(cfd_sat.fecha) as mes
+	FROM
+		SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat join SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_posteriores
+on(cfd_sat_posteriores.cfdi_relacionado = cfd_sat.uuid AND year(cfd_sat_posteriores.fecha) > ".$data["anio"].")
+AND cfd_sat_posteriores.tipo_comprobante IN ('E')
+	WHERE
+		(((cfd_sat.cancelado = 0
+			AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"].")
+		AND cfd_sat.tipo_comprobante IN ('I'))
+			) AND year(cfd_sat.fecha) = ".$data["anio"]."
+
+	) as qry
+	GROUP by mes
+        ";
+        //echo $informe_qry;
         $informe = DB::connection("seguridad")->select($informe_qry);
         $informe = array_map(function ($value) {
             return (array)$value;
