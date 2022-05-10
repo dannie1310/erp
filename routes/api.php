@@ -1123,6 +1123,19 @@ $api->version('v1', function ($api) {
         });
 
         /**
+         * AVANCE SUBCONTRATOS
+         */
+        $api->group(['prefix' => 'avance-subcontrato'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@paginate');
+            $api->post('/','App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@store');
+            $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/obtenerAvance', 'App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@obtenerAvance')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@update')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\AvanceSubcontratoController@destroy')->where(['id' => '[0-9]+']);
+
+        });
+
+        /**
          * CONTRATO PROYECTADO
          */
         $api->group(['prefix' => 'contrato-proyectado'], function ($api){
@@ -1216,6 +1229,7 @@ $api->version('v1', function ($api) {
             $api->get('/proveedor', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@indexSinContexto');
             $api->patch('{id}/sinContexto', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@showSinContexto')->where(['id' => '[0-9]+']);
             $api->patch('{id}/proveedorConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptosProveedor')->where(['id' => '[0-9]+']);
+            $api->get('{id}/ordenarConceptosAvance', 'App\Http\Controllers\v1\CADECO\Contratos\SubcontratoController@ordenarConceptosAvance')->where(['id' => '[0-9]+']);
         });
 
         /**

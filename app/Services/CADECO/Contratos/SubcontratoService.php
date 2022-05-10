@@ -171,4 +171,9 @@ class SubcontratoService
     {
         return $this->repository->paraEstimarProveedor($id,$data['base'], null);
     }
+
+    public function ordenadoAvance($id_avance)
+    {
+        return $this->repository->subcontratoParaAvance($id_avance);
+    }
 }
