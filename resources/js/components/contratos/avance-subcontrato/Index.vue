@@ -10,6 +10,15 @@
         <div class="col-12">
             <div class="card">
                 <!-- /.card-header -->
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
@@ -43,6 +52,7 @@
                 total: 0,
                 query: {include: [ ], sort: 'id_transaccion', order: 'desc'},
                 estado: "",
+                search: '',
                 cargando: false,
             }
         },

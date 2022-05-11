@@ -42,6 +42,15 @@ class AvanceSubcontrato extends Transaccion
         'id_usuario'
     ];
 
+    public $searchable = [
+        'numero_folio',
+        'referencia',
+        'observaciones',
+        'empresa.razon_social',
+        'monto',
+        'subcontrato.numero_folio'
+    ];
+
     protected static function boot()
     {
         parent::boot();
