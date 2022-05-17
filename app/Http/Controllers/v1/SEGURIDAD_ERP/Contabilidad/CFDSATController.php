@@ -141,4 +141,10 @@ class CFDSATController extends Controller
         $respuesta =$this->service->obtenerNumeroEmpresa();
         return response()->json($respuesta, 200);
     }
+
+    public function obtenerListaCFDICostosCFDICostosBalanza(Request $request, $id)
+    {
+        $respuesta =$this->service->obtenerListaCFDICostosCFDIBalanza($request->all());
+        return response()->json($respuesta, 200);
+    }
 }

@@ -448,7 +448,7 @@ class CFDSATService
                     $ruta_archivo = $path . "/" . $current;
                     if (strpos($current, ".xml")) {
                         $this->procesaArchivoCFDI($ruta_archivo, $current);
-                    } else if (strpos($current, ".txt")) {
+                    } else if (strpos($current, ".txt") && $current !== "errors.txt") {
                         $contenido_archivo_txt = file_get_contents($ruta_archivo);
                         $resultado = $this->setArreglosFacturas($ruta_archivo);
                         if ($resultado == 0) {
@@ -1344,6 +1344,12 @@ class CFDSATService
     {
         $cfdiRepository = new CFDSATRepository(new CFDSAT());
         return $cfdiRepository->obtenerListaCFDIMesAnio($data);
+    }
+
+    public function obtenerListaCFDICostosCFDIBalanza($data)
+    {
+        $cfdiRepository = new CFDSATRepository(new CFDSAT());
+        return $cfdiRepository->obtenerListaCFDICostosCFDIBalanza($data);
     }
 
     public function obtenerNumeroEmpresa()

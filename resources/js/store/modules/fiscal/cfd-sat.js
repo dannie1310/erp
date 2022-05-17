@@ -434,6 +434,20 @@ export default {
             });
         },
 
+        getListaCFDICostosCFDIBalanza(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post(URI  + payload.empresa_sat + '/obtener-lista-cfdi-costos-cfdi-costos-balanza', payload)
+                    .then(r => r.data)
+                    .then((data) => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
+
         getNumeroEmpresaContexto(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
