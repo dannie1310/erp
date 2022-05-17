@@ -748,6 +748,120 @@ AND cfd_sat_posteriores.tipo_comprobante IN ('E')
         return $meses;
     }
 
+    public static function getListaCFDIEjercicioPosterior($data){
+
+       $qry = "
+      SELECT distinct cfd_sat.*,
+            CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull(cfd_sat.descuento,0)) * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal - isnull( cfd_sat.descuento,0)) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal - isnull( cfd_sat.descuento,0))
+            END
+        END AS subtotal_a_sumar,
+
+        CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal )
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.subtotal ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.subtotal )
+            END
+        END AS subtotal_mxn,
+
+
+        CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.descuento ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.descuento )
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN (cfd_sat.descuento ) * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN (cfd_sat.descuento )
+            END
+        END AS descuento_mxn,
+
+       '' AS id_reemplazado,
+       '' AS serie_reemplazado,
+       '' AS folio_reemplazado,
+       '' AS fecha_reemplazado,
+
+       '' AS id_reemplaza,
+       '' AS fecha_reemplaza,
+       '' AS serie_reemplaza,
+       '' AS folio_reemplaza,
+       configuracion_obra.nombre AS obra_sao,
+       informe_sat_lista_empresa.descripcion as empresa_contpaq,
+cfd_sat_i.id as id_relacionado,
+cfd_sat_i.serie + ' ' + cfd_sat_i.folio as cfdi_relacionado,
+cfd_sat_i.fecha as fecha_relacionado
+  FROM (((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+          LEFT OUTER JOIN
+          SEGURIDAD_ERP.Finanzas.repositorio_facturas repositorio_facturas
+             ON (cfd_sat.uuid = repositorio_facturas.uuid))
+         )
+        )
+       LEFT OUTER JOIN
+       SEGURIDAD_ERP.dbo.configuracion_obra configuracion_obra
+          ON     (repositorio_facturas.id_proyecto =
+              configuracion_obra.id_proyecto)
+          AND (repositorio_facturas.id_obra = configuracion_obra.id_obra)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.polizas_cfdi on(polizas_cfdi.uuid = cfd_sat.uuid)
+      LEFT OUTER JOIN
+      SEGURIDAD_ERP.Contabilidad.informe_sat_lista_empresa on(informe_sat_lista_empresa.numero = polizas_cfdi.numero_empresa)
+
+
+      JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat_i
+      on(cfd_sat_i.uuid = cfd_sat.cfdi_relacionado)
+    WHERE month(cfd_sat_i.fecha) = ".$data["mes"]."
+      AND  year(cfd_sat_i.fecha) = ".$data["anio"]."
+      AND cfd_sat_i.cancelado = 0
+      AND cfd_sat.cancelado = 0
+        AND cfd_sat.tipo_comprobante in('E')
+        AND cfd_sat.id_empresa_sat = ".$data["empresa_sat"]."
+        AND year(cfd_sat.fecha) > ".$data["anio"]."
+        order by cfd_sat.id";
+
+
+        $informe = DB::connection("seguridad")->select($qry);
+
+        $informe = array_map(function ($value) {
+            return (array)$value;
+        }, $informe);
+
+        $total = 0;
+        $i = 0;
+        foreach($informe as $partida_informe)
+        {
+            if($i>0) {
+                if ($partida_informe["id"] != $informe[$i - 1]["id"]){
+                    $total += $partida_informe["subtotal_a_sumar"];
+                }
+            } else {
+                $total += $partida_informe["subtotal_a_sumar"];
+            }
+            $i++;
+        }
+
+        return ["informe" => $informe, "total_format"=>"$".number_format($total,2), "total"=>$total];
+
+    }
+
     public static function getListaCFDI($data){
         $qry = "
       SELECT distinct cfd_sat.*,

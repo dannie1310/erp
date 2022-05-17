@@ -3,7 +3,6 @@
         <template v-if="value<0">(</template>
         <span v-if="value!=0">{{  parseFloat(Math.abs(value)).formatMoney(0,'.',',') }}</span>
         <span v-else>-</span>
-
         <template v-if="value<0">)</template>
     </td>
 </template>

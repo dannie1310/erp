@@ -234,6 +234,17 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         return $cfdi;
     }
 
+    public function obtenerListaCFDICostosCFDIBalanza($data)
+    {
+        if($data["tipo"] == 9){
+            $cfdi = InformeCostosCFDIvsCostosBalanza::getListaCFDIEjercicioPosterior($data);
+        } else {
+            $cfdi = InformeCostosCFDIvsCostosBalanza::getListaCFDI($data);
+        }
+
+        return $cfdi;
+    }
+
     public function obtenerNumeroEmpresa()
     {
         $id_obra = Context::getIdObra();
