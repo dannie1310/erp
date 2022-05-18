@@ -84,12 +84,16 @@
 
                                     <th class="c100">CFDI Recibidos Tipo E <br>Totales</th>
                                     <th class="c100">(-) CFDI TIPO E <br>Relacionados a un ejercicio anterior</th>
-                                    <th class="c100">(-) CFDI TIPO E <br>Relacionados a un ejercicio posterior</th>
+
                                     <th class="c100">Neto de Recibidos <br> Tipo E</th>
 
                                     <th class="c100">CFDI recibidos <br>por mes (Neto)</th>
 
                                     <th class="c100">Diferencia Vs. Balanza</th>
+
+                                    <th class="c100">(-) CFDI TIPO E <br>Recibidos en un ejercicio posterior</th>
+
+                                    <th class="c100">Diferencia Real</th>
                                 </tr>
                             <tr>
 
@@ -103,12 +107,17 @@
 
                                 <th class="c100">C1</th>
                                 <th class="c100">C2</th>
-                                <th class="c100">C3</th>
-                                <th class="c100">C4= C1-C2-C3</th>
 
-                                <th class="c100">D = B5-C4</th>
+                                <th class="c100">C3= C1-C2</th>
 
-                                <th class="c110">D - A</th>
+                                <th class="c100">D = B5-C3</th>
+
+                                <th class="c110">E = D - A</th>
+
+                                <th class="c100">F</th>
+
+                                <th class="c100">G = E - F</th>
+
 
                             </tr>
                             </thead>
@@ -128,13 +137,14 @@
 
                                     <td_informe v-bind:value="partida.costo_cfdi_e_sf" />
                                     <td_informe v-bind:value="partida.relacion_ejercicios_anteriores_sf" />
-
-                                    <td_informe_link_cfdi @ver-cfdi="verCFDI" v-bind:value="partida.relacion_ejercicios_posteriores_sf" v-bind:partida="partida" v-bind:tipo="9"></td_informe_link_cfdi>
-
                                     <td_informe v-bind:value="partida.neto_tipo_e_sf" />
 
                                     <td style="text-align: right; " :style="partida.costo_cfdi != '-'?`text-decoration: underline; cursor: pointer`:``" v-on:click="verCFDI(partida)">{{partida.costo_cfdi}}</td>
                                     <td_informe v-bind:value="partida.diferencia_sf" />
+
+                                    <td_informe_link_cfdi @ver-cfdi="verCFDI" v-bind:value="partida.relacion_ejercicios_posteriores_sf" v-bind:partida="partida" v-bind:tipo="9"></td_informe_link_cfdi>
+
+                                    <td_informe v-bind:value="partida.diferencia_real_sf" />
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -150,11 +160,14 @@
 
                                 <td_informe v-bind:value="informe.sumatorias.suma_costos_cfdi_e_sf" />
                                 <td_informe v-bind:value="informe.sumatorias.suma_relacion_ejercicios_anteriores_sf" />
-                                <td_informe v-bind:value="informe.sumatorias.suma_relacion_ejercicios_posteriores_sf" />
                                 <td_informe v-bind:value="informe.sumatorias.suma_neto_tipo_e_sf" />
 
                                 <td_informe v-bind:value="informe.sumatorias.suma_costos_cfdi_sf" />
                                 <td_informe v-bind:value="informe.sumatorias.suma_diferencia_sf" />
+
+                                <td_informe v-bind:value="informe.sumatorias.suma_relacion_ejercicios_posteriores_sf" />
+
+                                <td_informe v-bind:value="informe.sumatorias.suma_diferencia_real_sf" />
                             </tr>
                             </tfoot>
                         </table>

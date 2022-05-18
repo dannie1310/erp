@@ -106,6 +106,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         $suma_relacion_ejercicios_posteriores = 0;
         $suma_neto_tipo_e = 0;
         $suma_diferencia = 0;
+        $suma_diferencia_real = 0;
 
         foreach($partidas as $partida)
         {
@@ -121,6 +122,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $suma_relacion_ejercicios_posteriores += $partida["relacion_ejercicios_posteriores_sf"];
             $suma_neto_tipo_e += $partida["neto_tipo_e_sf"];
             $suma_diferencia += $partida["diferencia_sf"];
+            $suma_diferencia_real += $partida["diferencia_real_sf"];
         }
 
         return array(
@@ -136,6 +138,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             "suma_relacion_ejercicios_posteriores"=>number_format($suma_relacion_ejercicios_posteriores,2),
             "suma_neto_tipo_e"=>number_format($suma_neto_tipo_e,2),
             "suma_diferencia"=>number_format($suma_diferencia,2),
+            "suma_diferencia_real"=>number_format($suma_diferencia_real,2),
 
             "suma_costos_balanza_sf"=>$suma_costos_balanza,
             "suma_costos_cfdi_sf"=>$suma_costos_cfdi,
@@ -152,6 +155,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             "suma_neto_tipo_i_sf"=>$suma_neto_tipo_i,
             "suma_neto_tipo_e_sf"=>$suma_neto_tipo_e,
             "suma_diferencia_sf"=>$suma_diferencia,
+            "suma_diferencia_real_sf"=>$suma_diferencia_real,
         );
 
     }
@@ -181,6 +185,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         $neto_tipo_i = [];
         $neto_tipo_e = [];
         $diferencia = [];
+        $diferencia_real = [];
 
         foreach($costos_cfdi_i_ini as $costo_cfdi_i_ini)
         {
@@ -188,6 +193,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_i[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
             $costo_cfdi[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
             $diferencia[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
+            $diferencia_real[$costo_cfdi_i_ini["mes"]] = $costo_cfdi_i_ini["cfdi_i_recibidos"];
         }
 
         foreach($sustituciones_ejercicios_anteriores_ini as $sustitucion_ejercicios_anteriores_ini)
@@ -196,6 +202,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_i[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
             $costo_cfdi[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
             $diferencia[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
+            $diferencia_real[$sustitucion_ejercicios_anteriores_ini["mes"]] -= $sustitucion_ejercicios_anteriores_ini["neto_subtotal"];
         }
 
         foreach($compraventas_divisas_ini as $compraventa_divisas_ini)
@@ -204,6 +211,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_i[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
             $costo_cfdi[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
             $diferencia[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
+            $diferencia_real[$compraventa_divisas_ini["mes"]] -= $compraventa_divisas_ini["neto_subtotal"];
         }
 
         foreach($dispersiones_vales_ini as $dispersion_vales_ini)
@@ -212,6 +220,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_i[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
             $costo_cfdi[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
             $diferencia[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
+            $diferencia_real[$dispersion_vales_ini["mes"]] -= $dispersion_vales_ini["neto_subtotal"];
         }
 
         foreach($costos_cfdi_e_ini as $costo_cfdi_e_ini)
@@ -220,6 +229,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_e[$costo_cfdi_e_ini["mes"]] = $costo_cfdi_e_ini["cfdi_e_recibidos"];
             $costo_cfdi[$costo_cfdi_e_ini["mes"]] -= $costo_cfdi_e_ini["cfdi_e_recibidos"];
             $diferencia[$costo_cfdi_e_ini["mes"]] -= $costo_cfdi_e_ini["cfdi_e_recibidos"];
+            $diferencia_real[$costo_cfdi_e_ini["mes"]] -= $costo_cfdi_e_ini["cfdi_e_recibidos"];
         }
 
         foreach($relaciones_ejercicios_anteriores_ini as $relacion_ejercicios_anteriores_ini)
@@ -228,20 +238,20 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $neto_tipo_e[$relacion_ejercicios_anteriores_ini["mes"]] -= $relacion_ejercicios_anteriores_ini["neto_subtotal"];
             $costo_cfdi[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
             $diferencia[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
-        }
-
-        foreach($relaciones_ejercicios_posteriores_ini as $relacion_ejercicios_posteriores_ini)
-        {
-            $relacion_ejercicios_posteriores[$relacion_ejercicios_posteriores_ini["mes"]] = $relacion_ejercicios_posteriores_ini["neto_subtotal"];
-            $neto_tipo_e[$relacion_ejercicios_posteriores_ini["mes"]] -= $relacion_ejercicios_posteriores_ini["neto_subtotal"];
-            $costo_cfdi[$relacion_ejercicios_posteriores_ini["mes"]] +=$relacion_ejercicios_posteriores_ini["neto_subtotal"];
-            $diferencia[$relacion_ejercicios_posteriores_ini["mes"]] +=$relacion_ejercicios_posteriores_ini["neto_subtotal"];
+            $diferencia_real[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
         }
 
         foreach($costos_balanza_ini as $costo_balanza_ini)
         {
             $costo_balanza[$costo_balanza_ini["periodo"]] = $costo_balanza_ini["costo_bza"];
             $diferencia[$costo_balanza_ini["periodo"]] -= $costo_balanza_ini["costo_bza"];
+            $diferencia_real[$costo_balanza_ini["periodo"]] -= $costo_balanza_ini["costo_bza"];
+        }
+
+        foreach($relaciones_ejercicios_posteriores_ini as $relacion_ejercicios_posteriores_ini)
+        {
+            $relacion_ejercicios_posteriores[$relacion_ejercicios_posteriores_ini["mes"]] = $relacion_ejercicios_posteriores_ini["neto_subtotal"];
+            $diferencia_real[$relacion_ejercicios_posteriores_ini["mes"]] -=$relacion_ejercicios_posteriores_ini["neto_subtotal"];
         }
 
         $meses = CFDICompleto::getMeses();
@@ -262,6 +272,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
                 , "relacion_ejercicios_posteriores"=>key_exists($mes["id"], $relacion_ejercicios_posteriores)? number_format($relacion_ejercicios_posteriores[$mes["id"]],2):"-"
                 , "neto_tipo_e"=>key_exists($mes["id"], $neto_tipo_e)? number_format($neto_tipo_e[$mes["id"]],2):"-"
                 , "diferencia"=>key_exists($mes["id"], $diferencia)? number_format($diferencia[$mes["id"]],2):"-"
+                , "diferencia_real"=>key_exists($mes["id"], $diferencia_real)? number_format($diferencia_real[$mes["id"]],2):"-"
 
                 , "costo_cfdi_sf"=>key_exists($mes["id"], $costo_cfdi)? $costo_cfdi[$mes["id"]]:"0"
                 , "costo_cfdi_i_sf"=>key_exists($mes["id"], $costo_cfdi_i)? $costo_cfdi_i[$mes["id"]]:"0"
@@ -275,6 +286,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
                 , "neto_tipo_i_sf"=>key_exists($mes["id"], $neto_tipo_i)? $neto_tipo_i[$mes["id"]]:"0"
                 , "neto_tipo_e_sf"=>key_exists($mes["id"], $neto_tipo_e)? $neto_tipo_e[$mes["id"]]:"0"
                 , "diferencia_sf"=>key_exists($mes["id"], $diferencia)? $diferencia[$mes["id"]]:"0"
+                , "diferencia_real_sf"=>key_exists($mes["id"], $diferencia_real)? $diferencia_real[$mes["id"]]:"0"
             ];
         }
         return $informe;
