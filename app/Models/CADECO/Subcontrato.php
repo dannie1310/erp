@@ -210,6 +210,11 @@ class Subcontrato extends Transaccion
         return $this->hasOne(PresupuestoContratista::class, 'id_antecedente', 'id_antecedente')->where('id_empresa', '=', $this->id_empresa);
     }
 
+    public function avance()
+    {
+        return $this->belongsTo(AvanceSubcontrato::class, 'id_transaccion', 'id_antecedente');
+    }
+
     public function getAnticipoFormatAttribute()
     {
         return number_format(abs($this->anticipo), 2) . '%';
@@ -259,6 +264,15 @@ class Subcontrato extends Transaccion
     public function scopeConFondo($query)
     {
         return $query->whereHas('fondo_garantia');
+    }
+
+    public function scopeAvanceSubcontrato($query)
+    {
+        return $query->withoutGlobalScopes()->whereHas('contratoProyectado',function ($q){
+            return $q->whereHas('contratoAreaSubcontratante', function ($q1) {
+                return $q1->whereIn('id_area_subcontratante', [1, 2]);
+            });
+        })->where('tipo_transaccion', '=', 51)->where('opciones', '=', 2)->whereIn('estado', [0, 1]);
     }
 
     public function getNombre()
@@ -975,5 +989,37 @@ class Subcontrato extends Transaccion
     public function getPorcentajeCambioFormat($id_solicitud)
     {
         return number_format($this->getPorcentajeCambio($id_solicitud),4,"." ,","). "%";
+    }
+
+    public function subcontratoParaAvance($avance)
+    {
+        $respuesta = array();
+        $items = array();
+        $nivel_ancestros = '';
+
+        foreach ($this->partidasOrdenadas as $partida) {
+            $nivel = substr($partida->nivel, 0, strlen($partida->nivel) - 4);
+            if ($nivel != $nivel_ancestros) {
+                $nivel_ancestros = $nivel;
+                foreach ($partida->ancestros as $ancestro) {
+                    $items[$ancestro[1]] = ["para_estimar" => 0, "descripcion" => $ancestro[0], "clave" => $ancestro[2], "nivel" => (int)$ancestro[3]];
+                }
+            }
+            $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("id_concepto", "=",$partida->id_concepto)->first();
+            if($contrato == null)
+            {
+                $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
+                $partida = ItemSubcontrato::where('id_transaccion', '=',  $this->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
+                dd($contrato, $partida);
+            }
+            $items [$partida->nivel] = $partida->partidasAvanceSubcontrato($avance);
+        }
+        $respuesta = array(
+            'folio' => $this->numero_folio_format,
+            'referencia' => $this->referencia,
+            'fecha_format' => $this->fecha_format,
+            'partidas' => $items
+        );
+        return $respuesta;
     }
 }

@@ -8,7 +8,7 @@
                         Solicitud de Compra
                     </th>
                     <th class="encabezado c120" rowspan="2" v-if="invitacion.tipo_antecedente == 49">
-                        Contrato Proyectad
+                        Contrato Proyectado
                     </th>
                     <th class="encabezado" colspan="4">
                         Proveedor Invitado

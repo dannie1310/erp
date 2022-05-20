@@ -154,7 +154,7 @@ export default {
                             .patch(URI + payload.id+'/eliminar',payload)
                             .then(r => r.data)
                             .then(data => {
-                                swal("Solicitud de Autotización eliminada correctamente", {
+                                swal("Solicitud de Autorización eliminada correctamente", {
                                     icon: "success",
                                     timer: 1500,
                                     buttons: false

@@ -894,6 +894,86 @@ export const routes = [
                         }
                     },
                     {
+                        path: 'avance-subcontrato',
+                        component: require('./components/contratos/avance-subcontrato/Layout').default,
+                        children: [
+                            {
+                                path: '/',
+                                name: 'avance-subcontrato',
+                                component: require('./components/contratos/avance-subcontrato/Index').default,
+                                meta: {
+                                    title: 'Listado de Avance de Subcontratos',
+                                    breadcrumb: {parent: 'contratos', name: 'AVANCE DE SUBCONTRATO'},
+                                    middleware: [auth, context],
+
+                                }
+                            },
+                            {
+                                path: 'create',
+                                name: 'avance-subcontrato-seleccionar-create',
+                                component: require('./components/contratos/avance-subcontrato/SeleccionarSubcontrato').default,
+                                meta: {
+                                    title: 'Seleccionar Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'SELECCIONAR SUBCONTRATO'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_avance_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id/create',
+                                name: 'avance-subcontrato-create',
+                                props: true,
+                                component: require('./components/contratos/avance-subcontrato/Create').default,
+                                meta: {
+                                    title: 'Registrar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato-seleccionar-create', name: 'REGISTRAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['registrar_avance_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id',
+                                name: 'avance-subcontrato-show',
+                                props: true,
+                                component: require('./components/contratos/avance-subcontrato/Show').default,
+                                meta: {
+                                    title: 'Consultar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'CONSULTAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['consultar_avance_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id/editar',
+                                name: 'avance-subcontrato-edit',
+                                props: route => ({
+                                    id: route.params.id,
+                                }),
+                                component: require('./components/contratos/avance-subcontrato/Edit').default,
+                                meta: {
+                                    title: 'Editar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'EDITAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['editar_avance_subcontrato']
+                                }
+                            },
+                            {
+                                path: ':id/delete',
+                                name: 'avance-subcontrato-delete',
+                                props: route => ({
+                                    id: route.params.id,
+                                }),
+                                component: require('./components/contratos/avance-subcontrato/Delete').default,
+                                meta: {
+                                    title: 'Eliminar Avance de Subcontrato',
+                                    breadcrumb: { parent: 'avance-subcontrato', name: 'ELIMINAR'},
+                                    middleware: [auth, context, permission],
+                                    permission: ['eliminar_avance_subcontrato'],
+                                }
+                            },
+                        ]
+                    },
+                    {
                         path: 'proyectado',
                         component: require('./components/contratos/proyectado/partials/Layout').default,
                         children: [
@@ -1509,7 +1589,6 @@ export const routes = [
                             }
                         ]
                     },
-
                     {
                         path: 'solicitud-movimiento',
                         components: {
