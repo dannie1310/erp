@@ -3,7 +3,7 @@
         <div class="col-md-12">
             <span><i class="fa fa-file-contract"></i>Datos de Subcontrato</span>
             <table class="table table-bordered table-sm">
-                <tr >
+                <tr>
                     <th class="encabezado">
                         Contratista
                     </th>
