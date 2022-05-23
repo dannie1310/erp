@@ -53,7 +53,7 @@ class NotificacionSolicitudAutorizacionPagoAnticipado extends Notification
         $pdf = new PagoAnticipado($this->solicitud->id_transaccion);
         return (new MailMessage)
             ->subject("Solicitud de Autorización de Pago Anticipado")
-            ->view('emails.solicitud_pago_anticipado',["solicitud"=>$this->solicitud, "token"=>$this->token, "nombre_usuario"=>$this->nombre_usuario])
+            ->view('emails.solicitud_pago_anticipado',["solicitud"=>$this->solicitud, "token"=>$this->token, "nombre_usuario"=>$this->nombre_usuario, "usuario_registro"=>auth()->user()->nombre_completo])
             ->attachData($pdf->Output("S","solicitud_pago_anticipado_".$this->solicitud->numero_folio.".pdf"), 'solicitud_pago_anticipado_'.$this->solicitud->numero_folio.'.pdf',['mime' => 'application/pdf']);
     }
 

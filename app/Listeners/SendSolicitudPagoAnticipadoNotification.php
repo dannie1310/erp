@@ -37,9 +37,11 @@ class SendSolicitudPagoAnticipadoNotification
             $permiso
         )->get();
 
+
+
         $usuarios_notificacion = $usuarios_suscripcion->diff($usuarios_interesados_permisos);
         Notification::send($usuarios_notificacion, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud));
-        Notification::send($event->solicitud->usuario, new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud));
+        Notification::send(auth()->user(), new NotificacionSolicitudAutorizacionPagoAnticipado($event->solicitud));
 
     }
 }

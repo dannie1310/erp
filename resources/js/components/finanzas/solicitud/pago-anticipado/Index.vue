@@ -109,7 +109,7 @@
                                 id: solicitud.id,
                                 estado: solicitud.estado,
                                 transaccion: {id:solicitud.id, tipo:72},
-                                solicitud_autorizacion : solicitud.requiere_autorizacion ? solicitud.solicitud_pago_autorizacion_activa ? 0 : 1 : 0
+                                solicitud_autorizacion : solicitud.requiere_autorizacion ? 1 : 0
                             })
                         })
                     });
