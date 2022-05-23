@@ -65,7 +65,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group error-content">
-                                <label >Observaciones:</label>
+                                <label >Motivo:</label>
                                 {{$solicitud->observaciones}}
                             </div>
                         </div>

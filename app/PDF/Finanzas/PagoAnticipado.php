@@ -390,7 +390,7 @@ RFC: ' . $this->rfc), '', 'J');
         $this->SetFont('Arial', '', 6);
         $this->SetAligns(array('C'));
         $this->encola = "observaciones_encabezado";
-        $this->Row(array(utf8_decode("Observaciones solicitud")));
+        $this->Row(array(utf8_decode("Motivo de Solicitud")));
         $this->SetRounds(array('34'));
         $this->SetRadius(array(0.2));
         $this->SetAligns(array('J'));
