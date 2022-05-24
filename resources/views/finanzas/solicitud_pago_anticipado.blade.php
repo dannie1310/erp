@@ -70,7 +70,7 @@
                     <div class="card-body">
 
 
-                    <div class="row">
+                    <div class="row" style="font-size: 16px">
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label style="font-weight: normal">
@@ -99,8 +99,8 @@
                                 <label style="font-weight: normal">
                                     Monto Solicitado:
                                 </label>
-                                <div style="font-weight: bold; text-align: right">
-                                    {{$solicitud->solicitud_pago_anticipado->monto_format}}
+                                <div style="font-weight: bold; text-align: right; color: #ff0000">
+                                    {{$solicitud->solicitud_pago_anticipado->monto_format}} {{$solicitud->solicitud_pago_anticipado->moneda->nombre}}
                                 </div>
 
                             </div>
@@ -152,7 +152,7 @@
                                     Monto:
                                 </label>
                                 <div style="font-weight: bold; text-align: right">
-                                    {{$solicitud->solicitud_pago_anticipado->monto_format}}
+                                    {{$solicitud->solicitud_pago_anticipado->monto_format}} {{$solicitud->solicitud_pago_anticipado->moneda->nombre}}
                                 </div>
 
                             </div>
@@ -163,7 +163,7 @@
                         <div class="col-md-12">
                             <div class="form-group error-content">
                                 <label style="font-weight: normal">
-                                    Observaciones:
+                                    Motivo:
                                 </label>
                                 <div style="font-weight: bold; ">
                                     {{$solicitud->solicitud_pago_anticipado->observaciones}}
@@ -224,7 +224,7 @@
                     @endif
 
                     </div>
-                    @if($token)
+                    @if($token && count($solicitud->autorizacionesRequeridasPendientes))
                     <div class="card-footer">
                         <div class="pull-right">
                             <form id="frm_autorizar" action="/api/solicitud-pago-anticipado/{{$solicitud->id}}/autorizar" method="GET" style="display: inline;"  >

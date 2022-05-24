@@ -29,6 +29,7 @@ $api->version('v1', function ($api) {
         $api->get('obras/por-usuario/{id_usuario}', 'App\Http\Controllers\v1\CADECO\ObraController@porUsuario')->where(['id_usuario' => '[0-9]+']);
     });
     $api->group(['middleware' => ['auth:api','scope:autorizar-solicitudes-pago-anticipado']], function ($api) {
+        $api->get('solicitud-pago-anticipado/{id}/pide-motivo-rechazo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@pideMotivoRechazoVista')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado/{id}/rechazar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@rechazarVista')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado/{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@autorizarVista')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@showVista')->where(['id' => '[0-9]+']);

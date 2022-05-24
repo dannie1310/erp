@@ -76,6 +76,15 @@ class SolicitudPagoAutorizacionController extends Controller
 
     }
 
+    public function pideMotivoRechazoVista(Request $request,$id)
+    {
+        $solicitud = $this->service->show($id);
+        return view('finanzas.motivo_rechazo_solicitud_pago_anticipado', [
+            'solicitud' => $solicitud,
+            "token"=>$request->access_token
+        ]);
+    }
+
     public function rechazarVista(Request $request,$id)
     {
         $solicitud = $this->service->show($id);
