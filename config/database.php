@@ -237,6 +237,17 @@ return [
             ],*/
         ],
 
+        'repseg' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_REPSEG', 'localhost'),
+            'database' => env('DB_DATABASE_REPSEG', 'forge'),
+            'username' => env('DB_USERNAME_REPSEG', 'forge'),
+            'password' => env('DB_PASSWORD_REPSEG', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'seguridad' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_SEGURIDAD', 'localhost'),

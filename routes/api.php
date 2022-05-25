@@ -1356,7 +1356,9 @@ $api->version('v1', function ($api) {
 
     });
 
-
+    /**
+     * FINANZAS GENERAL
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas-general'], function ($api) {
         $api->group(['prefix' => 'solicitud-pago-aplicada'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@paginate');
@@ -1373,8 +1375,6 @@ $api->version('v1', function ($api) {
         });
 
     });
-
-
 
     /**
      * FINANZAS
@@ -1639,7 +1639,19 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** SEGURIDAD ERP */
+    /**
+     * SEGUIMIENTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'seguimiento'], function ($api){
+
+        $api->group(['prefix'=>'factura'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@paginate');
+        });
+    });
+
+    /**
+     * SEGURIDAD ERP
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
 
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
@@ -1725,7 +1737,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** SUBCONTRATOS ESTIMACIONES */
+    /**
+     * SUBCONTRATOS ESTIMACIONES
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'subcontratos-estimaciones'], function ($api){
         $api->group(['prefix'=>'descuento'], function ($api){
             $api->get('{id}/list', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\DescuentoController@list');
@@ -1765,7 +1779,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** Ventas */
+    /**
+     * Ventas
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api){
 
         $api->group(['prefix'=>'venta'], function ($api){
@@ -1779,7 +1795,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** IGH */
+    /**
+     * IGH
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
             $api->get('currentUser', 'App\Http\Controllers\v1\IGH\UsuarioController@currentUser');
@@ -1795,7 +1813,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /**SCI*/
+    /**
+     * SCI
+     */
     $api->group(['middleware'=>'api', 'prefix'=> 'SCI'], function ($api){
 
         $api->group(['prefix' => 'marca'], function ($api) {
