@@ -513,6 +513,7 @@ class Pago extends Transaccion
                 'referencia' => $this->referencia,
                 'tipo_cambio' => $data['tipo_cambio']
             ]);
+            $orden_pago->numero_folio = $this->numero_folio;
 
             $partidas = $factura->partidas->where('saldo', '>', 0);
 
