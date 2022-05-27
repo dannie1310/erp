@@ -14,7 +14,7 @@
 $api = app('Dingo\Api\Routing\Router');
 
 $api->version('v1', function ($api) {
-    Route::post('/chat-bot', 'App\Http\Controllers\ChatBotController@listenToReplies');
+    Route::post('/chat-bot', 'ChatBotController@listenToReplies');
     // $api->group([ 'prefix' => 'movil'], function ($api) {
     //     $api->post('authorizeMovil', 'App\Http\Controllers\Auth\Passport\AuthorizationController@authorizeMovil');
     // });

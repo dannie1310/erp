@@ -52,13 +52,16 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                      * WHATSAPP
                      */
 
-                    $recipient = "whatsapp:+5215546347020" /*. $usuario_interesado_permiso->numero_celular*/;
+                    //$recipient = "whatsapp:+525546347020" ;
+                    //$recipient = "whatsapp:+5215518673524" ;
+
+                    $recipient ="whatsapp:". $usuario_interesado_permiso->numero_celular;
                     $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
                     $account_sid = config('app.env_variables.TWILIO_SID');
                     $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
 
                     $client = new Client($account_sid, $auth_token);
-                    /*$message = $client->messages->create($recipient, array(
+                    $message = $client->messages->create($recipient, array(
                         'from' => "whatsapp:$twilio_whatsapp_number",
                         'body' => "Se le informa que ".$event->solicitud->transaccionGeneral->usuarioRegistro->nombre_completo." ha solicitado que se autorice el pago anticipado que se describe a continuación:"
                             ."\nProyecto: " .$event->solicitud->obra->nombre." "
@@ -66,15 +69,8 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                             ."\nProveedor: ".$event->solicitud->empresa->razon_social." "
                             ."\nMonto: ".$event->solicitud->monto_format." "
                             ."\nMotivo: ".$event->solicitud->observaciones." "
-                    ));*/
-
-                    $message = $client->messages->create($recipient, array(
-                        "from" => "whatsapp:+15076072235", /*"whatsapp:$twilio_whatsapp_number",*/
-                        "body" => "prueba"
                     ));
 
-                    print_r($twilio_whatsapp_number);
-                    print_r($message);
 
                     /**
                      * SMS
