@@ -55,7 +55,7 @@ class OrdenPago extends Transaccion
 
     public static function calcularFolio()
     {
-        $pago = self::orderBy('numero_folio', 'DESC')->first();
+        $pago = Pago::orderBy('numero_folio', 'DESC')->first();
         return $pago ? $pago->numero_folio + 1 : 1;
     }
 

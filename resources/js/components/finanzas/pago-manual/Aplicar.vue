@@ -385,7 +385,7 @@ export default {
             this.total = parseFloat(this.subtotal + this.iva - this.impuesto_retenido).formatMoney(2,'.','');
             this.aplicado = parseFloat((this.total * this.tipo_cambio_factura)).formatMoney(2,'.',',');
             this.subtotal = parseFloat(this.subtotal).formatMoney(2,'.',',');
-            this.iva = parseFloat(this.iva).formatMoney(2,'.',',');
+            this.iva = parseFloat(this.iva).formatMoney(2,'.','');
             this.total = parseFloat(this.total).formatMoney(2,'.',',');
             
         },
@@ -437,7 +437,7 @@ export default {
             this.total = total.formatMoney(2,'.',',')
         },
         getCantidadFloat(cantidad){
-            return parseFloat(cantidad.replace(",", "")).formatMoney(2,'.','');
+            return parseFloat(cantidad.replaceAll(",", "")).formatMoney(2,'.','');
         },
     },
     watch:{
