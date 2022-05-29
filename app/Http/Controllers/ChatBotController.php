@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Token;
+use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Transaccion;
 use Illuminate\Http\Request;
 use GuzzleHttp\Exception\RequestException;
 use Twilio\Rest\Client;
@@ -13,7 +15,7 @@ class ChatBotController extends Controller
     public function listenToReplies(Request $request)
     {
         $from = $request->input('From');
-        $body = $request->input('Body');
+        $body = strtoupper($request->input('Body'));
         $body_ex = explode(" ", $body);
         $numero_celular = str_replace("whatsapp:","", $from);
 
@@ -36,6 +38,30 @@ class ChatBotController extends Controller
                     }
 				}
 
+                $transaccionGeneral = Transaccion::find($body_ex[1]);
+                if(!$transaccionGeneral){
+                    $this->sendWhatsAppMessage("El identificador de transacción ingresado: ".$body_ex[1]." no existe, favor de verificar.", $from);
+                }
+                $token = Token::where("id_transaccion","=",$transaccionGeneral->id)
+                    ->where("id_firmante","=",$usuario_from->firmante->id)->pluck("token")->first();
+                if(!$token){
+                    $this->sendWhatsAppMessage("Usted no cuenta con los privilegios necesarios para autorizar la transacción con identificador: ".$transaccionGeneral->id, $from);
+                }
+
+                $client = new \GuzzleHttp\Client();
+                try {
+                    $response = $client->request('GET', "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/solicitud-pago-anticipado/{$transaccionGeneral->id}/autorizar?access_token={$token}");
+                    $responseJSON = json_decode($response->getBody());
+                    if ($response->getStatusCode() == 200) {
+                        $message = "La solicitud ha sido autorizada éxitosamente.";
+                        $this->sendWhatsAppMessage($message, $from);
+                    } else {
+                        $this->sendWhatsAppMessage($responseJSON->message, $from);
+                    }
+                } catch (RequestException $th) {
+                    $response = json_decode($th->getResponse()->getBody());
+                    $this->sendWhatsAppMessage($response->message, $from);
+                }
 
 
                 break;

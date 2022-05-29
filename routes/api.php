@@ -30,8 +30,10 @@ $api->version('v1', function ($api) {
     });
     $api->group(['middleware' => ['auth:api','scope:autorizar-solicitudes-pago-anticipado']], function ($api) {
         $api->get('solicitud-pago-anticipado/{id}/pide-motivo-rechazo', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@pideMotivoRechazoVista')->where(['id' => '[0-9]+']);
-        $api->get('solicitud-pago-anticipado/{id}/rechazar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@rechazarVista')->where(['id' => '[0-9]+']);
-        $api->get('solicitud-pago-anticipado/{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@autorizarVista')->where(['id' => '[0-9]+']);
+        $api->get('solicitud-pago-anticipado/{id}/rechazar-vista', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@rechazarVista')->where(['id' => '[0-9]+']);
+        $api->get('solicitud-pago-anticipado/{id}/autorizar-vista', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@autorizarVista')->where(['id' => '[0-9]+']);
+        $api->get('solicitud-pago-anticipado/{id}/rechazar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@rechazar')->where(['id' => '[0-9]+']);
+        $api->get('solicitud-pago-anticipado/{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@autorizar')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@showVista')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@indexVista');
     });
@@ -750,7 +752,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'ajuste-inventario'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Almacenes\AjusteController@paginate');
 
-        //AJUSTE POSITIVO (+)
+            //AJUSTE POSITIVO (+)
             $api->group(['prefix' => 'positivo'], function ($api) {
                 $api->post('/', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@store');
                 $api->get('{id}', 'App\Http\Controllers\v1\CADECO\Almacenes\AjustePositivoController@show')->where(['id' => '[0-9]+']);
@@ -1025,13 +1027,13 @@ $api->version('v1', function ($api) {
             $api->get('pdf/{id}', 'App\Http\Controllers\v1\CADECO\Compras\AsignacionProveedorController@pdf')->where(['id' => '[0-9]+']);
         });
 
-         // ITEM CONTRATISTA
+        // ITEM CONTRATISTA
         $api->group(['prefix' => 'item-contratista'], function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Compras\ItemContratistaController@update')->where(['id' => '[0-9]+']);
         });
 
-         // COTIZACIÓN
+        // COTIZACIÓN
         $api->group(['prefix' => 'cotizacion'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@paginate');
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Compras\CotizacionController@descargaLayout')->where(['id' => '[0-9]+']);
@@ -1049,7 +1051,7 @@ $api->version('v1', function ($api) {
             $api->delete('{id}/proveedor','App\Http\Controllers\v1\CADECO\Compras\CotizacionController@destroyProveedor')->where(['id' => '[0-9]+']);
         });
 
-         // ORDEN DE COMPRA
+        // ORDEN DE COMPRA
         $api->group(['prefix' => 'orden-compra'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@index');
             $api->get('paginate', 'App\Http\Controllers\v1\CADECO\Compras\OrdenCompraController@paginate');
