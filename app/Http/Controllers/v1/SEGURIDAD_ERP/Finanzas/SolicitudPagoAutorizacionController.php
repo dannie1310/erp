@@ -48,12 +48,12 @@ class SolicitudPagoAutorizacionController extends Controller
 
     public function autorizar(Request $request,$id)
     {
-        $this->service->show($id)->autorizar();
+        return $this->service->show($id)->autorizar();
     }
 
     public function rechazar(Request $request, $id)
     {
-        $this->service->show($id)->rechazar($request->motivo);
+        return $this->service->show($id)->rechazar($request->motivo);
     }
 
     public function autorizarVista(Request $request,$id)
