@@ -79,7 +79,7 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                             ."\nMonto: ".$event->solicitud->monto_format." "
                             ."\nMotivo: ".$event->solicitud->observaciones." "
                             ."\nAutorizar: AUT ".$event->solicitud->transaccionGeneral->id." "
-                            ."\nRechazar: REC ".$event->solicitud->transaccionGeneral->id." "
+                            ."\nRechazar: REC ".$event->solicitud->transaccionGeneral->id." Motivo"
 
                     ));
                     //print_r($message);
