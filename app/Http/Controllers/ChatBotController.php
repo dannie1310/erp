@@ -15,7 +15,7 @@ class ChatBotController extends Controller
     public function listenToReplies(Request $request)
     {
         $from = $request->input('From');
-        $body = strtoupper($request->input('Body'));
+        $body = $request->input('Body');
         $body_ex = explode(" ", $body);
         $numero_celular = str_replace("whatsapp:","", $from);
 
@@ -26,7 +26,7 @@ class ChatBotController extends Controller
 			\n Por favor solicite a Soporte a Aplicaciones que le asignen el número.", $from);
         }
 
-        switch($body_ex[0])
+        switch(strtoupper($body_ex[0]))
         {
             case "AUT":
                 if(!key_exists(1, $body_ex))
@@ -86,7 +86,7 @@ class ChatBotController extends Controller
                 $motivo = "";
 
                 for ($i = 2 ; $i<count($body_ex); $i++) {
-                    $motivo .= $body_ex[$i];
+                    $motivo .= $body_ex[$i]." ";
                 }
 
                 $transaccionGeneral = Transaccion::find($body_ex[1]);
@@ -115,8 +115,6 @@ class ChatBotController extends Controller
                     $response = json_decode($th->getResponse()->getBody());
                     $this->sendWhatsAppMessage($response->message, $from);
                 }
-
-
 
                 break;
 
