@@ -108,9 +108,9 @@
                     @endif
                     @if($token)
                         <br>
-                        <a href="http://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->transaccionGeneral->id}}/autorizar-vista?access_token={{$token}}">[AUTORIZAR]</a>
-                        <a href="http://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->transaccionGeneral->id}}/pide-motivo-rechazo?access_token={{$token}}">[RECHAZAR]</a>
-                        <a href="http://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado?access_token={{$token}}">[VER PENDIENTES]</a>
+                        <a href="https://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->transaccionGeneral->id}}/autorizar-vista?access_token={{$token}}">[AUTORIZAR]</a>
+                        <a href="https://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado/{{$solicitud->transaccionGeneral->id}}/pide-motivo-rechazo?access_token={{$token}}">[RECHAZAR]</a>
+                        <a href="https://{{$_SERVER['SERVER_NAME']}}:{{$_SERVER['SERVER_PORT']}}/api/solicitud-pago-anticipado?access_token={{$token}}">[VER PENDIENTES]</a>
                     @endif
 
                 </span>
