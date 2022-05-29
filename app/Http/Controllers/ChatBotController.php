@@ -72,14 +72,14 @@ class ChatBotController extends Controller
             case "REC":
                 if(!key_exists(1, $body_ex))
                 {
-                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea autorizar y MMMMMM el motivo del rechazo.", $from);
+                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
                     exit;
                 }else if(!is_numeric($body_ex[1])){
-                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea autorizar y MMMMMM el motivo del rechazo.", $from);
+                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
                     exit;
                 } else if(!key_exists(2, $body_ex))
                 {
-                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea autorizar y MMMMMM el motivo del rechazo.", $from);
+                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
                     exit;
                 }
 
