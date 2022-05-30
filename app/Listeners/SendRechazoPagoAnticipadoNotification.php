@@ -25,6 +25,6 @@ class SendRechazoPagoAnticipadoNotification
      */
     public function handle(RechazoPagoAnticipado $event)
     {
-        Notification::send($event->solicitud_pago_autorizacion->usuarioRegistro, new NotificacionRechazoPagoAnticipado($event->solicitud_pago_autorizacion, $event->solicitud_pago_anticipado));
+        Notification::send($event->solicitud_pago_autorizacion->usuarioRegistro, new NotificacionRechazoPagoAnticipado($event->solicitud_pago_autorizacion, $event->solicitud_pago_anticipado, $event->motivo));
     }
 }

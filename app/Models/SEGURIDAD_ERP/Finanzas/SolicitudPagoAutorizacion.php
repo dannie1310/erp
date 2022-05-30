@@ -262,7 +262,7 @@ class SolicitudPagoAutorizacion extends Transaccion
             }
             $this->estado = -2;
             $this->save();
-            event(new RechazoPagoAnticipado($this, $this->solicitud_pago_anticipado));
+            event(new RechazoPagoAnticipado($this, $this->solicitud_pago_anticipado, $motivo));
             return $this;
         }
         else{
