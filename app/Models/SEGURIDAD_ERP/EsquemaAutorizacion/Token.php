@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Token extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'EsquemaAutorizacion.token';
+    protected $table = 'EsquemaAutorizacion.tokens';
     public $timestamps = false;
 
     protected $fillable = [
