@@ -62,9 +62,9 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                     //$recipient = "whatsapp:+525546347020" ;
                     //$recipient = "whatsapp:+5215518673524" ;
                     //$recipient = "whatsapp:+5215541353541";
-                    $recipient = "whatsapp:+5215591976519";
+                    //$recipient = "whatsapp:+5215591976519";
 
-                    //$recipient ="whatsapp:". $usuario_interesado_permiso->numero_celular;
+                    $recipient ="whatsapp:". $usuario_interesado_permiso->numero_celular;
                     $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
                     $account_sid = config('app.env_variables.TWILIO_SID');
                     $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
@@ -82,8 +82,8 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                             ."\nMonto: ".$event->solicitud->monto_format." "
                             ."\nMotivo/Concepto: ".$event->solicitud->observaciones." "
                             ."\nAutorizar: AUT ".$event->solicitud->transaccionGeneral->id." "
-                            ."\nRechazar: REC ".$event->solicitud->transaccionGeneral->id." Motivo"
-                            ."\nDelegar: DEL ".$event->solicitud->transaccionGeneral->id." #Minutos"
+                            ."\nRechazar: REC ".$event->solicitud->transaccionGeneral->id." motivo"
+                            ."\nDelegar: DEL ".$event->solicitud->transaccionGeneral->id." minutos"
 
                     ));
                     //print_r($message);
