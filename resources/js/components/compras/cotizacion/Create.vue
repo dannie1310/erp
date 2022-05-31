@@ -116,7 +116,7 @@
                                                             </div>
                                                         </td>
                                                         <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
-                                                        <td style="text-align:right;">{{parseFloat(partida.cantidad_original_num).formatMoney(2,'.',',')}}</td>
+                                                        <td style="text-align:right;">{{parseFloat(solicitud_editar.estado === 0 ? partida.cantidad_original_num : partida.cantidad).formatMoney(2,'.',',')}}</td>
                                                         <td>
                                                             <input type="text"
                                                                    :disabled="enable[i] == false"
