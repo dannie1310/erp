@@ -4906,6 +4906,19 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id',
+                        name: 'factura-seg-show',
+                        component: require('./components/seguimiento/factura/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consulta de Factura',
+                            breadcrumb: {name: 'VER', parent: 'factura-seg'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_cuenta_x_cobrar'],
+                            general: true
+                        }
+                    },
                 ]
             },
         ]

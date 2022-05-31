@@ -43,7 +43,7 @@
                     { title: 'Importe', field: 'importe', tdClass: 'money', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha de Cobro', field: 'fecha_cobro', tdClass: 'money', sortable: true, thComp: require('../../globals/th-Date').default},
                     { title: 'Estatus', field: 'estado', tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, sortable: true},
-                    //{ title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
