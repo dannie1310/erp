@@ -62,8 +62,9 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                     //$recipient = "whatsapp:+525546347020" ;
                     //$recipient = "whatsapp:+5215518673524" ;
                     //$recipient = "whatsapp:+5215541353541";
+                    $recipient = "whatsapp:+5215591976519";
 
-                    $recipient ="whatsapp:". $usuario_interesado_permiso->numero_celular;
+                    //$recipient ="whatsapp:". $usuario_interesado_permiso->numero_celular;
                     $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
                     $account_sid = config('app.env_variables.TWILIO_SID');
                     $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
@@ -71,15 +72,18 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                     $client = new Client($account_sid, $auth_token);
                     $message = $client->messages->create($recipient, array(
                         'from' => "whatsapp:$twilio_whatsapp_number",
-                        'body' => "Se le informa que ".$event->solicitud->transaccionGeneral->usuarioRegistro->nombre_completo." ha solicitado que se autorice el pago anticipado que se describe a continuación:"
+                        'body' => "Se le informa que ".$event->solicitud->transaccionGeneral->usuarioRegistro->nombre_completo." ha solicitado que se autorice la transacción que se describe a continuación:"
+                            ."\nTipo: Solicitud de Pago Anticipado"
                             ."\nIdentificador: " .$event->solicitud->transaccionGeneral->id." "
                             ."\nProyecto: " .$event->solicitud->obra->nombre." "
+                            ."\nEmpresa: " .$event->solicitud->obra->facturar." "
                             ."\nFolio: " .$event->solicitud->numero_folio_format." "
                             ."\nProveedor: ".$event->solicitud->empresa->razon_social." "
                             ."\nMonto: ".$event->solicitud->monto_format." "
-                            ."\nMotivo: ".$event->solicitud->observaciones." "
+                            ."\nMotivo/Concepto: ".$event->solicitud->observaciones." "
                             ."\nAutorizar: AUT ".$event->solicitud->transaccionGeneral->id." "
                             ."\nRechazar: REC ".$event->solicitud->transaccionGeneral->id." Motivo"
+                            ."\nDelegar: DEL ".$event->solicitud->transaccionGeneral->id." #Minutos"
 
                     ));
                     //print_r($message);
