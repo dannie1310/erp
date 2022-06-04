@@ -5,7 +5,7 @@
             <div class="table-responsive">
                 <table class="table  table-sm">
                     <tr>
-                        <th class="encabezado" colspan="6">
+                        <th class="encabezado" colspan="5">
                             {{factura.nombre_proyecto}}
                         </th>
                     </tr>
@@ -36,7 +36,7 @@
                         </td>
                     </tr>
                     <tr>
-                        <th class="encabezado c100">
+                        <th class="encabezado c100" colspan="2">
                             Cliente
                         </th>
                         <th class="encabezado" colspan="2">
@@ -45,12 +45,9 @@
                         <th class="encabezado">
                             Moneda
                         </th>
-                        <th class="encabezado money">
-                            Tipo de Cambio
-                        </th>
                     </tr>
                     <tr>
-                        <td>
+                        <td colspan="2">
                             {{ factura.nombre_cliente}}
                         </td>
                         <td>
@@ -62,13 +59,11 @@
                         <td>
                             {{ factura.nombre_moneda }}
                         </td>
-                        <td class="money">
-                            {{ factura.tipo_cambio }}
-                        </td>
+
                     </tr>
                     <tr>
-                        <th class="encabezado">
-                            Importe
+                        <th class="encabezado money">
+                            Tipo de Cambio
                         </th>
                         <th class="encabezado">
                             Subtotal
@@ -85,7 +80,7 @@
                     </tr>
                     <tr>
                         <td class="money">
-                            {{ factura.importe_format }}
+                            {{ factura.tipo_cambio }}
                         </td>
                         <td class="money">
                             {{factura.subtotal_format}}
