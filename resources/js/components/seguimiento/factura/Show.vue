@@ -54,7 +54,7 @@
                 this.cargando = true;
                 return this.$store.dispatch('seguimiento/factura/find', {
                     id: this.id,
-                    params:{include: []}
+                    params:{include: ['conceptos', 'partidas']}
                 }).then(data => {
                     this.factura = data
                 })

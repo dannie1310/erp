@@ -36,6 +36,22 @@ class FinFacIngresoFactura extends Model
         return $this->belongsTo(GrlMoneda::class, 'idmoneda', 'idmoneda');
     }
 
+    public function conceptos()
+    {
+        return $this->hasMany(FinFacIngresoFacturaConcepto::class,  'idfactura','idfactura');
+    }
+
+    public function partidas()
+    {
+        return $this->hasMany(FinFacIngresoFacturaDetalle::class, 'idfactura', 'idfactura');
+    }
+
+    public function partidasSinTotales()
+    {
+        return $this->hasMany(FinFacIngresoFacturaDetalle::class, 'idfactura', 'idfactura')->whereNotIn('idpartida', [15,16,17]);
+    }
+
+
     /**
      * Scopes
      */
@@ -151,6 +167,36 @@ class FinFacIngresoFactura extends Model
             default:
                 return '#d2d6de';
                 break;
+        }
+    }
+
+    public function getSubtotalFormatAttribute()
+    {
+        try {
+            return $this->partidas()->where('idpartida', 15)->first()->total_format;
+
+        } catch (\Exception $exception) {
+            return null;
+        }
+    }
+
+    public function getIvaFormatAttribute()
+    {
+        try {
+            return $this->partidas()->where('idpartida', 16)->first()->total_format;
+
+        } catch (\Exception $exception) {
+            return null;
+        }
+    }
+
+    public function getTotalFormatAttribute()
+    {
+        try {
+            return $this->partidas()->where('idpartida', 17)->first()->total_format;
+
+        } catch (\Exception $exception) {
+            return null;
         }
     }
 

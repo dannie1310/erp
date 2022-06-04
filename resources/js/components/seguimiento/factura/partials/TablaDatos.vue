@@ -13,27 +13,32 @@
                         <th class="encabezado  c130">
                             Fecha de emisión
                         </th>
+                        <th class="encabezado">
+                            Número de Factura
+                        </th>
                         <th class="encabezado" colspan="2">
                             Empresa
                         </th>
-                        <th class="encabezado c100">Cliente</th>
                         <th class="encabezado c100">Descripción</th>
                     </tr>
                     <tr>
                         <td style="text-align: center">
                             {{ factura.fecha_format }}
                         </td>
+                        <td>
+                            {{factura.numero}}
+                        </td>
                         <td colspan="2">
                             {{ factura.nombre_empresa }}
                         </td>
                         <td>
-                            {{ factura.nombre_cliente }}
-                        </td>
-                        <td>
-                            {{ factura.descripcion}}
+                            {{ factura.descripcion }}
                         </td>
                     </tr>
                     <tr>
+                        <th class="encabezado c100">
+                            Cliente
+                        </th>
                         <th class="encabezado" colspan="2">
                             Periodo que cubre
                         </th>
@@ -43,11 +48,11 @@
                         <th class="encabezado money">
                             Tipo de Cambio
                         </th>
-                        <th class="encabezado">
-                            Concepto
-                        </th>
                     </tr>
                     <tr>
+                        <td>
+                            {{ factura.nombre_cliente}}
+                        </td>
                         <td>
                             {{ factura.fecha_fi_format }}
                         </td>
@@ -59,9 +64,6 @@
                         </td>
                         <td class="money">
                             {{ factura.tipo_cambio }}
-                        </td>
-                        <td>
-                            {{ factura.concepto }}
                         </td>
                     </tr>
                     <tr>
@@ -86,13 +88,13 @@
                             {{ factura.importe_format }}
                         </td>
                         <td class="money">
-
+                            {{factura.subtotal_format}}
                         </td>
                         <td class="money">
-
+                            {{factura.iva_format}}
                         </td>
                         <td class="money">
-
+                            {{factura.total_format}}
                         </td>
                         <td class="center">
                             <span class="badge" :style="{'background-color': factura.estado_color}">{{ factura.estado_descripcion }}</span>
@@ -100,7 +102,31 @@
                     </tr>
                 </table>
             </div>
-
+            <div class="row">
+                <div class="col-12">
+                    <h6><b>Detalle de los conceptos</b></h6>
+                </div>
+            </div>
+            <div class="row">
+                <div class="table-responsive col-md-12">
+                    <table class="table table-sm">
+                        <thead>
+                        <tr>
+                            <th class="encabezado">#</th>
+                            <th class="encabezado">Tipo Ingreso</th>
+                            <th class="encabezado">Importe</th>
+                        </tr>
+                        </thead>
+                        <tbody v-for="(doc, i) in factura.conceptos.data">
+                            <tr>
+                                <td>{{i+1}}</td>
+                                <td>{{doc.tipoIngreso.tipo_ingreso}}</td>
+                                <td style="text-align: right"><b>{{doc.importe_format}}</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-12">
                     <h6><b>Detalle de las partidas</b></h6>
@@ -112,32 +138,20 @@
                         <thead>
                         <tr>
                             <th class="encabezado">#</th>
-                            <th class="encabezado">Clave</th>
-                            <th class="encabezado">Concepto</th>
-                            <th class="encabezado">Unidad</th>
-                            <th class="encabezado">Cantidad Contratada</th>
-                            <th class="encabezado">Precio Unitario</th>
-                            <th class="encabezado">Cantidad</th>
+                            <th class="encabezado">Partida</th>
+                            <th class="encabezado">Operador</th>
+                            <th class="encabezado"></th>
+                            <th class="encabezado">Total</th>
                         </tr>
                         </thead>
-                        <tbody v-for="(doc, i) in avance.partidas">
-                        <tr v-if="doc.para_estimar != undefined">
-                            <td>{{i}}</td>
-                            <td>{{doc.clave}}</td>
-                            <td><b>{{doc.descripcion}}</b></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr v-else>
-                            <td>{{i}}</td>
-                            <td>{{doc.clave}}</td>
-                            <td>{{doc.descripcion_concepto}}</td>
-                            <td>{{doc.unidad}}</td>
-                            <td class="money">{{doc.cantidad_subcontrato_format}}</td>
-                            <td class="money">{{doc.precio_unitario_subcontrato_format}}</td>
-                            <td class="money">{{doc.cantidad_avance_format}}</td>
+                        <tbody v-for="(doc, i) in factura.partidas.data">
+                        <tr>
+                            <td>{{i+1}}</td>
+                            <td>{{doc.partida.partida}}</td>
+                            <td>{{doc.partida.nombre_operador}}</td>
+                            <td v-if="doc.antes_iva == 1">Antes de IVA</td>
+                            <td v-else>Despues de IVA</td>
+                            <td style="text-align: right"><b>{{doc.total_format}}</b></td>
                         </tr>
                         </tbody>
                     </table>
@@ -149,7 +163,7 @@
 
 <script>
 export default {
-    name: "AvanceTablaDatos",
+    name: "FacturaTablaDatos",
     components: { },
     props: ['factura'],
     methods :{

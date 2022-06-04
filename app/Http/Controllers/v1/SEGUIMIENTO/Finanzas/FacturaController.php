@@ -5,7 +5,7 @@ namespace App\Http\Controllers\v1\SEGUIMIENTO\Finanzas;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\SEGUIMIENTO\Finanzas\FacturaTransformer;
+use App\Http\Transformers\SEGUIMIENTO\FacturaTransformer;
 use App\Services\SEGUIMIENTO\Finanzas\FacturaService;
 use App\Traits\ControllerTrait;
 use League\Fractal\Manager;
