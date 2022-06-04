@@ -118,6 +118,12 @@ class ChatBotController extends Controller
 
                 break;
 
+            CASE "DEL":
+
+                $this->sendWhatsAppMessage("Por el momento esta opción no esta disponible.", $from);
+
+                break;
+
             default:
 
                 $this->sendWhatsAppMessage("La opción que ingresó no es válida.", $from);
