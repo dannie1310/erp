@@ -51,7 +51,7 @@
                             <td v-if="pagoAnticipado.usuario">{{ pagoAnticipado.usuario.nombre}}</td>
                         </tr>
                         <tr>
-                            <th style="text-align: left">Observaciones:</th>
+                            <th style="text-align: left">Motivo:</th>
                             <td>{{pagoAnticipado.observaciones}}</td>
                             <th></th>
                             <td></td>

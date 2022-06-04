@@ -13,6 +13,12 @@
 
 use App\Models\SEGURIDAD_ERP\Aviso;
 
+Route::get('/.well-known/pki-validation/6EBD6E1BD95FC91D52F9A7816E945700.txt', function () {
+    return response()->download(public_path("6EBD6E1BD95FC91D52F9A7816E945700.txt"));
+});
+
+Route::post('/chat-bot', 'ChatBotController@listenToReplies');
+
 Route::get('/portal-proveedor', function () {
     return view('welcome',["sidebar"=>"Portal de Proveedores", "logo"=>"portal-proveedores"]);
 })->middleware('auth');

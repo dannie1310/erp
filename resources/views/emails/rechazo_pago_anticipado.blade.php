@@ -113,7 +113,7 @@
                     <div class="row" style="color: #f00">
                         <div class="col-md-12">
                             <div class="form-group error-content">
-                                {{$solicitud_pago_autorizacion->motivo}}
+                                {{$motivo_rechazo}}
                             </div>
                         </div>
                     </div>

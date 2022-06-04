@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Events\AperturaInvitacion;
 use App\Events\SolicitudAutorizacionPagoAnticipado;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Token;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Notifications\NotificacionInvitacionAbierta;
 use App\Notifications\NotificacionSolicitudAutorizacionPagoAnticipado;
@@ -48,24 +49,49 @@ class SendSolicitudPagoAnticipadoNotificationSMS
                     $token = $tokenobj->accessToken;
                     $token_id = $tokenobj->token->id;
 
+                    Token::create([
+                        "id_firmante"=>$usuario_interesado_permiso->firmante->id,
+                        "id_transaccion"=>$event->solicitud->transaccionGeneral->id,
+                        "token"=>$token
+                    ]);
+
                     /**
                      * WHATSAPP
                      */
 
-                    /*$recipient = "whatsapp:" . $usuario_interesado_permiso->numero_celular;
+                    //$recipient = "whatsapp:+525546347020" ;
+                    //$recipient = "whatsapp:+5215518673524" ;
+                    //$recipient = "whatsapp:+5215541353541";
+                    //$recipient = "whatsapp:+5215591976519";
+
+                    $recipient ="whatsapp:". $usuario_interesado_permiso->numero_celular;
                     $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
                     $account_sid = config('app.env_variables.TWILIO_SID');
                     $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
 
                     $client = new Client($account_sid, $auth_token);
-                    $client->messages->create($recipient, array(
+                    $message = $client->messages->create($recipient, array(
                         'from' => "whatsapp:$twilio_whatsapp_number",
-                        'body' => "Se le informa que ".$event->solicitud->solicitudPagoAutorizacion->usuarioRegistro->nombre_completo." ha solicitado que se autorice el pago anticipado que se describe a continuación:"
+                        'body' => "Se le informa que ".$event->solicitud->transaccionGeneral->usuarioRegistro->nombre_completo." ha solicitado que se autorice la transacción que se describe a continuación:"
+                            ."\nTipo: Solicitud de Pago Anticipado"
+                            ."\nIdentificador: " .$event->solicitud->transaccionGeneral->id." "
                             ."\nProyecto: " .$event->solicitud->obra->nombre." "
+                            ."\nEmpresa: " .$event->solicitud->obra->facturar." "
                             ."\nFolio: " .$event->solicitud->numero_folio_format." "
                             ."\nProveedor: ".$event->solicitud->empresa->razon_social." "
                             ."\nMonto: ".$event->solicitud->monto_format." "
-                    ));*/
+                            ."\nMotivo/Concepto: ".$event->solicitud->observaciones." "
+                            ."\nAutorizar: AUT ".$event->solicitud->transaccionGeneral->id." "
+                            ."\nRechazar: REC ".$event->solicitud->transaccionGeneral->id." motivo"
+                            ."\nDelegar: DEL ".$event->solicitud->transaccionGeneral->id." minutos"
+
+                    ));
+                    //print_r($message);
+
+                    /*
+                    ."\n \n Autorizar: https://".$_SERVER['SERVER_NAME'].":".$_SERVER['SERVER_PORT']."/api/solicitud-pago-anticipado/".$event->solicitud->transaccionGeneral->id."/autorizar?access_token=".$token." "
+                    */
+
 
                     /**
                      * SMS

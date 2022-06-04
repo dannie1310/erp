@@ -47,7 +47,7 @@ class SolicitudPagoAutorizacionService
 
     public function show($id)
     {
-        return $this->repository->show($id);
+        return $this->repository->withoutGlobalScopes()->show($id);
     }
 
     public function index()

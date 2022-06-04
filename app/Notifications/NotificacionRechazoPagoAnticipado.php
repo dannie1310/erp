@@ -19,11 +19,13 @@ class NotificacionRechazoPagoAnticipado extends Notification
 
     public $solicitud_pago_autorizacion;
     public $solicitud_pago_anticipado;
+    public $motivo;
 
-    public function __construct(SolicitudPagoAutorizacion $solicitud_pago_autorizacion, SolicitudPagoAnticipado $solicitud_pago_anticipado)
+    public function __construct(SolicitudPagoAutorizacion $solicitud_pago_autorizacion, SolicitudPagoAnticipado $solicitud_pago_anticipado, $motivo)
     {
         $this->solicitud_pago_autorizacion = $solicitud_pago_autorizacion;
         $this->solicitud_pago_anticipado = $solicitud_pago_anticipado;
+        $this->motivo = $motivo;
     }
 
     /**
@@ -49,7 +51,8 @@ class NotificacionRechazoPagoAnticipado extends Notification
             ->subject("Rechazo de Pago Anticipado ".$this->solicitud_pago_anticipado->numero_folio_format . " (".$this->solicitud_pago_anticipado->obra->nombre.")")
             ->view('emails.rechazo_pago_anticipado',[
                 "solicitud_pago_autorizacion"=>$this->solicitud_pago_autorizacion,
-                "solicitud_pago_anticipado"=>$this->solicitud_pago_anticipado
+                "solicitud_pago_anticipado"=>$this->solicitud_pago_anticipado,
+                "motivo_rechazo"=>$this->motivo
             ]);
     }
 

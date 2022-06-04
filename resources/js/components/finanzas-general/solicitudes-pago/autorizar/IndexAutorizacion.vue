@@ -97,8 +97,8 @@
                         monto: solicitud.monto,
                         buttons: $.extend({}, {
                             id : solicitud.id,
-                            autorizar: self.$root.can('autorizar_rechazar_solicitud_pago', true) && solicitud.estatus == 0 ? true : false,
-                            rechazar: self.$root.can('autorizar_rechazar_solicitud_pago', true) && solicitud.estatus == 0 ? true : false,
+                            autorizar: self.$root.can('autorizar_rechazar_solicitud_pago', true) && solicitud.estado == 0 || solicitud.estado == 1 ? true : false,
+                            rechazar: self.$root.can('autorizar_rechazar_solicitud_pago', true) && solicitud.estado == 0 || solicitud.estado == 1 ? true : false,
                         })
                     }));
                 },

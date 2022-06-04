@@ -15,11 +15,13 @@ class RechazoPagoAnticipado
 
     public $solicitud_pago_autorizacion;
     public $solicitud_pago_anticipado;
+    public $motivo;
 
-    public function __construct(SolicitudPagoAutorizacion $solicitud_pago_autorizacion, SolicitudPagoAnticipado $solicitud_pago_anticipado)
+    public function __construct(SolicitudPagoAutorizacion $solicitud_pago_autorizacion, SolicitudPagoAnticipado $solicitud_pago_anticipado, $motivo)
     {
         $this->solicitud_pago_autorizacion = $solicitud_pago_autorizacion;
         $this->solicitud_pago_anticipado = $solicitud_pago_anticipado;
+        $this->motivo = $motivo;
     }
 
     /**

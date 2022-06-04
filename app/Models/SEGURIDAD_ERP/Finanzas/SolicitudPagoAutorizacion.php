@@ -194,10 +194,10 @@ class SolicitudPagoAutorizacion extends Transaccion
                     ->where("id_transaccion_general","=",$this->id)
                     ->first();
                 if ($ultima_autorizacion && $ultima_autorizacion->id_usuario_autorizo) {
-                    throw new \Exception('La solicitud ya fue autorizada por ' . $ultima_autorizacion->usuarioAutorizo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_autorizacion_format . "]");
+                    throw new \Exception('La solicitud ya fue autorizada por ' . ucwords(strtolower($ultima_autorizacion->usuarioAutorizo->nombre_completo)) . " el " . $ultima_autorizacion->fecha_hora_autorizacion_format . "");
                 }
                 if ($ultima_autorizacion && $ultima_autorizacion->id_usuario_rechazo) {
-                    throw new \Exception('La solicitud ya fue rechazada por ' . $ultima_autorizacion->usuarioRechazo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_rechazo_format . "]");
+                    throw new \Exception('La solicitud ya fue rechazada por ' . ucwords(strtolower($ultima_autorizacion->usuarioRechazo->nombre_completo)) . " el " . $ultima_autorizacion->fecha_hora_rechazo_format . " por el siguiente motivo: ". $ultima_autorizacion->observaciones);
                 }
             }
 
@@ -254,15 +254,15 @@ class SolicitudPagoAutorizacion extends Transaccion
                     ->where("id_transaccion_general","=",$this->id)
                     ->first();
                 if ($ultima_autorizacion && $ultima_autorizacion->id_usuario_autorizo) {
-                    throw new \Exception('La solicitud ya fue autorizada por ' . $ultima_autorizacion->usuarioAutorizo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_autorizacion_format . "]");
+                    throw new \Exception('La solicitud ya fue autorizada por ' .ucwords(strtolower( $ultima_autorizacion->usuarioAutorizo->nombre_completo)) . " el " . $ultima_autorizacion->fecha_hora_autorizacion_format . "");
                 }
                 if ($ultima_autorizacion && $ultima_autorizacion->id_usuario_rechazo) {
-                    throw new \Exception('La solicitud ya fue rechazada por ' . $ultima_autorizacion->usuarioRechazo->nombre_completo . " [" . $ultima_autorizacion->fecha_hora_rechazo_format . "]");
+                    throw new \Exception('La solicitud ya fue rechazada por ' . ucwords(strtolower($ultima_autorizacion->usuarioRechazo->nombre_completo)) . " el " . $ultima_autorizacion->fecha_hora_rechazo_format . " por el siguiente motivo: ". $ultima_autorizacion->observaciones);
                 }
             }
             $this->estado = -2;
             $this->save();
-            event(new RechazoPagoAnticipado($this, $this->solicitud_pago_anticipado));
+            event(new RechazoPagoAnticipado($this, $this->solicitud_pago_anticipado, $motivo));
             return $this;
         }
         else{

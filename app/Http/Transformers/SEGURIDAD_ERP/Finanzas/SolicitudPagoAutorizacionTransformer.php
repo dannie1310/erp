@@ -48,7 +48,7 @@ class SolicitudPagoAutorizacionTransformer extends TransformerAbstract
             'observaciones'=>$model->observaciones,
             'monto'=>$model->monto_format,
             'moneda'=>$model->moneda,
-            'estatus'=>$model->estatus,
+            'estado'=>$model->estado,
             'tipo_txt'=>$model->tipo_txt,
             'registro'=>$model->registro
         ];

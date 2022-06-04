@@ -142,4 +142,34 @@ class ChartController extends Controller
         ];
         return response()->json($acum);
     }
+
+    public function pagosAnticipados() {
+        $labels=[];
+        $data = [];
+        $backgroundColor = [];
+        $estatus=[];
+
+        $acumulado = Poliza::query()->select(DB::raw("COUNT(1) AS count"), 'estatus')->groupBy('estatus')->get();
+        foreach (EstatusPrePoliza::all() as $status) {
+            for($i = 0; $i < count($acumulado); $i++){
+                if($acumulado[$i]->estatus == $status->estatus){
+                    $labels[] = $status->descripcion;
+                    $data[] = $acumulado[$i]->count;
+                    $backgroundColor[] = $status->label;
+                    $estatus[] = $status->estatus;
+                    break;
+                }
+            }
+        }
+
+        $acum = [
+            'labels' => $labels,
+            'estatus'=> $estatus,
+            'datasets' => [[
+                'data'=> $data,
+                'backgroundColor'=> $backgroundColor
+            ]]
+        ];
+        return response()->json($acum);
+    }
 }

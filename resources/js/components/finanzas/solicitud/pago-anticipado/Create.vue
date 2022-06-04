@@ -227,14 +227,14 @@
                                     <!-- Observaciones -->
                                     <div class="col-md-12">
                                         <div class="form-group error-content">
-                                            <label for="observaciones">Observaciones:</label>
+                                            <label for="observaciones">Motivo:</label>
                                             <textarea
                                                     name="observaciones"
                                                     id="observaciones"
                                                     class="form-control"
                                                     v-model="observaciones"
                                                     v-validate="{required: true}"
-                                                    data-vv-as="Observaciones"
+                                                    data-vv-as="Motivo"
                                                     :class="{'is-invalid': errors.has('observaciones')}"
                                             ></textarea>
                                             <div class="invalid-feedback" v-show="errors.has('observaciones')">{{ errors.first('observaciones') }}</div>
