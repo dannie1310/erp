@@ -18,7 +18,7 @@ trait EmpresaTrait
 
     public function validaRFCSM($rfc)
     {
-        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
+        /*$usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
         if ($usa_servicio == 1) {
             $client = new \GuzzleHttp\Client();
             $url = config('app.env_variables.SERVICIO_RFC_URL');
@@ -38,7 +38,8 @@ trait EmpresaTrait
             return true;
         } else {
             return true;
-        }
+        }*/
+        $this->rfcValidaEfos($rfc);
     }
 
     public function rfcValido($rfc)
