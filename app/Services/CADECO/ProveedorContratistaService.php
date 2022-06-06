@@ -90,7 +90,7 @@ class ProveedorContratistaService
         }
         if($data["emite_factura"] == 1){
             if($data['rfc'] == 'XXXXXXXXXXXX' || $data['rfc'] == 'XEXX010101000') abort(403, 'El RFC tiene formato inválido.');
-            $this->getValidacionLRFC($data["rfc"], $data["razon_social"],7);
+            //$this->getValidacionLRFC($data["rfc"], $data["razon_social"],7);
         }
         return $this->repository->create($data);
     }
