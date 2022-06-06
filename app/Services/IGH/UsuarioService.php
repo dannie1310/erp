@@ -157,7 +157,7 @@ class UsuarioService
             }
         }else{
             /*1.3 si no existe se valida que el RFC sea válido ante el SAT*/
-            $rfc_valido = $empresaPadronService->validaRFCSM($datos["rfc"]);
+            $rfc_valido = $empresaPadronService->rfcValidaEfos($datos["rfc"]);
             if($rfc_valido){
                 $empresaPadronService->rfcValidaBoletinados($datos["rfc"]);
                 /*1.3.1   es válido ante el SAT*/

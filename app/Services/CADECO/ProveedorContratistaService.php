@@ -13,9 +13,11 @@ use App\Facades\Context;
 use App\Repositories\CADECO\ProveedorContratista\Repository;
 use App\Models\CADECO\ProveedorContratista;
 use App\Events\IncidenciaCI;
+use App\Traits\EmpresaTrait;
 
 class ProveedorContratistaService
 {
+    use EmpresaTrait;
     /**
      * @var Repository
      */
@@ -52,30 +54,30 @@ class ProveedorContratistaService
 
     private function getValidacionLRFC($rfc, $razon_social, $tipo_incidencia)
     {
-        $usa_servicio = config('app.env_variables.SERVICIO_CFDI_EN_USO');
-        if ($usa_servicio == 1) {
-            $client = new \GuzzleHttp\Client();
-            $url = config('app.env_variables.SERVICIO_RFC_URL');
-            $token = config('app.env_variables.SERVICIO_CFDI_TOKEN');
+        try{
+            $this->rfcValidaEfos($rfc);
+        }catch (\Exception $e){
+            event(new IncidenciaCI(
+                ["id_tipo_incidencia"=>$tipo_incidencia,
+                    "rfc"=>$rfc,
+                    "empresa"=>$razon_social,
+                    "mensaje"=>$e->getMessage(),
+                ]
+            ));
+            abort(500,$e->getMessage());
+        }
 
-            $headers = [
-                'Authorization' => 'Bearer ' . $token,
-                'Accept'        => 'application/json',
-            ];
-            try{
-                $client->request('GET', $url."".$rfc, [
-                    'headers' => $headers,
-                ]);
-            } catch (\Exception $e){
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia"=>$tipo_incidencia,
-                        "rfc"=>$rfc,
-                        "empresa"=>$razon_social,
-                        "mensaje"=>"El RFC ingresado del proveedor no es válido ante el SAT",
-                    ]
-                ));
-                abort(500,"El RFC ingresado del proveedor no es válido ante el SAT");
-            }
+        try{
+            $this->rfcValidaBoletinados($rfc);
+        }catch (\Exception $e){
+            event(new IncidenciaCI(
+                ["id_tipo_incidencia"=>$tipo_incidencia,
+                    "rfc"=>$rfc,
+                    "empresa"=>$razon_social,
+                    "mensaje"=>$e->getMessage(),
+                ]
+            ));
+            abort(500,$e->getMessage());
         }
     }
 

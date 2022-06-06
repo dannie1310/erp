@@ -500,12 +500,21 @@ class InvitacionService
         $empresaService = new EmpresaService(new Empresa());
         $empresa = $empresaService->getEmpresaPorRFC($usuario->usuario);
         if(!$empresa){
-            $rfc_valido = $empresaService->validaRFCSM($usuario["usuario"]);
-            if($rfc_valido){
-                $empresa = $this->generaEmpresaSAO($usuario);
-            }else {
-                abort(500,"El RFC: ".$usuario["usuario"].", no es válido ante el SAT. \n \nPor favor seleccione otro proveedor o indique que no desea seleccionar un proveedor de la lista");
+            try{
+                $empresaService->rfcValidaEfos($usuario["usuario"]);
+            }catch (\Exception $e)
+            {
+                abort(500, $e->getMessage());
             }
+
+            try{
+                $empresaService->rfcValidaBoletinados($usuario["usuario"]);
+            }catch (\Exception $e)
+            {
+                abort(500, $e->getMessage());
+            }
+
+            $empresa = $this->generaEmpresaSAO($usuario);
         }
         return $empresa;
     }
