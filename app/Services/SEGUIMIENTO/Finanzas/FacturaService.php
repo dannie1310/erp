@@ -86,9 +86,8 @@ class FacturaService
         return $this->repository->show($id);
     }
 
-    public function cancelar($data , $id){
-        dd($data, $id);
-        $observaciones = $data['data'][0];
-        return $this->repository->show($id)->cancelar($observaciones);
+    public function cancelar($data , $id)
+    {
+        return $this->repository->show($id)->cancelar($data['data'][0]);
     }
 }

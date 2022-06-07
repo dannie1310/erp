@@ -53,41 +53,49 @@ export default {
         cancelar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Factura",
+                    title: "Cancelar Factura",
                     text: "¿Está seguro de cancelar la factura?",
-                    icon: "warning",
-                    closeOnClickOutside: false,
-                    buttons: {
-                        cancel: {
-                            text: 'Cancelar',
-                            visible: true
+                    dangerMode: true,
+                    icon: "info",
+                    content: {
+                        element: "input",
+                        attributes: {
+                            placeholder: "Motivo de Cancelación",
+                            type: "text",
                         },
-                        confirm: {
-                            text: 'Si, Continuar',
+                    },
+                    buttons: [
+                        'Cancelar',
+                        {
+                            text: "Si, Cancelar",
                             closeModal: false,
                         }
-                    }
-                }) .then((value) => {
-                    if (value) {
-                        axios
-                            .get(URI + payload.id + '/cancelar', {params: payload.params})
-                            .then(r => r.data)
-                            .then(data => {
-                                swal("La cancelación ha sido aplicada exitosamente", {
-                                    icon: "success",
-                                    timer: 2000,
-                                    buttons: false
-                                }).then(() => {
-                                    resolve(data);
+                    ]
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI+ payload.id+'/cancelar',  {id:payload.id, motivo: value}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal({
+                                        title: "Cancelación exitosa",
+                                        text: " ",
+                                        icon: "success",
+                                        timer: 3000,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+
+                                    })
                                 })
-                            })
-                            .catch(error =>  {
-                                reject(error);
-                            });
-                    } else {
-                        reject();
-                    }
-                });
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            swal("Ingrese el motivo de cancelación de la factura.",{icon: "error"});
+                        }
+                    });
             });
         },
     },
