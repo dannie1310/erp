@@ -4919,6 +4919,18 @@ export const routes = [
                             general: true
                         }
                     },
+                    {
+                        path: ':id/delete',
+                        name: 'factura-seg-delete',
+                        component: require('./components/seguimiento/factura/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Factura',
+                            breadcrumb: { parent: 'factura-seg', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: ['eliminar_factura_cuenta_x_cobrar'],
+                        }
+                    },
                 ]
             },
         ]

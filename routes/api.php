@@ -1647,6 +1647,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix'=>'factura'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
+            $api->delete('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@destroy')->where(['id' => '[0-9]+']);
         });
     });
 

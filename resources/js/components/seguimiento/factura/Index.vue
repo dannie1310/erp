@@ -114,6 +114,7 @@
                         estado: this.getEstado(factura.estado_descripcion, factura.estado_color),
                         buttons: $.extend({}, {
                             id: factura.id,
+                            delete: (this.$root.can('eliminar_factura_cuenta_x_cobrar') && avance.estado == 0) ? true : false,
                         })
                     }));
                 },

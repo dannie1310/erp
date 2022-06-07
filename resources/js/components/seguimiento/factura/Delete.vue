@@ -1,0 +1,117 @@
+<template>
+    <span>
+        <div class="card" v-if="!factura">
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <div class="spinner-border text-success" role="status">
+                           <span class="sr-only">Cargando...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" v-else>
+            <div class="card-body">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <encabezado v-bind:factura="factura" />
+                        <tabla-datos v-bind:factura="factura" />
+                    </div>
+                </div>
+                <hr />
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row error-content">
+                            <label for="motivo" class="col-md-2 col-form-label">Motivo de eliminación:</label>
+                            <div class="col-md-10">
+                                <textarea
+                                    name="motivo"
+                                    id="motivo"
+                                    class="form-control"
+                                    v-model="motivo"
+                                    v-validate="{required: true}"
+                                    data-vv-as="Motivo"
+                                    :class="{'is-invalid': errors.has('motivo')}"
+                                ></textarea>
+                                <div class="invalid-feedback" v-show="errors.has('motivo')">{{ errors.first('motivo') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>Regresar
+                    </button>
+                    <button type="submit" class="btn btn-danger" @click="validate" :disabled="errors.count() > 0 || motivo == ''">
+                        <i class="fa fa-trash"></i>Eliminar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </span>
+</template>
+
+<script>
+    import Encabezado from './partials/Encabezado';
+    import TablaDatos from "./partials/TablaDatos";
+    export default {
+        name: "factura-delete",
+        components: { Encabezado, TablaDatos },
+        props: ['id'],
+        data(){
+            return{
+                cargando: false,
+                factura : null,
+                motivo : ''
+            }
+        },
+        mounted() {
+            this.find();
+        },
+        methods: {
+            find() {
+                this.cargando = true;
+                return this.$store.dispatch('seguimiento/factura/find', {
+                    id: this.id,
+                    params:{include: ['conceptos', 'partidas']}
+                }).then(data => {
+                    this.factura = data
+                })
+                    .finally(()=> {
+                        this.cargando = false;
+                    })
+            },
+            salir() {
+                this.$router.push({name: 'factura-seg'});
+            },
+            validate() {
+                this.$validator.validate().then(result => {
+                    if (result) {
+                        if(this.motivo == '') {
+                            swal('¡Error!', 'Debe colocar un motivo para realizar la operación.', 'error')
+                        }
+                        else {
+                            this.eliminar()
+                        }
+                    }
+                });
+            },
+            eliminar() {
+                return this.$store.dispatch('seguimiento/factura/eliminar', {
+                    id: this.id,
+                    params: {data: this.$data.motivo}
+                }).then(data => {
+                    this.salir();
+                })
+            },
+        },
+    }
+</script>
+
+<style scoped>
+
+</style>
