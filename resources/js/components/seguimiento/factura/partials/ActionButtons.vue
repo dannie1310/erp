@@ -3,9 +3,7 @@
         <router-link  :to="{ name: 'factura-seg-show', params: {id: value.id}}" type="button" class="btn btn-sm btn-outline-secondary" title="Consultar">
             <i class="fa fa-eye"></i>
         </router-link>
-        <router-link  :to="{ name: 'factura-seg-delete', params: {id: value.id}}" v-if="value.delete" type="button" class="btn btn-sm btn-outline-danger" title="Eliminar">
-            <i class="fa fa-trash"></i>
-        </router-link>
+        <button @click="cancelar"  v-if="value.cancelar" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>
     </div>
 </template>
 
@@ -14,5 +12,13 @@
         name: "factura-action-buttons",
         components: {},
         props: ['value'],
+        methods: {
+            cancelar() {
+                return this.$store.dispatch('seguimiento/factura/cancelar', {id: this.value.id})
+                    .then(() => {
+                        this.$emit('success')
+                    })
+            },
+        }
     }
 </script>

@@ -50,11 +50,11 @@ export default {
                     })
             });
         },
-        eliminar(context, payload) {
+        cancelar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Eliminar la factura",
-                    text: "¿Está seguro de que desea eliminar esta factura?",
+                    title: "Factura",
+                    text: "¿Está seguro de cancelar la factura?",
                     icon: "warning",
                     closeOnClickOutside: false,
                     buttons: {
@@ -63,32 +63,31 @@ export default {
                             visible: true
                         },
                         confirm: {
-                            text: 'Si, Eliminar',
+                            text: 'Si, Continuar',
                             closeModal: false,
                         }
                     }
-                })
-                    .then((value) => {
-                        if (value) {
-                            axios
-                                .delete(URI + payload.id, {params: payload.params})
-                                .then(r => r.data)
-                                .then(data => {
-                                    swal("Factura eliminada correctamente", {
-                                        icon: "success",
-                                        timer: 1500,
-                                        buttons: false
-                                    }).then(() => {
-                                        resolve(data);
-                                    })
+                }) .then((value) => {
+                    if (value) {
+                        axios
+                            .get(URI + payload.id + '/cancelar', {params: payload.params})
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("La cancelación ha sido aplicada exitosamente", {
+                                    icon: "success",
+                                    timer: 2000,
+                                    buttons: false
+                                }).then(() => {
+                                    resolve(data);
                                 })
-                                .catch(error => {
-                                    reject(error);
-                                });
-                        } else {
-                            reject();
-                        }
-                    });
+                            })
+                            .catch(error =>  {
+                                reject(error);
+                            });
+                    } else {
+                        reject();
+                    }
+                });
             });
         },
     },
