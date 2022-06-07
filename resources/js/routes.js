@@ -4872,6 +4872,70 @@ export const routes = [
         ]
     },
     {
+        path: '/seguimiento',
+        components:  {
+            default: require('./components/seguimiento/partials/Layout.vue').default,
+            menu: require('./components/seguimiento/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'seguimiento',
+                component: require('./components/seguimiento/Index').default,
+                meta: {
+                    title: 'Seguimiento',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'SEGUIMIENTO'},
+                    permission: ['consultar_factura_cuenta_x_cobrar'],
+                    general: true
+                }
+            },
+            {
+                path: 'factura',
+                component: require('./components/seguimiento/factura/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'factura-seg',
+                        component: require('./components/seguimiento/factura/Index').default,
+                        meta: {
+                            title: 'Lista de Facturas',
+                            breadcrumb: {parent: 'seguimiento', name: 'FACTURAS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_factura_cuenta_x_cobrar',
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'factura-seg-show',
+                        component: require('./components/seguimiento/factura/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consulta de Factura',
+                            breadcrumb: {name: 'VER', parent: 'factura-seg'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_cuenta_x_cobrar'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/delete',
+                        name: 'factura-seg-delete',
+                        component: require('./components/seguimiento/factura/Delete').default,
+                        props: true,
+                        meta: {
+                            title: 'Eliminar Factura',
+                            breadcrumb: { parent: 'factura-seg', name: 'ELIMINAR'},
+                            middleware: [auth, permission],
+                            permission: ['eliminar_factura_cuenta_x_cobrar'],
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,
