@@ -95,4 +95,9 @@ class CtgEfosService
         return Excel::download(new InformeCFDIDesglosado(), 'informe.xlsx');
     }
 
+    public function getUltimosCambiosEFOSTXT()
+    {
+        return $this->repository->getUltimosCambiosEFOSTXT();
+    }
+
 }
