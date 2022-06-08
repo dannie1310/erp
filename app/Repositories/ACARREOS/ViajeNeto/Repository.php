@@ -80,7 +80,7 @@ class Repository extends \App\Repositories\Repository implements RepositoryInter
     public function getCatalogoCamiones()
     {
         $camiones = Camion::select(['idcamion', 'Placas as placas', 'PlacasCaja as placas_caja', 'marcas.Descripcion as marca', 'Modelo as modelo', 'Ancho as ancho', 'largo',
-            'Alto as alto', 'Economico as economico', 'CubicacionParaPago as capacidad', 'IdEmpresa as id_empresa', 'IdSindicato as id_sindicato', 'camiones.Estatus as estatus'])
+            'Alto as alto','AlturaExtension as extencion', 'Disminucion as disminucion', 'EspacioDeGato as gato', 'Economico as economico', 'CubicacionParaPago as capacidad', 'IdEmpresa as id_empresa', 'IdSindicato as id_sindicato', 'camiones.Estatus as estatus'])
             ->activo()
             ->marcaDescripcion()
             ->get()->toArray();
