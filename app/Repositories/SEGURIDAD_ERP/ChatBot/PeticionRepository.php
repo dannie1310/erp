@@ -15,5 +15,10 @@ class PeticionRepository extends Repository implements RepositoryInterface
         $this->model = $model;
     }
 
+    public function create(array $data)
+    {
+        return $this->model->registrar($data);
+    }
+
 
 }

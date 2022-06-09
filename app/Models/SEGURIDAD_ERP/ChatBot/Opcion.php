@@ -28,4 +28,18 @@ class Opcion extends Model
         , "estado"
     ];
 
+
+    /**
+     * Relaciones Eloquent
+     */
+    public function opcionesHijas()
+    {
+        return $this->hasMany(Opcion::class, 'id_padre', 'id');
+    }
+
+    public function opcionPadre()
+    {
+        return $this->belongsTo(Opcion::class, 'id_padre', 'id');
+    }
+
 }

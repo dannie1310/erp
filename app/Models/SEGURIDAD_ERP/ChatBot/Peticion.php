@@ -23,9 +23,9 @@ class Peticion extends Model
         "id_opcion"
         , "id_usuario"
         , "token_acceso"
-        , "texto_devolver"
         , "numero_clave"
         , "palabra_clave"
+        , "peticion"
     ];
 
     /**
@@ -36,10 +36,56 @@ class Peticion extends Model
         return $this->belongsTo(Opcion::class, 'id_opcion', 'id');
     }
 
-
-
-    public function getRespuesta()
+    public function registrar(array $data)
     {
+        $opcion = $this->obtieneOpcion($data["peticion"]);
+
+        $peticion = Peticion::create(
+            [
+                "id_usuario"=>$data["id_usuario"]
+                ,"peticion"=>$data["peticion"]
+                ,"id_opcion"=>$opcion->id
+            ]
+        );
+        return $peticion;
+
+    }
+
+    public function obtieneOpcion($peticion)
+    {
+
+        $opcion = Opcion::where("palabra_clave","=",strtoupper($peticion))
+            ->first();
+
+        if(!$opcion && is_numeric($peticion))
+        {
+            $opcion = Opcion::where("numero_clave","=",$peticion)
+                ->first();
+        }
+
+        if(!$opcion)
+        {
+            $opcion = Opcion::where("palabra_clave","=","SALUDO")
+                ->first();
+        }
+
+        return $opcion;
+    }
+
+    public function getRespuesta($parametros)
+    {
+        $respuesta =  $this->opcion->texto_devolver;
+        foreach ($parametros as $label=>$value)
+        {
+            $respuesta = str_replace("[$label]",$value,$respuesta);
+        }
+
+        foreach($this->opcion->opcionesHijas()->orderBy("orden")->get() as $opcionHija)
+        {
+            $respuesta.="\n".$opcionHija->numero_clave.".-".$opcionHija->texto_devolver;
+        }
+
+        return $respuesta;
 
     }
 
