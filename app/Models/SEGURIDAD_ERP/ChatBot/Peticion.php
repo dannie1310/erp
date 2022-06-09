@@ -38,7 +38,7 @@ class Peticion extends Model
 
     public function registrar(array $data)
     {
-        $opcion = $this->obtieneOpcion($data["peticion"]);
+        $opcion = $this->obtieneOpcion($data["peticion"],$data["id_usuario"]);
 
         $peticion = Peticion::create(
             [
@@ -51,7 +51,7 @@ class Peticion extends Model
 
     }
 
-    public function obtieneOpcion($peticion)
+    public function obtieneOpcion($peticion,$id_usuario)
     {
 
         $opcion = Opcion::where("palabra_clave","=",strtoupper($peticion))
@@ -59,8 +59,20 @@ class Peticion extends Model
 
         if(!$opcion && is_numeric($peticion))
         {
-            $opcion = Opcion::where("numero_clave","=",$peticion)
+            $ultima_peticion = Peticion::where("id_usuario","=", $id_usuario)->orderBy("id","desc")
                 ->first();
+
+            if($ultima_peticion)
+            {
+                $opcion = Opcion::where("numero_clave","=",$peticion)
+                    ->where("id_padre","=",$ultima_peticion->id_opcion)
+                    ->first();
+
+            }else{
+                $opcion = Opcion::where("numero_clave","=",$peticion)
+                    ->first();
+            }
+
         }
 
         if(!$opcion)
@@ -83,6 +95,10 @@ class Peticion extends Model
         foreach($this->opcion->opcionesHijas()->orderBy("orden")->get() as $opcionHija)
         {
             $respuesta.="\n".$opcionHija->numero_clave.".-".$opcionHija->texto_devolver;
+        }
+        if($this->opcion->id_padre>0)
+        {
+            $respuesta.="\n< Regresar";
         }
 
         return $respuesta;
