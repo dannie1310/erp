@@ -53,6 +53,15 @@ class Peticion extends Model
 
     public function obtieneOpcion($peticion,$id_usuario)
     {
+        if($peticion == "<")
+        {
+            $ultimaPeticion = Peticion::where("id_usuario","=",$id_usuario)
+            ->orderBy("id","desc")
+            ->first();
+
+            return $ultimaPeticion->opcion->opcionPadre;
+
+        }
 
         $opcion = Opcion::where("palabra_clave","=",strtoupper($peticion))
             ->first();
