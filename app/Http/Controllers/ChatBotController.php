@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\ChatBot\Peticion;
 use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Token;
 use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Transaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\Services\SEGURIDAD_ERP\ChatBot\PeticionService;
 use App\Services\SEGURIDAD_ERP\Finanzas\CtgEfosService;
 use App\Utils\Util;
 use Illuminate\Http\Request;
@@ -21,7 +23,14 @@ class ChatBotController extends Controller
         $body_ex = explode(" ", $body);
         $numero_celular = str_replace("whatsapp:","", $from);
 
-        $usuario_from = Usuario::where("numero_celular","=",$numero_celular)->first();
+        $peticionService = new PeticionService(new Peticion());
+
+        $respuesta = $peticionService->getRespuesta($request->all());
+
+        $this->sendWhatsAppMessage($respuesta, $from);
+
+
+        /*$usuario_from = Usuario::where("numero_celular","=",$numero_celular)->first();
 
         if(!$usuario_from){
             $this->sendWhatsAppMessage("El número celular: ".$numero_celular." no esta asociado a ningún usuario.
@@ -34,13 +43,13 @@ class ChatBotController extends Controller
         }else{
             $saludo = "Buenos días";
         }
-        $nombre_usuario = ucwords(strtolower($usuario_from->nombre), " ");
+        $nombre_usuario = ucwords(strtolower($usuario_from->nombre), " ");*/
 
 
 
 
 
-        if(strtoupper(Util::eliminaCaracteresEspeciales($body)) == "ULTIMOS CAMBIOS EN EFOS" || strtoupper($body) == "ULTIMOS_CAMBIOS_EFOS")
+        /*if(strtoupper(Util::eliminaCaracteresEspeciales($body)) == "ULTIMOS CAMBIOS EN EFOS" || strtoupper($body) == "ULTIMOS_CAMBIOS_EFOS")
         {
             $efos_service = new CtgEfosService(new CtgEfos());
             $this->sendWhatsAppMessage($efos_service->getUltimosCambiosEFOSTXT(), $from);
@@ -166,7 +175,7 @@ class ChatBotController extends Controller
                     break;
             }
 
-        }
+        }*/
 
 
 
@@ -212,7 +221,13 @@ class ChatBotController extends Controller
         $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
 
         $client = new Client($account_sid, $auth_token);
-        return $client->messages->create($recipient, array('from' => "whatsapp:$twilio_whatsapp_number", 'body' => $message));
+        return $client->messages->create(
+            $recipient,
+            array(
+                'from' => "whatsapp:$twilio_whatsapp_number",
+                'body' => $message
+            )
+        );
     }
 
 }
