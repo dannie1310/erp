@@ -5,6 +5,7 @@ namespace App\Models\REPSEG;
 
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class FinFacIngresoFactura extends Model
 {
@@ -12,6 +13,12 @@ class FinFacIngresoFactura extends Model
     protected $table = 'fin_fac_ingreso_factura';
     protected $primaryKey = 'idfactura';
     public $timestamps = false;
+    protected $fillable = [
+        'estado',
+        'usuario_cancelo',
+        'motivo_cancelacion',
+        'fecha_cancelacion'
+    ];
 
     /**
      * Relaciones
@@ -203,4 +210,21 @@ class FinFacIngresoFactura extends Model
     /**
      * Métodos
      */
+    public function cancelar($motivo)
+    {
+        try {
+            DB::connection('repseg')->beginTransaction();
+            $this->update([
+                'estado' => 3,
+                'usuario_cancelo' => auth()->id(),
+                'motivo_cancelacion' => $motivo,
+                'fecha_cancelacion' => date('Y-m-d H:i:s')
+            ]);
+            DB::connection('repseg')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('repseg')->rollBack();
+            throw $e;
+        }
+    }
 }

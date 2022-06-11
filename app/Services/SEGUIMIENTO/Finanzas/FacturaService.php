@@ -88,6 +88,6 @@ class FacturaService
 
     public function cancelar($data , $id)
     {
-        return $this->repository->show($id)->cancelar($data['data'][0]);
+        return $this->repository->show($id)->cancelar($data['motivo']);
     }
 }
