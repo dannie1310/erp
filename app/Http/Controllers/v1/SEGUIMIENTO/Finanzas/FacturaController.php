@@ -40,6 +40,9 @@ class FacturaController extends Controller
     {
         $this->middleware('auth:api');
 
+        $this->middleware('permisoGlobal:cancelar_factura_cuenta_x_cobrar')->only('cancelar');
+        $this->middleware('permisoGlobal:consultar_factura_cuenta_x_cobrar')->only(['show','paginate','index','find']);
+
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;

@@ -114,7 +114,7 @@
                         estado: this.getEstado(factura.estado_descripcion, factura.estado_color),
                         buttons: $.extend({}, {
                             id: factura.id,
-                            cancelar: (this.$root.can('eliminar_factura_cuenta_x_cobrar',true) && factura.estado == 1) ? true : false,
+                            cancelar: (this.$root.can('cancelar_factura_cuenta_x_cobrar',true) && factura.estado == 1) ? true : false,
                         })
                     }));
                 },
