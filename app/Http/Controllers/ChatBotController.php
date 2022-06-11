@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Token;
 use App\Models\SEGURIDAD_ERP\EsquemaAutorizacion\Transaccion;
+use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
+use App\Services\SEGURIDAD_ERP\Finanzas\CtgEfosService;
+use App\Utils\Util;
 use Illuminate\Http\Request;
 use GuzzleHttp\Exception\RequestException;
 use Twilio\Rest\Client;
@@ -23,113 +25,150 @@ class ChatBotController extends Controller
 
         if(!$usuario_from){
             $this->sendWhatsAppMessage("El número celular: ".$numero_celular." no esta asociado a ningún usuario.
-			\n Por favor solicite a Soporte a Aplicaciones que le asignen el número.", $from);
+			\n Por favor solicite a Soporte a Aplicaciones que le asignen el número enviando un correo a la dirección: soporte_aplicaciones@desarrollo-hi.atlassian.net", $from);
         }
 
-        switch(strtoupper($body_ex[0]))
+        $H = date_format(now(), "H");
+        if($H>11){
+            $saludo = "Buenas tardes";
+        }else{
+            $saludo = "Buenos días";
+        }
+        $nombre_usuario = ucwords(strtolower($usuario_from->nombre), " ");
+
+
+
+
+
+        if(strtoupper(Util::eliminaCaracteresEspeciales($body)) == "ULTIMOS CAMBIOS EN EFOS" || strtoupper($body) == "ULTIMOS_CAMBIOS_EFOS")
         {
-            case "AUT":
-                if(!key_exists(1, $body_ex))
-                {
-                    $this->sendWhatsAppMessage("Para autorizar una transacción debe mandar el mensaje con el siguiente formato: AUT ####, donde #### es el identificador de transacción que desea autorizar.", $from);
-                    exit;
-                }else{
-                    if(!is_numeric($body_ex[1])){
+            $efos_service = new CtgEfosService(new CtgEfos());
+            $this->sendWhatsAppMessage($efos_service->getUltimosCambiosEFOSTXT(), $from);
+        }else
+        {
+            switch(strtoupper($body_ex[0]))
+            {
+                case "AUT":
+                    if(!key_exists(1, $body_ex))
+                    {
                         $this->sendWhatsAppMessage("Para autorizar una transacción debe mandar el mensaje con el siguiente formato: AUT ####, donde #### es el identificador de transacción que desea autorizar.", $from);
                         exit;
+                    }else{
+                        if(!is_numeric($body_ex[1])){
+                            $this->sendWhatsAppMessage("Para autorizar una transacción debe mandar el mensaje con el siguiente formato: AUT ####, donde #### es el identificador de transacción que desea autorizar.", $from);
+                            exit;
+                        }
                     }
-				}
 
-                $transaccionGeneral = Transaccion::find($body_ex[1]);
-                if(!$transaccionGeneral){
-                    $this->sendWhatsAppMessage("El identificador de transacción ingresado: ".$body_ex[1]." no existe, favor de verificar.", $from);
-                    exit;
-                }
-                $token = Token::where("id_transaccion","=",$transaccionGeneral->id)
-                    ->where("id_firmante","=",$usuario_from->firmante->id)->pluck("token")->first();
-                if(!$token){
-                    $this->sendWhatsAppMessage("Usted no cuenta con los privilegios necesarios para autorizar la transacción con identificador: ".$transaccionGeneral->id, $from);
-                    exit;
-                }
-
-                $client = new \GuzzleHttp\Client();
-                try {
-                    $response = $client->request('GET', "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/solicitud-pago-anticipado/{$transaccionGeneral->id}/autorizar?access_token={$token}");
-                    $responseJSON = json_decode($response->getBody());
-                    if ($response->getStatusCode() == 200) {
-                        $message = "La transacción ha sido autorizada éxitosamente.";
-                        $this->sendWhatsAppMessage($message, $from);
-                    } else {
-                        $this->sendWhatsAppMessage($responseJSON->message, $from);
+                    $transaccionGeneral = Transaccion::find($body_ex[1]);
+                    if(!$transaccionGeneral){
+                        $this->sendWhatsAppMessage("El identificador de transacción ingresado: ".$body_ex[1]." no existe, favor de verificar.", $from);
+                        exit;
                     }
-                } catch (RequestException $th) {
-                    $response = json_decode($th->getResponse()->getBody());
-                    $this->sendWhatsAppMessage($response->message, $from);
-                }
-
-                break;
-
-            case "REC":
-                if(!key_exists(1, $body_ex))
-                {
-                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
-                    exit;
-                }else if(!is_numeric($body_ex[1])){
-                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
-                    exit;
-                } else if(!key_exists(2, $body_ex))
-                {
-                    $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
-                    exit;
-                }
-
-                $motivo = "";
-
-                for ($i = 2 ; $i<count($body_ex); $i++) {
-                    $motivo .= $body_ex[$i]." ";
-                }
-
-                $transaccionGeneral = Transaccion::find($body_ex[1]);
-                if(!$transaccionGeneral){
-                    $this->sendWhatsAppMessage("El identificador de transacción ingresado: ".$body_ex[1]." no existe, favor de verificar.", $from);
-                    exit;
-                }
-                $token = Token::where("id_transaccion","=",$transaccionGeneral->id)
-                    ->where("id_firmante","=",$usuario_from->firmante->id)->pluck("token")->first();
-                if(!$token){
-                    $this->sendWhatsAppMessage("Usted no cuenta con los privilegios necesarios para rechazar la transacción con identificador: ".$transaccionGeneral->id, $from);
-                    exit;
-                }
-
-                $client = new \GuzzleHttp\Client();
-                try {
-                    $response = $client->request('GET', "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/solicitud-pago-anticipado/{$transaccionGeneral->id}/rechazar?access_token={$token}&motivo={$motivo}");
-                    $responseJSON = json_decode($response->getBody());
-                    if ($response->getStatusCode() == 200) {
-                        $message = "La transacción ha sido rechazada éxitosamente.";
-                        $this->sendWhatsAppMessage($message, $from);
-                    } else {
-                        $this->sendWhatsAppMessage($responseJSON->message, $from);
+                    $token = Token::where("id_transaccion","=",$transaccionGeneral->id)
+                        ->where("id_firmante","=",$usuario_from->firmante->id)->pluck("token")->first();
+                    if(!$token){
+                        $this->sendWhatsAppMessage("Usted no cuenta con los privilegios necesarios para autorizar la transacción con identificador: ".$transaccionGeneral->id, $from);
+                        exit;
                     }
-                } catch (RequestException $th) {
-                    $response = json_decode($th->getResponse()->getBody());
-                    $this->sendWhatsAppMessage($response->message, $from);
-                }
 
-                break;
+                    $client = new \GuzzleHttp\Client();
+                    try {
+                        $response = $client->request('GET', "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/solicitud-pago-anticipado/{$transaccionGeneral->id}/autorizar?access_token={$token}");
+                        $responseJSON = json_decode($response->getBody());
+                        if ($response->getStatusCode() == 200) {
+                            $message = "La transacción ha sido autorizada éxitosamente.";
+                            $this->sendWhatsAppMessage($message, $from);
+                        } else {
+                            $this->sendWhatsAppMessage($responseJSON->message, $from);
+                        }
+                    } catch (RequestException $th) {
+                        $response = json_decode($th->getResponse()->getBody());
+                        $this->sendWhatsAppMessage($response->message, $from);
+                    }
 
-            CASE "DEL":
+                    break;
 
-                $this->sendWhatsAppMessage("Por el momento esta opción no esta disponible.", $from);
+                case "REC":
+                    if(!key_exists(1, $body_ex))
+                    {
+                        $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
+                        exit;
+                    }else if(!is_numeric($body_ex[1])){
+                        $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
+                        exit;
+                    } else if(!key_exists(2, $body_ex))
+                    {
+                        $this->sendWhatsAppMessage("Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.", $from);
+                        exit;
+                    }
 
-                break;
+                    $motivo = "";
 
-            default:
+                    for ($i = 2 ; $i<count($body_ex); $i++) {
+                        $motivo .= $body_ex[$i]." ";
+                    }
 
-                $this->sendWhatsAppMessage("La opción que ingresó no es válida.", $from);
+                    $transaccionGeneral = Transaccion::find($body_ex[1]);
+                    if(!$transaccionGeneral){
+                        $this->sendWhatsAppMessage("El identificador de transacción ingresado: ".$body_ex[1]." no existe, favor de verificar.", $from);
+                        exit;
+                    }
+                    $token = Token::where("id_transaccion","=",$transaccionGeneral->id)
+                        ->where("id_firmante","=",$usuario_from->firmante->id)->pluck("token")->first();
+                    if(!$token){
+                        $this->sendWhatsAppMessage("Usted no cuenta con los privilegios necesarios para rechazar la transacción con identificador: ".$transaccionGeneral->id, $from);
+                        exit;
+                    }
 
-                break;
+                    $client = new \GuzzleHttp\Client();
+                    try {
+                        $response = $client->request('GET', "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/solicitud-pago-anticipado/{$transaccionGeneral->id}/rechazar?access_token={$token}&motivo={$motivo}");
+                        $responseJSON = json_decode($response->getBody());
+                        if ($response->getStatusCode() == 200) {
+                            $message = "La transacción ha sido rechazada éxitosamente.";
+                            $this->sendWhatsAppMessage($message, $from);
+                        } else {
+                            $this->sendWhatsAppMessage($responseJSON->message, $from);
+                        }
+                    } catch (RequestException $th) {
+                        $response = json_decode($th->getResponse()->getBody());
+                        $this->sendWhatsAppMessage($response->message, $from);
+                    }
+
+                    break;
+
+                CASE "DEL":
+
+                    $this->sendWhatsAppMessage("Por el momento esta opción no esta disponible.", $from);
+
+                    break;
+
+                CASE "ULTIMOS_CAMBIOS_EFOS":
+
+                    $efos_service = new CtgEfosService(new CtgEfos());
+                    $this->sendWhatsAppMessage($efos_service->getUltimosCambiosEFOSTXT(), $from);
+                    break;
+
+                default:
+
+                    $this->sendWhatsAppMessage($saludo." ".$nombre_usuario.", las peticiones disponibles por el momento son:
+
+-_*Últimos Cambios en EFOS*_: Para conocer los últimos cambios en el estado de los EFOS puede mandar alguno de los siguientes mensajes:
+\n-Últimos cambios en EFOS, \n-ULTIMOS_CAMBIOS_EFOS
+
+-_*Autorizar Transacción*_: Para autorizar una transacción debe mandar el mensaje con el siguiente formato: AUT ####, donde #### es el identificador de transacción que desea autorizar.
+
+-_*Rechazar Transacción*_: Para rechazar una transacción debe mandar el mensaje con el siguiente formato: REC #### MMMMMM, donde #### es el identificador de transacción que desea rechazar y MMMMMM el motivo del rechazo.
+
+", $from);
+
+                    break;
+            }
+
         }
+
+
 
         /*$client = new \GuzzleHttp\Client();
         try {

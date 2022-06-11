@@ -9,6 +9,7 @@ use App\Informes\EFOSEmpresaInformeCFDIDesglosado;
 use App\Informes\EFOSEmpresaInformeDesglosado;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\Fiscal\EFOSCambio;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use Illuminate\Support\Facades\DB;
 
@@ -70,7 +71,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function rfc($data)
     {
-       return $this->model->api($data);
+        return $this->model->api($data);
     }
 
     public function getInformeCFD()
@@ -93,5 +94,46 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
         $informe = EFOSEmpresaInformeCFDIDesglosado::getInforme();
         return $informe;
+    }
+    public function getUltimosProcesamientosCambios()
+    {
+        $ultimos_id_procesamientos_cambios = EFOSCambio::where("estado","=",1)->orderBy("id_procesamiento_efos","desc")->distinct()->take(3)->pluck("id_procesamiento_efos")->toArray();
+        $ultimos_procesamientos_cambios = ProcesamientoListaEfos::whereIn("id",$ultimos_id_procesamientos_cambios)->orderBy("id","desc")->get();
+        return $ultimos_procesamientos_cambios;
+    }
+
+    public function getUltimosCambiosEFOSTXT()
+    {
+        $respuesta = "";
+        $ultimos_procesamientos_cambios = $this->getUltimosProcesamientosCambios();
+
+        $i = 0;
+        foreach ($ultimos_procesamientos_cambios as $ultimo_procesamiento_cambio) {
+
+            $respuesta .= "\nFecha de Procesamiento: ".$ultimo_procesamiento_cambio->fecha_hora_format;
+            $respuesta .= "\nFecha de Actualización de lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_actualizacion_lista_efos."\n";
+            //$respuesta .= "\n Id Procesamiento: ".$ultimo_procesamiento_cambio->id;
+
+            foreach ($ultimo_procesamiento_cambio->cambios as $cambio_efos)
+            {
+                $respuesta .= "\n*_".$cambio_efos->efos->razon_social."_*";
+                $respuesta .= "\n".$cambio_efos->efos->rfc;
+
+                if($cambio_efos->estadoInicialObj){
+                    $respuesta .= "\nEstado Inicial: ".$cambio_efos->estadoInicialObj->descripcion;
+                }else{
+                    $respuesta .= "\nEstado Inicial: Proveedor/Contratista";
+                }
+
+                $respuesta .= "\nEstado Final: ".$cambio_efos->estadoFinalObj->descripcion;
+            }
+            if($i<count($ultimos_procesamientos_cambios)-1){
+                $respuesta .= "\n__________________________________\n";
+            }
+            $i++;
+        }
+
+        return $respuesta;
+
     }
 }
