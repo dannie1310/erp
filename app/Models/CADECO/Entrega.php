@@ -50,7 +50,7 @@ class Entrega extends Model
 
     public function getPendienteEntregaAttribute()
     {
-        return number_format(($this->cantidad - $this->surtida), 2, '.', '');
+        return number_format(($this->cantidad - $this->surtida), 3, '.', '');
     }
 
     public function getDestinoAttribute()
