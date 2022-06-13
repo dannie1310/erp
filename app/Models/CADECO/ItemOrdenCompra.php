@@ -65,7 +65,7 @@ class ItemOrdenCompra extends Item
     public function scopeDisponibleEntradaAlmacen($query)
     {
         return $query->whereHas('entrega', function ($qu) {
-            return $qu->whereRaw('ROUND(cantidad, 2) - ROUND(surtida, 2) > 0');
+            return $qu->whereRaw('ROUND(cantidad, 3) - ROUND(surtida, 3) > 0');
         });
     }
 
