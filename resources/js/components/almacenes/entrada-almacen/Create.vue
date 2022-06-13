@@ -124,7 +124,7 @@
                                                                             type="number"
                                                                             step="any"
                                                                             data-vv-as="Cantidad Ingresada"
-                                                                            v-validate="{min_value: 0.01, max_value:partida.cantidad_pendiente, decimal:3}"
+                                                                            v-validate="{min_value: 0.001, max_value:partida.cantidad_pendiente, decimal:3}"
                                                                             class="form-control"
                                                                             :name="`cantidad_ingresada[${i}]`"
                                                                             placeholder="Cantidad Ingresada"

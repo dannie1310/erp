@@ -386,8 +386,7 @@ class EntradaMaterial extends Transaccion
             $cant = EntradaMaterialPartida::where('item_antecedente', '=', $partida->item_antecedente)
                             ->where('id_antecedente', '=', $partida->id_antecedente)
                             ->where('id_transaccion', '!=', $partida->id_transaccion)->sum('cantidad');
-            
-            if ($entrega->surtida != $cant){
+            if (abs($entrega->surtida - $cant) > 0.001){
                 DB::connection('cadeco')->rollBack();
                 throw New \Exception('Error en el proceso de eliminación de entrada de almacén, no se actualizó la cantidad surtida en la entrega.');
             }
