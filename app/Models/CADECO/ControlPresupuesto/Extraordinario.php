@@ -92,7 +92,7 @@ class Extraordinario extends SolicitudCambio
 
             $nuevo_nivel = null;
             if($concepto_nivel){
-                $cantidad_partidas = $concepto_raiz->hijos()->count();
+                $cantidad_partidas = $concepto_raiz->numeroUltimoNivel();
                 $nuevo_nivel = substr($partida_inicial->nivel, 0, strlen($partida_inicial->nivel)-4 ).str_pad($cantidad_partidas + 1,3,"0", STR_PAD_LEFT) . '.';
             }
 
@@ -208,7 +208,7 @@ class Extraordinario extends SolicitudCambio
             if($data["tipo_ruta"] == 2){
                 $partida_padre = Concepto::find($data['id_nodo_ruta_nueva']);
                 $nivel_base = $partida_padre->nivel;
-                $cantidad_hijos = $partida_padre->hijos()->count();
+                $cantidad_hijos = $partida_padre->numeroUltimoNivel();
 
                 foreach($data["partidas_nueva_ruta"] as $partida_nueva_ruta)
                 {
@@ -227,7 +227,7 @@ class Extraordinario extends SolicitudCambio
             } else {
                 $partida_padre = Concepto::find($data['id_nodo_extraordinario']);
                 $nivel_base = $partida_padre->nivel;
-                $cantidad_hijos = $partida_padre->hijos()->count();
+                $cantidad_hijos = $partida_padre->numeroUltimoNivel();
                 $solicitud_extraordinario->id_concepto_raiz = $data['id_nodo_extraordinario'];
                 $solicitud_extraordinario->save();
             }

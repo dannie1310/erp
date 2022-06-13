@@ -388,6 +388,15 @@ class Concepto extends Model
             ->orderBy('nivel', 'ASC');
     }
 
+    public function numeroUltimoNivel(){
+        $ultimoConcepto =  $this->hasMany(self::class, 'id_obra', 'id_obra')
+            ->where('nivel', 'LIKE', $this->nivel . '___.')
+            ->whereNull('id_material')
+            ->orderBy('nivel', 'DESC')->first();
+        $nivelArray = array_filter(explode('.', $ultimoConcepto->nivel));
+        return (int) $nivelArray[sizeof($nivelArray)-1];
+    }
+
     /**
      *  Se muestra la ruta desde 3er nivel (000.000.000.)
      * @return mixed|string
