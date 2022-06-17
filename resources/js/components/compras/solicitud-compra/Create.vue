@@ -176,8 +176,8 @@
                                                     <td v-else>{{partida.material.descripcion}}</td>
                                                     <td>
                                                         <input type="number"
-                                                               min="0.01"
-                                                               step=".01"
+                                                               min="0.001"
+                                                               step=".001"
                                                                class="form-control"
                                                                :name="`cantidad[${i}]`"
                                                                data-vv-as="Cantidad"
