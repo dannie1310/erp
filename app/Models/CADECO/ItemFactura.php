@@ -81,8 +81,10 @@ class ItemFactura extends Item
             return 'Renta de ' . $this->material->descripcion;
         }else if($this->numero == 7){
             return 'Seguros y Fianzas';
+        }else if($this->numero == 5){
+            return 'Cuotas Sindicales';
         }else{
-            
+            // dd($this);
             switch ($this->antecedente->tipo_transaccion){
                 case 51:
                     return 'SUBCONTRATO ' . $this->antecedente->numero_folio_format;
