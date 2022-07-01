@@ -301,7 +301,7 @@ class AsignacionFormato extends Rotation
                             $this->SetTextColor(0, 0, 0);
                         }
                         $this->SetFont('Arial', '', $font_importes);
-                        $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->precio_compuesto, 4, '.', ',') : '', "T B L R", 0, "R", 1);
+                        $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->precio_compuesto, 2, '.', ',') : '', "T B L R", 0, "R", 1);
                         $this->Cell($anchos["pu"], $heigth, $partida_cotizacion ? number_format($partida_cotizacion->cantidad * $partida_cotizacion->precio_compuesto, 2, '.', ',') : '', "T B L R", 0, "R", 1);
                         $this->CellFitScale($anchos["pu"], $heigth, $partida_cotizacion ? $partida_cotizacion->moneda ? $partida_cotizacion->moneda->nombre : '' : '', "T B L R", 0, "R", 1);
                         $asignacion_partida = AsignacionProveedorPartida::where('id_transaccion_cotizacion', '=', $cotizaciones[$i]->id_transaccion)
