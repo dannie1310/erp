@@ -838,8 +838,10 @@ class ContratoProyectado extends Transaccion
                             {
                                 $partida->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
                                 $partida->save();
-                                $partida->movimiento->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
-                                $partida->movimiento->save();
+                                if($partida->movimiento){
+                                    $partida->movimiento->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
+                                    $partida->movimiento->save();
+                                }                               
                             }
                         }
                     }
