@@ -69,7 +69,7 @@ class OrdenPago extends Transaccion
                     'fecha'=>$data["fecha_pago"],
                     'monto'=>-1*abs($data["monto_pagado"]),
                     'id_empresa'=>$this->id_empresa,
-                    'destino'=>$this->empresa->razon_social,
+                    'destino'=>substr($this->empresa->razon_social,0,124),
                     'id_moneda'=>$data["id_moneda_cuenta_cargo"],
                     'observaciones'=>$this->factura->observaciones,
                     'cumplimiento'=>$data["fecha_pago"],
