@@ -110,8 +110,8 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         $i = 0;
         foreach ($ultimos_procesamientos_cambios as $ultimo_procesamiento_cambio) {
 
-            $respuesta .= "\nFecha de Procesamiento: ".$ultimo_procesamiento_cambio->fecha_hora_format;
-            $respuesta .= "\nFecha de Actualización de lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_actualizacion_lista_efos."\n";
+            $respuesta .= "\nFecha de Procesamiento de Lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_hora_format;
+            $respuesta .= "\nFecha de Actualización de Lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_actualizacion_lista_efos."\n";
             //$respuesta .= "\n Id Procesamiento: ".$ultimo_procesamiento_cambio->id;
 
             foreach ($ultimo_procesamiento_cambio->cambios as $cambio_efos)
@@ -120,12 +120,12 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 $respuesta .= "\n".$cambio_efos->efos->rfc;
 
                 if($cambio_efos->estadoInicialObj){
-                    $respuesta .= "\nEstado Inicial: ".$cambio_efos->estadoInicialObj->descripcion;
+                    $respuesta .= "\nEstado Inicial en Lista de EFOS: ".$cambio_efos->estadoInicialObj->descripcion;
                 }else{
                     $respuesta .= "\nEstado Inicial: Proveedor/Contratista";
                 }
 
-                $respuesta .= "\nEstado Final: ".$cambio_efos->estadoFinalObj->descripcion;
+                $respuesta .= "\nEstado Final Lista en Lista de EFOS: ".$cambio_efos->estadoFinalObj->descripcion;
             }
             if($i<count($ultimos_procesamientos_cambios)-1){
                 $respuesta .= "\n__________________________________\n";

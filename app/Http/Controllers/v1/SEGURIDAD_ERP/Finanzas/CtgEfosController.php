@@ -64,6 +64,11 @@ class CtgEfosController extends Controller
         return response()->json( $respuesta, 200);
     }
 
+    public function getUltimosCambiosEFOSTXT()
+    {
+        return $this->service->getUltimosCambiosEFOSTXT();
+    }
+
     public function obtenerInforme(Request $request)
     {
         $respuesta =$this->service->obtenerInforme();

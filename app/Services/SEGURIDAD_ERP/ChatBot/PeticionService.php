@@ -57,13 +57,16 @@ class PeticionService
 
         $nombre_usuario = ucwords(strtolower($usuario_from->nombre), " ");
 
+        $tokenobj = $usuario_from->createToken('token-chat-bot');
+        $token = $tokenobj->accessToken;
+
         $peticion = $this->store(
             [
                 "id_usuario"=>$usuario_from->idusuario,
                 "peticion"=>$body,
             ]
         );
-        $mensaje = $peticion->getRespuesta(["saludo"=>$saludo,"nombre"=>$nombre_usuario]);
+        $mensaje = $peticion->getRespuesta(["saludo"=>$saludo,"nombre"=>$nombre_usuario],$tokenobj);
 
         return $mensaje;
 

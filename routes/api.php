@@ -1710,7 +1710,7 @@ $api->version('v1', function ($api) {
             $api->get('obtener-informe-desglosado/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDesglosadoPDF');
             $api->get('obtener-informe-cfdi-desglosado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@descargaInformeCFDIDesglosado');
             $api->get('obtener-informe-definitivos/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@obtenerInformeDefinitivoPDF');
-
+            $api->get('ultimos-cambios-efos-txt', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@getUltimosCambiosEFOSTXT');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');

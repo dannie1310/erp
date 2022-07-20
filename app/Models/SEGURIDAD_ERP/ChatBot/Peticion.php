@@ -93,7 +93,7 @@ class Peticion extends Model
         return $opcion;
     }
 
-    public function getRespuesta($parametros)
+    public function getRespuesta($parametros, $tokenObj)
     {
         $respuesta =  $this->opcion->texto_devolver;
         foreach ($parametros as $label=>$value)
@@ -101,10 +101,21 @@ class Peticion extends Model
             $respuesta = str_replace("[$label]",$value,$respuesta);
         }
 
-        foreach($this->opcion->opcionesHijas()->orderBy("orden")->get() as $opcionHija)
+        $opcionesHijas = $this->opcion->opcionesHijas()->orderBy("orden")->get();
+
+        if(count($opcionesHijas)>0)
         {
-            $respuesta.="\n".$opcionHija->numero_clave.".-".$opcionHija->texto_devolver;
+            foreach($opcionesHijas as $opcionHija)
+            {
+                $respuesta.="\n".$opcionHija->numero_clave.".-".$opcionHija->texto_devolver;
+            }
+        } else if($this->opcion->ruta_api != "")
+        {
+            $respuesta.="\n".$this->getRespuestaAPI($this->opcion->ruta_api, $tokenObj->accessToken);
+
         }
+
+
         if($this->opcion->id_padre>0)
         {
             $respuesta.="\n< Regresar";
@@ -112,6 +123,35 @@ class Peticion extends Model
 
         return $respuesta;
 
+    }
+
+    public function getRespuestaAPI($ruta_api, $token)
+    {
+
+        $respuesta = "";
+
+        $client = new \GuzzleHttp\Client();
+        $ruta_peticion = "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/".$ruta_api."?access_token=".$token;
+
+        try {
+            $response = $client->request('GET', $ruta_peticion);
+            $responseJSON = json_decode($response->getBody());
+
+            /*if ($response->getStatusCode() == 200) {
+                $message = "La transacción ha sido autorizada éxitosamente.";
+                $this->sendWhatsAppMessage($message, $from);
+            } else {
+                $this->sendWhatsAppMessage($responseJSON->message, $from);
+            }*/
+        } catch (RequestException $th) {
+            $responseJSON = json_decode($th->getResponse()->getBody());
+            //$this->sendWhatsAppMessage($response->message, $from);
+        }
+
+        //$respuesta = $responseJSON->message;
+        $respuesta = $response->getBody();
+
+        return $respuesta;
     }
 
 }
