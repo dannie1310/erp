@@ -41,7 +41,7 @@ class CtgEfosController extends Controller
     public function __construct(CtgEfosService $service, Manager $fractal, CtgEfosTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('permiso:consultar_efos_empresa')->only('getUltimosCambiosEFOSTXT');
+        $this->middleware('permiso:consultar_efos_empresa')->only(['getUltimosCambiosEFOSTXT','getUltimasListasEFOSTXT']);
         /*$this->middleware('context')->except(['paginate','cargaLayout','rfc']);*/
 
         $this->service = $service;
@@ -68,6 +68,11 @@ class CtgEfosController extends Controller
     public function getUltimosCambiosEFOSTXT()
     {
         return $this->service->getUltimosCambiosEFOSTXT();
+    }
+
+    public function getUltimasListasEFOSTXT()
+    {
+        return $this->service->getUltimasListasEFOSTXT();
     }
 
     public function obtenerInforme(Request $request)

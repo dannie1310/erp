@@ -100,4 +100,9 @@ class CtgEfosService
         return $this->repository->getUltimosCambiosEFOSTXT();
     }
 
+    public function getUltimasListasEFOSTXT()
+    {
+        return $this->repository->getUltimasListasEFOSTXT();
+    }
+
 }

@@ -96,6 +96,13 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         $informe = EFOSEmpresaInformeCFDIDesglosado::getInforme();
         return $informe;
     }
+
+    public function getUltimasListas()
+    {
+        $ultimas_listas = ProcesamientoListaEfos::where("nombre_archivo","!=","")->orderBy("id","desc")->take(8)->get();
+        return $ultimas_listas;
+    }
+
     public function getUltimosProcesamientosCambios()
     {
         $ultimos_id_procesamientos_cambios = EFOSCambio::where("estado","=",1)->orderBy("id_procesamiento_efos","desc")->distinct()->take(3)->pluck("id_procesamiento_efos")->toArray();
@@ -199,5 +206,113 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
         return $respuesta;
 
+    }
+
+    public function getUltimasListasEFOSTXT()
+    {
+        $respuesta = "";
+        $ultimas_listas = $this->getUltimasListas();
+
+        $i = 0;
+        foreach ($ultimas_listas as $ultimas_lista)
+        {
+            $definitivos = $ultimas_lista->cambios()->where("estado_final","=",0)->get();
+            $presuntos = $ultimas_lista->cambios()->where("estado_final","=",2)->get();
+            $sentencias_favorable = $ultimas_lista->cambios()->where("estado_final","=",3)->get();
+            $desvirtuados = $ultimas_lista->cambios()->where("estado_final","=",1)->get();
+
+            $respuesta .= "Fecha Actualización Lista: ".$ultimas_lista->fecha_actualizacion_lista_efos;
+            $respuesta .= "\nFecha Procesamiento Lista: ".$ultimas_lista->fecha_hora_format."\n";
+
+            if(count($definitivos)>0)
+            {
+                $respuesta .= "\n🚫EFOS Definivos Detectados: ".count($definitivos)."\n";
+                $jd = 0;
+                foreach ($definitivos as $definitivo)
+                {
+                    $respuesta .= "\n"."*".$definitivo->efos->rfc."* ".$definitivo->efos->razon_social;
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($definitivo->efos->rfc);
+                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+
+                    if($jd<=count($definitivos)-1){
+                        $respuesta .= "\n";
+                    }
+
+                    $jd++;
+                }
+
+            }
+
+            if(count($presuntos)>0)
+            {
+                $respuesta .= "\n⭕️EFOS Presuntos Detectados: ".count($presuntos)."\n";
+                $jp = 0;
+                foreach ($presuntos as $presunto)
+                {
+                    $respuesta .= "\n *".$presunto->efos->rfc."* ".$presunto->efos->razon_social;
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($presunto->efos->rfc);
+                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+
+                    if($jp<=count($definitivos)-1){
+                        $respuesta .= "\n";
+                    }
+
+                    $jp++;
+
+                }
+
+            }
+
+            if(count($sentencias_favorable)>0)
+            {
+                $respuesta .= "\n✅️Sentencias Favorables: ".count($sentencias_favorable)."\n";
+                $jsf = 0;
+                foreach ($sentencias_favorable as $sentencia_favorable)
+                {
+                    $respuesta .= "\n *".$sentencia_favorable->efos->rfc."* ".$sentencia_favorable->efos->razon_social;
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($sentencia_favorable->efos->rfc);
+                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+
+                    if($jsf<=count($definitivos)-1){
+                        $respuesta .= "\n";
+                    }
+
+                    $jsf++;
+                }
+
+            }
+
+            if(count($desvirtuados)>0)
+            {
+                $respuesta .= "\n✅Desvirtuados: ".count($desvirtuados)."\n";
+                $jd = 0;
+                foreach ($desvirtuados as $desvirtuado)
+                {
+                    $respuesta .= "\n️".$desvirtuados->efos->rfc." ".$desvirtuados->efos->razon_social;
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($desvirtuados->efos->rfc);
+                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+
+                    if($jd<=count($definitivos)-1){
+                        $respuesta .= "\n";
+                    }
+
+                    $jd++;
+                }
+
+            }
+
+            if(count($presuntos)==0 && count($definitivos)==0 && count($desvirtuados)==0 && count($sentencias_favorable)==0)
+            {
+                $respuesta .= "\nSIN CAMBIOS DETECTADOS";
+            }
+
+
+            if($i<count($ultimas_listas)-1){
+                $respuesta .= "\n__________________________________\n\n";
+            }
+            $i++;
+        }
+
+        return $respuesta;
     }
 }
