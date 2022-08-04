@@ -136,7 +136,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $partidas = InformeDetalleUltimosCambiosEFOS::getPartidas($cambio_efos->efos->rfc);
                     if($partidas["pendientes"])
                     {
-                        $respuesta .= "\n\n🔴️Pendientes: \n";
+                        $respuesta .= "\n\n🔴️Estatus Pendiente de Corrección: \n";
                         foreach ($partidas["pendientes"] as $pendiente)
                         {
                             $respuesta .= "\n🏢"."*_".$pendiente["empresa"]."_*". " ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
@@ -145,7 +145,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
                     if($partidas["en_aclaracion"])
                     {
-                        $respuesta .= "\n\n🟡En Aclaración: \n";
+                        $respuesta .= "\n\n🟡Estatus En Aclaración: \n";
                         foreach ($partidas["en_aclaracion"] as $aclaracion)
                         {
                             $respuesta .= "\n🏢"."*_".$aclaracion["empresa"]."_*". " ".$aclaracion["no_CFDI"]." CFDI ".$aclaracion["importe_format"];
@@ -154,7 +154,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
                     if($partidas["corregidos"])
                     {
-                        $respuesta .= "\n\n🟢Corregidos: \n";
+                        $respuesta .= "\n\n🟢Estatus Corregido: \n";
                         foreach ($partidas["corregidos"] as $corregido)
                         {
                             $respuesta .= "\n🏢"."*_".$corregido["empresa"]."_*". " ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
@@ -163,7 +163,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
                     if($partidas["no_deducidos"])
                     {
-                        $respuesta .= "\n\n🟢No Deducidos: \n";
+                        $respuesta .= "\n\n🟢Estatus No Deducido: \n";
                         foreach ($partidas["no_deducidos"] as $no_deducido)
                         {
                             $respuesta .= "\n🏢"."*_".$no_deducido["empresa"]."_*". " ".$no_deducido["no_CFDI"]." CFDI ".$no_deducido["importe_format"];
