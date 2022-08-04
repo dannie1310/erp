@@ -118,7 +118,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             $cambios_efos = $ultimo_procesamiento_cambio->cambios;
             foreach ($cambios_efos as $cambio_efos)
             {
-                $respuesta .= "\n🏢🚫 "."*_".$cambio_efos->efos->razon_social."_*";
+                $respuesta .= "\n🚫 "."*_".$cambio_efos->efos->razon_social."_*";
                 $respuesta .= "\n".$cambio_efos->efos->rfc;
 
                 if($cambio_efos->estadoInicialObj){
@@ -131,53 +131,57 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
                 if(in_array($cambio_efos->estadoFinalObj->descripcion, ["Presunto","Definitivo"]))
                 {
-                    $respuesta .= "\n\nDetalle de CFDI: \n";
+                    $respuesta .= "\n\n📑Detalle de CFDI:";
 
                     $partidas = InformeDetalleUltimosCambiosEFOS::getPartidas($cambio_efos->efos->rfc);
                     if($partidas["pendientes"])
                     {
-                        $respuesta .= "Pendientes: \n";
+                        $respuesta .= "\n\n🔴️Pendientes: \n";
                         foreach ($partidas["pendientes"] as $pendiente)
                         {
-                            $respuesta .= "\n"."*_".$pendiente["empresa"]."_*". " ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
+                            $respuesta .= "\n🏢"."*_".$pendiente["empresa"]."_*". " ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
                         }
                     }
 
                     if($partidas["en_aclaracion"])
                     {
-                        $respuesta .= "En Aclaración: \n";
+                        $respuesta .= "\n\n🟡En Aclaración: \n";
                         foreach ($partidas["en_aclaracion"] as $aclaracion)
                         {
-                            $respuesta .= "\n"."*_".$aclaracion["empresa"]."_*". " ".$aclaracion["no_CFDI"]." CFDI ".$aclaracion["importe_format"];
+                            $respuesta .= "\n🏢"."*_".$aclaracion["empresa"]."_*". " ".$aclaracion["no_CFDI"]." CFDI ".$aclaracion["importe_format"];
                         }
                     }
 
                     if($partidas["corregidos"])
                     {
-                        $respuesta .= "Corregidos: \n";
+                        $respuesta .= "\n\n🟢Corregidos: \n";
                         foreach ($partidas["corregidos"] as $corregido)
                         {
-                            $respuesta .= "\n"."*_".$corregido["empresa"]."_*". " ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
+                            $respuesta .= "\n🏢"."*_".$corregido["empresa"]."_*". " ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
                         }
                     }
 
                     if($partidas["no_deducidos"])
                     {
-                        $respuesta .= "No Deducidos: \n";
+                        $respuesta .= "\n\n🟢No Deducidos: \n";
                         foreach ($partidas["no_deducidos"] as $no_deducido)
                         {
-                            $respuesta .= "\n"."*_".$no_deducido["empresa"]."_*". " ".$no_deducido["no_CFDI"]." CFDI ".$no_deducido["importe_format"];
+                            $respuesta .= "\n🏢"."*_".$no_deducido["empresa"]."_*". " ".$no_deducido["no_CFDI"]." CFDI ".$no_deducido["importe_format"];
                         }
                     }
 
                     if($partidas["presuntos"])
                     {
-                        $respuesta .= "Presuntos: \n";
+                        $respuesta .= "\n\n🟠Presuntos: \n";
                         foreach ($partidas["presuntos"] as $presunto)
                         {
-                            $respuesta .= "\n"."*_".$presunto["empresa"]."_*". " ".$presunto["no_CFDI"]." CFDI ".$presunto["importe_format"];
+                            $respuesta .= "\n🏢"."*_".$presunto["empresa"]."_*". " ".$presunto["no_CFDI"]." CFDI ".$presunto["importe_format"];
                         }
                     }
+
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($cambio_efos->efos->rfc);
+                    $respuesta .= "\n"."*_Total_*". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+
                 }
 
                 if(count($cambios_efos)>$j)

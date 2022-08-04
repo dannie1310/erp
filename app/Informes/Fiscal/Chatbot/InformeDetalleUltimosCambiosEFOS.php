@@ -36,6 +36,38 @@ class InformeDetalleUltimosCambiosEFOS
 
     }
 
+    public static function getTotal($rfc_efos)
+    {
+        $total = DB::select("SELECT
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       format (
+          sum (
+             CASE cfd_sat.tipo_comprobante
+                WHEN 'I' THEN cfd_sat.total
+                WHEN 'E' THEN cfd_sat.total * -1
+             END),
+          'C')
+          AS importe_format,
+       sum (
+          CASE cfd_sat.tipo_comprobante
+             WHEN 'I' THEN cfd_sat.total
+             WHEN 'E' THEN cfd_sat.total * -1
+          END)
+          AS importe
+  FROM SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+
+ WHERE cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
+AND cfd_sat.rfc_emisor ='".$rfc_efos."'
+
+ORDER BY 2 DESC")
+        ;
+        $total = array_map(function ($value) {
+            return (array)$value;
+        }, $total);
+
+        return $total[0];
+    }
+
     public static function getPendientesCorreccion($rfc_efos){
 
         $partidas = DB::select("SELECT ctg_estados_efos.descripcion AS estatus,
