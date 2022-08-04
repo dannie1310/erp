@@ -180,7 +180,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     }
 
                     $total = InformeDetalleUltimosCambiosEFOS::getTotal($cambio_efos->efos->rfc);
-                    $respuesta .= "\n"."*_Total_*". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+                    $respuesta .= "\n\n"."*_Total_*". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
 
                 }
 
