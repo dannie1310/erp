@@ -7,6 +7,7 @@ use App\Facades\Context;
 use App\Informes\EFOSEmpresaInforme;
 use App\Informes\EFOSEmpresaInformeCFDIDesglosado;
 use App\Informes\EFOSEmpresaInformeDesglosado;
+use App\Informes\Fiscal\Chatbot\InformeDetalleUltimosCambiosEFOS;
 use App\Models\SEGURIDAD_ERP\Finanzas\CtgEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOSCambio;
@@ -110,13 +111,14 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         $i = 0;
         foreach ($ultimos_procesamientos_cambios as $ultimo_procesamiento_cambio) {
 
-            $respuesta .= "\nFecha de Procesamiento de Lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_hora_format;
+            $respuesta .= "Fecha de Procesamiento de Lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_hora_format;
             $respuesta .= "\nFecha de Actualización de Lista de EFOS: ".$ultimo_procesamiento_cambio->fecha_actualizacion_lista_efos."\n";
-            //$respuesta .= "\n Id Procesamiento: ".$ultimo_procesamiento_cambio->id;
 
-            foreach ($ultimo_procesamiento_cambio->cambios as $cambio_efos)
+            $j = 1;
+            $cambios_efos = $ultimo_procesamiento_cambio->cambios;
+            foreach ($cambios_efos as $cambio_efos)
             {
-                $respuesta .= "\n*_".$cambio_efos->efos->razon_social."_*";
+                $respuesta .= "\n🏢🚫 "."*_".$cambio_efos->efos->razon_social."_*";
                 $respuesta .= "\n".$cambio_efos->efos->rfc;
 
                 if($cambio_efos->estadoInicialObj){
@@ -125,10 +127,68 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $respuesta .= "\nEstado Inicial: Proveedor/Contratista";
                 }
 
-                $respuesta .= "\nEstado Final Lista en Lista de EFOS: ".$cambio_efos->estadoFinalObj->descripcion;
+                $respuesta .= "\nEstado Final en Lista de EFOS: ".$cambio_efos->estadoFinalObj->descripcion;
+
+                if(in_array($cambio_efos->estadoFinalObj->descripcion, ["Presunto","Definitivo"]))
+                {
+                    $respuesta .= "\n\nDetalle de CFDI: \n";
+
+                    $partidas = InformeDetalleUltimosCambiosEFOS::getPartidas($cambio_efos->efos->rfc);
+                    if($partidas["pendientes"])
+                    {
+                        $respuesta .= "Pendientes: \n";
+                        foreach ($partidas["pendientes"] as $pendiente)
+                        {
+                            $respuesta .= "\n"."*_".$pendiente["empresa"]."_*". " ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
+                        }
+                    }
+
+                    if($partidas["en_aclaracion"])
+                    {
+                        $respuesta .= "En Aclaración: \n";
+                        foreach ($partidas["en_aclaracion"] as $aclaracion)
+                        {
+                            $respuesta .= "\n"."*_".$aclaracion["empresa"]."_*". " ".$aclaracion["no_CFDI"]." CFDI ".$aclaracion["importe_format"];
+                        }
+                    }
+
+                    if($partidas["corregidos"])
+                    {
+                        $respuesta .= "Corregidos: \n";
+                        foreach ($partidas["corregidos"] as $corregido)
+                        {
+                            $respuesta .= "\n"."*_".$corregido["empresa"]."_*". " ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
+                        }
+                    }
+
+                    if($partidas["no_deducidos"])
+                    {
+                        $respuesta .= "No Deducidos: \n";
+                        foreach ($partidas["no_deducidos"] as $no_deducido)
+                        {
+                            $respuesta .= "\n"."*_".$no_deducido["empresa"]."_*". " ".$no_deducido["no_CFDI"]." CFDI ".$no_deducido["importe_format"];
+                        }
+                    }
+
+                    if($partidas["presuntos"])
+                    {
+                        $respuesta .= "Presuntos: \n";
+                        foreach ($partidas["presuntos"] as $presunto)
+                        {
+                            $respuesta .= "\n"."*_".$presunto["empresa"]."_*". " ".$presunto["no_CFDI"]." CFDI ".$presunto["importe_format"];
+                        }
+                    }
+                }
+
+                if(count($cambios_efos)>$j)
+                {
+                    $respuesta .= "\n";
+                }
+
+                $j++;
             }
             if($i<count($ultimos_procesamientos_cambios)-1){
-                $respuesta .= "\n__________________________________\n";
+                $respuesta .= "\n__________________________________\n\n";
             }
             $i++;
         }

@@ -56,8 +56,8 @@ class Peticion extends Model
         if($peticion == "<")
         {
             $ultimaPeticion = Peticion::where("id_usuario","=",$id_usuario)
-            ->orderBy("id","desc")
-            ->first();
+                ->orderBy("id","desc")
+                ->first();
 
             return $ultimaPeticion->opcion->opcionPadre;
 
@@ -84,6 +84,11 @@ class Peticion extends Model
 
         }
 
+        if(!$opcion && strpos($peticion, ".")){
+            $opcion = Opcion::where("cadena_clave","=",$peticion)
+                ->first();
+        }
+
         if(!$opcion)
         {
             $opcion = Opcion::where("palabra_clave","=","SALUDO")
@@ -95,11 +100,27 @@ class Peticion extends Model
 
     public function getRespuesta($parametros, $tokenObj)
     {
-        $respuesta =  $this->opcion->texto_devolver;
+        if(!is_null($this->opcion->cadena_clave))
+        {
+            $respuesta = "*_".$this->opcion->cadena_clave."_* ";
+        }else {
+            $respuesta = "";
+        }
+
+        if(strlen($this->opcion->texto_devolver)<=50)
+        {
+            $respuesta .=  "*_".$this->opcion->texto_devolver."_*";
+        } else
+        {
+            $respuesta .= $this->opcion->texto_devolver;
+        }
+
         foreach ($parametros as $label=>$value)
         {
             $respuesta = str_replace("[$label]",$value,$respuesta);
         }
+
+        $respuesta .= "\n";
 
         $opcionesHijas = $this->opcion->opcionesHijas()->orderBy("orden")->get();
 
@@ -111,14 +132,22 @@ class Peticion extends Model
             }
         } else if($this->opcion->ruta_api != "")
         {
-            $respuesta.="\n".$this->getRespuestaAPI($this->opcion->ruta_api, $tokenObj->accessToken);
+            try{
+                $respuesta.="\n".$this->getRespuestaAPI($this->opcion->ruta_api, $tokenObj->accessToken);
+            }catch (\Exception $e) {
+                if($e->getCode() == 403)
+                {
+                    $respuesta .= "\n🚫 No cuenta con los privilegios para realizar esta consulta. 🚫";
+
+                }
+            }
 
         }
 
 
         if($this->opcion->id_padre>0)
         {
-            $respuesta.="\n< Regresar";
+            $respuesta.="\n\n < Regresar";
         }
 
         return $respuesta;
@@ -136,20 +165,13 @@ class Peticion extends Model
         try {
             $response = $client->request('GET', $ruta_peticion);
             $responseJSON = json_decode($response->getBody());
+            $respuesta = $response->getBody();
 
-            /*if ($response->getStatusCode() == 200) {
-                $message = "La transacción ha sido autorizada éxitosamente.";
-                $this->sendWhatsAppMessage($message, $from);
-            } else {
-                $this->sendWhatsAppMessage($responseJSON->message, $from);
-            }*/
+
         } catch (RequestException $th) {
             $responseJSON = json_decode($th->getResponse()->getBody());
-            //$this->sendWhatsAppMessage($response->message, $from);
+            $respuesta = $responseJSON->message;
         }
-
-        //$respuesta = $responseJSON->message;
-        $respuesta = $response->getBody();
 
         return $respuesta;
     }
