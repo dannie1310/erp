@@ -105,4 +105,11 @@ class CtgEfosService
         return $this->repository->getUltimasListasEFOSTXT();
     }
 
+    public function getCorreccionesPendientesTXT()
+    {
+        return $this->repository->getCorreccionesPendientesTXT();
+    }
+
+
+
 }
