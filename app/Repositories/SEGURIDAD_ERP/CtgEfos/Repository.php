@@ -151,15 +151,15 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                         $respuesta .= "\n\n              🔴️ Estatus Pendiente de Corrección: \n";
                         foreach ($partidas["pendientes"] as $pendiente)
                         {
-                            $respuesta .= "\n                     🏢 "."*_".$pendiente["empresa"]."_*". " ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
-                            $respuesta .= "\n                     ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
-                            $respuesta .= "\n                     ".$pendiente["importe_format"];
+                            $respuesta .= "\n                     🏢 "."*_".$pendiente["empresa"]."_*";
+                            $respuesta .= "\n                            ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
+                            $respuesta .= "\n                            ".$pendiente["importe_format"];
                         }
                     }
 
                     if($partidas["en_aclaracion"])
                     {
-                        $respuesta .= "\n\n🟡 Estatus En Aclaración: \n";
+                        $respuesta .= "\n\n              🟡 Estatus En Aclaración: \n";
                         foreach ($partidas["en_aclaracion"] as $aclaracion)
                         {
                             $respuesta .= "\n🏢 "."*_".$aclaracion["empresa"]."_*". " ".$aclaracion["no_CFDI"]." CFDI ".$aclaracion["importe_format"];
@@ -168,16 +168,18 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
                     if($partidas["corregidos"])
                     {
-                        $respuesta .= "\n\n🟢 Estatus Corregido: \n";
+                        $respuesta .= "\n\n              🟢 Estatus Corregido: \n";
                         foreach ($partidas["corregidos"] as $corregido)
                         {
-                            $respuesta .= "\n🏢 "."*_".$corregido["empresa"]."_*". " ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
+                            $respuesta .= "\n                     🏢 "."*_".$corregido["empresa"]."_*";
+                            $respuesta .= "\n                            ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
+                            $respuesta .= "\n                            ".$corregido["importe_format"];
                         }
                     }
 
                     if($partidas["no_deducidos"])
                     {
-                        $respuesta .= "\n\n🟢 Estatus No Deducido: \n";
+                        $respuesta .= "\n\n              🟢 Estatus No Deducido: \n";
                         foreach ($partidas["no_deducidos"] as $no_deducido)
                         {
                             $respuesta .= "\n🏢 "."*_".$no_deducido["empresa"]."_*". " ".$no_deducido["no_CFDI"]." CFDI ".$no_deducido["importe_format"];
@@ -186,7 +188,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
                     if($partidas["presuntos"])
                     {
-                        $respuesta .= "\n\n🟠 Presuntos: \n";
+                        $respuesta .= "\n\n              🟠 Presuntos: \n";
                         foreach ($partidas["presuntos"] as $presunto)
                         {
                             $respuesta .= "\n🏢 "."*_".$presunto["empresa"]."_*". " ".$presunto["no_CFDI"]." CFDI ".$presunto["importe_format"];
