@@ -104,7 +104,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
     public function getUltimasListas()
     {
-        $ultimas_listas = ProcesamientoListaEfos::where("nombre_archivo","!=","")->orderBy("id","desc")->take(8)->get();
+        $ultimas_listas = ProcesamientoListaEfos::where("nombre_archivo","!=","")->orderBy("id","desc")->take(5)->get();
         return $ultimas_listas;
     }
 
@@ -148,55 +148,61 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $partidas = InformeDetalleUltimosCambiosEFOS::getPartidas($cambio_efos->efos->rfc);
                     if($partidas["pendientes"])
                     {
-                        $respuesta .= "\n\n              🔴️ Estatus Pendiente de Corrección: \n";
+                        $respuesta .= "\n\n              🔴️ Estatus Pendiente de Corrección:";
                         foreach ($partidas["pendientes"] as $pendiente)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$pendiente["empresa"]."_*";
-                            $respuesta .= "\n                            ".$pendiente["no_CFDI"]." CFDI ".$pendiente["importe_format"];
+                            $respuesta .= "\n                            ".$pendiente["no_CFDI"]." CFDI";
                             $respuesta .= "\n                            ".$pendiente["importe_format"];
                         }
                     }
 
                     if($partidas["en_aclaracion"])
                     {
-                        $respuesta .= "\n\n              🟡 Estatus En Aclaración: \n";
+                        $respuesta .= "\n\n              🟡 Estatus En Aclaración:";
                         foreach ($partidas["en_aclaracion"] as $aclaracion)
                         {
-                            $respuesta .= "\n🏢 "."*_".$aclaracion["empresa"]."_*". " ".$aclaracion["no_CFDI"]." CFDI ".$aclaracion["importe_format"];
+                            $respuesta .= "\n                     🏢 "."*_".$aclaracion["empresa"]."_*";
+                            $respuesta .= "\n                            ".$aclaracion["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$aclaracion["importe_format"];
                         }
                     }
 
                     if($partidas["corregidos"])
                     {
-                        $respuesta .= "\n\n              🟢 Estatus Corregido: \n";
+                        $respuesta .= "\n\n              🟢 Estatus Corregido:";
                         foreach ($partidas["corregidos"] as $corregido)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$corregido["empresa"]."_*";
-                            $respuesta .= "\n                            ".$corregido["no_CFDI"]." CFDI ".$corregido["importe_format"];
+                            $respuesta .= "\n                            ".$corregido["no_CFDI"]." CFDI";
                             $respuesta .= "\n                            ".$corregido["importe_format"];
                         }
                     }
 
                     if($partidas["no_deducidos"])
                     {
-                        $respuesta .= "\n\n              🟢 Estatus No Deducido: \n";
+                        $respuesta .= "\n\n              🟢 Estatus No Deducido:";
                         foreach ($partidas["no_deducidos"] as $no_deducido)
                         {
-                            $respuesta .= "\n🏢 "."*_".$no_deducido["empresa"]."_*". " ".$no_deducido["no_CFDI"]." CFDI ".$no_deducido["importe_format"];
+                            $respuesta .= "\n                     🏢 "."*_".$no_deducido["empresa"]."_*";
+                            $respuesta .= "\n                            ".$no_deducido["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$no_deducido["importe_format"];
                         }
                     }
 
                     if($partidas["presuntos"])
                     {
-                        $respuesta .= "\n\n              🟠 Presuntos: \n";
+                        $respuesta .= "\n\n              🟠 Presuntos:";
                         foreach ($partidas["presuntos"] as $presunto)
                         {
-                            $respuesta .= "\n🏢 "."*_".$presunto["empresa"]."_*". " ".$presunto["no_CFDI"]." CFDI ".$presunto["importe_format"];
+                            $respuesta .= "\n                     🏢 "."*_".$presunto["empresa"]."_*";
+                            $respuesta .= "\n                            ".$presunto["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$presunto["importe_format"];
                         }
                     }
 
                     $total = InformeDetalleUltimosCambiosEFOS::getTotal($cambio_efos->efos->rfc);
-                    $respuesta .= "\n\n"."*_Total_*". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+                    $respuesta .= "\n\n"."*_Total:_*". " ".$total["importe_format"] . " (".$total["no_CFDI"]." CFDIs)";
 
                 }
 
@@ -208,7 +214,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 $j++;
             }
             if($i<count($ultimos_procesamientos_cambios)-1){
-                $respuesta .= "\n__________________________________\n\n";
+                $respuesta .= "\n_________________________________________\n\n";
             }
             $i++;
         }
@@ -235,15 +241,18 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
             if(count($definitivos)>0)
             {
-                $respuesta .= "\n🚫EFOS Definitivos Detectados: ".count($definitivos)."\n";
+                $respuesta .= "\n🔴️ # EFOS Definitivos Detectados: ".count($definitivos) . "\n";
                 $jd = 0;
                 foreach ($definitivos as $definitivo)
                 {
-                    $respuesta .= "\n"."*".$definitivo->efos->rfc."* ".$definitivo->efos->razon_social;
-                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($definitivo->efos->rfc);
-                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+                    $respuesta .= "\n       "."*".$definitivo->efos->rfc."* ";
+                    $respuesta .= "\n       " . $definitivo->efos->razon_social;
 
-                    if($jd<=count($definitivos)-1){
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($definitivo->efos->rfc);
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " .$total["importe_format"];
+
+                    if($jd<count($definitivos)-1){
                         $respuesta .= "\n";
                     }
 
@@ -254,15 +263,20 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
             if(count($presuntos)>0)
             {
-                $respuesta .= "\n⭕️EFOS Presuntos Detectados: ".count($presuntos)."\n";
+                $respuesta .= "\n";
+
+                $respuesta .= "\n🟠️ # EFOS Presuntos Detectados: ".count($presuntos)."\n";
                 $jp = 0;
                 foreach ($presuntos as $presunto)
                 {
-                    $respuesta .= "\n *".$presunto->efos->rfc."* ".$presunto->efos->razon_social;
-                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($presunto->efos->rfc);
-                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+                    $respuesta .= "\n       "."*".$presunto->efos->rfc."* ";
+                    $respuesta .= "\n       " . $presunto->efos->razon_social;
 
-                    if($jp<=count($definitivos)-1){
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($presunto->efos->rfc);
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " .$total["importe_format"];
+
+                    if($jp<count($definitivos)-1){
                         $respuesta .= "\n";
                     }
 
@@ -274,15 +288,19 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
             if(count($sentencias_favorable)>0)
             {
-                $respuesta .= "\n✅️Sentencias Favorables: ".count($sentencias_favorable)."\n";
+                $respuesta .= "\n";
+                $respuesta .= "\n🟢 # Sentencias Favorables: ".count($sentencias_favorable)."\n";
                 $jsf = 0;
                 foreach ($sentencias_favorable as $sentencia_favorable)
                 {
-                    $respuesta .= "\n *".$sentencia_favorable->efos->rfc."* ".$sentencia_favorable->efos->razon_social;
-                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($sentencia_favorable->efos->rfc);
-                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+                    $respuesta .= "\n       "."*".$sentencia_favorable->efos->rfc."* ";
+                    $respuesta .= "\n       " . $sentencia_favorable->efos->razon_social;
 
-                    if($jsf<=count($definitivos)-1){
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($sentencia_favorable->efos->rfc);
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " .$total["importe_format"];
+
+                    if($jsf< count($sentencias_favorable)-1){
                         $respuesta .= "\n";
                     }
 
@@ -293,15 +311,19 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
             if(count($desvirtuados)>0)
             {
-                $respuesta .= "\n✅Desvirtuados: ".count($desvirtuados)."\n";
+                $respuesta .= "\n";
+                $respuesta .= "\n🟢 # Desvirtuados: ".count($desvirtuados)."\n";
                 $jd = 0;
                 foreach ($desvirtuados as $desvirtuado)
                 {
-                    $respuesta .= "\n️".$desvirtuados->efos->rfc." ".$desvirtuados->efos->razon_social;
-                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($desvirtuados->efos->rfc);
-                    $respuesta .= "\n📑". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+                    $respuesta .= "\n       "."*".$desvirtuado->efos->rfc."* ";
+                    $respuesta .= "\n       " . $desvirtuado->efos->razon_social;
 
-                    if($jd<=count($definitivos)-1){
+                    $total = InformeDetalleUltimosCambiosEFOS::getTotal($desvirtuado->efos->rfc);
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " .$total["importe_format"];
+
+                    if($jd<=count($desvirtuado)-1){
                         $respuesta .= "\n";
                     }
 
@@ -317,7 +339,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
 
             if($i<count($ultimas_listas)-1){
-                $respuesta .= "\n__________________________________\n\n";
+                $respuesta .= "\n_________________________________________\n\n";
             }
             $i++;
         }
@@ -336,7 +358,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         foreach ($pendientes_correccion as $pendiente_correccion)
         {
             $respuesta .= "\n🚫 "."*_".$pendiente_correccion["rfc"]."_* "."\n       ".$pendiente_correccion["razon_social"];
-            $respuesta .= "\n📆 Fecha Definitivo: ".$pendiente_correccion["fecha_definitivo"]."\n";
+            $respuesta .= "\n       📆 Fecha Definitivo: ".$pendiente_correccion["fecha_definitivo"]."\n";
 
             $pendientes = InformeDetalleUltimosCambiosEFOS::getPendientesCorreccion($pendiente_correccion["rfc"]);
 
@@ -344,15 +366,19 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             {
                 foreach ($pendientes as $pendiente)
                 {
-                    $respuesta .= "\n🏢"."*_".$pendiente["empresa"]."_*". "\n      ".$pendiente["no_CFDI"]." CFDI \n      ".$pendiente["importe_format"];
+                    $respuesta .= "\n       🏢 "."*_".$pendiente["empresa"]."_*";
+                    $respuesta .= "\n              ".$pendiente["no_CFDI"]." CFDI";
+                    $respuesta .= "\n              ".$pendiente["importe_format"];
+
                 }
             }
 
             $total = InformeDetalleUltimosCambiosEFOS::getTotalPendientesCorreccion($pendiente_correccion["rfc"]);
-            $respuesta .= "\n\n"."*_Total_*". " ".$total["no_CFDI"]." CFDI ".$total["importe_format"];
+            $respuesta .= "\n\n"."*_Total:_*". " ".$total["importe_format"] . " (".$total["no_CFDI"]." CFDIs)";
+
 
             if($i<=count($pendientes_correccion)-1){
-                $respuesta .= "\n__________________________________\n\n";
+                $respuesta .= "\n_________________________________________\n";
             }
 
             $i++;

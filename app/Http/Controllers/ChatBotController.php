@@ -26,9 +26,15 @@ class ChatBotController extends Controller
         $peticionService = new PeticionService(new Peticion());
 
         $respuesta = $peticionService->getRespuesta($request->all());
+        $longitud_respuesta = strlen($respuesta);
 
-        $this->sendWhatsAppMessage($respuesta, $from);
+        $cantidad_cadenas = $longitud_respuesta / 1600;
 
+        for ($i = 0; $i<=$cantidad_cadenas; $i++)
+        {
+            $cadena = substr($respuesta,$i * 1600, 1600);
+            $this->sendWhatsAppMessage($cadena, $from);
+        }
 
         /*$usuario_from = Usuario::where("numero_celular","=",$numero_celular)->first();
 
