@@ -38,6 +38,8 @@ class ConfiguracionObra extends Model
         'logotipo_reportes'
     ];
 
+    //protected $dateFormat = 'Y-m-d H:i:s';
+
     protected static function boot()
     {
         parent::boot();

@@ -26,6 +26,8 @@ class Opcion extends Model
         , "texto_devolver"
         , "ruta_api"
         , "estado"
+        , "cadena_clave"
+        , "media"
     ];
 
 

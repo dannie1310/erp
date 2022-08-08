@@ -26,6 +26,7 @@ class Peticion extends Model
         , "numero_clave"
         , "palabra_clave"
         , "peticion"
+        , "respondida"
     ];
 
     /**
@@ -66,27 +67,34 @@ class Peticion extends Model
         $opcion = Opcion::where("palabra_clave","=",strtoupper($peticion))
             ->first();
 
+        if(!$opcion && strpos($peticion, ".")){
+            $opcion = Opcion::where("cadena_clave","=",$peticion)
+                ->first();
+        }
+
         if(!$opcion && is_numeric($peticion))
         {
             $ultima_peticion = Peticion::where("id_usuario","=", $id_usuario)->orderBy("id","desc")
                 ->first();
 
-            if($ultima_peticion)
+            if($ultima_peticion && !$ultima_peticion->opcion->ruta_api)
             {
                 $opcion = Opcion::where("numero_clave","=",$peticion)
                     ->where("id_padre","=",$ultima_peticion->id_opcion)
                     ->first();
 
-            }else{
+            }elseif($ultima_peticion && $ultima_peticion->opcion->ruta_api)
+            {
+                $opcion = Opcion::where("numero_clave","=",$peticion)
+                    ->where("id_padre","=",$ultima_peticion->opcion->opcionPadre->id)
+                    ->first();
+
+
+            } else {
                 $opcion = Opcion::where("numero_clave","=",$peticion)
                     ->first();
             }
 
-        }
-
-        if(!$opcion && strpos($peticion, ".")){
-            $opcion = Opcion::where("cadena_clave","=",$peticion)
-                ->first();
         }
 
         if(!$opcion)
@@ -130,7 +138,7 @@ class Peticion extends Model
             {
                 $respuesta.="\n".$opcionHija->numero_clave.".-".$opcionHija->texto_devolver;
             }
-        } else if($this->opcion->ruta_api != "")
+        } else if($this->opcion->ruta_api != "" && $this->opcion->media == 0)
         {
             try{
                 $respuesta.="\n".$this->getRespuestaAPI($this->opcion->ruta_api, $tokenObj->accessToken);
@@ -142,16 +150,41 @@ class Peticion extends Model
                 }
             }
 
+        }else if($this->opcion->ruta_api != "" && $this->opcion->media == 1)
+        {
+            try{
+                $this->getRespuestaAPI($this->opcion->ruta_api, $tokenObj->accessToken);
+
+                $mediaUrl = $this->getMediaUrl($this->opcion->ruta_api, $tokenObj->accessToken);
+                $respuesta = [
+                    "body"=>"Formato solicitado",
+                    "mediaUrl"=>$mediaUrl,
+                ];
+
+            }catch (\Exception $e) {
+                if($e->getCode() == 403)
+                {
+                    $respuesta .= "\n🚫 No cuenta con los privilegios para realizar esta consulta. 🚫";
+
+                }
+            }
+
         }
 
 
-        if($this->opcion->id_padre>0)
+        if($this->opcion->id_padre>0 && $this->opcion->media == 0)
         {
             $respuesta.="\n\n < Regresar";
         }
 
         return $respuesta;
 
+    }
+
+    public function getMediaUrl($ruta_api, $token)
+    {
+        $url = "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/".$ruta_api."?access_token=".$token;
+        return $url;
     }
 
     public function getRespuestaAPI($ruta_api, $token)

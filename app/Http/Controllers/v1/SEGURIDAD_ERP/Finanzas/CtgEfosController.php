@@ -41,7 +41,12 @@ class CtgEfosController extends Controller
     public function __construct(CtgEfosService $service, Manager $fractal, CtgEfosTransformer $transformer)
     {
         $this->middleware('auth:api');
-        $this->middleware('permiso:consultar_efos_empresa')->only(['getUltimosCambiosEFOSTXT','getUltimasListasEFOSTXT']);
+        $this->middleware('permiso:consultar_efos_empresa')
+            ->only(['getUltimosCambiosEFOSTXT','getUltimasListasEFOSTXT','getCorreccionesPendientesTXT']);
+
+        $this->middleware('permiso:consultar_informe_listado_efos_vs_cfdi_recibidos')
+            ->only(['obtenerInformePDF','obtenerInformeDesglosadoPDF']);
+        //
         /*$this->middleware('context')->except(['paginate','cargaLayout','rfc']);*/
 
         $this->service = $service;

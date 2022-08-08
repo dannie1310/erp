@@ -68,6 +68,9 @@ class PeticionService
         );
         $mensaje = $peticion->getRespuesta(["saludo"=>$saludo,"nombre"=>$nombre_usuario],$tokenobj);
 
+        $peticion->respondida = 1;
+        $peticion->save();
+
         return $mensaje;
 
     }
