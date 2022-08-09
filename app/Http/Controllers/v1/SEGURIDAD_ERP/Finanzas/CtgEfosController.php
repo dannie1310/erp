@@ -42,7 +42,7 @@ class CtgEfosController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permiso:consultar_efos_empresa')
-            ->only(['getUltimosCambiosEFOSTXT','getUltimasListasEFOSTXT','getCorreccionesPendientesTXT']);
+            ->only(['getUltimosCambiosEFOSTXT','getUltimasListasEFOSTXT','getCorreccionesPendientesTXT','getEFOSEnAclaracionTXT']);
 
         $this->middleware('permiso:consultar_informe_listado_efos_vs_cfdi_recibidos')
             ->only(['obtenerInformePDF','obtenerInformeDesglosadoPDF']);
@@ -68,6 +68,11 @@ class CtgEfosController extends Controller
     public function rfc(Request $request){
         $respuesta = $this->service->rfcApi($request->rfc);
         return response()->json( $respuesta, 200);
+    }
+
+    public function getEFOSEnAclaracionTXT()
+    {
+        return $this->service->getEFOSEnAclaracionTXT();
     }
 
     public function getUltimosCambiosEFOSTXT()

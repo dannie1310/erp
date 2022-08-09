@@ -152,7 +152,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                         foreach ($partidas["pendientes"] as $pendiente)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$pendiente["empresa"]."_*";
-                            $respuesta .= "\n                            ".$pendiente["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$pendiente["no_CFDI"]." CFDIs";
                             $respuesta .= "\n                            ".$pendiente["importe_format"];
                         }
                     }
@@ -163,7 +163,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                         foreach ($partidas["en_aclaracion"] as $aclaracion)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$aclaracion["empresa"]."_*";
-                            $respuesta .= "\n                            ".$aclaracion["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$aclaracion["no_CFDI"]." CFDIs";
                             $respuesta .= "\n                            ".$aclaracion["importe_format"];
                         }
                     }
@@ -174,7 +174,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                         foreach ($partidas["corregidos"] as $corregido)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$corregido["empresa"]."_*";
-                            $respuesta .= "\n                            ".$corregido["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$corregido["no_CFDI"]." CFDIs";
                             $respuesta .= "\n                            ".$corregido["importe_format"];
                         }
                     }
@@ -185,7 +185,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                         foreach ($partidas["no_deducidos"] as $no_deducido)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$no_deducido["empresa"]."_*";
-                            $respuesta .= "\n                            ".$no_deducido["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$no_deducido["no_CFDI"]." CFDIs";
                             $respuesta .= "\n                            ".$no_deducido["importe_format"];
                         }
                     }
@@ -196,7 +196,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                         foreach ($partidas["presuntos"] as $presunto)
                         {
                             $respuesta .= "\n                     🏢 "."*_".$presunto["empresa"]."_*";
-                            $respuesta .= "\n                            ".$presunto["no_CFDI"]." CFDI";
+                            $respuesta .= "\n                            ".$presunto["no_CFDI"]." CFDIs";
                             $respuesta .= "\n                            ".$presunto["importe_format"];
                         }
                     }
@@ -249,7 +249,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $respuesta .= "\n       " . $definitivo->efos->razon_social;
 
                     $total = InformeDetalleUltimosCambiosEFOS::getTotal($definitivo->efos->rfc);
-                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDIs";
                     $respuesta .= "\n       " .$total["importe_format"];
 
                     if($jd<count($definitivos)-1){
@@ -273,7 +273,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $respuesta .= "\n       " . $presunto->efos->razon_social;
 
                     $total = InformeDetalleUltimosCambiosEFOS::getTotal($presunto->efos->rfc);
-                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDIs";
                     $respuesta .= "\n       " .$total["importe_format"];
 
                     if($jp<count($definitivos)-1){
@@ -297,7 +297,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $respuesta .= "\n       " . $sentencia_favorable->efos->razon_social;
 
                     $total = InformeDetalleUltimosCambiosEFOS::getTotal($sentencia_favorable->efos->rfc);
-                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDIs ";
                     $respuesta .= "\n       " .$total["importe_format"];
 
                     if($jsf< count($sentencias_favorable)-1){
@@ -320,7 +320,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     $respuesta .= "\n       " . $desvirtuado->efos->razon_social;
 
                     $total = InformeDetalleUltimosCambiosEFOS::getTotal($desvirtuado->efos->rfc);
-                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDI ";
+                    $respuesta .= "\n       " . $total["no_CFDI"]." CFDIs";
                     $respuesta .= "\n       " .$total["importe_format"];
 
                     if($jd<=count($desvirtuado)-1){
@@ -367,17 +367,53 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 foreach ($pendientes as $pendiente)
                 {
                     $respuesta .= "\n       🏢 "."*_".$pendiente["empresa"]."_*";
-                    $respuesta .= "\n              ".$pendiente["no_CFDI"]." CFDI";
+                    $respuesta .= "\n              ".$pendiente["no_CFDI"]." CFDIs";
                     $respuesta .= "\n              ".$pendiente["importe_format"];
 
                 }
             }
 
-            $total = InformeDetalleUltimosCambiosEFOS::getTotalPendientesCorreccion($pendiente_correccion["rfc"]);
-            $respuesta .= "\n\n"."*_Total:_*". " ".$total["importe_format"] . " (".$total["no_CFDI"]." CFDIs)";
+            //$total = InformeDetalleUltimosCambiosEFOS::getTotalPendientesCorreccion($pendiente_correccion["rfc"]);
+            $respuesta .= "\n\n"."*_Total:_*". " ".$pendiente_correccion["importe_format"] . " (".$pendiente_correccion["no_CFDI"]." CFDIs)";
 
 
             if($i<=count($pendientes_correccion)-1){
+                $respuesta .= "\n_________________________________________\n";
+            }
+
+            $i++;
+        }
+
+        return $respuesta;
+    }
+
+    public function getEFOSEnAclaracionTXT()
+    {
+        $respuesta = "";
+
+        $aclaraciones = InformeDetalleUltimosCambiosEFOS::getEFOSEnAclaracion();
+
+        $i = 0;
+        foreach ($aclaraciones as $aclaracion)
+        {
+            $respuesta .= "\n🚫 "."*_".$aclaracion["rfc"]."_* "."\n       ".$aclaracion["razon_social"];
+
+            $cfdis_aclaracion = InformeDetalleUltimosCambiosEFOS::getEnAclaracion($aclaracion["rfc"]);
+
+            if($cfdis_aclaracion)
+            {
+                foreach ($cfdis_aclaracion as $cfdi_aclaracion)
+                {
+                    $respuesta .= "\n       🏢 "."*_".$cfdi_aclaracion["empresa"]."_*";
+                    $respuesta .= "\n              ".$cfdi_aclaracion["no_CFDI"]." CFDIs";
+                    $respuesta .= "\n              ".$cfdi_aclaracion["importe_format"];
+
+                }
+            }
+
+            $respuesta .= "\n\n"."*_Total:_*". " ".$aclaracion["importe_format"] . " (".$aclaracion["no_CFDI"]." CFDIs)";
+
+            if($i<=count($aclaraciones)-1){
                 $respuesta .= "\n_________________________________________\n";
             }
 

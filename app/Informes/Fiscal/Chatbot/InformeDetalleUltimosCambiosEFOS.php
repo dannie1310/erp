@@ -188,6 +188,96 @@ ORDER BY Subquery.fecha_devinitivo_maxima DESC,
         return $partidas;
 
     }
+
+    public static function getEFOSEnAclaracion(){
+
+        $partidas = DB::select("SELECT 'En Aclaración SAT' AS estatus,
+
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       efos.rfc as rfc,
+       efos.razon_social as razon_social,
+       sum(CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
+            END
+        END)
+        AS importe,
+
+    format (
+    sum(CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
+            END
+        END),
+          'C') AS importe_format
+  FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+           INNER JOIN
+           (SELECT cfd_sat.id, cfd_sat.estado
+              FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+                   INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                      ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id)
+             WHERE (cfd_sat.estado = 5)) Subquery
+              ON (cfd_sat.id = Subquery.id))
+          INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+             ON (efos.rfc = cfd_sat.rfc_emisor))
+         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+            ON (efos.estado = ctg_estados_efos.id))
+        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+           ON (ctg_efos.rfc = efos.rfc)
+        INNER JOIN (
+          select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+          ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
+
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
+ GROUP BY ctg_estados_efos.descripcion,
+         efos.rfc,
+         efos.razon_social,
+         ctg_efos.fecha_definitivo,
+         ctg_efos.fecha_definitivo_dof,
+         ctg_efos.fecha_presunto
+ORDER BY
+ sum(CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
+            END
+        END)
+ DESC")
+        ;
+        $partidas = array_map(function ($value) {
+            return (array)$value;
+        }, $partidas);
+
+        return $partidas;
+
+    }
+
     public static function getEnAclaracion($rfc_efos){
 
         $partidas = DB::select("SELECT 'En Aclaración SAT' AS estatus,
@@ -264,6 +354,7 @@ ORDER BY 2 DESC")
         return $partidas;
 
     }
+
     public static function getCorregidos($rfc_efos){
 
         $partidas = DB::select("
@@ -517,6 +608,7 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
        efos.razon_social as razon_social,
        Subquery.fecha_definitivo_maxima,
        CONVERT(varchar,ctg_efos.fecha_definitivo,103) AS fecha_definitivo,
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
        sum(CASE
             WHEN cfd_sat.moneda != 'MXN'
             AND cfd_sat.tipo_cambio > 0 THEN
@@ -529,7 +621,24 @@ ORDER BY Subquery.fecha_presunto_maxima DESC,
                 WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
                 WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
             END
-        END) as importe
+        END)
+        AS importe,
+
+    format (
+    sum(CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
+            END
+        END),
+          'C') AS importe_format
 
   FROM ((((((SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
              INNER JOIN
@@ -717,6 +826,83 @@ ORDER BY sum(CASE
         }, $total);
 
         return $total[0];
+    }
+
+    public static function getTotalEnAclaracion($rfc_efos){
+
+        $partidas = DB::select("SELECT 'En Aclaración SAT' AS estatus,
+       ListaEmpresasSAT.nombre_corto AS empresa,
+       COUNT (DISTINCT cfd_sat.id) AS no_CFDI,
+       sum(CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
+            END
+        END)
+        AS importe,
+
+    format (
+    sum(CASE
+            WHEN cfd_sat.moneda != 'MXN'
+            AND cfd_sat.tipo_cambio > 0 THEN
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1) * cfd_sat.tipo_cambio
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total * cfd_sat.tipo_cambio
+            END
+            ELSE
+            CASE
+                WHEN cfd_sat.tipo_comprobante = 'E' THEN cfd_sat.total * (-1)
+                WHEN cfd_sat.tipo_comprobante = 'I' THEN cfd_sat.total
+            END
+        END),
+          'C') AS importe_format
+  FROM ((((SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+           INNER JOIN
+           (SELECT cfd_sat.id, cfd_sat.estado
+              FROM SEGURIDAD_ERP.Contabilidad.cfd_sat_autocorrecciones cfd_sat_autocorrecciones
+                   INNER JOIN SEGURIDAD_ERP.Contabilidad.cfd_sat cfd_sat
+                      ON (cfd_sat_autocorrecciones.id_cfd_sat = cfd_sat.id)
+             WHERE (cfd_sat.estado = 5)) Subquery
+              ON (cfd_sat.id = Subquery.id))
+          INNER JOIN SEGURIDAD_ERP.Fiscal.efos efos
+             ON (efos.rfc = cfd_sat.rfc_emisor))
+         INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_estados_efos ctg_estados_efos
+            ON (efos.estado = ctg_estados_efos.id))
+        INNER JOIN SEGURIDAD_ERP.Fiscal.ctg_efos ctg_efos
+           ON (ctg_efos.rfc = efos.rfc)
+        INNER JOIN (
+          select max(id) as id from SEGURIDAD_ERP.Fiscal.ctg_efos
+              group by rfc
+              ) as ctg_efos_maximo
+          ON (ctg_efos.id = ctg_efos_maximo.id)
+      )
+       INNER JOIN
+       SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT ListaEmpresasSAT
+          ON (cfd_sat.id_empresa_sat = ListaEmpresasSAT.id)
+ WHERE (ctg_efos.estado_registro = 1) AND efos.estado = 0 AND cfd_sat.cancelado != 1 and cfd_sat.tipo_comprobante != 'P' and cfd_sat.tipo_comprobante != 'T'
+AND cfd_sat.rfc_emisor ='".$rfc_efos."'
+ GROUP BY ctg_estados_efos.descripcion,
+         efos.rfc,
+         efos.razon_social,
+         ctg_efos.fecha_definitivo,
+         ctg_efos.fecha_definitivo_dof,
+         ListaEmpresasSAT.nombre_corto,
+         ctg_efos.fecha_presunto
+ORDER BY 2 DESC")
+        ;
+        $partidas = array_map(function ($value) {
+            return (array)$value;
+        }, $partidas);
+
+        return $partidas;
+
     }
 
 }
