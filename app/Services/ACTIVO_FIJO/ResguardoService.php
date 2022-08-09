@@ -3,6 +3,7 @@
 namespace App\Services\ACTIVO_FIJO;
 
 use App\Models\ACTIVO_FIJO\Resguardo;
+use App\PDF\ActivoFijo\ResguardoFormato;
 use App\Repositories\ACTIVO_FIJO\ResguardoRepository as Repository;
 
 class ResguardoService
@@ -23,5 +24,11 @@ class ResguardoService
 
     public function listaResguardos($data){
         return $this->repository->getListaResguardos($data);
+    }
+
+    public function pdfResguardo($id){
+        $resguardo = $this->repository->show($id);
+        $pdf = new ResguardoFormato($resguardo);
+        return $pdf->create();
     }
 }

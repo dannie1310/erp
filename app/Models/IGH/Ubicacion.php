@@ -28,7 +28,6 @@ class Ubicacion extends Model
       * Scopes
       */
     public function scopeUsuarioUbicacion($query){
-        // dd(auth()->user()->idubicacion);
         $ubicaciones = UsuarioUbicacion::where('idUsuario', '=', auth()->id())->get(['idubicacion'])->toArray();
         array_push($ubicaciones, auth()->user()->idubicacion);
         return $query->whereIn('idubicacion', $ubicaciones);
