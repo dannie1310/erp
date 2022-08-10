@@ -16,6 +16,9 @@ import telefono from './modules/acarreos/telefono';
 import tipoOrigen from './modules/acarreos/tipo-origen';
 import tiro from './modules/acarreos/tiro';
 
+//ACTIVO FIJO
+import resguardo from "./modules/activoFijo/resguardo"
+
 //ALMACENES
 import ajusteInventario from './modules/almacenes/ajuste-inventario';
 import ajusteNegativo from './modules/almacenes/ajuste-negativo';
@@ -260,6 +263,8 @@ export default new Vuex.Store({
         'acarreos/telefono' : telefono,
         'acarreos/tipo-origen' : tipoOrigen,
         'acarreos/tiro' : tiro,
+
+        'activo-fijo/resguardo' : resguardo,
 
         'almacenes/conteo' : conteo,
         'almacenes/ctg-tipo-conteo' : tipoConteo,

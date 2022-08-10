@@ -49,6 +49,11 @@ class ResguardoController extends Controller
         return $this->service->listaResguardos($request);
     }
 
+    public function getResguardos(Request $request){
+        $resg = $this->service->getResguardos($request->all());
+        return $this->respondWithPaginator($resg);
+    }
+
     public function pdfResguardo($id){
         return $this->service->pdfResguardo($id);
     }
