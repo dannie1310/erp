@@ -100,4 +100,24 @@ class CtgEfosService
         return $this->repository->getUltimosCambiosEFOSTXT();
     }
 
+    public function getUltimasListasEFOSTXT()
+    {
+        return $this->repository->getUltimasListasEFOSTXT();
+    }
+
+    public function getCorreccionesPendientesTXT()
+    {
+        return $this->repository->getCorreccionesPendientesTXT();
+    }
+
+    public function getUltimasCorreccionesTXT()
+    {
+        return $this->repository->getUltimasCorreccionesTXT();
+    }
+
+    public function getEFOSEnAclaracionTXT()
+    {
+        return $this->repository->getEFOSEnAclaracionTXT();
+    }
+
 }
