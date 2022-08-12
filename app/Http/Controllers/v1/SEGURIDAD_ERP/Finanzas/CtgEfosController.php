@@ -41,6 +41,12 @@ class CtgEfosController extends Controller
     public function __construct(CtgEfosService $service, Manager $fractal, CtgEfosTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permiso:consultar_efos_empresa')
+            ->only(['getUltimosCambiosEFOSTXT','getUltimasListasEFOSTXT','getCorreccionesPendientesTXT','getEFOSEnAclaracionTXT']);
+
+        $this->middleware('permiso:consultar_informe_listado_efos_vs_cfdi_recibidos')
+            ->only(['obtenerInformePDF','obtenerInformeDesglosadoPDF']);
+        //
         /*$this->middleware('context')->except(['paginate','cargaLayout','rfc']);*/
 
         $this->service = $service;
@@ -62,6 +68,31 @@ class CtgEfosController extends Controller
     public function rfc(Request $request){
         $respuesta = $this->service->rfcApi($request->rfc);
         return response()->json( $respuesta, 200);
+    }
+
+    public function getEFOSEnAclaracionTXT()
+    {
+        return $this->service->getEFOSEnAclaracionTXT();
+    }
+
+    public function getUltimosCambiosEFOSTXT()
+    {
+        return $this->service->getUltimosCambiosEFOSTXT();
+    }
+
+    public function getUltimasListasEFOSTXT()
+    {
+        return $this->service->getUltimasListasEFOSTXT();
+    }
+
+    public function getCorreccionesPendientesTXT()
+    {
+        return $this->service->getCorreccionesPendientesTXT();
+    }
+
+    public function getUltimasCorreccionesTXT()
+    {
+        return $this->service->getUltimasCorreccionesTXT();
     }
 
     public function obtenerInforme(Request $request)
