@@ -110,6 +110,11 @@ class CtgEfosService
         return $this->repository->getCorreccionesPendientesTXT();
     }
 
+    public function getUltimasCorreccionesTXT()
+    {
+        return $this->repository->getUltimasCorreccionesTXT();
+    }
+
     public function getEFOSEnAclaracionTXT()
     {
         return $this->repository->getEFOSEnAclaracionTXT();

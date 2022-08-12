@@ -373,7 +373,6 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 }
             }
 
-            //$total = InformeDetalleUltimosCambiosEFOS::getTotalPendientesCorreccion($pendiente_correccion["rfc"]);
             $respuesta .= "\n\n"."*_Total:_*". " ".$pendiente_correccion["importe_format"] . " (".$pendiente_correccion["no_CFDI"]." CFDIs)";
 
 
@@ -414,6 +413,33 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             $respuesta .= "\n\n"."*_Total:_*". " ".$aclaracion["importe_format"] . " (".$aclaracion["no_CFDI"]." CFDIs)";
 
             if($i<=count($aclaraciones)-1){
+                $respuesta .= "\n_________________________________________\n";
+            }
+
+            $i++;
+        }
+
+        return $respuesta;
+    }
+
+    public function getUltimasCorreccionesTXT()
+    {
+        $respuesta = "";
+
+        $correcciones = InformeDetalleUltimosCambiosEFOS::getUltimosEFOSCorregidos();
+
+        $i = 0;
+        foreach ($correcciones as $correccion)
+        {
+            $respuesta .= "\n🟢 "."*_".$correccion["rfc"]."_* ";
+            $respuesta .= "\n       ".$correccion["razon_social"];
+            $respuesta .= "\n       🏢 ".$correccion["empresa"];
+
+
+
+            $respuesta .= "\n\n"."*_Total:_*". " ".$correccion["importe_format"] . " (".$correccion["no_CFDI"]." CFDIs)";
+
+            if($i<=count($correcciones)-1){
                 $respuesta .= "\n_________________________________________\n";
             }
 

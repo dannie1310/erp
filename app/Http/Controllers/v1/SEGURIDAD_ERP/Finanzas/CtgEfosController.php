@@ -90,6 +90,11 @@ class CtgEfosController extends Controller
         return $this->service->getCorreccionesPendientesTXT();
     }
 
+    public function getUltimasCorreccionesTXT()
+    {
+        return $this->service->getUltimasCorreccionesTXT();
+    }
+
     public function obtenerInforme(Request $request)
     {
         $respuesta =$this->service->obtenerInforme();

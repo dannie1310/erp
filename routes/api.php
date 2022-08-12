@@ -1714,6 +1714,7 @@ $api->version('v1', function ($api) {
             $api->get('ultimas-listas-txt', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@getUltimasListasEFOSTXT');
             $api->get('correcciones-pendientes-txt', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@getCorreccionesPendientesTXT');
             $api->get('en-aclaracion-txt', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@getEFOSEnAclaracionTXT');
+            $api->get('ultimas-correcciones-txt', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\CtgEfosController@getUltimasCorreccionesTXT');
         });
         $api->group(['prefix' => 'transaccion-efo'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\TransaccionesEfosController@paginate');
