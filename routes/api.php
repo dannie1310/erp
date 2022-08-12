@@ -271,8 +271,10 @@ $api->version('v1', function ($api) {
             $api->get('getResguardos', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@getResguardos');
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@pdfResguardo');
         });
-
-        /// TODO ubicaciones
+        $api->group(['prefix' => 'usuario-ubicacion'], function ($api){
+            $api->get('listaUbicaciones', 'App\Http\Controllers\v1\ACTIVO_FIJO\UsuarioUbicacionController@listaUbicaciones');
+        });
+        
     });
 
     /**
