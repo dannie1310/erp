@@ -6,7 +6,7 @@
                     <div class="form-row">
                         <div class="col">
                             <div class="form-group error-content">
-                                <label for="ubicaciones">Ubicaciones:</label>
+                                <label for="ubicaciones">Ubicación:</label>
                                 <model-list-select
                                         :disabled="cargando"
                                         name="ubicaciones"
@@ -22,7 +22,7 @@
                         </div>
                         <div class="col">
                             <div class="form-group row">
-                                <label for="user_id">Empleado</label>
+                                <label for="user_id">Empleado:</label>
                                 <usuario-select
                                         name="user_id"
                                         id="user_id"
@@ -37,7 +37,7 @@
                         </div>
                         <div class="col">
                             <div class="form-group error-content">
-                                <label for="tipoActivo">Tipo Activo:</label>
+                                <label for="tipoActivo">Tipo de Activo:</label>
                                 <model-list-select
                                         :disabled="cargando"
                                         name="tipoActivo"
@@ -45,7 +45,7 @@
                                         option-value="idGrupo"
                                         option-text="Descripcion"
                                         :list="tiposActivo"
-                                        :placeholder="!cargando?'Seleccionar o buscar activo por descripcion':'Cargando...'"
+                                        :placeholder="!cargando?'Seleccionar o buscar tipo de activo por descripcion':'Cargando...'"
                                         :isError="errors.has(`tipoActivo`)">
                                 </model-list-select>
                                 <div class="invalid-feedback" v-show="errors.has('tipoActivo')">{{ errors.first('tipoActivo') }}</div>
@@ -62,7 +62,7 @@
                             <span v-else>
                                 <i class="fa fa-spin fa-spinner" ></i>Buscando...
                             </span>
-                            
+
                         </button>
                     </div>
                 </div>
@@ -125,11 +125,11 @@ export default {
     methods: {
         getResguardos() {
             this.buscando = true;
-            return this.$store.dispatch('activo-fijo/resguardo/getResguardos', { 
+            return this.$store.dispatch('activo-fijo/resguardo/getResguardos', {
                 params: {
                     ubicacion: this.ubicacion,
                     empleado: this.user_id,
-                    tipo: this.tipoActivo, 
+                    tipo: this.tipoActivo,
                 }})
                 .then(data => {
                     if(data.data.length == 0){
@@ -138,7 +138,7 @@ export default {
                         this.$store.commit('activo-fijo/resguardo/SET_ACTIVOS', data.data);
                         this.$store.commit('activo-fijo/resguardo/SET_META', data.meta);
                     }
-                    
+
                 })
                 .finally(() => {
                     this.buscando = false;
