@@ -236,6 +236,9 @@ import proyectoMSAO from './modules/remesas/proyecto';
 //REPORTES
 import reporte from './modules/reportes/reporte';
 
+//SEGUIMIENTO
+import facturaSeg from './modules/seguimiento/factura';
+
 //SCI
 import marca from "./modules/sci/marca";
 import modelo from "./modules/sci/modelo";
@@ -451,6 +454,8 @@ export default new Vuex.Store({
         'remesas/documento-no-localizado' : documentoNoLocalizado,
         'remesas/remesa-folio' : folio,
         'remesas/proyecto' : proyectoMSAO,
+
+        'seguimiento/factura' : facturaSeg,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
