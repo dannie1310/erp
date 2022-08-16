@@ -75,7 +75,7 @@ class ResguardoFormato extends Rotation
         $this->SetTextColor(0, 0, 0);
 		$this->SetFont('Arial', 'BU', 11);		// Font: Arial Bold Underline Size:11
 		$this->Cell(5, 5, '', 0, 0, 'C');
-		$this->Cell(8.3,0.9, utf8_decode('RESGUARDO DE '), 0, 2, 'C');		
+		$this->Cell(8.3,0.9, utf8_decode('RESGUARDO DE '), 0, 2, 'C');
 		$this->Cell(8.3,0.1, utf8_decode($this->resguardo->resguardoElemento->Titulo), 0, 0, 'C');
 
         //AREA
@@ -129,14 +129,14 @@ class ResguardoFormato extends Rotation
 		$this->SetWidths(array(19.5));
 		$this->SetFills(array('221,221,221'));
 		$this->SetAligns(array('C'));
-		$this->SetHeights(array(0.5));	
+		$this->SetHeights(array(0.5));
 		$this->SetRounds(array('12'));
 		$this->SetFont('Arial','b',12);
 		$this->Row(array("ASIGNADO A"));
-        
+
 		$this->SetFont('Arial','b',15);
 		$this->SetWidths(array(19.5));
-		$this->SetHeights(array(0.7));	
+		$this->SetHeights(array(0.7));
 		$this->SetFills(array('255,255,255'));
 		$this->SetRounds(array('34'));
 		$this->Row(array(utf8_decode($this->resguardo->usuario->nombreCompleto)));
@@ -148,16 +148,16 @@ class ResguardoFormato extends Rotation
 		$this->SetHeights(array(.5, .5));
 		$this->SetFills(array('205, 205, 205', '255, 255, 255'));
 		$this->SetStyles(array('DF', 'DF'));
-		
+
 		$this->SetRounds(array('1', '2'));
 		$this->SetRadius(array(.3, .3));
 		$this->Row(array(utf8_decode("EMPRESA A LA QUE PERTENECE:"), utf8_decode($this->resguardo->empresa->empresa)));
-		
+
 		$this->SetRadius(array(0, 0));
 		$this->Row(array(utf8_decode("DIRECCIÓN DE LA EMPRESA:"), utf8_decode($this->resguardo->DireccionEmpresa)));
 		$this->Row(array(utf8_decode("DEPARTAMENTO"), utf8_decode($this->resguardo->departamento->departamento)));
 		$this->Row(array(utf8_decode("PROYECTO/OFICINA:"), utf8_decode($this->resguardo->ubicacion->ubicacion)));
-		
+
 		$this->SetRadius(array(.3, .3));
 		$this->SetRounds(array('4', '3'));
 		$this->Row(array(utf8_decode("DIRECCIÓN DEL PROYECTO/OFICINA:"), utf8_decode($this->resguardo->ubicacion->ubicacion_direccion)));
@@ -175,18 +175,25 @@ class ResguardoFormato extends Rotation
 		$this->SetTextColors(array('255, 255, 255'));
 		$this->SetRadius(array(.1));
 		$this->Row(array(utf8_decode("DETALLE DE LO ASIGNADO")));
-		
-		$this->SetHeights(array(.3, .3, .3, .3, .3, .3, .3, .3));	
+
+		$this->SetHeights(array(.3, .3, .3, .3, .3, .3, .3, .3));
 		$this->SetWidths(array(.5, 2.0, 3.5, 2.5, 2.5, 3.0, 1.5, 4.0));
 		$this->SetAligns(array('C', 'C', 'C', 'C', 'C', 'C', 'C', 'C'));
 		$this->SetTextColors(array('0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0'));
 		$this->SetFills(array('205,205,205', '205,205,205', '205,205,205', '205,205,205', '205,205,205', '205,205,205', '205,205,205', '205,205,205'));
 		$this->SetFont('Arial', 'b', 5);
 		$this->SetRadius(array(0, 0, 0, 0, 0, 0, 0, 0));
-		$this->Row(array("#", "IDENTIFICADOR", "EQUIPO", "MARCA", "MODELO", "NO. SERIE", "ESTADO", "OBSERVACIONES"));	
+		$this->Row(array("#", "IDENTIFICADOR", "EQUIPO", "MARCA", "MODELO", "NO. SERIE", "ESTADO", "OBSERVACIONES"));
 		$this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
 
         foreach($this->partidas as $k => $partida){
+            if($partida->es_ultima_partida)
+            {
+                $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '220,220,220'));
+            }else{
+                $this->SetFills(array('255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255'));
+
+            }
             $this->Row(array($k+1, $partida->CodigoEquipo, utf8_decode($partida->TipoEquipo), utf8_decode($partida->Marca), $partida->Modelo, $partida->SerieEquipo, utf8_decode($partida->estadoPartida->descripcion), utf8_decode($partida->Observaciones)));
         }
     }
@@ -200,7 +207,7 @@ class ResguardoFormato extends Rotation
 		$this->SetFills(array('0,0,0'));
 		$this->SetStyles(array('DF'));
 		$this->SetTextColors(array('255,255,255'));
-		$this->SetHeights(array(.5));	
+		$this->SetHeights(array(.5));
 		$this->SetY($this->GetY() + 0.5);
 		$this->Row(array(utf8_decode("CARACTERÍSTICAS DEL EQUIPO ASIGNADO")));
 		$this->SetY($this->GetY() + 0.2);
@@ -223,7 +230,7 @@ class ResguardoFormato extends Rotation
 
         for($i = 0; $i < $cantP; $i++){
             $j = 0;
-            
+
             $this->SetRadius(array(.1));
             $this->SetRounds(array('12'));
             $this->SetFont('Arial','b',8);
@@ -242,16 +249,16 @@ class ResguardoFormato extends Rotation
             $this->x_p = $this->GetX();
             $this->encola = 'TipoEquipo';
             $this->Row(array(utf8_decode($partidas[$i]['TipoEquipo'])));
-            
+
             if(array_key_exists($i+1, $partidas)){
                 $this->x_p = $this->x_c+10;
                 $this->SetXY(($this->x_c + 10),$this->y_c);
                 $this->SetFont('Arial','b',8);
                 $this->Row(array(utf8_decode($partidas[$i+1]['TipoEquipo'])));
-                
+
             }
             $this->encola = 'CodigoEquipo';
-            
+
             $this->SetFont('code39', '', 7);
 			$this->Cell(9.5, 2, '*'.$partidas[$i]['CodigoEquipo'].'*', 0, 0, 'C');
             $this->RoundedRect($this->x_c, $this->y_c+0.5, 9.5, 1.5, 1, '', 'D');
@@ -262,7 +269,7 @@ class ResguardoFormato extends Rotation
                 $this->Cell(9.5, 2, '*'.$partidas[$i+1]['CodigoEquipo'].'*', 0, 0, 'C');
                 $this->RoundedRect($this->x_c + 10, $this->y_c+0.5, 9.5, 1.5, 1, '', 'D');
             }
-            
+
 
             $this->SetXY(($this->x_c),$this->y_c+2);
             while($j<$caract1){
@@ -270,7 +277,7 @@ class ResguardoFormato extends Rotation
                 $this->y_c = $this->GetY();
                 $this->x_c = $this->GetX();
                 $this->x_p = $this->GetX();
-                
+
                 $this->SetRadius(array(0, 0));
                 $this->SetFont('Arial', '', 5);
                 $this->SetAligns(array('L', 'L'));
@@ -292,7 +299,7 @@ class ResguardoFormato extends Rotation
                     }
                 }
                 $j++;
-                
+
             }
             $i++;
             $this->SetY($this->GetY() + 0.5);
@@ -302,7 +309,7 @@ class ResguardoFormato extends Rotation
 			$this->AddPage();
 
 		$this->SetY(-6.0);
-				
+
 
 		$this->SetStyles(array("DF"));
 		$this->SetFont('Arial', 'B', 9);
@@ -344,12 +351,12 @@ class ResguardoFormato extends Rotation
 			$this->Cell(4.875,.3,"Entrega",1,0,'C',1);
 			$this->Cell(4.875,.3,"VoBo",1,0,'C',1);
 			$this->Cell(4.875,.3,"Recibe",1,1,'C',1);
-			
+
 			$this->Cell(2.44,.8,'',0,0,'C');
 			$this->Cell(4.875,.8,"",1,0,'C');
 			$this->Cell(4.875,.8,"",1,0,'C');
 			$this->Cell(4.875,.8,"",1,1,'C');
-			
+
 			$this->Cell(2.44,.3,'',0,0,'C');
 			$this->Cell(4.875,.3,"Nombre y Firma",1,0,'C',1);
 			$this->Cell(4.875,.3,"Nombre y Firma",1,0,'C',1);
@@ -358,9 +365,9 @@ class ResguardoFormato extends Rotation
 
         $this->SetTextColor(180,180,180);
 		$this->SetY(-.7);
-		$this->Cell(10.0,.4,'V091110',0,0,'L');		
+		$this->Cell(10.0,.4,'V091110',0,0,'L');
 		$this->SetTextColor(0,0,0);
-    	$this->Cell(9.5,.4,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'R');		
+    	$this->Cell(9.5,.4,utf8_decode('Página ').$this->PageNo().'/{nb}',0,0,'R');
     }
 
     function firmas(){

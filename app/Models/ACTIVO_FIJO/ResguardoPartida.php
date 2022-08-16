@@ -25,6 +25,10 @@ class ResguardoPartida extends Model
         return $this->hasMany(ResguardoPartidaCaracteristica::class, 'IdPartida', 'IdPartida');
     }
 
+    public function Resguardo(){
+        return $this->belongsTo(Resguardo::class, 'IdResguardo', 'IdResguardo');
+    }
+
     /**
      * scoopes
      */
@@ -33,5 +37,16 @@ class ResguardoPartida extends Model
      * attributes
      */
 
-    
+    public function getEsUltimaPartidaAttribute()
+    {
+        $ultima_partida = ResguardoPartida::
+        where("IdResguardo", "=", $this->IdResguardo)
+            ->orderBy("FechaAsignacion","desc")->first();
+
+        if($ultima_partida->FechaAsignacion == $this->FechaAsignacion){
+            return true;
+        }
+        return false;
+    }
+
 }

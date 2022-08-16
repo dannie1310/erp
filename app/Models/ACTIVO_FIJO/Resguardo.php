@@ -16,7 +16,7 @@ class Resguardo extends Model
 {
     protected $connection = 'sci';
     protected $table = 'resguardos';
-    public $primaryKey = 'idResguardo';
+    public $primaryKey = 'IdResguardo';
     protected $fillable = [
     ];
 
