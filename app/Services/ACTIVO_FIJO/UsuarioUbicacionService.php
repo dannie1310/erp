@@ -25,6 +25,6 @@ class UsuarioUbicacionService
     public function listaResguardos($data){
         $ubicaciones = $this->repository->all()->pluck('idUbicacion')->toArray();
         array_push($ubicaciones, auth()->user()->idubicacion);
-        return Ubicacion::whereIn('idubicacion', $ubicaciones)->select('idubicacion', 'Ubicacion')->get();
+        return Ubicacion::whereIn('idubicacion', $ubicaciones)->select('idubicacion', 'Ubicacion')->orderBy('Ubicacion', 'ASC')->get();
     }
 }
