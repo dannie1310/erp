@@ -3343,6 +3343,51 @@ export const routes = [
         ]
     },
     {
+        path:'/activo-fijo',
+        components: {
+            default: require('./components/activo-fijo/partials/Layout.vue').default,
+            menu: require('./components/activo-fijo/partials/Menu.vue').default,
+        },
+        children: [
+            {
+                path:'',
+                name: 'activo-fijo',
+                meta: {
+                    title: 'ACTIVO FIJO',
+                    middleware: [auth],
+                    //permission: ['editar_poliza','configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq','consultar_log_edicion_poliza'],
+                    general: true
+                }
+            },
+            {
+                path:"activos-administrar",
+                name:"activos-administrar",
+                component: require('./components/activo-fijo/activos/Administrar.vue').default,
+                meta: {
+                    title: 'Administrar',
+                    breadcrumb: {parent: 'activo-fijo', name: 'ADMINISTRAR'},
+                    middleware: [auth],
+                    
+                    //permission: ['editar_poliza','consultar_poliza'],
+                    general: true
+                }
+            },
+            {
+                path:"resguardos-index",
+                name:"resguardos-index",
+                component: require('./components/activo-fijo/resguardos/Index.vue').default,
+                meta: {
+                    title: 'Resguardos',
+                    breadcrumb: {parent: 'activo-fijo', name: 'RESGUARDOS'},
+                    middleware: [auth],
+                    
+                    //permission: ['editar_poliza','consultar_poliza'],
+                    general: true
+                }
+            },
+        ],
+    },
+    {
         path: '/contabilidad-general',
         components:  {
             default: require('./components/contabilidad-general/partials/Layout.vue').default,
