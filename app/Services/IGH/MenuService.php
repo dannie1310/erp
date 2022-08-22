@@ -24,9 +24,33 @@ class MenuService
 
     public function index($data)
     {
+        $menu_arr = [];
         $sistema = new Sistema();
         $aplicaciones = $sistema->aplicaciones()->get();
-        $menu = $this->repository->all($data);
-        return $aplicaciones->merge($menu);
+        foreach ($aplicaciones as $item) {
+            $menu_arr [] = [
+                'color' => $item->color,
+                'icon' => $item->icon,
+                'menu' => ($item->menu)?$item->menu:$item->name,
+                'ruta' => ($item->ruta)?$item->ruta:$item->url,
+                'target' => $item->target,
+                'manual' => (string) $item->url_manual
+            ];
+        }
+
+        $menu = $this->repository->all();
+
+        foreach ($menu as $item) {
+            $menu_arr [] = [
+                'color' => $item->color,
+                'icon' => $item->icon,
+                'menu' => ($item->menu)?$item->menu:$item->name,
+                'ruta' => ($item->ruta)?$item->ruta:$item->url,
+                'target' => $item->target,
+                'manual' => (string) $item->url_manual
+            ];
+        }
+        //dd("merge",$aplicaciones->merge($menu), "APLICACIONESS ",$aplicaciones,"MENNUUUU", $menu);
+        return $menu_arr;
     }
 }

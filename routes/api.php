@@ -262,6 +262,22 @@ $api->version('v1', function ($api) {
     });
 
     /**
+     * ACTIVO FIJO
+     */
+
+    $api->group(['middleware' => 'api', 'prefix' => 'activo-fijo'], function ($api){
+        $api->group(['prefix' => 'resguardo'], function ($api){
+            $api->get('lista', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@listaResguardos');
+            $api->get('getResguardos', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@getResguardos');
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\ACTIVO_FIJO\ResguardoController@pdfResguardo');
+        });
+        $api->group(['prefix' => 'usuario-ubicacion'], function ($api){
+            $api->get('listaUbicaciones', 'App\Http\Controllers\v1\ACTIVO_FIJO\UsuarioUbicacionController@listaUbicaciones');
+        });
+        
+    });
+
+    /**
      * CONTABILIDAD GENERAL
      */
     $api->group(['middleware' => 'api', 'prefix' => 'contabilidad-general'], function ($api) {
@@ -1819,6 +1835,10 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'menu'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\MenuController@index');
+        });
+
+        $api->group(['prefix' => 'ubicacion'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\IGH\UbicacionController@index');
         });
     });
 
