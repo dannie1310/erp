@@ -280,7 +280,7 @@ class AsignacionFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font2-0.5);
                 $this->CellFitScale($anchos["u"], $heigth, $partida['unidad'], 1, 0, 'L', 0, '');
                 $this->SetFont('Arial', 'B', $font2);
-                $this->CellFitScale($anchos["c"], $heigth, number_format($partida['cantidad'], '2', '.', ','), 1, 0, 'L', 0, '');
+                $this->CellFitScale($anchos["c"], $heigth, number_format($partida['cantidad'], '2', '.', ','), 1, 0, 'R', 0, '');
                 $xca_ini = $this->getX();
 
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
