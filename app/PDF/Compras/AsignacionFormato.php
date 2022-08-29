@@ -330,6 +330,8 @@ class AsignacionFormato extends Rotation
                         ->where('id_material', '=', $partida_solicitud->id_material)
                         ->where('precio_unitario', '!=', 0)
                         ->first();
+                    
+                    $this->SetDrawColor('200', '200', '200');
                     if($partida_cotizacion) {
                         if (array_key_exists($partida_solicitud->id_material, $mejor_opcion_partida) && $mejor_opcion_partida[$partida_solicitud->id_material] == $cotizaciones[$i]->id_transaccion) {
                             $this->SetFillColor(190, 190, 190);
@@ -385,7 +387,7 @@ class AsignacionFormato extends Rotation
                 $this->SetFont('Arial', 'B', $font2);
                 $this->MultiCell($anchos["des"], $heigth,   '', 1, 'L', 0, 1);
                 $this->y_para_descripcion_arr[] = $this->GetY();
-                $this->y_fin_obs_par_sol_arr[] = $this->GetY();
+                $this->y_fin_obs_par_sol_arr[] = $this->GetY() +0.015;
                 $xos_ini += $anchos["des"];
                 $this->setY($this->y_para_obs_partidas);
                 $this->setX($xos_ini);
@@ -410,6 +412,7 @@ class AsignacionFormato extends Rotation
                         }
                         
                         $this->SetFont('Arial', '', $font2);
+                        $this->SetDrawColor('200', '200', '200');
                         $this->setY($yop_ini);
                         $this->setX($xop_ini);
                         
