@@ -286,6 +286,7 @@ class AsignacionFormato extends Rotation
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     if (array_key_exists($key, $mejor_opcion_partida) && !is_null($mejor_opcion_partida[$key]) && $mejor_opcion_partida[$key] == $partida['presupuestos'][$i]['id_transaccion']) {
                         $this->SetFillColor(150, 150, 150);
+                        $this->SetDrawColor('255', '255', '255');
                         $this->SetTextColor(0, 0, 0);
                     } else {
                         $this->SetFillColor(255, 255, 255);
@@ -342,6 +343,7 @@ class AsignacionFormato extends Rotation
                 for ($i = $i_e; $i < ($i_e + $inc_ie); $i++) {
                     if (array_key_exists($key, $mejor_opcion_partida) &&  !is_null($mejor_opcion_partida[$key]) &&  $mejor_opcion_partida[$key] == $partida['presupuestos'][$i]['id_transaccion']) {
                         $this->SetFillColor(150, 150, 150);
+                        $this->SetDrawColor('255', '255', '255');
                         $this->SetTextColor(0, 0, 0);
                     }else {
                         $this->SetFillColor(255, 255, 255);
