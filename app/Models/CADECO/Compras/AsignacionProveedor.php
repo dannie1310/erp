@@ -292,6 +292,19 @@ class AsignacionProveedor extends Model
         }
     }
 
+    public function getAsignacionParcialAttribute(){
+        if($this->solicitud->partidas->count() != $this->partidas->count()){
+            return true;
+        }
+        
+        foreach($this->partidas as $partida){
+            if($partida->cantidad_asignada != $partida->itemSolicitud->cantidad){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Métodos
      */

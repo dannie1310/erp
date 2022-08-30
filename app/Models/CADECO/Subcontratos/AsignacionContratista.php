@@ -246,6 +246,18 @@ class AsignacionContratista extends Model
         return implode(" / ",$razones_sociales);
     }
 
+    public function getAsignacionParcialAttribute(){
+        if($this->contratoProyectado->conceptos->count() != $this->partidas->count()){
+            return true;
+        }
+        foreach($this->partidas as $partida){
+            if($partida->cantidad_asignada != $partida->contrato->cantidad_presupuestada){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Métodos
      */
