@@ -1200,6 +1200,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIva')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/registrarRetencionIsr', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIsr')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@descargaLayout')->where(['id' => '[0-9]+']);

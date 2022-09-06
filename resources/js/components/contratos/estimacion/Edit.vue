@@ -14,6 +14,9 @@
                 <RetencionIndex v-bind:id="id"></RetencionIndex>
             </div>
             <div class="p-2" v-if="estimacion.estado == 0">
+                <RetencionISRCreate v-bind:id="id"></RetencionISRCreate>
+            </div>
+            <div class="p-2" v-if="estimacion.estado == 0">
                 <RetencionIvaCreate v-bind:id="id"></RetencionIvaCreate>
             </div>
             <div class="p-2" v-if="estimacion.estado == 0">
@@ -252,6 +255,7 @@
 </template>
 
 <script>
+    import RetencionISRCreate from './retencion-isr/Create';
     import RetencionIvaCreate from './retencion-iva/create'
     import DeductivaEdit from './deductivas/Edit'
     import RetencionIndex from './retenciones/Index';
@@ -263,7 +267,7 @@
 
     export default {
         name: "estimacion-edit",
-        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen, Penalizacion},
+        components: {DeductivaEdit, RetencionIndex, RetencionIvaCreate, Amortizacion, Datepicker, es, Resumen, Penalizacion,RetencionISRCreate},
         props: ['id'],
         data() {
             return {

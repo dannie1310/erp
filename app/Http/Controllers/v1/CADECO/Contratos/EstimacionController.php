@@ -61,6 +61,7 @@ class EstimacionController extends Controller
         $this->middleware('permiso:revertir_aprobacion_estimacion_subcontrato')->only('revertirAprobacion');
         $this->middleware('permiso:eliminar_estimacion_subcontrato')->only('destroy');
         $this->middleware('permiso:actualizar_amortizacion_anticipo')->only('anticipo');
+        $this->middleware('permiso:aplicar_retencion_isr_estimacion')->only('registrarRetencionIsr');
 
         $this->service = $service;
         $this->fractal = $fractal;
@@ -111,6 +112,11 @@ class EstimacionController extends Controller
     public function registrarRetencionIva(Request $request, $id)
     {
         return $this->service->registrarRetencionIva($request->all(), $id);
+    }
+
+    public function registrarRetencionIsr(Request $request, $id)
+    {
+        return $this->service->registrarRetencionIsr($request->all(), $id);
     }
 
     public function ordenarConceptos($id)
