@@ -553,6 +553,29 @@
                     <div class="col-md-3 offset-9 ">
                         <div class="form-group error-content">
                             <div class="row">
+                                <label class="col-md-8" for="ret_isr_125">Retención a ISR (1.25%):</label>
+                                <input
+                                    type="text"
+                                    class="form-control col-md-4"
+                                    style="width: 100%; text-align: right"
+                                    placeholder="Retención a ISR (10%)"
+                                    name="ret_isr_125"
+                                    id="ret_isr_125"
+                                    data-vv-as="Retención a ISR (1.25%)"
+                                    v-validate="{required: true, regex: /^[0-9]\d*(\.\d+)?$/}"
+                                    v-model="resumen.ret_isr_125"
+                                    v-on:keyup="actualizar_resumen()"
+                                    :class="{'is-invalid': errors.has('ret_isr_125')}"
+                                >
+                                <div class="invalid-feedback" v-show="errors.has('ret_isr_125')">{{ errors.first('ret_isr_125') }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 offset-9 ">
+                        <div class="form-group error-content">
+                            <div class="row">
                                 <label class="col-md-8" for="ret_isr_10">Retención a ISR (10%):</label>
                                 <input
                                     type="text"
@@ -650,6 +673,7 @@ export default {
                 ieps:0,
                 imp_hospedaje:0,
                 ret_isr_10:0,
+                ret_isr_125:0,
                 ret_subcontratos:0,
                 dev_ret_subcontratos:0,
                 total_deductivas_estimacion:0,
@@ -678,6 +702,7 @@ export default {
             this.resumen.ieps = parseFloat(0);
             this.resumen.imp_hospedaje = parseFloat(0);
             this.resumen.ret_isr_10 = parseFloat(0);
+            this.resumen.ret_isr_125 = parseFloat(0);
             this.resumen.ret_subcontratos = parseFloat(0);
             this.resumen.dev_ret_subcontratos = parseFloat(0);
             this.resumen.total_deductivas_estimacion = parseFloat(0);
@@ -728,6 +753,12 @@ export default {
                             this.resumen.dev_ret_subcontratos = parseFloat(this.resumen.dev_ret_subcontratos) + parseFloat(subcontrato.suma_penalizaciones_liberadas_sf);
                             this.resumen.total_deductivas_estimacion = parseFloat(this.resumen.total_deductivas_estimacion) + parseFloat(subcontrato.total_deductivas_sf);
                             this.resumen.monto_anticipo_aplicado = parseFloat(this.resumen.monto_anticipo_aplicado) + parseFloat(subcontrato.monto_anticipo_aplicado);
+                            if(subcontrato.porcentaje_isr_retenido == 1.25){
+                                this.resumen.ret_isr_125 = parseFloat(this.resumen.ret_isr_125) + parseFloat(subcontrato.monto_isr_retenido);
+                            }
+                            if(subcontrato.porcentaje_isr_retenido == 10){
+                                this.resumen.ret_isr_10 = parseFloat(this.resumen.ret_isr_10) + parseFloat(subcontrato.monto_isr_retenido);
+                            }
                         }
                         if(parseInt(subcontrato.tipo_transaccion) == 53){
                             this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
@@ -878,7 +909,7 @@ export default {
         actualizar_resumen(){
             this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
             let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje)  +  parseFloat(this.resumen.ieps);
-            let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6) + parseFloat(this.resumen.ret_isr_10);
+            let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6) + parseFloat(this.resumen.ret_isr_10) + parseFloat(this.resumen.ret_isr_125);
             this.resumen.total_documentos = parseFloat(this.resumen.subtotal) + this.resumen.iva_pagar + otros_impuestos - retenciones;
         },
         find(){

@@ -687,6 +687,10 @@ class Estimacion extends Transaccion
     public function getTotalOrdenPagoAttribute()
     {
         $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
+                
+        if($this->porcentaje_isr_retenido && $this->porcentaje_isr_retenido > 0){
+            $total -= $this->monto_isr_retenido;
+        }
         return $total;
     }
 
@@ -774,6 +778,13 @@ class Estimacion extends Transaccion
         } else {
             return "0 %";
         }
+    }
+
+    public function getPorcentajeIsrRetenidoFormatAttribute(){
+        if($this->porcentaje_isr_retenido && $this->porcentaje_isr_retenido > 0){
+            return number_format($this->porcentaje_isr_retenido, 2) . " %";
+        }
+        return "0 %";
     }
 
     /**
@@ -870,6 +881,29 @@ class Estimacion extends Transaccion
         $this->IVARetenido = $retencion;
         $this->save();
         $this->recalculaDatosGenerales();
+        return $this;
+    }
+
+    public function registrarISRRetenido($data){
+        if($data['retencionISR125'] && $data['retencionISR10']){
+            abort(403, 'Favor de solo ingresar una retención.');
+        }
+
+        if($data['retencionISR125']){
+            if(abs(($this->subtotal_orden_pago * 0.0125) - $data['retencionISR125']) > 0.99){
+                abort(403, 'La retención de ISR no es del 1.25%');
+            }
+            $this->porcentaje_isr_retenido = 1.25;
+            $this->monto_isr_retenido = $data['retencionISR125'];
+        }
+        if($data['retencionISR10']){
+            if(abs(($this->subtotal_orden_pago * 0.1) - $data['retencionISR10']) > 0.99){
+                abort(403, 'La retención de ISR no es del 10%');
+            }
+            $this->porcentaje_isr_retenido = 10;
+            $this->monto_isr_retenido = $data['retencionISR10'];
+        }
+        $this->save();
         return $this;
     }
 
@@ -1105,6 +1139,10 @@ class Estimacion extends Transaccion
 
     public function getRetencionIva23FormatAttribute(){
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
+    }
+
+    public function getMontoIsrRetenidoFormatAttribute(){
+        return '$ ' . number_format($this->monto_isr_retenido, 2);
     }
 
     public function getEstadoDescripcionAttribute()
