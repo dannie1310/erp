@@ -585,45 +585,61 @@ class OrdenPagoEstimacion extends Rotation
       */else if(Context::getDatabase() == "SAO1814_PRESA_LIBERTAD" && Context::getIdObra() == 6 && $this->estimacion->origenAcarreos)
         {
             /*Firmas Acarreos Presa Libertad*/
-            $this->Cell(1);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.1);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 2) / 6, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Revisó'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Autorizó'), 'TRLB', 0, 'C', 1);
 
             $this->Ln();
-            $this->Cell(1);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRL', 0, 'C');
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(0.1);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 2) / 6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 1.2, '', 'TRL', 0, 'C');
             $this->SetFont('Arial', 'B', 5);
 
             $this->Ln();
-            $this->Cell(1);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode("Ing. Anayeli Marcial Basurto"), 'RLB', 0, 'C', 0);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Ing. Jonathan Vergara Sánchez'), 'RLB', 0, 'C', 0);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('C.P. Sergio Banda Hernández'), 'RLB', 0, 'C', 0);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Ing. Juan Antonio Hernández Carrillo'), 'RLB', 0, 'C', 0);
+            $this->Cell(0.1);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode("Ing. Anayeli Marcial Basurto"), 'RLB', 0, 'C', 0);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 2) / 6, 0.4, utf8_decode('Ing. Jonathan Vergara Sánchez'), 'RLB', 0, 'C', 0);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('C.P. Sergio Banda Hernández'), 'RLB', 0, 'C', 0);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Moisés Martínez'), 'RLB', 0, 'C', 0);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Fernando Caloca Villarreal'), 'RLB', 0, 'C', 0);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Miguel Angel Bonola Chacon'), 'RLB', 0, 'C', 0);
 
             $this->Ln();
-            $this->Cell(1);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Responsable de Subcontratos'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Responsable de Control de Proyectos'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Responsable de Administración'), 'TRLB', 0, 'C', 1);
-            $this->Cell(0.9);
-            $this->Cell(($this->GetPageWidth() - 4) / 5, 0.4, utf8_decode('Responsable del Proyecto'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.1);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Responsable de Subcontratos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 2) / 6, 0.4, utf8_decode('Responsable de Control de Proyectos'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Responsable de Administración'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Responsable de Construcción'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Jefe de Trituración'), 'TRLB', 0, 'C', 1);
+            $this->Cell(0.2);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Responsable del Proyecto'), 'TRLB', 0, 'C', 1);
         }
         else if(Context::getDatabase() == "SAO1814_CIRCUITO" && (Context::getIdObra() == 7 || Context::getIdObra() == 8)) {
             /*Firmas en CEVASG E INFRASG*/
