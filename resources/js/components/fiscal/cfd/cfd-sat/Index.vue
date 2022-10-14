@@ -24,22 +24,28 @@
                     </div>
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="custom-control custom-switch" :disabled="ver_asociados">
                                     <input type="checkbox" class="custom-control-input" id="ver_pendientes" v-model="ver_pendientes" :disabled="ver_asociados || ver_asociados_contabilidad">
                                     <label class="custom-control-label" for="ver_pendientes" :disabled="ver_asociados">Ver únicamente CFDI pendientes de asociación en proyecto</label>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="custom-control custom-switch" :disabled="ver_pendientes">
                                     <input type="checkbox" class="custom-control-input" id="ver_asociados" v-model="ver_asociados" :disabled="ver_pendientes">
                                     <label class="custom-control-label" for="ver_asociados" :disabled="ver_pendientes">Ver CFDI asociados a proyecto por SAO</label>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="custom-control custom-switch" :disabled="ver_pendientes">
-                                    <input type="checkbox" class="custom-control-input" id="ver_asociados_contpaq" v-model="ver_asociados_contabilidad" :disabled="ver_pendientes">
+                                    <input type="checkbox" class="custom-control-input" id="ver_asociados_contpaq" v-model="ver_asociados_contabilidad" :disabled="ver_pendientes || ver_no_asociados_contabilidad">
                                     <label class="custom-control-label" for="ver_asociados_contpaq" :disabled="ver_pendientes">Ver CFDI asociados a proyecto por Contabilidad</label>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="custom-control custom-switch" :disabled="ver_pendientes">
+                                    <input type="checkbox" class="custom-control-input" id="ver_no_asociados_contpaq" v-model="ver_no_asociados_contabilidad" :disabled="ver_asociados_contabilidad">
+                                    <label class="custom-control-label" for="ver_no_asociados_contpaq" :disabled="ver_pendientes">Ver CFDI no asociados a Contabilidad</label>
                                 </div>
                             </div>
                         </div>
@@ -88,6 +94,7 @@
                 ver_pendientes: false,
                 ver_asociados: false,
                 ver_asociados_contabilidad: false,
+                ver_no_asociados_contabilidad: false,
                 detalle_descarga :[],
                 HeaderSettings: false,
                 columns: [
@@ -292,6 +299,13 @@
             ver_asociados_contabilidad:{
                 handler(vac) {
                     this.query.solo_asociados_contabilidad = vac
+                    this.query.offset = 0;
+                    this.paginate()
+                },
+            },
+            ver_no_asociados_contabilidad:{
+                handler(vnac) {
+                    this.query.solo_no_asociados_contabilidad = vnac
                     this.query.offset = 0;
                     this.paginate()
                 },

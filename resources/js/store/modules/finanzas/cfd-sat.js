@@ -399,6 +399,15 @@ export default {
                 search = search + 'solo_asociados='+ payload.params.solo_asociados + '&';
                 filtros = +filtros + 1;
             }
+            if (typeof payload.params.solo_asociados !== 'undefined') {
+                search = search + 'solo_asociados_contabilidad='+ payload.params.solo_asociados_contabilidad + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.solo_asociados !== 'undefined') {
+                search = search + 'solo_no_asociados_contabilidad='+ payload.params.solo_no_asociados_contabilidad + '&';
+                filtros = +filtros + 1;
+            }
+            //
 
             if(filtros == 0){
                 swal({
