@@ -13,7 +13,7 @@ class TipoIngresoTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$model->getKey(),
-            'tipo_ingreso' => $model->tipo_ingreso
+            'nombre' => $model->tipo_ingreso
         ];
     }
 }

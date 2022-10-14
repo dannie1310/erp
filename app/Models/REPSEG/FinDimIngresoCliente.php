@@ -12,4 +12,24 @@ class FinDimIngresoCliente extends Model
     protected $table = 'fin_dim_ingreso_clientes';
     protected $primaryKey = 'idcliente';
     public $timestamps = false;
+
+    /**
+     * Relaciones
+     */
+
+    /**
+     * Scopes
+     */
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 1);
+    }
+
+    /**
+     * Attributos
+     */
+
+    /**
+     * Métodos
+     */
 }

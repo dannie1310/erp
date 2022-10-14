@@ -3367,7 +3367,7 @@ export const routes = [
                     title: 'Administrar',
                     breadcrumb: {parent: 'activo-fijo', name: 'ADMINISTRAR'},
                     middleware: [auth],
-                    
+
                     //permission: ['editar_poliza','consultar_poliza'],
                     general: true
                 }
@@ -3380,7 +3380,7 @@ export const routes = [
                     title: 'Resguardos',
                     breadcrumb: {parent: 'activo-fijo', name: 'RESGUARDOS'},
                     middleware: [auth],
-                    
+
                     //permission: ['editar_poliza','consultar_poliza'],
                     general: true
                 }
@@ -4948,6 +4948,18 @@ export const routes = [
                             breadcrumb: {parent: 'seguimiento', name: 'FACTURAS'},
                             middleware: [auth, permission],
                             permission: 'consultar_factura_cuenta_x_cobrar',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'factura-seg-create',
+                        component: require('./components/seguimiento/factura/Create').default,
+                        meta: {
+                            title: 'Registrar Factura',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'factura-seg'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_cuenta_x_cobrar'],
                             general: true
                         }
                     },

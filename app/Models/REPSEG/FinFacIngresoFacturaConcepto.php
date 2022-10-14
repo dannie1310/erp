@@ -24,6 +24,10 @@ class FinFacIngresoFacturaConcepto extends Model
     /**
      * Scopes
      */
+    public function scopeActivos($query)
+    {
+        return $query->where('estado', 1);
+    }
 
     /**
      * Atributos

@@ -274,7 +274,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'usuario-ubicacion'], function ($api){
             $api->get('listaUbicaciones', 'App\Http\Controllers\v1\ACTIVO_FIJO\UsuarioUbicacionController@listaUbicaciones');
         });
-        
+
     });
 
     /**
@@ -1663,10 +1663,34 @@ $api->version('v1', function ($api) {
      */
     $api->group(['middleware' => 'api', 'prefix' => 'seguimiento'], function ($api){
 
+        $api->group(['prefix'=>'cliente'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\ClienteController@index');
+        });
+
+        $api->group(['prefix'=>'empresa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\EmpresaController@index');
+        });
+
         $api->group(['prefix'=>'factura'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix'=>'ingreso-partida'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@index');
+        });
+
+        $api->group(['prefix'=>'moneda'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\MonedaController@index');
+        });
+
+        $api->group(['prefix'=>'proyecto'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\ProyectoController@index');
+        });
+
+        $api->group(['prefix'=>'tipo-ingreso'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@index');
         });
     });
 
