@@ -237,7 +237,7 @@
                                                 v-model="concepto.id_concepto"
                                                 :class="{'is-invalid': errors.has(`concepto[${i}]`)}">
                                                 <option value>--Seleccionar--</option>
-                                                <option v-for="concept in tipoConceptos" :value="concept.id_concepto">{{ concept.nombre }}</option>
+                                                <option v-for="concept in tipoConceptos" :value="concept.id">{{ concept.nombre }}</option>
                                             </select>
                                             <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
                                         </td>
@@ -374,18 +374,16 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="modal-footer">
-                        <div class="pull-right">
-                            <button type="button" class="btn btn-secondary" v-on:click="salir">
-                                <i class="fa fa-angle-left"></i>
-                                Regresar</button>
-                            <button type="button" @click="validate" :disabled="errors.count() > 0" class="btn btn-primary">
-                                <i class="fa fa-save"></i>
-                                Guardar
-                            </button>
-                        </div>
-                    </div>
+            </div>
+            <div class="modal-footer">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>
+                        Regresar</button>
+                    <button type="button" @click="validate" :disabled="errors.count() > 0" class="btn btn-primary">
+                        <i class="fa fa-save"></i>
+                        Guardar
+                    </button>
                 </div>
             </div>
         </div>
@@ -609,42 +607,31 @@
             },
             store() {
                 return this.$store.dispatch('seguimiento/factura/store', {
-                    id_antecedente: this.id,
-                    fecha: moment(this.fecha).format('YYYY-MM-DD'),
-                    cumplimiento: moment(this.fecha_inicio).format('YYYY-MM-DD'),
-                    vencimiento:  moment(this.fecha_fin).format('YYYY-MM-DD'),
-                    observaciones: this.observaciones,
-                    conceptos: conceptos
-                    fecha_emision:  moment(this.fecha_emision).format('YYYY-MM-DD'),
-                    observaciones: '',
-
-                    numero_factura : '',
-                    descripcion : '',
-                    proyectos : {},
-                    id_proyecto : '',
-                    empresas : {},
-                    id_empresa : '',
-                    clientes : {},
-                    id_cliente : '',
-                    fecha_inicial : '',
-                    fecha_fin : '',
-                    monedas : {},
-                    id_moneda : '',
-                    tipo_cambio : '',
-                    tipoConceptos : {},
-                    conceptos : [],
-                    importe_conceptos : 0,
-                    subtotal : 0,
-                    iva : 0,
-                    total : 0,
-                    partidas : [],
-                    importe_partidas_antes : 0,
-                    importe_partidas_despues : 0,
-                    tipos_partida : {}
+                    fi_cubre: moment(this.fecha_inicial).format('YYYY-MM-DD'),
+                    ff_cubre:  moment(this.fecha_fin).format('YYYY-MM-DD'),
+                    conceptos: this.conceptos,
+                    fecha:  moment(this.fecha_emision).format('YYYY-MM-DD'),
+                    numero : this.numero_factura,
+                    descripcion : this.descripcion,
+                    idproyecto : this.id_proyecto,
+                    idempresa : this.id_empresa,
+                    idcliente : this.id_cliente,
+                    idmoneda : this.id_moneda,
+                    tipo_cambio : this.tipo_cambio,
+                    importe_conceptos : this.importe_conceptos,
+                    importe : this.subtotal,
+                    iva : this.iva,
+                    total : this.total,
+                    partidas : this.partidas,
+                    importe_partidas_antes : this.importe_partidas_antes,
+                    importe_partidas_despues : this.importe_partidas_despues,
                 }).then(data=> {
-                    this.$router.push({name: 'estimacion-index'});
-                    this.$router.push({name: 'estimacion'});
+                    //this.salir();
                 })
+            },
+            salir()
+            {
+                this.$router.go(-1);
             },
         },
         watch: {

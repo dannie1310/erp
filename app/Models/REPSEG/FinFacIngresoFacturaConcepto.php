@@ -12,6 +12,11 @@ class FinFacIngresoFacturaConcepto extends Model
     protected $table = 'fin_fac_ingreso_factura_concepto';
     protected $primaryKey = 'idfactura_concepto';
     public $timestamps = false;
+    protected $fillable = [
+        'idfactura',
+        'idconcepto',
+        'importe'
+    ];
 
     /**
      * Relaciones
@@ -19,6 +24,11 @@ class FinFacIngresoFacturaConcepto extends Model
     public function tipoIngreso()
     {
         return $this->belongsTo(FinDimTipoIngreso::class,  'idconcepto','idtipo_ingreso');
+    }
+
+    public function factura()
+    {
+        return $this->hasOne(FinFacIngresoFactura::class,'idfactura', 'idfactura');
     }
 
     /**

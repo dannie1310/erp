@@ -1675,6 +1675,7 @@ $api->version('v1', function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@store');
         });
 
         $api->group(['prefix'=>'ingreso-partida'], function ($api){
