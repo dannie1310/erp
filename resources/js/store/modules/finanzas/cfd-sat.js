@@ -305,7 +305,7 @@ export default {
         },
         descargaLayout(context, payload){
             let filtros = 0;
-            var search = '?';
+            var search = '?scope=paraProyecto&';
             if (typeof payload.params.rfc_emisor !== 'undefined') {
                 search = search + 'rfc_emisor='+ payload.params.rfc_emisor + '&';
                 filtros = +filtros + 1;

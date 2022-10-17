@@ -289,8 +289,8 @@
                 },
             },
             ver_no_asociados_contabilidad:{
-                handler(vac) {
-                    this.query.solo_no_asociados_contabilidad = vac
+                handler(vnac) {
+                    this.query.solo_no_asociados_contabilidad = vnac
                     this.query.offset = 0;
                     this.paginate()
                 },
