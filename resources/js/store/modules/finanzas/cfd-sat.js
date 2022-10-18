@@ -305,7 +305,10 @@ export default {
         },
         descargaLayout(context, payload){
             let filtros = 0;
-            var search = '?scope=paraProyecto&';
+            var search = '';
+            if (typeof payload.params.scope !== 'undefined') {
+                search = search + '?scope='+payload.params.scope+'&';
+            }
             if (typeof payload.params.rfc_emisor !== 'undefined') {
                 search = search + 'rfc_emisor='+ payload.params.rfc_emisor + '&';
                 filtros = +filtros + 1;
