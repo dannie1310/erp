@@ -106,7 +106,7 @@ class CFDILayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->setCellValue("O" . $i, $cfd->total_format);
                     $event->sheet->setCellValue("P" . $i, $cfd->moneda);
                     $event->sheet->setCellValue("Q" . $i, $cfd->tipo_cambio);
-                    $event->sheet->setCellValue("R" . $i, $cfd->estado);
+                    $event->sheet->setCellValue("R" . $i, $cfd->conceptos_txt);
                     $event->sheet->setCellValue("S" . $i, $cfd->factura_repositorio ? $cfd->factura_repositorio->base_datos:'');
                     $event->sheet->setCellValue("T" . $i, $cfd->factura_repositorio ? $cfd->factura_repositorio->fecha_hora_carga_format:'');
                     $event->sheet->setCellValue("U" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->base_datos : '');
@@ -124,6 +124,6 @@ class CFDILayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-        return array(['#','FECHA', 'SERIE', 'FOLIO','TIPO', 'UUID','RFC RECEPTOR','RECEPTOR','RFC EMISOR','EMISOR','SUBTOTAL','DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'ESTADO','BD','FECHA CARGA PROYECTO', 'BD CTPQ', 'EJERCICIO', 'PERIODO', 'TIPO POLIZA', 'FOLIO POLIZA', 'FECHA POLIZA']);
+        return array(['#','FECHA', 'SERIE', 'FOLIO','TIPO', 'UUID','RFC RECEPTOR','RECEPTOR','RFC EMISOR','EMISOR','SUBTOTAL','DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'CONCEPTOS','BD','FECHA CARGA PROYECTO', 'BD CTPQ', 'EJERCICIO', 'PERIODO', 'TIPO POLIZA', 'FOLIO POLIZA', 'FECHA POLIZA']);
     }
 }
