@@ -326,14 +326,16 @@ class CFDSAT extends Model
 
     public function complementarConceptosTxt()
     {
-        $concepto_arr = [];
-        foreach ($this->conceptos as $concepto)
+        if(count($this->conceptos) > 0)
         {
-            $concepto_arr[]= $concepto->descripcion;
+            $concepto_arr = [];
+            foreach ($this->conceptos as $concepto)
+            {
+                $concepto_arr[]= $concepto->descripcion;
+            }
+            $this->conceptos_txt = implode(" | ",$concepto_arr);
+            $this->save();
         }
-        $this->concepto_txt = implode(" | ",$concepto_arr);
-        $this->save();
-
     }
 
     public function complementarDatos()

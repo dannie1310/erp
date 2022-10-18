@@ -1609,12 +1609,14 @@ class CFDSATService
         $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
 
         $cantidad = CFDSAT::where("cancelado","=","0")
+            ->whereNull("conceptos_txt")
             ->count();
 
         $take = 1000;
 
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::where("cancelado","=","0")
+                ->whereNull("conceptos_txt")
                 ->skip($i)
                 ->take($take)
                 ->orderBy("id","asc")
@@ -1622,7 +1624,8 @@ class CFDSATService
 
             $idistribucion = 0;
             foreach ($cfd as $rcfd) {
-                ProcessComplementaConceptosTxtCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                ProcessComplementaConceptosTxtCFDI::dispatch($rcfd)
+                    ->onQueue("q".$idistribucion);
                 //$rcfd->complementarDatos();
                 $idistribucion ++;
                 if($idistribucion==5){
