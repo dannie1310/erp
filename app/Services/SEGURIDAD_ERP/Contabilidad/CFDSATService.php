@@ -106,6 +106,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }

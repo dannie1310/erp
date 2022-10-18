@@ -107,14 +107,15 @@ class CFDILayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->setCellValue("P" . $i, $cfd->moneda);
                     $event->sheet->setCellValue("Q" . $i, $cfd->tipo_cambio);
                     $event->sheet->setCellValue("R" . $i, $cfd->conceptos_txt);
-                    $event->sheet->setCellValue("S" . $i, $cfd->factura_repositorio ? $cfd->factura_repositorio->base_datos:'');
-                    $event->sheet->setCellValue("T" . $i, $cfd->factura_repositorio ? $cfd->factura_repositorio->fecha_hora_carga_format:'');
-                    $event->sheet->setCellValue("U" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->base_datos : '');
-                    $event->sheet->setCellValue("V" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->ejercicio : '');
-                    $event->sheet->setCellValue("W" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->periodo : '');
-                    $event->sheet->setCellValue("X" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->tipo : '');
-                    $event->sheet->setCellValue("Y" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->folio : '');
-                    $event->sheet->setCellValue("Z" . $i, $cfd->poliza_cfdi ? $cfd->poliza_cfdi->fecha_format : '');
+                    $event->sheet->setCellValue("S" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->proyecto->base_datos:'');
+                    $event->sheet->setCellValue("T" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->obra:'');
+                    $event->sheet->setCellValue("U" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->fecha_hora_registro_format:'');
+                    $event->sheet->setCellValue("V" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->base_datos_contpaq : '');
+                    $event->sheet->setCellValue("W" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->ejercicio : '');
+                    $event->sheet->setCellValue("X" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->periodo : '');
+                    $event->sheet->setCellValue("Y" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->tipo : '');
+                    $event->sheet->setCellValue("Z" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->folio : '');
+                    $event->sheet->setCellValue("AA" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->fecha_format : '');
 
                     $i++;
                 }
@@ -124,6 +125,6 @@ class CFDILayout implements WithHeadings, ShouldAutoSize, WithEvents
 
     public function headings(): array
     {
-        return array(['#','FECHA', 'SERIE', 'FOLIO','TIPO', 'UUID','RFC RECEPTOR','RECEPTOR','RFC EMISOR','EMISOR','SUBTOTAL','DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'CONCEPTOS','BD','FECHA CARGA PROYECTO', 'BD CTPQ', 'EJERCICIO', 'PERIODO', 'TIPO POLIZA', 'FOLIO POLIZA', 'FECHA POLIZA']);
+        return array(['#','FECHA', 'SERIE', 'FOLIO','TIPO', 'UUID','RFC RECEPTOR','RECEPTOR','RFC EMISOR','EMISOR','SUBTOTAL','DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'CONCEPTOS','BD SAO','OBRA SAO','FECHA CARGA PROYECTO', 'BD CTPQ', 'EJERCICIO', 'PERIODO', 'TIPO POLIZA', 'FOLIO POLIZA', 'FECHA POLIZA']);
     }
 }
