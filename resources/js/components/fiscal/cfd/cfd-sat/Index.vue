@@ -4,6 +4,7 @@
             <div class="col-12">
                 <RegistroMasivo/>
                 <ProcesaDirectorio/>
+                <descarga-layout v-bind:query="query" />
                 <button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
                     <i class="fa fa-download"></i> Descargar
                 </button>
@@ -79,10 +80,11 @@
     import RegistroMasivo from './RegistroMasivo'
     import ProcesaDirectorio from './ProcesaDirectorio'
     import DateRangePicker from "../../../globals/DateRangePicker"
+    import DescargaLayout from "./DescargaLayout";
 
     export default {
         name: "cfd-sat-index",
-        components:{RegistroMasivo,ProcesaDirectorio, DateRangePicker},
+        components:{DescargaLayout, RegistroMasivo,ProcesaDirectorio, DateRangePicker},
 
         data() {
             return {

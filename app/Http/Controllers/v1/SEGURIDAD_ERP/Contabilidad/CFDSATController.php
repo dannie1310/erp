@@ -147,4 +147,9 @@ class CFDSATController extends Controller
         $respuesta =$this->service->obtenerListaCFDICostosCFDIBalanza($request->all());
         return response()->json($respuesta, 200);
     }
+
+    public function descargaLayout(Request $request)
+    {
+        return $this->service->descargaExcel($request->all());
+    }
 }
