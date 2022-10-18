@@ -106,6 +106,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -187,6 +188,12 @@ class CFDSATService
         if (isset($data['solo_asociados_contabilidad'])) {
             if($data['solo_asociados_contabilidad']==="true"){
                 $this->repository->whereHas("polizaCFDI");
+            }
+        }
+
+        if (isset($data['solo_no_asociados_contabilidad'])) {
+            if($data['solo_no_asociados_contabilidad']==="true"){
+                $this->repository->whereDoesntHave("polizaCFDI");
             }
         }
 
@@ -280,8 +287,9 @@ class CFDSATService
         ini_set('memory_limit', -1);
         $cantidad = CFDSAT::where("id_empresa_sat","=",1)
             ->where("cancelado","=","0")
+            ->where("rfc_emisor","=","GMS971110BTA")
             ->whereIn("tipo_comprobante",["I","E"])
-            ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+            ->whereBetween("fecha",["2014-01-01 00:00:00","2016-12-31 23:59:59"])
             ->count();
 
         $take = 1000;
@@ -289,8 +297,9 @@ class CFDSATService
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::where("id_empresa_sat","=",1)
                 ->where("cancelado","=","0")
+                ->where("rfc_emisor","=","GMS971110BTA")
                 ->whereIn("tipo_comprobante",["I","E"])
-                ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+                ->whereBetween("fecha",["2014-01-01 00:00:00","2016-12-31 23:59:59"])
                 ->skip($i)
                 ->take($take)
                 ->get();
@@ -1462,6 +1471,12 @@ class CFDSATService
         if (isset($data['solo_asociados_contabilidad'])) {
             if($data['solo_asociados_contabilidad']==="true"){
                 $this->repository->whereHas("polizaCFDI");
+            }
+        }
+
+        if (isset($data['solo_no_asociados_contabilidad'])) {
+            if($data['solo_no_asociados_contabilidad']==="true"){
+                $this->repository->whereDoesntHave("polizaCFDI");
             }
         }
 
