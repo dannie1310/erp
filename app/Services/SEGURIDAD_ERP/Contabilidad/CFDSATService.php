@@ -11,6 +11,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
 use App\Jobs\ProcessCancelacionCFDI;
+use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
@@ -1594,6 +1595,39 @@ class CFDSATService
                 $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
                 $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
                 $id++;
+            }
+        }
+    }
+
+    public function reprocesaCFDIComplementarConceptosTxt()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessComplementaConceptosTxtCFDI::dispatch($rcfd)->onQueue("q".$idistribucion);
+                //$rcfd->complementarDatos();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
             }
         }
     }
