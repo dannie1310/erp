@@ -107,7 +107,7 @@ class CFDILayout implements WithHeadings, ShouldAutoSize, WithEvents
                     $event->sheet->setCellValue("P" . $i, $cfd->moneda);
                     $event->sheet->setCellValue("Q" . $i, $cfd->tipo_cambio);
                     $event->sheet->setCellValue("R" . $i, $cfd->conceptos_txt);
-                    $event->sheet->setCellValue("S" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->proyecto->base_datos:'');
+                    $event->sheet->setCellValue("S" . $i, $cfd->facturaRepositorio && $cfd->facturaRepositorio->proyecto ? $cfd->facturaRepositorio->proyecto->base_datos:'');
                     $event->sheet->setCellValue("T" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->obra:'');
                     $event->sheet->setCellValue("U" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->fecha_hora_registro_format:'');
                     $event->sheet->setCellValue("V" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->base_datos_contpaq : '');
