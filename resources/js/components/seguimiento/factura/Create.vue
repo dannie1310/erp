@@ -234,7 +234,7 @@
                                                 v-validate="{required: true}"
                                                 class="form-control"
                                                 :id="`concepto[${i}]`"
-                                                v-model="concepto.id_concepto"
+                                                v-model="concepto.idconcepto"
                                                 :class="{'is-invalid': errors.has(`concepto[${i}]`)}">
                                                 <option value>--Seleccionar--</option>
                                                 <option v-for="concept in tipoConceptos" :value="concept.id">{{ concept.nombre }}</option>
@@ -438,7 +438,7 @@
             this.fecha_inicial = new Date();
             this.fecha_fin = new Date();
             this.conceptos.push({
-                id_concepto:'',
+                idconcepto:'',
                 importe: 0
             });
             this.getClientes();
@@ -455,7 +455,7 @@
             agregarConcepto(){
                 let temp_index = this.conceptos.length;
                 this.conceptos.splice(temp_index, 0, {
-                    id_concepto:'',
+                    idconcepto:'',
                     importe:0.00
                 });
             },

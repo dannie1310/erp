@@ -173,6 +173,7 @@ use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
 use App\Models\REPSEG\FinFacIngresoFactura;
 use App\Models\REPSEG\FinFacIngresoFacturaConcepto;
+use App\Models\REPSEG\FinFacIngresoFacturaDetalle;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -367,6 +368,7 @@ use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\CTPQ\DocumentoObserver;
 use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
 use App\Observers\REPSEG\FinFacIngresoFacturaConceptoObserver;
+use App\Observers\REPSEG\FinFacIngresoFacturaDetalleObserver;
 use App\Observers\REPSEG\FinFacIngresoFacturaObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
@@ -705,6 +707,7 @@ class AppServiceProvider extends ServiceProvider
         /**
          * REPSEG
          */
+         FinFacIngresoFacturaDetalle::observe(FinFacIngresoFacturaDetalleObserver::class);
          FinFacIngresoFactura::observe(FinFacIngresoFacturaObserver::class);
 
 

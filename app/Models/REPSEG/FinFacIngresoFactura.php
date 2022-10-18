@@ -255,20 +255,35 @@ class FinFacIngresoFactura extends Model
             $datos_factura = array_except($datos_factura, 'importe_partidas_despues');
             $factura = $this->create($datos_factura);
 
-            foreach (array_only($data, 'conceptos') as $concepto)
-            {
-                dd($concepto['idconcepto']);
-                $i = $factura->conceptos()->create($concepto);
-                dd($i);
+            foreach (array_only($data, 'conceptos')['conceptos'] as $concepto) {
+                $factura->conceptos()->create($concepto);
             }
-            $factura->conceptos()->create(array_only($data, 'conceptos'));
-            dd("f", $factura->conceptos);
 
+            if (array_key_exists('partidas', $data)) {
+                foreach (array_only($data, 'partidas')['partidas'] as $partida) {
+                    $factura->partidas()->create($partida);
+                }
+            }
+
+            $factura->partidas()->create([
+                'idfactura' => $factura->getKey(),
+                'idpartida' => 15,
+                'total' => $data['importe']
+            ]);
+            $factura->partidas()->create([
+                'idfactura' => $factura->getKey(),
+                'idpartida' => 16,
+                'total' => $data['iva']
+            ]);
+            $factura->partidas()->create([
+                'idfactura' => $factura->getKey(),
+                'idpartida' => 17,
+                'total' => $data['total']
+            ]);
 
             DB::connection('repseg')->commit();
             return $factura;
-
-        } catch (\Exception $e) {
+        }catch (\Exception $e) {
             DB::connection('repseg')->rollBack();
             abort(400, $e->getMessage());
         }

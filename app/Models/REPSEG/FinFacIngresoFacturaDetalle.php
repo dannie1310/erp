@@ -12,6 +12,13 @@ class FinFacIngresoFacturaDetalle extends Model
     protected $table = 'fin_fac_ingreso_factura_detalle';
     protected $primaryKey = 'idfactura_detalle';
     public $timestamps = false;
+    protected $fillable = [
+        'idfactura',
+        'idpartida',
+        'antes_iva',
+        'total',
+        'timestamp'
+    ];
 
     /**
      * Relaciones
@@ -36,6 +43,6 @@ class FinFacIngresoFacturaDetalle extends Model
 
 
     /**
-     * Atributos
+     * Métodos
      */
 }
