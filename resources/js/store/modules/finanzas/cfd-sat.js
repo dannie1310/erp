@@ -305,9 +305,9 @@ export default {
         },
         descargaLayout(context, payload){
             let filtros = 0;
-            var search = '';
+            var search = '?';
             if (typeof payload.params.scope !== 'undefined') {
-                search = search + '?scope='+payload.params.scope+'&';
+                search = search + 'scope='+payload.params.scope+'&';
             }
             if (typeof payload.params.rfc_emisor !== 'undefined') {
                 search = search + 'rfc_emisor='+ payload.params.rfc_emisor + '&';
