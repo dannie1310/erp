@@ -324,6 +324,20 @@ class CFDSAT extends Model
         }
     }
 
+    public function complementarConceptosTxt()
+    {
+        if(count($this->conceptos) > 0)
+        {
+            $concepto_arr = [];
+            foreach ($this->conceptos as $concepto)
+            {
+                $concepto_arr[]= $concepto->descripcion;
+            }
+            $this->conceptos_txt = implode(" | ",$concepto_arr);
+            $this->save();
+        }
+    }
+
     public function complementarDatos()
     {
         $cfd = new CFD($this->xml);
