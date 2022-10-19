@@ -260,7 +260,7 @@ class CFDSAT extends Model
         return $xml->xml;
     }
 
-    public function getConceptosTxtAttribute()
+    public function getConceptoTxtAttribute()
     {
         $concepto_arr = [];
         foreach ($this->conceptos as $concepto)
