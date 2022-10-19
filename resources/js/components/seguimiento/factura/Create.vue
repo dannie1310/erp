@@ -21,6 +21,7 @@
                                     <label for="fecha_emision" >Fecha de Emisión</label>
                                     <datepicker v-model = "fecha_emision"
                                                 name = "fecha_emision"
+                                                v-on:keyup="getTipoCambio"
                                                 :format = "formatoFecha"
                                                 :language = "es"
                                                 :bootstrap-styling = "true"
@@ -313,6 +314,7 @@
                                                     :name="`partida[${i}]`"
                                                     data-vv-as="Partida"
                                                     v-validate="{required: true}"
+                                                    v-on:change="getPartida(i)"
                                                     class="form-control"
                                                     :id="`partida[${i}]`"
                                                     v-model="partida.idpartida"
@@ -323,8 +325,8 @@
                                                 <div class="invalid-feedback" v-show="errors.has(`partida[${i}]`)">{{ errors.first(`partida[${i}]`) }}</div>
                                             </td>
                                             <td>
-                                                <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" :id="partida.antes_iva" v-on:keyup="importeTotalPartidas">
+                                                 <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" :id="partida.antes_iva" v-model="partida.antes_iva" :disabled="partida.idpartida == ''" v-on:click="importeTotalPartidas">
                                                     <label class="form-check-label" for="antes_iva">¿Antes de IVA?</label>
                                                 </div>
                                             </td>
@@ -477,12 +479,13 @@
                 iva : 0,
                 total : 0,
                 partidas : [],
-                importe_partidas_antes : 0,
-                importe_partidas_despues : 0,
+                importe_partidas_antes_suma : 0,
+                importe_partidas_antes_resta: 0,
+                importe_partidas_despues_suma : 0,
+                importe_partidas_despues_resta : 0,
                 tipos_partida : {},
                 nuevo_concepto : '',
                 tipos_cambios : [],
-                partida : {}
             }
         },
         mounted() {
@@ -532,9 +535,13 @@
                 this.totales();
             },
             totales(){
-                this.subtotal = this.importe_conceptos - this.importe_partidas_antes;
+                this.subtotal = this.importe_conceptos
+                this.subtotal = this.subtotal + this.importe_partidas_antes_suma;
+                this.subtotal = this.subtotal - this.importe_partidas_antes_resta;
                 this.iva = this.subtotal * 0.16;
-                this.total = (this.subtotal + this.iva) - this.importe_partidas_despues;
+                this.total = (this.subtotal + this.iva)
+                this.total = this.total + this.importe_partidas_despues_suma;
+                this.total = this.total - this.importe_partidas_despues_resta;
             },
             agregarPartida(){
                 this.getPartidas()
@@ -554,19 +561,33 @@
                 this.importeTotalPartidas()
             },
             importeTotalPartidas() {
-                let importe_despues = 0;
-                let importe_antes = 0;
+                let importe_despues_resta = 0;
+                let importe_despues_suma = 0;
+                let importe_antes_resta = 0;
+                let importe_antes_suma = 0;
+
                 for(let i=0; i < this.partidas.length; i++) {
-                    this.getPartida(this.partidas[i]['idpartida'])
-                    console.log(this.partidas[i], this.partidas[i]['idpartida'],this.partida)
-                    if(this.partidas[i].antes_iva) {
-                        importe_despues += parseFloat(this.partidas[i].importe);
-                    }else{
-                        importe_antes += parseFloat(this.partidas[i].importe);
+                    if (this.partidas[i].nombre_operador == 'MENOS') {
+                        if (this.partidas[i].antes_iva === false) {
+                            importe_antes_resta += parseFloat(this.partidas[i].importe);
+                        }
+                        if (this.partidas[i].antes_iva === true) {
+                            importe_despues_resta += parseFloat(this.partidas[i].importe);
+                        }
+                    }
+                    if (this.partidas[i].nombre_operador == 'MAS') {
+                        if (this.partidas[i].antes_iva === false) {
+                            importe_antes_suma += parseFloat(this.partidas[i].importe);
+                        }
+                        if (this.partidas[i].antes_iva === true) {
+                            importe_despues_suma += parseFloat(this.partidas[i].importe);
+                        }
                     }
                 }
-                this.importe_partidas_antes = importe_antes;
-                this.importe_partidas_despues = importe_despues;
+                this.importe_partidas_antes_suma = importe_antes_suma;
+                this.importe_partidas_antes_resta = importe_antes_resta;
+                this.importe_partidas_despues_suma = importe_despues_suma;
+                this.importe_partidas_despues_resta = importe_despues_resta;
                 this.totales();
             },
             getClientes() {
@@ -648,14 +669,16 @@
                         this.tipos_partida = data.data;
                     })
             },
-            getPartida(idpartida) {
+            getPartida(i) {
                  return this.$store.dispatch('seguimiento/ingreso-partida/find', {
-                    id: idpartida,
+                    id: this.partidas[i]['idpartida'],
                     params: {}
                 }).then(data => {
-                        this.partida = data;
-                    })
+                     this.partidas[i]['nombre_operador'] = data['nombre_operador'];
+                     this.importeTotalPartidas();
+                })
             },
+
             getTipoCambio() {
                 return this.$store.dispatch('igh/tipo-cambio/index', {
                     params: {
@@ -669,17 +692,13 @@
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        /*if(moment(this.fecha_fin).format('YYYY/MM/DD') < moment(this.fecha_inicio).format('YYYY/MM/DD'))
+                        if(moment(this.fecha_fin).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
                         {
-                            swal('¡Error!', 'La fecha de inicio no puede ser posterior a la fecha de término.', 'error')
+                            swal('¡Error!', 'El periodo de inicio no puede ser posterior a la fecha de término.', 'error')
                         }
-                        else if(moment(this.fecha_hoy).format('YYYY/MM/DD') < moment(this.fecha).format('YYYY/MM/DD'))
-                        {
-                            swal('¡Error!', 'La fecha no puede ser mayor a la fecha actual.', 'error')
+                        else {
+                            this.store()
                         }
-                        else {*/
-                        this.store()
-                        //}
                     }
                 });
             },
@@ -755,7 +774,7 @@
                         this.tipo_cambio = 0;
                     }
                 }
-            }
+            },
         }
     }
 </script>
