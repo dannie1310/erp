@@ -64,6 +64,7 @@ class CFDSAT extends Model
         ,"forma_pago"
         ,"fecha_pago"
         ,"id_tipo_transaccion"
+        ,"conceptos_txt"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion","ultima_verificacion"];
