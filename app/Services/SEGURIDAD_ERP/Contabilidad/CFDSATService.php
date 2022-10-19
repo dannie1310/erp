@@ -11,6 +11,7 @@ namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 use App\CSV\Finanzas\CFDILayout;
 use App\Events\IncidenciaCI;
 use App\Jobs\ProcessCancelacionCFDI;
+use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
@@ -106,6 +107,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -187,6 +189,12 @@ class CFDSATService
         if (isset($data['solo_asociados_contabilidad'])) {
             if($data['solo_asociados_contabilidad']==="true"){
                 $this->repository->whereHas("polizaCFDI");
+            }
+        }
+
+        if (isset($data['solo_no_asociados_contabilidad'])) {
+            if($data['solo_no_asociados_contabilidad']==="true"){
+                $this->repository->whereDoesntHave("polizaCFDI");
             }
         }
 
@@ -280,8 +288,9 @@ class CFDSATService
         ini_set('memory_limit', -1);
         $cantidad = CFDSAT::where("id_empresa_sat","=",1)
             ->where("cancelado","=","0")
+            ->where("rfc_emisor","=","GMS971110BTA")
             ->whereIn("tipo_comprobante",["I","E"])
-            ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+            ->whereBetween("fecha",["2014-01-01 00:00:00","2016-12-31 23:59:59"])
             ->count();
 
         $take = 1000;
@@ -289,8 +298,9 @@ class CFDSATService
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::where("id_empresa_sat","=",1)
                 ->where("cancelado","=","0")
+                ->where("rfc_emisor","=","GMS971110BTA")
                 ->whereIn("tipo_comprobante",["I","E"])
-                ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+                ->whereBetween("fecha",["2014-01-01 00:00:00","2016-12-31 23:59:59"])
                 ->skip($i)
                 ->take($take)
                 ->get();
@@ -1465,6 +1475,12 @@ class CFDSATService
             }
         }
 
+        if (isset($data['solo_no_asociados_contabilidad'])) {
+            if($data['solo_no_asociados_contabilidad']==="true"){
+                $this->repository->whereDoesntHave("polizaCFDI");
+            }
+        }
+
         if (isset($data['base_datos_ctpq'])) {
             $this->repository->join("Contabilidad.polizas_cfdi as pol_bd", "pol_bd.uuid","=","cfd_sat.uuid")
                 ->where([['pol_bd.base_datos_contpaq', 'like', '%' .$data['base_datos_ctpq']. '%' ]])->select("cfd_sat.*");
@@ -1579,6 +1595,42 @@ class CFDSATService
                 $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
                 $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
                 $id++;
+            }
+        }
+    }
+
+    public function reprocesaCFDIComplementarConceptosTxt()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            ->whereNull("conceptos_txt")
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                ->whereNull("conceptos_txt")
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessComplementaConceptosTxtCFDI::dispatch($rcfd)
+                    ->onQueue("q".$idistribucion);
+                //$rcfd->complementarDatos();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
             }
         }
     }

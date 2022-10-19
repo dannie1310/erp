@@ -430,6 +430,8 @@ $api->version('v1', function ($api) {
             $api->post('obtener-numero-empresa', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerNumeroEmpresa');
             $api->post('obtener-informe-costos-cfdi-vs-costos-balanza', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCostosCFDIvsCostosBalanza');
             $api->post('{id_proveedor}/obtener-lista-cfdi-costos-cfdi-costos-balanza', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerListaCFDICostosCFDICostosBalanza')->where(['id_proveedor' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargaLayout');
+
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
