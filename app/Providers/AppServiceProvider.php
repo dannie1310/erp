@@ -171,6 +171,7 @@ use App\Models\CADECO\VentaPartida;
 use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
+use App\Models\REPSEG\FinDimTipoIngreso;
 use App\Models\REPSEG\FinFacIngresoFactura;
 use App\Models\REPSEG\FinFacIngresoFacturaConcepto;
 use App\Models\REPSEG\FinFacIngresoFacturaDetalle;
@@ -367,6 +368,7 @@ use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\CTPQ\DocumentoObserver;
 use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
+use App\Observers\REPSEG\FinDimTipoIngresoObserver;
 use App\Observers\REPSEG\FinFacIngresoFacturaConceptoObserver;
 use App\Observers\REPSEG\FinFacIngresoFacturaDetalleObserver;
 use App\Observers\REPSEG\FinFacIngresoFacturaObserver;
@@ -707,6 +709,7 @@ class AppServiceProvider extends ServiceProvider
         /**
          * REPSEG
          */
+         FinDimTipoIngreso::observe(FinDimTipoIngresoObserver::class);
          FinFacIngresoFacturaDetalle::observe(FinFacIngresoFacturaDetalleObserver::class);
          FinFacIngresoFactura::observe(FinFacIngresoFacturaObserver::class);
 

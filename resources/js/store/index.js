@@ -228,6 +228,7 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 //IGH
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
+import tipoCambio from "./modules/igh/tipo-cambio"
 
 //PRESUPUESTO
 import conceptoPresupuesto from './modules/presupuesto/concepto';
@@ -412,7 +413,7 @@ export default new Vuex.Store({
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
-
+        'igh/tipo-cambio' : tipoCambio,
 
         'sci/marca': marca,
         'sci/modelo': modelo,

@@ -12,6 +12,11 @@ class FinDimTipoIngreso extends Model
     protected $table = 'fin_dim_tipo_ingreso';
     protected $primaryKey = 'idtipo_ingreso';
     public $timestamps = false;
+    protected $fillable = [
+        'tipo_ingreso',
+        'estado',
+        'timestamp'
+    ];
 
     /**
      * Relaciones

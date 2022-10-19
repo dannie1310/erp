@@ -23,4 +23,13 @@ class TipoIngresoService
     {
         return $this->repository->all($data);
     }
+
+    public function store($data)
+    {
+        try {
+            return $this->repository->create($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

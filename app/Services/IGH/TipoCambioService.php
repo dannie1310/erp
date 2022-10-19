@@ -1,20 +1,25 @@
 <?php
 
 
-namespace App\Services\SEGUIMIENTO\Finanzas;
+namespace App\Services\IGH;
 
 
-use App\Models\REPSEG\FinDimIngresoPartida;
+use App\Models\IGH\TipoCambio;
 use App\Repositories\Repository;
 
-class IngresoPartidaService
+class TipoCambioService
 {
+
     /**
      * @var Repository
      */
     protected $repository;
 
-    public function __construct(FinDimIngresoPartida $model)
+    /**
+     * TipoCambioService constructor.
+     * @param TipoCambio $model
+     */
+    public function __construct(TipoCambio $model)
     {
         $this->repository = new Repository($model);
     }
@@ -22,10 +27,5 @@ class IngresoPartidaService
     public function index($data)
     {
         return $this->repository->all($data);
-    }
-
-    public function show($id)
-    {
-        return $this->repository->show($id);
     }
 }

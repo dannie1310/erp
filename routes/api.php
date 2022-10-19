@@ -1680,6 +1680,8 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix'=>'ingreso-partida'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@show')->where(['id' => '[0-9]+']);
+
         });
 
         $api->group(['prefix'=>'moneda'], function ($api){
@@ -1692,6 +1694,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix'=>'tipo-ingreso'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@index');
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@store');
         });
     });
 
@@ -1857,9 +1860,12 @@ $api->version('v1', function ($api) {
             $api->post('/por-correos', 'App\Http\Controllers\v1\IGH\UsuarioController@buscaUsuariosEmpresaPorCorreo');
         });
 
-
         $api->group(['prefix' => 'menu'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\MenuController@index');
+        });
+
+        $api->group(['prefix' => 'tipo-cambio'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\IGH\TipoCambioController@index');
         });
 
         $api->group(['prefix' => 'ubicacion'], function ($api){
