@@ -278,8 +278,10 @@ class CFDSAT extends Model
             DB::connection('seguridad')->beginTransaction();
 
             $cfd = $this->create($data);
+            $conceptos_arr = [];
             if(key_exists("conceptos",$data)){
                 foreach($data["conceptos"] as $concepto){
+                    $conceptos_arr []= $concepto["descripcion"];
                     $conceptoObj = $cfd->conceptos()->create($concepto);
                     if(key_exists("traslados",$concepto)){
                         foreach($concepto["traslados"] as $traslado){
@@ -293,6 +295,9 @@ class CFDSAT extends Model
                     }
                 }
             }
+
+            $cfd->conceptos_txt = implode(" | ",$conceptos_arr);
+            $cfd->save();
 
             if(key_exists("traslados",$data)){
                 foreach($data["traslados"] as $traslado){
