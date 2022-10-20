@@ -281,7 +281,7 @@ class CFDSAT extends Model
             $conceptos_arr = [];
             if(key_exists("conceptos",$data)){
                 foreach($data["conceptos"] as $concepto){
-                    $conceptos_arr []= $concepto["descripcion"];
+                    $conceptos_arr[] = $concepto["descripcion"];
                     $conceptoObj = $cfd->conceptos()->create($concepto);
                     if(key_exists("traslados",$concepto)){
                         foreach($concepto["traslados"] as $traslado){
