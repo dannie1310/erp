@@ -1,6 +1,13 @@
 <template>
     <div class="row">
         <div class="col-12">
+            <router-link :to="{name: 'factura-seg-create'}" v-if="$root.can('registrar_estimacion_subcontrato')" class="btn btn-app btn-info float-right" :disabled="cargando">
+                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                <i class="fa fa-plus" v-else></i>
+                Registrar
+            </router-link>
+        </div>
+        <div class="col-12">
             <div class="card">
                 <div class="card-header">
                     <div class="row">

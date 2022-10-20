@@ -171,7 +171,10 @@ use App\Models\CADECO\VentaPartida;
 use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
+use App\Models\REPSEG\FinDimTipoIngreso;
 use App\Models\REPSEG\FinFacIngresoFactura;
+use App\Models\REPSEG\FinFacIngresoFacturaConcepto;
+use App\Models\REPSEG\FinFacIngresoFacturaDetalle;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -365,6 +368,9 @@ use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\CTPQ\DocumentoObserver;
 use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
+use App\Observers\REPSEG\FinDimTipoIngresoObserver;
+use App\Observers\REPSEG\FinFacIngresoFacturaConceptoObserver;
+use App\Observers\REPSEG\FinFacIngresoFacturaDetalleObserver;
 use App\Observers\REPSEG\FinFacIngresoFacturaObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
@@ -703,6 +709,8 @@ class AppServiceProvider extends ServiceProvider
         /**
          * REPSEG
          */
+         FinDimTipoIngreso::observe(FinDimTipoIngresoObserver::class);
+         FinFacIngresoFacturaDetalle::observe(FinFacIngresoFacturaDetalleObserver::class);
          FinFacIngresoFactura::observe(FinFacIngresoFacturaObserver::class);
 
 

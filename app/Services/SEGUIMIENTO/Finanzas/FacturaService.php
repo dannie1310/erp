@@ -9,7 +9,7 @@ use App\Models\REPSEG\FinDimIngresoEmpresa;
 use App\Models\REPSEG\FinFacIngresoFactura;
 use App\Models\REPSEG\GrlMoneda;
 use App\Models\REPSEG\GrlProyecto;
-use App\Repositories\Repository;
+use App\Repositories\REPSEG\FacturaRepository as Repository;
 
 class FacturaService
 {
@@ -89,5 +89,14 @@ class FacturaService
     public function cancelar($data , $id)
     {
         return $this->repository->show($id)->cancelar($data['motivo']);
+    }
+
+    public function store($data)
+    {
+        try {
+            return $this->repository->create($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
     }
 }

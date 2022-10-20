@@ -72,12 +72,19 @@ class CtgEfos extends Model
     public function reg($procesamiento, $file)
     {
         DB::connection('seguridad')->beginTransaction();
+
+
+
+
         if($file == null) {
             $this->log[] = ["descripcion"=>'Archivo CSV inválido', "tipo"=>"1"];
             DB::connection('seguridad')->rollBack();
             return $this->log;
         }
+
         $file_fingerprint = hash_file('md5', $file);
+
+
         if(ProcesamientoListaEfos::where('hash_file','=', $file_fingerprint)
             ->where("id", "!=", $procesamiento->id)->where("nombre_archivo","!=","")->first())
         {
@@ -91,6 +98,7 @@ class CtgEfos extends Model
         {
             $this->log[] = ["descripcion"=>'El procesamiento del archivo no arrojó resultados',"tipo"=>1];
             DB::connection('seguridad')->rollBack();
+            $this->guardarCsv($file, $file_fingerprint);
             return $this->log;
         }
 
@@ -106,6 +114,7 @@ class CtgEfos extends Model
                 "tipo"=>1
             ];
             DB::connection('seguridad')->rollBack();
+            $this->guardarCsv($file, $file_fingerprint);
             return $this->log;
         }
 
@@ -195,6 +204,11 @@ class CtgEfos extends Model
                 $fecha_definitivo_dof_f = '';
                 $fecha_favorable_dof_f = '';
 
+                $fecha_presunto_txt = '';
+                $fecha_presunto_dof_txt = '';
+                $fecha_definitivo_txt = '';
+                $fecha_definitivo_dof_txt = '';
+
                 if(substr_count($renglon[1], substr($renglon[1], 0,1)) <= 6)
                 {
                     while (!in_array(str_replace(' ', '', strtoupper($renglon[$t])), $estado))
@@ -218,6 +232,7 @@ class CtgEfos extends Model
                     }
 
                     $fecha_presunto = (!isset($renglon[$t + 2])) ? '' : $renglon[$t + 2];
+                    $fecha_presunto_txt = $fecha_presunto;
                     if($fecha_presunto != ''){
                         $fecha_presunto = $this->validarFormatoFecha($fecha_presunto);
                         $fecha_presunto_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto);
@@ -228,6 +243,7 @@ class CtgEfos extends Model
                     }
 
                     $fecha_presunto_dof = (!isset($renglon[$t + 4])) ? '' : $renglon[$t + 4];
+                    $fecha_presunto_dof_txt = $fecha_presunto_dof;
                     if($fecha_presunto_dof != ''){
                         $fecha_presunto_dof = $this->validarFormatoFecha($fecha_presunto_dof);
                         $fecha_presunto_dof_obj = DateTime::createFromFormat('d/m/Y', $fecha_presunto_dof);
@@ -260,6 +276,7 @@ class CtgEfos extends Model
                     }
 
                     $fecha_definitivo = (!isset($renglon[$t + 10])) ? '' : $renglon[$t + 10];
+                    $fecha_definitivo_txt = $fecha_definitivo;
                     if($fecha_definitivo != '')
                     {
                         // $fecha_definitivo = str_replace(' ', '', $fecha_definitivo);
@@ -273,6 +290,7 @@ class CtgEfos extends Model
                     }
 
                     $fecha_definitivo_dof = (!isset($renglon[$t + 12])) ? '' : $renglon[$t + 12];
+                    $fecha_definitivo_dof_txt = $fecha_definitivo_dof;
                     if($fecha_definitivo_dof != '')
                     {
                         $fecha_definitivo_dof = $this->validarFormatoFecha($fecha_definitivo_dof);
@@ -317,7 +335,11 @@ class CtgEfos extends Model
                             'fecha_definitivo_dof' => ($fecha_definitivo_dof_f != '') ? $fecha_definitivo_dof_f : NULL,
                             'fecha_desvirtuado_dof' => ($fecha_desvirtuado_dof_f != '') ? $fecha_desvirtuado_dof_f : NULL,
                             'fecha_sentencia_favorable_dof' => ($fecha_favorable_dof_f != '') ? $fecha_favorable_dof_f : NULL,
-                            'estado' => str_replace(' ', '', strtoupper($renglon[$t]))
+                            'estado' => str_replace(' ', '', strtoupper($renglon[$t])),
+                            'fecha_presunto_txt'=>($fecha_presunto_txt != '') ? $fecha_presunto_txt : NULL,
+                            'fecha_definitivo_txt'=>($fecha_definitivo_txt != '') ? $fecha_definitivo_txt : NULL,
+                            'fecha_presunto_dof_txt'=>($fecha_presunto_dof_txt != '') ? $fecha_presunto_dof_txt : NULL,
+                            'fecha_definitivo_dof_txt'=>($fecha_definitivo_dof_txt != '') ? $fecha_definitivo_dof_txt : NULL,
                         );
                     }
                     catch (Error $e){
@@ -359,25 +381,25 @@ class CtgEfos extends Model
                     $efo_previo = $efos_previos[0];
                     if($efo_previo->estado == 0)
                     {
-                        if(substr($efo_previo->fecha_presunto,0,10) != $efo["fecha_presunto"]){
+                        if(strpos($efo["fecha_presunto_txt"], substr($efo_previo->fecha_presunto_format,0,10)) === false){
                             //dd(1, $efo_previo->fecha_presunto ,$efo["fecha_presunto"]);
                             $inconsistencias++;
                         }
                         if($efo_previo->fecha_presunto_dof != ''){
-                            if(substr($efo_previo->fecha_presunto_dof,0,10) != $efo["fecha_presunto_dof"])
+                            if(strpos($efo["fecha_presunto_dof_txt"], substr($efo_previo->fecha_presunto_dof_format,0,10)) === false)
                             {
-                                //dd(2, $efo_previo->fecha_presunto_dof ,$efo["fecha_presunto_dof"]);
+                                //dd(2, substr($efo_previo->fecha_presunto_dof_format,0,10) ,$efo["fecha_presunto_dof"],$efo["fecha_presunto_dof_txt"], $i, $efo_previo);
                                 $inconsistencias++;
                             }
                         }
-                        if(substr($efo_previo->fecha_definitivo,0,10) != $efo["fecha_definitivo"]){
-                            //dd(3, $efo_previo->fecha_definitivo ,$efo["fecha_definitivo"]);
+                        if( strpos($efo["fecha_definitivo_txt"], substr($efo_previo->fecha_definitivo_format,0,10)) === false ){
+                            //dd(3, substr($efo_previo->fecha_definitivo_format,0,10) ,$efo["fecha_definitivo"],$efo["fecha_definitivo_txt"], $i, $efo_previo);
                             $inconsistencias++;
                         }
                         if($efo_previo->fecha_definitivo_dof != ''){
-                            if(substr($efo_previo->fecha_definitivo_dof,0,10) != $efo["fecha_definitivo_dof"])
+                            if(strpos($efo["fecha_definitivo_dof_txt"], substr($efo_previo->fecha_definitivo_dof_format,0,10)) === false)
                             {
-                                //dd(4, $efo_previo->fecha_definitivo_dof ,$efo["fecha_definitivo_dof"]);
+                                //dd(4, substr($efo_previo->fecha_definitivo_dof_format,0,10) ,$efo["fecha_definitivo_dof"],$efo["fecha_definitivo_dof_txt"], $i, $efo_previo);
                                 $inconsistencias++;
                             }
                         }
@@ -386,13 +408,13 @@ class CtgEfos extends Model
                     if($efo_previo->estado == 2)
                     {
                         if(substr($efo_previo->fecha_presunto,0,10) != $efo["fecha_presunto"]){
-                            //dd(5, $efo_previo->fecha_presunto ,$efo["fecha_presunto"]);
+                            dd(5, $efo_previo->fecha_presunto ,$efo["fecha_presunto"]);
                             $inconsistencias++;
                         }
                         if($efo_previo->fecha_presunto_dof != ''){
                             if(substr($efo_previo->fecha_presunto_dof,0,10) != $efo["fecha_presunto_dof"])
                             {
-                                //dd(6, $efo_previo->fecha_presunto_dof ,$efo["fecha_presunto_dof"]);
+                                dd(6, $efo_previo->fecha_presunto_dof ,$efo["fecha_presunto_dof"]);
                                 $inconsistencias++;
                             }
                         }

@@ -64,6 +64,7 @@ class CFDSAT extends Model
         ,"forma_pago"
         ,"fecha_pago"
         ,"id_tipo_transaccion"
+        ,"conceptos_txt"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion","ultima_verificacion"];
@@ -260,6 +261,16 @@ class CFDSAT extends Model
         return $xml->xml;
     }
 
+    public function getConceptoTxtAttribute()
+    {
+        $concepto_arr = [];
+        foreach ($this->conceptos as $concepto)
+        {
+            $concepto_arr[]= $concepto->descripcion;
+        }
+        return implode(" | ",$concepto_arr);
+    }
+
     public function registrar($data)
     {
         $factura = null;
@@ -311,6 +322,20 @@ class CFDSAT extends Model
             dd($e->getMessage(),$data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function complementarConceptosTxt()
+    {
+        if(count($this->conceptos) > 0)
+        {
+            $concepto_arr = [];
+            foreach ($this->conceptos as $concepto)
+            {
+                $concepto_arr[]= $concepto->descripcion;
+            }
+            $this->conceptos_txt = implode(" | ",$concepto_arr);
+            $this->save();
         }
     }
 

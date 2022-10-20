@@ -205,10 +205,10 @@
                                             <td v-else>
                                                  <input type="text" class="form-control"
                                                         readonly="readonly"
-                                                        :title="partida.destino.concepto ? partida.destino.concepto.path : partida.destino"
+                                                        :title="partida.destino ? partida.destino.concepto.path : partida.destino"
                                                         :name="`destino_path[${i}]`"
                                                         data-vv-as="Destino"
-                                                        v-model="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
+                                                        v-model="partida.destino ? partida.destino.concepto.path_corta : partida.destino"
                                                         v-validate="{required: partida.es_hoja}"
                                                         :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
                                                         :id="`destino_path[${i}]`">
@@ -538,8 +538,8 @@ export default {
                 this.partida_copia.destino = partida.destino;
                 this.partida_copia.id_destino = partida.id_destino;
             }else{
-                this.partida_copia.destino = partida.destino.concepto.path_corta;
-                this.partida_copia.id_destino = partida.destino.id_concepto;
+                this.partida_copia.destino = partida.destino ? partida.destino.concepto.path_corta : '';
+                this.partida_copia.id_destino = partida.destino ? partida.destino.id_concepto : '';
             }
         },
         pegar_destino(index){

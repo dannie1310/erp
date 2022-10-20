@@ -14,6 +14,20 @@ class FinFacIngresoFactura extends Model
     protected $primaryKey = 'idfactura';
     public $timestamps = false;
     protected $fillable = [
+        'numero',
+        'fecha',
+        'idproyecto',
+        'idempresa',
+        'idcliente',
+        'descripcion',
+        'fi_cubre',
+        'ff_cubre',
+        'idmoneda',
+        'tipo_cambio',
+        'importe',
+        'registra',
+        'timestamp',
+        'fecha_cobro',
         'estado',
         'usuario_cancelo',
         'motivo_cancelacion',
@@ -225,6 +239,53 @@ class FinFacIngresoFactura extends Model
         } catch (\Exception $e) {
             DB::connection('repseg')->rollBack();
             throw $e;
+        }
+    }
+
+    public function registrar($data)
+    {
+        try {
+            DB::connection('repseg')->beginTransaction();
+            $datos_factura = array_except($data, 'conceptos');
+            $datos_factura = array_except($datos_factura, 'partidas');
+            $datos_factura = array_except($datos_factura, 'importe_conceptos');
+            $datos_factura = array_except($datos_factura, 'iva');
+            $datos_factura = array_except($datos_factura, 'total');
+            $datos_factura = array_except($datos_factura, 'importe_partidas_antes');
+            $datos_factura = array_except($datos_factura, 'importe_partidas_despues');
+            $factura = $this->create($datos_factura);
+
+            foreach (array_only($data, 'conceptos')['conceptos'] as $concepto) {
+                $factura->conceptos()->create($concepto);
+            }
+
+            if (array_key_exists('partidas', $data)) {
+                foreach (array_only($data, 'partidas')['partidas'] as $partida) {
+                    $factura->partidas()->create($partida);
+                }
+            }
+
+            $factura->partidas()->create([
+                'idfactura' => $factura->getKey(),
+                'idpartida' => 15,
+                'total' => $data['importe']
+            ]);
+            $factura->partidas()->create([
+                'idfactura' => $factura->getKey(),
+                'idpartida' => 16,
+                'total' => $data['iva']
+            ]);
+            $factura->partidas()->create([
+                'idfactura' => $factura->getKey(),
+                'idpartida' => 17,
+                'total' => $data['total']
+            ]);
+
+            DB::connection('repseg')->commit();
+            return $factura;
+        }catch (\Exception $e) {
+            DB::connection('repseg')->rollBack();
+            abort(400, $e->getMessage());
         }
     }
 }

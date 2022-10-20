@@ -306,6 +306,9 @@ export default {
         descargaLayout(context, payload){
             let filtros = 0;
             var search = '?';
+            if (typeof payload.params.scope !== 'undefined') {
+                search = search + 'scope='+payload.params.scope+'&';
+            }
             if (typeof payload.params.rfc_emisor !== 'undefined') {
                 search = search + 'rfc_emisor='+ payload.params.rfc_emisor + '&';
                 filtros = +filtros + 1;
@@ -399,6 +402,15 @@ export default {
                 search = search + 'solo_asociados='+ payload.params.solo_asociados + '&';
                 filtros = +filtros + 1;
             }
+            if (typeof payload.params.solo_asociados_contabilidad !== 'undefined') {
+                search = search + 'solo_asociados_contabilidad='+ payload.params.solo_asociados_contabilidad + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.solo_no_asociados_contabilidad !== 'undefined') {
+                search = search + 'solo_no_asociados_contabilidad='+ payload.params.solo_no_asociados_contabilidad + '&';
+                filtros = +filtros + 1;
+            }
+            //
 
             if(filtros == 0){
                 swal({
