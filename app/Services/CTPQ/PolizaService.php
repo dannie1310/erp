@@ -112,6 +112,15 @@ class PolizaService
             }
         }
 
+        if (isset($data['cargos']))
+        {
+            if ($data['cargos'] != "") {
+                $cargos_str = str_replace("$","",$data['cargos']);
+                $cargos_str = str_replace(",","",$cargos_str);
+                $poliza = $poliza->where([['Cargos','=', $cargos_str]]);
+            }
+        }
+
         if (isset($data['tipopol'])) {
             if($data['tipopol'] != '') {
                 $tipo = TipoPoliza::where('Nombre', 'like', '%'.ucfirst(request('tipopol')).'%')->first();
