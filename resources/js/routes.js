@@ -4959,7 +4959,7 @@ export const routes = [
                             title: 'Registrar Factura',
                             breadcrumb: {name: 'REGISTRAR', parent: 'factura-seg'},
                             middleware: [auth, permission],
-                            permission: ['consultar_factura_cuenta_x_cobrar'],
+                            permission: ['registrar_factura_cuenta_x_cobrar'],
                             general: true
                         }
                     },
