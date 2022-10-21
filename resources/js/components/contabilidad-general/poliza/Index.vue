@@ -143,7 +143,7 @@
                     { title: 'Fecha', field: 'fecha', tdClass: 'td_fecha', thClass: 'th_fecha', sortable: true },
                     { title: 'Tipo', field: 'tipopol', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true },
                     { title: 'Folio', field: 'folio', tdClass: 'td_fecha', thClass: 'th_fecha', thComp: require('../../globals/th-Filter').default, sortable: true},
-                    { title: 'Monto', field: 'cargos', tdClass: 'td_money', thClass: 'th_money', sortable: true},
+                    { title: 'Monto', field: 'cargos', tdClass: 'td_money', thClass: 'th_money', thComp: require('../../globals/th-Filter').default, sortable: true},
                     { title: 'Concepto', field: 'concepto',thComp: require('../../globals/th-Filter').default, sortable: false},
                     { title: 'Acciones', field: 'buttons', tdClass: 'td_c120',  thClass: 'th_c120',  tdComp: require('./partials/ActionButtons').default},
                 ],
