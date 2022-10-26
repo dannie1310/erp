@@ -282,6 +282,50 @@ class CFDSATService
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
     }
 
+    public function reprocesaCFDILlenadoMetodoPago()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $cantidad= CFDSAT::whereNull("metodo_pago")
+            ->where("cancelado","=",0)
+            ->where("tipo_comprobante","=","I")
+            ->where("version","=","3.3")
+            ->count();
+
+        $take = 1000;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::whereNull("metodo_pago")
+                ->where("cancelado","=",0)
+                ->where("tipo_comprobante","=","I")
+                ->where("version","=","3.3")
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","desc")
+                ->get();
+
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd_util = new CFD($rcfd->xml);
+                    $arreglo_cfd = $cfd_util->getArregloFactura();
+
+                    try {
+                        if(key_exists("metodo_pago",$arreglo_cfd)){
+                            $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
+                            $rcfd->save();
+                        }
+                    }
+                    catch (\Exception $e)
+                    {
+                        //dd('1',$e->getMessage());
+                    }
+                } catch (\Exception $e){
+                    //dd('2',$e->getMessage());
+                }
+            }
+        }
+    }
+
     public function reprocesaCFDILlenadoPago()
     {
         ini_set('max_execution_time', '7200');
