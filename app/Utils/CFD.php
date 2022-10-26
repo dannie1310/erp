@@ -248,9 +248,9 @@ class CFD
         }
     }
 
-    private function setDatosPago($factura_xml)
+    public function setDatosPago($factura_xml)
     {
-        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
+        $pagos = $factura_xml->xpath('//cfdi:Comprobante/pago10:Pagos');
         $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
         $monto = 0 ;
         if($pagos){
@@ -258,14 +258,17 @@ class CFD
             {
                 $monto += (float) $pago["Monto"];
                 $moneda = (string) $pago["MonedaP"];
-                $forma_pago = (string) $pago["FormaDePagoP"];
+                $forma_pago = (int) $pago["FormaDePagoP"];
                 $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
             }
 
             $this->arreglo_factura["total"] = $monto;
             $this->arreglo_factura["moneda"] = $moneda;
             $this->arreglo_factura["forma_pago"] = $forma_pago;
+            $this->arreglo_factura["forma_pago_p"] = $forma_pago;
             $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+            $this->arreglo_factura["moneda_pago"] = $moneda;
+            $this->arreglo_factura["monto_pago"] = (float) $pago["Monto"];
         }
 
         if($doctos){
@@ -282,6 +285,37 @@ class CFD
                 $id++;
             }
         }
+
+        /*$pagos = $factura_xml->xpath('//cfdi:Comprobante//pago10:Pago');
+        $ip = 0;
+        $ipd = 1;
+        foreach($pagos as $pago)
+        {
+            $this->arreglo_factura["pagos"][$ip]["fecha_pago"] = $this->getFechaHora((string)$pago["FechaPago"]);
+            $this->arreglo_factura["pagos"][$ip]["forma_pago_p"] = (int) $pago["FormaDePagoP"];
+            $this->arreglo_factura["pagos"][$ip]["moneda_pago"] = (string) $pago["MonedaP"];
+            $this->arreglo_factura["pagos"][$ip]["monto_pago"] = (float) $pago["Monto"];
+
+            $documentos_pagados = $factura_xml->xpath("/cfdi:Comprobante//pago10:Pagos/pago10:Pago[".$ipd."]//pago10:DoctoRelacionado");
+
+            $dp = 0;
+
+            foreach($documentos_pagados as $documento_pagado)
+            {
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["uuid"] = (string)$documento_pagado["IdDocumento"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["moneda_dr"] = (string)$documento_pagado["MonedaDR"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["metodo_pago_dr"] = (string)$documento_pagado["MetodoDePagoDR"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["num_parcialidad"] = (int)$documento_pagado["NumParcialidad"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["imp_saldo_ant"] = (float)$documento_pagado["ImpSaldoAnt"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["imp_pagado"] = (float)$documento_pagado["ImpPagado"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["imp_saldo_insoluto"] = (float)$documento_pagado["ImpSaldoInsoluto"];
+
+                $dp ++;
+            }
+
+            $ip ++;
+            $ipd ++;
+        }*/
     }
 
     private function setArreglo32($factura_xml)

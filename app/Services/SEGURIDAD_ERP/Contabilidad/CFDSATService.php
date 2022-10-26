@@ -282,6 +282,54 @@ class CFDSATService
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
     }
 
+    public function reprocesaCFDILlenadoPago()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $cantidad= CFDSAT::pendienteProcesamientoDoctosPagados()->count();
+
+        $take = 1000;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::pendienteProcesamientoDoctosPagados()
+                ->skip($i)
+                ->take($take)
+                ->get();
+
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd_util = new CFD($rcfd->xml);
+                    $arreglo_cfd = $cfd_util->getArregloFactura();
+
+                    try {
+                        if(key_exists("forma_pago_p",$arreglo_cfd)){
+                            $rcfd->forma_pago_p = $arreglo_cfd["forma_pago_p"];
+                            $rcfd->moneda_pago = $arreglo_cfd["moneda_pago"];
+                            $rcfd->monto_pago = $arreglo_cfd["monto_pago"];
+                            $rcfd->save();
+                        }
+                    }
+                    catch (\Exception $e)
+                    {
+                        //dd('1',$e->getMessage());
+                    }
+                } catch (\Exception $e){
+                    //dd('2',$e->getMessage());
+                }
+
+                if(key_exists("documentos_pagados",$arreglo_cfd)){
+                    foreach($arreglo_cfd["documentos_pagados"] as $documento_pagado){
+                        $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
+                        if($cfdi_pagado){
+                            $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
+                        }
+                        $rcfd->documentosPagados()->create($documento_pagado);
+                    }
+                }
+            }
+        }
+    }
+
     public function reprocesaCFDObtenerTipo()
     {
         ini_set('max_execution_time', '7200');
