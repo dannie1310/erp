@@ -275,7 +275,7 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Importe:</th>
-                                            <td>{{importe_conceptos}}</td>
+                                            <td>{{parseFloat(importe_conceptos).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
