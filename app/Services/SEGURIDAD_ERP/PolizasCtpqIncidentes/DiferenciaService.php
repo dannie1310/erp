@@ -60,14 +60,22 @@ class DiferenciaService
         if (isset($data['id_tipo_diferencia'])) {
             $this->repository->where([['id_tipo', '=', $data['id_tipo_diferencia']]]);
         }
-        /*if($data['sort'] == 'tipo'){
-            $tipos = CtgTipo::query()->orderBy('descripcion',$data['order'])->get();
-            foreach ($tipos as $tipo){
-                $this->repository->whereOr([['id_tipo', '=', $tipo->id]]);
-            }
-            request()->request->remove("sort");
-            request()->query->remove("sort");
-        }*/
+        if (isset($data['ejercicio'])) {
+            $this->repository->where([['ejercicio', '=', $data['ejercicio'] ]]);
+        }
+        if (isset($data['periodo'])) {
+            $this->repository->where([['periodo', '=', $data['periodo'] ]]);
+        }
+        if (isset($data['folio_poliza'])) {
+            $this->repository->where([['folio_poliza', '=', $data['folio_poliza'] ]]);
+        }
+        if (isset($data['observaciones'])) {
+            $this->repository->where([['observaciones', 'like', '%'.$data['observaciones'].'%' ]]);
+        }
+        if (isset($data['tipo_poliza'])) {
+            $this->repository->where([['tipo_poliza', 'like', '%'.$data['tipo_poliza'].'%' ]]);
+        }
+
         return $this->repository->paginate($data);
     }
 

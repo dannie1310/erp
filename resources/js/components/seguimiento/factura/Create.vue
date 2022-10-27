@@ -207,7 +207,7 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="pull-right">
-                                <button type="button" class="btn btn-success btn-sm" @click="altaConcepto()"><i class="fa fa-upload"></i>Alta de Concepto</button>
+                                <concepto-create @created="getConceptos" />
                                 <button type="button" class="btn btn-success btn-sm" @click="agregarConcepto()"><i class="fa fa-plus"></i>Agregar Concepto</button>
                             </div>
                         </div>
@@ -244,10 +244,9 @@
                                                 <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
                                             </td>
                                             <td>
-                                                <input type="number" class="form-control"
+                                                <input type="text" class="form-control"
                                                        :name="`importe[${i}]`"
                                                        data-vv-as="Importe"
-                                                       step="any"
                                                        v-on:keyup="importeTotalConceptos"
                                                        v-model="concepto.importe"
                                                        v-validate="{required: true, decimal:2}"
@@ -275,7 +274,7 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Importe:</th>
-                                            <td>{{importe_conceptos}}</td>
+                                            <td>{{parseFloat(importe_conceptos).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -331,13 +330,12 @@
                                                 </div>
                                             </td>
                                             <td>
-                                                <input type="number" class="form-control"
+                                                <input type="text" class="form-control"
                                                        :name="`importe_partida[${i}]`"
                                                        data-vv-as="Importe"
-                                                       step="any"
                                                        v-on:keyup="importeTotalPartidas"
                                                        v-model="partida.importe"
-                                                       v-validate="{required: true, decimal:2}"
+                                                       v-validate="{required: true, min: 0.01, decimal:2}"
                                                        :class="{'is-invalid': errors.has(`importe_partida[${i}]`)}"
                                                        :id="`importe_partida[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`importe_partida[${i}]`)">{{ errors.first(`importe_partida[${i}]`) }}</div>
@@ -384,59 +382,10 @@
                         <button type="button" class="btn btn-secondary" v-on:click="salir">
                             <i class="fa fa-angle-left"></i>
                             Regresar</button>
-                        <button type="button" @click="validate" :disabled="errors.count() > 0" class="btn btn-primary">
+                        <button type="button" @click="validate" class="btn btn-primary">
                             <i class="fa fa-save"></i>
                             Guardar
                         </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        <nav>
-            <div class="modal fade" ref="modal_concepto" role="dialog" aria-hidden="true">
-                <div class="modal-dialog modal-dialog-centered modal-lg" >
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="modal_concepto"> <i class="fa fa-sign-in"></i> Alta de Concepto</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <form role="form">
-                            <div class="modal-body">
-                                <div class="row">
-                                    <div class="col-12">
-                                        <div class="form-group error-content">
-                                            <div class="form-group">
-                                                <label for="nuevo_concepto">Concepto:</label>
-                                                <input class="form-control"
-                                                       style="width: 100%"
-                                                       placeholder="Concepto"
-                                                       name="nuevo_concepto"
-                                                       id="nuevo_concepto"
-                                                       data-vv-as="Nuevo Concepto"
-                                                       v-validate="{required: true}"
-                                                       v-model="nuevo_concepto"
-                                                       :class="{'is-invalid': errors.has('nuevo_concepto')}">
-                                                <div class="invalid-feedback" v-show="errors.has('nuevo_concepto')">{{ errors.first('nuevo_concepto') }}</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <div class="pull-right">
-                                    <button type="button" class="btn btn-secondary" v-on:click="cerrarModalConcepto">
-                                        <i class="fa fa-close"></i>
-                                        Cerrar
-                                    </button>
-                                    <button type="button" @click="guardarConcepto" :disabled="nuevo_concepto != ''" class="btn btn-primary">
-                                        <i class="fa fa-save"></i>
-                                        Guardar
-                                    </button>
-                                </div>
-                            </div>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -447,9 +396,10 @@
 <script>
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
+    import ConceptoCreate from "./partials/ConceptoCreate";
     export default {
         name: "create",
-        components: {Datepicker, es},
+        components: {Datepicker, es, ConceptoCreate},
         data() {
             return {
                 es: es,
@@ -484,7 +434,6 @@
                 importe_partidas_despues_suma : 0,
                 importe_partidas_despues_resta : 0,
                 tipos_partida : {},
-                nuevo_concepto : '',
                 tipos_cambios : [],
             }
         },
@@ -497,7 +446,7 @@
             this.fecha_fin = new Date();
             this.conceptos.push({
                 idconcepto:'',
-                importe: 0
+                importe: ''
             });
             this.getClientes();
             this.getConceptos();
@@ -505,6 +454,7 @@
             this.getMonedas();
             this.getProyectos();
             this.getTipoCambio();
+            this.$validator.reset();
         },
 
         methods: {
@@ -514,8 +464,8 @@
             agregarConcepto(){
                 let temp_index = this.conceptos.length;
                 this.conceptos.splice(temp_index, 0, {
-                    idconcepto:'',
-                    importe:0.00
+                    idconcepto : '',
+                    importe : ''
                 });
             },
             eliminarConcepto(index){
@@ -604,7 +554,6 @@
                     })
             },
             getConceptos() {
-                this.cargando = true;
                 return this.$store.dispatch('seguimiento/tipo-ingreso/index', {
                     params: {
                         scope: ['activos'],
@@ -699,6 +648,7 @@
                         else {
                             this.store()
                         }
+                        this.$validator.errors.clear();
                     }
                 });
             },
@@ -723,32 +673,13 @@
                     importe_partidas_antes : this.importe_partidas_antes,
                     importe_partidas_despues : this.importe_partidas_despues,
                 }).then(data=> {
-                    //this.salir();
+                    this.salir();
                 })
             },
             salir()
             {
                 this.$router.go(-1);
             },
-            altaConcepto()
-            {
-                this.nuevo_concepto =  '';
-                this.$validator.reset();
-                $(this.$refs.modal_concepto).modal('show');
-            },
-            cerrarModalConcepto(){
-                this.nuevo_concepto = '';
-                $(this.$refs.modal_concepto).modal('hide');
-                this.$validator.reset();
-            },
-            guardarConcepto() {
-                return this.$store.dispatch('seguimiento/tipo-ingreso/store', {
-                    tipo_ingreso: this.nuevo_concepto,
-                }).then(data => {
-                    this.cerrarModalConcepto();
-                    this.getConceptos();
-                })
-            }
         },
         watch: {
             id_proyecto(value) {
