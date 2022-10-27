@@ -34,6 +34,15 @@ class FinFacIngresoFactura extends Model
         'fecha_cancelacion'
     ];
 
+    public $searchable = [
+        'numero',
+        'fecha',
+        'proyecto.proyecto',
+        'empresa.empresa',
+        'cliente.cliente',
+        'descripcion'
+    ];
+
     /**
      * Relaciones
      */
