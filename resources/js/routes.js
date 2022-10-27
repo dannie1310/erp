@@ -3367,7 +3367,7 @@ export const routes = [
                     title: 'Administrar',
                     breadcrumb: {parent: 'activo-fijo', name: 'ADMINISTRAR'},
                     middleware: [auth],
-                    
+
                     //permission: ['editar_poliza','consultar_poliza'],
                     general: true
                 }
@@ -3380,7 +3380,7 @@ export const routes = [
                     title: 'Resguardos',
                     breadcrumb: {parent: 'activo-fijo', name: 'RESGUARDOS'},
                     middleware: [auth],
-                    
+
                     //permission: ['editar_poliza','consultar_poliza'],
                     general: true
                 }
@@ -4114,6 +4114,18 @@ export const routes = [
                                 }
                             }
                         ]
+                    },
+                    {
+                        path: 'informe-rep-faltantes',
+                        name: 'informe-rep-faltantes',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientes').default,
+                        meta: {
+                            title: 'CFDI con REP faltantes',
+                            breadcrumb: {name: 'INFORME REP Faltantes', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
                     },
                     {
                         path: 'informe',

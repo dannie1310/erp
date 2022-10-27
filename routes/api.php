@@ -1617,6 +1617,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaLayout');
             $api->post('cargar-xml-comprobacion', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLComprobacion');
+            $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
+
         });
     });
 

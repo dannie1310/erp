@@ -437,6 +437,111 @@ export default {
                 }
             }
         },
+        cfdiRepPendienteXls(context, payload){
+            let filtros = 0;
+            var search = '?';
+            if (typeof payload.params.scope !== 'undefined') {
+                search = search + 'scope='+payload.params.scope+'&';
+            }
+            if (typeof payload.params.rfc_emisor !== 'undefined') {
+                search = search + 'rfc_emisor='+ payload.params.rfc_emisor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.rfc_receptor !== 'undefined') {
+                search = search + 'rfc_receptor='+ payload.params.rfc_receptor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.emisor !== 'undefined') {
+                search = search + 'emisor='+ payload.params.emisor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.receptor !== 'undefined') {
+                search = search + 'receptor='+ payload.params.receptor + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.startDate !== 'undefined') {
+                search = search + 'startDate='+ payload.params.startDate + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.endDate !== 'undefined') {
+                search = search + 'endDate='+ payload.params.endDate + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.fecha !== 'undefined') {
+                search = search + 'fecha='+ payload.params.fecha + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.uuid !== 'undefined') {
+                search = search + 'uuid='+ payload.params.uuid + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.subtotal !== 'undefined') {
+                search = search + 'subtotal='+ payload.params.subtotal + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.total !== 'undefined') {
+                search = search + 'total='+ payload.params.total + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.descuento !== 'undefined') {
+                search = search + 'descuento='+ payload.params.descuento + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.moneda !== 'undefined') {
+                search = search + 'moneda='+ payload.params.moneda + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.tipo_cambio !== 'undefined') {
+                search = search + 'tipo_cambio='+ payload.params.tipo_cambio + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.serie !== 'undefined') {
+                search = search + 'serie='+ payload.params.serie + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.folio !== 'undefined') {
+                search = search + 'folio='+ payload.params.folio + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.impuestos_retenidos !== 'undefined') {
+                search = search + 'impuestos_retenidos='+ payload.params.impuestos_retenidos + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.impuestos_trasladados !== 'undefined') {
+                search = search + 'impuestos_trasladados='+ payload.params.impuestos_trasladados + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.estado !== 'undefined') {
+                search = search + 'estado='+ payload.params.estado + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.tipo_comprobante !== 'undefined') {
+                search = search + 'tipo_comprobante='+ payload.params.tipo_comprobante + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.base_datos !== 'undefined') {
+                search = search + 'base_datos='+ payload.params.obra + '&';
+                filtros = +filtros + 1;
+            }
+            if (typeof payload.params.obra !== 'undefined') {
+                search = search + 'obra='+ payload.params.obra + '&';
+                filtros = +filtros + 1;
+            }
+
+            //
+
+            var urr = URI + 'cfdi-rep-pendiente-xls'+ search+'&db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Layout descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
         cargarXMLComprobacion(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
