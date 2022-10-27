@@ -163,6 +163,11 @@ class CFDSAT extends Model
         return $this->hasMany(Archivo::class, "id_cfdi", "id");
     }
 
+    public function vwPendienteREP()
+    {
+        return $this->hasOne(CFDSATPendientesREP::class,"id_cfdi", "id");
+    }
+
     public function scopeDeEFO($query)
     {
         return $query->whereHas("efo");
@@ -244,7 +249,7 @@ class CFDSAT extends Model
 
     public function getTotalFormatAttribute()
     {
-        return '$' . number_format(($this->total),2);
+        return '$ ' . number_format(($this->total),2);
     }
 
     public function getSubtotalFormatAttribute()
@@ -289,6 +294,24 @@ class CFDSAT extends Model
             $concepto_arr[]= $concepto->descripcion;
         }
         return implode(" | ",$concepto_arr);
+    }
+
+    public function getMontoPendienteRepAttribute()
+    {
+        if($this->vwPendienteREP){
+            return $this->vwPendienteREP->pendiente_pago;
+        }else{
+            return $this->total;
+        }
+    }
+
+    public function getCantidadPagosAttribute()
+    {
+        if($this->vwPendienteREP){
+            return $this->vwPendienteREP->cantidad_pagos;
+        }else{
+            return 0;
+        }
     }
 
     public function registrar($data)

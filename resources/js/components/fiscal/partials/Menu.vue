@@ -29,6 +29,12 @@
                             <p>CFDI SAT</p>
                         </router-link>
                     </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                        <router-link :to="{name: 'informe-rep-faltantes'}" class="nav-link" :class="{active: this.$route.name == 'informe-rep-faltantes'}">
+                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <p>REP Faltantes</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item"   v-if="$root.can('consultar_autocorreccion_cfd_efo',true)">
                         <router-link :to="{name: 'autocorreccion-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'autocorreccion-cfd-efos'}">
                             <i class="fa fa-check-circle nav-icon"></i>

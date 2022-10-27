@@ -1,18 +1,18 @@
 <template>
     <span>
-        <!--
+
         <div class="row">
             <div class="col-12">
-                <descarga-layout v-bind:query="query" />
-                <button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
+                <cfdi-rep-pendiente-xls v-bind:query="query" />
+                <!--<button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
                     <i class="fa fa-download"></i> Descargar XLS
                 </button>
                 <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
                     <i class="fa fa-sync"></i> Descargar Comunicados
-                </button>
+                </button>-->
             </div>
         </div>
-        -->
+
         <div class="row">
             <div class="col-12">
                 <div class="card">
@@ -46,14 +46,12 @@
 </template>
 
 <script>
-import RegistroMasivo from './RegistroMasivo'
-import ProcesaDirectorio from './ProcesaDirectorio'
 import DateRangePicker from "../../../globals/DateRangePicker"
-import DescargaLayout from "./DescargaLayout";
+import CfdiRepPendienteXls from "./partials/CFDIREPPendienteXLS";
 
 export default {
-    name: "cfd-sat-index",
-    components:{DescargaLayout, RegistroMasivo,ProcesaDirectorio, DateRangePicker},
+    name: "cfdi-rep-pendiente-index",
+    components:{CfdiRepPendienteXls, DateRangePicker},
 
     data() {
         return {
@@ -62,10 +60,6 @@ export default {
             id_empresa: '',
             empresas: [],
             empresa_seleccionada: [],
-            ver_pendientes: false,
-            ver_asociados: false,
-            ver_asociados_contabilidad: false,
-            ver_no_asociados_contabilidad: false,
             detalle_descarga :[],
             HeaderSettings: false,
             columns: [
@@ -125,29 +119,6 @@ export default {
                     this.cargando=false;
                 })
         },
-        descargar(){
-            this.descargando = true;
-            return this.$store.dispatch('fiscal/cfd-sat/descargar',
-                {
-                    params: this.query,
-                })
-                .then(data => {
-                    this.$emit('success');
-                }).finally(() => {
-                    this.descargando = false;
-                });
-        },
-        actualizarPolizas(){
-            return this.$store.dispatch('contabilidadGeneral/poliza/actualizaCFDI',
-                {
-                    params: this.query,
-                })
-                .then(data => {
-                    this.$emit('success');
-                }).finally(() => {
-                    this.descargando = false;
-                });
-        }
     },
     computed: {
         cfdi(){
