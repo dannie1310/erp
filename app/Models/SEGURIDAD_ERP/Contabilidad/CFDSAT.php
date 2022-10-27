@@ -217,6 +217,16 @@ class CFDSAT extends Model
             ->whereDoesntHave("documentosPagados");
     }
 
+    public function scopeRepPendiente($query)
+    {
+        return $query->join("Contabilidad.cfd_sat_rep_pendiente","cfd_sat_rep_pendiente.id_cfdi","=","cfd_sat.id")
+            ->where('tipo_comprobante', '=', 'I')
+            ->where("cancelado","=",0)
+            ->where("cfd_sat.metodo_pago","=","PPD")
+            ;
+    }
+
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);
