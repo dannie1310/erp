@@ -115,19 +115,19 @@
                         <tbody v-for="(doc, i) in factura.conceptos.data">
                             <tr>
                                 <td>{{i+1}}</td>
-                                <td>{{doc.tipoIngreso.tipo_ingreso}}</td>
+                                <td>{{doc.tipoIngreso.nombre}}</td>
                                 <td style="text-align: right"><b>{{doc.importe_format}}</b></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" v-if="factura.partidas.data.length != 0">
                 <div class="col-12">
                     <h6><b>Detalle de las partidas</b></h6>
                 </div>
             </div>
-            <div class="row">
+            <div class="row" v-if="factura.partidas.data.length != 0">
                 <div class="table-responsive col-md-12">
                     <table class="table table-sm">
                         <thead>

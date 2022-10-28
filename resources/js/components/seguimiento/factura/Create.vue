@@ -249,7 +249,8 @@
                                                        data-vv-as="Importe"
                                                        v-on:keyup="importeTotalConceptos"
                                                        v-model="concepto.importe"
-                                                       v-validate="{required: true, decimal:2}"
+                                                       style="text-align: right"
+                                                       v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
                                                        :class="{'is-invalid': errors.has(`importe[${i}]`)}"
                                                        :id="`importe[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
@@ -274,7 +275,7 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Importe:</th>
-                                            <td>{{parseFloat(importe_conceptos).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(importe_conceptos).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -325,7 +326,7 @@
                                             </td>
                                             <td>
                                                  <div class="form-check">
-                                                    <input type="checkbox" class="form-check-input" :id="partida.antes_iva" v-model="partida.antes_iva" :disabled="partida.idpartida == ''" v-on:click="importeTotalPartidas">
+                                                    <input type="checkbox" class="form-check-input" :id="partida.antes_iva" v-model="partida.antes_iva" :disabled="partida.idpartida == ''" v-on:change="importeTotalPartidas" v-on:click="importeTotalPartidas">
                                                     <label class="form-check-label" for="antes_iva">¿Antes de IVA?</label>
                                                 </div>
                                             </td>
@@ -334,8 +335,9 @@
                                                        :name="`importe_partida[${i}]`"
                                                        data-vv-as="Importe"
                                                        v-on:keyup="importeTotalPartidas"
-                                                       v-model="partida.importe"
-                                                       v-validate="{required: true, min: 0.01, decimal:2}"
+                                                       v-model="partida.total"
+                                                       style="text-align: right"
+                                                       v-validate="{required: true, regex: /^[0-9]\d*(\.\d{0,2})?$/, min: 0.01, decimal:2}"
                                                        :class="{'is-invalid': errors.has(`importe_partida[${i}]`)}"
                                                        :id="`importe_partida[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`importe_partida[${i}]`)">{{ errors.first(`importe_partida[${i}]`) }}</div>
@@ -361,15 +363,15 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Subtotal:</th>
-                                            <td>{{parseFloat(subtotal).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(subtotal).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                         <tr>
                                             <th>IVA</th>
-                                            <td>{{parseFloat(iva).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(iva).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                         <tr>
                                             <th>Total:</th>
-                                            <td>{{parseFloat(total).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(total).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -499,8 +501,9 @@
                 this.partidas.splice(temp_index, 0, {
                     idpartida : '',
                     antes_iva : false,
-                    importe : 0
+                    total : ''
                 });
+                this.importeTotalPartidas();
             },
             eliminarPartida(index){
                 let temp_index = index - 1;
@@ -517,20 +520,20 @@
                 let importe_antes_suma = 0;
 
                 for(let i=0; i < this.partidas.length; i++) {
-                    if (this.partidas[i].nombre_operador == 'MENOS') {
-                        if (this.partidas[i].antes_iva === false) {
-                            importe_antes_resta += parseFloat(this.partidas[i].importe);
+                    if(this.partidas[i].nombre_operador != undefined && this.partidas[i].total != '') {
+                        if (this.partidas[i].nombre_operador == 'MENOS') {
+                            if (this.partidas[i].antes_iva) {
+                                importe_antes_resta += parseFloat(this.partidas[i].total);
+                            } else {
+                                importe_despues_resta += parseFloat(this.partidas[i].total);
+                            }
                         }
-                        if (this.partidas[i].antes_iva === true) {
-                            importe_despues_resta += parseFloat(this.partidas[i].importe);
-                        }
-                    }
-                    if (this.partidas[i].nombre_operador == 'MAS') {
-                        if (this.partidas[i].antes_iva === false) {
-                            importe_antes_suma += parseFloat(this.partidas[i].importe);
-                        }
-                        if (this.partidas[i].antes_iva === true) {
-                            importe_despues_suma += parseFloat(this.partidas[i].importe);
+                        if (this.partidas[i].nombre_operador == 'MAS') {
+                            if (this.partidas[i].antes_iva) {
+                                importe_antes_suma += parseFloat(this.partidas[i].total);
+                            } else {
+                                importe_despues_suma += parseFloat(this.partidas[i].total);
+                            }
                         }
                     }
                 }
