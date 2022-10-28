@@ -64,35 +64,38 @@ export default {
                             type: "text",
                         },
                     },
-                    buttons: [
-                        'Cancelar',
-                        {
-                            text: "Si, Cancelar",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cancelar',
                             closeModal: false,
                         }
-                    ]
+                    }
                 })
                     .then((value) => {
-                        if (value) {
+                        if (value)
+                        {
                             axios
                                 .patch(URI+ payload.id+'/cancelar',  {id:payload.id, motivo: value}, { params: payload.params })
                                 .then(r => r.data)
                                 .then(data => {
-                                    swal({
-                                        title: "Cancelación exitosa",
-                                        text: " ",
+                                    swal("Factura cancelada correctamente", {
                                         icon: "success",
-                                        timer: 3000,
+                                        timer: 1500,
                                         buttons: false
                                     }).then(() => {
                                         resolve(data);
-
                                     })
                                 })
                                 .catch(error => {
                                     reject(error);
                                 });
-                        } else {
+                        }
+                        else if(value == '')
+                        {
                             swal("Ingrese el motivo de cancelación de la factura.",{icon: "error"});
                         }
                     });

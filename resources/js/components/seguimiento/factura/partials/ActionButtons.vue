@@ -17,6 +17,12 @@
                 return this.$store.dispatch('seguimiento/factura/cancelar', {id: this.value.id})
                     .then(() => {
                         this.$emit('success')
+                        return this.$store.dispatch('seguimiento/factura/paginate', {
+                            params: this.query
+                        }).then(data => {
+                            this.$store.commit('seguimiento/factura/SET_FACTURAS', data.data);
+                            this.$store.commit('seguimiento/factura/SET_META', data.meta);
+                        })
                     })
             },
         }

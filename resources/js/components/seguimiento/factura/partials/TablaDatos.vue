@@ -50,10 +50,10 @@
                         <td colspan="2">
                             {{ factura.nombre_cliente}}
                         </td>
-                        <td>
+                        <td style="text-align: center">
                             {{ factura.fecha_fi_format }}
                         </td>
-                        <td>
+                        <td style="text-align: center">
                             {{ factura.fecha_ff_format }}
                         </td>
                         <td>
