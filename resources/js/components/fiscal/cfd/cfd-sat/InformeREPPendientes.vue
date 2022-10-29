@@ -4,6 +4,9 @@
         <div class="row">
             <div class="col-12">
                 <cfdi-rep-pendiente-xls v-bind:query="query" />
+                <button @click="descargarComunicados" class="btn btn-app btn-secondary float-right" title="Descargar">
+                    <i class="fa fa-file-pdf"></i> Comunicados
+                </button>
                 <!--<button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
                     <i class="fa fa-download"></i> Descargar XLS
                 </button>
@@ -119,6 +122,21 @@ export default {
                     this.cargando=false;
                 })
         },
+        descargarComunicados()
+        {
+
+            this.descargando = true;
+            return this.$store.dispatch('fiscal/cfd-sat/descargarComunicados',
+                {
+                    params: this.query,
+                })
+                .then(data => {
+                    this.$emit('success');
+                }).finally(() => {
+                    this.descargando = false;
+                });
+
+        }
     },
     computed: {
         cfdi(){
