@@ -437,6 +437,8 @@
                 importe_partidas_despues_resta : 0,
                 tipos_partida : {},
                 tipos_cambios : [],
+                archivo : null,
+                archivo_name : null,
             }
         },
         mounted() {

@@ -1,11 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12">
-            <router-link :to="{name: 'factura-seg-create'}" v-if="$root.can('registrar_factura_cuenta_x_cobrar', true)" class="btn btn-app btn-info float-right" :disabled="cargando">
-                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                <i class="fa fa-plus" v-else></i>
-                Registrar
-            </router-link>
+            <registrar  v-if="$root.can('registrar_factura_cuenta_x_cobrar', true)" />
         </div>
         <div class="col-12">
             <div class="card">
@@ -33,8 +29,10 @@
 </template>
 
 <script>
+    import Registrar from './CreateCFDI';
     export default {
         name: "factura-index",
+        components : {Registrar},
         data() {
             return {
                 HeaderSettings: false,
@@ -89,6 +87,12 @@
                 }
 
             },
+            registrar(){
+                this.$router.push({name: 'factura-seg-create'});
+            },
+            cargar_cfdi(){
+                this.$router.push({name: 'factura-seg-create_cfdi'});
+            }
         },
         computed: {
             facturas(){

@@ -1,32 +1,28 @@
 <template>
     <span>
         <button class="btn btn-app pull-right dropdown-toggle"
-            type="button"
-            id="dropdownMenuButton"
-            data-toggle="dropdown"
-            data-boundary="window"
-            aria-haspopup="true"
-            aria-expanded="false">
+                type="button"
+                id="dropdownMenuButton"
+                data-toggle="dropdown"
+                data-boundary="window"
+                aria-haspopup="true"
+                aria-expanded="false">
             <span><i class="fa fa-plus"></i></span>
             Registrar
         </button>
         <div class="dropdown-menu">
             <button @click="load" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Cargar" >
-                <i class="fa fa-upload"></i>Cargar Layout
+                <i class="fa fa-upload"></i> Cargar Layout
             </button>
-            <button @click="registrar" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Editar" >
-                <i class="fa fa-pencil"></i>Ir a Formulario
+            <button @click="registrar" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Registrar" >
+                <i class="fa fa-pencil"></i> Ir a Formulario
             </button>
         </div>
-        <!-- <button @click="load" v-if="$root.can('registrar_contrato_proyectado')" class="btn btn-app pull-right" :disabled="cargando">
-            <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-            <i class="fa fa-plus" v-else></i> Registrar
-        </button> -->
         <div class="modal fade" ref="modal_carga" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal" >
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-upload"></i> CARGAR LAYOUT DE CONTRATO PROYECTADO</h5>
+                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-upload"></i> CARGAR FACTURA CON CFDI</h5>
                         <button type="button" class="close" v-on:click="cerrarModalCarga" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -39,15 +35,14 @@
                                         <div class="col-md-12">
                                             <div class="col-lg-12">
                                                 <input type="file" class="form-control" id="carga_layout"
-                                                    @change="onFileChange"
-                                                    row="3"
-                                                    v-validate="{ ext: ['xlsx']}"
-                                                    name="carga_layout"
-                                                    data-vv-as="Layout"
-                                                    ref="carga_layout"
-                                                    :class="{'is-invalid': errors.has('carga_layout')}"
-                                                >
-                                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (csv)</div>
+                                                       @change="onFileChange"
+                                                       row="3"
+                                                       v-validate="{ ext: ['xml']}"
+                                                       name="carga_layout"
+                                                       data-vv-as="Layout"
+                                                       ref="carga_layout"
+                                                       :class="{'is-invalid': errors.has('carga_layout')}">
+                                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xml)</div>
                                             </div>
                                         </div>
                                     </div>
@@ -66,11 +61,11 @@
                 </div>
             </div>
         </div>
-        <div class="modal fade" ref="modal_errores" role="dialog" aria-hidden="true">
+        <!-- <div class="modal fade" ref="modal_errores" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal modal-xl" >
                 <div class="modal-content" v-if="data">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-close"></i> ERRORES EN LAYOUT DE CONTRATO PROYECTADO</h5>
+                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-close"></i> ERRORES EN CFDI DE LA FACTURA</h5>
                         <button type="button" class="close" v-on:click="cerrarModalErrores" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -112,96 +107,96 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
     </span>
 </template>
 
 <script>
-export default {
-    name: "seleccion-tipo-registro",
-    props: ['cargando'],
-    data() {
-        return {
-            procesando:false,
-            file_carga : null,
-            file_carga_name : '',
-            data: null,
-        }
-    },
-    mounted(){
-    },
-    methods:{
-        load() {
-            this.file = null;
-            this.$validator.errors.clear();
-
-            $(this.$refs.modal_carga).appendTo('body')
-            $(this.$refs.modal_carga).modal('show');
+    export default {
+        name: "registrar-factura-cfdi",
+        props: ['cargando'],
+        data() {
+            return {
+                procesando:false,
+                file_carga : null,
+                file_carga_name : '',
+                data: null,
+            }
         },
-        createImage(file) {
-            var reader = new FileReader();
-            var vm = this;
-
-            reader.onload = (e) => {
-                vm.file_carga = e.target.result;
-            };
-            reader.readAsDataURL(file);
+        mounted(){
         },
-        onFileChange(e){
-            this.file_carga = null;
-            var files = e.target.files || e.dataTransfer.files;
-            if (!files.length)
-                return;
-            this.file_carga_name = files[0].name;
-            this.createImage(files[0]);
+        methods:{
+            load() {
+                this.file = null;
+                this.$validator.errors.clear();
 
-        },
-        getLayoutData(){
-            this.procesando = true;
-            var formData = new FormData();
-            formData.append('pagos',  this.file_carga);
-            formData.append('nombre_archivo',  this.file_carga_name);
-            return this.$store.dispatch('contratos/contrato-proyectado/cargarLayout',{
+                $(this.$refs.modal_carga).appendTo('body')
+                $(this.$refs.modal_carga).modal('show');
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.file_carga = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            },
+            onFileChange(e){
+                this.file_carga = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.file_carga_name = files[0].name;
+                this.createImage(files[0]);
+
+            },
+            getLayoutData(){
+                this.procesando = true;
+                var formData = new FormData();
+                formData.append('facturas',  this.file_carga);
+                formData.append('nombre_archivo',  this.file_carga_name);
+                return this.$store.dispatch('seguimiento/factura/cargarCFDI',{
                     data: formData, config: { params: { _method: 'POST'}}
-            })
-            .then(data => {
-                if(data.partidas_con_error){
-                    this.data = data;
-                    $(this.$refs.modal_errores).appendTo('body')
-                    $(this.$refs.modal_errores).modal('show');
-                }else{
-                    this.procesando = false;
-                    this.cerrarModalCarga();
-                    this.$router.push({name: 'proyectado-layout-create', params: {partidas:data.contratos}});
-                }
-            }).finally(() => {
-                this.procesando = false;
+                })
+                    .then(data => {
+                        if(data.partidas_con_error){
+                            this.data = data;
+                            $(this.$refs.modal_errores).appendTo('body')
+                            $(this.$refs.modal_errores).modal('show');
+                        }else{
+                            this.procesando = false;
+                            this.cerrarModalCarga();
+                            this.$router.push({name: 'proyectado-layout-create', params: {partidas:data.contratos}});
+                        }
+                    }).finally(() => {
+                        this.procesando = false;
+                        this.cerrarModalCarga();
+                    });
+            },
+            registrar(){
                 this.cerrarModalCarga();
-            });
+                this.$router.push({name: 'factura-seg-create'});
+            },
+            cerrarModalCarga(){
+                if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
+                    this.$refs.carga_layout.value = '';
+                }
+                this.file_carga = null;
+                $(this.$refs.modal_carga).modal('hide');
+                this.$validator.reset();
+            },
+            cerrarModalErrores(){
+                if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
+                    this.$refs.carga_layout.value = '';
+                }
+                this.file_carga = null;
+                $(this.$refs.modal_errores).modal('hide');
+                this.$validator.reset();
+            },
         },
-        registrar(){
-            this.cerrarModalCarga();
-            this.$router.push({name: 'proyectado-create'});
-        },
-        cerrarModalCarga(){
-            if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
-                this.$refs.carga_layout.value = '';
-            }
-            this.file_carga = null;
-            $(this.$refs.modal_carga).modal('hide');
-            this.$validator.reset();
-        },
-        cerrarModalErrores(){
-            if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
-                this.$refs.carga_layout.value = '';
-            }
-            this.file_carga = null;
-            $(this.$refs.modal_errores).modal('hide');
-            this.$validator.reset();
-        },
-    },
 
-}
+    }
 </script>
 
 <style scoped>

@@ -53,4 +53,9 @@ class FacturaController extends Controller
         $item = $this->service->cancelar($request->all(),$id);
         return $this->respondWithItem($item);
     }
+
+    public function cargarArchivo(Request $request){
+        $respuesta = $this->service->cargarArchivo($request);
+        return response()->json($respuesta, 200);
+    }
 }
