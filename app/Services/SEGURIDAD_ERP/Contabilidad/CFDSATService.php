@@ -1381,13 +1381,11 @@ class CFDSATService
         $arr_comunicados = [];
         foreach ($uuids as $uuid)
         {
-            $arr_comunicados[$uuid->rfc_emisor]["uuid"][] = $uuid;
             $arr_comunicados[$uuid->rfc_emisor]["proveedor"] = $uuid->proveedor->razon_social;
+            $arr_comunicados[$uuid->rfc_emisor]["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
+            $arr_comunicados[$uuid->rfc_emisor]["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
 
         }
-
-
-
 
         $dir_descarga = "downloads/fiscal/descarga/comunicados/";
         if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
@@ -1396,16 +1394,9 @@ class CFDSATService
 
         foreach ($arr_comunicados as $rfc=>$arr_comunicado) {
             $comunicado = new Comunicado($arr_comunicado);
+            //return $comunicado->create();
             $comunicado->create()->Output("F", $dir_descarga.$rfc.".pdf",1);
         }
-
-        /*foreach ($uuid as $uuid_individual){
-            try{
-                copy($dir_xml.$uuid_individual->uuid.".xml", $dir_descarga.$uuid_individual->uuid.".xml");
-            }catch (\Exception $e){
-
-            }
-        }*/
 
         $path = "downloads/fiscal/descarga/";
         $nombre_zip = $path.date("Ymd_his").".zip";

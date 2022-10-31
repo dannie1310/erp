@@ -36,7 +36,7 @@ class Comunicado extends Rotation
     }
 
 
-    public function cuerpo()
+    public function comunicado()
     {
         $this->SetFont('Helvetica', '', 20);
         $this->Cell(17.7,1,"Comunicado", '',1,'C');
@@ -50,7 +50,7 @@ class Comunicado extends Rotation
         $this->Cell(17.7,1,"Estimados proveedores: ", '',1,'J');
         $this->ln(".7");
 
-        $this->MultiCell(17.7,0.6,utf8_decode("El presente comunicado es en relación con la emisión y entrega del Recibo Electrónico de Pago (REP) el cual tendrá que ser emitido a la liquidación de sus comprobantes fiscales digitales, debido a que es un requisito necesario para poder realizar la acreditación de los impuestos trasladados o en su caso, la deducción para cumplir con las disposiciones fiscales de la Ley de Impuesto Sobre la Renta y la Ley del Impuesto al Valor Agregado."),0,"J");
+        $this->MultiCell(17.7,0.6,utf8_decode("El presente comunicado es con relación a la emisión y entrega del Recibo Electrónico de Pago (REP) el cual tendrá que ser emitido a la liquidación de sus comprobantes fiscales digitales, debido a que es un requisito necesario para poder realizar la acreditación de los impuestos trasladados o en su caso, la deducción para cumplir con las disposiciones fiscales de la Ley de Impuesto Sobre la Renta y la Ley del Impuesto al Valor Agregado."),0,"J");
         $this->ln(".3");
 
 
@@ -79,40 +79,74 @@ class Comunicado extends Rotation
     {
 
         $this->SetFont('Helvetica', '', 13);
-
-
         $this->MultiCell(17.7,0.6,"Lista de Facturas con REP Pendiente de ".$this->emisor["proveedor"].":", '','J',0);
-        $this->ln(1);
+        $this->ln(0.5);
+
+        $this->listaCFDIxReceptor();
+    }
+
+    public function listaCFDIxReceptor()
+    {
+
+        $total_emisor = 0;
+        $cantidad_uuid_por_emisor = 0;
+        foreach ($this->emisor["receptores"] as $receptor) {
+            $this->SetFont('Helvetica', '', 11);
+            $this->SetTextColor(0,0,0);
+            $this->MultiCell(17.7,0.6,utf8_decode($receptor["empresa"]).":", '','J',0);
+            $this->ln(0.3);
+            $this->partidasTitle();
+
+            $i = 1;
+            $total_receptor = 0;
+            foreach ($receptor["uuid"] as $item) {
+                $this->SetAligns(['C','C','C','L','C','R','L']);
+                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+                $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+                $this->Row([$i, $item->uuid, $item->fecha_sencilla_format, $item->serie,$item->folio, $item->total_format,$item->moneda]);
+                $total_receptor += $item->total_mxn;
+                $total_emisor += $item->total_mxn;
+                $i++;
+                $cantidad_uuid_por_emisor ++;
+            }
+
+            $this->SetFillColor(213,213,213);
+            $this->SetFont('Helvetica', '', 8);
+            $this->cell(13.9,0.5,"Total ".utf8_decode($receptor["empresa"]).": ",1,0,'R',1);
+            $this->cell(2.5,0.5,"$ ".number_format($total_receptor,2,".",","),1,0,'R',1);
+            $this->cell(1.3,0.5,"MXN",1,1,'L',1);
+            $this->ln("0.5");
+
+        }
+        $this->SetFillColor(117,117,117);
+        $this->setTextColor(255,255,255);
+
         $this->SetFont('Helvetica', '', 8);
+        $this->cell(0.7,0.5,$cantidad_uuid_por_emisor,1,0,'C',1);
+        $this->cell(13.2,0.5,"Total: ",1,0,'R',1);
+        $this->cell(2.5,0.5,"$ ".number_format($total_emisor,2,".",","),1,0,'R',1);
+        $this->cell(1.3,0.5,"MXN",1,1,'L',1);
 
-        $this->partidasTitle();
-
-        $i = 1;
-        $this->SetAligns(['C','C','C','L','L','R','L']);
-        $this->SetTextColors(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
-        $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-
-        foreach ($this->emisor["uuid"] as $item) {
+        /*foreach ($this->emisor["uuid"] as $item) {
             $this->Row([$i, $item->uuid, $item->fecha_format, $item->serie,$item->folio, $item->total_format,$item->moneda]);
 
             $i++;
 
-        }
-
+        }*/
     }
 
     public function partidasTitle()
     {
-
+        $this->SetFont('Helvetica', '', 8);
 
         $this->SetFillColor(180,180,180);
-        $this->SetWidths([0.7,6,2.5,2,2,2.5,2]);
+        $this->SetWidths([0.7,6.5,1.8,1.5,3.4,2.5,1.3]);
         $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF']);
         $this->SetRounds(['','','','','','','']);
         $this->SetRadius([0.2,0,0,0,0,0,0.2]);
 
-        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
-        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+        $this->SetFills(['213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213']);
+        $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
         $this->SetDrawColor(100,100,100);
         $this->SetHeights([0.5]);
         $this->SetAligns(['C','C','C','C','C','C','C']);
@@ -129,14 +163,14 @@ class Comunicado extends Rotation
         $this->SetAutoPageBreak(true, 1);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->cuerpo();
+        $this->comunicado();
         $this->AddPage();
         $this->listaCFDI();
 
         return $this;
 
         try {
-            //$this->Output('F', 'Comunicado_'.date("d-m-Y_h_i_s").'.pdf', 1);
+            $this->Output('I', 'Com', 1);
         } catch (\Exception $ex) {
             dd("error", $ex);
         }
