@@ -89,6 +89,7 @@ class Comunicado extends Rotation
     {
 
         $total_emisor = 0;
+        $saldo_emisor = 0;
         $cantidad_uuid_por_emisor = 0;
         foreach ($this->emisor["receptores"] as $receptor) {
             $this->SetFont('Helvetica', '', 11);
@@ -99,33 +100,38 @@ class Comunicado extends Rotation
 
             $i = 1;
             $total_receptor = 0;
+            $saldo_receptor = 0;
             foreach ($receptor["uuid"] as $item) {
-                $this->SetAligns(['C','C','C','L','C','R','L']);
-                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
-                $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
-                $this->Row([$i, $item->uuid, $item->fecha_sencilla_format, $item->serie,$item->folio, $item->total_format,$item->moneda]);
+                $this->SetAligns(['C','C','C','L','C','R','R','L']);
+                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+                $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+                $this->Row([$i, $item->uuid, $item->fecha_sencilla_format, $item->serie,$item->folio, $item->total_format,$item->monto_pendiente_rep_vw_format,$item->moneda]);
                 $total_receptor += $item->total_mxn;
                 $total_emisor += $item->total_mxn;
+                $saldo_receptor += $item->monto_pendiente_rep_vw_mxn;
+                $saldo_emisor += $item->monto_pendiente_rep_vw_mxn;
                 $i++;
                 $cantidad_uuid_por_emisor ++;
             }
 
             $this->SetFillColor(213,213,213);
-            $this->SetFont('Helvetica', '', 8);
-            $this->cell(13.9,0.5,"Total ".utf8_decode($receptor["empresa"]).": ",1,0,'R',1);
-            $this->cell(2.5,0.5,"$ ".number_format($total_receptor,2,".",","),1,0,'R',1);
-            $this->cell(1.3,0.5,"MXN",1,1,'L',1);
+            $this->SetFont('Helvetica', '', 6);
+            $this->cell(12.7,0.5,"Total ".utf8_decode($receptor["empresa"]).": ",1,0,'R',1);
+            $this->cell(2,0.5,"$ ".number_format($total_receptor,2,".",","),1,0,'R',1);
+            $this->cell(2,0.5,"$ ".number_format($saldo_receptor,2,".",","),1,0,'R',1);
+            $this->cell(1,0.5,"MXN",1,1,'L',1);
             $this->ln("0.5");
 
         }
         $this->SetFillColor(117,117,117);
         $this->setTextColor(255,255,255);
 
-        $this->SetFont('Helvetica', '', 8);
+        $this->SetFont('Helvetica', '', 6);
         $this->cell(0.7,0.5,$cantidad_uuid_por_emisor,1,0,'C',1);
-        $this->cell(13.2,0.5,"Total: ",1,0,'R',1);
-        $this->cell(2.5,0.5,"$ ".number_format($total_emisor,2,".",","),1,0,'R',1);
-        $this->cell(1.3,0.5,"MXN",1,1,'L',1);
+        $this->cell(12,0.5,"Total: ",1,0,'R',1);
+        $this->cell(2,0.5,"$ ".number_format($total_emisor,2,".",","),1,0,'R',1);
+        $this->cell(2,0.5,"$ ".number_format($saldo_emisor,2,".",","),1,0,'R',1);
+        $this->cell(1,0.5,"MXN",1,1,'L',1);
 
         /*foreach ($this->emisor["uuid"] as $item) {
             $this->Row([$i, $item->uuid, $item->fecha_format, $item->serie,$item->folio, $item->total_format,$item->moneda]);
@@ -137,21 +143,21 @@ class Comunicado extends Rotation
 
     public function partidasTitle()
     {
-        $this->SetFont('Helvetica', '', 8);
+        $this->SetFont('Helvetica', '', 6);
 
         $this->SetFillColor(180,180,180);
-        $this->SetWidths([0.7,6.5,1.8,1.5,3.4,2.5,1.3]);
-        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF']);
-        $this->SetRounds(['','','','','','','']);
-        $this->SetRadius([0.2,0,0,0,0,0,0.2]);
+        $this->SetWidths([0.7,5.7,1.8,1.5,3,2,2,1]);
+        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF']);
+        $this->SetRounds(['','','','','','','','']);
+        $this->SetRadius([0.2,0,0,0,0,0,0,0.2]);
 
-        $this->SetFills(['213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213']);
-        $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+        $this->SetFills(['213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213','213,213,213']);
+        $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
         $this->SetDrawColor(100,100,100);
         $this->SetHeights([0.5]);
-        $this->SetAligns(['C','C','C','C','C','C','C']);
+        $this->SetAligns(['C','C','C','C','C','C','C','C']);
 
-        $this->Row(["#", "UUID","Fecha", "Serie","Folio","Total","Moneda"]);
+        $this->Row(["#", "UUID","Fecha", "Serie","Folio","Total","Saldo REP","Moneda"]);
 
 
     }

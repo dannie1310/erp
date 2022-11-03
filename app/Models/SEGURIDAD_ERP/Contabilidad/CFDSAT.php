@@ -321,13 +321,32 @@ class CFDSAT extends Model
         return implode(" | ",$concepto_arr);
     }
 
-    public function getMontoPendienteRepAttribute()
+    public function getMontoPendienteRepVwAttribute()
     {
         if($this->vwPendienteREP){
             return $this->vwPendienteREP->pendiente_pago;
         }else{
             return $this->total;
         }
+    }
+
+    public function getMontoPendienteRepVwMxnAttribute()
+    {
+        if($this->moneda != "MXN"){
+            if($this->tipo_cambio>0){
+                return $this->monto_pendiente_rep_vw * $this->tipo_cambio;
+            }else{
+                return $this->monto_pendiente_rep_vw;
+            }
+
+        }else{
+            return $this->monto_pendiente_rep_vw;
+        }
+    }
+
+    public function getMontoPendienteRepVwFormatAttribute()
+    {
+        return '$ ' . number_format(($this->monto_pendiente_rep_vw),2);
     }
 
     public function getCantidadPagosAttribute()
