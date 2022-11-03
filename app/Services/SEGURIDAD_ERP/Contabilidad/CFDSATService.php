@@ -99,6 +99,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -1090,6 +1091,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -1100,6 +1102,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -1152,6 +1155,8 @@ class CFDSATService
         if (isset($data['obra'])) {
             $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
 
+            $id_obra = [];
+            $id_proyecto = [];
             foreach($obras as $obra){
                 $id_obra[] = $obra->id_obra;
                 $id_proyecto[] = $obra->id_proyecto;
@@ -1256,6 +1261,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -1266,6 +1272,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -1318,6 +1325,8 @@ class CFDSATService
         if (isset($data['obra'])) {
             $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
 
+            $id_obra = [];
+            $id_proyecto = [];
             foreach($obras as $obra){
                 $id_obra[] = $obra->id_obra;
                 $id_proyecto[] = $obra->id_proyecto;
@@ -1646,6 +1655,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -1656,6 +1666,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -1707,7 +1718,8 @@ class CFDSATService
         }
         if (isset($data['obra'])) {
             $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
-
+            $id_obra = [];
+            $id_proyecto = [];
             foreach($obras as $obra){
                 $id_obra[] = $obra->id_obra;
                 $id_proyecto[] = $obra->id_proyecto;
@@ -1787,6 +1799,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -1797,6 +1810,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -1849,6 +1863,8 @@ class CFDSATService
         if (isset($data['obra'])) {
             $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
 
+            $id_obra = [];
+            $id_proyecto = [];
             foreach($obras as $obra){
                 $id_obra[] = $obra->id_obra;
                 $id_proyecto[] = $obra->id_proyecto;
