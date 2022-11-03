@@ -9,6 +9,8 @@
 namespace App\Utils;
 
 
+use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
+
 class Util
 {
     public static function eliminaPalabrasComunes($string)
@@ -151,6 +153,12 @@ class Util
         );
 
         return preg_replace( "/\r|\n/", " ", $string );
+    }
+
+    public static function getMesTxt($mes, $tipo = 0)
+    {
+        $mes = CatalogoMeses::find($mes);
+        return $mes->NombreMes;
     }
 
 }
