@@ -1415,7 +1415,7 @@ class CFDSATService
             ->add(public_path($dir_descarga));
         $zipper->close();
 
-        //Files::eliminaDirectorio($dir_descarga);
+        Files::eliminaDirectorio($dir_descarga);
 
         if(file_exists(public_path($nombre_zip))){
             return response()->download(public_path($nombre_zip));
