@@ -4966,6 +4966,7 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'factura-seg-create',
+                        props:true,
                         component: require('./components/seguimiento/factura/Create').default,
                         meta: {
                             title: 'Registrar Factura',

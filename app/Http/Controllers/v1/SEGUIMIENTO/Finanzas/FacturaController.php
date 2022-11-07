@@ -42,7 +42,7 @@ class FacturaController extends Controller
 
         $this->middleware('permisoGlobal:cancelar_factura_cuenta_x_cobrar')->only('cancelar');
         $this->middleware('permisoGlobal:consultar_factura_cuenta_x_cobrar')->only(['show','paginate','index','find']);
-        $this->middleware('permisoGlobal:registrar_factura_cuenta_x_cobrar')->only('store');
+        $this->middleware('permisoGlobal:registrar_factura_cuenta_x_cobrar')->only(['store','cargarArchivo']);
 
         $this->service = $service;
         $this->transformer = $transformer;

@@ -12,7 +12,7 @@
         </button>
         <div class="dropdown-menu">
             <button @click="load" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Cargar" >
-                <i class="fa fa-upload"></i> Cargar Layout
+                <i class="fa fa-upload"></i> Cargar CFDI
             </button>
             <button @click="registrar" type="button" class="btn btn-sm btn-outline-info dropdown-item" title="Registrar" >
                 <i class="fa fa-pencil"></i> Ir a Formulario
@@ -124,6 +124,10 @@
             }
         },
         mounted(){
+            this.procesando = false
+            this.file_carga = null
+            this.file_carga_name = ''
+            this.data = null
         },
         methods:{
             load() {
@@ -167,7 +171,7 @@
                         }else{
                             this.procesando = false;
                             this.cerrarModalCarga();
-                            this.$router.push({name: 'proyectado-layout-create', params: {partidas:data.contratos}});
+                            this.$router.push({name: 'factura-seg-create', params: {datos : data}});
                         }
                     }).finally(() => {
                         this.procesando = false;
@@ -179,17 +183,15 @@
                 this.$router.push({name: 'factura-seg-create'});
             },
             cerrarModalCarga(){
-                if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
-                    this.$refs.carga_layout.value = '';
-                }
+                this.file_carga_name = ''
                 this.file_carga = null;
+                this.cargando = false
+                this.procesando = false;
                 $(this.$refs.modal_carga).modal('hide');
                 this.$validator.reset();
             },
             cerrarModalErrores(){
-                if(this.$refs.carga_layout.value && this.$refs.carga_layout.value !== ''){
-                    this.$refs.carga_layout.value = '';
-                }
+                this.file_carga_name = ''
                 this.file_carga = null;
                 $(this.$refs.modal_errores).modal('hide');
                 this.$validator.reset();

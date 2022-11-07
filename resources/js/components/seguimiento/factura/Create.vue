@@ -1,7 +1,7 @@
 <template>
     <span>
         <nav>
-            <div class="card" v-if="cargando">
+            <div class="card" v-if="registro.cargando">
                 <div class="card-body">
                     <div class="row" >
                         <div class="col-md-12">
@@ -18,15 +18,16 @@
                         <div class="col-md-2">
                             <div class="form-group error-content">
                                 <div class="form-group">
+
                                     <label for="fecha_emision" >Fecha de Emisión</label>
-                                    <datepicker v-model = "fecha_emision"
+                                    <datepicker v-model = "registro.fecha_emision"
                                                 name = "fecha_emision"
                                                 v-on:keyup="getTipoCambio"
                                                 :format = "formatoFecha"
-                                                :language = "es"
+                                                :language = "registro.es"
                                                 :bootstrap-styling = "true"
                                                 class = "form-control"
-                                                :disabled-dates="fechasDeshabilitadas"
+                                                :disabled-dates="registro.fechasDeshabilitadas"
                                                 v-validate="{required: true}"
                                                 :class="{'is-invalid': errors.has('fecha_emision')}"
                                     ></datepicker>
@@ -45,7 +46,7 @@
                                            id="numero_factura"
                                            data-vv-as="Número de Factura"
                                            v-validate="{required: true}"
-                                           v-model="numero_factura"
+                                           v-model="registro.numero_factura"
                                            :class="{'is-invalid': errors.has('numero_factura')}">
                                     <div class="invalid-feedback" v-show="errors.has('numero_factura')">{{ errors.first('numero_factura') }}</div>
                                 </div>
@@ -62,10 +63,10 @@
                                         v-validate="{required: true}"
                                         class="form-control"
                                         id="id_proyecto"
-                                        v-model="id_proyecto"
+                                        v-model="registro.id_proyecto"
                                         :class="{'is-invalid': errors.has('id_proyecto')}">
                                          <option value>--Seleccionar--</option>
-                                        <option v-for="proyecto in proyectos" :value="proyecto.id">{{ proyecto.nombre }}</option>
+                                        <option v-for="proyecto in registro.proyectos" :value="proyecto.id">{{ proyecto.nombre }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_proyecto')">{{ errors.first('id_proyecto') }}</div>
                                 </div>
@@ -82,10 +83,10 @@
                                         v-validate="{required: true}"
                                         class="form-control"
                                         id="id_empresa"
-                                        v-model="id_empresa"
+                                        v-model="registro.id_empresa"
                                         :class="{'is-invalid': errors.has('id_empresa')}">
                                          <option value>--Seleccionar--</option>
-                                        <option v-for="empresa in empresas" :value="empresa.id">{{ empresa.nombre }}</option>
+                                        <option v-for="empresa in registro.empresas" :value="empresa.id">{{ empresa.nombre }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_empresa')">{{ errors.first('id_empresa') }}</div>
                                 </div>
@@ -102,7 +103,7 @@
                                            id="descripcion"
                                            data-vv-as="Descripción"
                                            v-validate="{required: true}"
-                                           v-model="descripcion"
+                                           v-model="registro.descripcion"
                                            :class="{'is-invalid': errors.has('descripcion')}">
                                     <div class="invalid-feedback" v-show="errors.has('descripcion')">{{ errors.first('descripcion') }}</div>
                                 </div>
@@ -121,10 +122,10 @@
                                         v-validate="{required: true}"
                                         class="form-control"
                                         id="id_cliente"
-                                        v-model="id_cliente"
+                                        v-model="registro.id_cliente"
                                         :class="{'is-invalid': errors.has('id_cliente')}">
                                          <option value>--Seleccionar--</option>
-                                        <option v-for="cliente in clientes" :value="cliente.id">{{ cliente.nombre }}</option>
+                                        <option v-for="cliente in registro.clientes" :value="cliente.id">{{ cliente.nombre }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_cliente')">{{ errors.first('id_cliente') }}</div>
                                 </div>
@@ -134,13 +135,13 @@
                             <div class="form-group error-content">
                                 <div class="form-group">
                                     <label for="fecha_inicial" >Periodo que cubre:</label>
-                                    <datepicker v-model = "fecha_inicial"
+                                    <datepicker v-model = "registro.fecha_inicial"
                                                 name = "fecha_inicial"
                                                 :format = "formatoFecha"
-                                                :language = "es"
+                                                :language = "registro.es"
                                                 :bootstrap-styling = "true"
                                                 class = "form-control"
-                                                :disabled-dates="fechasDeshabilitadas"
+                                                :disabled-dates="registro.fechasDeshabilitadas"
                                                 v-validate="{required: true}"
                                                 :class="{'is-invalid': errors.has('fecha_inicial')}"
                                     ></datepicker>
@@ -152,13 +153,13 @@
                             <div class="form-group error-content">
                                 <div class="form-group">
                                     <label for="fecha_fin" >al</label>
-                                    <datepicker v-model = "fecha_fin"
+                                    <datepicker v-model = "registro.fecha_fin"
                                                 name = "fecha_fin"
                                                 :format = "formatoFecha"
-                                                :language = "es"
+                                                :language = "registro.es"
                                                 :bootstrap-styling = "true"
                                                 class = "form-control"
-                                                :disabled-dates="fechasDeshabilitadas"
+                                                :disabled-dates="registro.fechasDeshabilitadas"
                                                 v-validate="{required: true}"
                                                 :class="{'is-invalid': errors.has('fecha_fin')}"
                                     ></datepicker>
@@ -177,10 +178,10 @@
                                         v-validate="{required: true}"
                                         class="form-control"
                                         id="id_moneda"
-                                        v-model="id_moneda"
+                                        v-model="registro.id_moneda"
                                         :class="{'is-invalid': errors.has('id_moneda')}">
                                          <option value>--Seleccionar--</option>
-                                        <option v-for="moneda in monedas" :value="moneda.id">{{ moneda.nombre }}</option>
+                                        <option v-for="moneda in registro.monedas" :value="moneda.id">{{ moneda.nombre }}</option>
                                     </select>
                                     <div class="invalid-feedback" v-show="errors.has('id_moneda')">{{ errors.first('id_moneda') }}</div>
                                 </div>
@@ -197,7 +198,7 @@
                                            id="tipo_cambio"
                                            data-vv-as="Tipo de Cambio"
                                            v-validate="{required: true}"
-                                           v-model="tipo_cambio"
+                                           v-model="registro.tipo_cambio"
                                            :class="{'is-invalid': errors.has('tipo_cambio')}">
                                     <div class="invalid-feedback" v-show="errors.has('tipo_cambio')">{{ errors.first('tipo_cambio') }}</div>
                                 </div>
@@ -226,7 +227,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(concepto, i) in conceptos">
+                                        <tr v-for="(concepto, i) in registro.conceptos">
                                             <td>{{i+1}}</td>
                                             <td>
                                                 <select
@@ -239,7 +240,7 @@
                                                     v-model="concepto.idconcepto"
                                                     :class="{'is-invalid': errors.has(`concepto[${i}]`)}">
                                                     <option value>--Seleccionar--</option>
-                                                    <option v-for="concept in tipoConceptos" :value="concept.id">{{ concept.nombre }}</option>
+                                                    <option v-for="concept in registro.tipoConceptos" :value="concept.id">{{ concept.nombre }}</option>
                                                 </select>
                                                 <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
                                             </td>
@@ -256,8 +257,8 @@
                                                 <div class="invalid-feedback" v-show="errors.has(`importe[${i}]`)">{{ errors.first(`importe[${i}]`) }}</div>
                                             </td>
                                             <td class="icono">
-                                                <button @click="eliminarConcepto(i)" :disabled="conceptos.length === 1" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                <button @click="eliminarConcepto(i)" :disabled="registro.conceptos.length === 1" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
+                                                    <i class="fa fa-spin fa-spinner" v-if="registro.cargando"></i>
                                                     <i class="fa fa-trash" v-else></i>
                                                 </button>
                                             </td>
@@ -275,7 +276,7 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Importe:</th>
-                                            <td style="text-align: right">{{parseFloat(importe_conceptos).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(registro.importe_conceptos).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -291,7 +292,7 @@
                         </div>
                     </div>
                     <br />
-                    <div class="row" v-if="partidas.length != 0">
+                    <div class="row" v-if="registro.partidas.length != 0">
                         <br />
                         <div  class="col-12">
                             <div class="table-responsive">
@@ -306,7 +307,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="(partida, i) in partidas">
+                                        <tr v-for="(partida, i) in registro.partidas">
                                             <td>{{i+1}}</td>
                                             <td>
                                                 <select
@@ -320,7 +321,7 @@
                                                     v-model="partida.idpartida"
                                                     :class="{'is-invalid': errors.has(`partida[${i}]`)}">
                                                     <option value>--Seleccionar--</option>
-                                                    <option v-for="par in tipos_partida" :value="par.id">{{ par.partida }} ({{par.nombre_operador}})</option>
+                                                    <option v-for="par in registro.tipos_partida" :value="par.id">{{ par.partida }} ({{par.nombre_operador}})</option>
                                                 </select>
                                                 <div class="invalid-feedback" v-show="errors.has(`partida[${i}]`)">{{ errors.first(`partida[${i}]`) }}</div>
                                             </td>
@@ -344,7 +345,7 @@
                                             </td>
                                             <td class="icono">
                                                 <button @click="eliminarPartida(i)" type="button" class="btn btn-sm btn-outline-danger pull-left" title="Eliminar">
-                                                    <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
+                                                    <i class="fa fa-spin fa-spinner" v-if="registro.cargando"></i>
                                                     <i class="fa fa-trash" v-else></i>
                                                 </button>
                                             </td>
@@ -363,15 +364,15 @@
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Subtotal:</th>
-                                            <td style="text-align: right">{{parseFloat(subtotal).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(registro.subtotal).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                         <tr>
                                             <th>IVA</th>
-                                            <td style="text-align: right">{{parseFloat(iva).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(registro.iva).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                         <tr>
                                             <th>Total:</th>
-                                            <td style="text-align: right">{{parseFloat(total).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(registro.total).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -402,62 +403,77 @@
     export default {
         name: "create",
         components: {Datepicker, es, ConceptoCreate},
+        props: ['datos'],
         data() {
             return {
-                es: es,
-                cargando: false,
-                fecha_emision: '',
-                observaciones: '',
-                fecha: '',
-                fechasDeshabilitadas:{},
-                fecha_hoy : '',
-                numero_factura : '',
-                descripcion : '',
-                proyectos : {},
-                id_proyecto : '',
-                empresas : {},
-                id_empresa : '',
-                clientes : {},
-                id_cliente : '',
-                fecha_inicial : '',
-                fecha_fin : '',
-                monedas : {},
-                id_moneda : '',
-                tipo_cambio : '',
-                tipoConceptos : {},
-                conceptos : [],
-                importe_conceptos : 0,
-                subtotal : 0,
-                iva : 0,
-                total : 0,
-                partidas : [],
-                importe_partidas_antes_suma : 0,
-                importe_partidas_antes_resta: 0,
-                importe_partidas_despues_suma : 0,
-                importe_partidas_despues_resta : 0,
-                tipos_partida : {},
-                tipos_cambios : [],
-                archivo : null,
-                archivo_name : null,
+                registro : {
+                    es: es,
+                    cargando: false,
+                    fecha_emision: '',
+                    fechasDeshabilitadas: {},
+                    numero_factura: '',
+                    descripcion: '',
+                    proyectos: {},
+                    id_proyecto: '',
+                    empresas: {},
+                    id_empresa: '',
+                    clientes: {},
+                    id_cliente: '',
+                    fecha_inicial: '',
+                    fecha_fin: '',
+                    monedas: {},
+                    id_moneda: '',
+                    tipo_cambio: '',
+                    tipoConceptos: {},
+                    conceptos: [],
+                    importe_conceptos: 0,
+                    subtotal: 0,
+                    iva: 0,
+                    total: 0,
+                    partidas: [],
+                    importe_partidas_antes_suma: 0,
+                    importe_partidas_antes_resta: 0,
+                    importe_partidas_despues_suma: 0,
+                    importe_partidas_despues_resta: 0,
+                    tipos_partida: {},
+                    tipos_cambios: [],
+                    archivo: null,
+                    archivo_name: null,
+                }
             }
         },
         mounted() {
-            this.fecha_emision = new Date()
-            this.fecha = new Date()
-            this.fecha_hoy = new Date()
-            this.fechasDeshabilitadas.from= new Date();
-            this.fecha_inicial = new Date();
-            this.fecha_fin = new Date();
-            this.conceptos.push({
-                idconcepto:'',
-                importe: ''
-            });
-            this.getClientes();
-            this.getConceptos();
-            this.getEmpresas();
-            this.getMonedas();
+            if(this.datos)
+            {
+                this.registro = this.datos
+                this.registro.es = es
+                this.registro.fechasDeshabilitadas = {};
+                this.registro.fecha_inicial = '';
+                this.registro.fecha_fin = '';
+                this.registro.importe_conceptos = 0
+                this.registro.importe_partidas_antes_suma = 0
+                this.registro.importe_partidas_antes_resta = 0
+                this.registro.importe_partidas_despues_suma = 0
+                this.registro.importe_partidas_despues_resta = 0
+                this.registro.descripcion = ''
+                this.importeTotalConceptos();
+                this.importeTotalPartidas();
+            }else {
+                this.registro.fecha_emision = new Date()
+                this.registro.conceptos.push({
+                    idconcepto: '',
+                    importe: ''
+                });
+                this.getClientes();
+                this.getConceptos();
+                this.getEmpresas();
+                this.getMonedas();
+                this.getTipoCambio();
+            }
             this.getProyectos();
-            this.getTipoCambio();
+            this.registro.fechasDeshabilitadas.from = new Date();
+            this.registro.fecha_inicial = new Date();
+            this.registro.fecha_fin = new Date();
             this.$validator.reset();
         },
 
@@ -466,41 +482,41 @@
                 return moment(date).format('DD/MM/YYYY');
             },
             agregarConcepto(){
-                let temp_index = this.conceptos.length;
-                this.conceptos.splice(temp_index, 0, {
+                let temp_index = this.registro.conceptos.length;
+                this.registro.conceptos.splice(temp_index, 0, {
                     idconcepto : '',
                     importe : ''
                 });
             },
             eliminarConcepto(index){
                 let temp_index = index - 1;
-                while(temp_index in this.conceptos){
+                while(temp_index in this.registro.conceptos){
                     temp_index= temp_index - 1;
                 }
-                this.conceptos.splice(index, 1);
+                this.registro.conceptos.splice(index, 1);
                 this.importeTotalConceptos()
             },
             importeTotalConceptos() {
                 let importe = 0;
-                for(let i=0; i < this.conceptos.length; i++) {
-                    importe += parseFloat(this.conceptos[i].importe);
+                for(let i=0; i < this.registro.conceptos.length; i++) {
+                    importe += parseFloat(this.registro.conceptos[i].importe);
                 }
-                this.importe_conceptos = parseFloat(importe).formatMoney(2,'.','')
+                this.registro.importe_conceptos = parseFloat(importe).formatMoney(2,'.','')
                 this.totales();
             },
             totales(){
-                this.subtotal = this.importe_conceptos
-                this.subtotal = this.subtotal + this.importe_partidas_antes_suma;
-                this.subtotal = this.subtotal - this.importe_partidas_antes_resta;
-                this.iva = this.subtotal * 0.16;
-                this.total = (this.subtotal + this.iva)
-                this.total = this.total + this.importe_partidas_despues_suma;
-                this.total = this.total - this.importe_partidas_despues_resta;
+                this.registro.subtotal = this.registro.importe_conceptos
+                this.registro.subtotal = this.registro.subtotal + this.registro.importe_partidas_antes_suma;
+                this.registro.subtotal = this.registro.subtotal - this.registro.importe_partidas_antes_resta;
+                this.registro.iva = this.registro.subtotal * 0.16;
+                this.registro.total = (this.registro.subtotal + this.registro.iva)
+                this.registro.total = this.registro.total + this.registro.importe_partidas_despues_suma;
+                this.registro.total = this.registro.total - this.registro.importe_partidas_despues_resta;
             },
             agregarPartida(){
                 this.getPartidas()
-                let temp_index = this.partidas.length;
-                this.partidas.splice(temp_index, 0, {
+                let temp_index = this.registro.partidas.length;
+                this.registro.partidas.splice(temp_index, 0, {
                     idpartida : '',
                     antes_iva : false,
                     total : ''
@@ -509,10 +525,10 @@
             },
             eliminarPartida(index){
                 let temp_index = index - 1;
-                while(temp_index in this.partidas){
+                while(temp_index in this.registro.partidas){
                     temp_index= temp_index - 1;
                 }
-                this.partidas.splice(index, 1);
+                this.registro.partidas.splice(index, 1);
                 this.importeTotalPartidas()
             },
             importeTotalPartidas() {
@@ -521,32 +537,32 @@
                 let importe_antes_resta = 0;
                 let importe_antes_suma = 0;
 
-                for(let i=0; i < this.partidas.length; i++) {
-                    if(this.partidas[i].nombre_operador != undefined && this.partidas[i].total != '') {
-                        if (this.partidas[i].nombre_operador == 'MENOS') {
-                            if (this.partidas[i].antes_iva) {
-                                importe_antes_resta += parseFloat(this.partidas[i].total);
+                for(let i=0; i < this.registro.partidas.length; i++) {
+                    if(this.registro.partidas[i].nombre_operador != undefined && this.registro.partidas[i].total != '') {
+                        if (this.registro.partidas[i].nombre_operador == 'MENOS') {
+                            if (this.registro.partidas[i].antes_iva) {
+                                importe_antes_resta += parseFloat(this.registro.partidas[i].total);
                             } else {
-                                importe_despues_resta += parseFloat(this.partidas[i].total);
+                                importe_despues_resta += parseFloat(this.registro.partidas[i].total);
                             }
                         }
-                        if (this.partidas[i].nombre_operador == 'MAS') {
-                            if (this.partidas[i].antes_iva) {
-                                importe_antes_suma += parseFloat(this.partidas[i].total);
+                        if (this.registro.partidas[i].nombre_operador == 'MAS') {
+                            if (this.registro.partidas[i].antes_iva) {
+                                importe_antes_suma += parseFloat(this.registro.partidas[i].total);
                             } else {
-                                importe_despues_suma += parseFloat(this.partidas[i].total);
+                                importe_despues_suma += parseFloat(this.registro.partidas[i].total);
                             }
                         }
                     }
                 }
-                this.importe_partidas_antes_suma = importe_antes_suma;
-                this.importe_partidas_antes_resta = importe_antes_resta;
-                this.importe_partidas_despues_suma = importe_despues_suma;
-                this.importe_partidas_despues_resta = importe_despues_resta;
+                this.registro.importe_partidas_antes_suma = importe_antes_suma;
+                this.registro.importe_partidas_antes_resta = importe_antes_resta;
+                this.registro.importe_partidas_despues_suma = importe_despues_suma;
+                this.registro.importe_partidas_despues_resta = importe_despues_resta;
                 this.totales();
             },
             getClientes() {
-                this.cargando = true;
+                this.registro.cargando = true;
                 return this.$store.dispatch('seguimiento/cliente/index', {
                     params: {
                         scope: ['activos'],
@@ -555,7 +571,7 @@
                     }
                 })
                     .then(data => {
-                        this.clientes = data.data;
+                        this.registro.clientes = data.data;
                     })
             },
             getConceptos() {
@@ -567,11 +583,11 @@
                     }
                 })
                     .then(data => {
-                        this.tipoConceptos = data.data;
+                        this.registro.tipoConceptos = data.data;
                     })
             },
             getEmpresas() {
-                this.cargando = true;
+                this.registro.cargando = true;
                 return this.$store.dispatch('seguimiento/empresa/index', {
                     params: {
                         scope: ['activos'],
@@ -580,11 +596,11 @@
                     }
                 })
                     .then(data => {
-                        this.empresas = data.data;
+                        this.registro.empresas = data.data;
                     })
             },
             getMonedas() {
-                this.cargando = true;
+                this.registro.cargando = true;
                 return this.$store.dispatch('seguimiento/moneda/index', {
                     params: {
                         order: 'ASC',
@@ -592,13 +608,13 @@
                     }
                 })
                     .then(data => {
-                        this.monedas = data.data;
-                        this.id_moneda = 3
-                        this.tipo_cambio = 1.00
+                        this.registro.monedas = data.data;
+                        this.registro.id_moneda = 3
+                        this.registro.tipo_cambio = 1.00
                     })
             },
             getProyectos() {
-                this.cargando = true;
+                this.registro.proyectos = {};
                 return this.$store.dispatch('seguimiento/proyecto/index', {
                     params: {
                         scope: ['porTipo'],
@@ -606,9 +622,9 @@
                         sort: 'proyecto'
                     }
                 }).then(data => {
-                    this.proyectos = data;
+                    this.registro.proyectos = data;
                 }).finally(()=>{
-                    this.cargando = false;
+                    this.registro.cargando = false;
                 })
             },
             getPartidas() {
@@ -620,15 +636,15 @@
                     }
                 })
                     .then(data => {
-                        this.tipos_partida = data.data;
+                        this.registro.tipos_partida = data.data;
                     })
             },
             getPartida(i) {
                  return this.$store.dispatch('seguimiento/ingreso-partida/find', {
-                    id: this.partidas[i]['idpartida'],
+                    id: this.registro.partidas[i]['idpartida'],
                     params: {}
                 }).then(data => {
-                     this.partidas[i]['nombre_operador'] = data['nombre_operador'];
+                     this.registro.partidas[i]['nombre_operador'] = data['nombre_operador'];
                      this.importeTotalPartidas();
                 })
             },
@@ -636,17 +652,19 @@
             getTipoCambio() {
                 return this.$store.dispatch('igh/tipo-cambio/index', {
                     params: {
-                        scope: ['porFecha:'+moment(this.fecha).format('YYYY-MM-DD')]
+                        scope: ['porFecha:'+moment(this.registro.fecha).format('YYYY-MM-DD')]
                     }
                 })
                     .then(data => {
-                        this.tipos_cambios = data;
+                        this.registro.tipos_cambios = data;
+                    }).finally(()=>{
+                        this.registro.cargando = false;
                     })
             },
             validate() {
                 this.$validator.validate().then(result => {
                     if (result) {
-                        if(moment(this.fecha_fin).format('YYYY/MM/DD') < moment(this.fecha_inicial).format('YYYY/MM/DD'))
+                        if(moment(this.registro.fecha_fin).format('YYYY/MM/DD') < moment(this.registro.fecha_inicial).format('YYYY/MM/DD'))
                         {
                             swal('¡Error!', 'El periodo de inicio no puede ser posterior a la fecha de término.', 'error')
                         }
@@ -659,24 +677,24 @@
             },
             store() {
                 return this.$store.dispatch('seguimiento/factura/store', {
-                    fi_cubre: moment(this.fecha_inicial).format('YYYY-MM-DD'),
-                    ff_cubre:  moment(this.fecha_fin).format('YYYY-MM-DD'),
-                    conceptos: this.conceptos,
-                    fecha:  moment(this.fecha_emision).format('YYYY-MM-DD'),
-                    numero : this.numero_factura,
-                    descripcion : this.descripcion,
-                    idproyecto : this.id_proyecto,
-                    idempresa : this.id_empresa,
-                    idcliente : this.id_cliente,
-                    idmoneda : this.id_moneda,
-                    tipo_cambio : this.tipo_cambio,
-                    importe_conceptos : this.importe_conceptos,
-                    importe : this.subtotal,
-                    iva : this.iva,
-                    total : this.total,
-                    partidas : this.partidas,
-                    importe_partidas_antes : this.importe_partidas_antes,
-                    importe_partidas_despues : this.importe_partidas_despues,
+                    fi_cubre: moment(this.registro.fecha_inicial).format('YYYY-MM-DD'),
+                    ff_cubre:  moment(this.registro.fecha_fin).format('YYYY-MM-DD'),
+                    conceptos: this.registro.conceptos,
+                    fecha:  moment(this.registro.fecha_emision).format('YYYY-MM-DD'),
+                    numero : this.registro.numero_factura,
+                    descripcion : this.registro.descripcion,
+                    idproyecto : this.registro.id_proyecto,
+                    idempresa : this.registro.id_empresa,
+                    idcliente : this.registro.id_cliente,
+                    idmoneda : this.registro.id_moneda,
+                    tipo_cambio : this.registro.tipo_cambio,
+                    importe_conceptos : this.registro.importe_conceptos,
+                    importe : this.registro.subtotal,
+                    iva : this.registro.iva,
+                    total : this.registro.total,
+                    partidas : this.registro.partidas,
+                    importe_partidas_antes : this.registro.importe_partidas_antes,
+                    importe_partidas_despues : this.registro.importe_partidas_despues,
                 }).then(data=> {
                     this.salir();
                 })
@@ -698,16 +716,16 @@
             id_moneda(value) {
                 if(value !== '' && value !== null && value !== undefined){
                     if(value != 3 && value != 4) {
-                        for (let i = 0; i < this.tipos_cambios.length; i++)
+                        for (let i = 0; i < this.registro.tipos_cambios.length; i++)
                         {
-                            if (value == this.tipos_cambios[i]['moneda']) {
-                                this.tipo_cambio = this.tipos_cambios[i]['tipo_cambio'];
+                            if (value == this.registro.tipos_cambios[i]['moneda']) {
+                                this.registro.tipo_cambio = this.registro.tipos_cambios[i]['tipo_cambio'];
                             }
                         }
                     }
                     if(value == 4)
                     {
-                        this.tipo_cambio = 0;
+                        this.registro.tipo_cambio = 0;
                     }
                 }
             },

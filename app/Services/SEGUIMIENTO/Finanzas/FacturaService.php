@@ -4,12 +4,17 @@
 namespace App\Services\SEGUIMIENTO\Finanzas;
 
 
+use App\Events\IncidenciaCI;
 use App\Models\REPSEG\FinDimIngresoCliente;
 use App\Models\REPSEG\FinDimIngresoEmpresa;
+use App\Models\REPSEG\FinDimIngresoPartida;
+use App\Models\REPSEG\FinDimTipoIngreso;
 use App\Models\REPSEG\FinFacIngresoFactura;
 use App\Models\REPSEG\GrlMoneda;
 use App\Models\REPSEG\GrlProyecto;
 use App\Repositories\REPSEG\FacturaRepository as Repository;
+use App\Utils\CFD;
+use App\Utils\Util;
 
 class FacturaService
 {
@@ -100,115 +105,137 @@ class FacturaService
         }
     }
 
-    public function getLayoutData($data){
-        ini_set('memory_limit', -1) ;
-        ini_set('max_execution_time', '7200') ;
-        $file_xls = $this->getFileXLS($data->nombre_archivo, $data->pagos);
-        $partidas = $this->getDatosPartidas($file_xls);
+    public function cargarArchivo($archivo_xml)
+    {
 
-        $index_padre = 0;
-        $nivel_anterior = 0;
-        $contratos = array();
-        $partidas_error = false;
-        $partidas_errores = [];
-        foreach($partidas as $key => $partida){
-            if(!$partida['descripcion'] || !$partida['nivel']){continue;}
+        $arreglo = [];
+        $cfd = new CFD($archivo_xml['facturas']);
+        $arreglo_cfd = $cfd->getArregloFactura();
+        $arreglo['version'] = $arreglo_cfd['version'];
+        $arreglo['xml'] = $arreglo_cfd['xml'];
+        $arreglo['descuento'] = $arreglo_cfd['descuento'];
+        $arreglo['total'] = $arreglo_cfd['total'];
+        $arreglo['subtotal'] = $arreglo_cfd['subtotal'];
+        $arreglo['tipo_comprobante'] = $arreglo_cfd['tipo_comprobante'];
+        $arreglo['numero_factura'] = $arreglo_cfd['serie'].$arreglo_cfd['folio'];
+        $arreglo['fecha_emision'] = $arreglo_cfd['fecha']->format("Y-m-d");
+        $arreglo['fecha_hora'] = $arreglo_cfd['fecha_hora'];
+        $moneda = GrlMoneda::where('moneda', $arreglo_cfd['moneda'])->first();
+        $arreglo['id_moneda'] = $moneda ? $moneda->getKey() : 3;
+        $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'] ? floatval($arreglo_cfd['tipo_cambio']) : 1.00;
+        $arreglo['monedas'] = GrlMoneda::selectRaw('idmoneda as id, moneda as nombre')->orderBy('orden','ASC')->get()->toArray();
+        $arreglo['no_certificado'] = $arreglo_cfd['no_certificado'];
+        $arreglo["certificado"] = $arreglo_cfd["certificado"];
+        $arreglo["sello"] = $arreglo_cfd["sello"];
+        $nombre_empresa = Util::eliminaCaracteresEspeciales($arreglo_cfd['emisor']['razon_social']);
+        $empresa = FinDimIngresoEmpresa::where('empresa', 'like', '%'.$nombre_empresa.'%')->first();
+        $arreglo['id_empresa'] = $empresa ? $empresa->idempresa : '';
+        $empresas = FinDimIngresoEmpresa::activos()->selectRaw('idempresa as id, empresa as nombre')->orderBy('empresa','ASC')->get();
+        $arreglo['empresas'] = $empresas->toArray();
+        $arreglo['empresa_rfc'] = $arreglo_cfd["emisor"]["rfc"];
+        $arreglo['razon_social'] = $arreglo_cfd["emisor"]["razon_social"];
+        $nombre_cliente = Util::eliminaCaracteresEspeciales($arreglo_cfd['receptor']['razon_social']);
+        $cliente = FinDimIngresoCliente::where('cliente', 'like', '%'.$nombre_cliente.'%')->first();
+        $arreglo['id_cliente'] = $cliente ? $cliente->idcliente : '';
+        $clientes = FinDimIngresoCliente::activos()->selectRaw('idcliente as id, cliente as nombre')->orderBy('cliente','ASC')->get();
+        $arreglo['clientes'] = $clientes->toArray();
+        $arreglo['cliente_rfc'] = $arreglo_cfd['receptor']['rfc'];
+        $arreglo['nombre'] = $arreglo_cfd['receptor']['nombre'];
+        $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
+        foreach ($arreglo_cfd['conceptos'] as $key => $concepto)
+        {
+            $arreglo['conceptos'][$key]['idconcepto'] = '';
+            $arreglo['conceptos'][$key]['importe'] = $concepto['importe'];
+            if(array_key_exists('descuento',$concepto))
+            {
+                $arreglo['conceptos'][$key]['descuento'] = $concepto['descuento'];
+                $arreglo['partidas'][$key]['idpartida'] = '';
+                $arreglo['partidas'][$key]['antes_iva'] = false;
+                $arreglo['partidas'][$key]['total'] = $concepto['descuento'];
+            }
+        }
+        $arreglo['tipoConceptos'] = FinDimTipoIngreso::activos()->orderBy('tipo_ingreso','ASC')->selectRaw('idtipo_ingreso as id, tipo_ingreso as nombre')->get()->toArray();
+        $arreglo['tipos_partida'] = FinDimIngresoPartida::activos()->selectRaw('idpartida as id, partida as partida, nombre_operador')->orderBy('partida','ASC')->get()->toArray();
+        $arreglo['id_proyecto'] = '';
+        $arreglo['proyectos'] = '';
+        //$this->validaEFO($arreglo);
+        //$this->validaReceptor($arreglo);
 
-            $destino = '';
-            $destino_path = '';
-            $cantidad = 0;
-            $tipo_error = [];
 
-            if(is_numeric($partida["destino"])){
-                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', "'" . $partida['destino'] . "'")->orWhere("id_concepto","=",$partida['destino'])->first()){
-                    if($concepto->es_agrupador){
-                        $path = explode('->', $concepto->path);
-                        $destino = $concepto->id_concepto;
-                        $destino_path =  $concepto->path_corta;
-                    }
+
+
+
+
+
+
+        return $arreglo;
+    }
+
+    public function cargaXML(array $data)
+    {
+        $archivo_xml = $data["xml"];
+        $tipo = $data["tipo"];
+        $id_empresa = $data["id_empresa"];
+        $arreglo_cfd = $this->getArregloCFD($archivo_xml);
+        if(is_numeric($id_empresa)){
+            $empresa = $this->repository->getEmpresaPorId($id_empresa);
+            if($empresa["rfc"] != $arreglo_cfd["emisor"]["rfc"]){
+                if($arreglo_cfd["tipo_comprobante"] == "E"){
+                    abort(500, "El emisor de los CFDI no coincide, favor de verificar");
                 }
-            }else{
-                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->first()){
-                    if($concepto->es_agrupador){
-                        $path = explode('->', $concepto->path);
-                        $destino = $concepto->id_concepto;
-                        $destino_path =  $concepto->path_corta;
-                    }
-                }
             }
+        }
+        if($arreglo_cfd["tipo_comprobante"] == "I" && $tipo == 2)
+        {
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo egreso (Nota de Crédito)");
+        }
+        elseif($arreglo_cfd["tipo_comprobante"] == "E" && $tipo == 1)
+        {
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
+        }
+        return $arreglo_cfd;
+    }
 
-            if($partida['cantidad'] && !is_numeric($partida['cantidad'])){
-                $cantidad = 'N/V';
-                $partidas_errores[1] = 'Cantidad no válida';
-                $tipo_error['cantidad'] = true;
-            }else{
-                $cantidad = $partida['cantidad'];
+    private function validaEFO($arreglo_cfd)
+    {
+        $efo = $this->repository->getEFO($arreglo_cfd['empresa_rfc']);
+        if ($efo) {
+            if ($efo->estado == 0) {
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 8,
+                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
+                ));
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 9,
+                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
+                ));
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
-            if(strlen($partida['descripcion']) > 255){
-                $partidas_errores[0] = 'Descripción mayor a 255 caracteres';
-                $tipo_error['descripcion'] = true;
-            }
-
-            $dsc_format = str_pad($partida['descripcion'], strlen($partida['descripcion']) + ($partida['nivel'] * 2), '_', STR_PAD_LEFT);
-            $contratos[$key] = [
-                'clave' => $partida['clave'],
-                'descripcion' => $dsc_format,
-                'descripcion_sin_formato' => $partida['descripcion'],
-                'unidad' => $partida['unidad'],
-                'cantidad' => $cantidad,
-                'destino' => $destino,
-                'destino_path' => $destino_path,
-                'nivel' => (int) $partida['nivel'],
-                'es_hoja' => $partida['cantidad']?true:false,
-                'cantidad_hijos' => 0,
-                'partida_valida' => true,
-                'tipo_error' => [],
-            ];
-            if($contratos[$key]['es_hoja']){
-                if($destino == ''){
-                    $contratos[$key]['destino_path'] = 'N/V';
-                    $tipo_error['destino'] = true;
-                    $partidas_errores[2] = 'Destino no válido';
-                }
-                $contratos[$key]['partida_valida'] = count($tipo_error) > 0?false:true;
-                $contratos[$key]['tipo_error'] = $tipo_error;
-            }
-            if($key == 0){
-
-                $index_padre = $key;
-                $nivel_anterior = $partida['nivel'];
-                continue;
-            }
-            if($nivel_anterior + 1 == $partida['nivel']){
-                $contratos[$key - 1]['es_hoja'] = false;
-                $contratos[$key - 1]['cantidad'] = '';
-                $contratos[$key - 1]['unidad'] = '';
-                $contratos[$key - 1]['destino'] = '';
-                $contratos[$key - 1]['destino_path'] = '';
-                $contratos[$key - 1]['cantidad_hijos'] = $contratos[$key - 1]['cantidad_hijos'] + 1;
-
-                $index_padre = $key - 1;
-                $nivel_anterior = $partida['nivel'];
-                continue;
-            }
-
-            if($nivel_anterior == $partida['nivel']){
-                $contratos[$index_padre]['cantidad_hijos'] = $contratos[$index_padre]['cantidad_hijos'] + 1;
-                continue;
-            }
-
-            if($nivel_anterior < $partida['nivel']){
-                $index_base = $key - 1;
-                while($contratos[$index_base]['nivel'] >= $partida['nivel']){$index_base--;}
-                $contratos[$index_base]['cantidad_hijos'] = $contratos[$index_base]['cantidad_hijos'] + 1;
-            }
-
 
         }
+    }
 
-        if(count($partidas_errores) > 0){
-            $partidas_error = true;
+    private function validaPresuntoEFO($arreglo_cfd)
+    {
+        $efo = $this->repository->getEFO($arreglo_cfd['cliente_rfc']);
+        if ($efo) {
+            if ($efo->estado == 2) {
+                event(new IncidenciaCI(
+                    ["id_tipo_incidencia" => 9,
+                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
+                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
+                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
+                ));
+            }
+
         }
-        return ['partidas_con_error' => $partidas_error, 'errores_partidas' => implode(', ', $partidas_errores), 'contratos' =>$contratos];
     }
 }
