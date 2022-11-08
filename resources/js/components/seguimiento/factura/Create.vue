@@ -695,6 +695,18 @@
                     partidas : this.registro.partidas,
                     importe_partidas_antes : this.registro.importe_partidas_antes,
                     importe_partidas_despues : this.registro.importe_partidas_despues,
+                    xml : this.registro.xml ? this.registro.xml : '',
+                    certificado : this.registro.xml ? this.registro.certificado : '',
+                    descuento : this.registro.xml ? this.registro.descuento : '',
+                    no_certificado : this.registro.xml ? this.registro.no_certificado : '',
+                    sello : this.registro.xml ? this.registro.sello : '',
+                    tipo_comprobante : this.registro.xml ? this.registro.tipo_comprobante : '',
+                    version : this.registro.xml ? this.registro.version : '',
+                    nombre_archivo : this.registro.xml ? this.registro.nombre_archivo : '',
+                    uuid : this.registro.xml ? this.registro.uuid : '',
+                    cfdi_relacionado : this.registro.xml ? this.registro.cfdi_relacionado : '',
+                    tipo_relacion : this.registro.xml ? this.registro.tipo_relacion : '',
+                    serie : this.registro.xml ? this.registro.serie : ''
                 }).then(data=> {
                     this.salir();
                 })

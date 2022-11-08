@@ -134,6 +134,10 @@ return [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_XML_ERRORES')),
         ],
+        'xml_emitidos' => [
+            'driver' => 'local',
+            'root' => public_path(env('STORAGE_XML_EMITIDOS')),
+        ],
         'archivos_transacciones' => [
             'driver' => 'local',
             'root' => public_path(env('STORAGE_ARCHIVOS_TRANSACCIONES')),

@@ -15,6 +15,7 @@ use App\Models\REPSEG\GrlProyecto;
 use App\Repositories\REPSEG\FacturaRepository as Repository;
 use App\Utils\CFD;
 use App\Utils\Util;
+use Illuminate\Support\Facades\Storage;
 
 class FacturaService
 {
@@ -99,18 +100,30 @@ class FacturaService
     public function store($data)
     {
         try {
-            return $this->repository->create($data);
+            $factura = $this->repository->create($data);
         } catch (\Exception $e) {
             throw $e;
         }
+        if($data['xml'] != '')
+        {
+            $this->storePorXML($data, $factura);
+        }
+        return $factura;
     }
 
     public function cargarArchivo($archivo_xml)
     {
-
         $arreglo = [];
         $cfd = new CFD($archivo_xml['facturas']);
         $arreglo_cfd = $cfd->getArregloFactura();
+        if($arreglo_cfd["tipo_comprobante"] != "I")
+        {
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
+        }
+        $arreglo['uuid'] = $arreglo_cfd['uuid'];
+        $arreglo['cfdi_relacionado'] = $arreglo_cfd['cfdi_relacionado'];
+        $arreglo['tipo_relacion'] = $arreglo_cfd['tipo_relacion'];
+        $arreglo['nombre_archivo'] = $archivo_xml['nombre_archivo'];
         $arreglo['version'] = $arreglo_cfd['version'];
         $arreglo['xml'] = $arreglo_cfd['xml'];
         $arreglo['descuento'] = $arreglo_cfd['descuento'];
@@ -118,6 +131,7 @@ class FacturaService
         $arreglo['subtotal'] = $arreglo_cfd['subtotal'];
         $arreglo['tipo_comprobante'] = $arreglo_cfd['tipo_comprobante'];
         $arreglo['numero_factura'] = $arreglo_cfd['serie'].$arreglo_cfd['folio'];
+        $arreglo['serie'] = $arreglo_cfd['serie'];
         $arreglo['fecha_emision'] = $arreglo_cfd['fecha']->format("Y-m-d");
         $arreglo['fecha_hora'] = $arreglo_cfd['fecha_hora'];
         $moneda = GrlMoneda::where('moneda', $arreglo_cfd['moneda'])->first();
@@ -141,6 +155,7 @@ class FacturaService
         $arreglo['clientes'] = $clientes->toArray();
         $arreglo['cliente_rfc'] = $arreglo_cfd['receptor']['rfc'];
         $arreglo['nombre'] = $arreglo_cfd['receptor']['nombre'];
+        $arreglo['cliente_razon_social'] = $arreglo_cfd['receptor']['razon_social'];
         $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
         foreach ($arreglo_cfd['conceptos'] as $key => $concepto)
         {
@@ -158,84 +173,53 @@ class FacturaService
         $arreglo['tipos_partida'] = FinDimIngresoPartida::activos()->selectRaw('idpartida as id, partida as partida, nombre_operador')->orderBy('partida','ASC')->get()->toArray();
         $arreglo['id_proyecto'] = '';
         $arreglo['proyectos'] = '';
-        //$this->validaEFO($arreglo);
-        //$this->validaReceptor($arreglo);
-
-
-
-
-
-
-
-
+        $this->validaEmpresaEFO($arreglo);
+        $this->validaClienteEFO($arreglo);
         return $arreglo;
     }
 
-    public function cargaXML(array $data)
-    {
-        $archivo_xml = $data["xml"];
-        $tipo = $data["tipo"];
-        $id_empresa = $data["id_empresa"];
-        $arreglo_cfd = $this->getArregloCFD($archivo_xml);
-        if(is_numeric($id_empresa)){
-            $empresa = $this->repository->getEmpresaPorId($id_empresa);
-            if($empresa["rfc"] != $arreglo_cfd["emisor"]["rfc"]){
-                if($arreglo_cfd["tipo_comprobante"] == "E"){
-                    abort(500, "El emisor de los CFDI no coincide, favor de verificar");
-                }
-            }
-        }
-        if($arreglo_cfd["tipo_comprobante"] == "I" && $tipo == 2)
-        {
-            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo egreso (Nota de Crédito)");
-        }
-        elseif($arreglo_cfd["tipo_comprobante"] == "E" && $tipo == 1)
-        {
-            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
-        }
-        return $arreglo_cfd;
-    }
-
-    private function validaEFO($arreglo_cfd)
-    {
-        $efo = $this->repository->getEFO($arreglo_cfd['empresa_rfc']);
-        if ($efo) {
-            if ($efo->estado == 0) {
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 8,
-                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
-                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
-                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-            } else if ($efo->estado == 2) {
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 9,
-                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
-                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
-                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-            }
-
-        }
-    }
-
-    private function validaPresuntoEFO($arreglo_cfd)
+    private function validaClienteEFO($arreglo_cfd)
     {
         $efo = $this->repository->getEFO($arreglo_cfd['cliente_rfc']);
         if ($efo) {
+            if ($efo->estado == 0) {
+                abort(403, 'La empresa cliente que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            } else if ($efo->estado == 2) {
+                abort(403, 'La empresa cliente que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
+            }
+        }
+    }
+
+    private function validaEmpresaEFO($arreglo_cfd)
+    {
+        $efo = $this->repository->getEFO($arreglo_cfd['empresa_rfc']);
+        if ($efo) {
             if ($efo->estado == 2) {
-                event(new IncidenciaCI(
-                    ["id_tipo_incidencia" => 9,
-                        "id_empresa" => $arreglo_cfd["empresa_bd"]["id_empresa"],
-                        "rfc" => $arreglo_cfd["empresa_bd"]["rfc"],
-                        "empresa" => $arreglo_cfd["empresa_bd"]["razon_social"]]
-                ));
+                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
+             Favor de comunicarse con el área fiscal para cualquier aclaración.');
             }
 
+        }
+    }
+
+    private function storePorXML($data, $factura)
+    {
+        $data['xml_file'] = explode("base64,", $data['xml'])[1];
+        $this->repository->registrarXML($data, $factura);
+        $this->guardarXML($data);
+    }
+
+    private function guardarXML($datos)
+    {
+        $xml_split = explode('base64,', $datos['xml']);
+        $xml = base64_decode($xml_split[1]);
+        $cfdi = $this->repository->validaExistencia($datos["uuid"]);
+        if (!$cfdi) {
+            Storage::disk('xml_emitidos')->put($datos["uuid"] . ".xml", $xml);
+        } else {
+            abort(403, 'Este comprobante ya existe previamente.');
         }
     }
 }

@@ -37,7 +37,8 @@ class PagoFacturaObserver extends PagoObserver
         try{
             $pago->orden_pago->actualizaControlObra();
         } catch (\Exception $e){
-            abort(500, "Error al actualizar control de obra en la factura: ".$pago->orden_pago->factura->referencia." ".$e->getMessage());
+            abort(500, "
+            Error al actualizar control de obra en la factura: ".$pago->orden_pago->factura->referencia." ".$e->getMessage());
         }
 
     }

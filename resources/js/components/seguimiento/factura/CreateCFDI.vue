@@ -131,8 +131,13 @@
         },
         methods:{
             load() {
-                this.file = null;
+                this.file_carga_name = '';
+                this.file_carga = null
+                this.data = null
+                this.procesando = false;
+
                 this.$validator.errors.clear();
+                this.$validator.reset();
 
                 $(this.$refs.modal_carga).appendTo('body')
                 $(this.$refs.modal_carga).modal('show');
@@ -153,7 +158,6 @@
                     return;
                 this.file_carga_name = files[0].name;
                 this.createImage(files[0]);
-
             },
             getLayoutData(){
                 this.procesando = true;

@@ -4,6 +4,8 @@
 namespace App\Models\REPSEG;
 
 
+use DateTime;
+use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -262,6 +264,16 @@ class FinFacIngresoFactura extends Model
             $datos_factura = array_except($datos_factura, 'total');
             $datos_factura = array_except($datos_factura, 'importe_partidas_antes');
             $datos_factura = array_except($datos_factura, 'importe_partidas_despues');
+            $fecha = New DateTime($data["fecha"]);
+            $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $fi_cubre = New DateTime($data["fi_cubre"]);
+            $fi_cubre->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $ff_cubre = New DateTime($data["ff_cubre"]);
+            $ff_cubre->setTimezone(new DateTimeZone('America/Mexico_City'));
+            $datos_factura['fecha'] = $fecha->format('Y-m-d');
+            $datos_factura['fi_cubre'] = $fi_cubre->format('Y-m-d');
+            $datos_factura['ff_cubre'] = $ff_cubre->format('Y-m-d');
+
             $factura = $this->create($datos_factura);
 
             foreach (array_only($data, 'conceptos')['conceptos'] as $concepto) {
