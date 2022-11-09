@@ -4,6 +4,7 @@
 namespace App\Models\REPSEG;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDIEmitido;
 use DateTime;
 use DateTimeZone;
 use Illuminate\Database\Eloquent\Model;
@@ -83,6 +84,10 @@ class FinFacIngresoFactura extends Model
         return $this->hasMany(FinFacIngresoFacturaDetalle::class, 'idfactura', 'idfactura')->whereNotIn('idpartida', [15,16,17]);
     }
 
+    public function CFDI()
+    {
+        return $this->belongsTo(CFDIEmitido::class, 'idfactura','idfactura');
+    }
 
     /**
      * Scopes
@@ -244,6 +249,10 @@ class FinFacIngresoFactura extends Model
                 'usuario_cancelo' => auth()->id(),
                 'motivo_cancelacion' => $motivo,
                 'fecha_cancelacion' => date('Y-m-d H:i:s')
+            ]);
+            $this->CFDI->update([
+                'estado' => -1,
+                'cancelado' => -1
             ]);
             DB::connection('repseg')->commit();
             return $this;

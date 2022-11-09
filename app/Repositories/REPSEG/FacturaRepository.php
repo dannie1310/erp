@@ -33,7 +33,7 @@ class FacturaRepository extends Repository implements RepositoryInterface
 
     public function validaExistencia($uuid)
     {
-        $cfd = CFDIEmitido::where("uuid","=", $uuid)->first();
+        $cfd = CFDIEmitido::where("uuid","=", $uuid)->where("estado", '!=', '-1')->first();
         return $cfd;
     }
 
@@ -41,15 +41,15 @@ class FacturaRepository extends Repository implements RepositoryInterface
     {
         CFDIEmitido::create([
             'version' => $data['version'],
-            'idempresa' => $data['idempresa'],
-            'idcliente' => $data['idcliente'],
+            'idempresa' => $factura->idempresa,
+            'idcliente' => $factura->idcliente,
             'idfactura' => $factura->getkey(),
             'rfc_empresa' => $factura->empresa->rfc,
             'rfc_cliente' => $factura->cliente->rfc,
-            'xml_file' => $data['xml_file'],
+            'xml_file' => $this->getArchivoSQL($data['xml_file']),
             'fecha' => $factura->fecha,
             'serie' => $data['serie'],
-            'folio' => $factura->folio,
+            'folio' => $data['folio'],
             'uuid' => $data['uuid'],
             'moneda' => $factura->moneda->moneda,
             'importe_iva' => $data['iva'],
@@ -60,5 +60,10 @@ class FacturaRepository extends Repository implements RepositoryInterface
             'estado' => 0,
             'tipo_cambio' => $data['tipo_cambio']
         ]);
+    }
+
+    public function getArchivoSQL($archivo)
+    {
+        return DB::raw("CONVERT(VARBINARY(MAX), '" . $archivo . "')");
     }
 }

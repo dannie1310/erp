@@ -18,7 +18,7 @@
                     .then(() => {
                         this.$emit('success')
                         return this.$store.dispatch('seguimiento/factura/paginate', {
-                            params: this.query
+                            params: {include: [], sort: 'idfactura', order: 'desc'},
                         }).then(data => {
                             this.$store.commit('seguimiento/factura/SET_FACTURAS', data.data);
                             this.$store.commit('seguimiento/factura/SET_META', data.meta);

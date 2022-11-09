@@ -87,12 +87,6 @@
                 }
 
             },
-            registrar(){
-                this.$router.push({name: 'factura-seg-create'});
-            },
-            cargar_cfdi(){
-                this.$router.push({name: 'factura-seg-create_cfdi'});
-            }
         },
         computed: {
             facturas(){

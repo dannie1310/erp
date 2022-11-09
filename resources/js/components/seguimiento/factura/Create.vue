@@ -706,7 +706,8 @@
                     uuid : this.registro.xml ? this.registro.uuid : '',
                     cfdi_relacionado : this.registro.xml ? this.registro.cfdi_relacionado : '',
                     tipo_relacion : this.registro.xml ? this.registro.tipo_relacion : '',
-                    serie : this.registro.xml ? this.registro.serie : ''
+                    serie : this.registro.xml ? this.registro.serie : '',
+                    folio : this.registro.xml ? this.registro.folio : ''
                 }).then(data=> {
                     this.salir();
                 })

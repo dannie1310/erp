@@ -11,11 +11,12 @@ class CFDIEmitido extends Model
     public $timestamps = false;
     protected $fillable =[
         'version',
-        'id_empresa_sat',
-        'id_proveedor_sat',
-        'rfc_emisor',
-        'rfc_receptor',
+        'idempresa',
+        'idcliente',
+        'rfc_empresa',
+        'rfc_cliente',
         'xml_file',
+        'idfactura',
         'fecha',
         'serie',
         'folio',
@@ -47,7 +48,7 @@ class CFDIEmitido extends Model
         'cfdi_relacionado',
         'forma_pago',
         'fecha_pago',
-        'id_tipo_transaccion',
+        'id_tipo_transaccion'
     ];
 
     /**

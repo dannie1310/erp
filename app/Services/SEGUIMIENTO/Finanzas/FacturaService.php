@@ -100,13 +100,18 @@ class FacturaService
     public function store($data)
     {
         try {
-            $factura = $this->repository->create($data);
+            if($data['xml'] != '')
+            {
+                $this->validaciones($data);
+                $factura = $this->repository->create($data);
+                $data['xml_file'] = explode("base64,", $data['xml'])[1];
+                $this->repository->registrarXML($data, $factura);
+                $this->guardarXML($data);
+            }else{
+                $factura = $this->repository->create($data);
+            }
         } catch (\Exception $e) {
             throw $e;
-        }
-        if($data['xml'] != '')
-        {
-            $this->storePorXML($data, $factura);
         }
         return $factura;
     }
@@ -132,6 +137,7 @@ class FacturaService
         $arreglo['tipo_comprobante'] = $arreglo_cfd['tipo_comprobante'];
         $arreglo['numero_factura'] = $arreglo_cfd['serie'].$arreglo_cfd['folio'];
         $arreglo['serie'] = $arreglo_cfd['serie'];
+        $arreglo['folio'] = $arreglo_cfd['folio'];
         $arreglo['fecha_emision'] = $arreglo_cfd['fecha']->format("Y-m-d");
         $arreglo['fecha_hora'] = $arreglo_cfd['fecha_hora'];
         $moneda = GrlMoneda::where('moneda', $arreglo_cfd['moneda'])->first();
@@ -204,22 +210,24 @@ class FacturaService
         }
     }
 
-    private function storePorXML($data, $factura)
-    {
-        $data['xml_file'] = explode("base64,", $data['xml'])[1];
-        $this->repository->registrarXML($data, $factura);
-        $this->guardarXML($data);
-    }
-
     private function guardarXML($datos)
     {
         $xml_split = explode('base64,', $datos['xml']);
         $xml = base64_decode($xml_split[1]);
-        $cfdi = $this->repository->validaExistencia($datos["uuid"]);
-        if (!$cfdi) {
-            Storage::disk('xml_emitidos')->put($datos["uuid"] . ".xml", $xml);
-        } else {
+        Storage::disk('xml_emitidos')->put($datos["uuid"] . ".xml", $xml);
+    }
+
+    private function validaciones($data)
+    {
+
+        $cfdi = $this->repository->validaExistencia($data["uuid"]);
+        if($cfdi)
+        {
             abort(403, 'Este comprobante ya existe previamente.');
+        }
+        if($data["tipo_comprobante"] != "I")
+        {
+            abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
     }
 }
