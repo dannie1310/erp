@@ -7,6 +7,7 @@
                 <button @click="descargarComunicados" class="btn btn-app btn-secondary float-right" title="Descargar">
                     <i class="fa fa-file-pdf"></i> Comunicados
                 </button>
+                <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
                 <!--<button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
                     <i class="fa fa-download"></i> Descargar XLS
                 </button>
@@ -51,10 +52,11 @@
 <script>
 import DateRangePicker from "../../../globals/DateRangePicker"
 import CfdiRepPendienteXls from "./partials/CFDIREPPendienteXLS";
+import ImpresionInformeREPFaltante from "../partials/ImpresionInformeREPFaltante";
 
 export default {
     name: "cfdi-rep-pendiente-index",
-    components:{CfdiRepPendienteXls, DateRangePicker},
+    components:{ImpresionInformeREPFaltante, CfdiRepPendienteXls, DateRangePicker},
 
     data() {
         return {
