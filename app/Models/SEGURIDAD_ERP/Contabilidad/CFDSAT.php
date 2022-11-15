@@ -238,6 +238,12 @@ class CFDSAT extends Model
         return date_format($date,"d/m/Y H:i:s");
     }
 
+    public function getFechaSencillaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
+    }
+
     public static function getFechaUltimoCFDTxt()
     {
         $ultimo_cfd = CFDSAT::orderBy("fecha","desc")->first();
@@ -245,6 +251,25 @@ class CFDSAT extends Model
         $mes = $meses[($ultimo_cfd->fecha->format('n')) - 1];
         $fecha = "CFDI cargados al ".$ultimo_cfd->fecha->format("d")." de ".$mes. " de ".$ultimo_cfd->fecha->format("Y");
         return $fecha;
+    }
+
+    public function getTotalMxnAttribute()
+    {
+        if($this->moneda != "MXN"){
+            if($this->tipo_cambio>0){
+                return $this->total * $this->tipo_cambio;
+            }else{
+                return $this->total;
+            }
+
+        }else{
+            return $this->total;
+        }
+    }
+
+    public function getTotalMxnFormatAttribute()
+    {
+        return '$ ' . number_format(($this->total_mxn),2);
     }
 
     public function getTotalFormatAttribute()
@@ -296,13 +321,32 @@ class CFDSAT extends Model
         return implode(" | ",$concepto_arr);
     }
 
-    public function getMontoPendienteRepAttribute()
+    public function getMontoPendienteRepVwAttribute()
     {
         if($this->vwPendienteREP){
             return $this->vwPendienteREP->pendiente_pago;
         }else{
             return $this->total;
         }
+    }
+
+    public function getMontoPendienteRepVwMxnAttribute()
+    {
+        if($this->moneda != "MXN"){
+            if($this->tipo_cambio>0){
+                return $this->monto_pendiente_rep_vw * $this->tipo_cambio;
+            }else{
+                return $this->monto_pendiente_rep_vw;
+            }
+
+        }else{
+            return $this->monto_pendiente_rep_vw;
+        }
+    }
+
+    public function getMontoPendienteRepVwFormatAttribute()
+    {
+        return '$ ' . number_format(($this->monto_pendiente_rep_vw),2);
     }
 
     public function getCantidadPagosAttribute()

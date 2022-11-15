@@ -112,7 +112,7 @@ class CFDIREPPendiente implements WithHeadings, ShouldAutoSize, WithEvents, With
                     $event->sheet->setCellValue("P" . $i, $cfd->moneda);
                     $event->sheet->setCellValue("Q" . $i, $cfd->tipo_cambio);
                     $event->sheet->setCellValue("R" . $i, $cfd->conceptos_txt);
-                    $event->sheet->setCellValue("S" . $i, $cfd->facturaRepositorio && $cfd->facturaRepositorio->proyecto ? $cfd->facturaRepositorio->proyecto->base_datos:'');
+                    /*$event->sheet->setCellValue("S" . $i, $cfd->facturaRepositorio && $cfd->facturaRepositorio->proyecto ? $cfd->facturaRepositorio->proyecto->base_datos:'');
                     $event->sheet->setCellValue("T" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->obra:'');
                     $event->sheet->setCellValue("U" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->fecha_hora_registro_format:'');
                     $event->sheet->setCellValue("V" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->base_datos_contpaq : '');
@@ -120,9 +120,10 @@ class CFDIREPPendiente implements WithHeadings, ShouldAutoSize, WithEvents, With
                     $event->sheet->setCellValue("X" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->periodo : '');
                     $event->sheet->setCellValue("Y" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->tipo : '');
                     $event->sheet->setCellValue("Z" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->folio : '');
-                    $event->sheet->setCellValue("AA" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->fecha_format : '');
-                    $event->sheet->setCellValue("AB" . $i, $cfd->cantidad_pagos);
-                    $event->sheet->setCellValue("AC" . $i, $cfd->monto_pendiente_rep);
+                    $event->sheet->setCellValue("AA" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->fecha_format : '');*/
+                    $event->sheet->setCellValue("S" . $i, $cfd->cantidad_pagos);
+                    $event->sheet->setCellValue("T" . $i, $cfd->total);
+                    $event->sheet->setCellValue("U" . $i, $cfd->monto_pendiente_rep_vw);
 
                     $i++;
                 }
@@ -140,9 +141,9 @@ class CFDIREPPendiente implements WithHeadings, ShouldAutoSize, WithEvents, With
     public function headings(): array
     {
         return array(['#','FECHA', 'SERIE', 'FOLIO','TIPO', 'UUID','RFC RECEPTOR','RECEPTOR','RFC EMISOR','EMISOR','SUBTOTAL'
-            ,'DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'CONCEPTOS','BD SAO','OBRA SAO'
+            ,'DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'CONCEPTOS',/*'BD SAO','OBRA SAO'
             ,'FECHA CARGA PROYECTO', 'BD CTPQ', 'EJERCICIO', 'PERIODO', 'TIPO POLIZA', 'FOLIO POLIZA', 'FECHA POLIZA'
-            ,'# PAGOS','MONTO PENDIENTE REP']);
+            ,*/'# PAGOS','TOTAL','MONTO PENDIENTE REP']);
     }
 
 

@@ -951,7 +951,7 @@ class Estimacion extends Transaccion
                     /**
                      * Se crea un item nuevo.
                      */
-                    if ($partida['id_item_estimacion'] == 0 && $partida['cantidad_estimacion'] != 0) {
+                    if ($partida['id_item_estimacion'] == 0 && ($partida['cantidad_estimacion'] != 0 || $partida['importe_estimacion'] != 0)) {
                         $this->items()->create([
                             'id_transaccion' => $this->id_transaccion,
                             'id_antecedente' => $this->id_antecedente,

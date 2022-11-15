@@ -10,5 +10,6 @@ class CatalogoMeses extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'Reportes.CatalogoMeses';
+    protected $primaryKey = 'MesID';
 
 }
