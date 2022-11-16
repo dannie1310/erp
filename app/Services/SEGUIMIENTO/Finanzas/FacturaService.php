@@ -12,6 +12,7 @@ use App\Models\REPSEG\FinDimTipoIngreso;
 use App\Models\REPSEG\FinFacIngresoFactura;
 use App\Models\REPSEG\GrlMoneda;
 use App\Models\REPSEG\GrlProyecto;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Repositories\REPSEG\FacturaRepository as Repository;
 use App\Utils\CFD;
 use App\Utils\Util;
@@ -147,15 +148,18 @@ class FacturaService
         $arreglo['no_certificado'] = $arreglo_cfd['no_certificado'];
         $arreglo["certificado"] = $arreglo_cfd["certificado"];
         $arreglo["sello"] = $arreglo_cfd["sello"];
-        $nombre_empresa = Util::eliminaCaracteresEspeciales($arreglo_cfd['emisor']['razon_social']);
-        $empresa = FinDimIngresoEmpresa::where('empresa', 'like', '%'.$nombre_empresa.'%')->first();
+        $empresa_sat = EmpresaSAT::where('rfc', $arreglo_cfd['emisor']['rfc'])->first();
+        $empresa = FinDimIngresoEmpresa::where('rfc', $arreglo_cfd['emisor']['rfc'])->first();
+        //mensaje de error sino se encuentra la empresa.....
         $arreglo['id_empresa'] = $empresa ? $empresa->idempresa : '';
         $empresas = FinDimIngresoEmpresa::activos()->selectRaw('idempresa as id, empresa as nombre')->orderBy('empresa','ASC')->get();
         $arreglo['empresas'] = $empresas->toArray();
         $arreglo['empresa_rfc'] = $arreglo_cfd["emisor"]["rfc"];
         $arreglo['razon_social'] = $arreglo_cfd["emisor"]["razon_social"];
-        $nombre_cliente = Util::eliminaCaracteresEspeciales($arreglo_cfd['receptor']['razon_social']);
-        $cliente = FinDimIngresoCliente::where('cliente', 'like', '%'.$nombre_cliente.'%')->first();
+        $cliente = FinDimIngresoCliente::where('rfc', $arreglo_cfd['receptor']['rfc'])->first();
+        $cliente_sat = EmpresaSAT::where('rfc', $arreglo_cfd['receptor']['rfc'])->first();
+        dd($cliente, $cliente_sat);
+        //mensaje de error del cliente  cuando no se encuentre...
         $arreglo['id_cliente'] = $cliente ? $cliente->idcliente : '';
         $clientes = FinDimIngresoCliente::activos()->selectRaw('idcliente as id, cliente as nombre')->orderBy('cliente','ASC')->get();
         $arreglo['clientes'] = $clientes->toArray();
