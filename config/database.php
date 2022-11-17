@@ -248,6 +248,17 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'correos' => [
+            'driver' => 'sqlsrv',
+            'host' => env('DB_HOST_CORREOS', 'localhost'),
+            'database' => env('DB_DATABASE_CORREOS', 'forge'),
+            'username' => env('DB_USERNAME_CORREOS', 'forge'),
+            'password' => env('DB_PASSWORD_CORREOS', ''),
+            'charset' => 'utf8',
+            'prefix' => '',
+            'prefix_indexes' => true,
+        ],
+
         'seguridad' => [
             'driver' => 'sqlsrv',
             'host' => env('DB_HOST_SEGURIDAD', 'localhost'),
