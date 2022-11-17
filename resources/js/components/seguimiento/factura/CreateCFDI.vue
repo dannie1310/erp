@@ -51,7 +51,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" v-on:click="cerrarModalCarga" :disabled="cargando"><i class="fa fa-times"></i>Cerrar</button>
-                            <button type="button" class="btn btn-primary" @click="getLayoutData()" :disabled="errors.has('carga_layout') || file_carga === null">
+                            <button type="button" class="btn btn-primary" @click="getLayoutData()" :disabled="errors.has('carga_layout')">
                                 <i class="fa fa-spin fa-spinner" v-if="procesando"></i>
                                 <i class="fa fa-upload" v-else ></i> Cargar
                             </button>
@@ -160,27 +160,32 @@
                 this.createImage(files[0]);
             },
             getLayoutData(){
-                this.procesando = true;
-                var formData = new FormData();
-                formData.append('facturas',  this.file_carga);
-                formData.append('nombre_archivo',  this.file_carga_name);
-                return this.$store.dispatch('seguimiento/factura/cargarCFDI',{
-                    data: formData, config: { params: { _method: 'POST'}}
-                })
-                    .then(data => {
-                        if(data.partidas_con_error){
-                            this.data = data;
-                            $(this.$refs.modal_errores).appendTo('body')
-                            $(this.$refs.modal_errores).modal('show');
-                        }else{
+                if(this.file_carga != null && this.file_carga_name !='') {
+                    this.procesando = true;
+                    var formData = new FormData();
+                    formData.append('facturas', this.file_carga);
+                    formData.append('nombre_archivo', this.file_carga_name);
+                    return this.$store.dispatch('seguimiento/factura/cargarCFDI', {
+                        data: formData, config: {params: {_method: 'POST'}}
+                    })
+                        .then(data => {
+                            if (data.partidas_con_error) {
+                                this.data = data;
+                                $(this.$refs.modal_errores).appendTo('body')
+                                $(this.$refs.modal_errores).modal('show');
+                            } else {
+                                this.procesando = false;
+                                this.cerrarModalCarga();
+                                this.$router.push({name: 'factura-seg-create', params: {datos: data}});
+                            }
+                        }).finally(() => {
                             this.procesando = false;
                             this.cerrarModalCarga();
-                            this.$router.push({name: 'factura-seg-create', params: {datos : data}});
-                        }
-                    }).finally(() => {
-                        this.procesando = false;
-                        this.cerrarModalCarga();
-                    });
+                        });
+                }
+                else{
+                    swal('¡Error!', 'Debe seleccionar un archivo (XML).', 'error')
+                }
             },
             registrar(){
                 this.cerrarModalCarga();
@@ -191,6 +196,8 @@
                 this.file_carga = null;
                 this.cargando = false
                 this.procesando = false;
+                this.$validator.errors.clear();
+                this.$validator.reset();
                 $(this.$refs.modal_carga).modal('hide');
                 this.$validator.reset();
             },

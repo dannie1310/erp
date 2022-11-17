@@ -13,6 +13,14 @@ class FinDimIngresoCliente extends Model
     protected $primaryKey = 'idcliente';
     public $timestamps = false;
 
+    protected $fillable = [
+        'cliente',
+        'abreviatura',
+        'rfc',
+        'registra',
+        'estado'
+    ];
+
     /**
      * Relaciones
      */
