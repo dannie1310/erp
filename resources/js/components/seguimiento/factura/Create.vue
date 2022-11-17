@@ -313,16 +313,16 @@
                                                 <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
                                             </td>
                                             <td>
-                                                {{concepto.cantidad}}
+                                                {{parseFloat(concepto.cantidad).formatMoney(2,'.',',')}}
                                             </td>
                                             <td>
-                                                {{concepto.valor_unitario}}
+                                                {{parseFloat(concepto.valor_unitario).formatMoney(2,'.',',')}}
                                             </td>
                                             <td>
-                                                {{concepto.descuento}}
+                                                {{parseFloat(concepto.descuento).formatMoney(2,'.',',')}}
                                             </td>
                                             <td>
-                                               {{concepto.importe}}
+                                               {{parseFloat(concepto.importe).formatMoney(2,'.',',')}}
                                             </td>
                                         </tr>
                                     </tbody>

@@ -25,14 +25,6 @@ class FacturaRepository extends Repository implements RepositoryInterface
         return $this->model->registrar($datos);
     }
 
-    public function getEFO($rfc)
-    {
-        $efo = DB::connection("seguridad")->table("Fiscal.ctg_efos")
-            ->where("rfc","=",$rfc)
-            ->first();
-        return $efo;
-    }
-
     public function validaExistencia($uuid)
     {
         $cfd = CFDIEmitido::where("uuid","=", $uuid)->where("estado", '!=', '-1')->first();
@@ -60,7 +52,9 @@ class FacturaRepository extends Repository implements RepositoryInterface
             'total' => $data['total'],
             'tipo_comprobante' => $data['tipo_comprobante'],
             'estado' => 0,
-            'tipo_cambio' => $data['tipo_cambio']
+            'tipo_cambio' => $data['tipo_cambio'],
+            'cancelado' => 0,
+            'no_verificable' => 1
         ]);
     }
 

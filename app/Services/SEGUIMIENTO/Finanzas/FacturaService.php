@@ -108,15 +108,15 @@ class FacturaService
                 $this->validaciones($data);
                 $factura = $this->repository->create($data);
                 $data['xml_file'] = explode("base64,", $data['xml'])[1];
-                $this->repository->registrarXML($data, $factura);
                 $this->guardarXML($data);
+                $this->repository->registrarXML($data, $factura);
             }else{
                 $factura = $this->repository->create($data);
             }
+            return $factura;
         } catch (\Exception $e) {
             throw $e;
         }
-        return $factura;
     }
 
     public function cargarArchivo($archivo_xml)
@@ -134,6 +134,7 @@ class FacturaService
         $arreglo['nombre_archivo'] = $archivo_xml['nombre_archivo'];
         $arreglo['version'] = $arreglo_cfd['version'];
         $arreglo['xml'] = $arreglo_cfd['xml'];
+        $arreglo['descuento'] = $arreglo_cfd['descuento'];
         $arreglo['total'] = $arreglo_cfd['total'];
         $arreglo['subtotal'] = $arreglo_cfd['subtotal'];
         $arreglo['iva'] = $arreglo_cfd['descuento'];
