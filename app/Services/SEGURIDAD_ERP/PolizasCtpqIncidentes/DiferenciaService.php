@@ -52,10 +52,17 @@ class DiferenciaService
     public function paginate($data)
     {
 
-        if (isset($data['id_empresa'])) {
-            $empresa = Empresa::find($data['id_empresa']);
+        if (isset($data['id_empresa_contabilidad'])) {
+            $empresa = Empresa::find($data['id_empresa_contabilidad']);
 
             $this->repository->where([['base_datos_revisada', '=', $empresa->AliasBDD]]);
+        }
+        if (isset($data['id_empresa'])) {
+            $bases_datos_revisadas = Empresa::where("IdEmpresaSAT","=",$data['id_empresa'])
+                ->get()
+                ->pluck("AliasBDD")->toArray();
+
+            $this->repository->whereIn(['base_datos_revisada', $bases_datos_revisadas]);
         }
         if (isset($data['id_tipo_diferencia'])) {
             $this->repository->where([['id_tipo', '=', $data['id_tipo_diferencia']]]);
