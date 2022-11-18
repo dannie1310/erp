@@ -13,6 +13,14 @@ class FinDimIngresoEmpresa extends Model
     protected $primaryKey = 'idempresa';
     public $timestamps = false;
 
+    protected $fillable = [
+        'empresa',
+        'abreviatura',
+        'rfc',
+        'registra',
+        'estado'
+    ];
+
     /**
      * Relaciones
      */

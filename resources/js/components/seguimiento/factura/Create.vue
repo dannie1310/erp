@@ -72,7 +72,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" v-if="registro.xml != undefined">
+                            <label for="id_empresa">Empresa:</label>
+                            <h6>{{registro.razon_social}} ({{registro.empresa_rfc}})</h6>
+                        </div>
+                        <div class="col-md-3" v-else>
                             <div class="form-group error-content">
                                 <div class="form-group">
                                     <label for="id_empresa">Empresa:</label>
@@ -111,7 +115,15 @@
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-3" v-if="registro.xml != undefined">
+                            <div class="form-group error-content">
+                                <div class="form-group">
+                                    <label for="id_cliente">Cliente:</label>
+                                    <h6>{{registro.cliente_razon_social}} ({{registro.cliente_rfc}})</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3" v-else>
                             <div class="form-group error-content">
                                 <div class="form-group">
                                     <label for="id_cliente">Cliente:</label>
@@ -205,7 +217,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="registro.xml == undefined">
                         <div class="col-md-12">
                             <div class="pull-right">
                                 <concepto-create @created="getConceptos" />
@@ -214,7 +226,7 @@
                         </div>
                     </div>
                     <br />
-                    <div class="row">
+                    <div class="row" v-if="registro.xml == undefined">
                         <div  class="col-12">
                             <div class="table-responsive">
                                 <table class="table table-striped table-sm">
@@ -268,6 +280,56 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row" v-else>
+                        <div  class="col-12">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th class="index_corto">#</th>
+                                        <th>Concepto</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio Unitario</th>
+                                        <th>Descuento</th>
+                                        <th>Importe</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(concepto, i) in registro.conceptos">
+                                            <td>{{i+1}}</td>
+                                            <td>
+                                                <select
+                                                    type="text"
+                                                    :name="`concepto[${i}]`"
+                                                    data-vv-as="Concepto"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    :id="`concepto[${i}]`"
+                                                    v-model="concepto.idconcepto"
+                                                    :class="{'is-invalid': errors.has(`concepto[${i}]`)}">
+                                                    <option value>--Seleccionar--</option>
+                                                    <option v-for="concept in registro.tipoConceptos" :value="concept.id">{{ concept.nombre }}</option>
+                                                </select>
+                                                <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
+                                            </td>
+                                            <td>
+                                                {{parseFloat(concepto.cantidad).formatMoney(2,'.',',')}}
+                                            </td>
+                                            <td>
+                                                {{parseFloat(concepto.valor_unitario).formatMoney(2,'.',',')}}
+                                            </td>
+                                            <td>
+                                                {{parseFloat(concepto.descuento).formatMoney(2,'.',',')}}
+                                            </td>
+                                            <td>
+                                               {{parseFloat(concepto.importe).formatMoney(2,'.',',')}}
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-8"></div>
                         <div class="col-md-4">
@@ -283,7 +345,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="registro.xml == undefined">
                         <div class="col-md-12">
                             <div class="pull-right">
                                <!-- <button type="button" class="btn btn-success btn-sm" @click="altaPartida()"><i class="fa fa-upload"></i>Alta de Partida</button> -->
@@ -292,9 +354,9 @@
                         </div>
                     </div>
                     <br />
-                    <div class="row" v-if="registro.partidas.length != 0">
+                    <div class="row" v-if="registro.xml == undefined">
                         <br />
-                        <div  class="col-12">
+                        <div  class="col-12" v-if="registro.partidas.length != 0">
                             <div class="table-responsive">
                                 <table class="table table-striped table-sm">
                                     <thead>
@@ -447,6 +509,7 @@
             {
                 this.registro = this.datos
                 this.registro.es = es
+                this.registro.fecha_emision = new Date(this.datos['fecha_emision']);
                 this.registro.fechasDeshabilitadas = {};
                 this.registro.fecha_inicial = '';
                 this.registro.fecha_fin = '';
@@ -457,7 +520,6 @@
                 this.registro.importe_partidas_despues_resta = 0
                 this.registro.descripcion = ''
                 this.importeTotalConceptos();
-                this.importeTotalPartidas();
             }else {
                 this.registro.fecha_emision = new Date()
                 this.registro.conceptos.push({
@@ -505,13 +567,16 @@
                 this.totales();
             },
             totales(){
-                this.registro.subtotal = this.registro.importe_conceptos
-                this.registro.subtotal = this.registro.subtotal + this.registro.importe_partidas_antes_suma;
-                this.registro.subtotal = this.registro.subtotal - this.registro.importe_partidas_antes_resta;
-                this.registro.iva = this.registro.subtotal * 0.16;
-                this.registro.total = (this.registro.subtotal + this.registro.iva)
-                this.registro.total = this.registro.total + this.registro.importe_partidas_despues_suma;
-                this.registro.total = this.registro.total - this.registro.importe_partidas_despues_resta;
+                if(this.registro.xml == undefined)
+                {
+                    this.registro.subtotal = this.registro.importe_conceptos
+                    this.registro.subtotal = this.registro.subtotal + this.registro.importe_partidas_antes_suma;
+                    this.registro.subtotal = this.registro.subtotal - this.registro.importe_partidas_antes_resta;
+                    this.registro.iva = this.registro.subtotal * 0.16;
+                    this.registro.total = (this.registro.subtotal + this.registro.iva)
+                    this.registro.total = this.registro.total + this.registro.importe_partidas_despues_suma;
+                    this.registro.total = this.registro.total - this.registro.importe_partidas_despues_resta;
+                }
             },
             agregarPartida(){
                 this.getPartidas()
@@ -532,34 +597,36 @@
                 this.importeTotalPartidas()
             },
             importeTotalPartidas() {
-                let importe_despues_resta = 0;
-                let importe_despues_suma = 0;
-                let importe_antes_resta = 0;
-                let importe_antes_suma = 0;
+                if(this.registro.xml == undefined) {
+                    let importe_despues_resta = 0;
+                    let importe_despues_suma = 0;
+                    let importe_antes_resta = 0;
+                    let importe_antes_suma = 0;
 
-                for(let i=0; i < this.registro.partidas.length; i++) {
-                    if(this.registro.partidas[i].nombre_operador != undefined && this.registro.partidas[i].total != '') {
-                        if (this.registro.partidas[i].nombre_operador == 'MENOS') {
-                            if (this.registro.partidas[i].antes_iva) {
-                                importe_antes_resta += parseFloat(this.registro.partidas[i].total);
-                            } else {
-                                importe_despues_resta += parseFloat(this.registro.partidas[i].total);
+                    for (let i = 0; i < this.registro.partidas.length; i++) {
+                        if (this.registro.partidas[i].nombre_operador != undefined && this.registro.partidas[i].total != '') {
+                            if (this.registro.partidas[i].nombre_operador == 'MENOS') {
+                                if (this.registro.partidas[i].antes_iva) {
+                                    importe_antes_resta += parseFloat(this.registro.partidas[i].total);
+                                } else {
+                                    importe_despues_resta += parseFloat(this.registro.partidas[i].total);
+                                }
                             }
-                        }
-                        if (this.registro.partidas[i].nombre_operador == 'MAS') {
-                            if (this.registro.partidas[i].antes_iva) {
-                                importe_antes_suma += parseFloat(this.registro.partidas[i].total);
-                            } else {
-                                importe_despues_suma += parseFloat(this.registro.partidas[i].total);
+                            if (this.registro.partidas[i].nombre_operador == 'MAS') {
+                                if (this.registro.partidas[i].antes_iva) {
+                                    importe_antes_suma += parseFloat(this.registro.partidas[i].total);
+                                } else {
+                                    importe_despues_suma += parseFloat(this.registro.partidas[i].total);
+                                }
                             }
                         }
                     }
+                    this.registro.importe_partidas_antes_suma = importe_antes_suma;
+                    this.registro.importe_partidas_antes_resta = importe_antes_resta;
+                    this.registro.importe_partidas_despues_suma = importe_despues_suma;
+                    this.registro.importe_partidas_despues_resta = importe_despues_resta;
+                    this.totales();
                 }
-                this.registro.importe_partidas_antes_suma = importe_antes_suma;
-                this.registro.importe_partidas_antes_resta = importe_antes_resta;
-                this.registro.importe_partidas_despues_suma = importe_despues_suma;
-                this.registro.importe_partidas_despues_resta = importe_despues_resta;
-                this.totales();
             },
             getClientes() {
                 this.registro.cargando = true;

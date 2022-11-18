@@ -12,9 +12,12 @@ use App\Models\REPSEG\FinDimTipoIngreso;
 use App\Models\REPSEG\FinFacIngresoFactura;
 use App\Models\REPSEG\GrlMoneda;
 use App\Models\REPSEG\GrlProyecto;
+use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Repositories\REPSEG\FacturaRepository as Repository;
 use App\Utils\CFD;
 use App\Utils\Util;
+use DateTime;
+use DateTimeZone;
 use Illuminate\Support\Facades\Storage;
 
 class FacturaService
@@ -105,15 +108,15 @@ class FacturaService
                 $this->validaciones($data);
                 $factura = $this->repository->create($data);
                 $data['xml_file'] = explode("base64,", $data['xml'])[1];
-                $this->repository->registrarXML($data, $factura);
                 $this->guardarXML($data);
+                $this->repository->registrarXML($data, $factura);
             }else{
                 $factura = $this->repository->create($data);
             }
+            return $factura;
         } catch (\Exception $e) {
             throw $e;
         }
-        return $factura;
     }
 
     public function cargarArchivo($archivo_xml)
@@ -134,12 +137,18 @@ class FacturaService
         $arreglo['descuento'] = $arreglo_cfd['descuento'];
         $arreglo['total'] = $arreglo_cfd['total'];
         $arreglo['subtotal'] = $arreglo_cfd['subtotal'];
+        $arreglo['iva'] = $arreglo_cfd['descuento'];
+        $arreglo['importe_iva'] = $arreglo_cfd['importe_iva'];
         $arreglo['tipo_comprobante'] = $arreglo_cfd['tipo_comprobante'];
         $arreglo['numero_factura'] = $arreglo_cfd['serie'].$arreglo_cfd['folio'];
         $arreglo['serie'] = $arreglo_cfd['serie'];
         $arreglo['folio'] = $arreglo_cfd['folio'];
-        $arreglo['fecha_emision'] = $arreglo_cfd['fecha']->format("Y-m-d");
-        $arreglo['fecha_hora'] = $arreglo_cfd['fecha_hora'];
+        $arreglo['fecha_emision'] = $arreglo_cfd['fecha']->format('Y-m-d');
+        $arreglo['fecha_inicial'] = '';
+        $arreglo['fecha_fin'] = '';
+        $fecha = New DateTime($arreglo_cfd["fecha_hora"]);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $arreglo['fecha_hora'] = $fecha->format('d-m-Y');
         $moneda = GrlMoneda::where('moneda', $arreglo_cfd['moneda'])->first();
         $arreglo['id_moneda'] = $moneda ? $moneda->getKey() : 3;
         $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'] ? floatval($arreglo_cfd['tipo_cambio']) : 1.00;
@@ -147,67 +156,55 @@ class FacturaService
         $arreglo['no_certificado'] = $arreglo_cfd['no_certificado'];
         $arreglo["certificado"] = $arreglo_cfd["certificado"];
         $arreglo["sello"] = $arreglo_cfd["sello"];
-        $nombre_empresa = Util::eliminaCaracteresEspeciales($arreglo_cfd['emisor']['razon_social']);
-        $empresa = FinDimIngresoEmpresa::where('empresa', 'like', '%'.$nombre_empresa.'%')->first();
+        $empresa_sat = EmpresaSAT::where('rfc', $arreglo_cfd['emisor']['rfc'])->first();
+        $arreglo['empresa_sat'] = $empresa_sat ? $empresa_sat->toArray() : $empresa_sat;
+        $empresa = FinDimIngresoEmpresa::where('rfc', $arreglo_cfd['emisor']['rfc'])->first();
         $arreglo['id_empresa'] = $empresa ? $empresa->idempresa : '';
-        $empresas = FinDimIngresoEmpresa::activos()->selectRaw('idempresa as id, empresa as nombre')->orderBy('empresa','ASC')->get();
-        $arreglo['empresas'] = $empresas->toArray();
         $arreglo['empresa_rfc'] = $arreglo_cfd["emisor"]["rfc"];
         $arreglo['razon_social'] = $arreglo_cfd["emisor"]["razon_social"];
-        $nombre_cliente = Util::eliminaCaracteresEspeciales($arreglo_cfd['receptor']['razon_social']);
-        $cliente = FinDimIngresoCliente::where('cliente', 'like', '%'.$nombre_cliente.'%')->first();
-        $arreglo['id_cliente'] = $cliente ? $cliente->idcliente : '';
-        $clientes = FinDimIngresoCliente::activos()->selectRaw('idcliente as id, cliente as nombre')->orderBy('cliente','ASC')->get();
-        $arreglo['clientes'] = $clientes->toArray();
+        $cliente = FinDimIngresoCliente::where('rfc', $arreglo_cfd['receptor']['rfc'])->first();
+        if($cliente == null)
+        {
+            $cliente = $this->repository->setCliente($arreglo_cfd['receptor']);
+        }
+        $arreglo['id_cliente'] = $cliente->idcliente;
         $arreglo['cliente_rfc'] = $arreglo_cfd['receptor']['rfc'];
         $arreglo['nombre'] = $arreglo_cfd['receptor']['nombre'];
         $arreglo['cliente_razon_social'] = $arreglo_cfd['receptor']['razon_social'];
         $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
         foreach ($arreglo_cfd['conceptos'] as $key => $concepto)
         {
+            $arreglo['conceptos'][$key]['cantidad'] = $concepto['cantidad'];
+            $arreglo['conceptos'][$key]['valor_unitario'] = $concepto['valor_unitario'];
             $arreglo['conceptos'][$key]['idconcepto'] = '';
             $arreglo['conceptos'][$key]['importe'] = $concepto['importe'];
-            if(array_key_exists('descuento',$concepto))
-            {
-                $arreglo['conceptos'][$key]['descuento'] = $concepto['descuento'];
-                $arreglo['partidas'][$key]['idpartida'] = '';
-                $arreglo['partidas'][$key]['antes_iva'] = false;
-                $arreglo['partidas'][$key]['total'] = $concepto['descuento'];
-            }
+            $arreglo['conceptos'][$key]['descuento'] = $concepto['descuento'] ? $concepto['descuento'] : 0.0;
         }
         $arreglo['tipoConceptos'] = FinDimTipoIngreso::activos()->orderBy('tipo_ingreso','ASC')->selectRaw('idtipo_ingreso as id, tipo_ingreso as nombre')->get()->toArray();
         $arreglo['tipos_partida'] = FinDimIngresoPartida::activos()->selectRaw('idpartida as id, partida as partida, nombre_operador')->orderBy('partida','ASC')->get()->toArray();
         $arreglo['id_proyecto'] = '';
         $arreglo['proyectos'] = '';
-        $this->validaEmpresaEFO($arreglo);
-        $this->validaClienteEFO($arreglo);
+        $arreglo = $this->validaEmpresaSAT($arreglo);
         return $arreglo;
     }
 
-    private function validaClienteEFO($arreglo_cfd)
+    private function validaEmpresaSAT($arreglo_cfd)
     {
-        $efo = $this->repository->getEFO($arreglo_cfd['cliente_rfc']);
-        if ($efo) {
-            if ($efo->estado == 0) {
-                abort(403, 'La empresa cliente que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-            } else if ($efo->estado == 2) {
-                abort(403, 'La empresa cliente que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-            }
+        if($arreglo_cfd['empresa_sat'] == null && $arreglo_cfd['id_empresa'] != '')
+        {
+            abort(403, 'La emisora del CFDI '.$arreglo_cfd['razon_social'].' ('.$arreglo_cfd['empresa_rfc'].') no esta dada de alta en el
+            catálogo maestro de empresas del ERP, favor de solicitar el alta a soporte a aplicaciones.');
         }
-    }
-
-    private function validaEmpresaEFO($arreglo_cfd)
-    {
-        $efo = $this->repository->getEFO($arreglo_cfd['empresa_rfc']);
-        if ($efo) {
-            if ($efo->estado == 2) {
-                abort(403, 'La empresa que emitió el comprobante esta invalidada por el SAT, no se pueden tener operaciones con esta empresa.
-             Favor de comunicarse con el área fiscal para cualquier aclaración.');
-            }
-
+        if($arreglo_cfd['empresa_sat'] == null && $arreglo_cfd['id_empresa'] == '')
+        {
+            abort(403, 'La emisora del CFDI '.$arreglo_cfd['razon_social'].' ('.$arreglo_cfd['empresa_rfc'].') no esta dada de alta en el catálogo,
+            favor de darla de alta y adicionalmente solicitar el alta en el catálogo maestro del ERP al área de soporte a aplicaciones.');
         }
+        if($arreglo_cfd['empresa_sat'] != null && $arreglo_cfd['id_empresa'] == '')
+        {
+            $arreglo_cfd['id_empresa'] = $this->repository->setEmpresa($arreglo_cfd['empresa_sat']);
+        }
+        return $arreglo_cfd;
     }
 
     private function guardarXML($datos)
@@ -219,7 +216,6 @@ class FacturaService
 
     private function validaciones($data)
     {
-
         $cfdi = $this->repository->validaExistencia($data["uuid"]);
         if($cfdi)
         {

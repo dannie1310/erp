@@ -152,4 +152,8 @@ class CFDSATController extends Controller
     {
         return $this->service->descargaExcel($request->all());
     }
+
+    public function descargarComunicados(Request $request){
+        return $this->service->descargarComunicados($request->all());
+    }
 }
