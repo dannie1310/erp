@@ -27,4 +27,19 @@ class EmpresaSAT extends Model
         return $this->hasMany(CFDSAT::class,"rfc_receptor", "rfc");
     }
 
+    public function empresaContabilidad()
+    {
+        return $this->hasMany(Empresa::class,"IdEmpresaSAT", "id");
+    }
+
+    public function empresaContabilidadConDiferencia()
+    {
+        return $this->hasMany(Empresa::class,"IdEmpresaSAT", "id")
+            ->solicitudes();
+    }
+
+    public function scopeSolicitudes($query){
+        return $query->whereHas('empresaContabilidadConDiferencia');
+    }
+
 }
