@@ -13,7 +13,7 @@ class PendientesREP
 {
     public static function  get($data)
     {
-        $informe["informe"][] = PendientesREP::getPartidas();
+        $informe["informe"] = PendientesREP::getPartidas();
 
         return $informe;
     }
@@ -198,7 +198,8 @@ ORDER BY mp.pendiente_rep_total DESC
             $partidas_completas[$i]["color_rgb"] = [255,255,255];
         }
 
-        dd($partidas_completas[0],$partidas_completas[1],$partidas_completas[2],$partidas_completas[3],$partidas_completas[4]);
+        /*dd($partidas_completas[0],$partidas_completas[1],$partidas_completas[2],$partidas_completas[3],$partidas_completas[4]
+        ,$partidas_completas[5]);*/
 
         return $partidas_completas;
     }
