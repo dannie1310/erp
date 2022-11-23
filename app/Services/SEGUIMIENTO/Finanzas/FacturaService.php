@@ -184,6 +184,7 @@ class FacturaService
         $arreglo['tipos_partida'] = FinDimIngresoPartida::activos()->selectRaw('idpartida as id, partida as partida, nombre_operador')->orderBy('partida','ASC')->get()->toArray();
         $arreglo['id_proyecto'] = '';
         $arreglo['proyectos'] = '';
+        $this->validaciones($arreglo);
         $arreglo = $this->validaEmpresaSAT($arreglo);
         return $arreglo;
     }

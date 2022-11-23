@@ -35,7 +35,8 @@ class FinFacIngresoFactura extends Model
         'estado',
         'usuario_cancelo',
         'motivo_cancelacion',
-        'fecha_cancelacion'
+        'fecha_cancelacion',
+        'uuid'
     ];
 
     public $searchable = [
