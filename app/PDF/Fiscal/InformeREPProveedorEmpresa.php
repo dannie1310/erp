@@ -97,13 +97,13 @@ class InformeREPProveedorEmpresa extends Rotation
                         $this->Row([
                             $partida["indice"]
                             , utf8_decode($partida["rfc_empresa"])
-                            , $partida["rfc_empresa"]
                             , utf8_decode($partida["empresa"])
-                            , $partida["cantidad_cfdi"]
-                            , $partida["total_cfdi"]
-                            , utf8_decode($partida["pagado"])
-                            , $partida["pendiente_rep"]
-                            , $partida["pendiente_rep"]
+                            , $partida["cantidad_cfdi_f"]
+                            , $partida["total_cfdi_f"]
+                            , $partida["total_rep_f"]
+                            , $partida["pendiente_rep_f"]
+                            , $partida["acumulado_pendiente_rep_f"]
+                            , $partida["porcentaje"]
                             ]
                         );
                     }
@@ -120,7 +120,17 @@ class InformeREPProveedorEmpresa extends Rotation
                     else if ($partida["tipo"] == "total") {
                         $this->Row([$partida["contador"], '', '', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
                     } else {
-                        $this->Row([$partida["contador"], '', '', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
+                        $this->Row([
+                            $partida["contador"]
+                            , utf8_decode($partida["etiqueta"])
+                            , $partida["cantidad_cfdi_f"]
+                            , $partida["total_cfdi_f"]
+                            , $partida["total_rep_f"]
+                            , $partida["pendiente_rep_f"]
+                            , ''
+                            , ''
+                        ]);
+
                         $this->Ln();
                     }
                 }
@@ -142,10 +152,10 @@ class InformeREPProveedorEmpresa extends Rotation
     {
         $this->setXY(1, 2.6);
 
-        $this->SetFont('Arial', '', 8);
+        $this->SetFont('Arial', '', 6);
 
         $this->SetFillColor(180, 180, 180);
-        $this->SetWidths([0.8, 1.5, 2.2, 6, 1.8, 1.8, 2.2, 1, 2.4]);
+        $this->SetWidths([0.8, 2, 7, 0.9, 2.1, 2.1, 2.1, 2.1, 0.6]);
         $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
         $this->SetRounds(['', '', '', '', '', '', '', '', '']);
         $this->SetRadius([0.2, 0, 0, 0, 0, 0, 0, 0, 0.2]);
@@ -155,7 +165,7 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->SetDrawColor(117, 117, 117);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C']);
-        $this->Row(["#", "Estatus", "RFC", utf8_decode("Razón Social"), "Fecha Definitivo SAT", "Fecha Definitivo DOF", "Empresa", "# CFDI", "Importe Incluyendo IVA"]);
+        $this->Row(["#", "RFC", utf8_decode("Razón Social"), "# CFDI", "Monto CFDI", "Monto REP", "Pendiente REP", "Pendiete REP (Acumulado)", "%"]);
 
     }
 
@@ -163,31 +173,31 @@ class InformeREPProveedorEmpresa extends Rotation
     {
         if ($tipo == "partida") {
             $this->SetDrawColor(213, 213, 213);
-            $this->SetFont('Arial', '', 7);
+            $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
-            $this->SetWidths([0.8, 1.5, 2.2, 6, 1.8, 1.8, 2.2, 1, 2.4]);
+            $this->SetWidths([0.8, 2, 7, 0.9, 2.1, 2.1, 2.1, 2.1, 0.6]);
             $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
             $this->SetRounds(['', '', '', '', '', '', '', '', '']);
             $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0, 0]);
             $this->SetFills(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
             $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
             $this->SetHeights([0.4]);
-            $this->SetAligns(['C', 'C', 'C', 'L', 'C', 'C', 'L', 'R', 'R']);
+            $this->SetAligns(['C', 'C', 'L', 'R', 'R', 'R', 'R', 'R', 'R']);
         } else if ($tipo == "subtotal") {
             $this->SetDrawColor(213, 213, 213);
-            $this->SetFont('Arial', '', 7);
+            $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
-            $this->SetWidths([0.8, 1.5, 2.2, 11.8, 1, 2.4]);
-            $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
-            $this->SetRounds(['', '', '', '', '', '', '', '', '']);
-            $this->SetRadius([0, 0, 0, 0, 0, 0]);
-            $this->SetFills(['213,213,213', '213,213,213', '213,213,213', '213,213,213', '213,213,213', '213,213,213']);
-            $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
+            $this->SetWidths([0.8, 9, 0.9, 2.1, 2.1, 2.1, 2.1, 0.6]);
+            $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
+            $this->SetRounds(['', '', '', '', '', '', '', '']);
+            $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0]);
+            $this->SetFills(['213,213,213', '213,213,213', '213,213,213', '213,213,213', '213,213,213', '213,213,213', '213,213,213', '213,213,213']);
+            $this->SetTextColors(['0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0', '0,0,0']);
             $this->SetHeights([0.4]);
-            $this->SetAligns(['C', 'C', 'C', 'L', 'R', 'R']);
+            $this->SetAligns(['C', 'R', 'R', 'R', 'R', 'R','R', 'R']);
         } else if ($tipo == "total") {
             $this->SetDrawColor(117, 117, 117);
-            $this->SetFont('Arial', '', 7);
+            $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
             $this->SetWidths([0.8, 1.5, 2.2, 11.8, 1, 2.4]);
             $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF']);

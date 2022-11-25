@@ -102,6 +102,9 @@ ORDER BY mp.pendiente_rep_total DESC
             $contador_partidas_proveedor = 1;
             $contador_cfdi = 0;
             $importe_cfdi=0;
+            $total_cfdi =0;
+            $total_rep =0;
+            $pendiente_rep =0;
             $contador_cfdi_global = 0;
             $importe_cfdi_global=0;
             $i_bis = 1;
@@ -124,12 +127,19 @@ ORDER BY mp.pendiente_rep_total DESC
 
                     if($partida["proveedor"]!=$partidas[$i_p-1]["proveedor"] ){
 
+
                         $partidas_completas[$i]["contador"] = $contador_partidas_proveedor-1;
                         $partidas_completas[$i]["acumulador"] = $acumulador_partidas_proveedor;
                         $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$partidas[$i_p-1]["proveedor"];
                         $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
+                        $partidas_completas[$i]["cantidad_cfdi_f"] = number_format($contador_cfdi);
+                        $partidas_completas[$i]["total_cfdi_f"] = number_format($total_cfdi);
+                        $partidas_completas[$i]["total_rep_f"] = number_format($total_rep);
+                        $partidas_completas[$i]["pendiente_rep_f"] = number_format($pendiente_rep);
+
+
                         $partidas_completas[$i]["importe"] = $importe_cfdi;
-                        $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
+                        $partidas_completas[$i]["importe_format"] = number_format($importe_cfdi);
                         $partidas_completas[$i]["tipo"] = "subtotal";
                         $partidas_completas[$i]["bg_color_hex"] = "#757575";
                         $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];
@@ -151,19 +161,32 @@ ORDER BY mp.pendiente_rep_total DESC
                         $contador_cfdi=0;
                         $importe_cfdi=0;
                         $acumulador_partidas_proveedor=0;
+                        $total_cfdi =0;
+                        $total_rep =0;
+                        $pendiente_rep =0;
                     }
                 }
 
                 $partidas_completas[$i] = $partida;
+                $partidas_completas[$i]["cantidad_cfdi_f"] = number_format($partidas_completas[$i]["cantidad_cfdi"],0);
+                $partidas_completas[$i]["total_cfdi_f"] = number_format($partidas_completas[$i]["total_cfdi"],0);
+                $partidas_completas[$i]["total_rep_f"] = number_format($partidas_completas[$i]["total_rep"],0);
+                $partidas_completas[$i]["pendiente_rep_f"] = number_format($partidas_completas[$i]["pendiente_rep"],0);
+
                 $partidas_completas[$i]["indice"] = $i_bis;
                 $partidas_completas[$i]["tipo"] = "partida";
                 $contador_cfdi+=$partidas_completas[$i]["cantidad_cfdi"];
                 $importe_cfdi+=$partidas_completas[$i]["pendiente_rep"];
+                $total_cfdi+=$partidas_completas[$i]["total_cfdi"];
+                $total_rep += $partidas_completas[$i]["total_rep"];
+                $pendiente_rep += $partidas_completas[$i]["pendiente_rep"];
                 $contador_cfdi_global+=$partidas_completas[$i]["cantidad_cfdi"];;
                 $importe_cfdi_global+=$partidas_completas[$i]["pendiente_rep"];
                 $acumulador_pendiente_rep += $partidas_completas[$i]["pendiente_rep"];
 
                 $partidas_completas[$i]["acumulado_pendiente_rep"] = $acumulador_pendiente_rep;
+                $partidas_completas[$i]["acumulado_pendiente_rep_f"] = number_format($acumulador_pendiente_rep,0);
+
                 $partidas_completas[$i]["porcentaje"] = 0;
 
                 $contador_partidas_proveedor++;
@@ -179,6 +202,10 @@ ORDER BY mp.pendiente_rep_total DESC
             $partidas_completas[$i]["acumulador"] = $acumulador_partidas_proveedor;
             $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$partidas[count($partidas)-1]["proveedor"];
             $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
+            $partidas_completas[$i]["cantidad_cfdi_f"] = number_format($contador_cfdi);
+            $partidas_completas[$i]["total_cfdi_f"] = number_format($total_cfdi);
+            $partidas_completas[$i]["total_rep_f"] = number_format($total_rep);
+            $partidas_completas[$i]["pendiente_rep_f"] = number_format($pendiente_rep);
             $partidas_completas[$i]["importe"] = $importe_cfdi;
             $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi,2,".",",");
             $partidas_completas[$i]["tipo"] = "subtotal";
@@ -201,9 +228,6 @@ ORDER BY mp.pendiente_rep_total DESC
             $partidas_completas[$i]["color_rgb"] = [255,255,255];
         }
 
-        /*dd($partidas_completas[0],$partidas_completas[1],$partidas_completas[2],$partidas_completas[3],$partidas_completas[4]
-        ,$partidas_completas[5]);*/
-
         return PendientesREP::establecePorcentajePartidas($partidas_completas);
     }
 
@@ -215,7 +239,7 @@ ORDER BY mp.pendiente_rep_total DESC
         {
             if(key_exists("porcentaje", $partida_completa))
             {
-                $partidas_completas[$i]["porcentaje"] = number_format($partida_completa["acumulado_pendiente_rep"] * 100 / $total,2);
+                $partidas_completas[$i]["porcentaje"] = number_format($partida_completa["acumulado_pendiente_rep"] * 100 / $total,0);
             }
             $i++;
         }
