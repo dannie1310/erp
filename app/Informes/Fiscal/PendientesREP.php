@@ -28,7 +28,7 @@ SELECT
     les.razon_social as empresa,
     count(DISTINCT cs.id) as cantidad_cfdi,
     sum( cs.total) as total_cfdi,
-    sum( csrp.total_pagado) as pagado,
+    sum( csrp.total_pagado) as total_rep,
     sum( csrp.pendiente_pago) as pendiente_rep,
     case isnull(les2.id,0) when 0 then 0 else 1 end es_empresa_hermes ,
     mp.pendiente_rep_total
@@ -107,7 +107,7 @@ ORDER BY mp.pendiente_rep_total DESC
             $i_bis = 1;
             $i_p =0;
             $acumulador_partidas_proveedor = 0;
-
+            $acumulador_pendiente_rep = 0;
 
             $partidas_completas[$i]["etiqueta"] = $partidas[0]["rfc_proveedor"]." ".$partidas[0]["proveedor"];
             $partidas_completas[$i]["tipo"] = "subtitulo";
@@ -121,7 +121,6 @@ ORDER BY mp.pendiente_rep_total DESC
             foreach($partidas as $partida)
             {
                 if($i_p>0){
-
 
                     if($partida["proveedor"]!=$partidas[$i_p-1]["proveedor"] ){
 
@@ -138,8 +137,6 @@ ORDER BY mp.pendiente_rep_total DESC
                         $partidas_completas[$i]["color_rgb"] = [255,255,255];
                         $i++;
 
-
-
                         $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["rfc_proveedor"]." ".$partidas[$i_p]["proveedor"];
                         $partidas_completas[$i]["es_empresa_hermes"] = $partidas[$i_p]["es_empresa_hermes"];
 
@@ -153,7 +150,6 @@ ORDER BY mp.pendiente_rep_total DESC
                         $contador_partidas_proveedor = 1;
                         $contador_cfdi=0;
                         $importe_cfdi=0;
-
                         $acumulador_partidas_proveedor=0;
                     }
                 }
@@ -165,11 +161,18 @@ ORDER BY mp.pendiente_rep_total DESC
                 $importe_cfdi+=$partidas_completas[$i]["pendiente_rep"];
                 $contador_cfdi_global+=$partidas_completas[$i]["cantidad_cfdi"];;
                 $importe_cfdi_global+=$partidas_completas[$i]["pendiente_rep"];
+                $acumulador_pendiente_rep += $partidas_completas[$i]["pendiente_rep"];
+
+                $partidas_completas[$i]["acumulado_pendiente_rep"] = $acumulador_pendiente_rep;
+                $partidas_completas[$i]["porcentaje"] = 0;
+
                 $contador_partidas_proveedor++;
                 $i++;
                 $i_bis++;
                 $i_p++;
                 $acumulador_partidas_proveedor++;
+
+
             }
 
             $partidas_completas[$i]["contador"] = $contador_partidas_proveedor-1;
@@ -201,7 +204,22 @@ ORDER BY mp.pendiente_rep_total DESC
         /*dd($partidas_completas[0],$partidas_completas[1],$partidas_completas[2],$partidas_completas[3],$partidas_completas[4]
         ,$partidas_completas[5]);*/
 
-        return $partidas_completas;
+        return PendientesREP::establecePorcentajePartidas($partidas_completas);
     }
 
+    private static function establecePorcentajePartidas($partidas_completas)
+    {
+        $total = $partidas_completas[count($partidas_completas)-3]["acumulado_pendiente_rep"];
+        $i = 0;
+        foreach ($partidas_completas as $partida_completa)
+        {
+            if(key_exists("porcentaje", $partida_completa))
+            {
+                $partidas_completas[$i]["porcentaje"] = number_format($partida_completa["acumulado_pendiente_rep"] * 100 / $total,2);
+            }
+            $i++;
+        }
+
+        return $partidas_completas;
+    }
 }
