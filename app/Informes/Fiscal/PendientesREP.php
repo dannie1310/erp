@@ -107,6 +107,9 @@ ORDER BY mp.pendiente_rep_total DESC
             $pendiente_rep =0;
             $contador_cfdi_global = 0;
             $importe_cfdi_global=0;
+            $total_cfdi_global =0;
+            $total_rep_global =0;
+            $pendiente_rep_global =0;
             $i_bis = 1;
             $i_p =0;
             $acumulador_partidas_proveedor = 0;
@@ -180,8 +183,14 @@ ORDER BY mp.pendiente_rep_total DESC
                 $total_cfdi+=$partidas_completas[$i]["total_cfdi"];
                 $total_rep += $partidas_completas[$i]["total_rep"];
                 $pendiente_rep += $partidas_completas[$i]["pendiente_rep"];
-                $contador_cfdi_global+=$partidas_completas[$i]["cantidad_cfdi"];;
-                $importe_cfdi_global+=$partidas_completas[$i]["pendiente_rep"];
+                $contador_cfdi_global+= $partidas_completas[$i]["cantidad_cfdi"];
+                $importe_cfdi_global += $partidas_completas[$i]["pendiente_rep"];
+
+                $total_cfdi_global += $partidas_completas[$i]["total_cfdi"];
+                $total_rep_global += $partidas_completas[$i]["total_rep"];
+                $pendiente_rep_global += $partidas_completas[$i]["pendiente_rep"];
+
+
                 $acumulador_pendiente_rep += $partidas_completas[$i]["pendiente_rep"];
 
                 $partidas_completas[$i]["acumulado_pendiente_rep"] = $acumulador_pendiente_rep;
@@ -221,6 +230,12 @@ ORDER BY mp.pendiente_rep_total DESC
             $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi_global;
             $partidas_completas[$i]["importe"] = $importe_cfdi_global;
             $partidas_completas[$i]["importe_format"] = '$ '.number_format($importe_cfdi_global,2,".",",");
+
+            $partidas_completas[$i]["cantidad_cfdi_f"] = number_format($contador_cfdi_global);
+            $partidas_completas[$i]["total_cfdi_f"] = number_format($total_cfdi_global);
+            $partidas_completas[$i]["total_rep_f"] = number_format($total_rep_global);
+            $partidas_completas[$i]["pendiente_rep_f"] = number_format($pendiente_rep_global);
+
             $partidas_completas[$i]["tipo"] = "total";
             $partidas_completas[$i]["bg_color_hex"] = "#757575";
             $partidas_completas[$i]["bg_color_rgb"] = [117,117,117];

@@ -118,7 +118,16 @@ class InformeREPProveedorEmpresa extends Rotation
                     }
 
                     else if ($partida["tipo"] == "total") {
-                        $this->Row([$partida["contador"], '', '', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
+                        $this->Row([
+                            $partida["contador"]
+                            , utf8_decode($partida["etiqueta"])
+                            , $partida["cantidad_cfdi_f"]
+                            , $partida["total_cfdi_f"]
+                            , $partida["total_rep_f"]
+                            , $partida["pendiente_rep_f"]
+                            , ''
+                            , ''
+                        ]);
                     } else {
                         $this->Row([
                             $partida["contador"]
@@ -199,14 +208,14 @@ class InformeREPProveedorEmpresa extends Rotation
             $this->SetDrawColor(117, 117, 117);
             $this->SetFont('Arial', '', 6);
             $this->SetFillColor(255, 255, 255);
-            $this->SetWidths([0.8, 1.5, 2.2, 11.8, 1, 2.4]);
-            $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
-            $this->SetRounds(['', '', '', '', '', '']);
-            $this->SetRadius([0.2, 0, 0, 0, 0, 0.2]);
-            $this->SetFills(['117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117']);
-            $this->SetTextColors(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
+            $this->SetWidths([0.8, 8.9, 1, 2.1, 2.1, 2.1, 2.1, 0.6]);
+            $this->SetStyles(['DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF', 'DF']);
+            $this->SetRounds(['', '', '', '', '', '', '', '']);
+            $this->SetRadius([0, 0, 0, 0, 0, 0, 0, 0]);
+            $this->SetFills(['117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117', '117,117,117']);
+            $this->SetTextColors(['255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
             $this->SetHeights([0.4]);
-            $this->SetAligns(['C', 'C', 'C', 'L', 'R', 'R']);
+            $this->SetAligns(['C', 'R', 'R', 'R', 'R', 'R','R', 'R']);
         } else if ($tipo == "titulo") {
             $this->SetDrawColor(255, 255, 255);
             $this->SetFont('Arial', 'B', 9);
