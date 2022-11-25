@@ -60,25 +60,13 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->MultiCell(16, .3, utf8_decode('Desglosado por empresa'), 0, 'C', 0);
         $this->setXY(4.59, 2.0);
 
-        if ($this->en_cola != "subtotal" && $this->en_cola != "total" /*&& $this->omitir_encabezado_tabla == false*/) {
-            $this->partidasTitle();
+        $this->partidasTitle();
 
-        }
-
-        $this->subtitulo();
-        $this->subtitulo_final();
-
-
-
-        /*if($this->en_cola != "subtitulo"){
+        if($this->en_cola != "subtitulo"){
             $this->subtitulo();
-            if ($this->en_cola != "subtotal" && $this->en_cola != "total" && $this->omitir_encabezado_tabla == false) {
-                $this->partidasTitle();
-            }
-            $this->subtitulo_final();
-        } else{
+        }else{
             $this->omitir_encabezado_tabla = true;
-        }*/
+        }
 
         if ($this->en_cola != '') {
             $this->setEstilos($this->en_cola);
@@ -118,33 +106,22 @@ class InformeREPProveedorEmpresa extends Rotation
                             , $partida["pendiente_rep"]
                             ]
                         );
-
-                    }else if ($partida["tipo"] == "subtitulo") {
-                        $this->etiqueta_subtitulo = $partida["etiqueta"];
-                        $this->Ln();
-                        $this->Row([utf8_decode($partida["etiqueta"])]);
                     }
-                    /*else if ($partida["tipo"] == "subtitulo") {
+                    else if ($partida["tipo"] == "subtitulo") {
                         $this->etiqueta_subtitulo = $partida["etiqueta"];
                         if($this->omitir_encabezado_tabla){
                             $this->subtitulo();
-                        } else {
-                            $this->Ln();
-                            $this->Row([utf8_decode($partida["etiqueta"])]);
-                        }
-                    } else if ($partida["tipo"] == "subtitulo_final") {
-                        $this->etiqueta_subtitulo_final = $partida["etiqueta"];
-                        if($this->omitir_encabezado_tabla){
-                            $this->partidasTitle();
-                            $this->subtitulo_final();
                             $this->omitir_encabezado_tabla = false;
                         } else {
                             $this->Row([utf8_decode($partida["etiqueta"])]);
                         }
-                    } */else if ($partida["tipo"] == "total") {
+                    }
+
+                    else if ($partida["tipo"] == "total") {
                         $this->Row([$partida["contador"], '', '', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
                     } else {
                         $this->Row([$partida["contador"], '', '', utf8_decode($partida["etiqueta"]), $partida["contador_cfdi"], $partida["importe_format"]]);
+                        $this->Ln();
                     }
                 }
             }
@@ -154,23 +131,17 @@ class InformeREPProveedorEmpresa extends Rotation
 
     private function subtitulo($v="")
     {
-        $this->setXY(1, 3.6);
-        $this->setEstilos("subtitulo");
-        $this->Row([utf8_decode($this->etiqueta_subtitulo).$v."ssss"]);
-    }
-
-    private function subtitulo_final($v="")
-    {
-        if(!is_null($this->etiqueta_subtitulo_final))
+        if(!is_null($this->etiqueta_subtitulo))
         {
-            $this->setEstilos("subtitulo_final");
-            $this->Row([utf8_decode($this->etiqueta_subtitulo_final).$v]);
+            $this->setEstilos("subtitulo");
+            $this->Row([utf8_decode($this->etiqueta_subtitulo).$v]);
         }
     }
 
     public function partidasTitle()
     {
-        $this->Ln();
+        $this->setXY(1, 2.6);
+
         $this->SetFont('Arial', '', 8);
 
         $this->SetFillColor(180, 180, 180);
