@@ -163,6 +163,12 @@ class FinFacIngresoFactura extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getFechaRegistroFormatAttribute()
+    {
+        $date = date_create($this->timestamp);
+        return date_format($date,"d/m/Y");
+    }
+
     public function getImporteFormatAttribute()
     {
         return '$' . number_format($this->importe,2);

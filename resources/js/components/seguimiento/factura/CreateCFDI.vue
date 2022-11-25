@@ -34,15 +34,15 @@
                                     <div class="row justify-content-between">
                                         <div class="col-md-12">
                                             <div class="col-lg-12">
-                                                <input type="file" class="form-control" id="carga_layout"
+                                                <input type="file" class="form-control" id="file_carga"
                                                        @change="onFileChange"
                                                        row="3"
                                                        v-validate="{ ext: ['xml']}"
-                                                       name="carga_layout"
+                                                       name="file_carga"
                                                        data-vv-as="Layout"
-                                                       ref="carga_layout"
-                                                       :class="{'is-invalid': errors.has('carga_layout')}">
-                                                <div class="invalid-feedback" v-show="errors.has('carga_layout')">{{ errors.first('carga_layout') }} (xml)</div>
+                                                       ref="file_carga"
+                                                       :class="{'is-invalid': errors.has('file_carga')}">
+                                                <div class="invalid-feedback" v-show="errors.has('file_carga')">{{ errors.first('file_carga') }} (xml)</div>
                                             </div>
                                         </div>
                                     </div>
@@ -61,53 +61,6 @@
                 </div>
             </div>
         </div>
-        <!-- <div class="modal fade" ref="modal_errores" role="dialog" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal modal-xl" >
-                <div class="modal-content" v-if="data">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modal-carga"> <i class="fa fa-close"></i> ERRORES EN CFDI DE LA FACTURA</h5>
-                        <button type="button" class="close" v-on:click="cerrarModalErrores" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="pull-right" style="color:red;"><h5>Las siguientes partidas tienen error en: {{data.errores_partidas}}</h5></div>
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div  class="col-12">
-                                <div class="table-responsive" style="overflow-y: auto; height:350px">
-                                    <table class="table table-striped table-bordered table-sm">
-                                        <thead>
-                                            <tr>
-                                                <th class="c100">Clave</th>
-                                                <th >Descripción</th>
-                                                <th class="c100">Unidad</th>
-                                                <th class="c100">Cantidad</th>
-                                                <th >Destinos</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="(partida, i) in data.contratos" v-if="!partida.partida_valida">
-                                                <td>{{partida.clave}}</td>
-                                                <td :style="Object.keys(partida.tipo_error).length > 0 && partida.tipo_error.descripcion?`color: red;`:``">{{partida.descripcion}}</td>
-                                                <td>{{partida.unidad}} </td>
-                                                <td :style="Object.keys(partida.tipo_error).length > 0 && partida.tipo_error.cantidad?`color: red;`:``">{{partida.cantidad}} </td>
-                                                <td :style="Object.keys(partida.tipo_error).length > 0 && partida.tipo_error.destino?`color: red;`:``">{{partida.destino_path}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" v-on:click="cerrarModalErrores" :disabled="cargando"><i class="fa fa-times"></i>Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>-->
     </span>
 </template>
 
@@ -119,19 +72,20 @@
             return {
                 procesando:false,
                 file_carga : null,
-                file_carga_name : '',
+                file_carga_name : null,
                 data: null,
             }
         },
         mounted(){
+            this.$validator.reset()
             this.procesando = false
             this.file_carga = null
-            this.file_carga_name = ''
+            this.file_carga_name = null
             this.data = null
         },
         methods:{
             load() {
-                this.file_carga_name = '';
+                this.file_carga_name = null;
                 this.file_carga = null
                 this.data = null
                 this.procesando = false;
@@ -167,17 +121,20 @@
                     formData.append('nombre_archivo', this.file_carga_name);
                     return this.$store.dispatch('seguimiento/factura/cargarCFDI', {
                         data: formData, config: {params: {_method: 'POST'}}
-                    })
-                        .then(data => {
-                            if (data.partidas_con_error) {
-                                this.data = data;
-                                $(this.$refs.modal_errores).appendTo('body')
-                                $(this.$refs.modal_errores).modal('show');
-                            } else {
-                                this.procesando = false;
-                                this.cerrarModalCarga();
-                                this.$router.push({name: 'factura-seg-create', params: {datos: data}});
+                    }).then(data => {
+                        var count = Object.keys(data).length;
+                        if(count > 0) {
+                            this.file_carga_name = null
+                            this.file_carga = null;
+                            $(this.$refs.modal_carga).modal('hide');
+                            this.$router.push({name: 'factura-seg-create', params: {datos: data}});
+                        }else{
+                            if(this.$refs.archivo.value !== ''){
+                                this.file_carga_name = null;
+                                this.file_carga = null;
                             }
+                        }
+
                         }).finally(() => {
                             this.procesando = false;
                             this.cerrarModalCarga();
@@ -192,7 +149,7 @@
                 this.$router.push({name: 'factura-seg-create'});
             },
             cerrarModalCarga(){
-                this.file_carga_name = ''
+                this.file_carga_name = null
                 this.file_carga = null;
                 this.cargando = false
                 this.procesando = false;
@@ -202,7 +159,7 @@
                 this.$validator.reset();
             },
             cerrarModalErrores(){
-                this.file_carga_name = ''
+                this.file_carga_name = null
                 this.file_carga = null;
                 $(this.$refs.modal_errores).modal('hide');
                 this.$validator.reset();
