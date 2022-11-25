@@ -15,10 +15,13 @@
             <div class="card" v-else>
                 <div class="card-body">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-2" v-if="registro.xml != undefined">
+                            <label for="fecha_emision">Fecha de Emisión</label>
+                            <h6>{{registro.fecha_emision}}</h6>
+                        </div>
+                        <div class="col-md-2" v-else>
                             <div class="form-group error-content">
                                 <div class="form-group">
-
                                     <label for="fecha_emision" >Fecha de Emisión</label>
                                     <datepicker v-model = "registro.fecha_emision"
                                                 name = "fecha_emision"
@@ -35,7 +38,11 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" v-if="registro.xml != undefined">
+                            <label for="numero_factura">Número de Factura:</label>
+                            <h6>{{registro.numero_factura}}</h6>
+                        </div>
+                        <div class="col-md-2" v-else>
                             <div class="form-group error-content">
                                 <div class="form-group">
                                     <label for="numero_factura">Número de Factura:</label>
@@ -185,6 +192,7 @@
                                     <label for="id_moneda">Moneda:</label>
                                     <select
                                         type="text"
+                                        :disabled="registro.xml != undefined ? true : false"
                                         name="id_moneda"
                                         data-vv-as="Moneda"
                                         v-validate="{required: true}"
@@ -204,6 +212,7 @@
                                 <div class="form-group">
                                     <label for="tipo_cambio">Tipo de Cambio:</label>
                                     <input class="form-control"
+                                           :disabled="registro.xml != undefined ? true : false"
                                            style="width: 100%"
                                            placeholder="Tipo de Cambio"
                                            name="tipo_cambio"
@@ -312,16 +321,16 @@
                                                 </select>
                                                 <div class="invalid-feedback" v-show="errors.has(`concepto[${i}]`)">{{ errors.first(`concepto[${i}]`) }}</div>
                                             </td>
-                                            <td>
+                                            <td style="text-align: right">
                                                 {{parseFloat(concepto.cantidad).formatMoney(2,'.',',')}}
                                             </td>
-                                            <td>
+                                            <td style="text-align: right">
                                                 {{parseFloat(concepto.valor_unitario).formatMoney(2,'.',',')}}
                                             </td>
-                                            <td>
+                                            <td style="text-align: right">
                                                 {{parseFloat(concepto.descuento).formatMoney(2,'.',',')}}
                                             </td>
-                                            <td>
+                                            <td style="text-align: right">
                                                {{parseFloat(concepto.importe).formatMoney(2,'.',',')}}
                                             </td>
                                         </tr>
@@ -330,7 +339,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row">
+                    <div class="row" v-if="registro.xml == undefined">
                         <div class="col-md-8"></div>
                         <div class="col-md-4">
                             <div class="table-responsive">
@@ -428,6 +437,10 @@
                                             <th style="width:50%">Subtotal:</th>
                                             <td style="text-align: right">{{parseFloat(registro.subtotal).formatMoney(2,'.',',')}}</td>
                                         </tr>
+                                        <tr v-if="registro.xml != undefined">
+                                            <th style="width:50%">Descuentos:</th>
+                                            <td style="text-align: right">{{parseFloat(registro.descuento).formatMoney(2,'.',',')}}</td>
+                                        </tr>
                                         <tr>
                                             <th>IVA</th>
                                             <td style="text-align: right">{{parseFloat(registro.iva).formatMoney(2,'.',',')}}</td>
@@ -509,7 +522,6 @@
             {
                 this.registro = this.datos
                 this.registro.es = es
-                this.registro.fecha_emision = new Date(this.datos['fecha_emision']);
                 this.registro.fechasDeshabilitadas = {};
                 this.registro.fecha_inicial = '';
                 this.registro.fecha_fin = '';

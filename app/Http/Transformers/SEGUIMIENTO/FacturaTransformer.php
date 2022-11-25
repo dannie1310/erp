@@ -35,6 +35,7 @@ class FacturaTransformer extends TransformerAbstract
             'nombre_moneda' => $model->nombre_moneda,
             'numero' => $model->numero,
             'fecha_format' => $model->fecha_format,
+            'fecha_registro_format' => $model->fecha_registro_format,
             'fecha_cobro_format' => $model->fecha_cobro_format,
             'fecha_fi_format' => $model->fecha_fi_format,
             'fecha_ff_format' => $model->fecha_ff_format,

@@ -49,9 +49,9 @@ class FacturaService
             $this->repository->where([['numero', 'LIKE', '%' . $data['numero'] . '%']]);
         }
 
-        if (isset($data['fecha']))
+        if (isset($data['fecha_emision']))
         {
-            $this->repository->whereBetween( ['fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+            $this->repository->whereBetween( ['fecha', [ request( 'fecha_emision' )." 00:00:00",request( 'fecha_emision' )." 23:59:59"]] );
         }
 
         if (isset($data['idempresa']))
@@ -82,9 +82,9 @@ class FacturaService
             $this->repository->where([['importe', 'LIKE', '%'.$data['importe'].'%']]);
         }
 
-        if (isset($data['fecha_cobro']))
+        if (isset($data['fecha']))
         {
-            $this->repository->whereBetween( ['fecha_cobro', [ request( 'fecha_cobro' )." 00:00:00",request( 'fecha_cobro' )." 23:59:59"]] );
+            $this->repository->whereBetween( ['timestamp', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
         }
 
         return $this->repository->paginate($data);
@@ -137,8 +137,7 @@ class FacturaService
         $arreglo['descuento'] = $arreglo_cfd['descuento'];
         $arreglo['total'] = $arreglo_cfd['total'];
         $arreglo['subtotal'] = $arreglo_cfd['subtotal'];
-        $arreglo['iva'] = $arreglo_cfd['descuento'];
-        $arreglo['importe_iva'] = $arreglo_cfd['importe_iva'];
+        $arreglo['iva'] = $arreglo_cfd['importe_iva'];
         $arreglo['tipo_comprobante'] = $arreglo_cfd['tipo_comprobante'];
         $arreglo['numero_factura'] = $arreglo_cfd['serie'].$arreglo_cfd['folio'];
         $arreglo['serie'] = $arreglo_cfd['serie'];
@@ -146,9 +145,7 @@ class FacturaService
         $arreglo['fecha_emision'] = $arreglo_cfd['fecha']->format('Y-m-d');
         $arreglo['fecha_inicial'] = '';
         $arreglo['fecha_fin'] = '';
-        $fecha = New DateTime($arreglo_cfd["fecha_hora"]);
-        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $arreglo['fecha_hora'] = $fecha->format('d-m-Y');
+        $arreglo['fecha_hora'] = $arreglo_cfd["fecha_hora"];
         $moneda = GrlMoneda::where('moneda', $arreglo_cfd['moneda'])->first();
         $arreglo['id_moneda'] = $moneda ? $moneda->getKey() : 3;
         $arreglo['tipo_cambio'] = $arreglo_cfd['tipo_cambio'] ? floatval($arreglo_cfd['tipo_cambio']) : 1.00;
