@@ -8,7 +8,7 @@ class InformeREPProveedorEmpresa extends Rotation
 {
     protected $informe;
     protected $etiqueta_subtitulo;
-    protected $etiqueta_subtitulo_final;
+    protected $es_del_grupo;
     protected $omitir_encabezado_tabla;
 
     const DPI = 96;
@@ -109,10 +109,14 @@ class InformeREPProveedorEmpresa extends Rotation
                     }
                     else if ($partida["tipo"] == "subtitulo") {
                         $this->etiqueta_subtitulo = $partida["etiqueta"];
+                        $this->es_del_grupo = $partida["es_empresa_hermes"];
                         if($this->omitir_encabezado_tabla){
                             $this->subtitulo();
                             $this->omitir_encabezado_tabla = false;
                         } else {
+                            if($this->es_del_grupo == 1){
+                                $this->SetTextColors(["194,8,8"]);
+                            }
                             $this->Row([utf8_decode($partida["etiqueta"])]);
                         }
                     }
@@ -148,12 +152,15 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->Ln();
     }
 
-    private function subtitulo($v="")
+    private function subtitulo()
     {
         if(!is_null($this->etiqueta_subtitulo))
         {
             $this->setEstilos("subtitulo");
-            $this->Row([utf8_decode($this->etiqueta_subtitulo).$v]);
+            if($this->es_del_grupo == 1){
+                $this->SetTextColors(["194,8,8"]);
+            }
+            $this->Row([utf8_decode($this->etiqueta_subtitulo)]);
         }
     }
 
@@ -228,7 +235,7 @@ class InformeREPProveedorEmpresa extends Rotation
             $this->SetTextColors(['0,0,0']);
             $this->SetHeights([0.6]);
             $this->SetAligns(['L']);
-        } else if ($tipo == "subtitulo" || $tipo == "subtitulo_final") {
+        } else if ($tipo == "subtitulo") {
             $this->SetDrawColor(255, 255, 255);
             $this->SetFont('Arial', 'B', 7);
             $this->SetFillColor(255, 255, 255);
