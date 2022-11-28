@@ -123,6 +123,7 @@
                         data: formData, config: {params: {_method: 'POST'}}
                     }).then(data => {
                         this.$router.push({name: 'factura-seg-create', params: {datos: data}});
+                        this.cerrarModalCarga();
                         }).finally(() => {
                             this.procesando = false;
                             this.cargando = false

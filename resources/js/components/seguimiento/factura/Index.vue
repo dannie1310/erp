@@ -40,7 +40,7 @@
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Proyecto', field: 'idproyecto', tdClass: 'td_c250', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Número', tdClass: 'td_c100', field: 'numero', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Fecha de Emision', field: 'fecha_emision', tdClass: 'money', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Fecha de Emisión', field: 'fecha_emision', tdClass: 'money', sortable: true, thComp: require('../../globals/th-Date').default},
                     { title: 'Empresa', tdClass: 'td_c100', field: 'idempresa', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Cliente', tdClass: 'td_c100', field: 'idcliente', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Descripción', tdClass: 'td_c100', field: 'descripcion',sortable: true, thComp: require('../../globals/th-Filter').default},
