@@ -122,21 +122,11 @@
                     return this.$store.dispatch('seguimiento/factura/cargarCFDI', {
                         data: formData, config: {params: {_method: 'POST'}}
                     }).then(data => {
-                        var count = Object.keys(data).length;
-                        if(count > 0) {
-                            this.file_carga_name = null
-                            this.file_carga = null;
-                            $(this.$refs.modal_carga).modal('hide');
-                            this.$router.push({name: 'factura-seg-create', params: {datos: data}});
-                        }else{
-                            if(this.$refs.archivo.value !== ''){
-                                this.file_carga_name = null;
-                                this.file_carga = null;
-                            }
-                        }
-
+                        this.$router.push({name: 'factura-seg-create', params: {datos: data}});
+                        this.cerrarModalCarga();
                         }).finally(() => {
                             this.procesando = false;
+                            this.cargando = false
                             this.cerrarModalCarga();
                         });
                 }
@@ -149,28 +139,14 @@
                 this.$router.push({name: 'factura-seg-create'});
             },
             cerrarModalCarga(){
-                this.file_carga_name = null
+                this.file_carga_name = null;
                 this.file_carga = null;
-                this.cargando = false
-                this.procesando = false;
+                this.$refs.file_carga.value = null;
                 this.$validator.errors.clear();
                 this.$validator.reset();
                 $(this.$refs.modal_carga).modal('hide');
-                this.$validator.reset();
-            },
-            cerrarModalErrores(){
-                this.file_carga_name = null
-                this.file_carga = null;
-                $(this.$refs.modal_errores).modal('hide');
-                this.$validator.reset();
             },
         },
 
     }
 </script>
-
-<style scoped>
-    .cantidad_invalida {
-        color: red;
-    }
-</style>
