@@ -156,4 +156,9 @@ class CFDSATController extends Controller
     public function descargarComunicados(Request $request){
         return $this->service->descargarComunicados($request->all());
     }
+
+    public function obtenerInformeREPPDF(Request $request)
+    {
+        $this->service->obtenerInformeREP($request->all())->create();
+    }
 }

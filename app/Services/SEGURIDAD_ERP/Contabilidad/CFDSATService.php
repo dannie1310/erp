@@ -1415,7 +1415,7 @@ class CFDSATService
             ->add(public_path($dir_descarga));
         $zipper->close();
 
-        Files::eliminaDirectorio($dir_descarga);
+        //Files::eliminaDirectorio($dir_descarga);
 
         if(file_exists(public_path($nombre_zip))){
             return response()->download(public_path($nombre_zip));
@@ -2146,5 +2146,17 @@ class CFDSATService
                 }
             }
         }*/
+    }
+
+    public function obtenerInformeREPPDF($data)
+    {
+        $informe = $this->obtenerInformeREP();
+        $pdf = new InformeCFDICompleto($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREP($data)
+    {
+        return $this->repository->getInformeREP($data);
     }
 }

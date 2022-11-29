@@ -13,6 +13,7 @@ use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
 use App\Informes\Fiscal\InformeCostosCFDIvsCostosBalanza;
 use App\Informes\Fiscal\InformeSATLP;
+use App\Informes\Fiscal\PendientesREP;
 use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -271,6 +272,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         if($obra){
             return $obra->rfc;
         }
+    }
+
+    public function getInformeREP($data)
+    {
+        $informe["informe"] = PendientesREP::get($data);
+        return $informe;
     }
 
 }
