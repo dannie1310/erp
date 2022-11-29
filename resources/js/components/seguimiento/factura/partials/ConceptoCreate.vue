@@ -18,12 +18,13 @@
                                         <div class="form-group">
                                             <label for="nuevo_concepto">Concepto:</label>
                                             <input class="form-control"
+                                                   type="text"
                                                    style="width: 100%"
                                                    placeholder="Concepto"
                                                    name="nuevo_concepto"
                                                    id="nuevo_concepto"
                                                    data-vv-as="Nuevo Concepto"
-                                                   v-validate="{required: true}"
+                                                   v-validate="{required: true, max: 50 }"
                                                    v-model="nuevo_concepto"
                                                    :class="{'is-invalid': errors.has('nuevo_concepto')}">
                                             <div class="invalid-feedback" v-show="errors.has('nuevo_concepto')">{{ errors.first('nuevo_concepto') }}</div>
@@ -38,7 +39,7 @@
                                     <i class="fa fa-close"></i>
                                     Cerrar
                                 </button>
-                                <button type="button" @click="guardarConcepto" :disabled="nuevo_concepto == ''" class="btn btn-primary">
+                                <button type="button" @click="validate" :disabled="nuevo_concepto == ''" class="btn btn-primary">
                                     <i class="fa fa-save"></i>
                                     Guardar
                                 </button>
@@ -76,7 +77,7 @@
             {
                 this.nuevo_concepto =  '';
                 this.$validator.reset();
-                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal_concepto).appendTo('body')
                 $(this.$refs.modal_concepto).modal('show');
             },
             cerrar(){
