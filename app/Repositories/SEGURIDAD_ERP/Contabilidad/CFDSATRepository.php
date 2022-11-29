@@ -14,6 +14,7 @@ use App\Informes\CFDICompleto;
 use App\Informes\Fiscal\InformeCostosCFDIvsCostosBalanza;
 use App\Informes\Fiscal\InformeSATLP;
 use App\Informes\Fiscal\PendientesREP;
+use App\Informes\Fiscal\PendientesREPProveedorEmpresa;
 use App\Models\CADECO\Obra;
 use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
@@ -277,6 +278,12 @@ class CFDSATRepository extends Repository implements RepositoryInterface
     public function getInformeREP($data)
     {
         $informe["informe"] = PendientesREP::get($data);
+        return $informe;
+    }
+
+    public function getInformeREPProveedorEmpresa($data)
+    {
+        $informe["informe"] = PendientesREPProveedorEmpresa::get($data);
         return $informe;
     }
 
