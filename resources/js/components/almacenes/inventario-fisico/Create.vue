@@ -53,8 +53,7 @@
                                                 class="form-control"
                                                 id="inventario"
                                                 v-model="form.inventario"
-                                                :class="{'is-invalid': errors.has('inventario')}"
-                                            >
+                                                :class="{'is-invalid': errors.has('inventario')}">
                                                     <option value>-- % --</option>
                                                     <option v-for="inventario in inventarios" :value="inventario.id">{{ inventario.descripcion }}</option>
                                             </select>
@@ -62,11 +61,10 @@
                                         </div>
                                     </div>
                                 </div>
-
-
-
                             </div>
-
+                            <div class="row">
+                                <multiselect v-model="value" :options="options"></multiselect>
+                            </div>
                         </div>
                         <div class="modal-footer">
                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -80,13 +78,15 @@
 </template>
 
 <script>
+    import Multiselect from 'vue-multiselect',
     export default {
         name: "inventario-fisico-create",
+        components : {Multiselect},
         data() {
             return {
                 cargando: false,
                 inventarios: [
-                    {id: 100, descripcion: '80%'},
+                    {id: 100,descripcion: '80%'},
                     {id: 75, descripcion: '60%'},
                     {id: 50, descripcion: '40%'},
                     {id: 25, descripcion: '20%'},
