@@ -97,7 +97,9 @@
                     2: "Parcial"
                 },
                 id_tipo:'',
-                form: {inventario:''}
+                form: {inventario:''},
+                value: null,
+                options: ['list', 'of', 'options']
             }
         },
         mounted(){
