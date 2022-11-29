@@ -226,11 +226,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" v-if="registro.xml == undefined">
+                    <div class="row">
                         <div class="col-md-12">
                             <div class="pull-right">
                                 <concepto-create @created="getConceptos" />
-                                <button type="button" class="btn btn-success btn-sm" @click="agregarConcepto()"><i class="fa fa-plus"></i>Agregar Concepto</button>
+                                <button  v-if="registro.xml == undefined" type="button" class="btn btn-success btn-sm" @click="agregarConcepto()"><i class="fa fa-plus"></i>Agregar Concepto</button>
                             </div>
                         </div>
                     </div>
