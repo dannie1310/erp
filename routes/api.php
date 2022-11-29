@@ -433,7 +433,7 @@ $api->version('v1', function ($api) {
             $api->get('descargaLayout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargaLayout');
             $api->get('descargar-comunicados', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarComunicados');
             $api->get('informe-rep-pendientes/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPPDF');
-
+            $api->get('informe-rep-pendientes-proveedor-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorEmpresaPDF');
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');

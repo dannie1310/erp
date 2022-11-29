@@ -4,7 +4,7 @@ namespace App\PDF\Fiscal;
 
 use Ghidev\Fpdf\Rotation;
 
-class InformeREPProveedorEmpresa extends Rotation
+class InformeREP extends Rotation
 {
     protected $informe;
     protected $etiqueta_subtitulo;
@@ -22,7 +22,6 @@ class InformeREPProveedorEmpresa extends Rotation
     {
         parent::__construct("P", "cm", "Letter");
         $this->informe = $informe;
-        $this->omitir_encabezado_tabla = true;
     }
 
     function logo()
@@ -55,19 +54,7 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
         $this->MultiCell(17, .5, utf8_decode('Informe de REP pendientes'), 0, 'C', 0);
-        $this->setX(3.59);
-        $this->SetFont('Helvetica', '', 9);
-        $this->MultiCell(17, .3, utf8_decode('Desglosado por empresa'), 0, 'C', 0);
-        $this->setXY(4.59, 2.0);
-
         $this->partidasTitle();
-
-        if($this->en_cola != "subtitulo"){
-            $this->subtitulo();
-        }else{
-            $this->omitir_encabezado_tabla = true;
-        }
-
         if ($this->en_cola != '') {
             $this->setEstilos($this->en_cola);
         }
@@ -94,10 +81,25 @@ class InformeREPProveedorEmpresa extends Rotation
                     $this->en_cola = $partida["tipo"];
                     $this->setEstilos($partida["tipo"]);
                     if ($partida["tipo"] == "partida") {
+
+                        if($partida["es_empresa_hermes"] == 1){
+                            $this->SetTextColors([
+                                "194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                                ,"194,8,8"
+                            ]);
+                        }
+
                         $this->Row([
                             $partida["indice"]
-                            , utf8_decode($partida["rfc_empresa"])
-                            , utf8_decode($partida["empresa"])
+                            , utf8_decode($partida["rfc_proveedor"])
+                            , utf8_decode($partida["proveedor"])
                             , $partida["cantidad_cfdi_f"]
                             , $partida["total_cfdi_f"]
                             , $partida["total_rep_f"]
@@ -107,19 +109,7 @@ class InformeREPProveedorEmpresa extends Rotation
                             ]
                         );
                     }
-                    else if ($partida["tipo"] == "subtitulo") {
-                        $this->etiqueta_subtitulo = $partida["etiqueta"];
-                        $this->es_del_grupo = $partida["es_empresa_hermes"];
-                        if($this->omitir_encabezado_tabla){
-                            $this->subtitulo();
-                            $this->omitir_encabezado_tabla = false;
-                        } else {
-                            if($this->es_del_grupo == 1){
-                                $this->SetTextColors(["194,8,8"]);
-                            }
-                            $this->Row([utf8_decode($partida["etiqueta"])]);
-                        }
-                    }
+
 
                     else if ($partida["tipo"] == "total") {
                         $this->Row([

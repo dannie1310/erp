@@ -8,12 +8,7 @@
                     <i class="fa fa-file-pdf"></i> Comunicados
                 </button>
                 <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
-                <!--<button @click="descargar" class="btn btn-app btn-secondary float-right" title="Descargar">
-                    <i class="fa fa-download"></i> Descargar XLS
-                </button>
-                <button @click="actualizarPolizas"  class="btn btn-app btn-secondary float-right" title="Actualizar Relación con Pólizas">
-                    <i class="fa fa-sync"></i> Descargar Comunicados
-                </button>-->
+
             </div>
         </div>
 
