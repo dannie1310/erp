@@ -341,6 +341,7 @@ class CFDSATService
         $take = 1000;
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::pendienteProcesamientoDoctosPagados()
+                ->where("uuid","=","ad84e2f6-911b-4294-a586-079ee751fa99")
                 ->skip($i)
                 ->take($take)
                 ->get();
@@ -349,6 +350,7 @@ class CFDSATService
                 try{
                     $cfd_util = new CFD($rcfd->xml);
                     $arreglo_cfd = $cfd_util->getArregloFactura();
+                    dd($arreglo_cfd);
 
                     try {
                         if(key_exists("forma_pago_p",$arreglo_cfd)){
@@ -363,7 +365,7 @@ class CFDSATService
                         //dd('1',$e->getMessage());
                     }
                 } catch (\Exception $e){
-                    //dd('2',$e->getMessage());
+                    dd('2',$e->getMessage());
                 }
 
                 if(key_exists("documentos_pagados",$arreglo_cfd)){

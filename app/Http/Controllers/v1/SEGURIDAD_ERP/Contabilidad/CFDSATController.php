@@ -52,6 +52,8 @@ class CFDSATController extends Controller
 
     public function procesaDirectorioZIPCFD(Request $request)
     {
+        $this->service->reprocesaCFDILlenadoPago();
+        return response()->json([], 200);
         /*$this->service->reprocesaCFDObtenerTipo();
         return response()->json([], 200);*/
         $respuesta =$this->service->procesaDirectorioZIPCFD();
