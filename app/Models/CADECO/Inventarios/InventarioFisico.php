@@ -45,7 +45,7 @@ class InventarioFisico extends Model
 
     public static function calcularFolio()
     {
-        $est = InventarioFisico::query()->orderBy('folio', 'DESC')->first();
+        $est = InventarioFisico::orderBy('folio', 'DESC')->first();
         return $est ? $est->folio + 1 : 1;
     }
 
@@ -91,7 +91,7 @@ class InventarioFisico extends Model
 
     public function validar()
     {
-        if(InventarioFisico::query()->where('estado', '=',0)->first() != null){
+        if(InventarioFisico::where('estado', '=',0)->first() != null){
             abort(400,'Existe un inventario físico no finalizado');
         }
         return true;
@@ -126,7 +126,5 @@ class InventarioFisico extends Model
         }else{
             return 'Cerrado';
         }
-
     }
-
 }
