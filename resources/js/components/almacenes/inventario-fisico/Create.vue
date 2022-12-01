@@ -111,7 +111,7 @@
                     1: "Total",
                     2: "Parcial"
                 },
-                id_tipo:'',
+                id_tipo: 1,
                 form: {inventario: '', almacenes: []},
                 almacenes: [],
                 almacenes_seleccionados: []
@@ -125,7 +125,7 @@
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
                 this.cargando = false;
-                this.id_tipo='';
+                this.id_tipo=1;
                 this.form.inventario='';
                 this.form.almacenes=[];
                 this.almacenes_seleccionados= [];
