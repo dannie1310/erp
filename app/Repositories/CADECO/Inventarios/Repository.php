@@ -31,15 +31,22 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     }
     public function create(array $data)
     {
-        try{
+        try {
             DB::connection('cadeco')->beginTransaction();
-             if($data ==[]){
-                   $inventario = $this->model->create($data);
-                 $this->total($inventario->id);
+            if($data['almacenes'] != [])
+            {
+                $almacenes = 'and id_almacen in (' . implode(',', $data['almacenes']) . ')';
             }else{
-                   $inventario = $this->model->create(['id_tipo'=>2]);
-                  $this->parcial($inventario->id,$data);
-             }
+                $almacenes = '';
+            }
+            $cantidad = $this->obtieneCantidadComplemento($almacenes);
+            if (array_key_exists('total',$data)) {
+                $inventario = $this->model->create($data);
+                $this->total($inventario->id, $almacenes, $cantidad);
+            } else {
+                $inventario = $this->model->create(['id_tipo' => 2]);
+                $this->parcial($inventario->id, $data, $almacenes, $cantidad);
+            }
             DB::connection('cadeco')->commit();
             return $inventario;
         }catch(\Exception $e){
@@ -48,10 +55,8 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             throw $e;
         }
     }
-    private function obtieneCantidadComplemento()
+    private function obtieneCantidadComplemento($almacenes)
     {
-
-        /*$cantidad = DB::connection('cadeco')->table('Inventarios.materiales_existencia')->where('id_obra',  Context::getIdObra())->count();*/
         $query = DB::connection('cadeco')->select(DB::raw("SELECT materiales_por_monto.id_obra,
         materiales_por_monto.obra,
         materiales_por_monto.material,
@@ -64,7 +69,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         materiales_por_monto.id_almacen,
         materiales_por_monto.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes . "
         UNION
         SELECT materiales_por_precio_unitario.id_obra,
         materiales_por_precio_unitario.obra,
@@ -78,7 +83,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         materiales_por_precio_unitario.id_almacen,
         materiales_por_precio_unitario.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes . "
         EXCEPT
         (
 
@@ -109,7 +114,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             materiales_por_monto.id_almacen,
             materiales_por_monto.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes . "
         UNION
         SELECT materiales_por_precio_unitario.id_obra,
             materiales_por_precio_unitario.obra,
@@ -123,18 +128,17 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             materiales_por_precio_unitario.id_almacen,
             materiales_por_precio_unitario.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes . "
 
         )
         )"));
         $cantidad = count($query);
         return ceil(2*$cantidad/100);
     }
-    public function total($id_inventario)
+    public function total($id_inventario, $almacenes, $cantidad)
     {
-        $cantidad = $this->obtieneCantidadComplemento();
         try {
-            $query = DB::connection('cadeco')->select(DB::raw("select 
+            $query = DB::connection('cadeco')->select(DB::raw("select
             id_almacen,
             id_material,
             existencia_sistema,
@@ -153,10 +157,10 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_existencia.id_almacen,
                 materiales_existencia.id_material
             FROM " . Context::getDatabase() . ".Inventarios.materiales_existencia materiales_existencia
-            
+
             UNION
             (
-            select top $cantidad * from 
+            select top $cantidad * from
             (
                 --INICIA AUB
                 (SELECT materiales_por_monto.id_obra,
@@ -171,7 +175,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     materiales_por_monto.id_almacen,
                     materiales_por_monto.id_material
                 FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-                WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+                WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
 
             UNION
             SELECT materiales_por_precio_unitario.id_obra,
@@ -186,7 +190,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     materiales_por_precio_unitario.id_almacen,
                     materiales_por_precio_unitario.id_material
             FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-                WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+                WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
 
                 )
             -- FIN AUB
@@ -221,7 +225,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     materiales_por_monto.id_almacen,
                     materiales_por_monto.id_material
             FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-            WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+            WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
             UNION
             SELECT materiales_por_precio_unitario.id_obra,
                     materiales_por_precio_unitario.obra,
@@ -235,18 +239,18 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                     materiales_por_precio_unitario.id_almacen,
                     materiales_por_precio_unitario.id_material
             FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-            WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+            WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
             --FIN AUB
             )
-            )  
-            
-            ) as significativas_sin_existencia
-            
+            )
+
+            ) as signifnicativas_sin_existencia
+
             )) as marbetes_inventario_total
-            where id_obra = " . Context::getIdObra() ));
-            
+            where id_obra = " . Context::getIdObra() . $almacenes));
+
             foreach ($query as $q) {
-                Marbete::query()->create([
+                Marbete::create([
                     'id_inventario_fisico' => $id_inventario,
                     'id_almacen' => $q->id_almacen,
                     'id_material' => $q->id_material,
@@ -262,10 +266,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
             throw $e;
         }
     }
-    public function parcial($id_inventario,$data){
+    public function parcial($id_inventario,$data, $almacenes, $cantidad){
     try {
-        $cantidad = $this->obtieneCantidadComplemento();
-        $query = DB::connection('cadeco')->select(DB::raw("select 
+        $query = DB::connection('cadeco')->select(DB::raw("select
             id_almacen,
             id_material,
             existencia_sistema,
@@ -302,7 +305,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_por_monto.id_almacen,
                 materiales_por_monto.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
         UNION
         SELECT materiales_por_precio_unitario.id_obra,
                 materiales_por_precio_unitario.obra,
@@ -316,7 +319,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_por_precio_unitario.id_almacen,
                 materiales_por_precio_unitario.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes. "
         --FIN AUB
         )
 
@@ -325,7 +328,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
 
         (
 
-        select top $cantidad * from 
+        select top $cantidad * from
         (
             --INICIA AUB
             (SELECT materiales_por_monto.id_obra,
@@ -340,7 +343,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_por_monto.id_almacen,
                 materiales_por_monto.id_material
             FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-            WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+            WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes."
         UNION
         SELECT materiales_por_precio_unitario.id_obra,
                 materiales_por_precio_unitario.obra,
@@ -354,7 +357,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_por_precio_unitario.id_almacen,
                 materiales_por_precio_unitario.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-            WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+            WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes."
             )
         -- FIN AUB
         EXCEPT
@@ -388,7 +391,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_por_monto.id_almacen,
                 materiales_por_monto.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_monto materiales_por_monto
-        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_monto.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
         UNION
         SELECT materiales_por_precio_unitario.id_obra,
                 materiales_por_precio_unitario.obra,
@@ -402,17 +405,17 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
                 materiales_por_precio_unitario.id_almacen,
                 materiales_por_precio_unitario.id_material
         FROM " . Context::getDatabase() . ".Inventarios.materiales_por_precio_unitario materiales_por_precio_unitario
-        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . "
+        WHERE (materiales_por_precio_unitario.percentiles <= 8) and id_obra = " . Context::getIdObra() . $almacenes ."
         --FIN AUB
         )
-        )  
-        
+        )
+
         ) as significativas_sin_existencia
-  
+
             )) as marbetes_inventario_aleatorio"));
 
             foreach ($query as $q) {
-                Marbete::query()->create([
+                Marbete::create([
                     'id_inventario_fisico' => $id_inventario,
                     'id_almacen' => $q->id_almacen,
                     'id_material' => $q->id_material,

@@ -16,6 +16,8 @@ use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\PDF\Fiscal\Comunicado;
+use App\PDF\Fiscal\InformeREP;
+use App\PDF\Fiscal\InformeREPProveedorEmpresa;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
 use DateTimeZone;
@@ -1415,7 +1417,7 @@ class CFDSATService
             ->add(public_path($dir_descarga));
         $zipper->close();
 
-        Files::eliminaDirectorio($dir_descarga);
+        //Files::eliminaDirectorio($dir_descarga);
 
         if(file_exists(public_path($nombre_zip))){
             return response()->download(public_path($nombre_zip));
@@ -2146,5 +2148,29 @@ class CFDSATService
                 }
             }
         }*/
+    }
+
+    public function obtenerInformeREPPDF($data)
+    {
+        $informe = $this->obtenerInformeREP($data);
+        $pdf = new InformeREP($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREPProveedorEmpresaPDF($data)
+    {
+        $informe = $this->obtenerInformeREPProveedorEmpresa($data);
+        $pdf = new InformeREPProveedorEmpresa($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREP($data)
+    {
+        return $this->repository->getInformeREP($data);
+    }
+
+    public function obtenerInformeREPProveedorEmpresa($data)
+    {
+        return $this->repository->getInformeREPProveedorEmpresa($data);
     }
 }

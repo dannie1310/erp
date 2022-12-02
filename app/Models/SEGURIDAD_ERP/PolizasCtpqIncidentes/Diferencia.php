@@ -245,7 +245,7 @@ class Diferencia extends Model
             ->join('Contabilidad.ListaEmpresas as empresa_referencia', 'empresa_referencia.AliasBDD','=','diferencias.base_datos_referencia')
             ->where("diferencias.activo","1")
             ->where("diferencias.tipo_busqueda",$tipo_busqueda)
-            ->groupBy(DB::raw("descripcion, diferencias.base_datos_revisada, diferencias.base_datos_referencia, empresa_revisada.Nombre, empresa_referencia.Nombre"))
+            ->groupBy(DB::raw(" ctg_tipos.descripcion, diferencias.base_datos_revisada, diferencias.base_datos_referencia, empresa_revisada.Nombre, empresa_referencia.Nombre"))
             ->get();
         return $dem;
     }

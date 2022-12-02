@@ -15,7 +15,14 @@
                             <div class="col">
                                 <select class="form-control" v-model="id_empresa">
                                     <option value>-- Empresa --</option>
-                                    <option v-for="item in empresas" v-bind:value="item.id">{{ item.nombre }}</option>
+                                    <option v-for="item in empresas" v-bind:value="item.id">{{ item.razon_social }}</option>
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <select class="form-control" v-model="id_empresa_contabilidad">
+                                    <option value>-- Empresa Contabilidad --</option>
+                                    <option v-for="item in empresas_contabilidad" v-bind:value="item.id">{{ item.nombre }}</option>
                                 </select>
                             </div>
 
@@ -81,10 +88,13 @@
                 query: {scope:['activos'], include:['poliza'], sort: 'id', order: 'desc'},
                 id_tipo_diferencia: '',
                 id_empresa:'',
+                id_empresa_contabilidad:'',
+                empresas:{},
+                empresas_contabilidad:{},
             }
         },
         mounted() {
-            this.getEmpresas();
+            this.getEmpresasContabilidad();
             this.$Progress.start();
             this.paginate()
                 .finally(() => {
@@ -106,8 +116,8 @@
                         this.cargando = false;
                     })
             },
-            getEmpresas() {
-                this.empresas = [];
+            getEmpresasContabilidad() {
+                this.empresas_contabilidad = [];
                 this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/empresa/index', {
                     params: {
@@ -117,9 +127,30 @@
                     }
                 })
                     .then(data => {
+                        this.empresas_contabilidad = data.data;
+
+                    }).finally( ()=>{
+                        this.getEmpresas();
+                    });
+            },
+
+            getEmpresas() {
+                this.empresas = [];
+                this.cargando = true;
+                return this.$store.dispatch('contabilidadGeneral/empresa-sat/index', {
+                    params: {
+                        sort: 'razon_social',
+                        order: 'asc',
+                        scope:'solicitudes',
+                    }
+                })
+                    .then(data => {
                         this.empresas = data.data;
+
+                    }).finally( ()=>{
+
                         this.cargando = false;
-                    })
+                    });
             },
 
         },
@@ -190,6 +221,11 @@
             },
             id_tipo_diferencia(id_tipo) {
                 this.$data.query.id_tipo_diferencia = id_tipo;
+                this.query.offset = 0;
+                this.paginate()
+            },
+            id_empresa_contabilidad(id_empresa_contabilidad) {
+                this.$data.query.id_empresa_contabilidad = id_empresa_contabilidad;
                 this.query.offset = 0;
                 this.paginate()
             },
