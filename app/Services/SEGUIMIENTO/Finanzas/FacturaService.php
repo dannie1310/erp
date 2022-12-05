@@ -110,6 +110,9 @@ class FacturaService
                 $data['xml_file'] = explode("base64,", $data['xml'])[1];
                 $this->guardarXML($data);
                 $this->repository->registrarXML($data, $factura);
+                if($factura){
+                    event(new EnvioCotizacion($cotizacion->invitacion, $cotizacion));
+                }
             }else{
                 $factura = $this->repository->create($data);
             }

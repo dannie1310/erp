@@ -428,7 +428,19 @@
                     </div>
                     <br />
                     <div class="row">
-                        <div class="col-md-8"></div>
+                        <div class="col-md-8" v-if="registro.xml != undefined">
+                            <label for="archivo_pdf" class="col-form-label">Adjuntar PDF: </label>
+                            <input type="file" class="form-control" id="archivo_pdf"
+                                   @change="onFileChange"
+                                   row="3"
+                                   v-validate="{ ext: ['pdf']}"
+                                   name="archivo_pdf"
+                                   data-vv-as="Soporte"
+                                   ref="archivo_pdf"
+                                   :class="{'is-invalid': errors.has('archivo_pdf')}">
+                            <div class="invalid-feedback" v-show="errors.has('archivo_pdf')">{{ errors.first('archivo_pdf') }} (pdf)</div>
+                        </div>
+                        <div class="col-md-8" v-else></div>
                         <div class="col-md-4">
                             <div class="table-responsive">
                                 <table class="table table-sm">
@@ -514,6 +526,8 @@
                     tipos_cambios: [],
                     archivo: null,
                     archivo_name: null,
+                    archivo_pdf: null,
+                    archivo_pdf_name: null,
                 }
             }
         },
@@ -786,7 +800,9 @@
                     cfdi_relacionado : this.registro.xml ? this.registro.cfdi_relacionado : '',
                     tipo_relacion : this.registro.xml ? this.registro.tipo_relacion : '',
                     serie : this.registro.xml ? this.registro.serie : '',
-                    folio : this.registro.xml ? this.registro.folio : ''
+                    folio : this.registro.xml ? this.registro.folio : '',
+                    nombre_archivo_pdf : this.registro.xml ? this.registro.archivo_pdf_name : '',
+                    archivo_pdf : this.registro.xml ? this.registro.archivo_pdf : ''
                 }).then(data=> {
                     this.salir();
                 })
@@ -794,6 +810,26 @@
             salir()
             {
                 this.$router.go(-1);
+            },
+            onFileChange(e){
+                this.registro.archivo_pdf = null;
+                var files = e.target.files || e.dataTransfer.files;
+                if (!files.length)
+                    return;
+                this.registro.archivo_pdf_nombre = files[0].name;
+                if(e.target.id == 'archivo') {
+                    this.createImage(files[0]);
+                }
+            },
+            createImage(file) {
+                var reader = new FileReader();
+                var vm = this;
+
+                reader.onload = (e) => {
+                    vm.registro.archivo_pdf = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
             },
         },
         watch: {
