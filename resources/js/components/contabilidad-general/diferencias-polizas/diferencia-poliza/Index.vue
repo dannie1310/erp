@@ -13,21 +13,21 @@
                     <div class="card-header">
                         <div class="form-row">
                             <div class="col">
-                                <select class="form-control" v-model="id_empresa">
+                                <select class="form-control" v-model="id_empresa" :disabled="cargando">
                                     <option value>-- Empresa --</option>
                                     <option v-for="item in empresas" v-bind:value="item.id">{{ item.razon_social }}</option>
                                 </select>
                             </div>
 
                             <div class="col">
-                                <select class="form-control" v-model="id_empresa_contabilidad">
+                                <select class="form-control" v-model="id_empresa_contabilidad" :disabled="cargando">
                                     <option value>-- Empresa Contabilidad --</option>
                                     <option v-for="item in empresas_contabilidad" v-bind:value="item.id">{{ item.nombre }}</option>
                                 </select>
                             </div>
 
                             <div class="col">
-                                <select class="form-control" v-model="id_tipo_diferencia">
+                                <select class="form-control" v-model="id_tipo_diferencia" :disabled="cargando">
                                     <option value>-- Tipo de Diferencia --</option>
                                     <option v-for="item in tiposDiferencia" v-bind:value="item.id">{{ item.descripcion }}</option>
                                 </select>
@@ -76,8 +76,8 @@
                     { title: 'Fecha / Hora Detección', field: 'fecha_hora_deteccion', thClass: 'fecha_hora', sortable: true},
                     { title: 'Base de Datos Revisada', field: 'base_datos_revisada', sortable: true},
                     { title: 'Base de Datos Referencia', field: 'base_datos_referencia', sortable: true},
-                    { title: 'Ejercicio', field: 'ejercicio', sortable: false, thComp: require('../../../globals/th-Filter').default},
-                    { title: 'Periodo', field: 'periodo', sortable: false, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Ejercicio', field: 'ejercicio', sortable: true, thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Periodo', field: 'periodo', sortable: true, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Tipo Poliza', field: 'tipo_poliza', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Folio Póliza', field: 'folio_poliza', sortable: false, thComp: require('../../../globals/th-Filter').default},
                     { title: 'Detalle de Error', field: 'observaciones', sortable: true, thComp: require('../../../globals/th-Filter').default},
@@ -94,19 +94,14 @@
             }
         },
         mounted() {
-            this.getEmpresasContabilidad();
             this.$Progress.start();
-            this.paginate()
-                .finally(() => {
-                    this.$Progress.finish();
-                })
+            this.getEmpresasContabilidad();
         },
         methods: {
             detectar() {
                 this.$router.push({name: 'detectar-diferencias-polizas'});
             },
             paginate() {
-                this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/incidente-poliza/paginate', { params: this.query})
                     .then(data => {
                         this.$store.commit('contabilidadGeneral/incidente-poliza/SET_INCIDENTES', data.data);
@@ -136,7 +131,6 @@
 
             getEmpresas() {
                 this.empresas = [];
-                this.cargando = true;
                 return this.$store.dispatch('contabilidadGeneral/empresa-sat/index', {
                     params: {
                         sort: 'razon_social',
@@ -148,8 +142,11 @@
                         this.empresas = data.data;
 
                     }).finally( ()=>{
+                        this.paginate()
+                            .finally(() => {
+                                this.$Progress.finish();
+                            });
 
-                        this.cargando = false;
                     });
             },
 
