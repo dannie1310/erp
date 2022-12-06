@@ -341,6 +341,8 @@ class CFDSATService
         $take = 1000;
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::pendienteProcesamientoDoctosPagados()
+                //->where("uuid","=","ad84e2f6-911b-4294-a586-079ee751fa99") 00FB75DC-04A7-424A-B25F-97977CF23A82
+                //where("uuid","=","00FB75DC-04A7-424A-B25F-97977CF23A82")
                 ->skip($i)
                 ->take($take)
                 ->get();
