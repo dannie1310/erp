@@ -70,7 +70,7 @@
                 <td class="campo" valign="top">PERIODO</td><td class="valor" valign="top">{{ $factura->fi_cubre }} al {{ $factura->ff_cubre }}</td>
             </tr>
             <tr>
-                <td class="campo" valign="top">TOTAL DE FACTURA</td><td class="valor" align="center" valign="top">{{ number_format($factura->importe, 2) }}</td>
+                <td class="campo" valign="top">TOTAL DE FACTURA</td><td class="valor" align="center" valign="top">{{ number_format($factura->total, 2) }}</td>
             </tr>
             <tr>
                 <td class="campo" valign="top">MONEDA</td><td class="valor" valign="top">{{ $factura->moneda->moneda }}</td>
