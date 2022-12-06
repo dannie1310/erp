@@ -63,7 +63,6 @@ class CFD
 
             if(!$factura_xml){
                 $errors = libxml_get_errors();
-                //dd(var_export($errors, true));
             }
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());

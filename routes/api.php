@@ -1379,7 +1379,9 @@ $api->version('v1', function ($api) {
 
     });
 
-
+    /**
+     * FINANZAS GENERAL
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas-general'], function ($api) {
         $api->group(['prefix' => 'solicitud-pago-aplicada'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@paginate');
@@ -1396,8 +1398,6 @@ $api->version('v1', function ($api) {
         });
 
     });
-
-
 
     /**
      * FINANZAS
@@ -1664,7 +1664,50 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** SEGURIDAD ERP */
+    /**
+     * SEGUIMIENTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'seguimiento'], function ($api){
+
+        $api->group(['prefix'=>'cliente'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\ClienteController@index');
+        });
+
+        $api->group(['prefix'=>'empresa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\EmpresaController@index');
+        });
+
+        $api->group(['prefix'=>'factura'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@store');
+            $api->post('CFDI', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cargarArchivo');
+        });
+
+        $api->group(['prefix'=>'ingreso-partida'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@show')->where(['id' => '[0-9]+']);
+
+        });
+
+        $api->group(['prefix'=>'moneda'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\MonedaController@index');
+        });
+
+        $api->group(['prefix'=>'proyecto'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\ProyectoController@index');
+        });
+
+        $api->group(['prefix'=>'tipo-ingreso'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@index');
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@store');
+        });
+    });
+
+    /**
+     * SEGURIDAD ERP
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
 
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
@@ -1754,7 +1797,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** SUBCONTRATOS ESTIMACIONES */
+    /**
+     * SUBCONTRATOS ESTIMACIONES
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'subcontratos-estimaciones'], function ($api){
         $api->group(['prefix'=>'descuento'], function ($api){
             $api->get('{id}/list', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\DescuentoController@list');
@@ -1794,7 +1839,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** Ventas */
+    /**
+     * Ventas
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api){
 
         $api->group(['prefix'=>'venta'], function ($api){
@@ -1808,7 +1855,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** IGH */
+    /**
+     * IGH
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
             $api->get('currentUser', 'App\Http\Controllers\v1\IGH\UsuarioController@currentUser');
@@ -1818,9 +1867,12 @@ $api->version('v1', function ($api) {
             $api->post('/por-correos', 'App\Http\Controllers\v1\IGH\UsuarioController@buscaUsuariosEmpresaPorCorreo');
         });
 
-
         $api->group(['prefix' => 'menu'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\MenuController@index');
+        });
+
+        $api->group(['prefix' => 'tipo-cambio'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\IGH\TipoCambioController@index');
         });
 
         $api->group(['prefix' => 'ubicacion'], function ($api){
@@ -1828,7 +1880,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /**SCI*/
+    /**
+     * SCI
+     */
     $api->group(['middleware'=>'api', 'prefix'=> 'SCI'], function ($api){
 
         $api->group(['prefix' => 'marca'], function ($api) {
