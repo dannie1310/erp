@@ -37,6 +37,10 @@ class GrlNotificacion extends Model
     /**
      * Attributos
      */
+    public function routeNotificationFor($notification)
+    {
+        return $this->cuenta;
+    }
 
     /**
      * Métodos

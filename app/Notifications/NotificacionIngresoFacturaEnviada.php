@@ -43,7 +43,7 @@ class NotificacionIngresoFacturaEnviada extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->subject("Factura - Prueba ERP - Registrada (" . $this->factura->proyecto->proyecto . ').')
+            ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
             ->cc(Array($this->factura->getCCNotificacionIngreso()))
             ->bcc(Array($this->factura->getCCONotificacionIngreso()))
             ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])

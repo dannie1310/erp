@@ -325,7 +325,7 @@ class FinFacIngresoFactura extends Model
                 'total' => $data['total']
             ]);
 
-            $this->enviar_correo($factura);
+            //$this->enviar_correo($factura);
 
             DB::connection('repseg')->commit();
             return $factura;
