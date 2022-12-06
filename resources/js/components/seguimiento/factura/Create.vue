@@ -801,7 +801,7 @@
                     tipo_relacion : this.registro.xml ? this.registro.tipo_relacion : '',
                     serie : this.registro.xml ? this.registro.serie : '',
                     folio : this.registro.xml ? this.registro.folio : '',
-                    nombre_archivo_pdf : this.registro.xml ? this.registro.archivo_pdf_name : '',
+                    nombre_archivo_pdf : this.registro.xml ? this.registro.archivo_pdf_nombre : '',
                     archivo_pdf : this.registro.xml ? this.registro.archivo_pdf : ''
                 }).then(data=> {
                     this.salir();
@@ -817,7 +817,7 @@
                 if (!files.length)
                     return;
                 this.registro.archivo_pdf_nombre = files[0].name;
-                if(e.target.id == 'archivo') {
+                if(e.target.id == 'archivo_pdf') {
                     this.createImage(files[0]);
                 }
             },

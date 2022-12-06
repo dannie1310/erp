@@ -4,6 +4,7 @@
 namespace App\Services\SEGUIMIENTO\Finanzas;
 
 
+use App\Events\EnvioIngresoFactura;
 use App\Events\IncidenciaCI;
 use App\Models\REPSEG\FinDimIngresoCliente;
 use App\Models\REPSEG\FinDimIngresoEmpresa;
@@ -109,9 +110,10 @@ class FacturaService
                 $factura = $this->repository->create($data);
                 $data['xml_file'] = explode("base64,", $data['xml'])[1];
                 $this->guardarXML($data);
+                $this->guardarPDF($data);
                 $this->repository->registrarXML($data, $factura);
                 if($factura){
-                    event(new EnvioCotizacion($cotizacion->invitacion, $cotizacion));
+                    event(new EnvioIngresoFactura($factura, $data['archivo_pdf']));
                 }
             }else{
                 $factura = $this->repository->create($data);
@@ -226,5 +228,12 @@ class FacturaService
         {
             abort(500, "Se ingresó un CFDI de tipo erróneo, favor de ingresar un CFDI de tipo ingreso (Factura)");
         }
+    }
+
+    private function guardarPDF($datos)
+    {
+        $xml_split = explode('base64,', $datos['archivo_pdf']);
+        $xml = base64_decode($xml_split[1]);
+        Storage::disk('pdf_emitidos')->put($datos["uuid"] . ".pdf", $xml);
     }
 }

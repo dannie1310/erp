@@ -25,3 +25,5 @@ yarn-error.log
 /public/downloads/
 /package-lock.json
 /composer.lock
+/public/pdf_emitidos
+/public/xml_emitidos

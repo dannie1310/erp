@@ -5,6 +5,7 @@ namespace App\Models\REPSEG;
 
 
 use App\Models\CORREOS\EmailRegister;
+use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDIEmitido;
 use DateTime;
 use DateTimeZone;
@@ -89,6 +90,11 @@ class FinFacIngresoFactura extends Model
     public function CFDI()
     {
         return $this->belongsTo(CFDIEmitido::class, 'idfactura','idfactura');
+    }
+
+    public function registro()
+    {
+        return $this->belongsTo(Usuario::class, 'idusuario','registra');
     }
 
     /**
@@ -456,5 +462,38 @@ class FinFacIngresoFactura extends Model
                     </strong></i>
                 </div>';
         return $body;
+    }
+
+    public function getToNotificacionIngreso()
+    {
+        $notificaciones = GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'TO')->get();
+        $correos = array();
+        foreach ($notificaciones as $notificacion)
+        {
+            $correos[] = $notificacion['cuenta'];
+        }
+        return $correos;
+    }
+
+    public function getCCNotificacionIngreso()
+    {
+        $notificaciones =  GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CC')->get();
+        $correos = array();
+        foreach ($notificaciones as $notificacion)
+        {
+            $correos[] = $notificacion['cuenta'];
+        }
+        return $correos;
+    }
+
+    public function getCCONotificacionIngreso()
+    {
+        $notificaciones = GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CCO')->get();
+        $correos = array();
+        foreach ($notificaciones as $notificacion)
+        {
+            $correos[] = $notificacion['cuenta'];
+        }
+        return $correos;
     }
 }
