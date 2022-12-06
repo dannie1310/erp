@@ -250,21 +250,10 @@ class CFD
 
     public function setDatosPago($factura_xml)
     {
-        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento');
-        dd($pagos, 1);
-        if(!($pagos)){
-            $pagos = $factura_xml->xpath('//cfdi:Comprobante//pago10:Pagos');
-        }
-        dd($pagos);
-        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
-
-        if(!count($doctos)>0){
-            dd($pagos[0]["Monto"]);
-            $doctos = $factura_xml->xpath('//cfdi:Comprobante//pago10:Pagos//pago10:DoctoRelacionado');
-            dd($doctos,"aca");
-        }
-
-        dd($doctos);
+        $ns = $factura_xml->getNamespaces(true);
+        $factura_xml->registerXPathNamespace('p', $ns['pago10']);
+        $pagos = $factura_xml->xpath('//p:Pago');
+        $doctos = $factura_xml->xpath('//p:Pago//p:DoctoRelacionado');
 
         $monto = 0 ;
         if($pagos){
