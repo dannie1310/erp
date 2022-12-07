@@ -251,6 +251,16 @@ class FinFacIngresoFactura extends Model
         }
     }
 
+    public function getTotalAttribute()
+    {
+        try {
+            return $this->partidas()->where('idpartida', 17)->first()->total_format;
+
+        } catch (\Exception $exception) {
+            return 0;
+        }
+    }
+
     /**
      * Métodos
      */

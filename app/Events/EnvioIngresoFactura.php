@@ -17,16 +17,18 @@ class EnvioIngresoFactura
 
     public $factura;
     public $archivo;
+    public $xml;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(FinFacIngresoFactura $factura, $archivo)
+    public function __construct(FinFacIngresoFactura $factura, $archivo, $xml)
     {
         $this->factura = $factura;
         $this->archivo = $archivo;
+        $this->xml = $xml;
     }
 
     /**

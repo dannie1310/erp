@@ -3,7 +3,6 @@
 namespace App\Listeners;
 
 use App\Events\EnvioIngresoFactura;
-use App\Models\IGH\Usuario;
 use App\Models\REPSEG\GrlNotificacion;
 use App\Notifications\NotificacionIngresoFacturaEnviada;
 use Illuminate\Support\Facades\Notification;
@@ -27,6 +26,6 @@ class SendIngresaFacturaNotification
     public function handle(EnvioIngresoFactura $event)
     {
         $notificaciones = GrlNotificacion::activo()->seccion(1)->proyecto($event->factura->idproyecto)->where('tipo', 'TO')->select('cuenta')->get();
-        Notification::send($notificaciones, new NotificacionIngresoFacturaEnviada($event->factura, $event->archivo));
+        Notification::send($notificaciones, new NotificacionIngresoFacturaEnviada($event->factura, $event->archivo, $event->xml));
     }
 }

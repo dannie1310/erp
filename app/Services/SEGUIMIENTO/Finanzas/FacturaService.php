@@ -113,7 +113,7 @@ class FacturaService
                 $this->guardarPDF($data);
                 $this->repository->registrarXML($data, $factura);
                 if($factura){
-                    event(new EnvioIngresoFactura($factura, $data['archivo_pdf']));
+                    event(new EnvioIngresoFactura($factura, $data['archivo_pdf'], $data['xml']));
                 }
             }else{
                 $factura = $this->repository->create($data);

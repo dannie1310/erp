@@ -12,15 +12,17 @@ class NotificacionIngresoFacturaEnviada extends Notification
     use Queueable;
     public $factura;
     public $archivo;
+    public $xml;
 
     /**
      * @param $factura
      * @param $archivo
      */
-    public function __construct(FinFacIngresoFactura $factura, $archivo)
+    public function __construct(FinFacIngresoFactura $factura, $archivo, $xml)
     {
         $this->factura = $factura;
         $this->archivo = $archivo;
+        $this->xml = $xml;
     }
 
     /**
@@ -47,7 +49,8 @@ class NotificacionIngresoFacturaEnviada extends Notification
             ->cc(Array($this->factura->getCCNotificacionIngreso()))
             ->bcc(Array($this->factura->getCCONotificacionIngreso()))
             ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
-            ->attach($this->archivo, ["as" => $this->factura->uuid . ".pdf"]);
+            ->attach($this->archivo, ["as" => $this->factura->uuid . ".pdf"])
+            ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
     }
 
     /**
