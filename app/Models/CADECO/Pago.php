@@ -488,7 +488,7 @@ class Pago extends Transaccion
             }
 
             $fac_iva = $factura->saldo/ $factura->partidas->sum('saldo');
-            
+
             $apl_manual = AplicacionManual::create([
                 'saldo' => $this->saldo,
                 'fecha' => date('Y-m-d'),
@@ -605,7 +605,7 @@ class Pago extends Transaccion
                             ->where('referencia', '=', $inventario->referencia)
                             ->whereRaw('monto_total > monto_pagado')->get();
                     }
-                    
+
                     foreach($inventarios as $inv){
                         $pago = 0;
                         if(($inv->monto_total - $inv->monto_pagado) > $pago_renta){
@@ -1081,7 +1081,7 @@ class Pago extends Transaccion
             if($transaccion->items->count() > 0)
             {
                 $antecedente = $transaccion->items[0]->antecedente;
-                if ($antecedente != 0 && $antecedente->estado != 2) {
+                if ($antecedente != null && $antecedente->estado != 2) {
                     abort( 400,"La " . $antecedente->tipo_transaccion_str . " a pagar " . $antecedente->numero_folio_format . " tiene un estado no aprobado.");
                 }
             }
