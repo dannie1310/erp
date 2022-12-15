@@ -262,7 +262,7 @@ class SolicitudCambioSubcontratoService
             $descripcion = '';
             $descripcion_error = '';
             if(is_numeric($partida["destino"])){
-                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', $partida['destino'])->orWhere("id_concepto","=",$partida['destino'])->first()){
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', "'".$partida['destino']."'")->orWhere("id_concepto","=","'".$partida['destino']."'")->first()){
                     if($concepto->es_agrupador){
                         $destino = $concepto->id_concepto;
                         $destino_path = $concepto->path;
