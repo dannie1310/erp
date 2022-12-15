@@ -262,7 +262,7 @@ class SolicitudCambioSubcontratoService
             $descripcion = '';
             $descripcion_error = '';
             if(is_numeric($partida["destino"])){
-                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', "'".$partida['destino']."'")->orWhere("id_concepto","=","'".$partida['destino']."'")->first()){
+                if($partida['destino'] && $concepto = Concepto::where('clave_concepto', '=', "'".$partida['destino']."'")->orWhere("id_concepto","=",$partida['destino'])->first()){
                     if($concepto->es_agrupador){
                         $destino = $concepto->id_concepto;
                         $destino_path = $concepto->path;
@@ -295,7 +295,7 @@ class SolicitudCambioSubcontratoService
                 $unidad_error = $partida["unidad"];
             }
             $clave_preexistente = Contrato::where("id_transaccion","=", $data->id_contrato_proyectado)
-                ->where("clave","=",$partida["clave"])->first();
+                ->where("clave","=","'".$partida["clave"]."'")->first();
             if($clave_preexistente){
                 $clave_error = $partida["clave"];
             } else {
