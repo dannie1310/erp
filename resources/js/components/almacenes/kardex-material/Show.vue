@@ -1,158 +1,111 @@
 <template>
     <span>
-         <button @click="find" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
-              <i class="fa fa-eye"></i>
-         </button>
-        <div class="modal fade" ref="modal" role="dialog">
-            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-sign-in"></i> ENTRADA DE ALMACÉN</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+        <div  v-if="!pago">
+            <div class="row" >
+                <div class="col-md-12">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="sr-only">Cargando...</span>
                     </div>
-                    <form role="form" @submit.prevent="validate">
-                        <div class="modal-body">
-                            <div class="row"  v-if="entrada">
-                                <div class="col-12">
-                                    <div class="invoice p-3 mb-3">
-                                        <div class="row">
-                                            <div class="col-12">
-                                                <b>Datos de la Entrada de Almacén</b>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="table-responsive col-md-12">
-                                                <table class="table table-striped">
-                                                    <tbody>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Empresa:</b></td>
-                                                            <td class="bg-gray-light" colspan="5">{{entrada.empresa_razon_social}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Folio:</b></td>
-                                                            <td class="bg-gray-light">{{entrada.numero_folio_format}}</td>
-                                                            <td class="bg-gray-light"><b>Fecha:</b></td>
-                                                            <td class="bg-gray-light">{{entrada.fecha_format}}</td>
-                                                            <td class="bg-gray-light"><b>Referencia:</b></td>
-                                                            <td class="bg-gray-light">{{entrada.referencia}}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="bg-gray-light"><b>Orden de Compra:</b></td>
-                                                            <td class="bg-gray-light">{{entrada.orden_compra_numero_folio_format}}</td>
-                                                            <td class="bg-gray-light"><b>Solicitud:</b></td>
-                                                            <td class="bg-gray-light">{{entrada.solicitud_numero_folio_format}}</td>
-                                                            <td class="bg-gray-light"></td>
-                                                            <td class="bg-gray-light"></td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                         <div class="row">
-                                            <div class="col-12">
-                                                <b>Detalle de las partidas</b>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="table-responsive col-md-12">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th>#</th>
-                                                            <th class="no_parte">No. de Parte</th>
-                                                            <th>Material</th>
-                                                            <th>Unidad</th>
-                                                            <th>Cantidad</th>
-                                                            <th>Destino</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <template v-for="(partida, i) in entrada.partidas.data">
-                                                        <tr >
-                                                            <td>{{i+1}}</td>
-                                                            <td>{{partida.material_numero_parte}}</td>
-                                                            <td >{{partida.material_descripcion}}</td>
-                                                            <td>{{partida.unidad}}</td>
-                                                            <td>{{partida.cantidad_format}}</td>
-                                                            <td v-if="partida.destino_path" :title="`${partida.destino_path}`"><u>{{partida.destino_descripcion}}</u></td>
-                                                            <td v-else >{{partida.destino_descripcion}}</td>
-                                                        </tr>
-                                                        <tr v-if="partida.contratista">
-                                                            <td colspan="2">
-                                                                <span  v-if="partida.contratista.con_cargo == 0">
-                                                                    <i class="fa fa-user-o" aria-hidden="true" ></i>
-                                                                    A Consignación de:
-                                                                </span>
-                                                                <span v-else >
-                                                                    <i class="fa fa-user" aria-hidden="true"  ></i>
-                                                                    Con cargo a:
-                                                                </span>
-                                                            </td>
-                                                            <td colspan="5">
-                                                                {{partida.contratista.empresa.razon_social}}
-                                                            </td>
-                                                        </tr>
-                                                    </template>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-2">
-                                                <b>Observaciones:</b>
-                                            </div>
-                                            <div class="col-sm-10">
-                                               {{entrada.observaciones}}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div  v-if="entrada.transacciones_relacionadas"  class="card">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class="col-md-12">
-                                                <label ><i class="fas fa-clone" style="padding-right:3px"></i>Transacciones Relacionadas:</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col-12 table-responsive">
-                                                <table class="table table-striped">
-                                                    <thead>
-                                                        <tr>
-                                                            <th class="bg-gray-light index_corto">#</th>
-                                                            <th class="bg-gray-light fecha_hora">Tipo</th>
-                                                            <th class="bg-gray-light fecha">Folio</th>
-                                                            <th class="bg-gray-light fecha">Fecha</th>
-                                                            <th class="bg-gray-light fecha_hora">Fecha/Hora Registro</th>
-                                                            <th class="bg-gray-light">Concepto</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                        <tr v-for="(transaccion, i) in entrada.transacciones_relacionadas">
-                                                            <td >{{i+1}}</td>
-                                                            <td >{{transaccion.tipo_transaccion}}</td>
-                                                            <td >{{transaccion.numero_folio}}</td>
-                                                            <td >{{transaccion.fecha}}</td>
-                                                            <td >{{transaccion.fecha_hora_registro}}</td>
-                                                            <td >{{transaccion.concepto}}</td>
-                                                        </tr>
-
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                </div>
+            </div>
+        </div>
+        <div v-else>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row">
+                            <div class="col-md-6">
+                                <h5>Folio: &nbsp; <b>{{pago.numero_folio_format}}</b></h5>
+                            </div>
+                            <div class="col-md-6" align="right">
+                                <h5>Fecha: <b>{{pago.fecha_format}}</b></h5>
                             </div>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    <div class="row">
+                        <div class="table-responsive col-md-12">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Beneficiario:</b></td>
+                                    <td class="bg-gray-light" colspan="3">{{pago.empresa ? pago.empresa.razon_social : pago.destino}}</td>
+                                    <td class="bg-gray-light"><b>Cuenta:</b></td>
+                                    <td class="bg-gray-light">{{pago.cuenta.numero}} ( {{pago.cuenta.abreviatura}} )</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Concepto:</b></td>
+                                    <td class="bg-gray-light" colspan="5">{{pago.observaciones.toLocaleUpperCase()}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Estado:</b></td>
+                                    <td class="bg-gray-light">{{pago.estado_string}}</td>
+                                    <td class="bg-gray-light"><b>Tipo:</b></td>
+                                    <td class="bg-gray-light">{{pago.tipo_pago}}</td>
+                                    <td class="bg-gray-light"><b>Importe Pagado:</b></td>
+                                    <td class="bg-gray-light">{{pago.monto_format}}</td>
+                                </tr>
+                                <tr v-if="pago.usuario">
+                                    <td class="bg-gray-light"><b>Usuario Registró:</b></td>
+                                    <td class="bg-gray-light" colspan="5">{{pago.usuario.nombre}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
-                    </form>
+                    </div>
+                    <hr>
+                    <div class="row" v-if="pago.antecedente || pago.ordenesPago">
+                            <div class="col-md-12">
+                                <h6><b>Transacción Pagada</b></h6>
+                            </div>
+                    </div>
+                    <div class="row" v-if="pago.antecedente">
+                        <div class="table-responsive col-md-12">
+                            <table class="table">
+                                <tbody>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Folio:</b></td>
+                                    <td class="bg-gray-light">{{pago.antecedente.numero_folio}}</td>
+                                    <td class="bg-gray-light"><b>Fecha:</b></td>
+                                    <td class="bg-gray-light">{{pago.antecedente.fecha.substr(0, 10)}}</td>
+                                    <td class="bg-gray-light"><b>Tipo:</b></td>
+                                    <td class="bg-gray-light">{{pago.tipo_antecedente}}</td>
+                                    <td class="bg-gray-light"><b>Importe:</b></td>
+                                    <td class="bg-gray-light">{{ '$ '+parseFloat(pago.antecedente.monto).formatMoney(2)}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                    <td class="bg-gray-light" colspan="7">{{pago.antecedente.observaciones}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row" v-if="pago.ordenesPago">
+                        <div class="table-responsive col-md-12">
+                            <table class="table">
+                                <tbody v-for="(partida, i) in pago.ordenesPago.data" >
+                                <tr>
+                                    <td class="bg-gray-light"><b>Folio:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.numero_folio}}</td>
+                                    <td class="bg-gray-light"><b>Fecha:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.fecha.substr(0, 10)}}</td>
+                                    <td class="bg-gray-light"><b>Tipo:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.tipo}}</td>
+                                    <td class="bg-gray-light"><b>Importe:</b></td>
+                                    <td class="bg-gray-light">{{partida.factura.monto_format}}</td>
+                                </tr>
+                                <tr>
+                                    <td class="bg-gray-light"><b>Observaciones:</b></td>
+                                    <td class="bg-gray-light" colspan="8">{{partida.factura.observaciones}}</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                        <i class="fa fa-angle-left"></i>
+                        Regresar
+                    </button>
                 </div>
             </div>
         </div>
@@ -160,33 +113,39 @@
 </template>
 
 <script>
-    export default {
-        name: "entrada-almacen-show",
-        props: ['id' , 'pagina'],
-        data() {
-            return {
-                partidas: ''
-            }
+export default {
+    name: "pago-show",
+    props: ['id'],
+    mounted() {
+        this.find();
+    },
+    methods: {
+        salir(){
+            this.$router.push({name: 'pago'});
         },
-        methods: {
-            find(){
-                this.partidas = '';
-                this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', null);
-                return this.$store.dispatch('almacenes/entrada-almacen/find', {
-                    id: this.id,
-                    params: { include: ['partidas','partidas.contratista','transacciones_relacionadas'] }
-                }).then(data => {
-                    this.$store.commit('almacenes/entrada-almacen/SET_ENTRADA', data);
-                    this.partidas = this.entrada.partidas.data;
-                    $(this.$refs.modal).appendTo('body')
-                    $(this.$refs.modal).modal('show');
+        find() {
+            this.$store.commit('finanzas/pago/SET_PAGO', null);
+            return this.$store.dispatch('finanzas/pago/find', {
+                id: this.id,
+                params: {include: ['moneda', 'cuenta', 'empresa', 'usuario', 'antecedente', 'ordenesPago.factura']}
+            })
+                .then(data => {
+                    this.$store.commit('finanzas/pago/SET_PAGO', data);
+                    this.cargando = false;
                 })
-            },
+                .finally(() => {
+                    this.cargando = false;
+                })
         },
-        computed: {
-            entrada() {
-                return this.$store.getters['almacenes/entrada-almacen/currentEntrada'];
-            }
+    },
+    computed: {
+        pago() {
+            return this.$store.getters['finanzas/pago/currentPago']
         }
     }
+}
 </script>
+
+<style scoped>
+
+</style>

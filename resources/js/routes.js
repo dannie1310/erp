@@ -887,7 +887,19 @@ export const routes = [
                                     middleware: [auth, context, permission],
                                     permission: 'consultar_salida_almacen'
                                 }
-                            }
+                            },
+                            {
+                                path: ':id/kardex',
+                                name: 'consultar-almacen',
+                                component: require('./components/almacenes/kardex-material/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Kardex',
+                                    breadcrumb: {name: 'CONSULTAR', parent: 'kardex-material'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'registrar_pago'
+                                }
+                            },
                         ]
                     },
                 ]

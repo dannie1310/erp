@@ -1,14 +1,14 @@
 <template>
     <div class="btn-group">
-        <Show v-bind:id="value.id"  v-bind:pagina="value.pagina"/>
+        <router-link :to="{ name: 'consultar-almacen', params: {id: this.value.id}}" type="button" class="btn btn-sm btn-outline-secondary" title="Ver">
+            <i class="fa fa-eye"></i>
+        </router-link>
     </div>
 </template>
 
 <script>
-    import Show from "../Show";
     export default {
         name: "ActionButtons",
-        components: { Show},
         props: ['value']
     }
 </script>
