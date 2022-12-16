@@ -25,7 +25,7 @@ export default {
             ],
             data: [],
             total: 0,
-            query: {include:[], scope: 'tipoMaterial', sort:'id_almacen', order:'desc'},
+            query: {include:[], scope: 'tipoMaterial', sort:'descripcion', order:'asc'},
             estado: "",
             cargando: false
         }

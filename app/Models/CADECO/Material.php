@@ -280,6 +280,13 @@ class Material extends Model
         return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8);
     }
 
+    public function scopeMaterialPorAlmacen($query, $id_almacen)
+    {
+        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id_almacen)
+            ->select('materiales.*')->distinct();
+    }
+
+
     public function validarExistente()
     {
         $articulo = $this->where('numero_parte','=', $this->numero_parte)->first();
