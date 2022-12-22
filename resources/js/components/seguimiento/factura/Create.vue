@@ -433,7 +433,7 @@
                             <input type="file" class="form-control" id="archivo_pdf"
                                    @change="onFileChange"
                                    row="3"
-                                   v-validate="{ ext: ['pdf']}"
+                                   v-validate="{required: true, ext: ['pdf']}"
                                    name="archivo_pdf"
                                    data-vv-as="Soporte"
                                    ref="archivo_pdf"
@@ -871,8 +871,9 @@
                     serie : this.registro.xml ? this.registro.serie : '',
                     folio : this.registro.xml ? this.registro.folio : '',
                     nombre_archivo_pdf : this.registro.xml ? this.registro.archivo_pdf_nombre : '',
-                    archivo_pdf : this.registro.xml ? this.registro.archivo_pdf : ''
-                }).then(data=> {
+                    archivo_pdf : this.registro.xml ? this.registro.archivo_pdf : '',
+                    retencionesLocales : this.registro.xml ? this.registro.retencionesLocales : ''
+                 }).then(data=> {
                     this.salir();
                 })
             },
