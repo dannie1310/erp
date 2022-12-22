@@ -354,11 +354,11 @@
                             </div>
                         </div>
                     </div>
-                    <div class="row" v-if="registro.xml == undefined">
+                    <div class="row" >
                         <div class="col-md-12">
                             <div class="pull-right">
-                               <!-- <button type="button" class="btn btn-success btn-sm" @click="altaPartida()"><i class="fa fa-upload"></i>Alta de Partida</button> -->
-                                <button type="button" class="btn btn-success btn-sm" @click="agregarPartida()"><i class="fa fa-plus"></i>Agregar Partida</button>
+                                <descuento-create @created="getPartidas" />
+                                <button v-if="registro.xml == undefined" type="button" class="btn btn-success btn-sm" @click="agregarPartida()"><i class="fa fa-plus"></i>Agregar Partida</button>
                             </div>
                         </div>
                     </div>
@@ -428,7 +428,7 @@
                     </div>
                     <br />
                     <div class="row">
-                        <div class="col-md-8" v-if="registro.xml != undefined">
+                        <div class="col-md-7" v-if="registro.xml != undefined">
                             <label for="archivo_pdf" class="col-form-label">Adjuntar PDF: </label>
                             <input type="file" class="form-control" id="archivo_pdf"
                                    @change="onFileChange"
@@ -440,22 +440,90 @@
                                    :class="{'is-invalid': errors.has('archivo_pdf')}">
                             <div class="invalid-feedback" v-show="errors.has('archivo_pdf')">{{ errors.first('archivo_pdf') }} (pdf)</div>
                         </div>
-                        <div class="col-md-8" v-else></div>
-                        <div class="col-md-4">
+                        <div class="col-md-7" v-else></div>
+                        <div class="col-md-5">
                             <div class="table-responsive">
-                                <table class="table table-sm">
+                                <table class="table table-sm" v-if="registro.xml == undefined">
                                     <tbody>
                                         <tr>
                                             <th style="width:50%">Subtotal:</th>
-                                            <td style="text-align: right">{{parseFloat(registro.subtotal).formatMoney(2,'.',',')}}</td>
+                                            <td style="text-align: right">{{parseFloat(registro.importe_conceptos).formatMoney(2,'.',',')}}</td>
                                         </tr>
-                                        <tr v-if="registro.xml != undefined">
+                                        <tr>
+                                            <th style="width:50%">Descuentos Antes:</th>
+                                            <td style="text-align: right">{{parseFloat(Math.abs(registro.importe_partidas_antes_suma - registro.importe_partidas_antes_resta)).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>IVA</th>
+                                            <td style="text-align: right">{{parseFloat(registro.iva).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th style="width:50%">Descuentos despues:</th>
+                                            <td style="text-align: right">{{parseFloat(Math.abs(registro.importe_partidas_despues_suma - registro.importe_partidas_despues_resta)).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total:</th>
+                                            <td style="text-align: right">{{parseFloat(registro.total).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table table-sm" v-else>
+                                    <tbody>
+                                        <tr>
+                                            <th style="width:50%">Subtotal:</th>
+                                            <td style="text-align: right" colspan="2">{{parseFloat(registro.importe_conceptos).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                        <tr v-for="(retencion, i) in registro.retencionesLocales" v-if="retencion.antes_iva == true">
+                                            <th style="width:50%">
+                                                <select
+                                                    type="text"
+                                                    :name="`retencion[${i}]`"
+                                                    data-vv-as="Descuento"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    :id="`retencion[${i}]`"
+                                                    v-model="retencion.id"
+                                                    :class="{'is-invalid': errors.has(`retencion[${i}]`)}">
+                                                    <option value>--Seleccionar--</option>
+                                                    <option v-for="partida in registro.tipos_partida" :value="partida.id">{{ partida.partida }}</option>
+                                                </select>
+                                                <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
+                                                 <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" :id="retencion.antes_iva" v-model="retencion.antes_iva" :disabled="retencion.id == ''" v-on:change="importeTotalPartidas" v-on:click="importeTotalPartidas">
+                                                    <label class="form-check-label" for="antes_iva">¿Antes de IVA?</label>
+                                                </div>
+                                            </th>
+                                            <td style="text-align: right">{{parseFloat(retencion.total).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                        <tr v-if="registro.xml != undefined" >
                                             <th style="width:50%">Descuentos:</th>
                                             <td style="text-align: right">{{parseFloat(registro.descuento).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                         <tr>
                                             <th>IVA</th>
                                             <td style="text-align: right">{{parseFloat(registro.iva).formatMoney(2,'.',',')}}</td>
+                                        </tr>
+                                        <tr v-for="(retencion, i) in registro.retencionesLocales" v-if="retencion.antes_iva == false">
+                                            <th style="width:50%">
+                                                <select
+                                                    type="text"
+                                                    :name="`retencion[${i}]`"
+                                                    data-vv-as="Descuento"
+                                                    v-validate="{required: true}"
+                                                    class="form-control"
+                                                    :id="`retencion[${i}]`"
+                                                    v-model="retencion.id"
+                                                    :class="{'is-invalid': errors.has(`retencion[${i}]`)}">
+                                                    <option value>--Seleccionar--</option>
+                                                    <option v-for="partida in registro.tipos_partida" :value="partida.id">{{ partida.partida }}</option>
+                                                </select>
+                                                <div class="invalid-feedback" v-show="errors.has(`retencion[${i}]`)">{{ errors.first(`retencion[${i}]`) }}</div>
+                                                 <div class="form-check">
+                                                    <input type="checkbox" class="form-check-input" :id="retencion.antes_iva" v-model="retencion.antes_iva" :disabled="retencion.id == ''" v-on:change="importeTotalPartidas" v-on:click="importeTotalPartidas">
+                                                    <label class="form-check-label" for="antes_iva">¿Antes de IVA?</label>
+                                                </div>
+                                            </th>
+                                            <td style="text-align: right">{{parseFloat(retencion.total).formatMoney(2,'.',',')}}</td>
                                         </tr>
                                         <tr>
                                             <th>Total:</th>
@@ -487,9 +555,10 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import ConceptoCreate from "./partials/ConceptoCreate";
+    import DescuentoCreate from "./partials/DescuentoCreate";
     export default {
         name: "create",
-        components: {Datepicker, es, ConceptoCreate},
+        components: {Datepicker, es, ConceptoCreate, DescuentoCreate},
         props: ['datos'],
         data() {
             return {

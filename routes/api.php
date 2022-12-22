@@ -1688,7 +1688,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix'=>'ingreso-partida'], function ($api){
             $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@index');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@show')->where(['id' => '[0-9]+']);
-
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@store');
         });
 
         $api->group(['prefix'=>'moneda'], function ($api){

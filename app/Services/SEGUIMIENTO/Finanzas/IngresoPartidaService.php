@@ -28,4 +28,13 @@ class IngresoPartidaService
     {
         return $this->repository->show($id);
     }
+
+    public function store($data)
+    {
+        try {
+            return $this->repository->create($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
 }

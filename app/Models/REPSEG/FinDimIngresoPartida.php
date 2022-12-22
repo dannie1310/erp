@@ -12,6 +12,11 @@ class FinDimIngresoPartida extends Model
     protected $table = 'fin_dim_ingreso_partidas';
     protected $primaryKey = 'idpartida';
     public $timestamps = false;
+    protected $fillable = [
+        'partida',
+        'operador',
+        'nombre_operador'
+    ];
 
     /**
      * Relaciones
