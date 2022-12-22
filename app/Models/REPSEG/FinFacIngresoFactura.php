@@ -297,11 +297,11 @@ class FinFacIngresoFactura extends Model
             $datos_factura = array_except($datos_factura, 'total');
             $datos_factura = array_except($datos_factura, 'importe_partidas_antes');
             $datos_factura = array_except($datos_factura, 'importe_partidas_despues');
-            $fecha = New DateTime($data["fecha"]);
+            $fecha = new DateTime($data["fecha"]);
             $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $fi_cubre = New DateTime($data["fi_cubre"]);
+            $fi_cubre = new DateTime($data["fi_cubre"]);
             $fi_cubre->setTimezone(new DateTimeZone('America/Mexico_City'));
-            $ff_cubre = New DateTime($data["ff_cubre"]);
+            $ff_cubre = new DateTime($data["ff_cubre"]);
             $ff_cubre->setTimezone(new DateTimeZone('America/Mexico_City'));
             $datos_factura['fecha'] = $fecha->format('Y-m-d');
             $datos_factura['fi_cubre'] = $fi_cubre->format('Y-m-d');
@@ -319,16 +319,26 @@ class FinFacIngresoFactura extends Model
                 }
             }
 
+            if (array_key_exists('retencionesLocales', $data))
+            {
+                foreach (array_only($data, 'retencionesLocales')['retencionesLocales'] as $retencion)
+                {
+                    $factura->partidas()->create($retencion);
+                }
+            }
+
             $factura->partidas()->create([
                 'idfactura' => $factura->getKey(),
                 'idpartida' => 15,
                 'total' => $data['importe']
             ]);
+
             $factura->partidas()->create([
                 'idfactura' => $factura->getKey(),
                 'idpartida' => 16,
                 'total' => $data['iva']
             ]);
+
             $factura->partidas()->create([
                 'idfactura' => $factura->getKey(),
                 'idpartida' => 17,
