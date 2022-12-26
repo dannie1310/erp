@@ -67,12 +67,17 @@ class MaterialController extends Controller
 
     public function destroy(DeleteMaterialRequest $request, $id)
     {
-        return $this->traitDestroy($request, $id);      
+        return $this->traitDestroy($request, $id);
     }
 
     public function buscarMateriales(Request $request){
         $materiales = $this->service->buscarMateriales($request->all());
         return $this->respondWithCollection($materiales);
+    }
+
+    public function materialPorAlmacen(Request $request, $id)
+    {
+        return $this->materialPorAlmacen($id);
     }
 }
 

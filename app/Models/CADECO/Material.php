@@ -282,7 +282,7 @@ class Material extends Model
 
     public function scopeMaterialPorAlmacen($query, $id_almacen)
     {
-        return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id_almacen)
+        return $query->join('inventaridos', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id_almacen)
             ->select('materiales.*')->distinct();
     }
 
@@ -420,5 +420,10 @@ class Material extends Model
     {
         return $query->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
             ->whereRaw('inventarios.saldo > 0')->select('materiales.*')->distinct();
+    }
+
+    public function material_por_almacen($id)
+    {
+        dd($id);
     }
 }
