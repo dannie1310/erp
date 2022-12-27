@@ -872,7 +872,7 @@
                     folio : this.registro.xml ? this.registro.folio : '',
                     nombre_archivo_pdf : this.registro.xml ? this.registro.archivo_pdf_nombre : '',
                     archivo_pdf : this.registro.xml ? this.registro.archivo_pdf : '',
-                    retencionesLocales : this.registro.xml ? this.registro.retencionesLocales : ''
+                    retencionesLocales : this.registro.xml ? this.registro.retencionesLocales : []
                  }).then(data=> {
                     this.salir();
                 })
