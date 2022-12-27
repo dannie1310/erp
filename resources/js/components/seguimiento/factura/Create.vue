@@ -428,7 +428,7 @@
                     </div>
                     <br />
                     <div class="row">
-                        <div class="col-md-7" v-if="registro.xml != undefined">
+                        <div class="col-md-7">
                             <label for="archivo_pdf" class="col-form-label">Adjuntar PDF: </label>
                             <input type="file" class="form-control" id="archivo_pdf"
                                    @change="onFileChange"
@@ -440,7 +440,6 @@
                                    :class="{'is-invalid': errors.has('archivo_pdf')}">
                             <div class="invalid-feedback" v-show="errors.has('archivo_pdf')">{{ errors.first('archivo_pdf') }} (pdf)</div>
                         </div>
-                        <div class="col-md-7" v-else></div>
                         <div class="col-md-5">
                             <div class="table-responsive">
                                 <table class="table table-sm" v-if="registro.xml == undefined">
@@ -870,8 +869,8 @@
                     tipo_relacion : this.registro.xml ? this.registro.tipo_relacion : '',
                     serie : this.registro.xml ? this.registro.serie : '',
                     folio : this.registro.xml ? this.registro.folio : '',
-                    nombre_archivo_pdf : this.registro.xml ? this.registro.archivo_pdf_nombre : '',
-                    archivo_pdf : this.registro.xml ? this.registro.archivo_pdf : '',
+                    nombre_archivo_pdf : this.registro.archivo_pdf_nombre,
+                    archivo_pdf : this.registro.archivo_pdf,
                     retencionesLocales : this.registro.xml ? this.registro.retencionesLocales : []
                  }).then(data=> {
                     this.salir();

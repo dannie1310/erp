@@ -117,8 +117,9 @@ class FacturaService
                 }
             }else{
                 $factura = $this->repository->create($data);
+                $this->guardarPDF($data);
                 if($factura){
-                    event(new EnvioIngresoFactura($factura, null, null));
+                    event(new EnvioIngresoFactura($factura, $data['archivo_pdf'], null));
                 }
             }
             return $factura;

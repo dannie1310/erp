@@ -50,7 +50,8 @@ class NotificacionIngresoFacturaEnviada extends Notification
                 ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
                 ->cc(Array($this->factura->getCCNotificacionIngreso()))
                 ->bcc(Array($this->factura->getCCONotificacionIngreso()))
-                ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura]);
+                ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
+                ->attach($this->archivo, ["as" => $this->factura->numero . ".pdf"]);
         }else{
             return (new MailMessage)
                 ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
