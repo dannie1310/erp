@@ -117,6 +117,9 @@ class FacturaService
                 }
             }else{
                 $factura = $this->repository->create($data);
+                if($factura){
+                    event(new EnvioIngresoFactura($factura, null, null));
+                }
             }
             return $factura;
         } catch (\Exception $e) {

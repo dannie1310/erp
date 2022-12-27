@@ -44,13 +44,22 @@ class NotificacionIngresoFacturaEnviada extends Notification
      */
     public function toMail($notifiable)
     {
-        return (new MailMessage)
-            ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
-            ->cc(Array($this->factura->getCCNotificacionIngreso()))
-            ->bcc(Array($this->factura->getCCONotificacionIngreso()))
-            ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
-            ->attach($this->archivo, ["as" => $this->factura->uuid . ".pdf"])
-            ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
+        if($this->xml == null)
+        {
+            return (new MailMessage)
+                ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
+                ->cc(Array($this->factura->getCCNotificacionIngreso()))
+                ->bcc(Array($this->factura->getCCONotificacionIngreso()))
+                ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura]);
+        }else{
+            return (new MailMessage)
+                ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
+                ->cc(Array($this->factura->getCCNotificacionIngreso()))
+                ->bcc(Array($this->factura->getCCONotificacionIngreso()))
+                ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
+                ->attach($this->archivo, ["as" => $this->factura->uuid . ".pdf"])
+                ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
+        }
     }
 
     /**
