@@ -75,9 +75,14 @@ class MaterialController extends Controller
         return $this->respondWithCollection($materiales);
     }
 
-    public function materialPorAlmacen(Request $request, $id)
+    public function materialPorAlmacen(Request $request)
     {
-        return $this->materialPorAlmacen($id);
+        return $this->service->materialPorAlmacen($request->all());
+    }
+
+    public function materialHistorico(Request $request)
+    {
+        return $this->service->materialHistorico($request->all());
     }
 }
 

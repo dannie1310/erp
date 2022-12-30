@@ -39,4 +39,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
         return $this->model->material_por_almacen($data);
     }
+
+    public function materialHistorico($id, $id_almacen)
+    {
+        return $this->model->material_historico($id, $id_almacen);
+    }
 }

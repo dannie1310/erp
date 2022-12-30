@@ -280,13 +280,6 @@ class Material extends Model
         return $query->whereRaw('LEN(nivel) > 4')->where('unidad','<>','jornal')->where('tipo_material', '!=', 8);
     }
 
-    public function scopeMaterialPorAlmacen($query, $id_almacen)
-    {
-        return $query->join('inventaridos', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id_almacen)
-            ->select('materiales.*')->distinct();
-    }
-
-
     public function validarExistente()
     {
         $articulo = $this->where('numero_parte','=', $this->numero_parte)->first();
@@ -424,6 +417,86 @@ class Material extends Model
 
     public function material_por_almacen($id)
     {
-        dd($id);
+        $array = [];
+        $total = 0;
+        $pagado = 0;
+        $x_pagar = 0;
+
+        $materiales = $this->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
+            ->selectRaw('materiales.id_material, sum(inventarios.cantidad) as existencia, sum(inventarios.monto_total) as total, sum(inventarios.monto_pagado) as pagado, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar')
+            ->groupBy('materiales.id_material')->get();
+
+        foreach ($materiales as $key => $material)
+        {
+            $ma = self::find($material->id_material);
+            $array[$key]['descripcion'] = $ma->descripcion;
+            $array[$key]['id'] = $ma->id_material;
+            $array[$key]['unidad'] = $ma->unidad;
+            $array[$key]['existencia'] = number_format($material->existencia,2,".", ",");
+            $array[$key]['total'] = number_format($material->total,2,".", ",");
+            $array[$key]['pagado'] = number_format($material->pagado, 2, ".", ",");
+            $array[$key]['por_pagar'] = number_format($material->por_pagar, 2, ".", ",");
+            $total +=  $material->total;
+            $pagado += $material->pagado;
+            $x_pagar += $material->por_pagar;
+        }
+       return [
+           'materiales' => $array,
+           'totales' => [
+               'total' => number_format($total,2,".",","),
+               'pagado' => number_format($pagado,2,".",","),
+               'x_pagar' => number_format($x_pagar,2,".",",")
+           ]
+       ];
+    }
+
+    public function material_historico($id, $id_almacen)
+    {
+        $material = self::find($id);
+        $array = [];
+        $entrada = 0;
+        $salida = 0;
+        $existencia = 0;
+        $adquirido = 0;
+        $pagado = 0;
+        $x_pagar = 0;
+
+        $inventarios = Transaccion::join('items', 'transacciones.id_transaccion','items.id_transaccion')
+            ->join('inventarios', 'inventarios.id_item', 'items.id_item')
+            ->where('items.id_almacen', '=', $id_almacen)
+            ->where('items.id_material', '=', $id)
+            ->selectRaw('transacciones.*, items.*, inventarios.*')
+            ->orderBy('numero_folio', 'ASC')->get();
+
+        foreach ($inventarios as $key => $inventario)
+        {
+            $fecha= date_create($inventario->fecha);
+            $array[$key]['fecha'] = date_format($fecha,"d/m/Y");
+            $array[$key]['unidad'] = $inventario->unidad;
+            $array[$key]['entrada'] = number_format($inventario->tipo_transaccion == 33 ? $inventario->cantidad : 0,2,".", ",");
+            $array[$key]['salida'] = number_format($inventario->tipo_transaccion == 34 ? $inventario->cantidad : 0, 2, ".", ",");
+            $array[$key]['existencia'] = number_format($inventario->cantidad, 2, ".", ",");
+            $array[$key]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
+            $array[$key]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
+            $array[$key]['x_pagar'] =  number_format($inventario->monto_total - $inventario->monto_pagado,2,".",",");
+            $array[$key]['referencia'] = 'REM #'.$inventario->numero_folio;
+            $entrada+= $inventario->tipo_transaccion == 33 ? $inventario->cantidad : 0;
+            $salida+= $inventario->tipo_transaccion == 34 ? $inventario->cantidad : 0;
+            $existencia += $inventario->cantidad;
+            $adquirido += $inventario->monto_total;
+            $pagado += $inventario->monto_pagado;
+            $x_pagar += $inventario->monto_total - $inventario->monto_pagado;
+        }
+        return [
+            'inventarios' => $array,
+            'totales' => [
+                'entrada' => number_format($entrada,2,".",","),
+                'salida' => number_format($salida,2,".",","),
+                'existencia' => number_format($existencia,2,".",","),
+                'adquirido' => number_format($adquirido,2,".",","),
+                'pagado' => number_format($pagado,2,".",","),
+                'x_pagar' => number_format($x_pagar,2,".",","),
+            ]
+        ];
     }
 }

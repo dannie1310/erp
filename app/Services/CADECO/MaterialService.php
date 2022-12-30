@@ -103,6 +103,11 @@ class MaterialService
 
     public function materialPorAlmacen($id)
     {
-        return $this->repository->materialPorAlmacen($id);
+        return $this->repository->materialPorAlmacen($id['id']);
+    }
+
+    public function materialHistorico($data)
+    {
+        return $this->repository->materialHistorico($data['id'], $data['id_almacen']);
     }
 }

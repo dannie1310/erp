@@ -177,6 +177,8 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@update')->where(['id' => '[0-9]+']);
             $api->get('buscarMateriales', 'App\Http\Controllers\v1\CADECO\MaterialController@buscarMateriales');
+            $api->get('porAlmacen', 'App\Http\Controllers\v1\CADECO\MaterialController@materialPorAlmacen');
+            $api->get('historico', 'App\Http\Controllers\v1\CADECO\MaterialController@materialHistorico');
         });
 
         // MONEDA
