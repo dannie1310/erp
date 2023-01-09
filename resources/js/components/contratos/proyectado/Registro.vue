@@ -60,7 +60,7 @@
                                 <i class="fa fa-spin fa-spinner" v-if="procesando"></i>
                                 <i class="fa fa-upload" v-else ></i> Cargar
                             </button>
-                            
+
                          </div>
                     </form>
                 </div>
@@ -105,7 +105,7 @@
                                     </table>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" v-on:click="cerrarModalErrores" :disabled="cargando"><i class="fa fa-times"></i>Cerrar</button>

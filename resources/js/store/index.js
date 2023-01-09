@@ -228,6 +228,7 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 //IGH
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
+import tipoCambio from "./modules/igh/tipo-cambio"
 
 //PRESUPUESTO
 import conceptoPresupuesto from './modules/presupuesto/concepto';
@@ -239,6 +240,15 @@ import proyectoMSAO from './modules/remesas/proyecto';
 
 //REPORTES
 import reporte from './modules/reportes/reporte';
+
+//SEGUIMIENTO
+import clienteSeg from './modules/seguimiento/cliente';
+import empresaSeg from './modules/seguimiento/empresa';
+import facturaSeg from './modules/seguimiento/factura';
+import ingresoPartida from './modules/seguimiento/ingreso-partida';
+import monedaSeg from './modules/seguimiento/moneda';
+import proyectoSeg from './modules/seguimiento/proyecto';
+import tipoIngresoSeg from './modules/seguimiento/tipo-ingreso';
 
 //SCI
 import marca from "./modules/sci/marca";
@@ -403,7 +413,7 @@ export default new Vuex.Store({
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
-
+        'igh/tipo-cambio' : tipoCambio,
 
         'sci/marca': marca,
         'sci/modelo': modelo,
@@ -458,6 +468,14 @@ export default new Vuex.Store({
         'remesas/documento-no-localizado' : documentoNoLocalizado,
         'remesas/remesa-folio' : folio,
         'remesas/proyecto' : proyectoMSAO,
+
+        'seguimiento/cliente' : clienteSeg,
+        'seguimiento/empresa' : empresaSeg,
+        'seguimiento/factura' : facturaSeg,
+        'seguimiento/ingreso-partida' : ingresoPartida,
+        'seguimiento/moneda' : monedaSeg,
+        'seguimiento/proyecto' : proyectoSeg,
+        'seguimiento/tipo-ingreso' : tipoIngresoSeg,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,
