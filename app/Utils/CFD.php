@@ -247,11 +247,12 @@ class CFD
         }
 
         $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:RetencionesLocales');
-        foreach ($complemento as $key => $c)
-        {
-            $this->arreglo_factura["retencionesLocales"][$key]['descripcion'] = (string) $c['ImpLocRetenido'];
-            $this->arreglo_factura["retencionesLocales"][$key]['total'] = (float) $c['Importe'];
-            $this->arreglo_factura["retencionesLocales"][$key]['tasaRetencion'] = (float) $c['TasadeRetencion'];
+        if($complemento != false) {
+            foreach ($complemento as $key => $c) {
+                $this->arreglo_factura["retencionesLocales"][$key]['descripcion'] = (string)$c['ImpLocRetenido'];
+                $this->arreglo_factura["retencionesLocales"][$key]['total'] = (float)$c['Importe'];
+                $this->arreglo_factura["retencionesLocales"][$key]['tasaRetencion'] = (float)$c['TasadeRetencion'];
+            }
         }
     }
 
