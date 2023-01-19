@@ -83,7 +83,7 @@ on mp.rfc_proveedor = cs.rfc_emisor
     les.razon_social,
     mp.pendiente_rep_total
 
-ORDER BY mp.pendiente_rep_total DESC
+ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
     ")
         ;
         $informe = array_map(function ($value) {
