@@ -63,7 +63,6 @@ class CFD
 
             if(!$factura_xml){
                 $errors = libxml_get_errors();
-                //dd(var_export($errors, true));
             }
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
@@ -245,6 +244,15 @@ class CFD
             $this->log["archivos_no_cargados_error_app"] += 1;
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
+        }
+
+        $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:RetencionesLocales');
+        if($complemento != false) {
+            foreach ($complemento as $key => $c) {
+                $this->arreglo_factura["retencionesLocales"][$key]['descripcion'] = (string)$c['ImpLocRetenido'];
+                $this->arreglo_factura["retencionesLocales"][$key]['total'] = (float)$c['Importe'];
+                $this->arreglo_factura["retencionesLocales"][$key]['tasaRetencion'] = (float)$c['TasadeRetencion'];
+            }
         }
     }
 
@@ -546,7 +554,7 @@ class CFD
             }
 
             if ($respuesta->EstatusCancelacion != [] && $respuesta->EstatusCancelacion == 'En proceso') {
-                $omitido = $this->repository->getEsOmitido($respuesta->EstatusCancelacion, $arreglo_cfd["emisor"]["rfc"], $arreglo_cfd["complemento"]["uuid"]);
+                $omitido = $this->repository->getEsOmitido($respuesta->EstatusCancelacion, $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["complemento"]["uuid"]);
                 if ($omitido == 0) {
                     event(new IncidenciaCI(
                         ["id_tipo_incidencia" => 18,

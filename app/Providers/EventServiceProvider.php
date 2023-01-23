@@ -74,6 +74,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendCotizacionEnviadaNotification',
         ],
 
+        'App\Events\EnvioIngresoFactura' => [
+            'App\Listeners\SendIngresaFacturaNotification',
+        ],
+
         'App\Events\AperturaInvitacion' => [
             'App\Listeners\SendAperturaInvitacionNotification',
         ],
