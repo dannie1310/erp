@@ -24,7 +24,7 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
         $this->model = $model;
     }
 
-    
+
     public function list($data)
     {
        return $this->model->lista_materiales($data);
@@ -33,5 +33,15 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     public function buscarMateriales($dato){
         $resp = $this->model->where('descripcion', 'LIKE', '%'.$dato.'%')->whereIn('tipo_material', [1,4])->insumos()->limit(30)->get();
         return $resp;
+    }
+
+    public function materialPorAlmacen($data)
+    {
+        return $this->model->material_por_almacen($data);
+    }
+
+    public function materialHistorico($id, $id_almacen)
+    {
+        return $this->model->material_historico($id, $id_almacen);
     }
 }
