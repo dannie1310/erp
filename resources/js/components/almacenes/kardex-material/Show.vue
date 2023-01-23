@@ -16,7 +16,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="table-responsive" style="max-height: 250px; overflow-y: scroll;">
-                            <table class="table table-hover table-bordered table-sm">
+                            <table class="table table-hover table-bordered table-sm" id="table">
                                 <thead>
                                     <tr>
                                         <th class="encabezado">
@@ -40,7 +40,7 @@
                                      </tr>
                                  </thead>
                                  <tbody>
-                                     <tr v-for="material in materiales" :key="material.id" @click="getHistorial(material.id)">
+                                     <tr v-for="(material, i) in materiales" :key="material.id" @click="getHistorial(material.id, i+1)">
                                          <th style="text-align: left; width:200px;">
                                              {{material.descripcion}}
                                          </th>
@@ -195,7 +195,8 @@ export default {
             materiales: [],
             inventarios: null,
             total_inv: null,
-            total_mat: null
+            total_mat: null,
+            num_pas: 0,
         }
     },
     methods: {
@@ -215,9 +216,11 @@ export default {
                 this.cargando = false;
             })
         },
-        getHistorial(i){
+        getHistorial(i, key){
             this.inventarios = null;
             this.total_inv = null;
+            document.getElementById('table').rows[this.num_pas].style.backgroundColor = "white";
+            document.getElementById('table').rows[key].style.backgroundColor = "#CFFCBC";
             return this.$store.dispatch('cadeco/material/historico', {
                 params: {
                     id: i,
@@ -226,6 +229,7 @@ export default {
             }).then(data => {
                 this.inventarios = data.inventarios;
                 this.total_inv = data.totales;
+                this.num_pas = key;
             })
         }
     },
