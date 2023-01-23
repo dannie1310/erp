@@ -15,36 +15,36 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
-                         <div class="table-responsive">
-                             <table class="table table-hover table-bordered">
-                                 <thead>
-                                     <tr>
-                                         <th class="encabezado" scope="col">
-                                             Material
+                        <div class="table-responsive" style="max-height: 250px; overflow-y: scroll;">
+                            <table class="table table-hover table-bordered table-sm">
+                                <thead>
+                                    <tr>
+                                        <th class="encabezado">
+                                            Material
                                          </th>
-                                         <th class="encabezado" scope="col">
+                                         <th class="encabezado">
                                              Unidad
                                          </th>
-                                         <th class="encabezado" scope="col">
+                                         <th class="encabezado">
                                              Existencia
                                          </th>
-                                         <th class="encabezado" scope="col">
+                                         <th class="encabezado">
                                              Total
                                          </th>
-                                         <th class="encabezado" scope="col">
+                                         <th class="encabezado">
                                              Pagado
                                          </th>
-                                         <th class="encabezado" scope="col">
+                                         <th class="encabezado">
                                              x Pagar
                                          </th>
                                      </tr>
                                  </thead>
                                  <tbody>
                                      <tr v-for="material in materiales" :key="material.id" @click="getHistorial(material.id)">
-                                         <th style="text-align: left" scope="row">
+                                         <th style="text-align: left; width:200px;">
                                              {{material.descripcion}}
                                          </th>
-                                         <td style="text-align: right">
+                                         <td style="text-align: right; width:100px;">
                                              {{material.unidad}}
                                          </td>
                                          <td style="text-align: right">
@@ -78,11 +78,12 @@
                                     </tr>
                                  </tfoot>
                              </table>
-                         </div>
-                     </div>
-                    <br>
+                        </div>
+                    </div>
+                    <br />
+                    <hr />
                     <div class="row" v-if="inventarios">
-                         <div class="table-responsive">
+                         <div class="table-responsive" style="max-height: 250px; overflow-y: scroll;">
                              <table class="table table-bordered table-sm">
                                  <tr>
                                      <th class="encabezado">

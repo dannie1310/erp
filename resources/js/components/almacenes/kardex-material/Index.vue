@@ -20,7 +20,7 @@ export default {
             HeaderSettings: false,
             columns: [
                 { title: '#', field:'index',sortable: false},
-                { title: 'Almacén', field:'id_almacen', sortable: true,  thComp: require('../../globals/th-Filter').default},
+                { title: 'Almacén', field:'descripcion', sortable: true,  thComp: require('../../globals/th-Filter').default},
                 { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
@@ -69,7 +69,7 @@ export default {
                 almacenes.forEach(function (almacen, i) {
                     self.$data.data.push({
                         index: (i + 1) + self.query.offset,
-                        id_almacen: almacen.descripcion,
+                        descripcion: almacen.descripcion,
                         buttons: $.extend({}, {
                             id: almacen.id
                         })

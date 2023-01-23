@@ -422,24 +422,38 @@ class Material extends Model
         $pagado = 0;
         $x_pagar = 0;
 
-        $materiales = $this->join('inventarios', 'materiales.id_material', 'inventarios.id_material')->where('inventarios.id_almacen', $id)
-            ->selectRaw('materiales.id_material, sum(inventarios.cantidad) as existencia, sum(inventarios.monto_total) as total, sum(inventarios.monto_pagado) as pagado, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar')
-            ->groupBy('materiales.id_material')->get();
+        $materiales = $this->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
+            ->where('inventarios.id_almacen', $id)
+            ->selectRaw('materiales.id_material, sum(inventarios.cantidad) as existencia, sum(inventarios.monto_total) as total, 
+                        sum(inventarios.monto_pagado) as pagado, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar')
+            ->groupBy(['materiales.id_material', 'materiales.descripcion'])->orderBy('materiales.descripcion')->get();
 
         foreach ($materiales as $key => $material)
         {
+            $movimiento = null;
             $ma = self::find($material->id_material);
+            $lote = Inventario::join('movimientos', 'movimientos.lote_antecedente', 'inventarios.id_lote')
+                ->where('inventarios.id_almacen', $id)
+                ->where('inventarios.id_material', $material->id_material)
+                ->selectRaw('distinct id_lote')->pluck('id_lote');
+            if(array_key_exists(0, $lote->toArray()))
+            {
+                $movimiento = $this->getTotalesSalida($lote);
+            }   
+
             $array[$key]['descripcion'] = $ma->descripcion;
             $array[$key]['id'] = $ma->id_material;
             $array[$key]['unidad'] = $ma->unidad;
-            $array[$key]['existencia'] = number_format($material->existencia,2,".", ",");
-            $array[$key]['total'] = number_format($material->total,2,".", ",");
-            $array[$key]['pagado'] = number_format($material->pagado, 2, ".", ",");
-            $array[$key]['por_pagar'] = number_format($material->por_pagar, 2, ".", ",");
-            $total +=  $material->total;
-            $pagado += $material->pagado;
-            $x_pagar += $material->por_pagar;
+            $array[$key]['existencia'] = number_format(($material->existencia - ($movimiento ? $movimiento->suma_salida : 0)),2,".", ",");
+            $array[$key]['total'] = number_format(($material->total - ($movimiento ? $movimiento->total_salida : 0)),2,".", ",");
+            $array[$key]['pagado'] = number_format(($material->pagado - ($movimiento ? $movimiento->pagado_salida : 0)), 2, ".", ",");
+            $array[$key]['por_pagar'] = number_format(($material->por_pagar- ($movimiento ? $movimiento->por_pagar_salida : 0)), 2, ".", ",");
+            $total +=  $material->total - ($movimiento ? $movimiento->total_salida : 0);
+            $pagado += $material->pagado - ($movimiento ? $movimiento->pagado_salida : 0);
+            $x_pagar += $material->por_pagar - ($movimiento ? $movimiento->por_pagar_salida : 0);
+            $lote = null;
         }
+
        return [
            'materiales' => $array,
            'totales' => [
@@ -452,7 +466,6 @@ class Material extends Model
 
     public function material_historico($id, $id_almacen)
     {
-        $material = self::find($id);
         $array = [];
         $entrada = 0;
         $salida = 0;
@@ -468,24 +481,27 @@ class Material extends Model
             ->selectRaw('transacciones.*, items.*, inventarios.*')
             ->orderBy('numero_folio', 'ASC')->get();
 
-        foreach ($inventarios as $key => $inventario)
-        {
+        foreach ($inventarios as $i => $inventario) {
+            $movimientos_totales = $this->getTotalesSalida([$inventario->id_lote]);
+    
             $fecha= date_create($inventario->fecha);
-            $array[$key]['fecha'] = date_format($fecha,"d/m/Y");
-            $array[$key]['unidad'] = $inventario->unidad;
-            $array[$key]['entrada'] = number_format($inventario->tipo_transaccion == 33 ? $inventario->cantidad : 0,2,".", ",");
-            $array[$key]['salida'] = number_format($inventario->tipo_transaccion == 34 ? $inventario->cantidad : 0, 2, ".", ",");
-            $array[$key]['existencia'] = number_format($inventario->cantidad, 2, ".", ",");
-            $array[$key]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
-            $array[$key]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
-            $array[$key]['x_pagar'] =  number_format($inventario->monto_total - $inventario->monto_pagado,2,".",",");
-            $array[$key]['referencia'] = 'REM #'.$inventario->numero_folio;
-            $entrada+= $inventario->tipo_transaccion == 33 ? $inventario->cantidad : 0;
-            $salida+= $inventario->tipo_transaccion == 34 ? $inventario->cantidad : 0;
-            $existencia += $inventario->cantidad;
+            $array[$i]['id'] = $inventario->getKey();
+            $array[$i]['fecha'] = date_format($fecha,"d/m/Y");
+            $array[$i]['unidad'] = $inventario->unidad;
+            $array[$i]['entrada'] = number_format($inventario->cantidad,2,".", ",");
+            $array[$i]['salida'] = number_format($movimientos_totales ? $movimientos_totales->suma_salida : 0, 2, ".", ",");
+            $array[$i]['existencia'] = number_format(($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0)), 2, ".", ",");
+            $array[$i]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
+            $array[$i]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
+            $array[$i]['x_pagar'] =  number_format(($inventario->monto_total - $inventario->monto_pagado),2,".",",");
+            $array[$i]['referencia'] = 'REM #'.$inventario->numero_folio;
+            $entrada+= $inventario->cantidad;
+            $salida+= $movimientos_totales ? $movimientos_totales->suma_salida : 0;
+            $existencia += ($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0));
             $adquirido += $inventario->monto_total;
             $pagado += $inventario->monto_pagado;
-            $x_pagar += $inventario->monto_total - $inventario->monto_pagado;
+            $x_pagar += ($inventario->monto_total - $inventario->monto_pagado);
+            $movimientos_totales = null;
         }
         return [
             'inventarios' => $array,
@@ -498,5 +514,12 @@ class Material extends Model
                 'x_pagar' => number_format($x_pagar,2,".",","),
             ]
         ];
+    }
+
+    private function getTotalesSalida($lotes)
+    {
+        return Movimiento::whereIn('lote_antecedente', $lotes)
+        ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida, 
+        sum(monto_pagado) as pagado_salida, (sum(monto_total) - sum(monto_pagado)) as por_pagar_salida')->first();
     }
 }
