@@ -18,6 +18,12 @@
             <button @click="proveedorEmpresa" type="button" class="btn btn-sm  dropdown-item" title="Desglosado por proveedor y empresa" >
                 <i class="fa fa-users"></i>Por proveedor y empresa
             </button>
+            <button @click="empresa" type="button" class="btn btn-sm  dropdown-item" title="Desglosado por proveedor y empresa" >
+                <i class="fa fa-user"></i>Por empresa
+            </button>
+            <button @click="empresaProveedor" type="button" class="btn btn-sm  dropdown-item" title="Desglosado por proveedor y empresa" >
+                <i class="fa fa-users"></i>Por empresa y proveedor
+            </button>
         </div>
 
 
@@ -50,11 +56,23 @@
                 $(this.$refs.modal).modal('show');
             },
             proveedor(){
-                var url = '/api/fiscal/cfd-sat/informe-rep-pendientes/pdf?'+'&access_token='+this.$session.get('jwt');
+                var url = '/api/fiscal/cfd-sat/informe-rep-pendientes-proveedor/pdf?'+'&access_token='+this.$session.get('jwt');
                 $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Informe</iframe>');
                 $(this.$refs.modal).appendTo('body')
                 $(this.$refs.modal).modal('show');
-            }
+            },
+            empresa(){
+                var url = '/api/fiscal/cfd-sat/informe-rep-pendientes-empresa/pdf?'+'&access_token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Informe</iframe>');
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            },
+            empresaProveedor(){
+                var url = '/api/fiscal/cfd-sat/informe-rep-pendientes-empresa-proveedor/pdf?'+'&access_token='+this.$session.get('jwt');
+                $(this.$refs.body).html('<iframe src="'+url+'"  frameborder="0" height="100%" width="100%">Informe</iframe>');
+                $(this.$refs.modal).appendTo('body')
+                $(this.$refs.modal).modal('show');
+            },
         }
     }
 </script>

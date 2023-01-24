@@ -4,7 +4,7 @@ namespace App\PDF\Fiscal;
 
 use Ghidev\Fpdf\Rotation;
 
-class InformeREPProveedorEmpresa extends Rotation
+class InformeREPEmpresaProveedor extends Rotation
 {
     protected $informe;
     protected $etiqueta_subtitulo;
@@ -23,6 +23,65 @@ class InformeREPProveedorEmpresa extends Rotation
         parent::__construct("P", "cm", "Letter");
         $this->informe = $informe;
         $this->omitir_encabezado_tabla = true;
+    }
+
+    function logo()
+    {
+        list($width, $height) = $this->resizeToFit(public_path('/img/logo_hc.png'));
+        $this->Image(public_path('/img/logo_hc.png'), 1, 0.5, $width - 2, $height - 1);
+    }
+
+    function pixelsToCM($val)
+    {
+        return ($val * self::MM_IN_INCH / self::DPI) / 10;
+    }
+
+    function resizeToFit($imgFilename)
+    {
+        list($width, $height) = getimagesize($imgFilename);
+        $widthScale = self::MAX_WIDTH / $width;
+        $heightScale = self::MAX_HEIGHT / $height;
+        $scale = min($widthScale, $heightScale);
+        return [
+            round($this->pixelsToCM($scale * $width)),
+            round($this->pixelsToCM($scale * $height))
+        ];
+    }
+
+    function Header()
+    {
+        $this->logo();
+        $this->setXY(3.59, 1.2);
+        $this->SetTextColor('0');
+        $this->SetFont('Helvetica', 'B', 12);
+        $this->MultiCell(17, .5, utf8_decode('Informe de REP pendientes'), 0, 'C', 0);
+        $this->setX(3.59);
+        $this->SetFont('Helvetica', '', 9);
+        $this->MultiCell(17, .3, utf8_decode('Desglosado por empresa y proveedor'), 0, 'C', 0);
+        $this->setXY(4.59, 2.0);
+
+        $this->partidasTitle();
+
+        if($this->en_cola != "subtitulo"){
+            $this->subtitulo();
+        }else{
+            $this->omitir_encabezado_tabla = true;
+        }
+
+        if ($this->en_cola != '') {
+            $this->setEstilos($this->en_cola);
+        }
+    }
+
+    function Footer()
+    {
+        $this->SetY($this->GetPageHeight() - 1);
+        $this->SetTextColor('0', '0', '0');
+        $this->SetFont('Arial', '', 6);
+        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta ') . date("d/m/Y H:i:s"), 0, 0, 'L');
+        $this->SetFont('Arial', 'B', 6);
+        $this->Cell(6.5, .4, '', 0, 0, 'C');
+        $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     function SetTextColor($r, $g=null, $b=null)
@@ -55,66 +114,6 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->ColorFlag = ($this->FillColor!=$this->TextColor);
     }
 
-    function logo()
-    {
-        list($width, $height) = $this->resizeToFit(public_path('/img/logo_hc.png'));
-        $this->Image(public_path('/img/logo_hc.png'), 1, 0.5, $width - 2, $height - 1);
-    }
-
-    function pixelsToCM($val)
-    {
-        return ($val * self::MM_IN_INCH / self::DPI) / 10;
-    }
-
-    function resizeToFit($imgFilename)
-    {
-        list($width, $height) = getimagesize($imgFilename);
-        $widthScale = self::MAX_WIDTH / $width;
-        $heightScale = self::MAX_HEIGHT / $height;
-        $scale = min($widthScale, $heightScale);
-        return [
-            round($this->pixelsToCM($scale * $width)),
-            round($this->pixelsToCM($scale * $height))
-        ];
-    }
-
-    function Header()
-    {
-        $this->logo();
-        $this->setXY(3.59, 1.2);
-        $this->SetTextColor('0', '0', '0');
-        $this->SetFont('Helvetica', 'B', 12);
-        $this->MultiCell(17, .5, utf8_decode('Informe de REP pendientes'), 0, 'C', 0);
-        $this->setX(3.59);
-        $this->SetFont('Helvetica', '', 9);
-        $this->MultiCell(17, .3, utf8_decode('Desglosado por Proveedor y Empresa'), 0, 'C', 0);
-        $this->setXY(4.59, 2.0);
-
-        $this->partidasTitle();
-
-        if($this->en_cola != "subtitulo"){
-            $this->subtitulo();
-        }else{
-            $this->omitir_encabezado_tabla = true;
-        }
-
-        if ($this->en_cola != '') {
-            $this->setEstilos($this->en_cola);
-        }
-    }
-
-    function Footer()
-    {
-        $this->SetY($this->GetPageHeight() - 1);
-        $this->SetTextColor('0', '0', '0');
-        $this->SetFont('Arial', '', 6);
-        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta ') . date("d/m/Y H:i:s"), 0, 0, 'L');
-        $this->SetFont('Arial', 'B', 6);
-        $this->Cell(6.5, .4, '', 0, 0, 'C');
-        $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
-    }
-
-
     public function partidas()
     {
         foreach ($this->informe["informe"] as $tipo) {
@@ -124,10 +123,15 @@ class InformeREPProveedorEmpresa extends Rotation
                     $this->en_cola = $partida["tipo"];
                     $this->setEstilos($partida["tipo"]);
                     if ($partida["tipo"] == "partida") {
+                        $this->es_del_grupo = $partida["es_empresa_hermes"];
+                        if($this->es_del_grupo == 1){
+                            $this->SetTextColors(["21,157,247","21,157,247","21,157,247","21,157,247","21,157,247","21,157,247","21,157,247","21,157,247","21,157,247"]);
+                        }
+
                         $this->Row([
                             $partida["indice"]
-                            , utf8_decode($partida["rfc_empresa"])
-                            , utf8_decode($partida["empresa"])
+                            , utf8_decode($partida["rfc_proveedor"])
+                            , utf8_decode($partida["proveedor"])
                             , $partida["cantidad_cfdi_f"]
                             , $partida["total_cfdi_f"]
                             , $partida["total_rep_f"]
@@ -139,14 +143,14 @@ class InformeREPProveedorEmpresa extends Rotation
                     }
                     else if ($partida["tipo"] == "subtitulo") {
                         $this->etiqueta_subtitulo = $partida["etiqueta"];
-                        $this->es_del_grupo = $partida["es_empresa_hermes"];
+                        //$this->es_del_grupo = $partida["es_empresa_hermes"];
                         if($this->omitir_encabezado_tabla){
                             $this->subtitulo();
                             $this->omitir_encabezado_tabla = false;
                         } else {
-                            if($this->es_del_grupo == 1){
-                                $this->SetTextColors(["21,157,247"]);
-                            }
+                            /*if($this->es_del_grupo == 1){
+                                $this->SetTextColors(["194,8,8"]);
+                            }*/
                             $this->Row([utf8_decode($partida["etiqueta"])]);
                         }
                     }
@@ -188,7 +192,7 @@ class InformeREPProveedorEmpresa extends Rotation
         {
             $this->setEstilos("subtitulo");
             if($this->es_del_grupo == 1){
-                $this->SetTextColors(["21,157,247"]);
+                $this->SetTextColors(["194,8,8"]);
             }
             $this->Row([utf8_decode($this->etiqueta_subtitulo)]);
         }
@@ -289,7 +293,7 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->partidas();
 
         try {
-            $this->Output('I', 'Informe - REP pendientes desglosado por proveedor y empresa_' . date("d-m-Y h:i:s") . '.pdf', 1);
+            $this->Output('I', 'Informe - REP pendientes desglosado por empresa y proveedor_' . date("d-m-Y h:i:s") . '.pdf', 1);
         } catch (\Exception $ex) {
             dd("error", $ex);
         }

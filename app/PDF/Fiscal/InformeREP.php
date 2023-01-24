@@ -24,6 +24,36 @@ class InformeREP extends Rotation
         $this->informe = $informe;
     }
 
+    function SetTextColor($r, $g=null, $b=null)
+    {
+        $datos = explode(',', $r);
+        if(count($datos)==3){
+            $r = $datos[0];
+            $g = $datos[1];
+            $b = $datos[2];
+        }else{
+            $r = $r;
+            $g = $g;
+            $b = $b;
+        }
+
+        // Set color for text
+        if(($r==0 && $g==0 && $b==0) || $g===null) {
+
+            $this->TextColor = sprintf('%.3F g', $datos[0] / 255);
+            //dd(1,$this->TextColor);
+        }
+        else {
+            $this->TextColor = sprintf('%.3F %.3F %.3F rg'
+                , ($r/255)
+                , ($g/255)
+                , ($b/255)
+            );
+            //dd(2,$this->TextColor);
+        }
+        $this->ColorFlag = ($this->FillColor!=$this->TextColor);
+    }
+
     function logo()
     {
         list($width, $height) = $this->resizeToFit(public_path('/img/logo_hc.png'));
@@ -53,7 +83,12 @@ class InformeREP extends Rotation
         $this->setXY(3.59, 1.2);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
-        $this->MultiCell(17, .5, utf8_decode('Informe de REP pendientes'), 0, 'C', 0);
+        $this->MultiCell(17, .5, utf8_decode('Informe de REP Pendientes'), 0, 'C', 0);
+        $this->setX(3.59);
+        $this->SetFont('Helvetica', '', 9);
+        $this->MultiCell(17, .3, utf8_decode('Por Proveedor'), 0, 'C', 0);
+        $this->setXY(4.59, 2.0);
+
         $this->partidasTitle();
         if ($this->en_cola != '') {
             $this->setEstilos($this->en_cola);
@@ -84,15 +119,15 @@ class InformeREP extends Rotation
 
                         if($partida["es_empresa_hermes"] == 1){
                             $this->SetTextColors([
-                                "194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
-                                ,"194,8,8"
+                                "21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
+                                ,"21,157,247"
                             ]);
                         }
 
@@ -249,7 +284,7 @@ class InformeREP extends Rotation
         $this->partidas();
 
         try {
-            $this->Output('I', 'Informe - REP pendientes desglosado por empresas_' . date("d-m-Y h:i:s") . '.pdf', 1);
+            $this->Output('I', 'Informe - REP pendientes desglosado por proveedor_' . date("d-m-Y h:i:s") . '.pdf', 1);
         } catch (\Exception $ex) {
             dd("error", $ex);
         }
