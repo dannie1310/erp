@@ -4,7 +4,7 @@ namespace App\PDF\Fiscal;
 
 use Ghidev\Fpdf\Rotation;
 
-class InformeREPProveedorEmpresa extends Rotation
+class InformeREPEmpresa extends Rotation
 {
     protected $informe;
     protected $etiqueta_subtitulo;
@@ -22,7 +22,6 @@ class InformeREPProveedorEmpresa extends Rotation
     {
         parent::__construct("P", "cm", "Letter");
         $this->informe = $informe;
-        $this->omitir_encabezado_tabla = true;
     }
 
     function SetTextColor($r, $g=null, $b=null)
@@ -84,20 +83,13 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->setXY(3.59, 1.2);
         $this->SetTextColor('0', '0', '0');
         $this->SetFont('Helvetica', 'B', 12);
-        $this->MultiCell(17, .5, utf8_decode('Informe de REP pendientes'), 0, 'C', 0);
+        $this->MultiCell(17, .5, utf8_decode('Informe de REP Pendientes'), 0, 'C', 0);
         $this->setX(3.59);
         $this->SetFont('Helvetica', '', 9);
-        $this->MultiCell(17, .3, utf8_decode('Desglosado por Proveedor y Empresa'), 0, 'C', 0);
+        $this->MultiCell(17, .3, utf8_decode('Por Empresa'), 0, 'C', 0);
         $this->setXY(4.59, 2.0);
 
         $this->partidasTitle();
-
-        if($this->en_cola != "subtitulo"){
-            $this->subtitulo();
-        }else{
-            $this->omitir_encabezado_tabla = true;
-        }
-
         if ($this->en_cola != '') {
             $this->setEstilos($this->en_cola);
         }
@@ -124,6 +116,7 @@ class InformeREPProveedorEmpresa extends Rotation
                     $this->en_cola = $partida["tipo"];
                     $this->setEstilos($partida["tipo"]);
                     if ($partida["tipo"] == "partida") {
+
                         $this->Row([
                             $partida["indice"]
                             , utf8_decode($partida["rfc_empresa"])
@@ -137,19 +130,7 @@ class InformeREPProveedorEmpresa extends Rotation
                             ]
                         );
                     }
-                    else if ($partida["tipo"] == "subtitulo") {
-                        $this->etiqueta_subtitulo = $partida["etiqueta"];
-                        $this->es_del_grupo = $partida["es_empresa_hermes"];
-                        if($this->omitir_encabezado_tabla){
-                            $this->subtitulo();
-                            $this->omitir_encabezado_tabla = false;
-                        } else {
-                            if($this->es_del_grupo == 1){
-                                $this->SetTextColors(["21,157,247"]);
-                            }
-                            $this->Row([utf8_decode($partida["etiqueta"])]);
-                        }
-                    }
+
 
                     else if ($partida["tipo"] == "total") {
                         $this->Row([
@@ -188,7 +169,7 @@ class InformeREPProveedorEmpresa extends Rotation
         {
             $this->setEstilos("subtitulo");
             if($this->es_del_grupo == 1){
-                $this->SetTextColors(["21,157,247"]);
+                $this->SetTextColors(["194,8,8"]);
             }
             $this->Row([utf8_decode($this->etiqueta_subtitulo)]);
         }
@@ -289,7 +270,7 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->partidas();
 
         try {
-            $this->Output('I', 'Informe - REP pendientes desglosado por proveedor y empresa_' . date("d-m-Y h:i:s") . '.pdf', 1);
+            $this->Output('I', 'Informe - REP pendientes por empresa_' . date("d-m-Y h:i:s") . '.pdf', 1);
         } catch (\Exception $ex) {
             dd("error", $ex);
         }

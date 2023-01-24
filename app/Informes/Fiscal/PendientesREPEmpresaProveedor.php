@@ -9,11 +9,11 @@ use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use Illuminate\Support\Facades\DB;
 
-class PendientesREPProveedorEmpresa
+class PendientesREPEmpresaProveedor
 {
     public static function  get($data)
     {
-        $informe["informe"] = PendientesREPProveedorEmpresa::getPartidas();
+        $informe["informe"] = PendientesREPEmpresaProveedor::getPartidas();
 
         return $informe;
     }
@@ -49,7 +49,7 @@ les2.rfc = ps.rfc
 LEFT JOIN (
 
 SELECT
-    ps.rfc AS rfc_proveedor,
+    les.rfc AS rfc_empresa,
     sum( csrp.pendiente_pago) as pendiente_rep_total
 
     FROM
@@ -61,17 +61,13 @@ INNER JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les ON
 INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat ps ON
     cs.id_proveedor_sat = ps.id
 
-LEFT JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les2 ON
-les2.rfc = ps.rfc
-
     GROUP BY
 
-    ps.rfc, ps.razon_social ,
-    les2.id
+    les.rfc
 
 ) AS mp
 
-on mp.rfc_proveedor = cs.rfc_emisor
+on mp.rfc_empresa = cs.rfc_receptor
 
     GROUP BY
 
@@ -80,13 +76,13 @@ on mp.rfc_proveedor = cs.rfc_emisor
     les.razon_social,
     mp.pendiente_rep_total
 
-ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
+ORDER BY mp.pendiente_rep_total DESC, sum(csrp.pendiente_pago) DESC
     ")
         ;
         $informe = array_map(function ($value) {
             return (array)$value;
         }, $informe);
-        $informe = PendientesREPProveedorEmpresa::setTitulosYSubtotalesPartidas($informe);
+        $informe = PendientesREPEmpresaProveedor::setTitulosYSubtotalesPartidas($informe);
         return $informe;
     }
 
@@ -112,9 +108,8 @@ ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
             $acumulador_partidas_proveedor = 0;
             $acumulador_pendiente_rep = 0;
 
-            $partidas_completas[$i]["etiqueta"] = $partidas[0]["rfc_proveedor"]." ".$partidas[0]["proveedor"];
+            $partidas_completas[$i]["etiqueta"] = $partidas[0]["rfc_empresa"]." ".$partidas[0]["empresa"];
             $partidas_completas[$i]["tipo"] = "subtitulo";
-            $partidas_completas[$i]["es_empresa_hermes"] = $partidas[0]["es_empresa_hermes"];
             $partidas_completas[$i]["bg_color_hex"] = "#757575";
             $partidas_completas[$i]["bg_color_rgb"] = [213,213,213];
             $partidas_completas[$i]["color_hex"] = "#FFF";
@@ -125,12 +120,12 @@ ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
             {
                 if($i_p>0){
 
-                    if($partida["proveedor"]!=$partidas[$i_p-1]["proveedor"] ){
+                    if($partida["empresa"]!=$partidas[$i_p-1]["empresa"] ){
 
 
                         $partidas_completas[$i]["contador"] = $contador_partidas_proveedor-1;
                         $partidas_completas[$i]["acumulador"] = $acumulador_partidas_proveedor;
-                        $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$partidas[$i_p-1]["proveedor"];
+                        $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$partidas[$i_p-1]["empresa"];
                         $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
                         $partidas_completas[$i]["cantidad_cfdi_f"] = number_format($contador_cfdi);
                         $partidas_completas[$i]["total_cfdi_f"] = number_format($total_cfdi);
@@ -147,8 +142,7 @@ ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
                         $partidas_completas[$i]["color_rgb"] = [255,255,255];
                         $i++;
 
-                        $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["rfc_proveedor"]." ".$partidas[$i_p]["proveedor"];
-                        $partidas_completas[$i]["es_empresa_hermes"] = $partidas[$i_p]["es_empresa_hermes"];
+                        $partidas_completas[$i]["etiqueta"] = $partidas[$i_p]["rfc_empresa"]." ".$partidas[$i_p]["empresa"];
 
                         $partidas_completas[$i]["tipo"] = "subtitulo";
                         $partidas_completas[$i]["bg_color_hex"] = "#757575";
@@ -206,7 +200,7 @@ ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
 
             $partidas_completas[$i]["contador"] = $contador_partidas_proveedor-1;
             $partidas_completas[$i]["acumulador"] = $acumulador_partidas_proveedor;
-            $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$partidas[count($partidas)-1]["proveedor"];
+            $partidas_completas[$i]["etiqueta"] = "SUBTOTAL ".$partidas[count($partidas)-1]["empresa"];
             $partidas_completas[$i]["contador_cfdi"] = $contador_cfdi;
             $partidas_completas[$i]["cantidad_cfdi_f"] = number_format($contador_cfdi);
             $partidas_completas[$i]["total_cfdi_f"] = number_format($total_cfdi);
@@ -240,7 +234,7 @@ ORDER BY mp.pendiente_rep_total DESC, sum( csrp.pendiente_pago) DESC
             $partidas_completas[$i]["color_rgb"] = [255,255,255];
         }
 
-        return PendientesREPProveedorEmpresa::establecePorcentajePartidas($partidas_completas);
+        return PendientesREPEmpresaProveedor::establecePorcentajePartidas($partidas_completas);
     }
 
     private static function establecePorcentajePartidas($partidas_completas)

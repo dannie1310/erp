@@ -168,4 +168,14 @@ class CFDSATController extends Controller
     {
         $this->service->obtenerInformeREPProveedorEmpresaPDF($request->all())->create();
     }
+
+    public function obtenerInformeREPEmpresaProveedorPDF(Request $request)
+    {
+        $this->service->obtenerInformeREPEmpresaProveedorPDF($request->all())->create();
+    }
+
+    public function obtenerInformeREPEmpresaPDF(Request $request)
+    {
+        $this->service->obtenerInformeREPEmpresaPDF($request->all())->create();
+    }
 }
