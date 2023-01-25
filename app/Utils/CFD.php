@@ -259,7 +259,13 @@ class CFD
     public function setDatosPago($factura_xml)
     {
         $ns = $factura_xml->getNamespaces(true);
-        $factura_xml->registerXPathNamespace('p', $ns['pago10']);
+        if(key_exists("pago10",$ns))
+        {
+            $factura_xml->registerXPathNamespace('p', $ns['pago10']);
+
+        }else{
+            $factura_xml->registerXPathNamespace('p', $ns['pago20']);
+        }
         $pagos = $factura_xml->xpath('//p:Pago');
         $doctos = $factura_xml->xpath('//p:Pago//p:DoctoRelacionado');
 
