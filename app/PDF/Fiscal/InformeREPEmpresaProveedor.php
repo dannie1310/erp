@@ -191,9 +191,6 @@ class InformeREPEmpresaProveedor extends Rotation
         if(!is_null($this->etiqueta_subtitulo))
         {
             $this->setEstilos("subtitulo");
-            if($this->es_del_grupo == 1){
-                $this->SetTextColors(["194,8,8"]);
-            }
             $this->Row([utf8_decode($this->etiqueta_subtitulo)]);
         }
     }
