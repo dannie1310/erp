@@ -1076,6 +1076,9 @@ class CFDSATService
         try{
             copy($dir_xml.$uuid->uuid.".xml", $dir_descarga.$uuid->uuid.".xml");
         }catch (\Exception $e){
+            $data_cfdi =  base64_decode($uuid->xml_file);
+            $file = public_path($dir_descarga.$uuid->uuid.".xml");
+            file_put_contents($file, $data_cfdi);
         }
 
         if(file_exists(public_path($dir_descarga.$uuid->uuid.".xml"))){
