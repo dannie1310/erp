@@ -86,7 +86,7 @@ class InformeREP extends Rotation
         $this->MultiCell(17, .5, utf8_decode('Informe de REP Pendientes'), 0, 'C', 0);
         $this->setX(3.59);
         $this->SetFont('Helvetica', '', 9);
-        $this->MultiCell(17, .3, utf8_decode('Por Proveedor'), 0, 'C', 0);
+        $this->MultiCell(17, .3, utf8_decode('Por Proveedor (Debe REP)'), 0, 'C', 0);
         $this->setXY(4.59, 2.0);
 
         $this->partidasTitle();
@@ -206,7 +206,7 @@ class InformeREP extends Rotation
         $this->SetDrawColor(117, 117, 117);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C']);
-        $this->Row(["#", "RFC", utf8_decode("Razón Social"), "# CFDI", "Monto CFDI", "Monto REP", "Pendiente REP", "Pendiete REP (Acumulado)", "%"]);
+        $this->Row(["#", "RFC", utf8_decode("Razón Social"), "# CFDI Emit.", "Monto CFDI", "Monto REP", "Pendiente REP", "Pendiete REP (Acumulado)", "%"]);
 
     }
 

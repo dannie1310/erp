@@ -57,7 +57,7 @@ class InformeREPEmpresaProveedor extends Rotation
         $this->MultiCell(17, .5, utf8_decode('Informe de REP pendientes'), 0, 'C', 0);
         $this->setX(3.59);
         $this->SetFont('Helvetica', '', 9);
-        $this->MultiCell(17, .3, utf8_decode('Desglosado por empresa y proveedor'), 0, 'C', 0);
+        $this->MultiCell(17, .3, utf8_decode('Desglosado por empresa (a quien se le debe REP) y proveedor (quien debe el REP)'), 0, 'C', 0);
         $this->setXY(4.59, 2.0);
 
         $this->partidasTitle();
@@ -212,7 +212,7 @@ class InformeREPEmpresaProveedor extends Rotation
         $this->SetDrawColor(117, 117, 117);
         $this->SetHeights([0.4]);
         $this->SetAligns(['C', 'C', 'C', 'C', 'C', 'C', 'C', 'C', 'C']);
-        $this->Row(["#", "RFC", utf8_decode("Razón Social"), "# CFDI", "Monto CFDI", "Monto REP", "Pendiente REP", "Pendiete REP (Acumulado)", "%"]);
+        $this->Row(["#", "RFC", utf8_decode("Razón Social"), "# CFDI Emit.", "Monto CFDI", "Monto REP", "Pendiente REP", "Pendiete REP (Acumulado)", "%"]);
 
     }
 
