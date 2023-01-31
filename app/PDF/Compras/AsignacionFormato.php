@@ -924,6 +924,40 @@ class AsignacionFormato extends Rotation
             $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
 
         }
+        else if (((Context::getDatabase() == "SAO1814_CHIMALHUACAN" && Context::getIdObra() == 5) || (Context::getDatabase() == "SAO1814_CUTZAMALA" && Context::getIdObra() == 7)) && $this->asignacion->solicitud->id_area_compradora == 4)
+        {
+            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('VoBo Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+
+            $this->Ln();
+            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+
+        }
         else if (Context::getDatabase() == "SAO1814_CUTZAMALA" && (Context::getIdObra() == 5 || Context::getIdObra() == 6) && $this->asignacion->solicitud->id_area_compradora == 4)
         {
             $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
@@ -1025,36 +1059,42 @@ class AsignacionFormato extends Rotation
         }
         else if (Context::getDatabase() == "SAO1814_TROLEBUS" && Context::getIdObra() == 1 && $this->asignacion->solicitud->id_area_compradora == 4)
         {
-            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode('VoBo Admon. Proyecto'), 'TRLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode('VoBo Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode('VoBo Dir. Proyecto'), 'TRLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode('VoBo Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(4.2, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
             $this->Ln();
-            $this->Cell(5, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
             $this->Cell(.25);
-            $this->Cell(5, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
             $this->Cell(.25);
-            $this->Cell(5, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
             $this->Cell(.25);
-            $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
             $this->Cell(.25);
-            $this->Cell(5, 1.2, '', 'TRL', 0, 'C');
+            $this->Cell(4.2, 1.2, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(4.2, 1.2, '', 'TRL', 0, 'C');
 
             $this->Ln();
-            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
             $this->Cell(.25);
-            $this->Cell(5, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
+            $this->Cell(4.2, .4, utf8_decode('ING. LUIS HORCASITAS MANJARREZ'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
 
         }else if($this->asignacion->solicitud->id_area_compradora == 4 && 
                 ((Context::getDatabase() == "SAO1814" && in_array(Context::getIdObra(), array(52,53,60))) || (Context::getDatabase() == "SAO_CORP" && Context::getIdObra() == 12))
