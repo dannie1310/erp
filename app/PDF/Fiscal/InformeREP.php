@@ -87,7 +87,15 @@ class InformeREP extends Rotation
         $this->setX(3.59);
         $this->SetFont('Helvetica', '', 9);
         $this->MultiCell(17, .3, utf8_decode('Por Proveedor (Debe REP)'), 0, 'C', 0);
+
+        $this->SetFont('Helvetica', 'B', 5);
+        $this->setY(2.3);
+        $this->SetTextColor('100', '100', '100');
+        $this->MultiCell(19.7, .3, utf8_decode('Última carga REP: '). $this->informe["fechas"]["ultimo_rep"]." / ".utf8_decode("Última validación de cancelación: ").$this->informe["fechas"]["ultima_cancelacion"]." ", 0, 'R', 0);
+
         $this->setXY(4.59, 2.0);
+        $this->SetTextColor('0', '0', '0');
+
 
         $this->partidasTitle();
         if ($this->en_cola != '') {
@@ -109,29 +117,27 @@ class InformeREP extends Rotation
 
     public function partidas()
     {
-        foreach ($this->informe["informe"] as $tipo) {
-            foreach ($tipo as $partida) {
+        foreach ($this->informe["partidas"] as $partida) {
+            if (key_exists("tipo", $partida)) {
+                $this->en_cola = $partida["tipo"];
+                $this->setEstilos($partida["tipo"]);
+                if ($partida["tipo"] == "partida") {
 
-                if (key_exists("tipo", $partida)) {
-                    $this->en_cola = $partida["tipo"];
-                    $this->setEstilos($partida["tipo"]);
-                    if ($partida["tipo"] == "partida") {
+                    if ($partida["es_empresa_hermes"] == 1) {
+                        $this->SetTextColors([
+                            "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                            , "125,182,70"
+                        ]);
+                    }
 
-                        if($partida["es_empresa_hermes"] == 1){
-                            $this->SetTextColors([
-                                "21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                                ,"21,157,247"
-                            ]);
-                        }
-
-                        $this->Row([
+                    $this->Row([
                             $partida["indice"]
                             , utf8_decode($partida["rfc_proveedor"])
                             , utf8_decode($partida["proveedor"])
@@ -141,36 +147,32 @@ class InformeREP extends Rotation
                             , $partida["pendiente_rep_f"]
                             , $partida["acumulado_pendiente_rep_f"]
                             , $partida["porcentaje"]
-                            ]
-                        );
-                    }
+                        ]
+                    );
+                } else if ($partida["tipo"] == "total") {
+                    $this->Row([
+                        $partida["contador"]
+                        , utf8_decode($partida["etiqueta"])
+                        , $partida["cantidad_cfdi_f"]
+                        , $partida["total_cfdi_f"]
+                        , $partida["total_rep_f"]
+                        , $partida["pendiente_rep_f"]
+                        , ''
+                        , ''
+                    ]);
+                } else {
+                    $this->Row([
+                        $partida["contador"]
+                        , utf8_decode($partida["etiqueta"])
+                        , $partida["cantidad_cfdi_f"]
+                        , $partida["total_cfdi_f"]
+                        , $partida["total_rep_f"]
+                        , $partida["pendiente_rep_f"]
+                        , ''
+                        , ''
+                    ]);
 
-
-                    else if ($partida["tipo"] == "total") {
-                        $this->Row([
-                            $partida["contador"]
-                            , utf8_decode($partida["etiqueta"])
-                            , $partida["cantidad_cfdi_f"]
-                            , $partida["total_cfdi_f"]
-                            , $partida["total_rep_f"]
-                            , $partida["pendiente_rep_f"]
-                            , ''
-                            , ''
-                        ]);
-                    } else {
-                        $this->Row([
-                            $partida["contador"]
-                            , utf8_decode($partida["etiqueta"])
-                            , $partida["cantidad_cfdi_f"]
-                            , $partida["total_cfdi_f"]
-                            , $partida["total_rep_f"]
-                            , $partida["pendiente_rep_f"]
-                            , ''
-                            , ''
-                        ]);
-
-                        $this->Ln();
-                    }
+                    $this->Ln();
                 }
             }
         }

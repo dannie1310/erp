@@ -253,6 +253,24 @@ class CFDSAT extends Model
         return $fecha;
     }
 
+    public static function getFechaUltimoREP()
+    {
+        $ultimo_cfdi_rep = CFDSAT::where("tipo_comprobante","=","P")
+            ->where("cancelado","=","0")
+            ->orderBy("fecha","desc")->first();
+
+        return $ultimo_cfdi_rep->fecha->format("d/m/Y");
+    }
+
+    public static function getFechaUltimaCancelacion()
+    {
+        $ultimo_cfdi_rep = CFDSAT::where("tipo_comprobante","=","P")
+            ->where("cancelado","=","0")
+            ->orderBy("fecha","desc")->first();
+
+        return $ultimo_cfdi_rep->fecha->format("d/m/Y");
+    }
+
     public function getTotalMxnAttribute()
     {
         if($this->moneda != "MXN"){

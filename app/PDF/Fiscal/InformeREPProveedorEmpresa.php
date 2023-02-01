@@ -88,7 +88,14 @@ class InformeREPProveedorEmpresa extends Rotation
         $this->setX(3.59);
         $this->SetFont('Helvetica', '', 9);
         $this->MultiCell(17, .3, utf8_decode('Desglosado por Proveedor (quien debe REP) y Empresa (a quien se le debe REP)'), 0, 'C', 0);
+
+        $this->SetFont('Helvetica', 'B', 5);
+        $this->setY(2.3);
+        $this->SetTextColor('100', '100', '100');
+        $this->MultiCell(19.7, .3, utf8_decode('Última carga REP: '). $this->informe["fechas"]["ultimo_rep"]." / ".utf8_decode("Última validación de cancelación: ").$this->informe["fechas"]["ultima_cancelacion"]." ", 0, 'R', 0);
+
         $this->setXY(4.59, 2.0);
+        $this->SetTextColor('0', '0', '0');
 
         $this->partidasTitle();
 
@@ -117,67 +124,66 @@ class InformeREPProveedorEmpresa extends Rotation
 
     public function partidas()
     {
-        foreach ($this->informe["informe"] as $tipo) {
-            foreach ($tipo as $partida) {
+        foreach ($this->informe["partidas"] as $partida) {
 
-                if (key_exists("tipo", $partida)) {
-                    $this->en_cola = $partida["tipo"];
-                    $this->setEstilos($partida["tipo"]);
-                    if ($partida["tipo"] == "partida") {
-                        $this->Row([
-                            $partida["indice"]
-                            , utf8_decode($partida["rfc_empresa"])
-                            , utf8_decode($partida["empresa"])
-                            , $partida["cantidad_cfdi_f"]
-                            , $partida["total_cfdi_f"]
-                            , $partida["total_rep_f"]
-                            , $partida["pendiente_rep_f"]
-                            , $partida["acumulado_pendiente_rep_f"]
-                            , $partida["porcentaje"]
-                            ]
-                        );
-                    }
-                    else if ($partida["tipo"] == "subtitulo") {
-                        $this->etiqueta_subtitulo = $partida["etiqueta"];
-                        $this->es_del_grupo = $partida["es_empresa_hermes"];
-                        if($this->omitir_encabezado_tabla){
-                            $this->subtitulo();
-                            $this->omitir_encabezado_tabla = false;
-                        } else {
-                            if($this->es_del_grupo == 1){
-                                $this->SetTextColors(["21,157,247"]);
-                            }
-                            $this->Row([utf8_decode($partida["etiqueta"])]);
-                        }
-                    }
-
-                    else if ($partida["tipo"] == "total") {
-                        $this->Row([
-                            $partida["contador"]
-                            , utf8_decode($partida["etiqueta"])
-                            , $partida["cantidad_cfdi_f"]
-                            , $partida["total_cfdi_f"]
-                            , $partida["total_rep_f"]
-                            , $partida["pendiente_rep_f"]
-                            , ''
-                            , ''
-                        ]);
+            if (key_exists("tipo", $partida)) {
+                $this->en_cola = $partida["tipo"];
+                $this->setEstilos($partida["tipo"]);
+                if ($partida["tipo"] == "partida") {
+                    $this->Row([
+                        $partida["indice"]
+                        , utf8_decode($partida["rfc_empresa"])
+                        , utf8_decode($partida["empresa"])
+                        , $partida["cantidad_cfdi_f"]
+                        , $partida["total_cfdi_f"]
+                        , $partida["total_rep_f"]
+                        , $partida["pendiente_rep_f"]
+                        , $partida["acumulado_pendiente_rep_f"]
+                        , $partida["porcentaje"]
+                        ]
+                    );
+                }
+                else if ($partida["tipo"] == "subtitulo") {
+                    $this->etiqueta_subtitulo = $partida["etiqueta"];
+                    $this->es_del_grupo = $partida["es_empresa_hermes"];
+                    if($this->omitir_encabezado_tabla){
+                        $this->subtitulo();
+                        $this->omitir_encabezado_tabla = false;
                     } else {
-                        $this->Row([
-                            $partida["contador"]
-                            , utf8_decode($partida["etiqueta"])
-                            , $partida["cantidad_cfdi_f"]
-                            , $partida["total_cfdi_f"]
-                            , $partida["total_rep_f"]
-                            , $partida["pendiente_rep_f"]
-                            , ''
-                            , ''
-                        ]);
-
-                        $this->Ln();
+                        if($this->es_del_grupo == 1){
+                            $this->SetTextColors(["125,182,70"]);
+                        }
+                        $this->Row([utf8_decode($partida["etiqueta"])]);
                     }
                 }
+
+                else if ($partida["tipo"] == "total") {
+                    $this->Row([
+                        $partida["contador"]
+                        , utf8_decode($partida["etiqueta"])
+                        , $partida["cantidad_cfdi_f"]
+                        , $partida["total_cfdi_f"]
+                        , $partida["total_rep_f"]
+                        , $partida["pendiente_rep_f"]
+                        , ''
+                        , ''
+                    ]);
+                } else {
+                    $this->Row([
+                        $partida["contador"]
+                        , utf8_decode($partida["etiqueta"])
+                        , $partida["cantidad_cfdi_f"]
+                        , $partida["total_cfdi_f"]
+                        , $partida["total_rep_f"]
+                        , $partida["pendiente_rep_f"]
+                        , ''
+                        , ''
+                    ]);
+
+                    $this->Ln();
+                }
             }
+
         }
         $this->Ln();
     }
@@ -188,7 +194,7 @@ class InformeREPProveedorEmpresa extends Rotation
         {
             $this->setEstilos("subtitulo");
             if($this->es_del_grupo == 1){
-                $this->SetTextColors(["21,157,247"]);
+                $this->SetTextColors(["125,182,70"]);
             }
             $this->Row([utf8_decode($this->etiqueta_subtitulo)]);
         }

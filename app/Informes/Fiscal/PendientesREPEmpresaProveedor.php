@@ -5,17 +5,23 @@ namespace App\Informes\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
-use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
-use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use Illuminate\Support\Facades\DB;
 
 class PendientesREPEmpresaProveedor
 {
     public static function  get($data)
     {
-        $informe["informe"] = PendientesREPEmpresaProveedor::getPartidas();
+        $informe["partidas"] = PendientesREPEmpresaProveedor::getPartidas();
+        $informe["fechas"] = PendientesREPEmpresaProveedor::getFechasInforme();
 
         return $informe;
+    }
+
+    private static function getFechasInforme()
+    {
+        $fechas["ultimo_rep"]= CFDSAT::getFechaUltimoREP();
+        $fechas["ultima_cancelacion"]= CFDSAT::getFechaUltimaCancelacion();
+        return $fechas;
     }
 
 

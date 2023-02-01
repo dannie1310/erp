@@ -11,11 +11,20 @@ use Illuminate\Support\Facades\DB;
 
 class PendientesREPProveedorEmpresa
 {
+
     public static function  get($data)
     {
-        $informe["informe"] = PendientesREPProveedorEmpresa::getPartidas();
+        $informe["partidas"] = PendientesREPProveedorEmpresa::getPartidas();
+        $informe["fechas"] = PendientesREPProveedorEmpresa::getFechasInforme();
 
         return $informe;
+    }
+
+    private static function getFechasInforme()
+    {
+        $fechas["ultimo_rep"]= CFDSAT::getFechaUltimoREP();
+        $fechas["ultima_cancelacion"]= CFDSAT::getFechaUltimaCancelacion();
+        return $fechas;
     }
 
 
