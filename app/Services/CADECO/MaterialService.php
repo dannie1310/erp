@@ -83,7 +83,7 @@ class MaterialService
 
     public function delete($data, $id)
     {
-        return $this->show($id)->eliminarInsumo();        
+        return $this->show($id)->eliminarInsumo();
     }
 
     public function catalogo_insumos($data)
@@ -99,5 +99,15 @@ class MaterialService
 
     public function buscarMateriales($data){
         return $this->repository->buscarMateriales($data['busqueda']);
+    }
+
+    public function materialPorAlmacen($id)
+    {
+        return $this->repository->materialPorAlmacen($id['id']);
+    }
+
+    public function materialHistorico($data)
+    {
+        return $this->repository->materialHistorico($data['id'], $data['id_almacen']);
     }
 }
