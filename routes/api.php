@@ -469,6 +469,14 @@ $api->version('v1', function ($api) {
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformePDF');
             $api->get('obtener-informe/empresa-proyecto/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformeEmpresaProyectoPDF');
         });
+        $api->group(['prefix' => 'proveedor-rep'], function ($api){
+            //proveedores-rep-pendiente-xls
+            //            $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
+            $api->get('proveedores-rep-pendiente-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@descargaXLS');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/comunicado-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@comunicadoPdf')->where(['id' => '[0-9]+']);
+        });
     });
 
     /**

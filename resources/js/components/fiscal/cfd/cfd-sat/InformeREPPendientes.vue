@@ -8,6 +8,9 @@
                     <i class="fa fa-file-pdf"></i> Comunicados
                 </button>
                 <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
+                <button @click="porProveedor" type="button" class="btn btn-app pull-right float-right" :disabled="cargando" title="Ver REP pendientes por proveedor">
+                    <i class="fa fa-users"></i>Ver Por Provedor
+                </button>
 
             </div>
         </div>
@@ -109,6 +112,9 @@ export default {
     },
 
     methods: {
+        porProveedor() {
+            this.$router.push({name: 'informe-rep-faltantes-proveedor'});
+        },
         paginate(){
             this.cargando=true;
             return this.$store.dispatch('fiscal/cfd-sat/paginate', {params: this.query})

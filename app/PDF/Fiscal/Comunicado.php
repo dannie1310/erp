@@ -94,7 +94,7 @@ class Comunicado extends Rotation
         foreach ($this->emisor["receptores"] as $receptor) {
             $this->SetFont('Helvetica', '', 11);
             $this->SetTextColor(0,0,0);
-            $this->MultiCell(17.7,0.6,utf8_decode($receptor["empresa"]).":", '','J',0);
+            $this->MultiCell(17.7,0.6,utf8_decode("Emitidos a ".$receptor["empresa"]).":", '','J',0);
             $this->ln(0.3);
             $this->partidasTitle();
 
@@ -133,12 +133,6 @@ class Comunicado extends Rotation
         $this->cell(2,0.5,"$ ".number_format($saldo_emisor,2,".",","),1,0,'R',1);
         $this->cell(1,0.5,"MXN",1,1,'L',1);
 
-        /*foreach ($this->emisor["uuid"] as $item) {
-            $this->Row([$i, $item->uuid, $item->fecha_format, $item->serie,$item->folio, $item->total_format,$item->moneda]);
-
-            $i++;
-
-        }*/
     }
 
     public function partidasTitle()
