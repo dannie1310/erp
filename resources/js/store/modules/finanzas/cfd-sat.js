@@ -535,7 +535,7 @@ export default {
             var win = window.open(urr, "_blank");
 
             win.onbeforeunload = () => {
-                swal("Layout descargado correctamente.", {
+                swal("Archivo descargado correctamente.", {
                     icon: "success",
                     timer: 2000,
                     buttons: false

@@ -51,6 +51,47 @@ export default {
                     })
             })
         },
+
+        proveedoresRepPendienteXls(context, payload){
+            var search = '?';
+
+            if (typeof payload.params.rfc_proveedor !== 'undefined') {
+                search = search + 'rfc_proveedor='+ payload.params.rfc_proveedor + '&';
+            }
+            if (typeof payload.params.proveedor !== 'undefined') {
+                search = search + 'proveedor='+ payload.params.proveedor + '&';
+            }
+            if (typeof payload.params.cantidad_cfdi !== 'undefined') {
+                search = search + 'cantidad_cfdi='+ payload.params.cantidad_cfdi + '&';
+            }
+            if (typeof payload.params.total_cfdi !== 'undefined') {
+                search = search + 'total_cfdi='+ payload.params.total_cfdi + '&';
+            }
+            if (typeof payload.params.total_rep !== 'undefined') {
+                search = search + 'total_rep='+ payload.params.total_rep + '&';
+            }
+
+            if (typeof payload.params.pendiente_rep !== 'undefined') {
+                search = search + 'pendiente_rep='+ payload.params.pendiente_rep + '&';
+            }
+            if (typeof payload.params.ultima_ubicacion_sao !== 'undefined') {
+                search = search + 'ultima_ubicacion_sao='+ payload.params.ultima_ubicacion_sao + '&';
+            }
+            if (typeof payload.params.ultima_ubicacion_contabilidad !== 'undefined') {
+                search = search + 'ultima_ubicacion_contabilidad='+ payload.params.ultima_ubicacion_contabilidad + '&';
+            }
+
+            var urr = URI + 'proveedores-rep-pendiente-xls'+ search + '&access_token=' + this._vm.$session.get('jwt');
+            var win = window.open(urr, "_blank");
+
+            win.onbeforeunload = () => {
+                swal("Archivo descargado correctamente.", {
+                    icon: "success",
+                    timer: 2000,
+                    buttons: false
+                })
+            }
+        },
     },
 
     getters: {

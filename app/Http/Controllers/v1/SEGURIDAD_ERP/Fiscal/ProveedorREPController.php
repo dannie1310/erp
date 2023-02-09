@@ -55,4 +55,9 @@ class ProveedorREPController extends Controller
         return $this->service->comunicadoPdf($id);
     }
 
+    public function descargaXls(Request $request)
+    {
+        return $this->service->descargaXls($request->all());
+    }
+
 }

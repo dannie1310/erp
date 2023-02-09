@@ -3,6 +3,7 @@
 
         <div class="row">
             <div class="col-12">
+                <proveedores-rep-pendiente-xls v-bind:query="query"></proveedores-rep-pendiente-xls>
                 <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
             </div>
         </div>
@@ -31,10 +32,11 @@
 import DateRangePicker from "../../../globals/DateRangePicker"
 import CfdiRepPendienteXls from "./partials/CFDIREPPendienteXLS";
 import ImpresionInformeREPFaltante from "../partials/ImpresionInformeREPFaltante";
+import ProveedoresRepPendienteXls from "./partials/ProveedoresRepPendienteXls";
 
 export default {
     name: "cfdi-rep-pendiente-proveedor-index",
-    components:{ImpresionInformeREPFaltante, CfdiRepPendienteXls, DateRangePicker},
+    components:{ProveedoresRepPendienteXls, ImpresionInformeREPFaltante, CfdiRepPendienteXls, DateRangePicker},
 
     data() {
         return {
@@ -55,8 +57,7 @@ export default {
                 { title: 'Pendiente REP', field: 'pendiente_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Último Proyecto SAO', field: 'ultima_ubicacion_sao', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Último Proyecto Contabilidad', field: 'ultima_ubicacion_contabilidad', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                { title: 'Fecha último CFDI con Ubicación', field: 'fecha_ultimo_cfdi_con_ubicacion', sortable: true},
-
+                { title: 'Fecha Último CFDI con Ubicación', field: 'fecha_ultimo_cfdi_con_ubicacion', sortable: true},
                 { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
             ],
             data: [],
