@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Services\SEGURIDAD_ERP\Fiscal;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
+use App\PDF\Fiscal\Comunicado;
 use App\Repositories\SEGURIDAD_ERP\Fiscal\ProveedorREPRepository;
 
 
@@ -121,6 +123,23 @@ class ProveedorREPService
     public function show($id)
     {
         return $this->repository->show($id);
+    }
+
+    public function comunicadoPdf($id)
+    {
+        $proveedor = $this->repository->show($id);
+
+        $uuids = $proveedor->cfdi()->repPendiente()->get();
+        $arr_comunicados = [];
+        foreach ($uuids as $uuid)
+        {
+            $arr_comunicados["proveedor"] = $uuid->proveedor->razon_social;
+            $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
+            $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
+        }
+
+        $pdf = new Comunicado($arr_comunicados);
+        return $pdf->create()->Output('I', 'Comunicado-'.$proveedor->rfc, 1);;
     }
 
 }

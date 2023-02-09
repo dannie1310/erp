@@ -53,7 +53,7 @@ export default {
                 { title: 'Monto CFDI', field: 'total_cfdi',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Monto REP', field: 'total_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Pendiente REP', field: 'pendiente_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
+                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
             ],
             data: [],
             total: 0,

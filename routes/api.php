@@ -472,6 +472,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'proveedor-rep'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@paginate');
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/comunicado-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@comunicadoPdf')->where(['id' => '[0-9]+']);
         });
     });
 

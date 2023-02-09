@@ -3,6 +3,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 
 class ProveedorREP extends Model
@@ -13,6 +14,10 @@ class ProveedorREP extends Model
 
     public $fillable = [
     ];
+
+    public function cfdi(){
+        return $this->hasMany(CFDSAT::class,"id_proveedor_sat","id");
+    }
 
     public function getTotalRepFormatAttribute()
     {

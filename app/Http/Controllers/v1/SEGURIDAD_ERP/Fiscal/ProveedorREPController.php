@@ -50,4 +50,9 @@ class ProveedorREPController extends Controller
         return $this->respondWithItem($item);
     }
 
+    public function comunicadoPdf($id)
+    {
+        return $this->service->comunicadoPdf($id);
+    }
+
 }
