@@ -33,6 +33,14 @@ class ProveedorREPService
             $proveedores = $proveedores->where([['proveedor', 'LIKE', '%' . $data['proveedor'] . '%']]);
         }
 
+        if (isset($data['ultima_ubicacion_sao'])) {
+            $proveedores = $proveedores->where([['ultima_ubicacion_sao', 'LIKE', '%' . $data['ultima_ubicacion_sao'] . '%']]);
+        }
+
+        if (isset($data['ultima_ubicacion_contabilidad'])) {
+            $proveedores = $proveedores->where([['ultima_ubicacion_contabilidad', 'LIKE', '%' . $data['ultima_ubicacion_contabilidad'] . '%']]);
+        }
+
         if (isset($data['cantidad_cfdi'])) {
             if (strpos($data['cantidad_cfdi'], ">=") !== false) {
                 $cantidad_cfdi = str_replace(">=", "", $data['cantidad_cfdi']);

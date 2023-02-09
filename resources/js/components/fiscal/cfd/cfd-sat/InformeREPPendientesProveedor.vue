@@ -53,6 +53,9 @@ export default {
                 { title: 'Monto CFDI', field: 'total_cfdi',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Monto REP', field: 'total_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Pendiente REP', field: 'pendiente_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Último Proyecto SAO', field: 'ultima_ubicacion_sao', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Último Proyecto Contabilidad', field: 'ultima_ubicacion_contabilidad', thComp: require('../../../globals/th-Filter').default, sortable: true},
+
                 { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
             ],
             data: [],
@@ -111,6 +114,8 @@ export default {
                         total_rep: proveedor_rep.total_rep,
                         pendiente_rep: proveedor_rep.pendiente_rep,
                         es_empresa_hermes: proveedor_rep.es_empresa_hermes,
+                        ultima_ubicacion_sao : proveedor_rep.ultima_ubicacion_sao,
+                        ultima_ubicacion_contabilidad : proveedor_rep.ultima_ubicacion_contabilidad,
 
                         buttons: $.extend({}, {
                             id: proveedor_rep.id,

@@ -19,6 +19,11 @@ class ProveedorREP extends Model
         return $this->hasMany(CFDSAT::class,"id_proveedor_sat","id");
     }
 
+    public function ultima_ubicacion()
+    {
+        return $this->hasOne(ProveedorUltimaUbicacion::class, "id_proveedor_sat","id");
+    }
+
     public function getTotalRepFormatAttribute()
     {
         return number_format($this->total_rep);

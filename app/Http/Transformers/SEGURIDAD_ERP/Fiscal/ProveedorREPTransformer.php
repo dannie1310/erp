@@ -22,6 +22,9 @@ class ProveedorREPTransformer extends TransformerAbstract
             'total_rep' => $model->total_rep_format,
             'pendiente_rep' => $model->pendiente_rep_format,
             'es_empresa_hermes' => $model->es_empresa_hermes,
+            'fecha_ultimo_cfdi_con_ubicacion' => $model->fecha_ultimo_cfdi_con_ubicacion,
+            'ultima_ubicacion_sao' => $model->ultima_ubicacion_sao,
+            'ultima_ubicacion_contabilidad' => $model->ultima_ubicacion_contabilidad,
         ];
     }
 
