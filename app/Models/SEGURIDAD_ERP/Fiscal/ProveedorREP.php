@@ -44,4 +44,13 @@ class ProveedorREP extends Model
         return number_format($this->cantidad_cfdi);
     }
 
+    public function getFechaUltimoCfdiConUbicacionFormatAttribute()
+    {
+        if($this->fecha_ultimo_cfdi_con_ubicacion) {
+            $date = date_create($this->fecha_ultimo_cfdi_con_ubicacion);
+            return date_format($date, "d/m/Y");
+        }
+        return null;
+    }
+
 }

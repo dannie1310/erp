@@ -55,6 +55,7 @@ export default {
                 { title: 'Pendiente REP', field: 'pendiente_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Último Proyecto SAO', field: 'ultima_ubicacion_sao', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Último Proyecto Contabilidad', field: 'ultima_ubicacion_contabilidad', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Fecha último CFDI con Ubicación', field: 'fecha_ultimo_cfdi_con_ubicacion', sortable: true},
 
                 { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
             ],
@@ -116,6 +117,7 @@ export default {
                         es_empresa_hermes: proveedor_rep.es_empresa_hermes,
                         ultima_ubicacion_sao : proveedor_rep.ultima_ubicacion_sao,
                         ultima_ubicacion_contabilidad : proveedor_rep.ultima_ubicacion_contabilidad,
+                        fecha_ultimo_cfdi_con_ubicacion : proveedor_rep.fecha_ultimo_cfdi_con_ubicacion,
 
                         buttons: $.extend({}, {
                             id: proveedor_rep.id,
