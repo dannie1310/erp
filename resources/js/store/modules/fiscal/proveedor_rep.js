@@ -92,6 +92,47 @@ export default {
                 })
             }
         },
+
+        enviarInvitacion(context,payload){
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Enviar comunicado",
+                    text: "¿Está seguro que desea enviar el comunicado?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Enviar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        console.log(payload);
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + "/enviar-comunicado", payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Comunicado enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        },
     },
 
     getters: {

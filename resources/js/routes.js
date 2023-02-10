@@ -4140,6 +4140,22 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id/envio-comunicado',
+                        //props:true,
+                        props: route => ({
+                            id: route.params.id,
+                        }),
+                        name: 'envio-comunicado-rep-faltantes',
+                        component: require('./components/fiscal/cfd/rep-pendientes/notificacion/Create').default,
+                        meta: {
+                            title: 'Enviar comunicado de REP Faltantes',
+                            breadcrumb: {name: 'Enviar Comunicado', parent: 'informe-rep-faltantes-proveedor'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
                         path: 'informe',
                         name: 'informe-cfd-empresa-tiempo',
                         component: require('./components/fiscal/cfd/cfd-sat/InformeCFDEmpresaMes').default,

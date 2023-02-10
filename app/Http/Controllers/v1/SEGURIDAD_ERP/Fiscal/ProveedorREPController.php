@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Events\RegistroNotificacionREP;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\ProveedorREPTransformer;
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Services\SEGURIDAD_ERP\Fiscal\ProveedorREPService;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
@@ -58,6 +60,18 @@ class ProveedorREPController extends Controller
     public function descargaXls(Request $request)
     {
         return $this->service->descargaXls($request->all());
+    }
+
+    public function enviarComunicado(Request $request, $id)
+    {
+        //dd($request->destinatarios);
+        $proveedor = ProveedorSAT::find($id);
+        if($proveedor){
+            event(new RegistroNotificacionREP($proveedor, $request->destinatarios));
+        }
+
+        return [];
+
     }
 
 }

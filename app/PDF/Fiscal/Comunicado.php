@@ -27,6 +27,13 @@ class Comunicado extends Rotation
     {
         parent::__construct("P", "cm", "Letter");
         $this->emisor = $emisor;
+        $this->SetMargins(2, 2, 2);
+        $this->SetAutoPageBreak(true, 1);
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->comunicado();
+        $this->AddPage();
+        $this->listaCFDI();
     }
 
     function Header()
@@ -159,13 +166,7 @@ class Comunicado extends Rotation
 
     function create()
     {
-        $this->SetMargins(2, 2, 2);
-        $this->SetAutoPageBreak(true, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->comunicado();
-        $this->AddPage();
-        $this->listaCFDI();
+
 
         return $this;
 
