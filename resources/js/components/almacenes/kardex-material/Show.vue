@@ -82,94 +82,22 @@
                     </div>
                     <br />
                     <hr />
-                    <div class="row" v-if="inventarios">
-                         <div class="table-responsive" style="max-height: 250px; overflow-y: scroll;">
-                             <table class="table table-bordered table-sm">
-                                 <tr>
-                                     <th class="encabezado">
-                                         Fecha
-                                     </th>
-                                     <th class="encabezado">
-                                         Unidad
-                                     </th>
-                                     <th class="encabezado">
-                                         Entradas
-                                     </th>
-                                     <th class="encabezado">
-                                         Salidas
-                                     </th>
-                                     <th class="encabezado">
-                                         Existencia
-                                     </th>
-                                     <th class="encabezado">
-                                         Adquirido
-                                     </th>
-                                     <th class="encabezado">
-                                         Pagado
-                                     </th>
-                                     <th class="encabezado">
-                                         x Pagar
-                                     </th>
-                                     <th class="encabezado">
-                                         Referencia
-                                     </th>
-                                 </tr>
-                                 <tr v-for="inventario in inventarios">
-                                     <td style="text-align: center">
-                                         {{inventario.fecha}}
-                                     </td>
-                                     <td style="text-align: center">
-                                         {{inventario.unidad}}
-                                     </td>
-                                     <td style="text-align: right">
-                                         {{inventario.entrada}}
-                                     </td>
-                                     <td style="text-align: right">
-                                         {{inventario.salida}}
-                                     </td>
-                                     <td style="text-align: right">
-                                         {{inventario.existencia}}
-                                     </td>
-                                     <td style="text-align: right">
-                                         {{inventario.adquirido}}
-                                     </td>
-                                     <td style="text-align: right">
-                                         {{inventario.pagado}}
-                                     </td>
-                                     <td style="text-align: right">
-                                         {{inventario.x_pagar}}
-                                     </td>
-                                     <td style="text-align: center">
-                                         {{inventario.referencia}}
-                                     </td>
-                                 </tr>
-                                 <tr v-if="total_inv">
-                                     <td class="encabezado"><b>TOTAL</b></td>
-                                     <td></td>
-                                     <td style="text-align: right">
-                                         <b>{{total_inv.entrada}}</b>
-                                     </td>
-                                     <td style="text-align: right">
-                                         <b>{{total_inv.salida}}</b>
-                                     </td>
-                                     <td style="text-align: right">
-                                         <b>{{total_inv.existencia}}</b>
-                                     </td>
-                                     <td style="text-align: right">
-                                         <b>{{total_inv.adquirido}}</b>
-                                     </td>
-                                     <td style="text-align: right">
-                                         <b>{{total_inv.pagado}}</b>
-                                     </td>
-                                     <td style="text-align: right">
-                                         <b>{{total_inv.x_pagar}}</b>
-                                     </td>
-                                     <td style="text-align: center">
-                                     </td>
-                                 </tr>
-                             </table>
-                         </div>
-                     </div>
+                    <nav v-if="inventarios">
+                        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                            <a aria-controls="nav-home" aria-selected="true" class="nav-item nav-link active" data-toggle="tab" href="#nav-home"
+                            id="nav-home-tab" role="tab">Entradas</a>
+                            <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
+                            href="#nav-profile" id="nav-profile-tab" role="tab">Salidas</a>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent" v-if="inventarios">
+                        <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
+                            <entrada v-bind:inventarios="inventarios" />
+                        </div>
+                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
+                            <salida />
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" v-on:click="salir">
@@ -183,8 +111,11 @@
 </template>
 
 <script>
+import Entrada from './partials/Entrada.vue';
+import Salida from './partials/Salida.vue';
 export default {
     name: "kardex-show",
+    components: {Entrada, Salida},
     props: ['id'],
     mounted() {
         this.find();
@@ -194,9 +125,11 @@ export default {
             cargando: false,
             materiales: [],
             inventarios: null,
+            salidas: null,
             total_inv: null,
             total_mat: null,
             num_pas: 0,
+            total_sal: null,
         }
     },
     methods: {
@@ -230,6 +163,15 @@ export default {
                 this.inventarios = data.inventarios;
                 this.total_inv = data.totales;
                 this.num_pas = key;
+                return this.$store.dispatch('cadeco/material/historicoSalida', {
+                    params: {
+                        id: i,
+                        id_almacen: this.id
+                    }
+                }).then(data => {
+                    this.salidas = data.salidas;
+                    this.total_sal = data.totales;
+                })
             })
         }
     },

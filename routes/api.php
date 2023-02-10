@@ -179,6 +179,7 @@ $api->version('v1', function ($api) {
             $api->get('buscarMateriales', 'App\Http\Controllers\v1\CADECO\MaterialController@buscarMateriales');
             $api->get('porAlmacen', 'App\Http\Controllers\v1\CADECO\MaterialController@materialPorAlmacen');
             $api->get('historico', 'App\Http\Controllers\v1\CADECO\MaterialController@materialHistorico');
+            $api->get('historicoSalida', 'App\Http\Controllers\v1\CADECO\MaterialController@historicoSalida');
         });
 
         // MONEDA

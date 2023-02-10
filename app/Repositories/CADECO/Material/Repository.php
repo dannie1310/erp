@@ -44,4 +44,9 @@ class Repository extends \App\Repositories\Repository  implements RepositoryInte
     {
         return $this->model->material_historico($id, $id_almacen);
     }
+
+    public function historico_salida($id, $id_almacen)
+    {
+        return $this->model->historico_salida($id, $id_almacen);
+    }
 }
