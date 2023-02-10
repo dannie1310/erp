@@ -357,7 +357,7 @@
                     <div class="row" >
                         <div class="col-md-12">
                             <div class="pull-right">
-                                <descuento-create @created="getPartidas" />
+                                <descuento-create @created="getPartidas" v-if="registro.retencionesLocales != undefined" />
                                 <button v-if="registro.xml == undefined" type="button" class="btn btn-success btn-sm" @click="agregarPartida()"><i class="fa fa-plus"></i>Agregar Partida</button>
                             </div>
                         </div>
