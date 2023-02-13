@@ -4149,7 +4149,19 @@ export const routes = [
                         component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientes').default,
                         meta: {
                             title: 'CFDI con REP faltantes',
-                            breadcrumb: {name: 'INFORME REP Faltantes', parent: 'fiscal'},
+                            breadcrumb: {name: 'REP Faltantes', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe-rep-faltantes-proveedor',
+                        name: 'informe-rep-faltantes-proveedor',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientesProveedor').default,
+                        meta: {
+                            title: 'REP Faltantes por Proveedor',
+                            breadcrumb: {name: 'Por Proveedor', parent: 'informe-rep-faltantes'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],
                             general: true

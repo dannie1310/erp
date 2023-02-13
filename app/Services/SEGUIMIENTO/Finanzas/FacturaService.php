@@ -190,14 +190,15 @@ class FacturaService
         $arreglo['tipos_partida'] = FinDimIngresoPartida::activos()->selectRaw('idpartida as id, partida as partida, nombre_operador')->orderBy('partida','ASC')->get()->toArray();
         $arreglo['id_proyecto'] = '';
         $arreglo['proyectos'] = '';
-        foreach ($arreglo_cfd['retencionesLocales'] as $key => $retencion)
-        {
-            $partida = FinDimIngresoPartida::activos()->where('partida', 'like', '%'.Util::eliminaCaracteresEspeciales($retencion['descripcion']).'%')->orderBy('idpartida','desc')->first();
-            $arreglo['retencionesLocales'][$key] = $retencion;
-            $arreglo['retencionesLocales'][$key]['id'] = $partida ? $partida->getKey() : '';
-            $arreglo['retencionesLocales'][$key]['nombre'] = $partida ? $partida->partida : '';
-            $arreglo['retencionesLocales'][$key]['nombre_operador'] = $partida ? $partida->nombre_operador : '';
-            $arreglo['retencionesLocales'][$key]['antes_iva'] = false;
+        if (array_key_exists('retencionesLocales', $arreglo_cfd)) {
+            foreach ($arreglo_cfd['retencionesLocales'] as $key => $retencion) {
+                $partida = FinDimIngresoPartida::activos()->where('partida', 'like', '%' . Util::eliminaCaracteresEspeciales($retencion['descripcion']) . '%')->orderBy('idpartida', 'desc')->first();
+                $arreglo['retencionesLocales'][$key] = $retencion;
+                $arreglo['retencionesLocales'][$key]['id'] = $partida ? $partida->getKey() : '';
+                $arreglo['retencionesLocales'][$key]['nombre'] = $partida ? $partida->partida : '';
+                $arreglo['retencionesLocales'][$key]['nombre_operador'] = $partida ? $partida->nombre_operador : '';
+                $arreglo['retencionesLocales'][$key]['antes_iva'] = false;
+            }
         }
         $this->validaciones($arreglo);
         $arreglo = $this->validaEmpresaSAT($arreglo);
