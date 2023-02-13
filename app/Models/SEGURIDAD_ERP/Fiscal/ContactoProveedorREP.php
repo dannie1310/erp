@@ -6,16 +6,17 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 
-class RepNotificaciones extends Model
+class ContactoProveedorREP extends Model
 {
     protected $connection = 'seguridad';
-    protected $table = 'SEGURIDAD_ERP.Fiscal.rep_notificaciones';
+    protected $table = 'SEGURIDAD_ERP.Fiscal.contactos_proveedores';
     public $timestamps = false;
 
     public $fillable = [
         "id_proveedor_sat"
-        , "usuario_registro"
-        , "comunicado_pdf"
+        , "correo"
+        , "nombre"
+        , "puesto"
     ];
 
 }

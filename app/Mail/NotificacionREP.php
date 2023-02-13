@@ -1,25 +1,24 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Mail;
 
-use App\CSV\Fiscal\ProveedoresREPPendiente;
-use App\Models\CADECO\SolicitudCompra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
-use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use App\PDF\Fiscal\Comunicado;
-use App\PDF\PortalProveedores\InvitacionCotizarFormato;
 use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
+use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NotificacionREP extends Notification
+class NotificacionREP extends Mailable
 {
-    use Queueable;
+    use Queueable, SerializesModels;
+
     public $proveedor;
 
     /**
-     * Create a new notification instance.
+     * Create a new message instance.
      *
      * @return void
      */
@@ -29,23 +28,11 @@ class NotificacionREP extends Notification
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Build the message.
      *
-     * @param  mixed  $notifiable
-     * @return array
+     * @return $this
      */
-    public function via($notifiable)
-    {
-        return ['mail'];
-    }
-
-    /**
-     * Get the mail representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return \Illuminate\Notifications\Messages\MailMessage
-     */
-    public function toMail($notifiable)
+    public function build()
     {
         $titulo = "REPs Pendientes";
 
@@ -62,22 +49,10 @@ class NotificacionREP extends Notification
 
         $pdf = new Comunicado($arr_comunicados);
 
-        return (new MailMessage)
+        return $this
             ->subject($titulo)
             ->view('emails.notificacion_rep',["proveedor"=>$this->proveedor])
             ->attachData($pdf->Output("S", 'Comunicado-'.$this->proveedor->rfc.".pdf"), 'Comunicado-'.$this->proveedor->rfc . '.pdf',['mime' => 'application/pdf']);
-    }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
-    public function toArray($notifiable)
-    {
-        return [
-            //
-        ];
     }
 }

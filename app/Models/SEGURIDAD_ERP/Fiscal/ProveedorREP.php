@@ -24,6 +24,16 @@ class ProveedorREP extends Model
         return $this->hasOne(ProveedorUltimaUbicacion::class, "id_proveedor_sat","id");
     }
 
+    public function notificaciones()
+    {
+        return $this->hasMany(RepNotificacion::class, "id_proveedor_sat", "id");
+    }
+
+    public function contactos()
+    {
+        return $this->hasMany(ContactoProveedorREP::class, "id_proveedor_sat", "id");
+    }
+
     public function getTotalRepFormatAttribute()
     {
         return number_format($this->total_rep);
@@ -51,6 +61,20 @@ class ProveedorREP extends Model
             return date_format($date, "d/m/Y");
         }
         return null;
+    }
+
+    public function getContacto($data){
+        $contacto = $this->contactos()->where("correo", "=", $data["correo"])->first();
+        if(!$contacto){
+            $contacto = $this->contactos()->create([
+                "correo" => $data["correo"],
+                "nombre" => $data["contacto"]
+            ]);
+        }else{
+            $contacto->nombre = $data["contacto"];
+            $contacto->save();
+        }
+        return $contacto;
     }
 
 }

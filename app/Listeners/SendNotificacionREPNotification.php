@@ -3,14 +3,11 @@
 namespace App\Listeners;
 
 
-use App\Events\RegistroInvitacion;
 use App\Events\RegistroNotificacionREP;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
-use App\Notifications\NotificacionInvitacionCotizar;
-use App\Notifications\NotificacionInvitacionCotizarCopiados;
-use App\Notifications\NotificacionREP;
-use Illuminate\Support\Facades\Notification;
+use App\Mail\NotificacionREP;
+use Illuminate\Support\Facades\Mail;
 
 
 class SendNotificacionREPNotification
@@ -26,37 +23,25 @@ class SendNotificacionREPNotification
     }
 
     /**
-     * @param RegistroInvitacion $event
+     * @param RegistroNotificacionREP $event
+     * @return void
      */
     public function handle(RegistroNotificacionREP $event)
     {
-
-        $suscripciones = Suscripcion::activa()->where("id_evento",18)->get();
-        $usuario = Usuario::suscripcion($suscripciones)->get();
-        Notification::send($usuario, new NotificacionREP($event->proveedor));
-
-        foreach ($event->destinatarios as $destinatario)
-        {
-            Notification::route("mail",$destinatario["correo"])->notify(new NotificacionREP($event->proveedor));
-
+        $suscripciones = Suscripcion::activa()->where("id_evento", 18)->get();
+        $usuarios_suscritos = Usuario::suscripcion($suscripciones)->get();
+        foreach ($usuarios_suscritos as $usuario_suscrito) {
+            $event->notificacion->destinatarios()->create([
+                "id_usuario_hermes" => $usuario_suscrito->idusuario,
+                "correo" => $usuario_suscrito->correo,
+                "nombre" => $usuario_suscrito->usuario,
+            ]);
         }
 
-        /*if($event->invitacion->id_area_compradora == 1)
-        {
-            $suscripciones = Suscripcion::activa()->where("id_evento",11)->get();
-            $usuario = Usuario::suscripcion($suscripciones)->get();
-            Notification::send($usuario, new NotificacionInvitacionCotizarCopiados($event->invitacion));
-        }
-        else if($event->invitacion->id_area_contratante == 1)
-        {
-            $suscripciones = Suscripcion::activa()->where("id_evento",9)->get();
-            $usuario = Usuario::suscripcion($suscripciones)->get();
-            Notification::send($usuario, new NotificacionInvitacionCotizarCopiados($event->invitacion));
-        }
-        if($event->invitacion->copiados()->count()>0){
-            Notification::route("mail",$event->invitacion->copiados()->pluck("direccion"))->notify(new NotificacionInvitacionCotizarCopiados($event->invitacion));
-        }
-        Notification::send($event->invitacion->usuarioInvitado, new NotificacionInvitacionCotizar($event->invitacion));
-    */
+        $destinatarios = $event->notificacion->destinatarios()->proveedor()->pluck("correo");
+        $destinatarios_copiados = $event->notificacion->destinatarios()->hermes()->pluck("correo");
+
+
+        Mail::to($destinatarios)->cc($destinatarios_copiados)->send(new NotificacionREP($event->notificacion->proveedor));
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Invitacion;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Foundation\Events\Dispatchable;
@@ -12,14 +13,12 @@ use Illuminate\Broadcasting\PrivateChannel;
 class RegistroNotificacionREP
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    public $proveedor;
+    public $notificacion;
     public $tipo;
-    public $destinatarios;
 
-    public function __construct(ProveedorSAT $proveedor, $destinatarios)
+    public function __construct(RepNotificacion $notificacion)
     {
-        $this->proveedor = $proveedor;
-        $this->destinatarios = $destinatarios;
+        $this->notificacion = $notificacion;
         $this->tipo = 18;
     }
 
