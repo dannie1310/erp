@@ -77,4 +77,14 @@ class ProveedorREP extends Model
         return $contacto;
     }
 
+    public function getFechaUltimaNotificacionFormatAttribute()
+    {
+        if(count($this->notificaciones)>0) {
+            $ultima_notificacion = $this->notificaciones()->orderBy("id","desc")->first();
+            $date = date_create($ultima_notificacion->fecha_hora_registro);
+            return date_format($date, "d/m/Y");
+        }
+        return null;
+    }
+
 }
