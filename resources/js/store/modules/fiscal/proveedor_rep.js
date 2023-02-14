@@ -107,11 +107,11 @@ export default {
             }
         },
 
-        guardarContactos(context,payload){
+        actualizarContactos(context,payload){
 
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "Guardar Contactos",
+                    title: "Actualizar Contactos",
                     text: "¿Está seguro que solo desea actualizar los contactos del proveedor?",
                     icon: "info",
                     buttons: {
@@ -127,7 +127,7 @@ export default {
                     .then((value) => {
                         if (value) {
                             axios
-                                .post(URI + payload.id + "/guardar-contactos", payload)
+                                .post(URI + payload.id + "/actualizar-contactos", payload)
                                 .then(r => r.data)
                                 .then(data => {
                                     swal("Contactos guardados correctamente", {

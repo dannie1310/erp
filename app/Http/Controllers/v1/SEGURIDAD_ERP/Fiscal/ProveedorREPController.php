@@ -65,9 +65,9 @@ class ProveedorREPController extends Controller
         return $this->service->enviarComunicado($id, $request->all());
     }
 
-    public function guardarContactos(Request $request, $id)
+    public function actualizarContactos(Request $request, $id)
     {
-        return $this->service->guardarContactos($id, $request->all());
+        return $this->service->actualizarContactos($id, $request->all());
     }
 
 }

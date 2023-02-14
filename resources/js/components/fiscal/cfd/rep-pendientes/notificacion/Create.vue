@@ -82,10 +82,10 @@
 
                                 <div class="col-md-9">
                                     <div class="pull-right">
-                                        <button type="button" class="btn btn-primary" v-on:click="guardarContactos" :disabled="cargando"><i class="fa fa-save"  ></i>
+                                        <button type="button" class="btn btn-primary" v-on:click="actualizarContactos" :disabled="cargando" title="Actualizar Contactos"><i class="fa fa-save"  ></i>
                                             Actualizar Contactos</button>
-                                        <button type="button" class="btn btn-danger" v-on:click="enviar" :disabled="errors.count() > 0 || cargando"><i class="fa fa-envelope"></i>
-                                            Enviar Notificación</button>
+                                        <button type="button" class="btn btn-danger" v-on:click="enviar" :disabled="errors.count() > 0 || cargando" title="Enviar Comunicado"><i class="fa fa-envelope"></i>
+                                            Enviar Comunicado</button>
                                     </div>
                                 </div>
                             </div>
@@ -193,14 +193,14 @@ export default {
             });
         },
 
-        guardarContactos(){
+        actualizarContactos(){
             let _self = this;
             this.$validator.validate().then(result => {
                 if (result) {
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.id = _self.id;
 
-                    return this.$store.dispatch('fiscal/proveedor-rep/guardarContactos', _self.post)
+                    return this.$store.dispatch('fiscal/proveedor-rep/actualizarContactos', _self.post)
                         .then((data) => {
                             //this.$router.push({name: 'informe-rep-faltantes-proveedor'});
                         });

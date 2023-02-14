@@ -19,4 +19,18 @@ class ContactoProveedorREP extends Model
         , "puesto"
     ];
 
+    protected static function boot()
+    {
+        parent::boot();
+        self::addGlobalScope(function ($query) {
+            return $query->where('estatus', '=', 1);
+        });
+    }
+
+    public function desactivar()
+    {
+        $this->estatus = 0;
+        $this->save();
+    }
+
 }
