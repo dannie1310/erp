@@ -4132,7 +4132,7 @@ export const routes = [
                         name: 'informe-rep-faltantes-proveedor',
                         component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientesProveedor').default,
                         meta: {
-                            title: 'REP Faltantes por Proveedor',
+                            title: 'Lista de proveedores que adeudan REP',
                             breadcrumb: {name: 'Por Proveedor', parent: 'informe-rep-faltantes'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],

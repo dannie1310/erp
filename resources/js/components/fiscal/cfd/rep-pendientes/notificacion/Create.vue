@@ -122,8 +122,8 @@ export default {
         }
     },
     mounted() {
-        this.verPDF();
         this.getDestinatarios();
+        this.verPDF();
     },
 
     methods:{
