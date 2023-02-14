@@ -92,10 +92,10 @@
                     </nav>
                     <div class="tab-content" id="nav-tabContent" v-if="inventarios">
                         <div aria-labelledby="nav-home-tab" class="tab-pane fade show active" id="nav-home" role="tabpanel">
-                            <entrada v-bind:inventarios="inventarios" />
+                            <entrada v-bind:inventarios="inventarios"  v-bind:totales="total_inv"/>
                         </div>
                         <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
-                            <salida />
+                            <salida v-bind:salidas="salidas" v-bind:totales="total_sal"/>
                         </div>
                     </div>
                 </div>

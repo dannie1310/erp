@@ -66,26 +66,26 @@
                                                 {{inventario.referencia}}
                                             </td>
                                         </tr>
-                                        <tr v-if="total_inv">
+                                        <tr v-if="totales">
                                             <td class="encabezado"><b>TOTAL</b></td>
                                             <td></td>
                                             <td style="text-align: right">
-                                                <b>{{total_inv.entrada}}</b>
+                                                <b>{{totales.entrada}}</b>
                                             </td>
                                             <td style="text-align: right">
-                                                <b>{{total_inv.salida}}</b>
+                                                <b>{{totales.salida}}</b>
                                             </td>
                                             <td style="text-align: right">
-                                                <b>{{total_inv.existencia}}</b>
+                                                <b>{{totales.existencia}}</b>
                                             </td>
                                             <td style="text-align: right">
-                                                <b>{{total_inv.adquirido}}</b>
+                                                <b>{{totales.adquirido}}</b>
                                             </td>
                                             <td style="text-align: right">
-                                                <b>{{total_inv.pagado}}</b>
+                                                <b>{{totales.pagado}}</b>
                                             </td>
                                             <td style="text-align: right">
-                                                <b>{{total_inv.x_pagar}}</b>
+                                                <b>{{totales.x_pagar}}</b>
                                             </td>
                                             <td style="text-align: center">
                                             </td>
@@ -104,7 +104,7 @@
 <script>
     export default {
         name: "entrada-historico-show",
-        props: ['inventarios'],
+        props: ['inventarios', 'totales'],
         data() {
             return {
                 cargando: false,
