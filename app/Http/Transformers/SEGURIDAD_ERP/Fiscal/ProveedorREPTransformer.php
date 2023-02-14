@@ -8,7 +8,11 @@ use League\Fractal\TransformerAbstract;
 class ProveedorREPTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'poliza'
+        "contactos"
+    ];
+
+    protected $defaultIncludes = [
+
     ];
 
     public function transform(ProveedorREP $model)
@@ -28,6 +32,16 @@ class ProveedorREPTransformer extends TransformerAbstract
             'fecha_ultimo_cfdi_con_ubicacion' => $model->fecha_ultimo_cfdi_con_ubicacion_format,
             'fecha_ultima_notificacion' => $model->fecha_ultima_notificacion_format
         ];
+    }
+
+    public function includeContactos(ProveedorREP $model){
+        if(count($model->contactos)>0)
+        {
+            return $this->collection($model->contactos, new ContactoProveedorTransformer);
+        }
+
+        return null;
+
     }
 
 }

@@ -1,13 +1,14 @@
 <template>
     <span>
-        <div class="card" >
+
+        <div class="card"  >
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-6">
 
                         <div class="row" style="margin-bottom: 5px">
                             <div class="col-md-12">
-                                <span><i class="fa fa-envelope"></i>Destinatarios</span>
+                                <span><i class="fa fa-envelope"></i>DESTINATARIOS <span v-if="!cargando"><strong>{{proveedor.proveedor}}</strong></span></span>
                             </div>
                         </div>
                         <div class="row">
@@ -77,7 +78,7 @@
 
                                 <div class="col-md-12">
                                     <div class="pull-right">
-                                        <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>
+                                        <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"  :disabled="cargando"></i>
                                             Regresar</button>
                                         <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0 || cargando"><i class="fa fa-envelope"></i>
                                             Enviar</button>
@@ -106,7 +107,7 @@ export default {
     props: ['id'],
     data(){
         return {
-            cargando : false,
+            cargando : true,
             post: {},
             destinatarios : [
                 {
@@ -118,12 +119,41 @@ export default {
     },
     mounted() {
         this.verPDF();
+        this.getDestinatarios();
     },
+
     methods:{
         verPDF(){
             var url = '/api/fiscal/proveedor-rep/' + this.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
             $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Contrato Proyectado</iframe>');
             $(this.$refs.modal).appendTo('body')
+        },
+
+        getDestinatarios(){
+            let _self = this;
+            return this.$store.dispatch('fiscal/proveedor-rep/find', {
+                id: _self.id,
+                params: {
+                    "include":["contactos"]
+                }
+            })
+                .then(data => {
+                    this.$store.commit('fiscal/proveedor-rep/SET_PROVEEDOR_REP', data);
+
+                    if(data.contactos !== undefined){
+                        this.destinatarios.splice(0, 1);
+                        data.contactos.data.forEach(function (contacto, i) {
+                            _self.destinatarios.push({
+                                'correo' : contacto.correo,
+                                'contacto' : contacto.nombre,
+                            })
+                        });
+                    }
+                })
+                .finally(() => {
+                    this.cargando = false;
+                })
+
         },
 
         agregarDestinatario(){
@@ -148,8 +178,6 @@ export default {
             let _self = this;
             this.$validator.validate().then(result => {
                 if (result) {
-                    //console.log(_self.destinatarios);
-                    //_self.post.cuerpo_correo = _self.cuerpo_correo;//
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.id = _self.id;
 
@@ -160,7 +188,12 @@ export default {
                 }
             });
         },
-    }
+    },
+    computed: {
+        proveedor(){
+            return this.$store.getters['fiscal/proveedor-rep/currentProveedorREP']
+        },
+    },
 }
 </script>
 

@@ -4148,7 +4148,7 @@ export const routes = [
                         name: 'envio-comunicado-rep-faltantes',
                         component: require('./components/fiscal/cfd/rep-pendientes/notificacion/Create').default,
                         meta: {
-                            title: 'Enviar comunicado de REP Faltantes',
+                            title: 'Enviar Comunicado de REP Faltantes',
                             breadcrumb: {name: 'Enviar Comunicado', parent: 'informe-rep-faltantes-proveedor'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],

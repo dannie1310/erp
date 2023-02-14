@@ -3,11 +3,8 @@
 namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal;
 
 
-use App\Events\RegistroNotificacionREP;
 use App\Http\Controllers\Controller;
 use App\Http\Transformers\SEGURIDAD_ERP\Fiscal\ProveedorREPTransformer;
-use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
-use App\Notifications\NotificacionREP;
 use App\Services\SEGURIDAD_ERP\Fiscal\ProveedorREPService;
 use League\Fractal\Manager;
 use App\Traits\ControllerTrait;
@@ -49,7 +46,7 @@ class ProveedorREPController extends Controller
 
     public function show(Request $request, $id)
     {
-        $item = $this->service->show($request->all(), $id);
+        $item = $this->service->show($id);
         return $this->respondWithItem($item);
     }
 
