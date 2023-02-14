@@ -477,6 +477,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@show')->where(['id' => '[0-9]+']);
             $api->get('{id}/comunicado-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@comunicadoPdf')->where(['id' => '[0-9]+']);
             $api->post('{id}/enviar-comunicado','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@enviarComunicado')->where(['id' => '[0-9]+']);
+            $api->post('{id}/guardar-contactos','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@guardarContactos')->where(['id' => '[0-9]+']);
+
         });
     });
 

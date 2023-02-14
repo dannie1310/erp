@@ -272,4 +272,12 @@ class ProveedorREPService
          return $notificacion;
     }
 
+    public function guardarContactos($id, $data)
+    {
+
+        $notificacion = $this->repository->guardarContactos($id,$data["destinatarios"]);
+
+        return $notificacion;
+    }
+
 }

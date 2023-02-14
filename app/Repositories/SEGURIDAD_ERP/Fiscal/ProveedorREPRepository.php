@@ -14,6 +14,15 @@ class ProveedorREPRepository extends Repository implements RepositoryInterface
         $this->model = $model;
     }
 
+    public function guardarContactos($id, $destinatarios)
+    {
+        $proveedor = $this->show($id);
+        foreach ($destinatarios as $destinatario)
+        {
+            $proveedor->getContacto($destinatario);
+        }
+    }
+
     public function registrarNotificacion($id, $destinatarios)
     {
         $proveedor = $this->show($id);

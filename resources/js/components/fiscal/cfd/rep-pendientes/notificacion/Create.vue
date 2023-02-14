@@ -75,13 +75,17 @@
 
                         <div class="card-footer">
                             <div class="row" >
-
-                                <div class="col-md-12">
-                                    <div class="pull-right">
-                                        <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"  :disabled="cargando"></i>
+                                <div class="col-md-3">
+                                    <button type="button" class="btn btn-secondary" v-on:click="salir" :disabled="cargando"><i class="fa fa-angle-left"  ></i>
                                             Regresar</button>
-                                        <button type="button" class="btn btn-primary" v-on:click="enviar" :disabled="errors.count() > 0 || cargando"><i class="fa fa-envelope"></i>
-                                            Enviar</button>
+                                </div>
+
+                                <div class="col-md-9">
+                                    <div class="pull-right">
+                                        <button type="button" class="btn btn-primary" v-on:click="guardarContactos" :disabled="cargando"><i class="fa fa-save"  ></i>
+                                            Actualizar Contactos</button>
+                                        <button type="button" class="btn btn-danger" v-on:click="enviar" :disabled="errors.count() > 0 || cargando"><i class="fa fa-envelope"></i>
+                                            Enviar Notificación</button>
                                     </div>
                                 </div>
                             </div>
@@ -188,6 +192,21 @@ export default {
                 }
             });
         },
+
+        guardarContactos(){
+            let _self = this;
+            this.$validator.validate().then(result => {
+                if (result) {
+                    _self.post.destinatarios = _self.destinatarios;
+                    _self.post.id = _self.id;
+
+                    return this.$store.dispatch('fiscal/proveedor-rep/guardarContactos', _self.post)
+                        .then((data) => {
+                            //this.$router.push({name: 'informe-rep-faltantes-proveedor'});
+                        });
+                }
+            });
+        }
     },
     computed: {
         proveedor(){

@@ -63,6 +63,16 @@ class ProveedorREP extends Model
         return null;
     }
 
+    public function getFechaUltimaNotificacionFormatAttribute()
+    {
+        if(count($this->notificaciones)>0) {
+            $ultima_notificacion = $this->notificaciones()->orderBy("id","desc")->first();
+            $date = date_create($ultima_notificacion->fecha_hora_registro);
+            return date_format($date, "d/m/Y");
+        }
+        return null;
+    }
+
     public function getContacto($data){
         $contacto = $this->contactos()->where("correo", "=", $data["correo"])->first();
         if(!$contacto){
@@ -75,16 +85,6 @@ class ProveedorREP extends Model
             $contacto->save();
         }
         return $contacto;
-    }
-
-    public function getFechaUltimaNotificacionFormatAttribute()
-    {
-        if(count($this->notificaciones)>0) {
-            $ultima_notificacion = $this->notificaciones()->orderBy("id","desc")->first();
-            $date = date_create($ultima_notificacion->fecha_hora_registro);
-            return date_format($date, "d/m/Y");
-        }
-        return null;
     }
 
 }
