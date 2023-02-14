@@ -93,6 +93,13 @@
                                     </table>
                                 </div>
                             </div>
+                            <div class="row" v-else>
+                                <div class="col-md-12">
+                                    <div class="spinner-border text-success" role="status">
+                                        <span class="sr-only">Cargando...</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

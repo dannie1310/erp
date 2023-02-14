@@ -528,13 +528,6 @@ class Material extends Model
     {
         $array = [];
         $x= 0;
-        $entrada = 0;
-        $salida = 0;
-        $existencia = 0;
-        $adquirido = 0;
-        $pagado = 0;
-        $x_pagar = 0;
-        $ant_concepto = 0;
 
         $salidas = SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
             ->join('movimientos', 'movimientos.id_item', 'items.id_item')
@@ -552,7 +545,7 @@ class Material extends Model
             $array[$x]['pagado'] = number_format($salida->monto_pagado, 2, ".", ",");
             $array[$x]['por_pagar'] = number_format($salida->monto_total-$salida->monto_pagado, 2,".",",");
             $x++;
-            if((sizeof($salidas->toArray()) == $i+1) || (sizeof($salidas->toArray()) < $i+1 && $salida->id_concepto != $salidas[$i+1]->id_concepto)){
+            if((sizeof($salidas->toArray()) == $i+1) || ($salida->id_concepto != $salidas[$i+1]->id_concepto)){
                 $totales = $this->getTotalesSalidasConcepto($salida->id_concepto, $id, $id_almacen);
                 $array[$x+1]['suma_cantidad'] = number_format($totales->suma_salida,2,".",",");
                 $array[$x+1]['suma_total'] = number_format($totales->total_salida,2,".",",");
@@ -560,7 +553,7 @@ class Material extends Model
                 $array[$x+1]['suma_por_pagar'] = number_format($totales->por_pagar_salida,2,".",",");
                 $concepto = Concepto::where('id_concepto', $salida->id_concepto)->first();
                 $array[$x+2]['concepto'] = $concepto->path;
-                $x += 2;
+                $x = $x + 3;
             }
         }
         $total_almacen = $this->getTotalesSalidasAlmacen($id,$id_almacen);
