@@ -9,6 +9,7 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREPUbicacion;
 use Illuminate\Database\Eloquent\Model;
 
 class ProveedorSAT extends Model
@@ -22,5 +23,10 @@ class ProveedorSAT extends Model
         'rfc',
         'regimen_fiscal',
     ];
+
+    public function ubicacionesRep()
+    {
+        return $this->hasMany(ProveedorREPUbicacion::class, "id_proveedor_sat", "id");
+    }
 
 }

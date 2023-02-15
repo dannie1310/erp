@@ -112,6 +112,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendRechazoPagoAnticipadoNotification',
         ],
 
+        'App\Events\RegistroNotificacionREP' => [
+            'App\Listeners\SendNotificacionREPNotification',
+        ],
+
 
             Registered::class => [
             SendEmailVerificationNotification::class,

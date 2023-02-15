@@ -46,7 +46,7 @@ class ProveedorREPController extends Controller
 
     public function show(Request $request, $id)
     {
-        $item = $this->service->show($request->all(), $id);
+        $item = $this->service->show($id);
         return $this->respondWithItem($item);
     }
 
@@ -58,6 +58,16 @@ class ProveedorREPController extends Controller
     public function descargaXls(Request $request)
     {
         return $this->service->descargaXls($request->all());
+    }
+
+    public function enviarComunicado(Request $request, $id)
+    {
+        return $this->service->enviarComunicado($id, $request->all());
+    }
+
+    public function actualizarContactos(Request $request, $id)
+    {
+        return $this->service->actualizarContactos($id, $request->all());
     }
 
 }

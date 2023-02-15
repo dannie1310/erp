@@ -22,6 +22,20 @@ export default {
     },
 
     actions: {
+        find(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + payload.id, { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    });
+            });
+        },
+
         index(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -91,6 +105,86 @@ export default {
                     buttons: false
                 })
             }
+        },
+
+        actualizarContactos(context,payload){
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Actualizar Contactos",
+                    text: "¿Está seguro que solo desea actualizar los contactos del proveedor?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Solo Actualizar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + "/actualizar-contactos", payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Contactos guardados correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
+        },
+
+        enviarInvitacion(context,payload){
+
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Enviar comunicado",
+                    text: "¿Está seguro que desea enviar el comunicado?",
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Enviar',
+                            closeModal: false,
+                        }
+                    }                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .post(URI + payload.id + "/enviar-comunicado", payload)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Comunicado enviado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                    });
+            });
+
         },
     },
 
