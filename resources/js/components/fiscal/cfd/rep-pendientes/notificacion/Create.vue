@@ -90,9 +90,12 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="row">
+                            <div class="modal-body modal-lg" style="height: 600px" ref="body">
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" v-if="!cargando">
                         <div class="row" style="margin-bottom: 5px">
                             <div class="col-md-12">
                                 <span><i class="fa fa-building"></i> OBRAS RELACIONADAS</span>
@@ -139,15 +142,6 @@
                         </div>
 
                     </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="modal-body modal-lg" style="height: 600px" ref="body">
-
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
