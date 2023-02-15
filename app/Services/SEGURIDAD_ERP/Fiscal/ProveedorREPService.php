@@ -2,6 +2,7 @@
 
 namespace App\Services\SEGURIDAD_ERP\Fiscal;
 use App\CSV\Fiscal\ProveedoresREPPendiente;
+use App\Events\RegistroNotificacionREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
 use App\PDF\Fiscal\Comunicado;
 use App\Repositories\SEGURIDAD_ERP\Fiscal\ProveedorREPRepository;
@@ -137,19 +138,24 @@ class ProveedorREPService
 
     public function comunicadoPdf($id)
     {
+        //print_r( date("h:i:s")."\n");
         $proveedor = $this->repository->show($id);
 
         $uuids = $proveedor->cfdi()->repPendiente()->get();
+        //print_r( date("h:i:s")."\n");
         $arr_comunicados = [];
         foreach ($uuids as $uuid)
         {
-            $arr_comunicados["proveedor"] = $uuid->proveedor->razon_social;
+            $arr_comunicados["proveedor"] = $proveedor->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
         }
+        //print_r( date("h:i:s")."\n");
 
         $pdf = new Comunicado($arr_comunicados);
-        return $pdf->create()->Output('I', 'Comunicado-'.$proveedor->rfc, 1);;
+
+        $pdf->create()->Output('I', 'Comunicado-'.$proveedor->rfc, 1);
+        //print_r( date("h:i:s"));
     }
 
     public function descargaXls($data)
@@ -257,6 +263,26 @@ class ProveedorREPService
         }
 
         return Excel::download(new ProveedoresREPPendiente($proveedores->all()), 'proveedores_rep_pendiente_'. date('Y-m-d H:i:s').'.xlsx');
+    }
+
+    public function enviarComunicado($id, $data)
+    {
+
+         $notificacion = $this->repository->registrarNotificacion($id,$data["destinatarios"]);
+
+         if($notificacion){
+             event(new RegistroNotificacionREP($notificacion));
+         }
+
+         return $notificacion;
+    }
+
+    public function actualizarContactos($id, $data)
+    {
+
+        $notificacion = $this->repository->actualizarContactos($id,$data["destinatarios"]);
+
+        return $notificacion;
     }
 
 }

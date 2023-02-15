@@ -3,6 +3,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,6 +23,21 @@ class ProveedorREP extends Model
     public function ultima_ubicacion()
     {
         return $this->hasOne(ProveedorUltimaUbicacion::class, "id_proveedor_sat","id");
+    }
+
+    public function notificaciones()
+    {
+        return $this->hasMany(RepNotificacion::class, "id_proveedor_sat", "id");
+    }
+
+    public function contactos()
+    {
+        return $this->hasMany(ContactoProveedorREP::class, "id_proveedor_sat", "id");
+    }
+
+    public function ubicaciones()
+    {
+        return $this->hasMany(ProveedorREPUbicacion::class, "id_proveedor_sat", "id");
     }
 
     public function getTotalRepFormatAttribute()
@@ -51,6 +67,30 @@ class ProveedorREP extends Model
             return date_format($date, "d/m/Y");
         }
         return null;
+    }
+
+    public function getFechaUltimaNotificacionFormatAttribute()
+    {
+        if(count($this->notificaciones)>0) {
+            $ultima_notificacion = $this->notificaciones()->orderBy("id","desc")->first();
+            $date = date_create($ultima_notificacion->fecha_hora_registro);
+            return date_format($date, "d/m/Y");
+        }
+        return null;
+    }
+
+    public function getContacto($data){
+        $contacto = $this->contactos()->where("correo", "=", $data["correo"])->first();
+        if(!$contacto){
+            $contacto = $this->contactos()->create([
+                "correo" => $data["correo"],
+                "nombre" => $data["contacto"]
+            ]);
+        }else{
+            $contacto->nombre = $data["contacto"];
+            $contacto->save();
+        }
+        return $contacto;
     }
 
 }

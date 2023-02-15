@@ -190,11 +190,13 @@ use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\ContactoProveedorREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
+use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinada;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
@@ -384,6 +386,7 @@ use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDNoDeducidoObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\ContactoProveedorObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\FechaInhabilSatObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
@@ -391,6 +394,7 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoNoLocalizadosObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\RepNotificacionObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
@@ -750,6 +754,8 @@ class AppServiceProvider extends ServiceProvider
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
             ProcesamientoListaNoLocalizados::observe(ProcesamientoNoLocalizadosObserver::class);
+            RepNotificacion::observe(RepNotificacionObserver::class);
+            ContactoProveedorREP::observe(ContactoProveedorObserver::class);
 
             /**
              *  PadronProveedores

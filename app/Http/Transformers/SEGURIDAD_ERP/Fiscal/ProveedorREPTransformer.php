@@ -2,13 +2,19 @@
 
 namespace App\Http\Transformers\SEGURIDAD_ERP\Fiscal;
 
+use App\Http\Transformers\SEGURIDAD_ERP\ObraTransformer;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
 use League\Fractal\TransformerAbstract;
 
 class ProveedorREPTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        'poliza'
+        "contactos",
+        "ubicaciones"
+    ];
+
+    protected $defaultIncludes = [
+
     ];
 
     public function transform(ProveedorREP $model)
@@ -26,7 +32,24 @@ class ProveedorREPTransformer extends TransformerAbstract
             'ultima_ubicacion_sao' => $model->ultima_ubicacion_sao,
             'ultima_ubicacion_contabilidad' => $model->ultima_ubicacion_contabilidad,
             'fecha_ultimo_cfdi_con_ubicacion' => $model->fecha_ultimo_cfdi_con_ubicacion_format,
+            'fecha_ultima_notificacion' => $model->fecha_ultima_notificacion_format
         ];
+    }
+
+    public function includeContactos(ProveedorREP $model){
+        if(count($model->contactos)>0)
+        {
+            return $this->collection($model->contactos, new ContactoProveedorTransformer);
+        }
+        return null;
+    }
+
+    public function includeUbicaciones(ProveedorREP $model){
+        if(count($model->ubicaciones)>0)
+        {
+            return $this->collection($model->ubicaciones, new ProveedorREPUbicacionTransformer());
+        }
+        return null;
     }
 
 }
