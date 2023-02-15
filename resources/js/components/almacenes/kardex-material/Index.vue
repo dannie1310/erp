@@ -21,6 +21,9 @@ export default {
             columns: [
                 { title: '#', field:'index',sortable: false},
                 { title: 'Almacén', field:'descripcion', sortable: true,  thComp: require('../../globals/th-Filter').default},
+                { title: 'Adquirido', field:'adquirido'},
+                { title: 'Pagado', field:'pagado'},
+                { title: 'Por Pagar', field:'por_pagar'},
                 { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
@@ -70,6 +73,9 @@ export default {
                     self.$data.data.push({
                         index: (i + 1) + self.query.offset,
                         descripcion: almacen.descripcion,
+                        adquirido: almacen.totales.adquirido,
+                        pagado: almacen.totales.pagado,
+                        por_pagar: almacen.totales.por_pagar,
                         buttons: $.extend({}, {
                             id: almacen.id
                         })
