@@ -93,11 +93,63 @@
 
                     </div>
                     <div class="col-md-6">
+                        <div class="row" style="margin-bottom: 5px">
+                            <div class="col-md-12">
+                                <span><i class="fa fa-building"></i> OBRAS RELACIONADAS</span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <table class="table  table-sm table-bordered">
+                                    <tr>
+                                        <th class="encabezado index_corto">
+                                            #
+                                        </th>
+                                        <th class="encabezado" >
+                                            Ubicación
+                                        </th>
+
+                                        <th class="encabezado" >
+                                            Responsable
+                                        </th>
+                                        <th class="encabezado" >
+                                            Administrador
+                                        </th>
+
+
+                                    </tr>
+
+                                    <tr v-for="(ubicacion, i) in this.ubicaciones">
+                                        <td>{{i+1}}</td>
+
+                                        <td>
+                                            {{ ubicacion.ubicacion }}
+                                        </td>
+
+                                        <td>
+                                            {{ ubicacion.correo_responsable }}
+                                        </td>
+
+                                        <td>
+                                            {{ ubicacion.correo_administrador }}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
                         <div class="modal-body modal-lg" style="height: 600px" ref="body">
 
                         </div>
                     </div>
+
                 </div>
+
             </div>
         </div>
 
@@ -113,6 +165,9 @@ export default {
         return {
             cargando : true,
             post: {},
+            ubicaciones :[
+
+            ],
             destinatarios : [
                 {
                     'correo' : '',
@@ -123,7 +178,6 @@ export default {
     },
     mounted() {
         this.getDestinatarios();
-        this.verPDF();
     },
 
     methods:{
@@ -138,7 +192,7 @@ export default {
             return this.$store.dispatch('fiscal/proveedor-rep/find', {
                 id: _self.id,
                 params: {
-                    "include":["contactos"]
+                    "include":["contactos", "ubicaciones"]
                 }
             })
                 .then(data => {
@@ -153,9 +207,16 @@ export default {
                             })
                         });
                     }
+                    if(data.ubicaciones !== undefined){
+                        this.ubicaciones.splice(0, 1);
+                        data.ubicaciones.data.forEach(function (ubicacion, i) {
+                            _self.ubicaciones.push(ubicacion)
+                        });
+                    }
                 })
                 .finally(() => {
                     this.cargando = false;
+                    this.verPDF();
                 })
 
         },

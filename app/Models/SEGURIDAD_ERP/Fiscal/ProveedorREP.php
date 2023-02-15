@@ -3,6 +3,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Database\Eloquent\Model;
 
@@ -32,6 +33,11 @@ class ProveedorREP extends Model
     public function contactos()
     {
         return $this->hasMany(ContactoProveedorREP::class, "id_proveedor_sat", "id");
+    }
+
+    public function ubicaciones()
+    {
+        return $this->hasMany(ProveedorREPUbicacion::class, "id_proveedor_sat", "id");
     }
 
     public function getTotalRepFormatAttribute()

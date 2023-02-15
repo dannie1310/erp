@@ -2,13 +2,15 @@
 
 namespace App\Http\Transformers\SEGURIDAD_ERP\Fiscal;
 
+use App\Http\Transformers\SEGURIDAD_ERP\ObraTransformer;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
 use League\Fractal\TransformerAbstract;
 
 class ProveedorREPTransformer extends TransformerAbstract
 {
     protected $availableIncludes = [
-        "contactos"
+        "contactos",
+        "ubicaciones"
     ];
 
     protected $defaultIncludes = [
@@ -39,9 +41,15 @@ class ProveedorREPTransformer extends TransformerAbstract
         {
             return $this->collection($model->contactos, new ContactoProveedorTransformer);
         }
-
         return null;
+    }
 
+    public function includeUbicaciones(ProveedorREP $model){
+        if(count($model->ubicaciones)>0)
+        {
+            return $this->collection($model->ubicaciones, new ProveedorREPUbicacionTransformer());
+        }
+        return null;
     }
 
 }
