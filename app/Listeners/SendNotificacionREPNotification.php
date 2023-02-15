@@ -38,9 +38,31 @@ class SendNotificacionREPNotification
             ]);
         }
 
+        $ubicaciones_rep = $event->notificacion->proveedor->ubicacionesRep;
+
+        foreach ($ubicaciones_rep as $ubicacion_rep)
+        {
+            if($ubicacion_rep->obraGlobal && $ubicacion_rep->obraGlobal->administrador)
+            {
+                $event->notificacion->destinatarios()->create([
+                    "id_usuario_hermes" => $ubicacion_rep->obraGlobal->id_administrador,
+                    "correo" => $ubicacion_rep->obraGlobal->administrador->correo,
+                    "nombre" => $ubicacion_rep->obraGlobal->administrador->nombre_completo,
+                ]);
+            }
+
+            if($ubicacion_rep->obraGlobal && $ubicacion_rep->obraGlobal->responsable)
+            {
+                $event->notificacion->destinatarios()->create([
+                    "id_usuario_hermes" => $ubicacion_rep->obraGlobal->id_responsable,
+                    "correo" => $ubicacion_rep->obraGlobal->responsable->correo,
+                    "nombre" => $ubicacion_rep->obraGlobal->responsable->nombre_completo,
+                ]);
+            }
+        }
+
         $destinatarios = $event->notificacion->destinatarios()->proveedor()->pluck("correo");
         $destinatarios_copiados = $event->notificacion->destinatarios()->hermes()->pluck("correo");
-
 
         Mail::to($destinatarios)->cc($destinatarios_copiados)->queue(new NotificacionREP($event->notificacion->proveedor));
     }

@@ -29,4 +29,9 @@ class RepNotificacion extends Model
         return $this->belongsTo(ProveedorSAT::class, "id_proveedor_sat","id");
     }
 
+    public function proveedor_rep()
+    {
+        return $this->belongsTo(ProveedorREP::class, "id_proveedor_sat","id");
+    }
+
 }
