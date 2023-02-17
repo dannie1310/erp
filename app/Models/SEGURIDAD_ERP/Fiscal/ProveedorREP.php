@@ -93,4 +93,12 @@ class ProveedorREP extends Model
         return $contacto;
     }
 
+    public function getConContactosAttribute()
+    {
+        if(count($this->contactos)>0)
+        {
+            return 1;
+        }
+        return 0;
+    }
 }
