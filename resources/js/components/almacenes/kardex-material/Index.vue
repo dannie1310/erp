@@ -46,7 +46,7 @@ export default {
             return this.$store.dispatch('cadeco/almacen/paginate', { params: this.query})
                 .then(data => {
                     this.$store.commit('cadeco/almacen/SET_ALMACENES', data.data);
-                    this.$store.commit('cadeco/almacen/SET_META/', data.meta);
+                    this.$store.commit('cadeco/almacen/SET_META', data.meta);
                 })
                 .finally(() => {
                     this.cargando = false;

@@ -15,6 +15,11 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row">
+                        <div class="col-md-12">
+                            <h4><b>{{almacen.descripcion}}</b></h4>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="table-responsive" style="max-height: 250px; overflow-y: scroll;">
                             <table class="table table-hover table-bordered table-sm" id="table">
                                 <thead>
@@ -118,6 +123,7 @@ export default {
     components: {Entrada, Salida},
     props: ['id'],
     mounted() {
+        this.findAlmacen();
         this.find();
     },
     data() {
@@ -130,6 +136,7 @@ export default {
             total_mat: null,
             num_pas: 0,
             total_sal: null,
+            almacen: null
         }
     },
     methods: {
@@ -147,6 +154,13 @@ export default {
                 this.total_mat = data.totales;
             }).finally(() => {
                 this.cargando = false;
+            })
+        },
+        findAlmacen() {
+            this.cargando = true;
+            return this.$store.dispatch('cadeco/almacen/find',{id: this.id
+            }).then(data => {
+                this.almacen = data;
             })
         },
         getHistorial(i, key){

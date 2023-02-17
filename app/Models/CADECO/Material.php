@@ -423,7 +423,8 @@ class Material extends Model
         $pagado = 0;
         $x_pagar = 0;
 
-        $materiales = $this->join('inventarios', 'materiales.id_material', 'inventarios.id_material')
+        $materiales = $this->join('items','materiales.id_material', 'items.id_material')
+            ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->where('inventarios.id_almacen', $id)
             ->selectRaw('materiales.id_material, sum(inventarios.cantidad) as existencia, sum(inventarios.monto_total) as total, 
                         sum(inventarios.monto_pagado) as pagado, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar')
@@ -431,27 +432,32 @@ class Material extends Model
 
         foreach ($materiales as $key => $material)
         {
-            $movimiento = null;
             $ma = self::find($material->id_material);
-            $lote = Inventario::join('movimientos', 'movimientos.lote_antecedente', 'inventarios.id_lote')
-                ->where('inventarios.id_almacen', $id)
-                ->where('inventarios.id_material', $material->id_material)
-                ->selectRaw('distinct id_lote')->pluck('id_lote');
-            if(array_key_exists(0, $lote->toArray()))
-            {
-                $movimiento = $this->getTotalesSalida($lote);
-            }   
-
+            $salida = SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
+            ->leftjoin('movimientos', 'movimientos.id_item', 'items.id_item')
+            ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
+            ->where('transacciones.id_almacen', '=', $id)
+            ->where('items.id_material', '=', $material->id_material)
+            ->selectRaw('sum(movimientos.cantidad) as suma_salida_m, sum(movimientos.monto_total) as total_salida_m, 
+        sum(movimientos.monto_pagado) as pagado_salida_m, (sum(movimientos.monto_total) - sum(movimientos.monto_pagado)) as por_pagar_salida_m,
+        sum(inventarios.cantidad) as suma_salida_i, sum(inventarios.monto_total) as total_salida_i, 
+        sum(inventarios.monto_pagado) as pagado_salida_i, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar_salida_i')->first();
+           
+        
+            $existencia = $material->existencia - ($salida->suma_salida_m + $salida->suma_salida_i);
+            $total = $material->total - ($salida->total_salida_m + $salida->total_salida_i);
+            $pagado = $material->pagado - ($salida->pagado_salida_m + $salida->pagado_salida_i);
+            $por_pagar = $material->por_pagar - ($salida->por_pagar_salida_m + $salida->por_pagar_salida_i);
             $array[$key]['descripcion'] = $ma->descripcion;
             $array[$key]['id'] = $ma->id_material;
             $array[$key]['unidad'] = $ma->unidad;
-            $array[$key]['existencia'] = number_format(($material->existencia - ($movimiento ? $movimiento->suma_salida : 0)),2,".", ",");
-            $array[$key]['total'] = number_format(($material->total - ($movimiento ? $movimiento->total_salida : 0)),2,".", ",");
-            $array[$key]['pagado'] = number_format(($material->pagado - ($movimiento ? $movimiento->pagado_salida : 0)), 2, ".", ",");
-            $array[$key]['por_pagar'] = number_format(($material->por_pagar- ($movimiento ? $movimiento->por_pagar_salida : 0)), 2, ".", ",");
-            $total +=  $material->total - ($movimiento ? $movimiento->total_salida : 0);
-            $pagado += $material->pagado - ($movimiento ? $movimiento->pagado_salida : 0);
-            $x_pagar += $material->por_pagar - ($movimiento ? $movimiento->por_pagar_salida : 0);
+            $array[$key]['existencia'] = number_format($existencia,2,".", ",");
+            $array[$key]['total'] = number_format($total,2,".", ",");
+            $array[$key]['pagado'] = number_format($pagado, 2, ".", ",");
+            $array[$key]['por_pagar'] = number_format($por_pagar, 2, ".", ",");
+            $total +=  $total;
+            $pagado += $pagado;
+            $x_pagar += $por_pagar;
             $lote = null;
         }
 
@@ -519,9 +525,17 @@ class Material extends Model
 
     private function getTotalesSalida($lotes)
     {
-        return Movimiento::whereIn('lote_antecedente', $lotes)
-        ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida, 
-        sum(monto_pagado) as pagado_salida, (sum(monto_total) - sum(monto_pagado)) as por_pagar_salida')->first();
+        $totales = Movimiento::whereIn('lote_antecedente', $lotes)
+                    ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida, 
+                    sum(monto_pagado) as pagado_salida, (sum(monto_total) - sum(monto_pagado)) as por_pagar_salida')->first();
+        if($totales->suma_salida)
+        {
+            return $totales;
+        }else{
+            return Inventario::whereIn('id_lote', $lotes)
+                     ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida, 
+                     sum(monto_pagado) as pagado_salida, (sum(monto_total) - sum(monto_pagado)) as por_pagar_salida')->first();
+        }
     }
 
     public function historico_salida($id, $id_almacen)
@@ -530,10 +544,10 @@ class Material extends Model
         $x= 0;
 
         $salidas = SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
-            ->join('movimientos', 'movimientos.id_item', 'items.id_item')
+            ->leftjoin('movimientos', 'movimientos.id_item', 'items.id_item')
+            ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->where('transacciones.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id)
-            ->selectRaw('transacciones.*, items.*, movimientos.*')
             ->orderByRaw('numero_folio', 'id_concepto')->get();
         foreach ($salidas as $i => $salida) {
             $fecha= date_create($salida->fecha);
@@ -546,13 +560,19 @@ class Material extends Model
             $array[$x]['por_pagar'] = number_format($salida->monto_total-$salida->monto_pagado, 2,".",",");
             $x++;
             if((sizeof($salidas->toArray()) == $i+1) || ($salida->id_concepto != $salidas[$i+1]->id_concepto)){
-                $totales = $this->getTotalesSalidasConcepto($salida->id_concepto, $id, $id_almacen);
+                $totales = $this->getTotalesSalidasConcepto($salida->id_concepto, $id, $id_almacen, $salida->id_almacen);
                 $array[$x+1]['suma_cantidad'] = number_format($totales->suma_salida,2,".",",");
                 $array[$x+1]['suma_total'] = number_format($totales->total_salida,2,".",",");
                 $array[$x+1]['suma_pagado'] = number_format($totales->pagado_salida,2,".",",");
                 $array[$x+1]['suma_por_pagar'] = number_format($totales->por_pagar_salida,2,".",",");
-                $concepto = Concepto::where('id_concepto', $salida->id_concepto)->first();
-                $array[$x+2]['concepto'] = $concepto->path;
+                if($salida->id_concepto)
+                {
+                    $concepto = Concepto::where('id_concepto', $salida->id_concepto)->first();
+                    $array[$x+2]['concepto'] = $concepto->path;
+                }else{
+                    $almacen = Almacen::where('id_almacen', $salida->id_almacen)->first();
+                    $array[$x+2]['almacen'] = $almacen->descripcion;
+                }
                 $x = $x + 3;
             }
         }
@@ -568,24 +588,36 @@ class Material extends Model
         ];
     }
 
-    private function getTotalesSalidasConcepto($id_concepto, $id_material, $id_almacen)
+    private function getTotalesSalidasConcepto($id_concepto, $id_material, $id_almacen, $almacen)
     {
-        return SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
-        ->join('movimientos', 'movimientos.id_item', 'items.id_item')
-        ->where('transacciones.id_almacen', '=', $id_almacen)
-        ->where('items.id_material', '=', $id_material)
-        ->where('movimientos.id_concepto', '=', $id_concepto)
-        ->selectRaw('sum(movimientos.cantidad) as suma_salida, sum(movimientos.monto_total) as total_salida, 
-        sum(movimientos.monto_pagado) as pagado_salida, (sum(movimientos.monto_total) - sum(movimientos.monto_pagado)) as por_pagar_salida')->first();
+        if($id_concepto)
+        {
+            return SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
+            ->join('movimientos', 'movimientos.id_item', 'items.id_item')
+            ->where('transacciones.id_almacen', '=', $id_almacen)
+            ->where('items.id_material', '=', $id_material)
+            ->where('movimientos.id_concepto', '=', $id_concepto)
+            ->selectRaw('sum(movimientos.cantidad) as suma_salida, sum(movimientos.monto_total) as total_salida, 
+            sum(movimientos.monto_pagado) as pagado_salida, (sum(movimientos.monto_total) - sum(movimientos.monto_pagado)) as por_pagar_salida')->first();
+        }else{
+            return SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
+            ->join('inventarios', 'inventarios.id_item', 'items.id_item')
+            ->where('transacciones.id_almacen', '=', $id_almacen)
+            ->where('items.id_material', '=', $id_material)
+            ->where('inventarios.id_almacen', '=', $almacen)
+            ->selectRaw('sum(inventarios.cantidad) as suma_salida, sum(inventarios.monto_total) as total_salida, 
+            sum(inventarios.monto_pagado) as pagado_salida, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar_salida')->first();
+        }
     }
 
     private function getTotalesSalidasAlmacen($id_material, $id_almacen)
     {
         return SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
-        ->join('movimientos', 'movimientos.id_item', 'items.id_item')
+        ->leftjoin('movimientos', 'movimientos.id_item', 'items.id_item')
+        ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
         ->where('transacciones.id_almacen', '=', $id_almacen)
         ->where('items.id_material', '=', $id_material)
-        ->selectRaw('sum(movimientos.cantidad) as suma_salida, sum(movimientos.monto_total) as total_salida, 
-        sum(movimientos.monto_pagado) as pagado_salida, (sum(movimientos.monto_total) - sum(movimientos.monto_pagado)) as por_pagar_salida')->first();
+        ->selectRaw('sum(inventarios.cantidad) as suma_salida, sum(inventarios.monto_total) as total_salida, 
+        sum(inventarios.monto_pagado) as pagado_salida, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar_salida')->first();
     }
 }
