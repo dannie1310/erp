@@ -31,7 +31,7 @@
                                             </tr>
                                         </thead>
                                         <tbody v-for="salida in salidas">
-                                            <tr v-if="salida.id != undefined && salida.concepto == undefined">
+                                            <tr v-if="salida.id != undefined && salida.concepto == undefined && salida.almacen == undefined">
                                                 <td style="text-align: center">
                                                     {{salida.fecha}}
                                                 </td>
@@ -54,6 +54,11 @@
                                             <tr v-else-if="salida.concepto != undefined" style="background-color: yellow;">
                                                 <td style="text-align: left;" colspan="6">
                                                     {{salida.concepto}}
+                                                </td>
+                                            </tr>
+                                            <tr v-else-if="salida.almacen != undefined" style="background-color: yellow;">
+                                                <td style="text-align: center;" colspan="6">
+                                                    {{salida.almacen}}
                                                 </td>
                                             </tr>
                                             <tr v-else style="background-color: yellow;">
