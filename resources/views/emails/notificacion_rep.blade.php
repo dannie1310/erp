@@ -19,7 +19,7 @@
 
     <div class="row">
         <div class="col-md-12" >
-            Estimado {{$proveedor->razon_social}} favor de revisar el comunicado adjunto al presente correo.
+            {!! $cuerpo_correo !!}
         </div>
     </div>
 

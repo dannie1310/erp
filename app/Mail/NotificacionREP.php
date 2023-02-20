@@ -4,6 +4,7 @@ namespace App\Mail;
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
+use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacion;
 use App\PDF\Fiscal\Comunicado;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
@@ -15,16 +16,16 @@ class NotificacionREP extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public $proveedor;
+    public $notificacion;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(ProveedorSAT $proveedor)
+    public function __construct(RepNotificacion $notificacion)
     {
-        $this->proveedor = $proveedor;
+        $this->notificacion = $notificacion;
     }
 
     /**
@@ -34,15 +35,15 @@ class NotificacionREP extends Mailable
      */
     public function build()
     {
-        $titulo = "REPs Pendientes";
+        $titulo = "Hermes Infraestructura - Recibos Electrónicos de Pagos (REP) pendientes de emisión";
 
-        $proveedor = ProveedorREP::find($this->proveedor->id);
+        $proveedor = ProveedorREP::find($this->notificacion->id_proveedor_sat);
 
         $uuids = $proveedor->cfdi()->repPendiente()->get();
         $arr_comunicados = [];
         foreach ($uuids as $uuid)
         {
-            $arr_comunicados["proveedor"] = $uuid->proveedor->razon_social;
+            $arr_comunicados["proveedor"] = $proveedor->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
         }
@@ -51,8 +52,8 @@ class NotificacionREP extends Mailable
 
         return $this
             ->subject($titulo)
-            ->view('emails.notificacion_rep',["proveedor"=>$this->proveedor])
-            ->attachData($pdf->Output("S", 'Comunicado-'.$this->proveedor->rfc.".pdf"), 'Comunicado-'.$this->proveedor->rfc . '.pdf',['mime' => 'application/pdf']);
+            ->view('emails.notificacion_rep',["cuerpo_correo"=>$this->notificacion->cuerpo_correo])
+            ->attachData($pdf->Output("S", 'Comunicado-'.$proveedor->rfc.".pdf"), 'Comunicado-'.$proveedor->rfc . '.pdf',['mime' => 'application/pdf']);
 
     }
 }

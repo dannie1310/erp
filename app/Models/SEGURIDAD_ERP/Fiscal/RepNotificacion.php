@@ -17,6 +17,7 @@ class RepNotificacion extends Model
         , "id_usuario_hermes"
         , "id_contacto_proveedor"
         , "comunicado_pdf"
+        , "cuerpo_correo"
     ];
 
     public function destinatarios()
