@@ -64,6 +64,6 @@ class SendNotificacionREPNotification
         $destinatarios = $event->notificacion->destinatarios()->proveedor()->pluck("correo");
         $destinatarios_copiados = $event->notificacion->destinatarios()->hermes()->pluck("correo");
 
-        Mail::to($destinatarios)->cc($destinatarios_copiados)->queue(new NotificacionREP($event->notificacion->proveedor));
+        Mail::to($destinatarios)->cc($destinatarios_copiados)->queue(new NotificacionREP($event->notificacion));
     }
 }
