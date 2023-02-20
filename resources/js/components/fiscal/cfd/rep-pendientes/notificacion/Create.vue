@@ -90,6 +90,13 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="row" v-if="!cargando">
+                            <div class="col-md-12">
+                                <ckeditor v-model="cuerpo_correo" ></ckeditor>
+                            </div>
+                        </div>
+
                         <div class="row">
                             <div class="modal-body modal-lg" style="height: 600px" ref="body">
                             </div>
@@ -158,6 +165,7 @@ export default {
     data(){
         return {
             cargando : true,
+            cuerpo_correo:'',
             post: {},
             ubicaciones :[
 
@@ -171,7 +179,7 @@ export default {
         }
     },
     mounted() {
-        this.getDestinatarios();
+        this.getCuerpoCorreo();
     },
 
     methods:{
@@ -179,6 +187,20 @@ export default {
             var url = '/api/fiscal/proveedor-rep/' + this.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
             $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Contrato Proyectado</iframe>');
             $(this.$refs.modal).appendTo('body')
+        },
+
+        getCuerpoCorreo(){
+            let _self = this;
+            this.cargando = true;
+            return this.$store.dispatch('fiscal/proveedor-rep/getCuerpoCorreo', {
+                id: _self.id
+            })
+            .then(data => {
+                this.cuerpo_correo = data;
+            })
+            .finally(()=>{
+                this.getDestinatarios();
+            })
         },
 
         getDestinatarios(){
@@ -239,6 +261,7 @@ export default {
                 if (result) {
                     _self.post.destinatarios = _self.destinatarios;
                     _self.post.id = _self.id;
+                    _self.post.cuerpo_correo = _self.cuerpo_correo;
 
                     return this.$store.dispatch('fiscal/proveedor-rep/enviarInvitacion', _self.post)
                         .then((data) => {

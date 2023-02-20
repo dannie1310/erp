@@ -70,4 +70,9 @@ class ProveedorREPController extends Controller
         return $this->service->actualizarContactos($id, $request->all());
     }
 
+    public function getCuerpoCorreo(Request $request, $id)
+    {
+        return $this->service->getCuerpoCorreo($id);
+    }
+
 }
