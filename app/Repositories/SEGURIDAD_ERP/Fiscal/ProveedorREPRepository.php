@@ -3,6 +3,7 @@
 namespace App\Repositories\SEGURIDAD_ERP\Fiscal;
 
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
+use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacionCuerpoCorreo;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
 
@@ -42,11 +43,13 @@ class ProveedorREPRepository extends Repository implements RepositoryInterface
 
     }
 
-    public function registrarNotificacion($id, $destinatarios)
+    public function registrarNotificacion($id, $data)
     {
         $proveedor = $this->show($id);
+        $destinatarios = $data["destinatarios"];
 
         $notificacion = $proveedor->notificaciones()->create([
+            "cuerpo_correo" => $data["cuerpo_correo"]
         ]);
         if ($notificacion) {
             foreach ($destinatarios as $destinatario) {
@@ -61,6 +64,12 @@ class ProveedorREPRepository extends Repository implements RepositoryInterface
         }
 
         return $notificacion;
+    }
+    public function getCuerpoCorreo($id)
+    {
+        $repositoryCuerpo = new RepNotificacionCuerpoCorreoRepository(new RepNotificacionCuerpoCorreo());
+        $cuerpo_correo = $repositoryCuerpo->model->where("estatus","=",1)->pluck("cuerpo_correo")->first();
+        return $cuerpo_correo;
     }
 
 }
