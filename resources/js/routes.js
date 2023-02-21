@@ -4121,7 +4121,35 @@ export const routes = [
                         component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientes').default,
                         meta: {
                             title: 'CFDI con REP faltantes',
-                            breadcrumb: {name: 'INFORME REP Faltantes', parent: 'fiscal'},
+                            breadcrumb: {name: 'REP Faltantes', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe-rep-faltantes-proveedor',
+                        name: 'informe-rep-faltantes-proveedor',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientesProveedor').default,
+                        meta: {
+                            title: 'Lista de proveedores que adeudan REP',
+                            breadcrumb: {name: 'Por Proveedor', parent: 'informe-rep-faltantes'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/envio-comunicado',
+                        //props:true,
+                        props: route => ({
+                            id: route.params.id,
+                        }),
+                        name: 'envio-comunicado-rep-faltantes',
+                        component: require('./components/fiscal/cfd/rep-pendientes/notificacion/Create').default,
+                        meta: {
+                            title: 'Enviar Comunicado de REP Faltantes',
+                            breadcrumb: {name: 'Enviar Comunicado', parent: 'informe-rep-faltantes-proveedor'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],
                             general: true

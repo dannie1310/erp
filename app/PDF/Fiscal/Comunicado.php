@@ -9,10 +9,11 @@
 namespace App\PDF\Fiscal;
 
 
+use App\Utils\PDF\FPDI\Fpdi;
 use App\Utils\Util;
 use Ghidev\Fpdf\Rotation;
 
-class Comunicado extends Rotation
+class Comunicado extends Fpdi
 {
     protected $emisor;
 
@@ -21,12 +22,25 @@ class Comunicado extends Rotation
     const MAX_HEIGHT = 150;
     const MM_IN_INCH = 25.4;
 
-    private $en_cola = '';
+    private $en_cola = '',
+            $comunicado = '';
 
     public function __construct($emisor)
     {
         parent::__construct("P", "cm", "Letter");
         $this->emisor = $emisor;
+        $this->SetMargins(2, 2, 2);
+        $this->SetAutoPageBreak(true, 1);
+
+        $this->setSourceFile(public_path('pdf/fiscal/ComunicadoRep.pdf'));
+        $this->comunicado = $this->importPage(1);
+
+        $this->AliasNbPages();
+        $this->AddPage();
+        $this->useTemplate($this->comunicado,0, 0.5, 22);
+        //$this->comunicado();
+        $this->AddPage();
+        $this->listaCFDI();
     }
 
     function Header()
@@ -91,10 +105,10 @@ class Comunicado extends Rotation
         $total_emisor = 0;
         $saldo_emisor = 0;
         $cantidad_uuid_por_emisor = 0;
-        foreach ($this->emisor["receptores"] as $receptor) {
+        foreach ($this->emisor["receptores"] as $rfc=>$receptor) {
             $this->SetFont('Helvetica', '', 11);
             $this->SetTextColor(0,0,0);
-            $this->MultiCell(17.7,0.6,utf8_decode($receptor["empresa"]).":", '','J',0);
+            $this->MultiCell(17.7,0.6,utf8_decode("Emitidos a ".$receptor["empresa"])." (".$rfc."):", '','J',0);
             $this->ln(0.3);
             $this->partidasTitle();
 
@@ -133,12 +147,6 @@ class Comunicado extends Rotation
         $this->cell(2,0.5,"$ ".number_format($saldo_emisor,2,".",","),1,0,'R',1);
         $this->cell(1,0.5,"MXN",1,1,'L',1);
 
-        /*foreach ($this->emisor["uuid"] as $item) {
-            $this->Row([$i, $item->uuid, $item->fecha_format, $item->serie,$item->folio, $item->total_format,$item->moneda]);
-
-            $i++;
-
-        }*/
     }
 
     public function partidasTitle()
@@ -159,28 +167,12 @@ class Comunicado extends Rotation
 
         $this->Row(["#", "UUID","Fecha", "Serie","Folio","Total","Saldo REP","Moneda"]);
 
-
     }
 
 
     function create()
     {
-        $this->SetMargins(2, 2, 2);
-        $this->SetAutoPageBreak(true, 1);
-        $this->AliasNbPages();
-        $this->AddPage();
-        $this->comunicado();
-        $this->AddPage();
-        $this->listaCFDI();
-
         return $this;
-
-        try {
-            $this->Output('I', 'Com', 1);
-        } catch (\Exception $ex) {
-            dd("error", $ex);
-        }
-        exit;
     }
 
 }

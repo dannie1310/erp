@@ -9,7 +9,7 @@
         aria-haspopup="true"
         aria-expanded="false">
             <span><i class="fa fa-file-pdf"></i></span>
-            Informes
+            Informes PDF
         </button>
         <div class="dropdown-menu">
             <button @click="proveedor" type="button" class="btn btn-sm  dropdown-item" title="Desglosado por proveedor" >

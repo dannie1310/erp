@@ -279,25 +279,25 @@ class CFDSATRepository extends Repository implements RepositoryInterface
 
     public function getInformeREP($data)
     {
-        $informe["informe"] = PendientesREP::get($data);
+        $informe = PendientesREP::get($data);
         return $informe;
     }
 
     public function getInformeREPProveedorEmpresa($data)
     {
-        $informe["informe"] = PendientesREPProveedorEmpresa::get($data);
+        $informe = PendientesREPProveedorEmpresa::get($data);
         return $informe;
     }
 
     public function getInformeREPEmpresaProveedor($data)
     {
-        $informe["informe"] = PendientesREPEmpresaProveedor::get($data);
+        $informe = PendientesREPEmpresaProveedor::get($data);
         return $informe;
     }
 
     public function getInformeREPEmpresa($data)
     {
-        $informe["informe"] = PendientesREPEmpresa::get($data);
+        $informe = PendientesREPEmpresa::get($data);
         return $informe;
     }
 
