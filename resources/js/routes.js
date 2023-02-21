@@ -5022,6 +5022,58 @@ export const routes = [
         ]
     },
     {
+        path: '/concursos',
+        components:  {
+            default: require('./components/concursos/partials/Layout.vue').default,
+            menu: require('./components/concursos/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'concursos',
+                component: require('./components/concursos/Index').default,
+                meta: {
+                    title: 'Concursos',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'CONCURSOS'},
+                    permission: ['consultar_concurso'],
+                    general: true
+                }
+            },
+            {
+                path: 'concurso',
+                component: require('./components/concursos/concurso/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'concurso',
+                        component: require('./components/concursos/concurso/Index').default,
+                        meta: {
+                            title: 'Lista de Concursos',
+                            breadcrumb: {parent: 'concursos', name: 'CONCURSO'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_concurso',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'concurso-create',
+                        props:true,
+                        component: require('./components/concursos/concurso/Create').default,
+                        meta: {
+                            title: 'Registrar Concurso',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'concurso'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_concurso'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,
