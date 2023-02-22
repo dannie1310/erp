@@ -9,10 +9,13 @@
 namespace App\Http\Transformers\CADECO;
 
 
+
 use App\Models\CADECO\Almacen;
 use League\Fractal\TransformerAbstract;
 use App\Http\Transformers\CADECO\Almacenes\MaterialAjustesTransformer;
 use App\Http\Transformers\CADECO\Almacenes\MaterialSalidasTransformer;
+use App\Http\Transformers\CADECO\Almacenes\TotalesKardexMaterialesTransformer;
+use App\Http\Transformers\CADECO\Almacenes\TotalesKardexTransformer;
 
 class AlmacenTransformer extends TransformerAbstract
 {
@@ -42,7 +45,8 @@ class AlmacenTransformer extends TransformerAbstract
             'permiso_eliminar' => $model->permiso_eliminar,
             'numero_economico' => $model->numero_economico,
             'clasificacion' => $model->clasificacion,
-            'propiedad' => $model->propiedad
+            'propiedad' => $model->propiedad,
+            'totales' => $model->totales_kardex_materiales
         ];
     }
 
