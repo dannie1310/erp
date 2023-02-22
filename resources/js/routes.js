@@ -885,7 +885,7 @@ export const routes = [
                                     title: 'Kardex de Materiales',
                                     breadcrumb: {parent: 'almacenes', name: 'KARDEX MATERIALES'},
                                     middleware: [auth, context, permission],
-                                    permission: 'consultar_salida_almacen'
+                                    permission: 'consultar_kardex_movimiento_material'
                                 }
                             },
                             {
@@ -897,7 +897,7 @@ export const routes = [
                                     title: 'Consultar Kardex',
                                     breadcrumb: {name: 'CONSULTAR', parent: 'kardex-material'},
                                     middleware: [auth, context, permission],
-                                    permission: 'registrar_pago'
+                                    permission: 'consultar_kardex_movimiento_material'
                                 }
                             },
                         ]
