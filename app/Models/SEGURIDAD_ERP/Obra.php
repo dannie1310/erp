@@ -24,7 +24,7 @@ class Obra extends Model
         'nombre',
     ];
 
-    protected $dateFormat = 'Y-m-d H:i:s';
+    //protected $dateFormat = 'Y-m-d H:i:s';
 
     protected $fillable = [
         'esquema_permisos',

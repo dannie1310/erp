@@ -144,8 +144,7 @@ class ProveedorREPService
         $uuids = $proveedor->cfdi()->repPendiente()->get();
         //print_r( date("h:i:s")."\n");
         $arr_comunicados = [];
-        foreach ($uuids as $uuid)
-        {
+        foreach ($uuids as $uuid) {
             $arr_comunicados["proveedor"] = $proveedor->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
@@ -154,7 +153,7 @@ class ProveedorREPService
 
         $pdf = new Comunicado($arr_comunicados);
 
-        $pdf->create()->Output('I', 'Comunicado-'.$proveedor->rfc, 1);
+        $pdf->create()->Output('I', 'Comunicado-' . $proveedor->rfc, 1);
         //print_r( date("h:i:s"));
     }
 
@@ -262,27 +261,30 @@ class ProveedorREPService
             }
         }
 
-        return Excel::download(new ProveedoresREPPendiente($proveedores->all()), 'proveedores_rep_pendiente_'. date('Y-m-d H:i:s').'.xlsx');
+        return Excel::download(new ProveedoresREPPendiente($proveedores->all()), 'proveedores_rep_pendiente_' . date('Y-m-d H:i:s') . '.xlsx');
     }
 
     public function enviarComunicado($id, $data)
     {
 
-         $notificacion = $this->repository->registrarNotificacion($id,$data["destinatarios"]);
+        $notificacion = $this->repository->registrarNotificacion($id, $data);
 
-         if($notificacion){
-             event(new RegistroNotificacionREP($notificacion));
-         }
+        if ($notificacion) {
+            event(new RegistroNotificacionREP($notificacion));
+        }
 
-         return $notificacion;
+        return $notificacion;
     }
 
     public function actualizarContactos($id, $data)
     {
-
-        $notificacion = $this->repository->actualizarContactos($id,$data["destinatarios"]);
-
+        $notificacion = $this->repository->actualizarContactos($id, $data["destinatarios"]);
         return $notificacion;
+    }
+
+    public function getCuerpoCorreo($id)
+    {
+        return $this->repository->getCuerpoCorreo($id);
     }
 
 }
