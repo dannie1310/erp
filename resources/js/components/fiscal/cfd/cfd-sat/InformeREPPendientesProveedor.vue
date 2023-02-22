@@ -58,6 +58,7 @@ export default {
                 { title: 'Último Proyecto SAO', field: 'ultima_ubicacion_sao', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Último Proyecto Contabilidad', field: 'ultima_ubicacion_contabilidad', thComp: require('../../../globals/th-Filter').default, sortable: true},
                 { title: 'Fecha Último CFDI con Ubicación', field: 'fecha_ultimo_cfdi_con_ubicacion', sortable: true},
+                { title: 'Tiene Contactos', field: 'con_contactos', tdClass:'td_icono', sortable: false, tdComp: require('../rep-pendientes/partials/IndicadorContactos.vue').default},
                 { title: 'Fecha Última Notificacion', field: 'fecha_ultima_notificacion', sortable: false},
                 { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
             ],
@@ -121,6 +122,7 @@ export default {
                         ultima_ubicacion_contabilidad : proveedor_rep.ultima_ubicacion_contabilidad,
                         fecha_ultimo_cfdi_con_ubicacion : proveedor_rep.fecha_ultimo_cfdi_con_ubicacion,
                         fecha_ultima_notificacion : proveedor_rep.fecha_ultima_notificacion,
+                        con_contactos : proveedor_rep.con_contactos,
 
                         buttons: $.extend({}, {
                             id: proveedor_rep.id,

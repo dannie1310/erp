@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="init" v-if="$root.can('registrar_insumo_herramienta_equipo')" class="btn btn-app btn-info float-right" :disabled="cargando">
+        <button @click="init" v-if="$root.can('registrar_insumo_herramienta_equipo')" class="btn btn-app float-right" :disabled="cargando">
             <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
             <i class="fa fa-plus" v-else></i>
             Registrar
@@ -47,7 +47,7 @@
                                                 type="text"
                                                 name="descripcion"
                                                 data-vv-as="Descripcion"
-                                                v-validate="{required: true}"
+                                                v-validate="{required: true, max:250}"
                                                 class="form-control"
                                                 id="descripcion"
                                                 placeholder="Descripcion"
