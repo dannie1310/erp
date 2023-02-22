@@ -5059,7 +5059,6 @@ export const routes = [
                     {
                         path: 'create',
                         name: 'concurso-create',
-                        props:true,
                         component: require('./components/concursos/concurso/Create').default,
                         meta: {
                             title: 'Registrar Concurso',
