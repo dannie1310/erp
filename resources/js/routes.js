@@ -873,7 +873,35 @@ export const routes = [
                             }
                         ]
                     },
-
+                    {
+                        path:'kardex-material',
+                        component: require('./components/almacenes/kardex-material/Layout').default,
+                        children: [
+                            {
+                                path:'/',
+                                name: 'kardex-material',
+                                component: require('./components/almacenes/kardex-material/Index').default,
+                                meta: {
+                                    title: 'Kardex de Materiales',
+                                    breadcrumb: {parent: 'almacenes', name: 'KARDEX MATERIALES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_kardex_movimiento_material'
+                                }
+                            },
+                            {
+                                path: ':id/kardex',
+                                name: 'consultar-almacen',
+                                component: require('./components/almacenes/kardex-material/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Kardex',
+                                    breadcrumb: {name: 'CONSULTAR', parent: 'kardex-material'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_kardex_movimiento_material'
+                                }
+                            },
+                        ]
+                    },
                 ]
             },
             {
