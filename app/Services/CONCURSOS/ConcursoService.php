@@ -8,13 +8,13 @@
 
 namespace App\Services\CONCURSOS;
 
-use App\Models\SEGURIDAD_ERP\Concurso;
-use App\Repositories\Repository;
+use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
+use App\Repositories\SEGURIDAD_ERP\Concursos\ConcursoRepository;
 
 class ConcursoService
 {
     /**
-     * @var Repository
+     * @var ConcursoRepository
      */
     protected $repository;
 
@@ -25,12 +25,11 @@ class ConcursoService
      */
     public function __construct(Concurso $model)
     {
-        $this->repository = new Repository($model);
+        $this->repository = new ConcursoRepository($model);
     }
 
     public function store(array $data)
-    {dd($data);
+    {
        return $this->repository->create($data);
-        
     }
 }

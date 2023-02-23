@@ -5,19 +5,17 @@
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group error-content">
-                            <div class="form-group">
-                                <label class="col-md-4" for="concurso">Nombre del Concurso:</label>
-                                <input class="col-md-8 form-control"
-                                        type="text"
-                                        placeholder="Nombre del Concurso"
-                                        name="concurso"
-                                        id="concurso"
-                                        data-vv-as="Nombre del concurso"
-                                        v-validate="{required: true}"
-                                        v-model="concurso"
-                                        :class="{'is-invalid': errors.has('concurso')}">
-                                <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>
-                            </div>
+                            <label for="concurso">Nombre del Concurso:</label>
+                            <input class="form-control"
+                                    type="text"
+                                    placeholder="Nombre del Concurso"
+                                    name="concurso"
+                                    id="concurso"
+                                    data-vv-as="Nombre del concurso"
+                                    v-validate="{required: true, max: 255}"
+                                    v-model="concurso"
+                                    :class="{'is-invalid': errors.has('concurso')}">    
+                            <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>
                         </div>
                     </div>
                 </div>
@@ -34,7 +32,7 @@
                                         <th class="encabezado">
                                             Participante
                                         </th>
-                                        <th class="encabezado">
+                                        <th class="encabezado c100">
                                             Monto
                                         </th>
                                         <th class="encabezado">
@@ -53,14 +51,14 @@
                                         <td>
                                            {{participante.nombre}}
                                         </td>
-                                        <td>
-                                            {{participante.monto}}
+                                        <td style="text-align: right: inherit;">
+                                            {{parseFloat(participante.monto).formatMoney(2,'.',',')}}
                                         </td>
                                         <td style="text-align: center">
-                                            <input type="radio" id="es_hermes" v-model="participante.es_hermes">
+                                            <input type="checkbox" id="es_hermes" v-model="participante.es_hermes" disabled>
                                         </td>
                                         <td style="text-align: center">
-                                            <button type="button" class="btn btn-sm btn-outline-danger" v-on:click="quitar(i)" :disabled="participantes.length == 1" >
+                                            <button type="button" class="btn btn-sm btn-outline-danger" v-on:click="quitar(i)">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         </td>
@@ -76,7 +74,7 @@
                     <button type="button" class="btn btn-secondary" v-on:click="salir">
                         <i class="fa fa-angle-left"></i>
                         Regresar</button>
-                    <button type="button" @click="validate" class="btn btn-primary">
+                    <button type="button" @click="store" class="btn btn-primary">
                         <i class="fa fa-save"></i>
                         Guardar
                     </button>
@@ -87,7 +85,7 @@
             <div class="modal-dialog modal-dialog-centered modal-md" role="document">
                 <div class="modal-content" >
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-paper-plane"></i>&nbsp;AGREGAR PARTICIPANTE</h5>
+                        <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i>&nbsp;AGREGAR PARTICIPANTE</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
@@ -102,8 +100,8 @@
                                                 placeholder="Nombre del Participante"
                                                 name="nombre"
                                                 id="nombre"
+                                                v-validate="{max: 255}"
                                                 data-vv-as="Nombre del Participante"
-                                                v-validate="{required: true}"
                                                 v-model="participante.nombre"
                                                 :class="{'is-invalid': errors.has('nombre')}">
                                         <div class="invalid-feedback" v-show="errors.has('nombre')">{{ errors.first('nombre') }}</div>
@@ -111,7 +109,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-6">
+                                <div class="col-md-5">
                                     <div class="form-group">
                                         <label for="nombre">Monto:</label>
                                         <input
@@ -119,7 +117,7 @@
                                                 name="monto"
                                                 v-model="participante.monto"
                                                 data-vv-as="Monto"
-                                                v-validate="{required: true,min_value: 0.1}"
+                                                v-validate="{min_value: 0.1}"
                                                 class="form-control"
                                                 :class="{'is-invalid': errors.has(`monto`)}"
                                                 id="monto"
@@ -129,10 +127,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6" style="text-align: center;">
+                            </div>
+                            <div class="row" v-if="this.es_hermes_seleccionado == 0">
+                                <div class="col-md-12" style="text-align: center;">
                                     <div class="form-group">
                                         <label for="nombre">Es Hermes:</label>
-                                        <input type="radio" id="es_hermes" v-model="participante.es_hermes">
+                                        <input type="checkbox" id="es_hermes" v-model="participante.es_hermes">
                                     </div>
                                 </div>
                             </div>
@@ -163,7 +163,8 @@
                     'nombre' : '',
                     'monto' : 0,
                     'es_hermes' : false   
-                }
+                },
+                es_hermes_seleccionado : 0
             }
         },
         methods: {
@@ -172,6 +173,10 @@
                 $(this.$refs.modal1).modal('show');
             },
             quitar(index){
+                if(this.participantes[index].es_hermes ==  true)
+                {
+                    this.es_hermes_seleccionado = 0;
+                }
                 this.participantes.splice(index, 1);
             },
             salir() {
@@ -179,22 +184,22 @@
             },
             guardar_participante()
             {
-                this.participantes.push(this.participante);
-                this.cerrar();
-            },
-            validate() {
-                this.$validator.validate().then(result => {
-					if (result) {
-                        console.log(this.participantes.length, this.participantes);
-                        if(this.participantes.length == 0)
-                        {
-                           swal('¡Error!', 'Debe agregar al menos un participante.', 'error') 
-                        }
-                        else {
-                            this.store()
-                        }
-                    }
-                });
+                if(this.participante.es_hermes == true)
+                {
+                    this.es_hermes_seleccionado = 1;
+                }
+                if(this.participante.nombre == '')
+                {
+                   swal('¡Error!', 'Debe agregar un nombre del participante.', 'error') 
+                }
+                else if(this.participante.monto < 0)
+                {
+                   swal('¡Error!', 'Debe agregar un monto.', 'error') 
+                }
+                else{
+                    this.participantes.push(this.participante);
+                    this.cerrar();
+                }
             },
             cerrar(){
                 this.$validator.reset();
@@ -207,13 +212,23 @@
                 $(this.$refs.modal1).modal('hide');
             },
             store() {
-                return this.$store.dispatch('concursos/concurso/store', {
+                if(this.concurso == '') 
+                {
+                   swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error') 
+                }
+                else if(this.participantes.length == 0) 
+                {
+                   swal('¡Error!', 'Debe agregar al menos un participante.', 'error') 
+                }
+                else {
+                    return this.$store.dispatch('concursos/concurso/store', {
                     concurso: this.concurso,
                     participantes: this.participantes
-                })
-                .then(data=> {
-                    this.salir();
-                })
+                    })
+                    .then(data=> {
+                        this.salir();
+                    })
+                }
 			},
         }
     }

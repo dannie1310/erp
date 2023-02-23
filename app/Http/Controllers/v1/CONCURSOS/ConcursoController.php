@@ -39,9 +39,16 @@ class ConcursoController extends Controller
     public function __construct(Manager $fractal, ConcursoService $service, ConcursoTransformer $transformer)
     {
         $this->middleware('auth:api');
+        $this->middleware('permisoGlobal:registrar_concurso')->only('store');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
+    }
+
+    public function store(Request $request)
+    {
+         $item = $this->service->store($request->all());
+        return $this->respondWithItem($item);
     }
 }

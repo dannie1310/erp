@@ -3,7 +3,7 @@
 
 namespace App\Http\Transformers\CONCURSOS;
 
-use App\Models\SEGURIDAD_ERP\Concurso;
+use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
 use League\Fractal\TransformerAbstract;
 
 class ConcursoTransformer extends TransformerAbstract

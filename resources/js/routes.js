@@ -5023,52 +5023,35 @@ export const routes = [
     },
     {
         path: '/concursos',
+        component: require('./components/concursos/concurso/Layout').default,
         components:  {
             default: require('./components/concursos/partials/Layout.vue').default,
             menu: require('./components/concursos/partials/Menu.vue').default
         },
         children: [
             {
-                path: '',
+                path: '/',
                 name: 'concursos',
-                component: require('./components/concursos/Index').default,
+                component: require('./components/concursos/concurso/Index').default,
                 meta: {
-                    title: 'Concursos',
+                    title: 'Lista de Concursos',
+                    breadcrumb: {name: 'CONCURSO'},
                     middleware: [auth, permission],
-                    breadcrumb: {name: 'CONCURSOS'},
-                    permission: ['consultar_concurso'],
+                    permission: 'consultar_concurso',
                     general: true
                 }
             },
             {
-                path: 'concurso',
-                component: require('./components/concursos/concurso/Layout').default,
-                children: [
-                    {
-                        path: '/',
-                        name: 'concurso',
-                        component: require('./components/concursos/concurso/Index').default,
-                        meta: {
-                            title: 'Lista de Concursos',
-                            breadcrumb: {parent: 'concursos', name: 'CONCURSO'},
-                            middleware: [auth, permission],
-                            permission: 'consultar_concurso',
-                            general: true
-                        }
-                    },
-                    {
-                        path: 'create',
-                        name: 'concurso-create',
-                        component: require('./components/concursos/concurso/Create').default,
-                        meta: {
-                            title: 'Registrar Concurso',
-                            breadcrumb: {name: 'REGISTRAR', parent: 'concurso'},
-                            middleware: [auth, permission],
-                            permission: ['registrar_concurso'],
-                            general: true
-                        }
-                    },
-                ]
+                path: 'create',
+                name: 'concurso-create',
+                component: require('./components/concursos/concurso/Create').default,
+                meta: {
+                    title: 'Registrar Concurso',
+                    breadcrumb: {name: 'REGISTRAR', parent: 'concurso'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_concurso'],
+                    general: true
+                }
             },
         ]
     },
