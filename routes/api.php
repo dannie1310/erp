@@ -1941,6 +1941,7 @@ $api->version('v1', function ($api) {
     $api->group(['middleware' => 'api', 'prefix' => 'concursos'], function ($api) {
         $api->group(['prefix' => 'concurso'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@paginate');
         });
     });
 });

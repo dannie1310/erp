@@ -11,14 +11,14 @@
                     <div class="row">
                         <div class="col">
                             <div class="form-group">
-                              <!--  <input type="text" class="form-control" placeholder="Buscar" v-model="search">-->
+                                <input type="text" class="form-control" placeholder="Buscar" v-model="search">
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <!--<datatable v-bind="$data" />-->
+                        <datatable v-bind="$data" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -37,7 +37,106 @@
         components : {Registrar},
         data() {
             return {
-            
+                HeaderSettings: false,
+                columns: [
+                    { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
+                    { title: 'Nombre', field: 'nombre', tdClass: 'td_c250', sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c150', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Estatus', field: 'estatus', tdClass: 'th_c120', sortable: true},
+                    //{ title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                ],
+                data: [],
+                total: 0,
+                query: {include: [], sort: 'id', order: 'desc'},
+                search: '',
+                cargando: false
             }
         },
+        mounted() {
+            this.$Progress.start();
+            this.paginate()
+                .finally(() => {
+                    this.$Progress.finish();
+                })
+        },
+        methods: {
+            paginate() {
+                this.cargando = true;
+                return this.$store.dispatch('concursos/concurso/paginate', {
+                    params: this.query
+                })
+                    .then(data => {
+                        this.$store.commit('concursos/concurso/SET_CONCURSOS', data.data);
+                        this.$store.commit('concursos/concurso/SET_META', data.meta);
+                    })
+                    .finally(() => {
+                        this.cargando = false;
+
+                    })
+            },
+        },
+        computed: {
+            concursos(){
+                return this.$store.getters['concursos/concurso/concursos'];
+            },
+            meta(){
+                return this.$store.getters['concursos/concurso/meta'];
+            },
+            tbodyStyle() {
+                return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            }
+        },
+        watch: {
+            concursos: {
+                handler(concursos) {
+                    let self = this
+                    self.$data.data = []
+                    self.$data.data = concursos.map((concurso, i) => ({
+                        index: (i + 1) + self.query.offset,
+                        nombre: concurso.nombre,
+                        fecha_hora_inicio_apertura: concurso.fecha_format,
+                        estatus: concurso.estatus,
+                        id: concurso.id,
+                        buttons: $.extend({}, {
+                            id: concurso.id
+                        })
+                    }));
+                },
+                deep: true
+            },
+            meta: {
+                handler (meta) {
+                    let total = meta.pagination.total
+                    this.$data.total = total
+                },
+                deep: true
+            },
+            query: {
+                handler (query) {
+                    this.paginate()
+                },
+                deep: true
+            },
+            search(val) {
+                if (this.timer) {
+                    clearTimeout(this.timer);
+                    this.timer = null;
+                }
+                this.timer = setTimeout(() => {
+
+                    this.query.search = val;
+                    this.query.offset = 0;
+                    this.paginate();
+                }, 500);
+            },
+            cargando(val) {
+                $('tbody').css({
+                    '-webkit-filter': val ? 'blur(2px)' : '',
+                    'pointer-events': val ? 'none' : ''
+                });
+            }
+        }
     }
+</script>
+
+

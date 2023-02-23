@@ -20,6 +20,9 @@ class ConcursoTransformer extends TransformerAbstract
     {
         return [
             'id' => (int)$model->getKey(),
+            'nombre' => (string) $model->nombre,
+            'fecha_format' => $model->fecha_format,
+            'estatus' => $model->estado
         ];
     }
 }

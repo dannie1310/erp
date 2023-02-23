@@ -26,6 +26,10 @@ class Concurso extends Model
 
     public $timestamps = false;
 
+    public $searchable = [
+        'nombre'
+    ];
+
     /**
      * Relaciones
      */
@@ -43,6 +47,24 @@ class Concurso extends Model
     /**
      * Atributos 
      */ 
+    public function getEstadoAttribute()
+    {
+        if($this->estatus == 1)
+        {
+            return 'Activo';
+        }else if($this->estatus == 0)
+        {
+            return 'Inactivo';
+        }else{
+            return '-';
+        }
+    }
+
+    public function getFechaFormatAttribute()
+    {
+        $date = date_create($this->fecha_hora_inicio_apertura);
+        return date_format($date,"d/m/Y");
+    }
 
     /**
      * Métodos

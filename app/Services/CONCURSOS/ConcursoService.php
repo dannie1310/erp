@@ -32,4 +32,18 @@ class ConcursoService
     {
        return $this->repository->create($data);
     }
+
+    public function paginate($data)
+    {
+        if(isset($data['nombre']))
+        {
+            $this->repository->where([['nombre', 'LIKE', '%' . $data['nombre'] . '%']]);
+        }
+
+        if (isset($data['fecha_hora_inicio_apertura']))
+        {
+            $this->repository->whereBetween( ['fecha_hora_inicio_apertura', [ request( 'fecha_hora_inicio_apertura' )." 00:00:00",request( 'fecha_hora_inicio_apertura' )." 23:59:59"]] );
+        }
+        return $this->repository->paginate($data);
+    }
 }
