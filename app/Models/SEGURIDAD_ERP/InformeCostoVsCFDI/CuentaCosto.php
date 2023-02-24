@@ -17,4 +17,17 @@ class CuentaCosto extends Model
     protected $connection = 'seguridad';
     protected $table = 'InformeCostoVsCFDI.cuentas_costo';
     public $timestamps = false;
+
+    protected $fillable = [
+        'id_empresa',
+        'base_datos_contpaq',
+        'id_cuenta',
+        'codigo_cuenta',
+        'nombre_cuenta',
+        'tipo_costo',
+        'usuario_registro',
+        'usuario_elimino',
+        'fecha_hora_eliminacion',
+        'clasificacion',
+    ];
 }
