@@ -98,7 +98,8 @@
                         estatus: concurso.estatus,
                         id: concurso.id,
                         buttons: $.extend({}, {
-                            id: concurso.id
+                            id: concurso.id,
+                            edit: self.$root.can('editar_cotizacion_compra', true) ? true : false
                         })
                     }));
                 },

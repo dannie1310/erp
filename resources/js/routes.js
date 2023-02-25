@@ -5081,6 +5081,19 @@ export const routes = [
                     general: true
                 }
             },
+            {
+                path: ':id/editar',
+                name: 'concurso-edit',
+                props: true,
+                component: require('./components/concursos/concurso/Edit').default,
+                meta: {
+                    title: 'Editar Concurso',
+                    breadcrumb: { parent: 'concurso', name: 'EDITAR'},
+                    middleware: [auth, permission],
+                    permission: ['editar_solicitud_autorizacion_avance_proveedor'],
+                    general: true
+                }
+            },
         ]
     },
     {
