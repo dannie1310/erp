@@ -20,8 +20,8 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="alert alert-primary alert-dismissible fade show">
-                                        <i class="fa fa-info-circle"></i> El archivo de excel solo debe contener las cuentas consideradas deducibles.
-                                        Se debe indicar el código de cuenta y nombre como se muestra en la imagen:
+                                        <i class="fa fa-info-circle"></i> El archivo de excel solo debe contener el código y nombre de las cuentas consideradas <strong>deducibles</strong>.
+                                        <br>En columna A poner el código de cuenta, en columna B poner el nombre de la cuenta (ver imagen):
                                     </div>
                                 </div>
                             </div>
@@ -94,6 +94,7 @@ import {ModelListSelect} from "vue-search-select";
                 file: null,
                 id_empresa: '',
                 empresas: [],
+                nombre: '',
             }
         },
         mounted(){
@@ -126,12 +127,15 @@ import {ModelListSelect} from "vue-search-select";
                 this.$refs.carga_layout.value = '';
                 this.file = null;
                 this.$validator.errors.clear();
+                this.id_empresa = '';
                 $(this.$refs.modal).modal('hide')
             },
             cargarLayout(){
                 var formData = new FormData();
                 formData.append('file',  this.file);
-                return this.$store.dispatch('compras/asignacion/cargaManualLayout',
+                formData.append('name', this.nombre);
+                formData.append("id_empresa", this.id_empresa);
+                return this.$store.dispatch('fiscal/informes/cargaCuentasBalanzaPorLayout',
                     {
                         data: formData,
                         config: {
@@ -167,6 +171,7 @@ import {ModelListSelect} from "vue-search-select";
                 var files = e.target.files || e.dataTransfer.files;
                 if (!files.length)
                     return;
+                    this.nombre = files[0].name;
                 if(e.target.id == 'carga_layout') {
                     this.createImage(files[0]);
                 }

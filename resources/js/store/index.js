@@ -216,7 +216,8 @@ import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
 import noLocalizado from './modules/fiscal/no-localizado';
 import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
-import proveedorREP from './modules/fiscal/proveedor_rep'
+import proveedorREP from './modules/fiscal/proveedor_rep';
+import informes from './modules/fiscal/informes';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -447,6 +448,7 @@ export default new Vuex.Store({
         'fiscal/no-localizado' : noLocalizado,
         'fiscal/tipo-fecha-sat' : tipoFechaSat,
         'fiscal/proveedor-rep' : proveedorREP,
+        'fiscal/informes' : informes,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,

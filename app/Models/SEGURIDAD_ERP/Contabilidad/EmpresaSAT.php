@@ -9,7 +9,9 @@
 namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 
+use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EmpresaSAT extends Model
 {
@@ -27,6 +29,11 @@ class EmpresaSAT extends Model
         return $this->hasMany(CFDSAT::class,"rfc_receptor", "rfc");
     }
 
+    public function cuentasCostoBalanza()
+    {
+        return $this->hasMany(CuentaCosto::class, "id_empresa", "id");
+    }
+
     public function empresaContabilidad()
     {
         return $this->hasMany(Empresa::class,"IdEmpresaSAT", "id");
@@ -40,6 +47,24 @@ class EmpresaSAT extends Model
 
     public function scopeSolicitudes($query){
         return $query->whereHas('empresaContabilidadConDiferencia');
+    }
+
+    public function cargarCuentas($nuevas_cuentas){
+        DB::connection('seguridad')->beginTransaction();
+
+        $cuentas = $this->cuentasCostoBalanza;
+
+        foreach ($cuentas as $cuenta) {
+            $cuenta->estatus = 0;
+            $cuenta->save();
+        }
+
+        foreach ($nuevas_cuentas as $nueva_cuenta) {
+            $this->cuentasCostoBalanza()->create($nueva_cuenta);
+        }
+
+        DB::connection('seguridad')->commit();
+
     }
 
 }

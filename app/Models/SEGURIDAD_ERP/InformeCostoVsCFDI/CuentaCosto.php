@@ -9,8 +9,8 @@
 namespace App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI;
 
 
+use App\Scopes\EstatusMayorACeroScope;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\IGH\Usuario;
 
 class CuentaCosto extends Model
 {
@@ -30,4 +30,10 @@ class CuentaCosto extends Model
         'fecha_hora_eliminacion',
         'clasificacion',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstatusMayorACeroScope());
+    }
 }

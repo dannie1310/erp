@@ -51,4 +51,10 @@ class ListaEmpresasService{
     {
         return $this->repository->sincronizar();
     }
+
+    public function validaCuenta($id_empresa, $cuenta)
+    {
+
+
+    }
 }

@@ -395,6 +395,7 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoNoLocalizadosObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\RepNotificacionObserver;
+use App\Observers\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCostoObserver as CuentaCostoBalanzaObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
@@ -756,6 +757,11 @@ class AppServiceProvider extends ServiceProvider
             ProcesamientoListaNoLocalizados::observe(ProcesamientoNoLocalizadosObserver::class);
             RepNotificacion::observe(RepNotificacionObserver::class);
             ContactoProveedorREP::observe(ContactoProveedorObserver::class);
+
+        /**
+         * InformeCostoVsCFDI
+         */
+        \App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto::observe(CuentaCostoBalanzaObserver::class);
 
             /**
              *  PadronProveedores
