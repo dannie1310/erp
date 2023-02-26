@@ -5,7 +5,7 @@
             <!-- Add icons to the links using the .nav-icon class
                  with font-awesome or any other icon font library -->
             <li class="nav-item"  v-if="$root.can('consultar_concurso',true)">
-                <router-link :to="{name: 'concurso'}" class="nav-link" :class="{active: this.$route.name == 'concurso'}">
+                <router-link :to="{name: 'concursos'}" class="nav-link" :class="{active: this.$route.name == 'concursos'}">
                     <i class="fa fa-envelope-open-text nav-icon"></i>
                     <p>Concurso</p>
                 </router-link>
