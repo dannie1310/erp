@@ -168,6 +168,17 @@
             }
         },
         methods: {
+            iniciar(){
+                this.concurso = '';
+                this.participantes = [];
+                this.participante =
+                {
+                    'nombre' : '',
+                    'monto' : 0,
+                    'es_hermes' : false   
+                };
+                this.es_hermes_seleccionado = 0;
+            },
             agregar(){
                 $(this.$refs.modal1).appendTo('body')
                 $(this.$refs.modal1).modal('show');
@@ -180,23 +191,24 @@
                 this.participantes.splice(index, 1);
             },
             salir() {
+                this.iniciar();
                 this.$router.go(-1);
             },
             guardar_participante()
             {
-                if(this.participante.es_hermes == true)
-                {
-                    this.es_hermes_seleccionado = 1;
-                }
                 if(this.participante.nombre == '')
                 {
                    swal('¡Error!', 'Debe agregar un nombre del participante.', 'error') 
                 }
-                else if(this.participante.monto < 0)
+                else if(this.participante.monto <= 0)
                 {
                    swal('¡Error!', 'Debe agregar un monto.', 'error') 
                 }
                 else{
+                    if(this.participante.es_hermes == true)
+                    {
+                        this.es_hermes_seleccionado = 1;
+                    }
                     this.participantes.push(this.participante);
                     this.cerrar();
                 }

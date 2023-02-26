@@ -71,6 +71,7 @@ class Concurso extends Model
     */
     public function registrar($data)
     {
+        $this->validarRegistroNuevo($data);
         try {
             DB::connection('seguridad')->beginTransaction();
             $concurso = $this->create([
@@ -95,6 +96,23 @@ class Concurso extends Model
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function validarRegistroNuevo($data)
+    {
+        $existe = $this->where('nombre', $data['concurso'])->first();
+        if($existe)
+        {
+            abort(400, "Este concurso ya existe con el nombre: \n" . $data['concurso'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+
+        foreach($data['participantes'] as $p)
+        {
+            if($p['monto'] <= 0)
+            {
+                abort(400, "El participante ".$p['nombre']." no puede tener un monto menor o igual a cero.");
+            }
         }
     }
 }
