@@ -17,9 +17,10 @@
                     <div class="col-md-12">
                         <table class="table table-sm">
                             <tr>
-                                <td class="sin_borde c400"><b>Empresas:</b></td>
+                                <td class="sin_borde"><b>Empresas:</b></td>
                                 <td class="c90 sin_borde"  ><b>Año:</b></td>
-                                <td class="c100 sin_borde"></td>
+                                <td class="c90 sin_borde"></td>
+                                <td class="c150 sin_borde"></td>
                             </tr>
                             <tr>
                                 <td class="sin_borde">
@@ -37,7 +38,7 @@
                                     </model-list-select>
                                 </td>
 
-                                <td class="c100 sin_borde">
+                                <td class="sin_borde">
                                     <select id="dob"
                                     class="form-control"
                                     v-model="anio_input"
@@ -45,12 +46,15 @@
                                       <option v-for="year in years" :value="year">{{ year }}</option>
                                     </select>
                                 </td>
-                                <td class="sin_borde" style="padding-top: 3px; width: 100px">
+                                <td class="sin_borde" style="padding-top: 3px;">
                                     <button type="button" class="btn btn-secondary" v-on:click="getInforme" :disabled="cargando" >
                                         <i class="fa fa-filter" v-if="!cargando"></i>
                                         <i class="fa fa-spinner fa-spin" v-else></i>
                                         Filtrar
                                     </button>
+                                </td>
+                                <td class="sin_borde">
+                                    <carga-cuentas-balanza></carga-cuentas-balanza>
                                 </td>
                             </tr>
                         </table>
@@ -483,10 +487,12 @@ import {ModelListSelect} from 'vue-search-select';
 import PolizaShowModal from "../../../contabilidad-general/poliza/ShowModal";
 import Td_informe from "../../../globals/td_informe";
 import Td_informe_link_cfdi from "./td_informe_link_cfdi";
+import CargaCuentasBalanza from "./CargaCuentasBalanza.vue";
 
 export default {
     name: "Informe",
     components: {
+        CargaCuentasBalanza,
         Td_informe_link_cfdi,
         Td_informe, PolizaShowModal, PDFPoliza, DescargaCFDI, CFDI, Datepicker, ModelListSelect},
     data() {
@@ -522,6 +528,7 @@ export default {
             empresa_sat_seleccionada:'',
             sin_proveedor : {},
             abriendo_modal : 0,
+            total_cfdi_sf : '',
         }
     },
     mounted() {
