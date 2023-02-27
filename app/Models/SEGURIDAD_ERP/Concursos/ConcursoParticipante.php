@@ -43,6 +43,15 @@ class ConcursoParticipante extends Model
     /**
      * Atributos 
      */ 
+    public function getMontoFormatAttribute()
+    {
+        return number_format($this->monto,2,".", ",");
+    }
+
+    public function getEsHermesAttribute()
+    {
+        return $this->es_empresa_hermes == 1 ? true : false;
+    }
 
      /**
       * Métodos

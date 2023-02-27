@@ -13,7 +13,15 @@ class ConcursoTransformer extends TransformerAbstract
      * @var array
      */
     protected $availableIncludes = [
-       
+        'participantes'
+    ];
+
+    /**
+     * ist of resources include
+     * @var array
+     */
+    protected $defaultIncludes = [
+        'participantes'
     ];
 
     public function transform(Concurso $model)
@@ -24,5 +32,14 @@ class ConcursoTransformer extends TransformerAbstract
             'fecha_format' => $model->fecha_format,
             'estatus' => $model->estado
         ];
+    }
+
+    public function includeParticipantes(Concurso $model)
+    {
+        if($participantes = $model->participantes)
+        {
+            return $this->collection($participantes, new ConcursoParticipanteTransformer);
+        }
+        return null;
     }
 }

@@ -46,4 +46,20 @@ class ConcursoService
         }
         return $this->repository->paginate($data);
     }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
+    }
+
+    public function update(array $data, $id)
+    {
+        $concurso = $this->repository->show($id);
+
+        if($concurso->estatus != 1)
+        {
+            abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+        return $concurso->editar($data);
+    }
 }

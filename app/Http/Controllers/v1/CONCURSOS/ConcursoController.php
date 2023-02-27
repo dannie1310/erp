@@ -40,15 +40,10 @@ class ConcursoController extends Controller
     {
         $this->middleware('auth:api');
         $this->middleware('permisoGlobal:registrar_concurso')->only('store');
+       // $this->middleware('permisoGlobal:editar_concurso')->only('update');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
-    }
-
-    public function store(Request $request)
-    {
-         $item = $this->service->store($request->all());
-        return $this->respondWithItem($item);
     }
 }

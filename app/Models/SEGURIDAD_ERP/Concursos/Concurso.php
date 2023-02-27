@@ -86,7 +86,7 @@ class Concurso extends Model
                     'id_concurso' => $concurso->id,
                     'nombre' => $p['nombre'],
                     'monto' => $p['monto'],
-                    'es_empresa_hermes' => $p['es_hermes'],
+                    'es_empresa_hermes' => $p['es_hermes'] ? 1 : 0,
                     'lugar' => 0
                 ]);
             }
@@ -108,6 +108,73 @@ class Concurso extends Model
         }
 
         foreach($data['participantes'] as $p)
+        {
+            if($p['monto'] <= 0)
+            {
+                abort(400, "El participante ".$p['nombre']." no puede tener un monto menor o igual a cero.");
+            }
+        }
+    }
+
+    public function editar($data)
+    {
+        $this->validarEditar($data);
+        try {
+            DB::connection('seguridad')->beginTransaction();
+            $this->update([
+                'nombre' => $data['nombre']
+            ]);
+            $a = '';
+            foreach($data['participantes']['data'] as $p)
+            {
+                if(array_key_exists('id',$p))
+                {
+                    $a = $a == '' ? (string) $p['id'] : $a . "," . (string) $p['id'];
+                    $participante = $this->participantes()->where('id', $p['id'])->first();
+                    $participante->update([
+                        'nombre' => $p['nombre'],
+                        'monto' => $p['monto'],
+                        'es_empresa_hermes' => $p['es_empresa_hermes'] ? 1 : 0,
+                        'lugar' => 0
+                    ]);
+                }else{
+                    $participantes = $this->participantes()->create([
+                        'id_concurso' => $this->id,
+                        'nombre' => $p['nombre'],
+                        'monto' => $p['monto'],
+                        'es_empresa_hermes' => $p['es_empresa_hermes'] ? 1 : 0,
+                        'lugar' => 0
+                    ]);
+                    $a = $a == '' ? (string) $participantes['id'] : $a . "," . (string) $participantes['id'];
+                }
+            }
+            $participantes = ConcursoParticipante::where('id_concurso', $data['id'])->whereRaw('id not in (' . $a . ')')->get();
+
+            if(count($participantes) > 0)
+            {
+                foreach($participantes as $p)
+                {
+                    $p->delete();
+                }
+            }        
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    
+    public function validarEditar($data)
+    {
+        $existe = $this->where('nombre', $data['nombre'])->where('id', '!=', $data['id'])->first();
+        if($existe)
+        {
+            abort(400, "Este concurso ya existe con el nombre: \n" . $data['nombre'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+
+        foreach($data['participantes']['data'] as $p)
         {
             if($p['monto'] <= 0)
             {

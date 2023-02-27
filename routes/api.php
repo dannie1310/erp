@@ -1942,6 +1942,8 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'concurso'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@store');
             $api->get('paginate', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@update')->where(['id' => '[0-9]+']);
         });
     });
 });

@@ -43,7 +43,7 @@
                     { title: 'Nombre', field: 'nombre', tdClass: 'td_c250', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c150', sortable: true, thComp: require('../../globals/th-Date').default},
                     { title: 'Estatus', field: 'estatus', tdClass: 'th_c120', sortable: true},
-                    //{ title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

@@ -62,7 +62,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(participante, i) in this.concurso.participantes">
+                                            <tr v-for="(participante, i) in this.concurso.participantes.data">
                                                 <td>{{i+1}}</td>
                                                 <td>
                                                 {{participante.nombre}}
@@ -71,7 +71,7 @@
                                                     {{parseFloat(participante.monto).formatMoney(2,'.',',')}}
                                                 </td>
                                                 <td style="text-align: center">
-                                                    <input type="checkbox" id="es_hermes" v-model="participante.es_hermes" disabled>
+                                                    <input type="checkbox" id="es_empresa_hermes" v-model="participante.es_empresa_hermes" disabled>
                                                 </td>
                                                 <td style="text-align: center">
                                                     <button type="button" class="btn btn-sm btn-outline-danger" v-on:click="quitar(i)">
@@ -90,7 +90,7 @@
                             <button type="button" class="btn btn-secondary" v-on:click="salir">
                                 <i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <button type="button" @click="store" class="btn btn-primary">
+                            <button type="button" @click="update" class="btn btn-primary">
                                 <i class="fa fa-save"></i>
                                 Guardar
                             </button>
@@ -102,7 +102,7 @@
                         <div class="modal-content" >
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i>&nbsp;AGREGAR PARTICIPANTE</h5>
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <button type="button" class="close" @click="cerrar" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -148,14 +148,14 @@
                                         <div class="col-md-12" style="text-align: center;">
                                             <div class="form-group">
                                                 <label for="nombre">Es Hermes:</label>
-                                                <input type="checkbox" id="es_hermes" v-model="participante.es_hermes">
+                                                <input type="checkbox" id="es_empresa_hermes" v-model="participante.es_empresa_hermes">
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal"><i class="fa fa-close"></i>Cerrar</button>
+                                <button type="button" class="btn btn-secondary" @click="cerrar"><i class="fa fa-close"></i>Cerrar</button>
                                 <button type="button" @click="guardar_participante" class="btn btn-primary">
                                     <i class="fa fa-plus"></i>Agregar
                                 </button>
@@ -181,7 +181,7 @@
                 {
                     'nombre' : '',
                     'monto' : 0,
-                    'es_hermes' : false   
+                    'es_empresa_hermes' : false   
                 },
                 es_hermes_seleccionado : 0
             }
@@ -191,36 +191,59 @@
             this.$validator.reset();
         },
         methods: {
+            find() {
+                this.cargando = true;
+                this.$store.commit('concursos/concurso/SET_CONCURSO', null);
+                return this.$store.dispatch('concursos/concurso/find', {
+                    id: this.id,
+                    params:{include: []}
+                }).then(data => {
+                    this.concurso = data;
+                    this.checar_participantes_hermes();
+                    this.cargando = false
+                })
+            },
+            checar_participantes_hermes()
+            {
+                for (var key in this.concurso.participantes.data) {
+                    console.log(key)
+                    var obj = this.concurso.participantes.data[key];
+                    console.log(obj)
+                    if(obj.es_empresa_hermes == true) {
+                        this.es_hermes_seleccionado = 1;
+                    }
+                }
+            },
             agregar(){
                 $(this.$refs.modal1).appendTo('body')
                 $(this.$refs.modal1).modal('show');
             },
             quitar(index){
-                if(this.participantes[index].es_hermes ==  true)
+                if(this.concurso.participantes.data[index].es_empresa_hermes ==  true)
                 {
                     this.es_hermes_seleccionado = 0;
                 }
-                this.participantes.splice(index, 1);
+                this.concurso.participantes.data.splice(index, 1);
             },
             salir() {
                 this.$router.go(-1);
             },
             guardar_participante()
             {
-                if(this.participante.es_hermes == true)
-                {
-                    this.es_hermes_seleccionado = 1;
-                }
                 if(this.participante.nombre == '')
                 {
                    swal('¡Error!', 'Debe agregar un nombre del participante.', 'error') 
                 }
-                else if(this.participante.monto < 0)
+                else if(this.participante.monto <= 0)
                 {
                    swal('¡Error!', 'Debe agregar un monto.', 'error') 
                 }
                 else{
-                    this.participantes.push(this.participante);
+                    if(this.participante.es_empresa_hermes == true)
+                    {
+                        this.es_hermes_seleccionado = 1;
+                    }
+                    this.concurso.participantes.data.push(this.participante);
                     this.cerrar();
                 }
             },
@@ -230,42 +253,29 @@
                 this.participante = {
                     'nombre' : '',
                     'monto' : 0,
-                    'es_hermes' : false  
+                    'es_empresa_hermes' : false  
                 }
                 $(this.$refs.modal1).modal('hide');
             },
-            store() {
-                if(this.concurso == '') 
+            update() {
+                if(this.concurso.nombre == '') 
                 {
                    swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error') 
                 }
-                else if(this.participantes.length == 0) 
+                else if(this.concurso.participantes.data.length == 0) 
                 {
                    swal('¡Error!', 'Debe agregar al menos un participante.', 'error') 
                 }
                 else {
-                    return this.$store.dispatch('concursos/concurso/store', {
-                    concurso: this.concurso,
-                    participantes: this.participantes
+                    return this.$store.dispatch('concursos/concurso/update', {
+                        id: this.id,
+                        data: this.concurso
                     })
-                    .then(data=> {
+                    .then((data) => {
                         this.salir();
                     })
                 }
-			},
-            find() {
-                this.cargando = true;
-                this.$store.commit('compras/cotizacion/SET_COTIZACION', null);
-                return this.$store.dispatch('compras/cotizacion/find', {
-                    id: this.id,
-                    params:{include: [
-                    
-                    ]}
-                }).then(data => {
-                    this.concurso = data;
-                    this.cargando = false
-                })
-            },
+			}
         }
     }
 </script>
