@@ -21,4 +21,10 @@ class EmpresaSATRepository extends Repository implements RepositoryInterface
         $this->model = $model;
     }
 
+    public function cargarCuentas($id_empresa, $cuentas)
+    {
+        $empresa = $this->model->find($id_empresa);
+        return $empresa->cargarCuentas($cuentas);
+    }
+
 }

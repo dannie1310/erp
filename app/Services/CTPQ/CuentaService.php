@@ -153,4 +153,18 @@ class CuentaService
         Config::set('database.connections.cntpq.database', $empresa->AliasBDD);
         return $this->repository->show($data['id_cuenta'])->eliminarAsociacion();
     }
+
+    public function validaCuenta($alias_bdd, $cuenta)
+    {
+        DB::purge('cntpq');
+        Config::set('database.connections.cntpq.database', $alias_bdd);
+        $this->repository->where([['Codigo','=', $cuenta]]);
+        $cuenta = $this->repository->first();
+        $this->repository->where([['estado', '=', 0]]);
+        if($cuenta)
+        {
+            return true;
+        }
+        return false;
+    }
 }

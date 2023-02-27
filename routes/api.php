@@ -483,6 +483,10 @@ $api->version('v1', function ($api) {
             $api->post('{id}/actualizar-contactos','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@actualizarContactos')->where(['id' => '[0-9]+']);
             $api->get('{id}/cuerpo-correo','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
         });
+
+        $api->group(['prefix' => 'informes'], function ($api){
+            $api->post('cargar-cuentas-balanza-layout','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CuentaCostoController@cargarPorLayout');
+        });
     });
 
     /**
