@@ -99,7 +99,7 @@
                         id: concurso.id,
                         buttons: $.extend({}, {
                             id: concurso.id,
-                            edit: self.$root.can('editar_cotizacion_compra', true) ? true : false
+                            edit: self.$root.can('editar_concurso', true) ? true : false
                         })
                     }));
                 },

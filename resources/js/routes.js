@@ -5090,7 +5090,7 @@ export const routes = [
                     title: 'Editar Concurso',
                     breadcrumb: { parent: 'concurso', name: 'EDITAR'},
                     middleware: [auth, permission],
-                    permission: ['editar_solicitud_autorizacion_avance_proveedor'],
+                    permission: ['editar_concurso'],
                     general: true
                 }
             },
