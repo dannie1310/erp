@@ -63,8 +63,18 @@ class EmpresaSAT extends Model
             $this->cuentasCostoBalanza()->create($nueva_cuenta);
         }
 
-        DB::connection('seguridad')->commit();
+        $this->load("cuentasCostoBalanza");
 
+        $cuentas_cargadas = $this->cuentasCostoBalanza;
+        if(count($cuentas_cargadas)>0)
+        {
+            DB::connection('seguridad')->commit();
+        } else
+        {
+            DB::connection('seguridad')->rollBack();
+            abort(500,"No se cargó ninguna cuenta.");
+        }
+        return $cuentas_cargadas;
     }
 
 }

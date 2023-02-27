@@ -148,6 +148,7 @@ import {ModelListSelect} from "vue-search-select";
                         this.$refs.carga_layout.value = '';
                         this.file = null;
                         this.file_name = '';
+                        this.id_empresa = '';
                         this.$validator.errors.clear();
                         setTimeout(() => {
                             $(this.$refs.modal).modal('hide');

@@ -25,16 +25,18 @@ class CuentaCostoService
     {
         $this->repository = new CuentaCostoRepository($model);
     }
+
     public function paginate($data)
     {
         $cuenta_costo = $this->repository;
         return $cuenta_costo->paginate($data);
     }
 
-    public function cargarPorLayout($data){
+    public function cargarPorLayout($data)
+    {
 
-        ini_set('memory_limit', -1) ;
-        ini_set('max_execution_time', '7200') ;
+        ini_set('memory_limit', -1);
+        ini_set('max_execution_time', '7200');
 
         $listaEmpresaService = new ListaEmpresasService(new Empresa());
         $empresa = $listaEmpresaService->show($data["id_empresa"]);
@@ -43,40 +45,31 @@ class CuentaCostoService
         $cuentas = [];
 
 
-        /*$empresa_sat = $empresaSATService->show($id_empresa_sat);
-
-        dd($empresa_sat);*/
-
-        if(!$id_empresa_sat)
-        {
-            abort(403, 'La empresa de contpaq '.$empresa->Nombre ." ".$empresa->AliasBDD." no tiene una empresa fiscal asociada; favor de reportar el tema a soporte a aplicaciones.");
+        if (!$id_empresa_sat) {
+            abort(403, 'La empresa de contpaq ' . $empresa->Nombre . " " . $empresa->AliasBDD . " no tiene una empresa fiscal asociada; favor de reportar el tema a soporte a aplicaciones.");
         }
 
-        $items = array();
-        $partidas_no_validas = false;
         $file_xls = $this->getFileXls($data['name'], $data['file']);
         $filas = $this->getDatosAsignacionLayout($file_xls);
 
-        for($i = 0; $i < count($filas);$i++) {
-            $cuenta = str_replace("-","", $filas[$i][0]);
+        for ($i = 0; $i < count($filas); $i++) {
+            $cuenta = str_replace("-", "", $filas[$i][0]);
             $nombre = $filas[$i][1];
-            if(is_numeric($cuenta))
-            {
-                $cuentas[] =[
-                    "codigo_cuenta"=>$cuenta
-                    ,"nombre_cuenta"=>$nombre
-                    , "base_datos_contpaq"=>$alias_bbdd
+            if (is_numeric($cuenta)) {
+                $cuentas[] = [
+                    "codigo_cuenta" => $cuenta
+                    , "nombre_cuenta" => $nombre
+                    , "base_datos_contpaq" => $alias_bbdd
                 ];
             }
         }
 
-        if(!count($cuentas)>0)
-        {
+        if (!count($cuentas) > 0) {
             abort(403, "El archivo cargado no tiene cuentas válidas, favor de verificar");
         }
 
         $empresaSATService = new EmpresaSATService(new EmpresaSAT());
-        return $empresaSATService->cargaCuentas($id_empresa_sat, $cuentas);
+        return $empresaSATService->cargaCuentas($id_empresa_sat, $alias_bbdd, $cuentas);
     }
 
     private function getFileXLS($nombre_archivo, $archivo_xls)
