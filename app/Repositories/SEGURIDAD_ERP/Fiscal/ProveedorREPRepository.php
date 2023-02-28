@@ -2,10 +2,12 @@
 
 namespace App\Repositories\SEGURIDAD_ERP\Fiscal;
 
+use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacionCuerpoCorreo;
 use App\Repositories\Repository;
 use App\Repositories\RepositoryInterface;
+use App\Repositories\SEGURIDAD_ERP\Contabilidad\ProveedorSATRepository;
 
 class ProveedorREPRepository extends Repository implements RepositoryInterface
 {
@@ -67,8 +69,12 @@ class ProveedorREPRepository extends Repository implements RepositoryInterface
     }
     public function getCuerpoCorreo($id)
     {
+        $repositoryProveedor = new ProveedorSATRepository(new ProveedorSAT());
+        $proveedor = $repositoryProveedor->show($id);
         $repositoryCuerpo = new RepNotificacionCuerpoCorreoRepository(new RepNotificacionCuerpoCorreo());
         $cuerpo_correo = $repositoryCuerpo->model->where("estatus","=",1)->pluck("cuerpo_correo")->first();
+        $cuerpo_correo = str_replace("[%razon_social%]",$proveedor->razon_social." (".$proveedor->rfc.")",$cuerpo_correo);
+
         return $cuerpo_correo;
     }
 
