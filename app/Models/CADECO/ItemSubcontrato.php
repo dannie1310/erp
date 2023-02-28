@@ -171,7 +171,7 @@ class ItemSubcontrato extends Item
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' => $estimacion ? $estimacion->id_item : 0,
             'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
-            'porcentaje_avance' => (float)number_format((($porcentaje_avance) * 100), 2, '.', ''),
+            'porcentaje_avance' => (float)number_format((($porcentaje_avance) * 100), 3, '.', ''),
             'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
             'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
             'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
