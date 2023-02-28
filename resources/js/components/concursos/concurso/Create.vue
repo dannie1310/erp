@@ -113,11 +113,11 @@
                                     <div class="form-group">
                                         <label for="nombre">Monto:</label>
                                         <input
-                                                type="text"
+                                                type="number"
                                                 name="monto"
                                                 v-model="participante.monto"
                                                 data-vv-as="Monto"
-                                                v-validate="{min_value: 0.1}"
+                                                v-validate="{min_value: 0.1, regex: /^[0-9]\d*(\.\d{0,2})?$/}"
                                                 class="form-control"
                                                 :class="{'is-invalid': errors.has(`monto`)}"
                                                 id="monto"

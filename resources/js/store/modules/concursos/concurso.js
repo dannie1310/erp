@@ -19,16 +19,6 @@ export default{
         SET_CONCURSO(state, data){
             state.currentConcurso = data
         },
-
-        UPDATE_CONCURSOS(state, data) {
-            state.concursos = state.concursos.map(concurso => {
-                if (concurso.id === data.id) {
-                    return Object.assign({}, concurso, data)
-                }
-                return concurso
-            })
-            state.currentConcurso != null ? data : null;
-        }
     },
 
     actions: {
@@ -117,6 +107,7 @@ export default{
                         if (value) {
                             axios
                             .patch(URI + payload.id, payload.data,{ params: payload.params } )
+                            .then(r => r.data)
                             .then(data => {
                                 swal("El concurso se ha actualizado correctamente", {
                                     icon: "success",

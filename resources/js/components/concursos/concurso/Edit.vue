@@ -129,11 +129,11 @@
                                             <div class="form-group">
                                                 <label for="nombre">Monto:</label>
                                                 <input
-                                                        type="text"
+                                                        type="number"
                                                         name="monto"
                                                         v-model="participante.monto"
                                                         data-vv-as="Monto"
-                                                        v-validate="{min_value: 0.1}"
+                                                        v-validate="{min_value: 0.1, regex: /^[0-9]\d*(\.\d{0,2})?$/}"
                                                         class="form-control"
                                                         :class="{'is-invalid': errors.has(`monto`)}"
                                                         id="monto"
@@ -206,9 +206,7 @@
             checar_participantes_hermes()
             {
                 for (var key in this.concurso.participantes.data) {
-                    console.log(key)
                     var obj = this.concurso.participantes.data[key];
-                    console.log(obj)
                     if(obj.es_empresa_hermes == true) {
                         this.es_hermes_seleccionado = 1;
                     }
@@ -271,7 +269,7 @@
                         id: this.id,
                         data: this.concurso
                     })
-                    .then((data) => {
+                    .then(data => {
                         this.salir();
                     })
                 }
