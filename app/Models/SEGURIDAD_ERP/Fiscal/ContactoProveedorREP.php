@@ -4,6 +4,7 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Scopes\EstatusMayorACeroScope;
 use Illuminate\Database\Eloquent\Model;
 
 class ContactoProveedorREP extends Model
@@ -22,9 +23,7 @@ class ContactoProveedorREP extends Model
     protected static function boot()
     {
         parent::boot();
-        self::addGlobalScope(function ($query) {
-            return $query->where('estatus', '=', 1);
-        });
+        static::addGlobalScope(new EstatusMayorACeroScope);
     }
 
     public function desactivar()

@@ -4,6 +4,8 @@ namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
+use App\Scopes\EstatusMayorACeroScope;
+use App\Scopes\EstatusMayorCeroScope;
 use Illuminate\Database\Eloquent\Model;
 
 class RepNotificacion extends Model
@@ -19,6 +21,12 @@ class RepNotificacion extends Model
         , "comunicado_pdf"
         , "cuerpo_correo"
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+        static::addGlobalScope(new EstatusMayorACeroScope);
+    }
 
     public function destinatarios()
     {
