@@ -38,6 +38,20 @@ class Comunicado extends Fpdi
         $this->AliasNbPages();
         $this->AddPage();
         $this->useTemplate($this->comunicado,0, 0.5, 22);
+        $this->SetFont('Helvetica', 'B', 11);
+        $this->SetTextColor("120,120,120");
+        $this->setXY(2.7,5.8);
+        $this->SetFillColor(254,254,254);
+        if(strlen($this->emisor["proveedor"])<=50){
+
+            $this->Cell(16.8,1,"Estimado proveedor ".$this->emisor["proveedor"], '',1,'L',1);
+
+        }else{
+            $this->MultiCell(16.8,0.5,"Estimado proveedor ".$this->emisor["proveedor"], '',1,'L',1);
+
+        }
+
+
         //$this->comunicado();
         $this->AddPage();
         $this->listaCFDI();
@@ -47,6 +61,36 @@ class Comunicado extends Fpdi
     {
 
 
+    }
+
+    function SetTextColor($r, $g=null, $b=null)
+    {
+        $datos = explode(',', $r);
+        if(count($datos)==3){
+            $r = $datos[0];
+            $g = $datos[1];
+            $b = $datos[2];
+        }else{
+            $r = $r;
+            $g = $g;
+            $b = $b;
+        }
+
+        // Set color for text
+        if(($r==0 && $g==0 && $b==0) || $g===null) {
+
+            $this->TextColor = sprintf('%.3F g', $datos[0] / 255);
+            //dd(1,$this->TextColor);
+        }
+        else {
+            $this->TextColor = sprintf('%.3F %.3F %.3F rg'
+                , ($r/255)
+                , ($g/255)
+                , ($b/255)
+            );
+            //dd(2,$this->TextColor);
+        }
+        $this->ColorFlag = ($this->FillColor!=$this->TextColor);
     }
 
 
@@ -91,7 +135,7 @@ class Comunicado extends Fpdi
 
     public function listaCFDI()
     {
-
+        $this->SetTextColor("0,0,0");
         $this->SetFont('Helvetica', '', 13);
         $this->MultiCell(17.7,0.6,"Lista de Facturas con REP Pendiente de ".$this->emisor["proveedor"].":", '','J',0);
         $this->ln(0.5);
