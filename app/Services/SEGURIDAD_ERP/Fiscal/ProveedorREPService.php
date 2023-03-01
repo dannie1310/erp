@@ -145,7 +145,7 @@ class ProveedorREPService
         //print_r( date("h:i:s")."\n");
         $arr_comunicados = [];
         foreach ($uuids as $uuid) {
-            $arr_comunicados["proveedor"] = $proveedor->razon_social;
+            $arr_comunicados["proveedor"] = $proveedor->proveedor;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
         }
