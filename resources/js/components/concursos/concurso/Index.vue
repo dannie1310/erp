@@ -42,8 +42,8 @@
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Nombre', field: 'nombre', tdClass: 'td_c250', sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c150', sortable: true, thComp: require('../../globals/th-Date').default},
-                    { title: 'Estatus', field: 'estatus', tdClass: 'th_c120', sortable: true},
-                    { title: 'Acciones', field: 'buttons', thClass: 'th_m200', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Estatus', field: 'estatus', tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, sortable: true},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c100', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,
@@ -74,6 +74,13 @@
 
                     })
             },
+            getEstado(descripcion, color) {
+                return {
+                    color: color,
+                    descripcion: descripcion
+                }
+
+            },
         },
         computed: {
             concursos(){
@@ -95,11 +102,12 @@
                         index: (i + 1) + self.query.offset,
                         nombre: concurso.nombre,
                         fecha_hora_inicio_apertura: concurso.fecha_format,
-                        estatus: concurso.estatus,
                         id: concurso.id,
+                        estatus: this.getEstado(concurso.estatus_descripcion, concurso.estatus_color),
                         buttons: $.extend({}, {
                             id: concurso.id,
-                            edit: self.$root.can('editar_concurso', true) ? true : false
+                            edit: (self.$root.can('editar_concurso', true) && concurso.estatus == 1) ? true : false,
+                            close: (self.$root.can('cerrar_concurso', true) && concurso.estatus == 1) ? true : false,
                         })
                     }));
                 },

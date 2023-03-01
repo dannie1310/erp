@@ -21,13 +21,16 @@ class Concurso extends Model
     protected $fillable =[
         'nombre',
         'fecha_hora_inicio_apertura',
-        'id_usuario_inicio_apertura'
+        'id_usuario_inicio_apertura',
+        'estatus'
     ];
 
     public $timestamps = false;
 
     public $searchable = [
-        'nombre'
+        'nombre',
+        'fecha_hora_inicio_apertura',
+        'estatus'
     ];
 
     /**
@@ -38,6 +41,11 @@ class Concurso extends Model
         return $this->hasMany(ConcursoParticipante::class, 'id_concurso', 'id');
     }
 
+    public function participantesOrdenados()
+    {
+        return $this->hasMany(ConcursoParticipante::class, 'id_concurso', 'id')
+                    ->orderBy('monto', 'ASC');
+    }
     
     /**
      * Scopes
@@ -52,11 +60,28 @@ class Concurso extends Model
         if($this->estatus == 1)
         {
             return 'Activo';
-        }else if($this->estatus == 0)
+        }else if($this->estatus == 2)
         {
-            return 'Inactivo';
+            return 'Cerrado';
         }else{
             return '-';
+        }
+    }
+
+    public function getEstadoColorAttribute()
+    {
+        switch ($this->estatus) {
+            case 1:
+                return '#f39c12';
+                break;
+
+            case 2:
+                return '#00a65a';
+                break;
+                
+            default:
+                return '#d2d6de';
+                break;
         }
     }
 
@@ -166,7 +191,7 @@ class Concurso extends Model
     }
 
     
-    public function validarEditar($data)
+    private function validarEditar($data)
     {
         $existe = $this->where('nombre', $data['nombre'])->where('id', '!=', $data['id'])->first();
         if($existe)
@@ -181,5 +206,29 @@ class Concurso extends Model
                 abort(400, "El participante ".$p['nombre']." no puede tener un monto menor o igual a cero.");
             }
         }
+    }
+
+    public function cerrar()
+    {
+        try {
+            DB::connection('seguridad')->beginTransaction();
+            $this->update([
+                'estatus' => 2
+            ]);
+            
+            foreach($this->participantesOrdenados as $key => $p)
+            {
+                $p->update([
+                    'lugar' => $key + 1,
+                    'estatus' => 2
+                ]);
+            }    
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
     }
 }

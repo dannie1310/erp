@@ -62,4 +62,9 @@ class ConcursoService
         }
         return $concurso->editar($data);
     }
+
+    public function cerrar($id)
+    {
+        return $this->repository->show($id)->cerrar();
+    }
 }

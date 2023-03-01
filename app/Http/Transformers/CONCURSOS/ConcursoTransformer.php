@@ -30,7 +30,9 @@ class ConcursoTransformer extends TransformerAbstract
             'id' => (int)$model->getKey(),
             'nombre' => (string) $model->nombre,
             'fecha_format' => $model->fecha_format,
-            'estatus' => $model->estado
+            'estatus_descripcion' => $model->estado,
+            'estatus' => $model-> estatus,
+            'estatus_color' => $model->estado_color
         ];
     }
 

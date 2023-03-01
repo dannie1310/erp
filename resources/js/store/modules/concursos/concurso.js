@@ -19,6 +19,16 @@ export default{
         SET_CONCURSO(state, data){
             state.currentConcurso = data
         },
+
+        UPDATE_CONCURSOS(state, data) {
+            state.concursos = state.concursos.map(c => {
+                if (c.id === data.id) {
+                    return Object.assign({}, c, data)
+                }
+                return c
+            })
+            state.currentConcurso != null ? data : null;
+        }
     },
 
     actions: {
@@ -121,6 +131,47 @@ export default{
                             .catch(error => {
                                 reject(error);
                             })
+                        }
+                    });
+            });
+        },
+        cerrar(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Está seguro?",
+                    text: "Cerrar Concurso",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Cerrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/cerrar', payload.data, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Concurso cerrado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        context.commit('UPDATE_CONCURSOS',data);
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        } else {
+                            reject();
                         }
                     });
             });

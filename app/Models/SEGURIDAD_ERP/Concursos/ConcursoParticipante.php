@@ -22,7 +22,8 @@ class ConcursoParticipante extends Model
         'nombre',
         'monto',
         'es_empresa_hermes',
-        'lugar'
+        'lugar',
+        'estatus'
     ];
 
     public $timestamps = false;

@@ -43,9 +43,16 @@ class ConcursoController extends Controller
         $this->middleware('permisoGlobal:consultar_concurso')->only(['show', 'paginate']);
         $this->middleware('permisoGlobal:registrar_concurso')->only('store');
         $this->middleware('permisoGlobal:editar_concurso')->only('update');
+        $this->middleware('permisoGlobal:cerrar_concurso')->only('cerrar');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
     }
+
+    public function cerrar($id)
+    {
+        return $this->respondWithItem($this->service->cerrar($id));
+    }
+
 }
