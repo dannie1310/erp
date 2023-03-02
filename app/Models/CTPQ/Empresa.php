@@ -19,7 +19,7 @@ class Empresa extends Model
 
     public static function getIdEmpresa($bd){
         $empresa = Empresa::where("AliasBDD","=", $bd)->first();
-        return $empresa->IdContpaq;
+        return $empresa->IdEmpresaContpaq;
     }
     public static function getNombreEmpresa($bd){
         $empresa = Empresa::where("AliasBDD","=", $bd)->first();
