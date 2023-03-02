@@ -159,7 +159,7 @@ class DiferenciaService
         }
     }
 
-    private function generaPeticionesBusquedas($parametros)
+    private function generaPeticionesBusquedasExtendida($parametros)
     {
         $lote = $this->repository->generaLoteBusqueda($parametros->tipo_busqueda);
         if($parametros->tipo_busqueda == 1) {
@@ -181,6 +181,112 @@ class DiferenciaService
                         //if($periodo)
                         ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
                         //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
+                    }
+
+                }
+            }
+            if(!count($lote->busquedas)>0){
+                $lote->finaliza();
+            }
+        } else if($parametros->tipo_busqueda == 2) {
+            $empresas_individuales = $this->repository->getListaEmpresasIndividuales();
+            foreach ($empresas_individuales as $empresas_individual) {
+                $ejercicios = $empresas_individual->ejercicios;
+                foreach ($ejercicios as $ejercicio) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
+                        $data = [
+                            "id_tipo_busqueda" => 2,
+                            "id_lote" => $lote->id,
+                            "ejercicio" => $ejercicio,
+                            "periodo" => $periodo,
+                            "base_datos_busqueda" => $empresas_individual->AliasBDD,
+                            "base_datos_referencia" => $empresas_individual->empresa_historica->AliasBDD
+                        ];
+                        $busqueda = $this->repository->generaPeticionesBusquedas($data);
+                        $busqueda->procesarBusquedaDiferencias();
+                        //if($periodo)
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
+                        //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
+                    }
+                }
+            }
+            if(!count($lote->busquedas)>0){
+                $lote->finaliza();
+            }
+        } else if($parametros->tipo_busqueda == 3) {
+            $empresas_consolidadoras = $this->repository->getListaEmpresasConsolidadorasConHistorica();
+            foreach ($empresas_consolidadoras as $empresa_consolidadora) {
+                $ejercicios = $empresa_consolidadora->ejercicios;
+                foreach ($ejercicios as $ejercicio) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
+                        $data = [
+                            "id_tipo_busqueda" => 3,
+                            "id_lote" => $lote->id,
+                            "ejercicio" => $ejercicio,
+                            "periodo" => $periodo,
+                            "base_datos_busqueda" => $empresa_consolidadora->AliasBDD,
+                            "base_datos_referencia" => $empresa_consolidadora->empresa_historica->AliasBDD
+                        ];
+                        $busqueda = $this->repository->generaPeticionesBusquedas($data);
+                        //$busqueda->procesarBusquedaDiferencias();
+                        //if($periodo)
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
+                        //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
+                    }
+                }
+            }
+            if(!count($lote->busquedas)>0){
+                $lote->finaliza();
+            }
+        } else if($parametros->tipo_busqueda == 4) {
+            $empresas_consolidantes = $this->repository->getListaEmpresasConsolidantesHistoricas();
+            foreach ($empresas_consolidantes as $empresa_consolidante) {
+                $ejercicios = $empresa_consolidante->ejercicios;
+                foreach ($ejercicios as $ejercicio) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
+                        $data = [
+                            "id_tipo_busqueda" => 4,
+                            "id_lote" => $lote->id,
+                            "ejercicio" => $ejercicio,
+                            "periodo" => $periodo,
+                            "base_datos_busqueda" => $empresa_consolidante->AliasBDD,
+                            "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD
+                        ];
+                        $busqueda = $this->repository->generaPeticionesBusquedas($data);
+                        //$busqueda->procesarBusquedaDiferencias();
+                        //if($periodo)
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
+                        //ProcessBusquedaDiferenciasPolizas::dispatch($busqueda);
+                    }
+                }
+            }
+            if(!count($lote->busquedas)>0){
+                $lote->finaliza();
+            }
+        }
+        return $lote;
+    }
+
+
+    private function generaPeticionesBusquedas($parametros)
+    {
+        $lote = $this->repository->generaLoteBusqueda($parametros->tipo_busqueda);
+        if($parametros->tipo_busqueda == 1) {
+            $empresas_consolidantes = $this->repository->getListaEmpresasConsolidantes();
+            foreach ($empresas_consolidantes as $empresa_consolidante) {
+                $ejercicios = $empresa_consolidante->getEjercicios(2018);
+                foreach ($ejercicios as $ejercicio) {
+                    for ($periodo = 1; $periodo <= 12; $periodo++) {
+                        $data = [
+                            "id_tipo_busqueda" => 1,
+                            "id_lote" => $lote->id,
+                            "ejercicio" => $ejercicio,
+                            "periodo" => $periodo,
+                            "base_datos_busqueda" => $empresa_consolidante->AliasBDD,
+                            "base_datos_referencia" => $empresa_consolidante->empresa_consolidadora->AliasBDD
+                        ];
+                        $busqueda = $this->repository->generaPeticionesBusquedas($data);
+                        ProcessBusquedaDiferenciasPolizas::dispatch($busqueda)->onQueue($this->getNombreCola($ejercicio, $periodo));
                     }
 
                 }
