@@ -411,7 +411,7 @@ class SalidaAlmacen extends Transaccion
                         $mensaje = $mensaje . "-La cantidad es diferente al saldo del inventario\n";
                     }
                     $inventario_antecedente = Inventario::where('id_lote', $inventario['lote_antecedente'])->get()->toArray();
-                    if ($inventario_antecedente[0]['saldo'] + $inventario['cantidad'] > $inventario_antecedente[0]['cantidad']) {
+                    if (round($inventario_antecedente[0]['saldo'] + $inventario['cantidad'], 2) > round($inventario_antecedente[0]['cantidad'],2)) {
                         $mensaje = $mensaje . "-El saldo es mayor a la cantidad del inventario antecedente\n";
                     }
                 }
