@@ -87,6 +87,27 @@ class Empresa extends Model
 
     }
 
+    public function getEjercicios($desde)
+    {
+        $ejercicios = [];
+        try{
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $this->AliasBDD);
+            $max = Poliza::max("Ejercicio");
+
+
+            for($i= $desde; $i<=$max; $i++){
+                $ejercicios[]=$i;
+            }
+
+
+        } catch (\Exception $e){
+
+        }
+        return $ejercicios;
+
+    }
+
     public function getPeriodosAttribute($ejercicio)
     {
         $ejercicios = [];
@@ -115,7 +136,7 @@ class Empresa extends Model
 
     public function scopeConsolidadora($query)
     {
-        return $query->where('Consolidadora', '=', 1);
+        return $query->where('Consolidadora', '=', 1)->where("Id","=",12);
     }
 
     public function scopeHistorica($query)

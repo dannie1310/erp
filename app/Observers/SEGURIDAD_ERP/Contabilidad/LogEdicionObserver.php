@@ -20,7 +20,7 @@ class LogEdicionObserver
     {
         $base_datos = config('database.connections.cntpq.database');
         $empresa = Empresa::where("AliasBDD","=", $base_datos)->first();
-        $log->id_empresa = $empresa->IdContpaq;
+        $log->id_empresa = $empresa->IdEmpresaContpaq;
         $log->empresa = $empresa->Nombre;
         $log->usuario_modifico = auth()->id();
         $log->bd_contpaq = config('database.connections.cntpq.database');
