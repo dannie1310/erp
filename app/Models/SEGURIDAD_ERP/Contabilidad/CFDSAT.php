@@ -17,6 +17,7 @@ use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\VwCFDSATPendientesREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Proyecto;
@@ -165,7 +166,7 @@ class CFDSAT extends Model
 
     public function vwPendienteREP()
     {
-        return $this->hasOne(CFDSATPendientesREP::class,"id_cfdi", "id");
+        return $this->hasOne(VwCFDSATPendientesREP::class,"id_cfdi", "id");
     }
 
     public function scopeDeEFO($query)
@@ -224,7 +225,7 @@ class CFDSAT extends Model
 
     public function scopeRepPendiente($query)
     {
-        return $query->join("Contabilidad.cfd_sat_rep_pendiente","cfd_sat_rep_pendiente.id_cfdi","=","cfd_sat.id")
+        return $query->join("Fiscal.vw_cfd_sat_rep_pendiente","vw_cfd_sat_rep_pendiente.id_cfdi","=","cfd_sat.id")
             ->where('tipo_comprobante', '=', 'I')
             ->where("cancelado","=",0)
             ->where("cfd_sat.metodo_pago","=","PPD")
