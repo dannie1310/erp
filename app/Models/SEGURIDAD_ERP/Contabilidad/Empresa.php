@@ -136,7 +136,7 @@ class Empresa extends Model
 
     public function scopeConsolidadora($query)
     {
-        return $query->where('Consolidadora', '=', 1)->where("Id","=",12);
+        return $query->where('Consolidadora', '=', 1);
     }
 
     public function scopeHistorica($query)
