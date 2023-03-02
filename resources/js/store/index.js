@@ -72,6 +72,9 @@ import requisicion from './modules/compras/requisicion';
 import solicitudCompra from './modules/compras/solicitud-compra';
 import formaPagoCredito from './modules/compras/forma-pago-credito';
 
+//CONCURSOS
+import concurso from "./modules/concursos/concurso";
+
 //CONFIGURACION
 import areaCompradora from './modules/configuracion/area-compradora';
 import areaSolicitante from './modules/configuracion/area-solicitante';
@@ -325,6 +328,7 @@ export default new Vuex.Store({
         'compras/forma-pago-credito' : formaPagoCredito,
         'compras/invitacion' : invitacionCotizarCompra,
 
+        'concursos/concurso' : concurso,
 
         'configuracion/area-compradora' : areaCompradora,
         'configuracion/area-solicitante' : areaSolicitante,
