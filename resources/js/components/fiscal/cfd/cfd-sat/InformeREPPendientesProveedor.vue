@@ -12,8 +12,22 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-primary">
+                            <input type="checkbox" name="options" autocomplete="off"
+                                   v-model="con_contactos"> Con Contactos
+                        </label>
+                        <label class="btn btn-primary">
+                            <input type="checkbox" autocomplete="off"
+                                   v-model="no_hermes"> No es Hermes
+                        </label>
+                    </div>
 
-                <!-- /.card-header -->
+                </div>
+
+
+                    <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
                             <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
@@ -47,6 +61,8 @@ export default {
             empresa_seleccionada: [],
             detalle_descarga :[],
             HeaderSettings: false,
+            con_contactos: true,
+            no_hermes: true,
             columns: [
                 { title: '#', field:'index',sortable: false},
                 { title: 'RFC Proveedor', field: 'rfc_proveedor',thComp: require('../../../globals/th-Filter').default, sortable: true},
@@ -82,6 +98,8 @@ export default {
     methods: {
         paginate(){
             this.cargando=true;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
             return this.$store.dispatch('fiscal/proveedor-rep/paginate', {params: this.query})
                 .then(data=>{
 
@@ -162,6 +180,18 @@ export default {
                 '-webkit-filter': val ? 'blur(2px)' : '',
                 'pointer-events': val ? 'none' : ''
             });
+        },
+        con_contactos(con_contactos) {
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        no_hermes(no_hermes) {
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.query.offset = 0;
+            this.paginate()
         },
     },
 }
