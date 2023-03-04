@@ -128,24 +128,16 @@ class ProveedorREPService
             }
         }
 
-        if(isset($data['no_hermes']))
-        {
-            if($data['no_hermes'] === "true"){
-                $es_hermes = 0;
-            }else{
-                $es_hermes = 1;
-            }
-            $proveedores = $proveedores->where([['es_empresa_hermes', "=", $es_hermes]]);
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $proveedores = $proveedores->where([['es_empresa_hermes', "=", 1]]);
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $proveedores = $proveedores->where([['es_empresa_hermes', "=", 0]]);
         }
 
-        if(isset($data['con_contactos']))
-        {
-            if($data['con_contactos'] === "true"){
-                $proveedores = $proveedores->where([['cantidad_contactos', ">", 0]]);
-            }else{
-                $proveedores = $proveedores->where([['es_empresa_hermes', "=", 0]]);
-            }
-
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $proveedores = $proveedores->where([['cantidad_contactos', "=", 0]]);
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $proveedores = $proveedores->where([['cantidad_contactos', ">", 0]]);
         }
 
         return $proveedores->paginate($data);

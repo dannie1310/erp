@@ -14,13 +14,22 @@
                 <div class="card">
                     <div class="card-header">
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                        <label class="btn btn-primary">
-                            <input type="checkbox" name="options" autocomplete="off"
+                        <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+
                                    v-model="con_contactos"> Con Contactos
                         </label>
-                        <label class="btn btn-primary">
-                            <input type="checkbox" autocomplete="off"
-                                   v-model="no_hermes"> No es Hermes
+                        <label class="btn btn-primary" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+                                   v-model="sin_contactos"> Sin Contactos
+                        </label>
+                        <label class="btn btn-primary" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                   v-model="es_hermes"> Es de Hermes
+                        </label>
+                        <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                   v-model="no_hermes"> No es de Hermes
                         </label>
                     </div>
 
@@ -63,6 +72,8 @@ export default {
             HeaderSettings: false,
             con_contactos: true,
             no_hermes: true,
+            sin_contactos: false,
+            es_hermes: false,
             columns: [
                 { title: '#', field:'index',sortable: false},
                 { title: 'RFC Proveedor', field: 'rfc_proveedor',thComp: require('../../../globals/th-Filter').default, sortable: true},
@@ -100,6 +111,8 @@ export default {
             this.cargando=true;
             this.$data.query.con_contactos = this.con_contactos;
             this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.es_hermes = this.es_hermes;
             return this.$store.dispatch('fiscal/proveedor-rep/paginate', {params: this.query})
                 .then(data=>{
 
@@ -182,14 +195,34 @@ export default {
             });
         },
         con_contactos(con_contactos) {
-            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.con_contactos = con_contactos;
+            this.$data.query.sin_contactos = this.sin_contactos;
             this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
             this.query.offset = 0;
             this.paginate()
         },
         no_hermes(no_hermes) {
             this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.no_hermes = no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        sin_contactos(sin_contactos) {
+            this.$data.query.sin_contactos = sin_contactos;
+            this.$data.query.con_contactos = this.con_contactos;
             this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        es_hermes(es_hermes) {
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = es_hermes;
             this.query.offset = 0;
             this.paginate()
         },
@@ -198,5 +231,21 @@ export default {
 </script>
 
 <style scoped>
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
 
 </style>
