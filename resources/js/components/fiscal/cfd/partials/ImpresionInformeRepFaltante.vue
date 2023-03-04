@@ -2,6 +2,7 @@
     <span>
 
         <button class="btn btn-app pull-right dropdown-toggle"
+                :disabled="cargando_padre"
         type="button"
         id="dropdownMenuButton"
         data-toggle="dropdown"
@@ -48,6 +49,7 @@
 
 <script>
     export default {
+        props: ['query','cargando_padre'],
         methods: {
             proveedorEmpresa(){
                 var url = '/api/fiscal/cfd-sat/informe-rep-pendientes-proveedor-empresa/pdf?'+'&access_token='+this.$session.get('jwt');

@@ -3,8 +3,8 @@
 
         <div class="row">
             <div class="col-12">
-                <proveedores-rep-pendiente-xls v-bind:query="query"></proveedores-rep-pendiente-xls>
-                <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
+                <proveedores-rep-pendiente-xls v-bind:query="query" :disabled="cargando" v-bind:cargando_padre="cargando"></proveedores-rep-pendiente-xls>
+                <impresion-informe-r-e-p-faltante :disabled="cargando" v-bind:cargando_padre="cargando"></impresion-informe-r-e-p-faltante>
             </div>
         </div>
 
