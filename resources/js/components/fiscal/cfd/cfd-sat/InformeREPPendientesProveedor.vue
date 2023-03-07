@@ -3,8 +3,8 @@
 
         <div class="row">
             <div class="col-12">
-                <proveedores-rep-pendiente-xls v-bind:query="query"></proveedores-rep-pendiente-xls>
-                <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
+                <proveedores-rep-pendiente-xls v-bind:query="query" :disabled="cargando" v-bind:cargando_padre="cargando"></proveedores-rep-pendiente-xls>
+                <impresion-informe-r-e-p-faltante :disabled="cargando" v-bind:cargando_padre="cargando" v-bind:query="query"></impresion-informe-r-e-p-faltante>
             </div>
         </div>
 
@@ -12,8 +12,37 @@
         <div class="row">
             <div class="col-12">
                 <div class="card">
+                    <div class="card-header">
+                        <div class="form-row">
+                            <div class="col-md-5">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
 
-                <!-- /.card-header -->
+                                   v-model="con_contactos"> Con Contactos
+                        </label>
+                        <label class="btn btn-primary" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+                                   v-model="sin_contactos"> Sin Contactos
+                        </label>
+                        <label class="btn btn-primary" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                   v-model="es_hermes"> Es de Hermes
+                        </label>
+                        <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                   v-model="no_hermes"> No es de Hermes
+                        </label>
+                    </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Buscar" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"><i class="fa fa-search" /> Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- /.card-header -->
                     <div class="card-body">
                         <div class="table-responsive">
                             <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
@@ -46,6 +75,10 @@ export default {
             empresa_seleccionada: [],
             detalle_descarga :[],
             HeaderSettings: false,
+            con_contactos: true,
+            no_hermes: true,
+            sin_contactos: false,
+            es_hermes: false,
             columns: [
                 { title: '#', field:'index',sortable: false},
                 { title: 'RFC Proveedor', field: 'rfc_proveedor',thComp: require('../../../globals/th-Filter').default, sortable: true},
@@ -71,22 +104,24 @@ export default {
         }
     },
     mounted(){
-        this.$Progress.start();
-        this.paginate()
-            .finally(() => {
-                this.$Progress.finish();
-            })
+
     },
 
     methods: {
         paginate(){
+            this.$Progress.start();
             this.cargando=true;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.es_hermes = this.es_hermes;
             return this.$store.dispatch('fiscal/proveedor-rep/paginate', {params: this.query})
                 .then(data=>{
 
                 })
                 .finally(()=>{
                     this.cargando=false;
+                    this.$Progress.finish();
                 })
         },
 
@@ -161,10 +196,58 @@ export default {
                 'pointer-events': val ? 'none' : ''
             });
         },
+        /*con_contactos(con_contactos) {
+            this.$data.query.con_contactos = con_contactos;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        no_hermes(no_hermes) {
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.no_hermes = no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        sin_contactos(sin_contactos) {
+            this.$data.query.sin_contactos = sin_contactos;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        es_hermes(es_hermes) {
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },*/
     },
 }
 </script>
 
 <style scoped>
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
 
 </style>

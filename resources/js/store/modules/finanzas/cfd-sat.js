@@ -529,7 +529,10 @@ export default {
                 filtros = +filtros + 1;
             }
 
-            //
+            search = search + 'es_hermes='+ payload.params.es_hermes + '&';
+            search = search + 'no_hermes='+ payload.params.no_hermes + '&';
+            search = search + 'con_contactos='+ payload.params.con_contactos + '&';
+            search = search + 'sin_contactos='+ payload.params.sin_contactos + '&';
 
             var urr = URI + 'cfdi-rep-pendiente-xls'+ search+'&db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");

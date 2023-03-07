@@ -12,6 +12,13 @@
                         </div>
                     </div>
                 <!-- /.card-body -->
+                    <div class="modal-footer">
+                        <div class="pull-right">
+                            <button type="button" class="btn btn-secondary" v-on:click="salir">
+                                <i class="fa fa-angle-left"></i>
+                                Regresar</button>
+                        </div>
+                    </div>
                 </div>
             <!-- /.card -->
             </div>
@@ -77,8 +84,10 @@ export default {
             }).then(data => {
             this.$store.commit('fiscal/proveedor-rep/SET_PROVEEDOR_REP', data);
             })
-        }
-
+        },
+        salir(){
+            this.$router.go(-1);
+        },
     },
     computed: {
         notificaciones(){
