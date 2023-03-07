@@ -18,7 +18,7 @@
                     <div class="card-header">
                         <div class="form-row">
                             <div class="col-md-2">
-                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="daterange"/>
+                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="daterange" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"/>
                             </div>
                             <div class="col-md-9">
                                 <div class="btn-group btn-group-toggle" data-toggle="buttons">
@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <div class="col-md-1">
-                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Filtrar"><i class="fa fa-search" /> Buscar</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Buscar" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"><i class="fa fa-search" /> Buscar</button>
                             </div>
                         </div>
                     </div>

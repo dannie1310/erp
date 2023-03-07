@@ -36,7 +36,7 @@
                     </div>
                             </div>
                             <div class="col-md-1">
-                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Filtrar"><i class="fa fa-search" /> Buscar</button>
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Buscar" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"><i class="fa fa-search" /> Buscar</button>
                             </div>
                         </div>
                     </div>
