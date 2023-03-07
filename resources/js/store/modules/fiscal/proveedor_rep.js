@@ -94,6 +94,11 @@ export default {
             if (typeof payload.params.ultima_ubicacion_contabilidad !== 'undefined') {
                 search = search + 'ultima_ubicacion_contabilidad='+ payload.params.ultima_ubicacion_contabilidad + '&';
             }
+            search = search + 'es_hermes='+ payload.params.es_hermes + '&';
+            search = search + 'no_hermes='+ payload.params.no_hermes + '&';
+            search = search + 'con_contactos='+ payload.params.con_contactos + '&';
+            search = search + 'sin_contactos='+ payload.params.sin_contactos + '&';
+
 
             var urr = URI + 'proveedores-rep-pendiente-xls'+ search + '&access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");
