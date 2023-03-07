@@ -11,10 +11,32 @@ class PendientesREPEmpresaProveedor
 {
     public static function  get($data)
     {
-        $informe["partidas"] = PendientesREPEmpresaProveedor::getPartidas();
+        $informe["partidas"] = PendientesREPEmpresaProveedor::getPartidas($data);
         $informe["fechas"] = PendientesREPEmpresaProveedor::getFechasInforme();
+        $informe["filtros_txt"] = PendientesREPEmpresaProveedor::getFiltrosTxt($data);
+
 
         return $informe;
+    }
+
+    private static function getFiltrosTxt($data)
+    {
+        $filtros_txt_arr = [];
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $filtros_txt_arr[]="Solo proveedores que son empresas de Hermes";
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $filtros_txt_arr[]="Solo proveedores que no son empresas de Hermes";
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $filtros_txt_arr[]="Solo proveedores que no tienen contactos";
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $filtros_txt_arr[]="Solo proveedores que tienen contactos";
+        }
+
+        $filtros_txt = implode(" | ", $filtros_txt_arr);
+
+        return $filtros_txt;
     }
 
     private static function getFechasInforme()
@@ -24,12 +46,35 @@ class PendientesREPEmpresaProveedor
         return $fechas;
     }
 
+    private static function getQueryFiltros($data)
+    {
+        $query_arr = [0=>"1=1"];
 
-    private static function getPartidas(){
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $query_arr[]="es_empresa_hermes = 1";
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $query_arr[]="es_empresa_hermes = 0";
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $query_arr[]="cantidad_contactos = 0";
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $query_arr[]="cantidad_contactos > 0";
+        }
+
+        $query = implode(" and ", $query_arr);
+
+        return $query;
+    }
+
+
+    private static function getPartidas($data){
+
+        $filtros = PendientesREPEmpresaProveedor::getQueryFiltros($data);
         $informe = DB::select("
 SELECT
-    ps.rfc AS rfc_proveedor,
-    ps.razon_social as proveedor,
+    ps.rfc_proveedor AS rfc_proveedor,
+    ps.proveedor as proveedor,
     les.rfc as rfc_empresa,
     les.razon_social as empresa,
     count(DISTINCT cs.id) as cantidad_cfdi,
@@ -45,11 +90,11 @@ INNER JOIN SEGURIDAD_ERP.Fiscal.vw_cfd_sat_rep_pendiente csrp ON
     cs.id = csrp.id_cfdi
 INNER JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les ON
     cs.id_empresa_sat = les.id
-INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat ps ON
+INNER JOIN SEGURIDAD_ERP.Fiscal.vw_proveedores_rep ps ON
     cs.id_proveedor_sat = ps.id
 
 LEFT JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les2 ON
-les2.rfc = ps.rfc
+les2.rfc = ps.rfc_proveedor
 
 
 LEFT JOIN (
@@ -64,7 +109,7 @@ INNER JOIN SEGURIDAD_ERP.Fiscal.vw_cfd_sat_rep_pendiente csrp ON
     cs.id = csrp.id_cfdi
 INNER JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les ON
     cs.id_empresa_sat = les.id
-INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat ps ON
+INNER JOIN SEGURIDAD_ERP.Fiscal.vw_proveedores_rep ps ON
     cs.id_proveedor_sat = ps.id
 
     GROUP BY
@@ -75,9 +120,11 @@ INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat ps ON
 
 on mp.rfc_empresa = cs.rfc_receptor
 
+    where $filtros
+
     GROUP BY
 
-    ps.rfc, ps.razon_social ,
+    ps.rfc_proveedor, ps.proveedor ,
     les2.id, les.rfc ,
     les.razon_social,
     mp.pendiente_rep_total

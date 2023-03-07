@@ -4148,7 +4148,7 @@ export const routes = [
                         name: 'informe-rep-faltantes',
                         component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientes').default,
                         meta: {
-                            title: 'CFDI con REP faltantes',
+                            title: 'Lista de CFDIs con REPs faltantes',
                             breadcrumb: {name: 'REP Faltantes', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],

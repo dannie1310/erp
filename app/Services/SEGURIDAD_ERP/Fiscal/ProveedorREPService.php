@@ -128,6 +128,18 @@ class ProveedorREPService
             }
         }
 
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $proveedores = $proveedores->where([['es_empresa_hermes', "=", 1]]);
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $proveedores = $proveedores->where([['es_empresa_hermes', "=", 0]]);
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $proveedores = $proveedores->where([['cantidad_contactos', "=", 0]]);
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $proveedores = $proveedores->where([['cantidad_contactos', ">", 0]]);
+        }
+
         return $proveedores->paginate($data);
     }
 
@@ -259,6 +271,18 @@ class ProveedorREPService
             } else {
                 $proveedores = $proveedores->where([['pendiente_rep', "=", $data['pendiente_rep']]]);
             }
+        }
+
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $proveedores = $proveedores->where([['es_empresa_hermes', "=", 1]]);
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $proveedores = $proveedores->where([['es_empresa_hermes', "=", 0]]);
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $proveedores = $proveedores->where([['cantidad_contactos', "=", 0]]);
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $proveedores = $proveedores->where([['cantidad_contactos', ">", 0]]);
         }
 
         return Excel::download(new ProveedoresREPPendiente($proveedores->all()), 'proveedores_rep_pendiente_' . date('Y-m-d H:i:s') . '.xlsx');
