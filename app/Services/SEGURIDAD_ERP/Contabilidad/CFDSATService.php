@@ -16,7 +16,7 @@ use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\PDF\Fiscal\Comunicado;
-use App\PDF\Fiscal\InformeREP;
+use App\PDF\Fiscal\InformeREPProveedor;
 use App\PDF\Fiscal\InformeREPEmpresa;
 use App\PDF\Fiscal\InformeREPEmpresaProveedor;
 use App\PDF\Fiscal\InformeREPProveedorEmpresa;
@@ -2157,10 +2157,10 @@ class CFDSATService
         }*/
     }
 
-    public function obtenerInformeREPPDF($data)
+    public function obtenerInformeREPProveedorPDF($data)
     {
-        $informe = $this->obtenerInformeREP($data);
-        $pdf = new InformeREP($informe);
+        $informe = $this->obtenerInformeREPProveedor($data);
+        $pdf = new InformeREPProveedor($informe);
         return $pdf->create();
     }
 
@@ -2185,9 +2185,9 @@ class CFDSATService
         return $pdf->create();
     }
 
-    public function obtenerInformeREP($data)
+    public function obtenerInformeREPProveedor($data)
     {
-        return $this->repository->getInformeREP($data);
+        return $this->repository->getInformeREPProveedor($data);
     }
 
     public function obtenerInformeREPProveedorEmpresa($data)
