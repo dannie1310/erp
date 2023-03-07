@@ -13,7 +13,9 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <div class="form-row">
+                            <div class="col-md-5">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
                             <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
 
@@ -32,8 +34,12 @@
                                    v-model="no_hermes"> No es de Hermes
                         </label>
                     </div>
-
-                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Filtrar"><i class="fa fa-search" /> Buscar</button>
+                            </div>
+                        </div>
+                    </div>
 
 
                     <!-- /.card-header -->
@@ -99,15 +105,12 @@ export default {
         }
     },
     mounted(){
-        this.$Progress.start();
-        this.paginate()
-            .finally(() => {
-                this.$Progress.finish();
-            })
+
     },
 
     methods: {
         paginate(){
+            this.$Progress.start();
             this.cargando=true;
             this.$data.query.con_contactos = this.con_contactos;
             this.$data.query.no_hermes = this.no_hermes;
@@ -119,6 +122,7 @@ export default {
                 })
                 .finally(()=>{
                     this.cargando=false;
+                    this.$Progress.finish();
                 })
         },
 
@@ -194,7 +198,7 @@ export default {
                 'pointer-events': val ? 'none' : ''
             });
         },
-        con_contactos(con_contactos) {
+        /*con_contactos(con_contactos) {
             this.$data.query.con_contactos = con_contactos;
             this.$data.query.sin_contactos = this.sin_contactos;
             this.$data.query.no_hermes = this.no_hermes;
@@ -225,7 +229,7 @@ export default {
             this.$data.query.es_hermes = es_hermes;
             this.query.offset = 0;
             this.paginate()
-        },
+        },*/
     },
 }
 </script>
