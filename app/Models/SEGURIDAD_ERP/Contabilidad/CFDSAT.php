@@ -17,6 +17,7 @@ use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\VwCFDSATPendientesREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
@@ -102,6 +103,30 @@ class CFDSAT extends Model
     public function proveedor()
     {
         return $this->belongsTo(ProveedorSAT::class, 'id_proveedor_sat', 'id');
+    }
+
+    public function proveedorHermes()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("es_empresa_hermes","=",1);
+    }
+
+    public function proveedorNoHermes()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("es_empresa_hermes","=",0);
+    }
+
+    public function proveedorConContactos()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("cantidad_contactos",">",0);
+    }
+
+    public function proveedorSinContactos()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("cantidad_contactos","=",0);
     }
 
     public function empresa()

@@ -57,9 +57,6 @@
         },
         methods: {
             armaCadenaFiltros(){
-                console.log(this.query);
-
-
                 if (typeof this.query.rfc_proveedor !== 'undefined') {
                     this.filtros = this.filtros + 'rfc_proveedor='+ this.query.rfc_proveedor + '&';
                 }

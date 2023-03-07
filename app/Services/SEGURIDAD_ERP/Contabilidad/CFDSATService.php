@@ -229,6 +229,19 @@ class CFDSATService
             $this->repository->join("Contabilidad.polizas_cfdi as pol_fecha", "pol_fecha.uuid","=","cfd_sat.uuid")
                 ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
         }
+
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $this->repository->whereHas("proveedorHermes");
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $this->repository->whereHas("proveedorNoHermes");
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $this->repository->whereHas("proveedorSinContactos");
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $this->repository->whereHas("proveedorConContactos");
+        }
+
         return $this->repository->paginate($data);
     }
 
@@ -1795,8 +1808,11 @@ class CFDSATService
         return Excel::download(new CFDILayout($this->repository->all()), 'cfdi_layout_'. date('Y-m-d H:i:s').'.xlsx');
     }
 
-    public function descargaExcelCFDIRepPendinete($data)
+    public function descargaExcelCFDIRepPendiente($data)
     {
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+
         if (isset($data['startDate'])) {
             $this->repository->where([['cfd_sat.fecha', '>=', $data['startDate']]]);
         }
@@ -1912,6 +1928,17 @@ class CFDSATService
         if (isset($data['fecha_poliza'])) {
             $this->repository->join("Contabilidad.polizas_cfdi as pol_fecha", "pol_fecha.uuid","=","cfd_sat.uuid")
                 ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
+        }
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $this->repository->whereHas("proveedorHermes");
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $this->repository->whereHas("proveedorNoHermes");
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $this->repository->whereHas("proveedorSinContactos");
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $this->repository->whereHas("proveedorConContactos");
         }
         return Excel::download(new CFDIREPPendiente($this->repository->all()), 'cfdi_rep_pendiente_'. date('Y-m-d H:i:s').'.xlsx');
     }
