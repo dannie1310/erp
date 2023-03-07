@@ -37,7 +37,6 @@ import ProveedoresRepPendienteXls from "./partials/ProveedoresRepPendienteXls";
 export default {
     name: "cfdi-rep-pendiente-proveedor-index",
     components:{ProveedoresRepPendienteXls, ImpresionInformeREPFaltante, CfdiRepPendienteXls, DateRangePicker},
-
     data() {
         return {
             cargando: false,
@@ -123,9 +122,8 @@ export default {
                         fecha_ultimo_cfdi_con_ubicacion : proveedor_rep.fecha_ultimo_cfdi_con_ubicacion,
                         fecha_ultima_notificacion : proveedor_rep.fecha_ultima_notificacion,
                         con_contactos : proveedor_rep.con_contactos,
-
                         buttons: $.extend({}, {
-                            id: proveedor_rep.id,
+                            id: proveedor_rep.id
                         })
                     })
                 });

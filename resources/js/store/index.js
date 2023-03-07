@@ -216,6 +216,7 @@ import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
 import noLocalizado from './modules/fiscal/no-localizado';
 import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
+import notificacionRep from './modules/fiscal/notificacion-rep';
 import proveedorREP from './modules/fiscal/proveedor_rep';
 import informes from './modules/fiscal/informes';
 
@@ -447,6 +448,7 @@ export default new Vuex.Store({
         'fiscal/no-deducido' : noDeducido,
         'fiscal/no-localizado' : noLocalizado,
         'fiscal/tipo-fecha-sat' : tipoFechaSat,
+        'fiscal/notificacion-rep' : notificacionRep,
         'fiscal/proveedor-rep' : proveedorREP,
         'fiscal/informes' : informes,
 
