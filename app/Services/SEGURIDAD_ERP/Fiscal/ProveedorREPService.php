@@ -165,7 +165,7 @@ class ProveedorREPService
 
         $pdf = new Comunicado($arr_comunicados);
 
-        $pdf->create()->Output('I', 'Comunicado-' . $proveedor->rfc, 1);
+        $pdf->create()->Output('I', 'Comunicado-' . $proveedor->rfc_proveedor, 1);
         //print_r( date("h:i:s"));
     }
 
