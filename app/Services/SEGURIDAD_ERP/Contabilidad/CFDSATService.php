@@ -127,8 +127,29 @@ class CFDSATService
             $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
         }
         if (isset($data['total'])) {
-            $this->repository->where([['total', '=', $data['total'] ]]);
+            //$this->repository->where([['total', '=', $data['total'] ]]);
+
+            if (strpos($data['total'], ">=") !== false) {
+                $total_cfdi = str_replace(">=", "", $data['total']);
+                $this->repository->where([['total', ">=", $total_cfdi]]);
+            } else if (strpos($data['total'], ">") !== false) {
+                $total_cfdi = str_replace(">", "", $data['total']);
+                $this->repository->where([['total', ">", $total_cfdi]]);
+            } else if (strpos($data['total'], "<=") !== false) {
+                $total_cfdi = str_replace("<=", "", $data['total']);
+                $this->repository->where([['total', "<=", $total_cfdi]]);
+            } else if (strpos($data['total'], "<") !== false) {
+                $total_cfdi = str_replace("<", "", $data['total']);
+                $this->repository->where([['total', "<", $total_cfdi]]);
+            } else if (strpos($data['total'], "=") !== false) {
+                $total_cfdi = str_replace("=", "", $data['total']);
+                $this->repository->where([['total', "=", $total_cfdi]]);
+            } else {
+                $this->repository->where([['total', "=", $data['total']]]);
+            }
         }
+
+
         if (isset($data['tipo_cambio'])) {
             $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
         }
@@ -206,8 +227,7 @@ class CFDSATService
         }
 
         if (isset($data['base_datos_ctpq'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_bd", "pol_bd.uuid","=","cfd_sat.uuid")
-                ->where([['pol_bd.base_datos_contpaq', 'like', '%' .$data['base_datos_ctpq']. '%' ]])->select("cfd_sat.*");
+            $this->repository->where([["ubicacion_contabilidad","like", '%'.$data['base_datos_ctpq']."%"]]);
         }
         if (isset($data['ejercicio'])) {
             $this->repository->join("Contabilidad.polizas_cfdi as pol_eje", "pol_eje.uuid","=","cfd_sat.uuid")
@@ -1813,134 +1833,7 @@ class CFDSATService
         ini_set('memory_limit', -1) ;
         ini_set('max_execution_time', '7200') ;
 
-        if (isset($data['startDate'])) {
-            $this->repository->where([['cfd_sat.fecha', '>=', $data['startDate']]]);
-        }
-        if (isset($data['endDate'])) {
-            $this->repository->where([['cfd_sat.fecha', '<=', $data['endDate']]]);
-        }
-        if (isset($data['rfc_emisor'])) {
-            $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
-        }
-        if (isset($data['emisor'])) {
-            $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
-            $arreglo_proveedor = [];
-            foreach ($proveedoresSAT as $e) {
-                $arreglo_proveedor[] = $e->id;
-            }
-            $this->repository->whereIn(['id_proveedor_sat', $arreglo_proveedor]);
-        }
-        if (isset($data['rfc_receptor'])) {
-            $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
-        }
-        if (isset($data['receptor'])) {
-            $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
-            $arreglo_empresa = [];
-            foreach ($empresasSAT as $es) {
-                $arreglo_empresa[] = $es->id;
-            }
-            $this->repository->whereIn(['id_empresa_sat', $arreglo_empresa]);
-        }
-        if (isset($data['uuid'])) {
-            $this->repository->where([['cfd_sat.uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
-        }
-        if (isset($data['moneda'])) {
-            $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
-        }
-        if (isset($data['total'])) {
-            $this->repository->where([['total', '=', $data['total'] ]]);
-        }
-        if (isset($data['tipo_cambio'])) {
-            $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
-        }
-        if (isset($data['subtotal'])) {
-            $this->repository->where([['subtotal', '=', $data['subtotal'] ]]);
-        }
-        if (isset($data['descuento'])) {
-            $this->repository->where([['descuento', '=', $data['descuento'] ]]);
-        }
-        if (isset($data['impuestos_retenidos'])) {
-            $this->repository->where([['total_impuestos_retenidos', '=', $data['impuestos_retenidos'] ]]);
-        }
-        if (isset($data['impuestos_trasladados'])) {
-            $this->repository->where([['total_impuestos_trasladados', '=', $data['impuestos_trasladados'] ]]);
-        }
-        if (isset($data['fecha'])) {
-            $this->repository->whereBetween( ['cfd_sat.fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
-        }
-        if (isset($data['tipo_comprobante'])) {
-            $this->repository->where([['cfd_sat.tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
-        }
-        if (isset($data['serie'])) {
-            $this->repository->where([['cfd_sat.serie', 'like', '' .$data['serie']. '' ]]);
-        }
-        if (isset($data['folio'])) {
-            $this->repository->where([['cfd_sat.folio', 'like', '' .$data['folio']. '' ]]);
-        }
-        if (isset($data['estado'])) {
-            if (strpos('CANCELADO', strtoupper($data['estado'])) !== FALSE) {
-                $this->repository->where([['cancelado', '=', 1]]);
-            }
-            else if (strpos('VIGENTE', strtoupper($data['estado'])) !== FALSE) {
-                $this->repository->where([['cancelado', '=', 0]]);
-            }
-        }
-        if (isset($data['obra'])) {
-            $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
-
-            $id_obra = [];
-            $id_proyecto = [];
-            foreach($obras as $obra){
-                $id_obra[] = $obra->id_obra;
-                $id_proyecto[] = $obra->id_proyecto;
-            }
-
-            $uuid = FacturaRepositorio::whereIn("id_obra", $id_obra)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
-            $this->repository->whereIn(['cfd_sat.uuid', $uuid]);
-        }
-        if (isset($data['base_datos'])) {
-            $id_proyecto = Proyecto::where([['base_datos', 'LIKE', '%' . $data['base_datos'] . '%']])->pluck("id");
-
-            $uuid = FacturaRepositorio::whereIn("id_proyecto", $id_proyecto)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
-            $this->repository->whereIn(['cfd_sat.uuid', $uuid]);
-        }
-
-        if (isset($data['base_datos_ctpq'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_bd", "pol_bd.uuid","=","cfd_sat.uuid")
-                ->where([['pol_bd.base_datos_contpaq', 'like', '%' .$data['base_datos_ctpq']. '%' ]])->select("cfd_sat.*");
-        }
-        if (isset($data['ejercicio'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_eje", "pol_eje.uuid","=","cfd_sat.uuid")
-                ->where([['pol_eje.ejercicio', '=', $data['ejercicio'] ]])->select("cfd_sat.*");
-        }
-        if (isset($data['periodo'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_per", "pol_per.uuid","=","cfd_sat.uuid")
-                ->where([['pol_per.periodo', '=', $data['periodo'] ]])->select("cfd_sat.*");
-        }
-        if (isset($data['tipo_poliza'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_tipo", "pol_tipo.uuid","=","cfd_sat.uuid")
-                ->where([['pol_tipo.tipo', 'like', '%' .$data['tipo_poliza']. '%' ]])->select("cfd_sat.*");
-        }
-        if (isset($data['folio_poliza'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_folio", "pol_folio.uuid","=","cfd_sat.uuid")
-                ->where([['pol_folio.folio', 'like', '%' .$data['folio_poliza']. '%' ]])->select("cfd_sat.*");
-        }
-        if (isset($data['fecha_poliza'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_fecha", "pol_fecha.uuid","=","cfd_sat.uuid")
-                ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
-        }
-        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
-            $this->repository->whereHas("proveedorHermes");
-        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
-            $this->repository->whereHas("proveedorNoHermes");
-        }
-
-        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
-            $this->repository->whereHas("proveedorSinContactos");
-        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
-            $this->repository->whereHas("proveedorConContactos");
-        }
-        return Excel::download(new CFDIREPPendiente($this->repository->all()), 'cfdi_rep_pendiente_'. date('Y-m-d H:i:s').'.xlsx');
+        return Excel::download(new CFDIREPPendiente($data), 'cfdi_rep_pendiente_'. date('Y-m-d H:i:s').'.xlsx');
     }
 
     public function cargaXMLComprobacion(array $data)

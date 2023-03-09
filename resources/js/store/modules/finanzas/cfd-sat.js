@@ -154,7 +154,7 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.base_datos !== 'undefined') {
-                search = search + 'base_datos='+ payload.params.obra + '&';
+                search = search + 'base_datos='+ payload.params.base_datos + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.obra !== 'undefined') {
@@ -387,7 +387,7 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.base_datos !== 'undefined') {
-                search = search + 'base_datos='+ payload.params.obra + '&';
+                search = search + 'base_datos='+ payload.params.base_datos + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.obra !== 'undefined') {
@@ -521,11 +521,16 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.base_datos !== 'undefined') {
-                search = search + 'base_datos='+ payload.params.obra + '&';
+                search = search + 'base_datos='+ payload.params.base_datos + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.obra !== 'undefined') {
                 search = search + 'obra='+ payload.params.obra + '&';
+                filtros = +filtros + 1;
+            }
+
+            if (typeof payload.params.base_datos_ctpq !== 'undefined') {
+                search = search + 'base_datos_ctpq='+ payload.params.base_datos_ctpq + '&';
                 filtros = +filtros + 1;
             }
 
