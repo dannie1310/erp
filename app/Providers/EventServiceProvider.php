@@ -114,6 +114,7 @@ class EventServiceProvider extends ServiceProvider
 
         'App\Events\RegistroNotificacionREP' => [
             'App\Listeners\SendNotificacionREPNotification',
+            'App\Listeners\GuardaComunicadoNotificacionREP',
         ],
 
 
