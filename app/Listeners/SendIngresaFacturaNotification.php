@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\EnvioIngresoFactura;
 use App\Models\REPSEG\GrlNotificacion;
 use App\Notifications\NotificacionIngresoFacturaEnviada;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Mail;
 
 class SendIngresaFacturaNotification
 {
@@ -25,7 +25,9 @@ class SendIngresaFacturaNotification
      */
     public function handle(EnvioIngresoFactura $event)
     {
-        $notificaciones = GrlNotificacion::activo()->seccion(1)->proyecto($event->factura->idproyecto)->where('tipo', 'TO')->select('cuenta')->get();
-        Notification::send($notificaciones, new NotificacionIngresoFacturaEnviada($event->factura, $event->archivo, $event->xml));
+        $destinatarios = $event->factura->getToNotificacionIngreso();
+        $destinatarios_copiados = $event->factura->getCCNotificacionIngreso();
+        $destinatarios_ocultos = $event->factura->getCCONotificacionIngreso();
+        Mail::to($destinatarios)->cc($destinatarios_copiados)->bcc($destinatarios_ocultos)->queue(new NotificacionIngresoFacturaEnviada($event->factura, $event->archivo, $event->xml));
     }
 }
