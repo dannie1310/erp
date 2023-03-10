@@ -44,7 +44,8 @@ class NotificacionIngresoFacturaEnviada extends Mailable
                 ->subject($titulo)
                 ->view('emails.ingreso_factura_registrada',["factura" => $this->factura])
                 ->attach($this->archivo, ["as" => $this->factura->numero . ".pdf"]);
-        }elseif($this->xml != null && $this->archivo != null){
+        }
+        elseif($this->xml != null && $this->archivo != null){
             return $this
                 ->subject($titulo)
                 ->view('emails.ingreso_factura_registrada',["factura" => $this->factura])
@@ -56,7 +57,8 @@ class NotificacionIngresoFacturaEnviada extends Mailable
                 ->subject($titulo)
                 ->view('emails.ingreso_factura_registrada',["factura" => $this->factura])
                 ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
-        }else{
+        }
+        elseif($this->xml == null && $this->archivo == null){
             return $this
                 ->subject($titulo)
                 ->view('emails.ingreso_factura_registrada',["factura" => $this->factura]);
