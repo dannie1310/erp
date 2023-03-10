@@ -79,10 +79,13 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         les.razon_social as customLabel
     FROM
         SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT as les join
-        SEGURIDAD_ERP.Contabilidad.ListaEmpresas as le on(les.id = le.IdEmpresaSAT)
+
+        SEGURIDAD_ERP.InformeCostoVsCFDI.empresas_sat_vs_empresas_contabilidad as esec
+                on(les.id = esec.id_empresa_sat)
+
+        join SEGURIDAD_ERP.Contabilidad.ListaEmpresas as le on(le.id = esec.id_empresa_contabilidad)
     WHERE
-        le.Consolidadora = 1 and le.Historica = 0 and le.Desarrollo = 0
-    group by les.id, les.razon_social, le.AliasBDD
+        esec.estatus = 1
     ORDER BY les.razon_social;
 ");
         $informe = array_map(function ($value) {
