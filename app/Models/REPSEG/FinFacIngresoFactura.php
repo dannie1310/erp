@@ -349,8 +349,6 @@ class FinFacIngresoFactura extends Model
                 'total' => $data['total']
             ]);
 
-            //$this->enviar_correo($factura);
-
             DB::connection('repseg')->commit();
             return $factura;
         }catch (\Exception $e) {
@@ -359,155 +357,14 @@ class FinFacIngresoFactura extends Model
         }
     }
 
-    private function enviar_correo($factura)
-    {
-        $notificaciones =  GrlNotificacion::activo()->seccion(1)->proyecto($factura->idproyecto)->get();
-        $correos = array();
-        $correosCC = array();
-        $correosCCO =array();
-        foreach ($notificaciones as $notificacion)
-        {
-            if($notificacion['tipo'] == 'TO')
-            {
-                $correos[] = $notificacion['cuenta'];
-            }
-            if($notificacion['tipo'] == 'CC')
-            {
-                $correosCC[] = $notificacion['cuenta'];
-            }
-            if($notificacion['tipo'] == 'CCO')
-            {
-                $correosCCO[] = $notificacion['cuenta'];
-            }
-        }
-        $body = $this->cuerpoCorreo($factura, 'Registrada', 'registrado una nueva');
-        $email = EmailRegister::create([
-            'remitente' => 'seguimiento@hermesconstruccion.com.mx|Finanzas',
-            'destinatarios' => implode(';', $correos),
-            'asunto' => 'Factura Registrada ('.$factura->proyecto->proyecto.').',
-            'cc' => implode(';', $correosCC),
-            'cco' => implode(';', $correosCCO),
-            'status' => 0,
-            'fecha' => now()->format('Y-m-d'),
-            'hora' => now()->format('H:i:s'),
-            'descripcion' => 'seginfo - Finanzas - SAOERP',
-            'body' => utf8_encode($body)
-        ]);
-    }
-
-    private function cuerpoCorreo($factura, $subject, $leyenda)
-    {
-        $body = '
-            <style>
-                #cuerpo{
-                    margin:0;
-                    padding:10px;
-                    font-family:Arial, Helvetica, sans-serif;
-                    font-size:12px;
-                    border:solid 1px #ccc;
-                    width:600px;
-                    max-width:600px;
-                    }
-                #header{
-                    background-color:#efefef;
-                    padding:10px;
-                    }
-                .campo{
-                    background-color:#888888;
-                    color:#ffffff;
-                    font-weight:300;
-                    padding:5px;
-                    font-size:12px;
-                    text-align:right;
-                    }
-                .valor{
-                    background-color:#efefef;
-                    padding:5px;
-                    font-size:12px;
-                    }
-                .leyenda{
-                    font-size:10px;
-                    }
-            </style>
-            <div id="cuerpo">
-                <div id="header" align="center">
-                    <img src="http://seguimiento.grupohi.mx/assets/img/logo4.fw.png"><br><br>
-                    <h3>Factura ' . $subject . '</h3>
-                </div>
-                <br>
-                <span style="font-weight:bold">Se le notifica que ' . auth()->user()->nombre . ' ' . auth()->user()->apaterno . ' ' . auth()->user()->amaterno . ' ha ' . $leyenda . ' factura</span>
-                <br><br>
-                <table cellpadding="0" cellspacing="0" style="width:100%;">
-                <tr>
-                    <td class="campo" valign="top">FECHA</td><td class="valor" valign="top">' . $factura->fecha . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">REFERENCIA</td><td class="valor" valign="top">' . $factura->numero . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">PROYECTO</td><td class="valor" valign="top">' . utf8_encode($factura->proyecto->proyecto) . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">AREA</td><td class="valor" valign="top">' . utf8_decode($factura->proyecto->tipo->proyecto_tipo) . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">EMPRESA</td><td class="valor" valign="top">' . utf8_decode($factura->empresa->empresa) . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">CLIENTE</td><td class="valor" valign="top">' . utf8_decode($factura->cliente->cliente) . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">PERIODO</td><td class="valor" valign="top">' . $factura->fi_cubre . ' al ' . $factura->ff_cubre . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">TOTAL DE FACTURA</td><td class="valor" align="center" valign="top">' . number_format($factura->importe, 2) . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">MONEDA</td><td class="valor" valign="top">' . $factura->moneda->moneda . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" valign="top">DESCRIPCION</td><td class="valor" valign="top">' . utf8_encode($factura->descripcion) . '</td>
-                </tr>
-                <tr>
-                    <td class="campo" style="background-color:#FFF; color:#444; font-size:10px;" colspan="2">CONCEPTOS</td>
-                </tr>';
-
-        foreach ($factura->conceptos as $concepto) {
-            $body .= '<tr><td class="campo" valign="top">' . $concepto->tipoIngreso->tipo_ingreso . '</td><td class="valor" align="center" valign="top">' . number_format($concepto->importe, 2) . '</td></tr>';
-        }
-
-        $body .= '</table>
-                    <br>
-                    <i><strong>
-                    <span class="leyenda">
-                    Mensaje enviado automaticamente desde el módulo de registro de ingresos SAOERP
-                    <br>SAO - Grupo Hermes Infraestructura.
-                    </span>
-                    </strong></i>
-                </div>';
-        return $body;
-    }
-
     public function getToNotificacionIngreso()
     {
-        $notificaciones = GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'TO')->get();
-        $correos = array();
-        foreach ($notificaciones as $notificacion)
-        {
-            $correos[] = $notificacion['cuenta'];
-        }
-        return $correos;
+        return GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'TO')->pluck('cuenta');
     }
 
     public function getCCNotificacionIngreso()
     {
-        $notificaciones =  GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CC')->get();
-        $correos = array();
-        foreach ($notificaciones as $notificacion)
-        {
-            $correos[] = $notificacion['cuenta'];
-        }
-        return $correos;
+        return GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CC')->pluck('cuenta');
     }
 
     public function getCCONotificacionIngreso()

@@ -120,7 +120,7 @@
                         buttons: $.extend({}, {
                             id: factura.id,
                             cancelar: (this.$root.can('cancelar_factura_cuenta_x_cobrar',true) && factura.estado == 1) ? true : false,
-                            envioCorreo: (this.$root.can('reenviar_email_factura_cuenta_x_cobrar',true) && factura.estado == 1) ? true : false,
+                            envioCorreo: (this.$root.can('reenviar_email_factura_cuenta_x_cobrar',true) && factura.estado != 3git) ? true : false,
                         })
                     }));
                 },
