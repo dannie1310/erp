@@ -163,7 +163,6 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
     public static function getInforme($data)
     {
         $informe = [];
-        //$costos_cfdi_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDI($data);
         $costos_cfdi_i_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDII($data);
         $costos_cfdi_e_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDIE($data);
         $costos_balanza_ini = InformeCostosCFDIvsCostosBalanza::getCostoBalanza($data);
@@ -186,6 +185,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         $neto_tipo_e = [];
         $diferencia = [];
         $diferencia_real = [];
+
+        for($i = 1; $i<=12; $i++)
+        {
+            $diferencia[$i] = 0;
+            $diferencia_real[$i] = 0;
+        }
 
         foreach($costos_cfdi_i_ini as $costo_cfdi_i_ini)
         {
