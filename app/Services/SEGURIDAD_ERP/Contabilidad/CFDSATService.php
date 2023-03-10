@@ -250,6 +250,26 @@ class CFDSATService
                 ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
         }
 
+        if(!isset($data['no_hermes']))
+        {
+            $data['no_hermes'] = true;
+        }
+
+        if(!isset($data['es_hermes']))
+        {
+            $data['es_hermes'] = true;
+        }
+
+        if(!isset($data['con_contactos']))
+        {
+            $data['con_contactos'] = true;
+        }
+
+        if(!isset($data['sin_contactos']))
+        {
+            $data['sin_contactos'] = true;
+        }
+
         if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
             $this->repository->whereHas("proveedorHermes");
         }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
