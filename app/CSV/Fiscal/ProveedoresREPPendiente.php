@@ -4,6 +4,8 @@
 namespace App\CSV\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -12,13 +14,143 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class ProveedoresREPPendiente implements WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
+class ProveedoresREPPendiente implements FromQuery, WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
 {
-    protected $proveedores;
+    protected $data;
 
-    public function __construct($proveedores)
+    public function __construct($data)
     {
-        $this->proveedores = $proveedores;
+        $this->data = $data;
+    }
+
+    public function query()
+    {
+        $query = ProveedorREP::query();
+
+
+
+        if ($this->data['no_hermes'] === "false" && $this->data['es_hermes'] === "true") {
+            $query->where("es_empresa_hermes", "=", "1");
+        } else if ($this->data['no_hermes'] === "true" && $this->data['es_hermes'] === "false") {
+            $query->where("es_empresa_hermes", "=", "0");
+        }
+
+        if ($this->data['con_contactos'] === "false" && $this->data['sin_contactos'] === "true") {
+            $query->where("cantidad_contactos", "=", "0");
+        } else if ($this->data['con_contactos'] === "true" && $this->data['sin_contactos'] === "false") {
+            $query->where("cantidad_contactos", ">", "0");
+        }
+
+
+         if (isset($this->data['rfc_proveedor'])) {
+            $query->where('rfc_proveedor', 'LIKE', '%' . $this->data['rfc_proveedor'] . '%');
+        }
+
+        if (isset($this->data['proveedor'])) {
+            $query->where('proveedor', 'LIKE', '%' . $this->data['proveedor'] . '%');
+        }
+
+        if (isset($this->data['ultima_ubicacion_sao'])) {
+            $query->where('ultima_ubicacion_sao', 'LIKE', '%' . $this->data['ultima_ubicacion_sao'] . '%');
+        }
+
+        if (isset($this->data['ultima_ubicacion_contabilidad'])) {
+            $query->where('ultima_ubicacion_contabilidad', 'LIKE', '%' . $this->data['ultima_ubicacion_contabilidad'] . '%');
+        }
+
+        if (isset($this->data['cantidad_cfdi'])) {
+            if (strpos($this->data['cantidad_cfdi'], ">=") !== false) {
+                $cantidad_cfdi = str_replace(">=", "", $this->data['cantidad_cfdi']);
+                $query->where('cantidad_cfdi', ">=", $cantidad_cfdi);
+            } else if (strpos($this->data['cantidad_cfdi'], ">") !== false) {
+                $cantidad_cfdi = str_replace(">", "", $this->data['cantidad_cfdi']);
+                $query->where('cantidad_cfdi', ">", $cantidad_cfdi);
+            } else if (strpos($this->data['cantidad_cfdi'], "<=") !== false) {
+                $cantidad_cfdi = str_replace("<=", "", $this->data['cantidad_cfdi']);
+                $query->where('cantidad_cfdi', "<=", $cantidad_cfdi);
+            } else if (strpos($this->data['cantidad_cfdi'], "<") !== false) {
+                $cantidad_cfdi = str_replace("<", "", $this->data['cantidad_cfdi']);
+                $query->where('cantidad_cfdi', "<", $cantidad_cfdi);
+            } else if (strpos($this->data['cantidad_cfdi'], "=") !== false) {
+                $cantidad_cfdi = str_replace("=", "", $this->data['cantidad_cfdi']);
+                $query->where('cantidad_cfdi', "=", $cantidad_cfdi);
+            } else {
+                $query->where('cantidad_cfdi', "=", $this->data['cantidad_cfdi']);
+            }
+        }
+
+        if (isset($this->data['total_cfdi'])) {
+            if (strpos($this->data['total_cfdi'], ">=") !== false) {
+                $total_cfdi = str_replace(">=", "", $this->data['total_cfdi']);
+                $query->where('total_cfdi', ">=", $total_cfdi);
+            } else if (strpos($this->data['total_cfdi'], ">") !== false) {
+                $total_cfdi = str_replace(">", "", $this->data['total_cfdi']);
+                $query->where('total_cfdi', ">", $total_cfdi);
+            } else if (strpos($this->data['total_cfdi'], "<=") !== false) {
+                $total_cfdi = str_replace("<=", "", $this->data['total_cfdi']);
+                $query->where('total_cfdi', "<=", $total_cfdi);
+            } else if (strpos($this->data['total_cfdi'], "<") !== false) {
+                $total_cfdi = str_replace("<", "", $this->data['total_cfdi']);
+                $query->where('total_cfdi', "<", $total_cfdi);
+            } else if (strpos($this->data['total_cfdi'], "=") !== false) {
+                $total_cfdi = str_replace("=", "", $this->data['total_cfdi']);
+                $query->where('total_cfdi', "=", $total_cfdi);
+            } else {
+                $query->where('total_cfdi', "=", $this->data['total_cfdi']);
+            }
+        }
+
+        if (isset($this->data['total_rep'])) {
+            if (strpos($this->data['total_rep'], ">=") !== false) {
+                $total_rep = str_replace(">=", "", $this->data['total_rep']);
+                $query->where('total_rep', ">=", $total_rep);
+            } else if (strpos($this->data['total_rep'], ">") !== false) {
+                $total_rep = str_replace(">", "", $this->data['total_rep']);
+                $query->where('total_rep', ">", $total_rep);
+            } else if (strpos($this->data['total_rep'], "<=") !== false) {
+                $total_rep = str_replace("<=", "", $this->data['total_rep']);
+                $query->where('total_rep', "<=", $total_rep);
+            } else if (strpos($this->data['total_rep'], "<") !== false) {
+                $total_rep = str_replace("<", "", $this->data['total_rep']);
+                $query->where('total_rep', "<", $total_rep);
+            } else if (strpos($this->data['total_rep'], "=") !== false) {
+                $total_rep = str_replace("=", "", $this->data['total_rep']);
+                $query->where('total_rep', "=", $total_rep);
+            } else {
+                $query->where('total_rep', "=", $this->data['total_rep']);
+            }
+        }
+
+        if (isset($this->data['pendiente_rep'])) {
+            if (strpos($this->data['pendiente_rep'], ">=") !== false) {
+                $pendiente_rep = str_replace(">=", "", $this->data['pendiente_rep']);
+                $query->where('pendiente_rep', ">=", $pendiente_rep);
+            } else if (strpos($this->data['pendiente_rep'], ">") !== false) {
+                $pendiente_rep = str_replace(">", "", $this->data['pendiente_rep']);
+                $query->where('pendiente_rep', ">", $pendiente_rep);
+            } else if (strpos($this->data['pendiente_rep'], "<=") !== false) {
+                $pendiente_rep = str_replace("<=", "", $this->data['pendiente_rep']);
+                $query->where('pendiente_rep', "<=", $pendiente_rep);
+            } else if (strpos($this->data['pendiente_rep'], "<") !== false) {
+                $pendiente_rep = str_replace("<", "", $this->data['pendiente_rep']);
+                $query->where('pendiente_rep', "<", $pendiente_rep);
+            } else if (strpos($this->data['pendiente_rep'], "=") !== false) {
+                $pendiente_rep = str_replace("=", "", $this->data['pendiente_rep']);
+                $query->where('pendiente_rep', "=", $pendiente_rep);
+            } else {
+                $query->where('pendiente_rep', "=", $this->data['pendiente_rep']);
+            }
+        }
+
+
+
+        $query->orderBy("pendiente_rep", "DESC");
+
+        $query->selectRaw("ROW_NUMBER() OVER(ORDER BY pendiente_rep DESC) as no_fila,
+        rfc_proveedor, proveedor, cantidad_cfdi, total_cfdi, total_rep, pendiente_rep, ultima_ubicacion_sao
+        , ultima_ubicacion_contabilidad, fecha_ultimo_cfdi_con_ubicacion");
+
+        return $query;
     }
 
     /**
@@ -37,51 +169,9 @@ class ProveedoresREPPendiente implements WithHeadings, ShouldAutoSize, WithEvent
                         'bold' => true
                     ]]);
 
-                //$event->sheet->getProtection()->setSheet(true);
-
-                $event->sheet->getColumnDimension('A')->setAutoSize(false);
-                $event->sheet->getColumnDimension('A')->setWidth(3);
-                $event->sheet->getColumnDimension('B')->setAutoSize(false);
-                $event->sheet->getColumnDimension('B')->setWidth(18);
                 $event->sheet->getColumnDimension('C')->setAutoSize(false);
                 $event->sheet->getColumnDimension('C')->setWidth(18);
-                $event->sheet->getColumnDimension('D')->setAutoSize(false);
-                $event->sheet->getColumnDimension('D')->setWidth(18);
-                $event->sheet->getColumnDimension('E')->setAutoSize(false);
-                $event->sheet->getColumnDimension('E')->setWidth(18);
-                $event->sheet->getColumnDimension('F')->setAutoSize(false);
-                $event->sheet->getColumnDimension('F')->setWidth(18);
-                $event->sheet->getColumnDimension('G')->setAutoSize(false);
-                $event->sheet->getColumnDimension('G')->setWidth(18);
-                $event->sheet->getColumnDimension('H')->setAutoSize(false);
-                $event->sheet->getColumnDimension('H')->setWidth(18);
-                $event->sheet->getColumnDimension('I')->setAutoSize(false);
-                $event->sheet->getColumnDimension('I')->setWidth(18);
-                $event->sheet->getColumnDimension('J')->setAutoSize(false);
-                $event->sheet->getColumnDimension('J')->setWidth(18);
 
-                $i = 2;
-                foreach ($this->proveedores as $key => $proveedor) {
-                    $event->sheet->getStyle('E'. $i)->getNumberFormat()
-                        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                    $event->sheet->getStyle('F'. $i)->getNumberFormat()
-                        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-                    $event->sheet->getStyle('G'. $i)->getNumberFormat()
-                        ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
-
-                    $event->sheet->setCellValue("A" . $i, $key + 1);
-                    $event->sheet->setCellValue("B" . $i, $proveedor->rfc_proveedor);
-                    $event->sheet->setCellValue("C" . $i, $proveedor->proveedor);
-                    $event->sheet->setCellValue("D" . $i, $proveedor->cantidad_cfdi);
-                    $event->sheet->setCellValue("E" . $i, $proveedor->total_cfdi);
-                    $event->sheet->setCellValue("F" . $i, $proveedor->total_rep);
-                    $event->sheet->setCellValue("G" . $i, $proveedor->pendiente_rep);
-                    $event->sheet->setCellValue("H" . $i, $proveedor->ultima_ubicacion_sao);
-                    $event->sheet->setCellValue("I" . $i, $proveedor->ultima_ubicacion_contabilidad);
-                    $event->sheet->setCellValue("J" . $i, $proveedor->fecha_ultimo_cfdi_con_ubicacion);
-
-                    $i++;
-                }
             },
         ];
     }
@@ -90,6 +180,8 @@ class ProveedoresREPPendiente implements WithHeadings, ShouldAutoSize, WithEvent
     {
         return [
             'E' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
+            'F' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
+            'G' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
         ];
     }
 
