@@ -26,6 +26,7 @@ class NotificacionIngresoFacturaEnviada extends Notification
     }
 
     /**
+     * 
      * Get the notification's delivery channels.
      *
      * @param  mixed  $notifiable
@@ -44,7 +45,7 @@ class NotificacionIngresoFacturaEnviada extends Notification
      */
     public function toMail($notifiable)
     {
-        if($this->xml == null)
+        if($this->xml == null && $this->archivo != null)
         {
             return (new MailMessage)
                 ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
@@ -52,7 +53,7 @@ class NotificacionIngresoFacturaEnviada extends Notification
                 ->bcc(Array($this->factura->getCCONotificacionIngreso()))
                 ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
                 ->attach($this->archivo, ["as" => $this->factura->numero . ".pdf"]);
-        }else{
+        }elseif($this->xml != null && $this->archivo != null){
             return (new MailMessage)
                 ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
                 ->cc(Array($this->factura->getCCNotificacionIngreso()))
@@ -60,6 +61,20 @@ class NotificacionIngresoFacturaEnviada extends Notification
                 ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
                 ->attach($this->archivo, ["as" => $this->factura->uuid . ".pdf"])
                 ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
+        }
+        elseif($this->xml != null && $this->archivo == null){
+            return (new MailMessage)
+                ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
+                ->cc(Array($this->factura->getCCNotificacionIngreso()))
+                ->bcc(Array($this->factura->getCCONotificacionIngreso()))
+                ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura])
+                ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
+        }else{
+            return (new MailMessage)
+                ->subject("Factura Registrada (" . $this->factura->proyecto->proyecto . ').')
+                ->cc(Array($this->factura->getCCNotificacionIngreso()))
+                ->bcc(Array($this->factura->getCCONotificacionIngreso()))
+                ->view('emails.ingreso_factura_registrada', ["factura" => $this->factura]);
         }
     }
 

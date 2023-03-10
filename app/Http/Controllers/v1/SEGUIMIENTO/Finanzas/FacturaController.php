@@ -58,4 +58,8 @@ class FacturaController extends Controller
         $respuesta = $this->service->cargarArchivo($request);
         return response()->json($respuesta, 200);
     }
+
+    public function envioCorreo(Request $request, $id){
+        return $this->service->envioCorreo($id);
+    }
 }
