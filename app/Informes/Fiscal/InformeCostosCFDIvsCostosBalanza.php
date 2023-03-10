@@ -303,7 +303,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
 
     private static function getAliasBDD($id_empresa_sat)
     {
-        $empresa_contpaq = Empresa::where("IdEmpresaSAT","=",$id_empresa_sat)->consolidadora()->first();
+
+        $asociacion_sat_contaq = EmpresaSATvsEmpresaContpaq::where("id_empresa_sat", "=", $id_empresa_sat)
+            ->first();
+        $empresa_contpaq = Empresa::where("id","=", $asociacion_sat_contaq->id_empresa_contabilidad)
+            ->first();
+
         if($empresa_contpaq){
             return $empresa_contpaq->AliasBDD;
         }else {
