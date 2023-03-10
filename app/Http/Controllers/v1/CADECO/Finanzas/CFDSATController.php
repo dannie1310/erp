@@ -72,6 +72,6 @@ class CFDSATController extends Controller
 
     public function descargaCFDIREPPendienteXLS(Request $request)
     {
-        return $this->service->descargaExcelCFDIRepPendinete($request->all());
+        return $this->service->descargaExcelCFDIRepPendiente($request->all());
     }
 }

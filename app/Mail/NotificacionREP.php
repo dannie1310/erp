@@ -43,7 +43,7 @@ class NotificacionREP extends Mailable
         $arr_comunicados = [];
         foreach ($uuids as $uuid)
         {
-            $arr_comunicados["proveedor"] = $proveedor->razon_social;
+            $arr_comunicados["proveedor"] = $proveedor->proveedor;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
         }
@@ -53,7 +53,7 @@ class NotificacionREP extends Mailable
         return $this
             ->subject($titulo)
             ->view('emails.notificacion_rep',["cuerpo_correo"=>$this->notificacion->cuerpo_correo])
-            ->attachData($pdf->Output("S", 'Comunicado-'.$proveedor->rfc.".pdf"), 'Comunicado-'.$proveedor->rfc . '.pdf',['mime' => 'application/pdf']);
+            ->attachData($pdf->Output("S", 'Comunicado-'.$proveedor->rfc_proveedor.".pdf"), 'Comunicado-'.$proveedor->rfc_proveedor . '.pdf',['mime' => 'application/pdf']);
 
     }
 }

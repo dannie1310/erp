@@ -7,12 +7,13 @@ namespace App\Informes\Fiscal;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use Illuminate\Support\Facades\DB;
 
-class PendientesREP
+class PendientesREPProveedor
 {
     public static function  get($data)
     {
-        $informe["partidas"] = PendientesREP::getPartidas();
-        $informe["fechas"] = PendientesREP::getFechasInforme();
+        $informe["partidas"] = PendientesREPProveedor::getPartidas($data);
+        $informe["fechas"] = PendientesREPProveedor::getFechasInforme();
+        $informe["filtros_txt"] = PendientesREPProveedor::getFiltrosTxt($data);
         return $informe;
     }
 
@@ -23,11 +24,55 @@ class PendientesREP
         return $fechas;
     }
 
-    private static function getPartidas(){
+    private static function getFiltrosTxt($data)
+    {
+        $filtros_txt_arr = [];
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $filtros_txt_arr[]="Solo proveedores que son empresas de Hermes";
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $filtros_txt_arr[]="Solo proveedores que no son empresas de Hermes";
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $filtros_txt_arr[]="Solo proveedores que no tienen contactos";
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $filtros_txt_arr[]="Solo proveedores que tienen contactos";
+        }
+
+        $filtros_txt = implode(" | ", $filtros_txt_arr);
+
+        return $filtros_txt;
+    }
+
+    private static function getQueryFiltros($data)
+    {
+        $query_arr = [0=>"1=1"];
+
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $query_arr[]="es_empresa_hermes = 1";
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $query_arr[]="es_empresa_hermes = 0";
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $query_arr[]="cantidad_contactos = 0";
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $query_arr[]="cantidad_contactos > 0";
+        }
+
+        $query = implode(" and ", $query_arr);
+
+        return $query;
+    }
+
+    private static function getPartidas($data){
+
+        $filtros = PendientesREPProveedor::getQueryFiltros($data);
+
         $informe = DB::select("
 SELECT
-    ps.rfc AS rfc_proveedor,
-    ps.razon_social as proveedor,
+    ps.rfc_proveedor AS rfc_proveedor,
+    ps.proveedor as proveedor,
     count(DISTINCT cs.id) as cantidad_cfdi,
     sum( cs.total) as total_cfdi,
     sum( csrp.total_pagado) as total_rep,
@@ -38,15 +83,17 @@ SELECT
     SEGURIDAD_ERP.Contabilidad.cfd_sat cs
 INNER JOIN SEGURIDAD_ERP.Fiscal.vw_cfd_sat_rep_pendiente csrp ON
     cs.id = csrp.id_cfdi
-INNER JOIN SEGURIDAD_ERP.Contabilidad.proveedores_sat ps ON
+INNER JOIN SEGURIDAD_ERP.Fiscal.vw_proveedores_rep ps ON
     cs.id_proveedor_sat = ps.id
 
 LEFT JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les2 ON
-les2.rfc = ps.rfc
+les2.rfc = ps.rfc_proveedor
+
+    WHERE $filtros
 
     GROUP BY
 
-    ps.rfc, ps.razon_social ,
+    ps.rfc_proveedor, ps.proveedor ,
     les2.id
 
 ORDER BY pendiente_rep DESC
@@ -55,7 +102,7 @@ ORDER BY pendiente_rep DESC
         $informe = array_map(function ($value) {
             return (array)$value;
         }, $informe);
-        $informe = PendientesREP::setTitulosYSubtotalesPartidas($informe);
+        $informe = PendientesREPProveedor::setTitulosYSubtotalesPartidas($informe);
         return $informe;
     }
 
@@ -142,7 +189,7 @@ ORDER BY pendiente_rep DESC
             $partidas_completas[$i]["color_rgb"] = [255,255,255];
         }
 
-        return PendientesREP::establecePorcentajePartidas($partidas_completas);
+        return PendientesREPProveedor::establecePorcentajePartidas($partidas_completas);
     }
 
     private static function establecePorcentajePartidas($partidas_completas)

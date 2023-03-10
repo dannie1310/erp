@@ -11,10 +11,31 @@ class PendientesREPEmpresa
 {
     public static function  get($data)
     {
-        $informe["partidas"] = PendientesREPEmpresa::getPartidas();
+        $informe["partidas"] = PendientesREPEmpresa::getPartidas($data);
         $informe["fechas"] = PendientesREPEmpresa::getFechasInforme();
+        $informe["filtros_txt"] = PendientesREPEmpresa::getFiltrosTxt($data);
 
         return $informe;
+    }
+
+    private static function getFiltrosTxt($data)
+    {
+        $filtros_txt_arr = [];
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $filtros_txt_arr[]="Solo proveedores que son empresas de Hermes";
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $filtros_txt_arr[]="Solo proveedores que no son empresas de Hermes";
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $filtros_txt_arr[]="Solo proveedores que no tienen contactos";
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $filtros_txt_arr[]="Solo proveedores que tienen contactos";
+        }
+
+        $filtros_txt = implode(" | ", $filtros_txt_arr);
+
+        return $filtros_txt;
     }
 
     private static function getFechasInforme()
@@ -24,7 +45,30 @@ class PendientesREPEmpresa
         return $fechas;
     }
 
-    private static function getPartidas(){
+    private static function getQueryFiltros($data)
+    {
+        $query_arr = [0=>"1=1"];
+
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $query_arr[]="es_empresa_hermes = 1";
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $query_arr[]="es_empresa_hermes = 0";
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $query_arr[]="cantidad_contactos = 0";
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $query_arr[]="cantidad_contactos > 0";
+        }
+
+        $query = implode(" and ", $query_arr);
+
+        return $query;
+    }
+
+    private static function getPartidas($data){
+        $filtros = PendientesREPEmpresa::getQueryFiltros($data);
+
         $informe = DB::select("
 SELECT
     les.rfc AS rfc_empresa,
@@ -40,6 +84,9 @@ INNER JOIN SEGURIDAD_ERP.Fiscal.vw_cfd_sat_rep_pendiente csrp ON
     cs.id = csrp.id_cfdi
 INNER JOIN SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT les ON
     cs.id_empresa_sat = les.id
+INNER JOIN SEGURIDAD_ERP.Fiscal.vw_proveedores_rep ps ON
+    cs.id_proveedor_sat = ps.id
+    where $filtros
 
     GROUP BY
 

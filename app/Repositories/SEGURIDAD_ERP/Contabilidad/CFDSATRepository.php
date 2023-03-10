@@ -13,7 +13,7 @@ use App\Informes\CFDEmpresaMes;
 use App\Informes\CFDICompleto;
 use App\Informes\Fiscal\InformeCostosCFDIvsCostosBalanza;
 use App\Informes\Fiscal\InformeSATLP;
-use App\Informes\Fiscal\PendientesREP;
+use App\Informes\Fiscal\PendientesREPProveedor;
 use App\Informes\Fiscal\PendientesREPEmpresa;
 use App\Informes\Fiscal\PendientesREPEmpresaProveedor;
 use App\Informes\Fiscal\PendientesREPProveedorEmpresa;
@@ -277,9 +277,9 @@ class CFDSATRepository extends Repository implements RepositoryInterface
         }
     }
 
-    public function getInformeREP($data)
+    public function getInformeREPProveedor($data)
     {
-        $informe = PendientesREP::get($data);
+        $informe = PendientesREPProveedor::get($data);
         return $informe;
     }
 
