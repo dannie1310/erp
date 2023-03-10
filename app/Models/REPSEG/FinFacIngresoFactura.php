@@ -321,7 +321,12 @@ class FinFacIngresoFactura extends Model
             if (array_key_exists('retencionesLocales', $data)) {
                 if ($data['retencionesLocales'] != []) {
                     foreach (array_only($data, 'retencionesLocales')['retencionesLocales'] as $retencion) {
-                        $factura->partidas()->create($retencion);
+                        $factura->partidas()->create([
+                            'idfactura' => $factura->idfactura,
+                            'idpartida' => $retencion['id'],
+                            'antes_iva' => $retencion['antes_iva'],
+                            'total' => $retencion['total'],
+                        ]);
                     }
                 }
             }

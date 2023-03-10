@@ -1703,6 +1703,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@store');
             $api->post('CFDI', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cargarArchivo');
+            $api->patch('{id}/envioCorreo', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@envioCorreo')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix'=>'ingreso-partida'], function ($api){

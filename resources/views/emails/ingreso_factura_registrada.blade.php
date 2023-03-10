@@ -65,7 +65,7 @@
                 <td class="campo" valign="top">AREA</td><td class="valor" valign="top">{{ $factura->proyecto->tipo->proyecto_tipo }}</td>
             </tr>
             <tr>
-                <td class="campo" valign="top">EMPRESA</td><td class="valor" valign="top">{{ utf8_decode($factura->empresa->empresa) }}</td>
+                <td class="campo" valign="top">EMPRESA</td><td class="valor" valign="top">{{ $factura->empresa->empresa }}</td>
             </tr>
             <tr>
                 <td class="campo" valign="top">CLIENTE</td><td class="valor" valign="top">{{ utf8_decode($factura->cliente->cliente) }}</td>
