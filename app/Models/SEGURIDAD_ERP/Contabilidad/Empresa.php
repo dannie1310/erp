@@ -3,6 +3,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\EmpresaSATvsEmpresaContabilidad;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Scopes\EstatusActivoScope;
 use Illuminate\Database\Eloquent\Model;
@@ -57,6 +58,11 @@ class Empresa extends Model
     public function empresa_consolidadora()
     {
         return $this->hasOne(self::class, 'Id', 'IdConsolidadora');
+    }
+
+    public function empresaSATVsEmpresaContabilidad()
+    {
+        return $this->hasOne(EmpresaSATvsEmpresaContabilidad::class,"id_empresa_contabilidad","id");
     }
 
     public function polizas()
@@ -132,6 +138,11 @@ class Empresa extends Model
     public function scopeEditable($query)
     {
         return $query->where('Visible',1)->where('Editable', 1);
+    }
+
+    public function scopeParaInformeCostosCFDIvsCostosBza($query)
+    {
+        return $query->whereHas('empresaSATVsEmpresaContabilidad');
     }
 
     public function scopeConsolidadora($query)

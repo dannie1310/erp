@@ -12,7 +12,7 @@ namespace App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI;
 use App\Scopes\EstatusMayorACeroScope;
 use Illuminate\Database\Eloquent\Model;
 
-class EmpresaSATvsEmpresaContpaq extends Model
+class EmpresaSATvsEmpresaContabilidad extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'InformeCostoVsCFDI.empresas_sat_vs_empresas_contabilidad';

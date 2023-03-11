@@ -10,7 +10,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto;
-use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\EmpresaSATvsEmpresaContpaq;
+use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\EmpresaSATvsEmpresaContabilidad;
 use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
 use DateTime;
 use Illuminate\Support\Facades\Config;
@@ -304,7 +304,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
     private static function getAliasBDD($id_empresa_sat)
     {
 
-        $asociacion_sat_contaq = EmpresaSATvsEmpresaContpaq::where("id_empresa_sat", "=", $id_empresa_sat)
+        $asociacion_sat_contaq = EmpresaSATvsEmpresaContabilidad::where("id_empresa_sat", "=", $id_empresa_sat)
             ->first();
         $empresa_contpaq = Empresa::where("id","=", $asociacion_sat_contaq->id_empresa_contabilidad)
             ->first();
@@ -318,7 +318,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
 
     private static function getCostoBalanza($data)
     {
-        $asociacion_sat_contaq = EmpresaSATvsEmpresaContpaq::where("id_empresa_sat", "=", $data["empresa_sat"])
+        $asociacion_sat_contaq = EmpresaSATvsEmpresaContabilidad::where("id_empresa_sat", "=", $data["empresa_sat"])
             ->first();
         $empresa_contpaq = Empresa::where("id","=", $asociacion_sat_contaq->id_empresa_contabilidad)
             ->first();
