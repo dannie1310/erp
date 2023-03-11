@@ -369,12 +369,6 @@ class FinFacIngresoFactura extends Model
 
     public function getCCONotificacionIngreso()
     {
-        $notificaciones = GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CCO')->get();
-        $correos = array();
-        foreach ($notificaciones as $notificacion)
-        {
-            $correos[] = $notificacion['cuenta'];
-        }
-        return $correos;
+        return GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CCO')->pluck('cuenta');
     }
 }
