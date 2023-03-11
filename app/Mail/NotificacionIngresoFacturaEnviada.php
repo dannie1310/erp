@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Notifications;
+namespace App\Mail;
 
 use App\Models\REPSEG\FinFacIngresoFactura;
 use Illuminate\Bus\Queueable;
@@ -58,7 +58,7 @@ class NotificacionIngresoFacturaEnviada extends Mailable
                 ->view('emails.ingreso_factura_registrada',["factura" => $this->factura])
                 ->attach($this->xml, ["as" => $this->factura->uuid . ".xml"]);
         }
-        elseif($this->xml == null && $this->archivo == null){
+        else{
             return $this
                 ->subject($titulo)
                 ->view('emails.ingreso_factura_registrada',["factura" => $this->factura]);
