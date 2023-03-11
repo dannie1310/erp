@@ -94,7 +94,7 @@ class FinFacIngresoFactura extends Model
 
     public function registro()
     {
-        return $this->belongsTo(Usuario::class, 'idusuario','registra');
+        return $this->belongsTo(Usuario::class, 'registra','idusuario');
     }
 
     /**
