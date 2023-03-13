@@ -10,6 +10,7 @@ use App\Models\SEGURIDAD_ERP\Contabilidad\Empresa;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
 use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto;
+use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\EmpresaSATvsEmpresaContabilidad;
 use App\Models\SEGURIDAD_ERP\Reportes\CatalogoMeses;
 use DateTime;
 use Illuminate\Support\Facades\Config;
@@ -79,10 +80,13 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         les.razon_social as customLabel
     FROM
         SEGURIDAD_ERP.Contabilidad.ListaEmpresasSAT as les join
-        SEGURIDAD_ERP.Contabilidad.ListaEmpresas as le on(les.id = le.IdEmpresaSAT)
+
+        SEGURIDAD_ERP.InformeCostoVsCFDI.empresas_sat_vs_empresas_contabilidad as esec
+                on(les.id = esec.id_empresa_sat)
+
+        join SEGURIDAD_ERP.Contabilidad.ListaEmpresas as le on(le.id = esec.id_empresa_contabilidad)
     WHERE
-        le.Consolidadora = 1 and le.Historica = 0 and le.Desarrollo = 0
-    group by les.id, les.razon_social, le.AliasBDD
+        esec.estatus = 1
     ORDER BY les.razon_social;
 ");
         $informe = array_map(function ($value) {
@@ -163,7 +167,6 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
     public static function getInforme($data)
     {
         $informe = [];
-        //$costos_cfdi_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDI($data);
         $costos_cfdi_i_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDII($data);
         $costos_cfdi_e_ini = InformeCostosCFDIvsCostosBalanza::getCostoCFDIE($data);
         $costos_balanza_ini = InformeCostosCFDIvsCostosBalanza::getCostoBalanza($data);
@@ -186,6 +189,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         $neto_tipo_e = [];
         $diferencia = [];
         $diferencia_real = [];
+
+        for($i = 1; $i<=12; $i++)
+        {
+            $diferencia[$i] = 0;
+            $diferencia_real[$i] = 0;
+        }
 
         foreach($costos_cfdi_i_ini as $costo_cfdi_i_ini)
         {
@@ -294,7 +303,12 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
 
     private static function getAliasBDD($id_empresa_sat)
     {
-        $empresa_contpaq = Empresa::where("IdEmpresaSAT","=",$id_empresa_sat)->consolidadora()->first();
+
+        $asociacion_sat_contaq = EmpresaSATvsEmpresaContabilidad::where("id_empresa_sat", "=", $id_empresa_sat)
+            ->first();
+        $empresa_contpaq = Empresa::where("id","=", $asociacion_sat_contaq->id_empresa_contabilidad)
+            ->first();
+
         if($empresa_contpaq){
             return $empresa_contpaq->AliasBDD;
         }else {
@@ -304,8 +318,9 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
 
     private static function getCostoBalanza($data)
     {
-        $empresa_contpaq = Empresa::where("IdEmpresaSAT","=",$data["empresa_sat"])
-            ->consolidadora()
+        $asociacion_sat_contaq = EmpresaSATvsEmpresaContabilidad::where("id_empresa_sat", "=", $data["empresa_sat"])
+            ->first();
+        $empresa_contpaq = Empresa::where("id","=", $asociacion_sat_contaq->id_empresa_contabilidad)
             ->first();
 
         if($empresa_contpaq){

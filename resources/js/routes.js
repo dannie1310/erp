@@ -4148,7 +4148,7 @@ export const routes = [
                         name: 'informe-rep-faltantes',
                         component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientes').default,
                         meta: {
-                            title: 'CFDI con REP faltantes',
+                            title: 'Lista de CFDIs con REPs faltantes',
                             breadcrumb: {name: 'REP Faltantes', parent: 'fiscal'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],
@@ -4162,6 +4162,19 @@ export const routes = [
                         meta: {
                             title: 'Lista de proveedores que adeudan REP',
                             breadcrumb: {name: 'Por Proveedor', parent: 'informe-rep-faltantes'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/notificaciones',
+                        name: 'historico-notificacion-rep',
+                        props:true,
+                        component: require('./components/fiscal/cfd/rep-pendientes/notificacion/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Notificaciones Enviadas',
+                            breadcrumb: {name: 'Notificaciones', parent: 'informe-rep-faltantes-proveedor'},
                             middleware: [auth, permission],
                             permission: ['consultar_informe_cfd_x_empresa_x_mes'],
                             general: true

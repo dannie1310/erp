@@ -4,6 +4,13 @@
 namespace App\CSV\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
+use App\Models\SEGURIDAD_ERP\Proyecto;
+use Illuminate\Database\Eloquent\Collection;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadings;
@@ -12,138 +19,174 @@ use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
-class CFDIREPPendiente implements WithHeadings, ShouldAutoSize, WithEvents, WithColumnFormatting
+class CFDIREPPendiente implements  FromQuery, WithHeadings, ShouldAutoSize, WithEvents
 {
-    protected $cfdi;
+    protected $data;
 
-    public function __construct($cfdi)
+    public function __construct($data)
     {
-        $this->cfdi = $cfdi;
+        $this->data = $data;
+    }
+
+    public function query()
+    {
+        $query = CFDSAT::join('Fiscal.vw_cfd_sat_rep_pendiente', 'cfd_sat.id', 'vw_cfd_sat_rep_pendiente.id_cfdi')
+            ->join('Contabilidad.ListaEmpresasSAT', 'cfd_sat.id_empresa_sat', 'ListaEmpresasSAT.id')
+            ->join('Fiscal.vw_proveedores_rep', 'cfd_sat.id_proveedor_sat', 'vw_proveedores_rep.id');;
+
+        if (key_exists("startDate", $this->data) && key_exists("endDate", $this->data)) {
+            $query->whereBetween('cfd_sat.fecha', [$this->data["startDate"], $this->data["endDate"]]);
+        }
+
+        if ($this->data['no_hermes'] === "false" && $this->data['es_hermes'] === "true") {
+            $query->where("es_empresa_hermes", "=", "1");
+        } else if ($this->data['no_hermes'] === "true" && $this->data['es_hermes'] === "false") {
+            $query->where("es_empresa_hermes", "=", "0");
+        }
+
+        if ($this->data['con_contactos'] === "false" && $this->data['sin_contactos'] === "true") {
+            $query->where("cantidad_contactos", "=", "0");
+        } else if ($this->data['con_contactos'] === "true" && $this->data['sin_contactos'] === "false") {
+            $query->where("cantidad_contactos", ">=", "0");
+        }
+
+        if (isset($this->data['rfc_emisor'])) {
+            $query->where('rfc_emisor', 'LIKE', '%' . $this->data['rfc_emisor'] . '%');
+        }
+
+        if (isset($this->data['emisor'])) {
+            $query->where(['proveedor', 'LIKE', '%' . $this->data['emisor'] . '%']);
+        }
+
+        if (isset($this->data['rfc_receptor'])) {
+            $query->where('rfc_receptor', 'LIKE', '%' . $this->data['rfc_receptor'] . '%');
+        }
+
+        if (isset($this->data['receptor'])) {
+            $query->where('razon_social', 'LIKE', '%' . $this->data['receptor'] . '%');
+        }
+
+        if (isset($this->data['uuid'])) {
+            $query->where('cfd_sat.uuid', 'LIKE', '%' . $this->data['uuid'] . '%');
+        }
+
+        if (isset($this->data['moneda'])) {
+            $query->where('moneda', 'LIKE', '%' . $this->data['moneda'] . '%');
+        }
+
+        if (isset($this->data['fecha'])) {
+            $query->whereBetween( 'cfd_sat.fecha', [ $this->data['fecha'] ." 00:00:00", $this->data['fecha']." 23:59:59"] );
+        }
+
+        if (isset($this->data['tipo_comprobante'])) {
+            $query->where('cfd_sat.tipo_comprobante', 'LIKE', '%' .$this->data['tipo_comprobante']. '%' );
+        }
+
+        if (isset($this->data['serie'])) {
+            $query->where('cfd_sat.serie', '=', $this->data['serie'] );
+        }
+
+        if (isset($this->data['folio'])) {
+            $query->where('cfd_sat.folio', '=', $this->data['folio'] );
+        }
+
+        if (isset($this->data['total'])) {
+
+            if (strpos($this->data['total'], ">=") !== false) {
+                $total = str_replace(">=", "", $this->data['total']);
+                $query->where('total', ">=", $total);
+            } else if (strpos($this->data['total'], ">") !== false) {
+                $total = str_replace(">", "", $this->data['total']);
+                $query->where('total', ">", $total);
+            } else if (strpos($this->data['total'], "<=") !== false) {
+                $total = str_replace("<=", "", $this->data['total']);
+                $query->where('total', "<=", $total);
+            } else if (strpos($this->data['total'], "<") !== false) {
+                $total = str_replace("<", "", $this->data['total']);
+                $query->where('total', "<", $total);
+            } else if (strpos($this->data['total'], "=") !== false) {
+                $total = str_replace("=", "", $this->data['total']);
+                $query->where('total', "=", $total);
+            } else {
+                $query->where('total', "=", $this->data['total']);
+            }
+        }
+
+        if (isset($this->data['tipo_cambio'])) {
+            $query->where('tipo_cambio', '=', $this->data['tipo_cambio'] );
+        }
+        if (isset($this->data['subtotal'])) {
+            $query->where('subtotal', '=', $this->data['subtotal'] );
+        }
+        if (isset($this->data['descuento'])) {
+            $query->where('descuento', '=', $this->data['descuento'] );
+        }
+        if (isset($this->data['impuestos_retenidos'])) {
+            $query->where('total_impuestos_retenidos', '=', $this->data['impuestos_retenidos'] );
+        }
+        if (isset($this->data['impuestos_trasladados'])) {
+            $query->where('total_impuestos_trasladados', '=', $this->data['impuestos_trasladados'] );
+        }
+
+        if (isset($this->data['obra'])) {
+            $query->where('ubicacion_sao', 'like', "%".$this->data['obra']."%" );
+        }
+
+        if (isset($this->data['base_datos_ctpq'])) {
+            $query->where('ubicacion_contabilidad', 'like', "%".$this->data['base_datos_ctpq']."%" );
+        }
+
+
+        $query->orderBy("vw_cfd_sat_rep_pendiente.pendiente_pago", "DESC");
+
+        $query->selectRaw("ROW_NUMBER() OVER(ORDER BY vw_cfd_sat_rep_pendiente.pendiente_pago DESC) as no_fila, fecha,serie,folio,tipo_comprobante, uuid, rfc_receptor
+        , ListaEmpresasSAT.razon_social as empresa, rfc_proveedor, proveedor, subtotal, descuento, total_impuestos_retenidos, total_impuestos_trasladados,
+        total, moneda, tipo_cambio, conceptos_txt, cfd_sat.ubicacion_sao,  cfd_sat.ubicacion_contabilidad,
+        vw_cfd_sat_rep_pendiente.total_cfdi,
+        vw_cfd_sat_rep_pendiente.cantidad_pagos, vw_cfd_sat_rep_pendiente.total_pagado, vw_cfd_sat_rep_pendiente.total_nc
+              , vw_cfd_sat_rep_pendiente.pendiente_pago");
+
+        return $query;
     }
 
     /**
      * @return array
      */
 
+
     public function registerEvents(): array
     {
         return [
             AfterSheet::class    => function(AfterSheet $event) {
-                $cellRange = 'A1:AC1';
+
+                $cellRange = 'A1:Y1';
 
                 $event->sheet->getDelegate()->getStyle($cellRange)->applyFromArray([
                     'font' => [
-                        'name' =>  'arial',
+                        'name' => 'arial',
                         'bold' => true
                     ]]);
 
-                $event->sheet->getProtection()->setSheet(true);
-
-                $event->sheet->getColumnDimension('A')->setAutoSize(false);
-                $event->sheet->getColumnDimension('A')->setWidth(8);
-                $event->sheet->getColumnDimension('B')->setAutoSize(false);
-                $event->sheet->getColumnDimension('B')->setWidth(18);
-                $event->sheet->getColumnDimension('C')->setAutoSize(false);
-                $event->sheet->getColumnDimension('C')->setWidth(18);
-                $event->sheet->getColumnDimension('D')->setAutoSize(false);
-                $event->sheet->getColumnDimension('D')->setWidth(12);
-                $event->sheet->getColumnDimension('F')->setAutoSize(false);
-                $event->sheet->getColumnDimension('F')->setWidth(45);
-                $event->sheet->getColumnDimension('G')->setAutoSize(false);
-                $event->sheet->getColumnDimension('G')->setWidth(16);
-                $event->sheet->getColumnDimension('H')->setAutoSize(false);
-                $event->sheet->getColumnDimension('H')->setWidth(70);
-                $event->sheet->getColumnDimension('I')->setAutoSize(false);
-                $event->sheet->getColumnDimension('I')->setWidth(16);
-                $event->sheet->getColumnDimension('J')->setAutoSize(false);
-                $event->sheet->getColumnDimension('J')->setWidth(70);
-                $event->sheet->getColumnDimension('K')->setAutoSize(false);
-                $event->sheet->getColumnDimension('K')->setWidth(25);
-                $event->sheet->getColumnDimension('L')->setAutoSize(false);
-                $event->sheet->getColumnDimension('L')->setWidth(10);
-                $event->sheet->getColumnDimension('M')->setAutoSize(false);
-                $event->sheet->getColumnDimension('M')->setWidth(20);
-                $event->sheet->getColumnDimension('N')->setAutoSize(false);
-                $event->sheet->getColumnDimension('N')->setWidth(22);
-                $event->sheet->getColumnDimension('O')->setAutoSize(false);
-                $event->sheet->getColumnDimension('O')->setWidth(16);
-                $event->sheet->getColumnDimension('P')->setAutoSize(false);
-                $event->sheet->getColumnDimension('P')->setWidth(10);
-                $event->sheet->getColumnDimension('Q')->setAutoSize(false);
-                $event->sheet->getColumnDimension('Q')->setWidth(10);
-                $event->sheet->getColumnDimension('R')->setAutoSize(false);
-                $event->sheet->getColumnDimension('R')->setWidth(22);
-                $event->sheet->getColumnDimension('S')->setAutoSize(false);
-                $event->sheet->getColumnDimension('S')->setWidth(16);
-                $event->sheet->getColumnDimension('T')->setAutoSize(false);
-                $event->sheet->getColumnDimension('T')->setWidth(25);
-                $event->sheet->getColumnDimension('U')->setAutoSize(false);
-                $event->sheet->getColumnDimension('U')->setWidth(20);
-                $event->sheet->getColumnDimension('V')->setAutoSize(false);
-                $event->sheet->getColumnDimension('V')->setWidth(20);
-                $event->sheet->getColumnDimension('W')->setAutoSize(false);
-                $event->sheet->getColumnDimension('W')->setWidth(18);
-                $event->sheet->getColumnDimension('X')->setAutoSize(false);
-                $event->sheet->getColumnDimension('X')->setWidth(15);
-                $event->sheet->getColumnDimension('Y')->setAutoSize(false);
-                $event->sheet->getColumnDimension('Y')->setWidth(15);
-                $event->sheet->getColumnDimension('Z')->setAutoSize(false);
-                $event->sheet->getColumnDimension('Z')->setWidth(15);
 
 
-                $i=2;
-                foreach ($this->cfdi as $key => $cfd)
-                {
-                    $event->sheet->setCellValue("A" . $i, $key + 1);
-                    $event->sheet->setCellValue("B" . $i, $cfd->fecha_format);
-                    $event->sheet->setCellValue("C" . $i, $cfd->serie);
-                    $event->sheet->setCellValue("D" . $i, $cfd->folio);
-                    $event->sheet->setCellValue("E" . $i, $cfd->tipo_comprobante);
-                    $event->sheet->setCellValue("F" . $i, $cfd->uuid);
-                    $event->sheet->setCellValue("G" . $i, $cfd->rfc_receptor);
-                    $event->sheet->setCellValue("H" . $i, $cfd->empresa->razon_social);
-                    $event->sheet->setCellValue("I" . $i, $cfd->rfc_emisor);
-                    $event->sheet->setCellValue("J" . $i, $cfd->proveedor->razon_social);
-                    $event->sheet->setCellValue("K" . $i, $cfd->subtotal);
-                    $event->sheet->setCellValue("L" . $i, $cfd->descuento);
-                    $event->sheet->setCellValue("M" . $i, $cfd->impuestos_retenidos);
-                    $event->sheet->setCellValue("N" . $i, $cfd->impuestos_trasladados);
-                    $event->sheet->setCellValue("O" . $i, $cfd->total);
-                    $event->sheet->setCellValue("P" . $i, $cfd->moneda);
-                    $event->sheet->setCellValue("Q" . $i, $cfd->tipo_cambio);
-                    $event->sheet->setCellValue("R" . $i, $cfd->conceptos_txt);
-                    /*$event->sheet->setCellValue("S" . $i, $cfd->facturaRepositorio && $cfd->facturaRepositorio->proyecto ? $cfd->facturaRepositorio->proyecto->base_datos:'');
-                    $event->sheet->setCellValue("T" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->obra:'');
-                    $event->sheet->setCellValue("U" . $i, $cfd->facturaRepositorio ? $cfd->facturaRepositorio->fecha_hora_registro_format:'');
-                    $event->sheet->setCellValue("V" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->base_datos_contpaq : '');
-                    $event->sheet->setCellValue("W" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->ejercicio : '');
-                    $event->sheet->setCellValue("X" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->periodo : '');
-                    $event->sheet->setCellValue("Y" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->tipo : '');
-                    $event->sheet->setCellValue("Z" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->folio : '');
-                    $event->sheet->setCellValue("AA" . $i, $cfd->polizaCFDI ? $cfd->polizaCFDI->fecha_format : '');*/
-                    $event->sheet->setCellValue("S" . $i, $cfd->cantidad_pagos);
-                    $event->sheet->setCellValue("T" . $i, $cfd->total);
-                    $event->sheet->setCellValue("U" . $i, $cfd->monto_pendiente_rep_vw);
+                $event->sheet->getStyle('k2:O1000000')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
+                $event->sheet->getStyle('u2:u1000000')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
+                $event->sheet->getStyle('w2:y1000000')->getNumberFormat()
+                    ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_USD);
 
-                    $i++;
-                }
             },
         ];
     }
 
-    public function columnFormats(): array
-    {
-        return [
-            'AC' => NumberFormat::FORMAT_CURRENCY_USD_SIMPLE,
-        ];
-    }
+
 
     public function headings(): array
     {
-        return array(['#','FECHA', 'SERIE', 'FOLIO','TIPO', 'UUID','RFC RECEPTOR','RECEPTOR','RFC EMISOR','EMISOR','SUBTOTAL'
-            ,'DESCUENTO','IMPUESTOS RETENIDOS','IMPUESTOS TRASLADADOS','TOTAL','MONEDA','TC', 'CONCEPTOS',/*'BD SAO','OBRA SAO'
-            ,'FECHA CARGA PROYECTO', 'BD CTPQ', 'EJERCICIO', 'PERIODO', 'TIPO POLIZA', 'FOLIO POLIZA', 'FECHA POLIZA'
-            ,*/'# PAGOS','TOTAL','MONTO PENDIENTE REP']);
+        return array(['#', 'FECHA', 'SERIE', 'FOLIO', 'TIPO', 'UUID', 'RFC RECEPTOR', 'RECEPTOR', 'RFC EMISOR', 'EMISOR', 'SUBTOTAL'
+            , 'DESCUENTO', 'IMPUESTOS RETENIDOS', 'IMPUESTOS TRASLADADOS', 'TOTAL', 'MONEDA', 'TC', 'CONCEPTOS','UBICACIÓN SAO'
+            ,'UBICACIÓN CONTABILIDAD','TOTAL CFDI', '# PAGOS', 'TOTAL PAGOS', 'TOTAL NC', 'MONTO PENDIENTE REP']);
     }
 
 

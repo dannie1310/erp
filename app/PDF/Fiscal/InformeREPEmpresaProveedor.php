@@ -59,10 +59,12 @@ class InformeREPEmpresaProveedor extends Rotation
         $this->SetFont('Helvetica', '', 9);
         $this->MultiCell(17, .3, utf8_decode('Desglosado por empresa (a quien se le debe REP) y proveedor (quien debe el REP)'), 0, 'C', 0);
 
-        $this->SetFont('Helvetica', 'B', 5);
+        $this->SetFont('Helvetica', '', 5);
         $this->setY(2.3);
         $this->SetTextColor('100', '100', '100');
-        $this->MultiCell(19.7, .3, utf8_decode('Última carga REP: '). $this->informe["fechas"]["ultimo_rep"]." / ".utf8_decode("Última validación de cancelación: ").$this->informe["fechas"]["ultima_cancelacion"]." ", 0, 'R', 0);
+        $this->Cell(13, .3, utf8_decode($this->informe["filtros_txt"])." ", 0, 0, 'L');
+        $this->SetFont('Helvetica', '', 5);
+        $this->Cell(6.7, .3, utf8_decode('Última carga REP: '). $this->informe["fechas"]["ultimo_rep"]." / ".utf8_decode("Última validación de cancelación: ").$this->informe["fechas"]["ultima_cancelacion"]." ", 0, 'R', 0);
 
         $this->setXY(4.59, 2.0);
         $this->SetTextColor('0', '0', '0');

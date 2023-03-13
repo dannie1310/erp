@@ -3,8 +3,8 @@
 
         <div class="row">
             <div class="col-12">
-                <cfdi-rep-pendiente-xls v-bind:query="query" />
-                <impresion-informe-r-e-p-faltante></impresion-informe-r-e-p-faltante>
+                <cfdi-rep-pendiente-xls v-bind:query="query" :disabled="cargando" v-bind:cargando_padre="cargando" />
+                <impresion-informe-r-e-p-faltante v-bind:query="query" :disabled="cargando" v-bind:cargando_padre="cargando"></impresion-informe-r-e-p-faltante>
                 <button @click="porProveedor" type="button" class="btn btn-app pull-right float-right" :disabled="cargando" title="Ver REP pendientes por proveedor">
                     <i class="fa fa-users"></i>Ver Por Provedor
                 </button>
@@ -17,8 +17,32 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="form-row">
-                            <div class="col">
-                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="$data.daterange"/>
+                            <div class="col-md-2">
+                                <DateRangePicker class="form-control" placeholder="Rango de Fechas" v-model="daterange" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"/>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                                    <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                                        <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+
+                                               v-model="con_contactos"> Proveedor con Contactos
+                                    </label>
+                                    <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                                        <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+                                               v-model="sin_contactos"> Proveedor sin Contactos
+                                    </label>
+                                    <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                                        <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                               v-model="es_hermes"> Proveedor es empresa de Hermes
+                                    </label>
+                                    <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                                        <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                               v-model="no_hermes"> Proveedor no es empresa de Hermes
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Buscar" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"><i class="fa fa-search" /> Buscar</button>
                             </div>
                         </div>
                     </div>
@@ -62,6 +86,10 @@ export default {
             empresa_seleccionada: [],
             detalle_descarga :[],
             HeaderSettings: false,
+            con_contactos: true,
+            no_hermes: true,
+            sin_contactos: true,
+            es_hermes: true,
             columns: [
                 { title: '#', field:'index',sortable: false},
                 { title: 'Fecha', field: 'fecha',thComp: require('../../../globals/th-Date').default, sortable: true},
@@ -101,11 +129,7 @@ export default {
         }
     },
     mounted(){
-        this.$Progress.start();
-        this.paginate()
-            .finally(() => {
-                this.$Progress.finish();
-            })
+
     },
 
     methods: {
@@ -113,30 +137,26 @@ export default {
             this.$router.push({name: 'informe-rep-faltantes-proveedor'});
         },
         paginate(){
+            this.$Progress.start();
             this.cargando=true;
+            if(this.daterange !== null)
+            {
+                this.query.startDate = this.daterange.startDate.format('YYYY-MM-DD')
+                this.query.endDate = this.daterange.endDate.format('YYYY-MM-DD');
+            }
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.es_hermes = this.es_hermes;
             return this.$store.dispatch('fiscal/cfd-sat/paginate', {params: this.query})
                 .then(data=>{
 
                 })
                 .finally(()=>{
                     this.cargando=false;
+                    this.$Progress.finish();
                 })
         },
-        descargarComunicados()
-        {
-
-            this.descargando = true;
-            return this.$store.dispatch('fiscal/cfd-sat/descargarComunicados',
-                {
-                    params: this.query,
-                })
-                .then(data => {
-                    this.$emit('success');
-                }).finally(() => {
-                    this.descargando = false;
-                });
-
-        }
     },
     computed: {
         cfdi(){
@@ -207,7 +227,7 @@ export default {
             },
             deep: true
         },
-        search(val) {
+        /*search(val) {
             if (this.timer) {
                 clearTimeout(this.timer);
                 this.timer = null;
@@ -218,61 +238,34 @@ export default {
                 this.paginate();
 
             }, 500);
-        },
+        },*/
         cargando(val) {
             $('tbody').css({
                 '-webkit-filter': val ? 'blur(2px)' : '',
                 'pointer-events': val ? 'none' : ''
             });
         },
-        'daterange.startDate': {
-            handler(sd) {
-                this.query.startDate = sd.format('YYYY-MM-DD')
-                this.query.offset = 0;
-                this.paginate()
-            },
-            deep: true
-        },
-        'daterange.endDate': {
-            handler(ed) {
-                this.query.endDate = ed.format('YYYY-MM-DD')
-                this.query.offset = 0;
-                this.paginate()
-            },
-            deep: true
-        },
-        ver_pendientes:{
-            handler(vp) {
-                this.query.solo_pendientes = vp
-                this.query.offset = 0;
-                this.paginate()
-            },
-        },
-        ver_asociados:{
-            handler(va) {
-                this.query.solo_asociados = va
-                this.query.offset = 0;
-                this.paginate()
-            },
-        },
-        ver_asociados_contabilidad:{
-            handler(vac) {
-                this.query.solo_asociados_contabilidad = vac
-                this.query.offset = 0;
-                this.paginate()
-            },
-        },
-        ver_no_asociados_contabilidad:{
-            handler(vnac) {
-                this.query.solo_no_asociados_contabilidad = vnac
-                this.query.offset = 0;
-                this.paginate()
-            },
-        }
     },
 }
 </script>
 
 <style scoped>
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
 
 </style>
+
