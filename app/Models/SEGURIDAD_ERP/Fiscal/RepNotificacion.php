@@ -3,6 +3,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
 use App\Scopes\EstatusMayorACeroScope;
 use App\Scopes\EstatusMayorCeroScope;
@@ -20,7 +21,12 @@ class RepNotificacion extends Model
         , "id_usuario_hermes"
         , "id_contacto_proveedor"
         , "comunicado_pdf"
-        , "cuerpo_correo"
+        , "cuerpo_correo",
+        "cfdi_nuevos",
+        "cfdi_atendidos",
+        "cfdi_cancelados",
+        "cantidad_cfdi",
+        "monto_mxn_cfdi"
     ];
 
     protected static function boot()
@@ -45,6 +51,11 @@ class RepNotificacion extends Model
     public function proveedor_rep()
     {
         return $this->belongsTo(ProveedorREP::class, "id_proveedor_sat","id");
+    }
+
+    public function notificacionCFDI()
+    {
+        return $this->hasMany(RepNotificacionCFDI::class,"id_notificacion", "id");
     }
 
     public function registro()
@@ -80,7 +91,7 @@ class RepNotificacion extends Model
     {
         return number_format($this->monto_mxn_cfdi,2,'.',',');
     }
- 
+
     public function getURegistroAttribute()
     {
         try{
