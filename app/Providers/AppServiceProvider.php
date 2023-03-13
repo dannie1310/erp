@@ -171,6 +171,11 @@ use App\Models\CADECO\VentaPartida;
 use App\Models\CTPQ\OtherMetadata\Documento;
 use App\Models\MODULOSSAO\ControlRemesas\RemesaFolio;
 use App\Models\MODULOSSAO\Proyectos\Proyecto;
+use App\Models\REPSEG\FinDimIngresoPartida;
+use App\Models\REPSEG\FinDimTipoIngreso;
+use App\Models\REPSEG\FinFacIngresoFactura;
+use App\Models\REPSEG\FinFacIngresoFacturaConcepto;
+use App\Models\REPSEG\FinFacIngresoFacturaDetalle;
 use App\Models\SEGURIDAD_ERP\AuditoriaRolUsuario;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
@@ -185,11 +190,13 @@ use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Fiscal\Autocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDNoDeducido;
+use App\Models\SEGURIDAD_ERP\Fiscal\ContactoProveedorREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\FechaInhabilSat;
 use App\Models\SEGURIDAD_ERP\Fiscal\NoDeducido;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfos;
 use App\Models\SEGURIDAD_ERP\Fiscal\ProcesamientoListaNoLocalizados;
+use App\Models\SEGURIDAD_ERP\Fiscal\RepNotificacion;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\Archivo;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinada;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacion;
@@ -364,6 +371,11 @@ use App\Observers\CADECO\Ventas\VentaCancelacionObserver;
 use App\Observers\CADECO\VentaPartidaObserver;
 use App\Observers\CTPQ\DocumentoObserver;
 use App\Observers\MODULOSSAO\Proyectos\ProyectoObserver;
+use App\Observers\REPSEG\FinDimIngresoPartidaObserver;
+use App\Observers\REPSEG\FinDimTipoIngresoObserver;
+use App\Observers\REPSEG\FinFacIngresoFacturaConceptoObserver;
+use App\Observers\REPSEG\FinFacIngresoFacturaDetalleObserver;
+use App\Observers\REPSEG\FinFacIngresoFacturaObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\CargaCFDSATObserver;
 use App\Observers\SEGURIDAD_ERP\Contabilidad\LogEdicionObserver;
 use App\Observers\SEGURIDAD_ERP\AuditoriaRolUsuarioObserver;
@@ -374,6 +386,7 @@ use App\Observers\SEGURIDAD_ERP\CtgEfosObserver;
 use App\Observers\SEGURIDAD_ERP\CtgEfosLogObserver;
 use App\Observers\SEGURIDAD_ERP\FacturaRepositorioObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDNoDeducidoObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\ContactoProveedorObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\FechaInhabilSatObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\NoDeducidoObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoListaEfosObserver;
@@ -381,6 +394,8 @@ use App\Observers\SEGURIDAD_ERP\Fiscal\AutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\CFDAutocorreccionObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\EFOSObserver;
 use App\Observers\SEGURIDAD_ERP\Fiscal\ProcesamientoNoLocalizadosObserver;
+use App\Observers\SEGURIDAD_ERP\Fiscal\RepNotificacionObserver;
+use App\Observers\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCostoObserver as CuentaCostoBalanzaObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\ArchivoObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaBoletinadaObserver;
 use App\Observers\SEGURIDAD_ERP\PadronProveedores\EmpresaExcluidaDocumentacionObserver;
@@ -699,6 +714,15 @@ class AppServiceProvider extends ServiceProvider
             VentaPartida::observe(VentaPartidaObserver::class);
 
         /**
+         * REPSEG
+         */
+         FinDimIngresoPartida::observe(FinDimIngresoPartidaObserver::class);
+         FinDimTipoIngreso::observe(FinDimTipoIngresoObserver::class);
+         FinFacIngresoFacturaDetalle::observe(FinFacIngresoFacturaDetalleObserver::class);
+         FinFacIngresoFactura::observe(FinFacIngresoFacturaObserver::class);
+
+
+        /**
          * SEGURIDAD_ERP
          */
             /**
@@ -731,6 +755,13 @@ class AppServiceProvider extends ServiceProvider
             NoDeducido::observe(NoDeducidoObserver::class);
             ProcesamientoListaEfos::observe(ProcesamientoListaEfosObserver::class);
             ProcesamientoListaNoLocalizados::observe(ProcesamientoNoLocalizadosObserver::class);
+            RepNotificacion::observe(RepNotificacionObserver::class);
+            ContactoProveedorREP::observe(ContactoProveedorObserver::class);
+
+        /**
+         * InformeCostoVsCFDI
+         */
+        \App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\CuentaCosto::observe(CuentaCostoBalanzaObserver::class);
 
             /**
              *  PadronProveedores

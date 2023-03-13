@@ -52,6 +52,8 @@ class CFDSATController extends Controller
 
     public function procesaDirectorioZIPCFD(Request $request)
     {
+        //$this->service->reprocesaCFDILlenadoPago();
+        //return response()->json([], 200);
         /*$this->service->reprocesaCFDObtenerTipo();
         return response()->json([], 200);*/
         $respuesta =$this->service->procesaDirectorioZIPCFD();
@@ -146,5 +148,34 @@ class CFDSATController extends Controller
     {
         $respuesta =$this->service->obtenerListaCFDICostosCFDIBalanza($request->all());
         return response()->json($respuesta, 200);
+    }
+
+    public function descargaLayout(Request $request)
+    {
+        return $this->service->descargaExcel($request->all());
+    }
+
+    public function descargarComunicados(Request $request){
+        return $this->service->descargarComunicados($request->all());
+    }
+
+    public function obtenerInformeREPProveedorPDF(Request $request)
+    {
+        $this->service->obtenerInformeREPProveedorPDF($request->all())->create();
+    }
+
+    public function obtenerInformeREPProveedorEmpresaPDF(Request $request)
+    {
+        $this->service->obtenerInformeREPProveedorEmpresaPDF($request->all())->create();
+    }
+
+    public function obtenerInformeREPEmpresaProveedorPDF(Request $request)
+    {
+        $this->service->obtenerInformeREPEmpresaProveedorPDF($request->all())->create();
+    }
+
+    public function obtenerInformeREPEmpresaPDF(Request $request)
+    {
+        $this->service->obtenerInformeREPEmpresaPDF($request->all())->create();
     }
 }

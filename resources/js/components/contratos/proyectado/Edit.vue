@@ -190,8 +190,20 @@
                                                 <input type="text" disabled="true" class="form-control" readonly="readonly">
                                             </td>
                                             <td v-else-if="partida.cantidad_original == 0">
+                                                 <input type="text" class="form-control"
+                                                        value=""
+                                                        readonly="readonly"
+                                                        :title="partida.destino"
+                                                        :name="`destino_path[${i}]`"
+                                                        data-vv-as="Destino"
+                                                        v-model="partida.destino"
+                                                        v-validate="{required: partida.es_hoja}"
+                                                        :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                        :id="`destino_path[${i}]`">
+                                                     <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                            </td>
+                                            <td v-else-if="partida.id_destino">
                                                 <input type="text" class="form-control"
-                                                       value=""
                                                        readonly="readonly"
                                                        :title="partida.destino"
                                                        :name="`destino_path[${i}]`"
@@ -202,16 +214,26 @@
                                                        :id="`destino_path[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                             </td>
+                                            <td v-else-if="partida.destino && partida.destino.id_concepto">
+                                                <input type="text" class="form-control"
+                                                       readonly="readonly"
+                                                       :title="partida.destino.concepto.path"
+                                                       :name="`destino_path[${i}]`"
+                                                       data-vv-as="Destino"
+                                                       v-model="partida.destino.concepto.path_corta"
+                                                       v-validate="{required: partida.es_hoja}"
+                                                       :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                       :id="`destino_path[${i}]`">
+                                                  <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
+                                            </td>
                                             <td v-else>
-                                                 <input type="text" class="form-control"
-                                                        readonly="readonly"
-                                                        :title="partida.destino.concepto ? partida.destino.concepto.path : partida.destino"
-                                                        :name="`destino_path[${i}]`"
-                                                        data-vv-as="Destino"
-                                                        v-model="partida.destino.concepto ? partida.destino.concepto.path_corta : partida.destino"
-                                                        v-validate="{required: partida.es_hoja}"
-                                                        :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
-                                                        :id="`destino_path[${i}]`">
+                                                <input type="text" class="form-control"
+                                                       readonly="readonly"
+                                                       :name="`destino_path[${i}]`"
+                                                       data-vv-as="Destino"
+                                                       disabled="true"
+                                                       :class="{'is-invalid': errors.has(`destino_path[${i}]`)}"
+                                                       :id="`destino_path[${i}]`">
                                                 <div class="invalid-feedback" v-show="errors.has(`destino_path[${i}]`)">{{ errors.first(`destino_path[${i}]`) }}</div>
                                             </td>
                                             <td class="icono">
@@ -538,8 +560,8 @@ export default {
                 this.partida_copia.destino = partida.destino;
                 this.partida_copia.id_destino = partida.id_destino;
             }else{
-                this.partida_copia.destino = partida.destino.concepto.path_corta;
-                this.partida_copia.id_destino = partida.destino.id_concepto;
+                this.partida_copia.destino = partida.destino ? partida.destino.concepto.path_corta : '';
+                this.partida_copia.id_destino = partida.destino ? partida.destino.id_concepto : '';
             }
         },
         pegar_destino(index){

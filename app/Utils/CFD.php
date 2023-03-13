@@ -63,7 +63,6 @@ class CFD
 
             if(!$factura_xml){
                 $errors = libxml_get_errors();
-                //dd(var_export($errors, true));
             }
         } catch (\Exception $e) {
             //abort(500, "Hubo un error al leer el archivo XML proporcionado. " . ' Ln.' . $e->getLine() . ' ' . $e->getMessage());
@@ -246,26 +245,47 @@ class CFD
             $this->log["cfd_no_cargados_error_app"] += 1;
             return 0;
         }
+
+        $complemento = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//implocal:RetencionesLocales');
+        if($complemento != false) {
+            foreach ($complemento as $key => $c) {
+                $this->arreglo_factura["retencionesLocales"][$key]['descripcion'] = (string)$c['ImpLocRetenido'];
+                $this->arreglo_factura["retencionesLocales"][$key]['total'] = (float)$c['Importe'];
+                $this->arreglo_factura["retencionesLocales"][$key]['tasaRetencion'] = (float)$c['TasadeRetencion'];
+            }
+        }
     }
 
-    private function setDatosPago($factura_xml)
+    public function setDatosPago($factura_xml)
     {
-        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
-        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $ns = $factura_xml->getNamespaces(true);
+        if(key_exists("pago10",$ns))
+        {
+            $factura_xml->registerXPathNamespace('p', $ns['pago10']);
+
+        }else{
+            $factura_xml->registerXPathNamespace('p', $ns['pago20']);
+        }
+        $pagos = $factura_xml->xpath('//p:Pago');
+        $doctos = $factura_xml->xpath('//p:Pago//p:DoctoRelacionado');
+
         $monto = 0 ;
         if($pagos){
             foreach($pagos as $pago)
             {
                 $monto += (float) $pago["Monto"];
                 $moneda = (string) $pago["MonedaP"];
-                $forma_pago = (string) $pago["FormaDePagoP"];
+                $forma_pago = (int) $pago["FormaDePagoP"];
                 $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
             }
 
             $this->arreglo_factura["total"] = $monto;
             $this->arreglo_factura["moneda"] = $moneda;
             $this->arreglo_factura["forma_pago"] = $forma_pago;
+            $this->arreglo_factura["forma_pago_p"] = $forma_pago;
             $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+            $this->arreglo_factura["moneda_pago"] = $moneda;
+            $this->arreglo_factura["monto_pago"] = (float) $pago["Monto"];
         }
 
         if($doctos){
@@ -282,6 +302,37 @@ class CFD
                 $id++;
             }
         }
+
+        /*$pagos = $factura_xml->xpath('//cfdi:Comprobante//pago10:Pago');
+        $ip = 0;
+        $ipd = 1;
+        foreach($pagos as $pago)
+        {
+            $this->arreglo_factura["pagos"][$ip]["fecha_pago"] = $this->getFechaHora((string)$pago["FechaPago"]);
+            $this->arreglo_factura["pagos"][$ip]["forma_pago_p"] = (int) $pago["FormaDePagoP"];
+            $this->arreglo_factura["pagos"][$ip]["moneda_pago"] = (string) $pago["MonedaP"];
+            $this->arreglo_factura["pagos"][$ip]["monto_pago"] = (float) $pago["Monto"];
+
+            $documentos_pagados = $factura_xml->xpath("/cfdi:Comprobante//pago10:Pagos/pago10:Pago[".$ipd."]//pago10:DoctoRelacionado");
+
+            $dp = 0;
+
+            foreach($documentos_pagados as $documento_pagado)
+            {
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["uuid"] = (string)$documento_pagado["IdDocumento"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["moneda_dr"] = (string)$documento_pagado["MonedaDR"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["metodo_pago_dr"] = (string)$documento_pagado["MetodoDePagoDR"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["num_parcialidad"] = (int)$documento_pagado["NumParcialidad"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["imp_saldo_ant"] = (float)$documento_pagado["ImpSaldoAnt"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["imp_pagado"] = (float)$documento_pagado["ImpPagado"];
+                $this->arreglo_factura["pagos"][$ip]["documentos_pagados"][$dp]["imp_saldo_insoluto"] = (float)$documento_pagado["ImpSaldoInsoluto"];
+
+                $dp ++;
+            }
+
+            $ip ++;
+            $ipd ++;
+        }*/
     }
 
     private function setArreglo32($factura_xml)
@@ -509,7 +560,7 @@ class CFD
             }
 
             if ($respuesta->EstatusCancelacion != [] && $respuesta->EstatusCancelacion == 'En proceso') {
-                $omitido = $this->repository->getEsOmitido($respuesta->EstatusCancelacion, $arreglo_cfd["emisor"]["rfc"], $arreglo_cfd["complemento"]["uuid"]);
+                $omitido = $this->repository->getEsOmitido($respuesta->EstatusCancelacion, $this->arreglo_factura["emisor"]["rfc"], $this->arreglo_factura["complemento"]["uuid"]);
                 if ($omitido == 0) {
                     event(new IncidenciaCI(
                         ["id_tipo_incidencia" => 18,

@@ -873,7 +873,35 @@ export const routes = [
                             }
                         ]
                     },
-
+                    {
+                        path:'kardex-material',
+                        component: require('./components/almacenes/kardex-material/Layout').default,
+                        children: [
+                            {
+                                path:'/',
+                                name: 'kardex-material',
+                                component: require('./components/almacenes/kardex-material/Index').default,
+                                meta: {
+                                    title: 'Kardex de Materiales',
+                                    breadcrumb: {parent: 'almacenes', name: 'KARDEX MATERIALES'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_kardex_movimiento_material'
+                                }
+                            },
+                            {
+                                path: ':id/kardex',
+                                name: 'consultar-almacen',
+                                component: require('./components/almacenes/kardex-material/Show').default,
+                                props: true,
+                                meta: {
+                                    title: 'Consultar Kardex',
+                                    breadcrumb: {name: 'CONSULTAR', parent: 'kardex-material'},
+                                    middleware: [auth, context, permission],
+                                    permission: 'consultar_kardex_movimiento_material'
+                                }
+                            },
+                        ]
+                    },
                 ]
             },
             {
@@ -3367,7 +3395,7 @@ export const routes = [
                     title: 'Administrar',
                     breadcrumb: {parent: 'activo-fijo', name: 'ADMINISTRAR'},
                     middleware: [auth],
-                    
+
                     //permission: ['editar_poliza','consultar_poliza'],
                     general: true
                 }
@@ -3380,7 +3408,7 @@ export const routes = [
                     title: 'Resguardos',
                     breadcrumb: {parent: 'activo-fijo', name: 'RESGUARDOS'},
                     middleware: [auth],
-                    
+
                     //permission: ['editar_poliza','consultar_poliza'],
                     general: true
                 }
@@ -4114,6 +4142,46 @@ export const routes = [
                                 }
                             }
                         ]
+                    },
+                    {
+                        path: 'informe-rep-faltantes',
+                        name: 'informe-rep-faltantes',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientes').default,
+                        meta: {
+                            title: 'Lista de CFDIs con REPs faltantes',
+                            breadcrumb: {name: 'REP Faltantes', parent: 'fiscal'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'informe-rep-faltantes-proveedor',
+                        name: 'informe-rep-faltantes-proveedor',
+                        component: require('./components/fiscal/cfd/cfd-sat/InformeREPPendientesProveedor').default,
+                        meta: {
+                            title: 'Lista de proveedores que adeudan REP',
+                            breadcrumb: {name: 'Por Proveedor', parent: 'informe-rep-faltantes'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id/envio-comunicado',
+                        //props:true,
+                        props: route => ({
+                            id: route.params.id,
+                        }),
+                        name: 'envio-comunicado-rep-faltantes',
+                        component: require('./components/fiscal/cfd/rep-pendientes/notificacion/Create').default,
+                        meta: {
+                            title: 'Enviar Comunicado de REP Faltantes',
+                            breadcrumb: {name: 'Enviar Comunicado', parent: 'informe-rep-faltantes-proveedor'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
                     },
                     {
                         path: 'informe',
@@ -4909,6 +4977,71 @@ export const routes = [
                             breadcrumb: { parent: 'solicitud-autorizacion-avance', name: 'ELIMINAR'},
                             middleware: [auth, permission],
                             permission: ['eliminar_solicitud_autorizacion_avance_proveedor'],
+                            general: true
+                        }
+                    },
+                ]
+            },
+        ]
+    },
+    {
+        path: '/seguimiento',
+        components:  {
+            default: require('./components/seguimiento/partials/Layout.vue').default,
+            menu: require('./components/seguimiento/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '',
+                name: 'seguimiento',
+                component: require('./components/seguimiento/Index').default,
+                meta: {
+                    title: 'Seguimiento',
+                    middleware: [auth, permission],
+                    breadcrumb: {name: 'SEGUIMIENTO'},
+                    permission: ['consultar_factura_cuenta_x_cobrar'],
+                    general: true
+                }
+            },
+            {
+                path: 'factura',
+                component: require('./components/seguimiento/factura/Layout').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'factura-seg',
+                        component: require('./components/seguimiento/factura/Index').default,
+                        meta: {
+                            title: 'Lista de Facturas',
+                            breadcrumb: {parent: 'seguimiento', name: 'FACTURAS'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_factura_cuenta_x_cobrar',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'create',
+                        name: 'factura-seg-create',
+                        props:true,
+                        component: require('./components/seguimiento/factura/Create').default,
+                        meta: {
+                            title: 'Registrar Factura',
+                            breadcrumb: {name: 'REGISTRAR', parent: 'factura-seg'},
+                            middleware: [auth, permission],
+                            permission: ['registrar_factura_cuenta_x_cobrar'],
+                            general: true
+                        }
+                    },
+                    {
+                        path: ':id',
+                        name: 'factura-seg-show',
+                        component: require('./components/seguimiento/factura/Show').default,
+                        props: true,
+                        meta: {
+                            title: 'Consulta de Factura',
+                            breadcrumb: {name: 'VER', parent: 'factura-seg'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_factura_cuenta_x_cobrar'],
                             general: true
                         }
                     },

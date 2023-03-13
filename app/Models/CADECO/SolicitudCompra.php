@@ -16,6 +16,7 @@ use App\Models\CADECO\Compras\SolicitudPartidaEliminada;
 use App\Models\CADECO\ItemSolicitudCompra;
 use App\Models\CADECO\Transaccion;
 use App\Models\IGH\Usuario;
+use App\Models\SEGURIDAD_ERP\Compras\AreaCompradoraUsuario;
 use App\Models\SEGURIDAD_ERP\Compras\CtgAreaCompradora;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\PadronProveedores\CuerpoCorreo;
@@ -153,9 +154,8 @@ class SolicitudCompra extends Transaccion
 
         if (ConfiguracionObra::pluck('migrado_compras')->first() == 1) {
             return $query->whereHas('complemento', function ($q) {
-                $transacciones = SolicitudCompra::where("id_usuario","=",auth()->id())->pluck("id_transaccion");
-                return $q->areasCompradorasPorUsuario()->orWhereIn("id_transaccion",$transacciones);
-            });
+                return $q->areasCompradorasPorUsuario();
+            })->orWhere("id_usuario","=",auth()->id());
         }
         return $query;
     }

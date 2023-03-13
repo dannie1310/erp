@@ -268,6 +268,19 @@ class Almacen extends Model
         return date_format($date,"d/m/Y H:i:s");
     }
 
+    public function getTotalesKardexMaterialesAttribute()
+    {
+        $totales = $this->join('inventarios','inventarios.id_almacen','almacenes.id_almacen')
+            ->selectRaw('sum(inventarios.monto_total) as adquirido,sum(inventarios.monto_pagado) as pagado,
+            sum(inventarios.monto_total-inventarios.monto_pagado) as por_pagar')->where('almacenes.id_almacen', '=',$this->id_almacen)
+            ->groupBy('almacenes.id_almacen','almacenes.descripcion','inventarios.id_almacen')->first();
+        return [
+            'adquirido' => number_format($totales ? $totales->adquirido : 0,2,".",","),
+            'pagado' => number_format($totales ? $totales->pagado : 0,2,".",","),
+            'por_pagar' => number_format($totales ? $totales->por_pagar : 0,2,".",","),
+        ];
+    }
+
     /**
      * Métodos
      */

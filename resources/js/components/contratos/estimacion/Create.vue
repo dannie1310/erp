@@ -193,7 +193,7 @@
                                 <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
                                 <td style="display: none" class="numerico avance-volumen"></td>
                                 <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
-                                <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(2) }}</td>
+                                <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(3) }}</td>
                                 <td style="display: none" class="numerico avance-importe"></td>
                                 <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
                                 <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
@@ -203,14 +203,14 @@
                                            class="text"
                                            v-model="concepto.cantidad_estimacion"
                                            :name="`cantidadEstimacion[${concepto.id}]`"
-                                           v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(2)}"
+                                           v-validate="{max_value: parseFloat(concepto.cantidad_por_estimar).toFixed(3)}"
                                            :class="{'is-invalid': errors.has(`cantidadEstimacion[${concepto.id}]`)}" />
                                      <div class="invalid-feedback" v-show="errors.has(`cantidadEstimacion[${concepto.id}]`)">{{ errors.first(`cantidadEstimacion[${concepto.id}]`) }}</div>
                                 </td>
                                 <td class="editable-cell numerico">
                                     <input v-on:change="changePorcentaje(concepto)"
-                                           v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(2)).toFixed(2) }"
-                                           class="text"
+                                           v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(3)).toFixed(3) }"
+                                           class="text" 
                                            :name="`porcentaje[${concepto.id}]`"
                                            v-model="concepto.porcentaje_estimado"
                                            :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />

@@ -1010,7 +1010,6 @@ class Subcontrato extends Transaccion
             {
                 $contrato = Contrato::where('id_transaccion', '=', $this->id_antecedente)->where("nivel", "=", $partida->nivel)->first();
                 $partida = ItemSubcontrato::where('id_transaccion', '=',  $this->id_transaccion)->where('id_concepto', '=', $contrato->id_concepto)->first();
-                dd($contrato, $partida);
             }
             $items [$partida->nivel] = $partida->partidasAvanceSubcontrato($avance);
         }

@@ -28,6 +28,8 @@ class Cuenta extends Model
     protected $table = 'Cuentas';
     protected $primaryKey = 'Id';
 
+    protected $fillable = ['Codigo'];
+
     public $timestamps = false;
 
 

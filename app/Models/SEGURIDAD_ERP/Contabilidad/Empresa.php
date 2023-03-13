@@ -3,6 +3,7 @@ namespace App\Models\SEGURIDAD_ERP\Contabilidad;
 
 use App\Models\CTPQ\Poliza;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
+use App\Models\SEGURIDAD_ERP\InformeCostoVsCFDI\EmpresaSATvsEmpresaContabilidad;
 use App\Models\SEGURIDAD_ERP\PolizasCtpqIncidentes\Diferencia;
 use App\Scopes\EstatusActivoScope;
 use Illuminate\Database\Eloquent\Model;
@@ -59,6 +60,11 @@ class Empresa extends Model
         return $this->hasOne(self::class, 'Id', 'IdConsolidadora');
     }
 
+    public function empresaSATVsEmpresaContabilidad()
+    {
+        return $this->hasOne(EmpresaSATvsEmpresaContabilidad::class,"id_empresa_contabilidad","id");
+    }
+
     public function polizas()
     {
         DB::purge('cntpq');
@@ -76,6 +82,27 @@ class Empresa extends Model
             $min = Poliza::min("Ejercicio");
 
             for($i= $min; $i<=$max; $i++){
+                $ejercicios[]=$i;
+            }
+
+
+        } catch (\Exception $e){
+
+        }
+        return $ejercicios;
+
+    }
+
+    public function getEjercicios($desde)
+    {
+        $ejercicios = [];
+        try{
+            DB::purge('cntpq');
+            Config::set('database.connections.cntpq.database', $this->AliasBDD);
+            $max = Poliza::max("Ejercicio");
+
+
+            for($i= $desde; $i<=$max; $i++){
                 $ejercicios[]=$i;
             }
 
@@ -111,6 +138,11 @@ class Empresa extends Model
     public function scopeEditable($query)
     {
         return $query->where('Visible',1)->where('Editable', 1);
+    }
+
+    public function scopeParaInformeCostosCFDIvsCostosBza($query)
+    {
+        return $query->whereHas('empresaSATVsEmpresaContabilidad');
     }
 
     public function scopeConsolidadora($query)

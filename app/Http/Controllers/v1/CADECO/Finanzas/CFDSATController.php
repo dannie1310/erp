@@ -69,4 +69,9 @@ class CFDSATController extends Controller
         $conceptos = $this->service->cargaXMLComprobacion($request->all());
         return response()->json($conceptos, 200);
     }
+
+    public function descargaCFDIREPPendienteXLS(Request $request)
+    {
+        return $this->service->descargaExcelCFDIRepPendiente($request->all());
+    }
 }

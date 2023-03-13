@@ -177,6 +177,9 @@ $api->version('v1', function ($api) {
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\MaterialController@update')->where(['id' => '[0-9]+']);
             $api->get('buscarMateriales', 'App\Http\Controllers\v1\CADECO\MaterialController@buscarMateriales');
+            $api->get('porAlmacen', 'App\Http\Controllers\v1\CADECO\MaterialController@materialPorAlmacen');
+            $api->get('historico', 'App\Http\Controllers\v1\CADECO\MaterialController@materialHistorico');
+            $api->get('historicoSalida', 'App\Http\Controllers\v1\CADECO\MaterialController@historicoSalida');
         });
 
         // MONEDA
@@ -274,7 +277,7 @@ $api->version('v1', function ($api) {
         $api->group(['prefix' => 'usuario-ubicacion'], function ($api){
             $api->get('listaUbicaciones', 'App\Http\Controllers\v1\ACTIVO_FIJO\UsuarioUbicacionController@listaUbicaciones');
         });
-        
+
     });
 
     /**
@@ -430,6 +433,12 @@ $api->version('v1', function ($api) {
             $api->post('obtener-numero-empresa', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerNumeroEmpresa');
             $api->post('obtener-informe-costos-cfdi-vs-costos-balanza', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeCostosCFDIvsCostosBalanza');
             $api->post('{id_proveedor}/obtener-lista-cfdi-costos-cfdi-costos-balanza', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerListaCFDICostosCFDICostosBalanza')->where(['id_proveedor' => '[0-9]+']);
+            $api->get('descargaLayout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargaLayout');
+            $api->get('descargar-comunicados', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarComunicados');
+            $api->get('informe-rep-pendientes-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorPDF');
+            $api->get('informe-rep-pendientes-proveedor-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorEmpresaPDF');
+            $api->get('informe-rep-pendientes-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaPDF');
+            $api->get('informe-rep-pendientes-empresa-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaProveedorPDF');
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');
@@ -462,6 +471,21 @@ $api->version('v1', function ($api) {
             $api->post('obtener-informe', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInforme');
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformePDF');
             $api->get('obtener-informe/empresa-proyecto/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformeEmpresaProyectoPDF');
+        });
+        $api->group(['prefix' => 'proveedor-rep'], function ($api){
+            //proveedores-rep-pendiente-xls
+            //            $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
+            $api->get('proveedores-rep-pendiente-xls', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@descargaXLS');
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@show')->where(['id' => '[0-9]+']);
+            $api->get('{id}/comunicado-pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@comunicadoPdf')->where(['id' => '[0-9]+']);
+            $api->post('{id}/enviar-comunicado','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@enviarComunicado')->where(['id' => '[0-9]+']);
+            $api->post('{id}/actualizar-contactos','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@actualizarContactos')->where(['id' => '[0-9]+']);
+            $api->get('{id}/cuerpo-correo','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\ProveedorREPController@getCuerpoCorreo')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix' => 'informes'], function ($api){
+            $api->post('cargar-cuentas-balanza-layout','App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CuentaCostoController@cargarPorLayout');
         });
     });
 
@@ -1376,7 +1400,9 @@ $api->version('v1', function ($api) {
 
     });
 
-
+    /**
+     * FINANZAS GENERAL
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'finanzas-general'], function ($api) {
         $api->group(['prefix' => 'solicitud-pago-aplicada'], function ($api) {
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\IndicadoresFinanzas\SolicitudPagoAplicadaController@paginate');
@@ -1393,8 +1419,6 @@ $api->version('v1', function ($api) {
         });
 
     });
-
-
 
     /**
      * FINANZAS
@@ -1616,6 +1640,8 @@ $api->version('v1', function ($api) {
             $api->get('{id}/cfdi-pdf', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@pdfCFDI')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaLayout');
             $api->post('cargar-xml-comprobacion', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@cargaXMLComprobacion');
+            $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
+
         });
     });
 
@@ -1659,7 +1685,51 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** SEGURIDAD ERP */
+    /**
+     * SEGUIMIENTO
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'seguimiento'], function ($api){
+
+        $api->group(['prefix'=>'cliente'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\ClienteController@index');
+        });
+
+        $api->group(['prefix'=>'empresa'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\EmpresaController@index');
+        });
+
+        $api->group(['prefix'=>'factura'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@store');
+            $api->post('CFDI', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cargarArchivo');
+            $api->patch('{id}/envioCorreo', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@envioCorreo')->where(['id' => '[0-9]+']);
+        });
+
+        $api->group(['prefix'=>'ingreso-partida'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@index');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@show')->where(['id' => '[0-9]+']);
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\IngresoPartidaController@store');
+        });
+
+        $api->group(['prefix'=>'moneda'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\MonedaController@index');
+        });
+
+        $api->group(['prefix'=>'proyecto'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\ProyectoController@index');
+        });
+
+        $api->group(['prefix'=>'tipo-ingreso'], function ($api){
+            $api->get('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@index');
+            $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\TipoIngresoController@store');
+        });
+    });
+
+    /**
+     * SEGURIDAD ERP
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'SEGURIDAD_ERP'], function ($api) {
 
         $api->group(['prefix' => 'configuracion-obra'], function($api) {
@@ -1749,7 +1819,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** SUBCONTRATOS ESTIMACIONES */
+    /**
+     * SUBCONTRATOS ESTIMACIONES
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'subcontratos-estimaciones'], function ($api){
         $api->group(['prefix'=>'descuento'], function ($api){
             $api->get('{id}/list', 'App\Http\Controllers\v1\CADECO\SubcontratosEstimaciones\DescuentoController@list');
@@ -1789,7 +1861,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** Ventas */
+    /**
+     * Ventas
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'ventas'], function ($api){
 
         $api->group(['prefix'=>'venta'], function ($api){
@@ -1803,7 +1877,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /** IGH */
+    /**
+     * IGH
+     */
     $api->group(['middleware' => 'api', 'prefix' => 'IGH'], function ($api) {
         $api->group(['prefix' => 'usuario'], function ($api) {
             $api->get('currentUser', 'App\Http\Controllers\v1\IGH\UsuarioController@currentUser');
@@ -1813,9 +1889,12 @@ $api->version('v1', function ($api) {
             $api->post('/por-correos', 'App\Http\Controllers\v1\IGH\UsuarioController@buscaUsuariosEmpresaPorCorreo');
         });
 
-
         $api->group(['prefix' => 'menu'], function ($api) {
             $api->get('/', 'App\Http\Controllers\v1\IGH\MenuController@index');
+        });
+
+        $api->group(['prefix' => 'tipo-cambio'], function ($api) {
+            $api->get('/', 'App\Http\Controllers\v1\IGH\TipoCambioController@index');
         });
 
         $api->group(['prefix' => 'ubicacion'], function ($api){
@@ -1823,7 +1902,9 @@ $api->version('v1', function ($api) {
         });
     });
 
-    /**SCI*/
+    /**
+     * SCI
+     */
     $api->group(['middleware'=>'api', 'prefix'=> 'SCI'], function ($api){
 
         $api->group(['prefix' => 'marca'], function ($api) {

@@ -1,0 +1,255 @@
+<template>
+    <span>
+
+        <div class="row">
+            <div class="col-12">
+                <proveedores-rep-pendiente-xls v-bind:query="query" :disabled="cargando" v-bind:cargando_padre="cargando"></proveedores-rep-pendiente-xls>
+                <impresion-informe-r-e-p-faltante :disabled="cargando" v-bind:cargando_padre="cargando" v-bind:query="query"></impresion-informe-r-e-p-faltante>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="form-row">
+                            <div class="col-md-5">
+                                <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+
+                                   v-model="con_contactos"> Con Contactos
+                        </label>
+                        <label class="btn btn-primary" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" name="options" autocomplete="off" :disabled="cargando"
+                                   v-model="sin_contactos"> Sin Contactos
+                        </label>
+                        <label class="btn btn-primary" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                   v-model="es_hermes"> Es de Hermes
+                        </label>
+                        <label class="btn btn-primary active" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando">
+                            <input type="checkbox" autocomplete="off" :disabled="cargando"
+                                   v-model="no_hermes"> No es de Hermes
+                        </label>
+                    </div>
+                            </div>
+                            <div class="col-md-1">
+                                <button type="button" class="btn btn-outline-primary btn-sm" @click="paginate" title="Buscar" :style="cargando?`cursor:not-allowed`:`cursor:pointer`" :disabled="cargando"><i class="fa fa-search" /> Buscar</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- /.card-header -->
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
+                        </div>
+                    </div>
+                <!-- /.card-body -->
+                </div>
+            <!-- /.card -->
+            </div>
+        </div>
+        <!-- /.col -->
+    </span>
+</template>
+
+<script>
+import DateRangePicker from "../../../globals/DateRangePicker"
+import CfdiRepPendienteXls from "./partials/CFDIREPPendienteXLS";
+import ImpresionInformeREPFaltante from "../partials/ImpresionInformeREPFaltante";
+import ProveedoresRepPendienteXls from "./partials/ProveedoresRepPendienteXls";
+
+export default {
+    name: "cfdi-rep-pendiente-proveedor-index",
+    components:{ProveedoresRepPendienteXls, ImpresionInformeREPFaltante, CfdiRepPendienteXls, DateRangePicker},
+
+    data() {
+        return {
+            cargando: false,
+            descargando: false,
+            id_empresa: '',
+            empresas: [],
+            empresa_seleccionada: [],
+            detalle_descarga :[],
+            HeaderSettings: false,
+            con_contactos: true,
+            no_hermes: true,
+            sin_contactos: false,
+            es_hermes: false,
+            columns: [
+                { title: '#', field:'index',sortable: false},
+                { title: 'RFC Proveedor', field: 'rfc_proveedor',thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Proveedor', field: 'proveedor', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: ' # CFDI Emitidos', field: 'cantidad_cfdi',tdClass: 'td_money',thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Monto CFDI', field: 'total_cfdi',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Monto REP', field: 'total_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Pendiente REP', field: 'pendiente_rep',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Último Proyecto SAO', field: 'ultima_ubicacion_sao', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Último Proyecto Contabilidad', field: 'ultima_ubicacion_contabilidad', thComp: require('../../../globals/th-Filter').default, sortable: true},
+                { title: 'Fecha Último CFDI con Ubicación', field: 'fecha_ultimo_cfdi_con_ubicacion', sortable: true},
+                { title: 'Tiene Contactos', field: 'con_contactos', tdClass:'td_icono', sortable: false, tdComp: require('../rep-pendientes/partials/IndicadorContactos.vue').default},
+                { title: 'Fecha Última Notificacion', field: 'fecha_ultima_notificacion', sortable: false},
+                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
+            ],
+            data: [],
+            total: 0,
+            query: {
+                include: [],
+                sort: 'pendiente_rep',  order: 'desc', limit: '40'
+            },
+            daterange: null,
+        }
+    },
+    mounted(){
+
+    },
+
+    methods: {
+        paginate(){
+            this.$Progress.start();
+            this.cargando=true;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.es_hermes = this.es_hermes;
+            return this.$store.dispatch('fiscal/proveedor-rep/paginate', {params: this.query})
+                .then(data=>{
+
+                })
+                .finally(()=>{
+                    this.cargando=false;
+                    this.$Progress.finish();
+                })
+        },
+
+    },
+    computed: {
+        proveedores_rep(){
+            return this.$store.getters['fiscal/proveedor-rep/proveedores_rep'];
+        },
+        meta(){
+            return this.$store.getters['fiscal/proveedor-rep/meta']
+        },
+        tbodyStyle() {
+            return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+        }
+    },
+    watch: {
+        proveedores_rep: {
+            handler(proveedores_rep) {
+                let self = this
+                self.$data.data = []
+                proveedores_rep.forEach(function (proveedor_rep, i) {
+                    self.$data.data.push({
+                        index: (i + 1) + self.query.offset,
+                        proveedor: proveedor_rep.proveedor,
+                        rfc_proveedor: proveedor_rep.rfc_proveedor,
+                        cantidad_cfdi: proveedor_rep.cantidad_cfdi,
+                        total_cfdi: proveedor_rep.total_cfdi,
+                        total_rep: proveedor_rep.total_rep,
+                        pendiente_rep: proveedor_rep.pendiente_rep,
+                        es_empresa_hermes: proveedor_rep.es_empresa_hermes,
+                        ultima_ubicacion_sao : proveedor_rep.ultima_ubicacion_sao,
+                        ultima_ubicacion_contabilidad : proveedor_rep.ultima_ubicacion_contabilidad,
+                        fecha_ultimo_cfdi_con_ubicacion : proveedor_rep.fecha_ultimo_cfdi_con_ubicacion,
+                        fecha_ultima_notificacion : proveedor_rep.fecha_ultima_notificacion,
+                        con_contactos : proveedor_rep.con_contactos,
+
+                        buttons: $.extend({}, {
+                            id: proveedor_rep.id,
+                        })
+                    })
+                });
+            },
+            deep: true
+        },
+        meta: {
+            handler(meta) {
+                let total = meta.pagination.total
+                this.$data.total = total
+            },
+            deep: true
+        },
+        query: {
+            handler(query) {
+                this.paginate(query)
+            },
+            deep: true
+        },
+        search(val) {
+            if (this.timer) {
+                clearTimeout(this.timer);
+                this.timer = null;
+            }
+            this.timer = setTimeout(() => {
+                this.query.search = val;
+                this.query.offset = 0;
+                this.paginate();
+
+            }, 500);
+        },
+        cargando(val) {
+            $('tbody').css({
+                '-webkit-filter': val ? 'blur(2px)' : '',
+                'pointer-events': val ? 'none' : ''
+            });
+        },
+        /*con_contactos(con_contactos) {
+            this.$data.query.con_contactos = con_contactos;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        no_hermes(no_hermes) {
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.no_hermes = no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        sin_contactos(sin_contactos) {
+            this.$data.query.sin_contactos = sin_contactos;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = this.es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },
+        es_hermes(es_hermes) {
+            this.$data.query.sin_contactos = this.sin_contactos;
+            this.$data.query.con_contactos = this.con_contactos;
+            this.$data.query.no_hermes = this.no_hermes;
+            this.$data.query.es_hermes = es_hermes;
+            this.query.offset = 0;
+            this.paginate()
+        },*/
+    },
+}
+</script>
+
+<style scoped>
+label:not(.form-check-label):not(.custom-file-label) {
+    font-weight: 500;
+}
+
+.btn-primary:not(:disabled):not(.disabled):active, .btn-primary:not(:disabled):not(.disabled).active, .show > .btn-primary.dropdown-toggle {
+    color: #ffffff;
+    background-color: #007bff;
+    border-color: #005cbf;
+}
+
+.btn-primary {
+    color: #007bff;
+    background-color: #ffffff;
+    border-color: #dee2e6;
+    box-shadow: none;
+}
+
+</style>

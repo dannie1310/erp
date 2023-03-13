@@ -281,7 +281,7 @@ class SolicitudEdicionService
                     $polizas[$i]["movimientos"] = $movimientos;
                     $polizas[$i]["concepto_original"] = $poliza_encontrada_transform["concepto"];
                     $polizas[$i]["id_poliza"] = $poliza_encontrada_transform["id"];
-                    $polizas[$i]["id_empresa_contpaq"] = $empresa->IdContpaq;
+                    $polizas[$i]["id_empresa_contpaq"] = $empresa->IdEmpresaContpaq;
                     $contador_movimientos += count($movimientos);
                     $i++;
                     $this->resumen["cantidad_polizas_involucradas"]++;
@@ -322,7 +322,7 @@ class SolicitudEdicionService
             $pdf = new PolizaFormatoTB1($folios);
             return $pdf->create();
         }
-        
+
     }
 
     private function impresionPolizasTipo2($id, $caida)
@@ -349,7 +349,7 @@ class SolicitudEdicionService
             $pdf = new PolizaFormatoTB2($polizas, $diferencias[0]->empresa);
             return $pdf->create();
         }
-        
+
     }
 
     private function impresionPolizasTipo3($id, $caida)
@@ -402,7 +402,7 @@ class SolicitudEdicionService
         if($caida == 2){
             $pdf = new PolizaFormatoPropuestaT1B($folios);
         }
-        
+
         return $pdf->create();
     }
 
@@ -421,7 +421,7 @@ class SolicitudEdicionService
         if($caida == 2){
             $pdf = new PolizaFormatoPropuestaT2B($polizas, $solicitud, $diferencias[0]->empresa);
         }
-        
+
         return $pdf->create();
     }
 
@@ -466,7 +466,7 @@ class SolicitudEdicionService
         }
         if($caida == 2){
         $pdf = new PolizaFormatoOriginalT1B($folios);
-        
+
         }
         return $pdf->create();
     }
@@ -485,7 +485,7 @@ class SolicitudEdicionService
         }
         if($caida == 2){
             $pdf = new PolizaFormatoOriginalT2B($polizas, $solicitud, $diferencias[0]->empresa);
-            
+
         }
         return $pdf->create();
     }
@@ -503,10 +503,10 @@ class SolicitudEdicionService
             $pdf = new PolizaFormatoOriginalT3($polizas, $solicitud, $diferencias[0]->empresa);
         }
         if($caida == 2){
-            $pdf = new PolizaFormatoOriginalT3B($polizas, $solicitud, $diferencias[0]->empresa);    
+            $pdf = new PolizaFormatoOriginalT3B($polizas, $solicitud, $diferencias[0]->empresa);
         }
         return $pdf->create();
-        
+
     }
 
     public function procesaSolicitudXLS($nombre_archivo, $archivo_xls)

@@ -17,6 +17,8 @@ use App\Models\SEGURIDAD_ERP\Documentacion\CtgTipoTransaccion;
 use App\Models\SEGURIDAD_ERP\Finanzas\FacturaRepositorio;
 use App\Models\SEGURIDAD_ERP\Finanzas\SolicitudRecepcionCFDI;
 use App\Models\SEGURIDAD_ERP\Fiscal\CFDAutocorreccion;
+use App\Models\SEGURIDAD_ERP\Fiscal\ProveedorREP;
+use App\Models\SEGURIDAD_ERP\Fiscal\VwCFDSATPendientesREP;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgEstadoCFD;
 use App\Models\SEGURIDAD_ERP\Fiscal\EFOS;
 use App\Models\SEGURIDAD_ERP\Proyecto;
@@ -62,8 +64,12 @@ class CFDSAT extends Model
         ,"tipo_relacion"
         ,"cfdi_relacionado"
         ,"forma_pago"
-        ,"fecha_pago"
         ,"id_tipo_transaccion"
+        ,"conceptos_txt"
+        ,"moneda_pago"
+        ,"monto_pago"
+        ,"fecha_pago"
+        ,"forma_pago_p"
     ];
 
     protected $dates =["fecha", "fecha_cancelacion","ultima_verificacion"];
@@ -97,6 +103,30 @@ class CFDSAT extends Model
     public function proveedor()
     {
         return $this->belongsTo(ProveedorSAT::class, 'id_proveedor_sat', 'id');
+    }
+
+    public function proveedorHermes()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("es_empresa_hermes","=",1);
+    }
+
+    public function proveedorNoHermes()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("es_empresa_hermes","=",0);
+    }
+
+    public function proveedorConContactos()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("cantidad_contactos",">",0);
+    }
+
+    public function proveedorSinContactos()
+    {
+        return $this->belongsTo(ProveedorREP::class, 'id_proveedor_sat', 'id')
+            ->where("cantidad_contactos","=",0);
     }
 
     public function empresa()
@@ -159,6 +189,11 @@ class CFDSAT extends Model
         return $this->hasMany(Archivo::class, "id_cfdi", "id");
     }
 
+    public function vwPendienteREP()
+    {
+        return $this->hasOne(VwCFDSATPendientesREP::class,"id_cfdi", "id");
+    }
+
     public function scopeDeEFO($query)
     {
         return $query->whereHas("efo");
@@ -206,10 +241,33 @@ class CFDSAT extends Model
         return $query->where('id_ctg_bancos', '!=', null);
     }
 
+    public function scopePendienteProcesamientoDoctosPagados($query)
+    {
+        return $query->where('tipo_comprobante', '=', 'P')
+            ->where("cancelado","=",0)
+            ->whereDoesntHave("documentosPagados");
+    }
+
+    public function scopeRepPendiente($query)
+    {
+        return $query->join("Fiscal.vw_cfd_sat_rep_pendiente","vw_cfd_sat_rep_pendiente.id_cfdi","=","cfd_sat.id")
+            ->where('tipo_comprobante', '=', 'I')
+            ->where("cancelado","=",0)
+            ->where("cfd_sat.metodo_pago","=","PPD")
+            ;
+    }
+
+
     public function getFechaFormatAttribute()
     {
         $date = date_create($this->fecha);
         return date_format($date,"d/m/Y H:i:s");
+    }
+
+    public function getFechaSencillaFormatAttribute()
+    {
+        $date = date_create($this->fecha);
+        return date_format($date,"d/m/Y");
     }
 
     public static function getFechaUltimoCFDTxt()
@@ -221,9 +279,46 @@ class CFDSAT extends Model
         return $fecha;
     }
 
+    public static function getFechaUltimoREP()
+    {
+        $ultimo_cfdi_rep = CFDSAT::where("tipo_comprobante","=","P")
+            ->where("cancelado","=","0")
+            ->orderBy("fecha","desc")->first();
+
+        return $ultimo_cfdi_rep->fecha->format("d/m/Y");
+    }
+
+    public static function getFechaUltimaCancelacion()
+    {
+        $ultimo_cfdi_rep = CFDSAT::where("tipo_comprobante","=","P")
+            ->where("cancelado","=","0")
+            ->orderBy("fecha","desc")->first();
+
+        return $ultimo_cfdi_rep->fecha->format("d/m/Y");
+    }
+
+    public function getTotalMxnAttribute()
+    {
+        if($this->moneda != "MXN"){
+            if($this->tipo_cambio>0){
+                return $this->total * $this->tipo_cambio;
+            }else{
+                return $this->total;
+            }
+
+        }else{
+            return $this->total;
+        }
+    }
+
+    public function getTotalMxnFormatAttribute()
+    {
+        return '$ ' . number_format(($this->total_mxn),2);
+    }
+
     public function getTotalFormatAttribute()
     {
-        return '$' . number_format(($this->total),2);
+        return '$ ' . number_format(($this->total),2);
     }
 
     public function getSubtotalFormatAttribute()
@@ -260,6 +355,53 @@ class CFDSAT extends Model
         return $xml->xml;
     }
 
+    public function getConceptoTxtAttribute()
+    {
+        $concepto_arr = [];
+        foreach ($this->conceptos as $concepto)
+        {
+            $concepto_arr[]= $concepto->descripcion;
+        }
+        return implode(" | ",$concepto_arr);
+    }
+
+    public function getMontoPendienteRepVwAttribute()
+    {
+        if($this->vwPendienteREP){
+            return $this->vwPendienteREP->pendiente_pago;
+        }else{
+            return $this->total;
+        }
+    }
+
+    public function getMontoPendienteRepVwMxnAttribute()
+    {
+        if($this->moneda != "MXN"){
+            if($this->tipo_cambio>0){
+                return $this->monto_pendiente_rep_vw * $this->tipo_cambio;
+            }else{
+                return $this->monto_pendiente_rep_vw;
+            }
+
+        }else{
+            return $this->monto_pendiente_rep_vw;
+        }
+    }
+
+    public function getMontoPendienteRepVwFormatAttribute()
+    {
+        return '$ ' . number_format(($this->monto_pendiente_rep_vw),2);
+    }
+
+    public function getCantidadPagosAttribute()
+    {
+        if($this->vwPendienteREP){
+            return $this->vwPendienteREP->cantidad_pagos;
+        }else{
+            return 0;
+        }
+    }
+
     public function registrar($data)
     {
         $factura = null;
@@ -267,8 +409,10 @@ class CFDSAT extends Model
             DB::connection('seguridad')->beginTransaction();
 
             $cfd = $this->create($data);
+            $conceptos_arr = [];
             if(key_exists("conceptos",$data)){
                 foreach($data["conceptos"] as $concepto){
+                    $conceptos_arr[] = $concepto["descripcion"];
                     $conceptoObj = $cfd->conceptos()->create($concepto);
                     if(key_exists("traslados",$concepto)){
                         foreach($concepto["traslados"] as $traslado){
@@ -282,6 +426,9 @@ class CFDSAT extends Model
                     }
                 }
             }
+
+            $cfd->conceptos_txt = implode(" | ",$conceptos_arr);
+            $cfd->save();
 
             if(key_exists("traslados",$data)){
                 foreach($data["traslados"] as $traslado){
@@ -311,6 +458,20 @@ class CFDSAT extends Model
             dd($e->getMessage(),$data);
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
+        }
+    }
+
+    public function complementarConceptosTxt()
+    {
+        if(count($this->conceptos) > 0)
+        {
+            $concepto_arr = [];
+            foreach ($this->conceptos as $concepto)
+            {
+                $concepto_arr[]= $concepto->descripcion;
+            }
+            $this->conceptos_txt = implode(" | ",$concepto_arr);
+            $this->save();
         }
     }
 

@@ -234,8 +234,8 @@ class EmpresaService
 
     private function validaRFC($rfc)
     {
-        $this->rfcValidaEfos();
-        $this->rfcValidaBoletinados();
+        $this->rfcValidaEfos($rfc);
+        $this->rfcValidaBoletinados($rfc);
     }
 
     public function update(array $data, $id)

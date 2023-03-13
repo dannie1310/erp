@@ -29,6 +29,12 @@
                             <p>CFDI SAT</p>
                         </router-link>
                     </li>
+                    <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                        <router-link :to="{name: 'informe-rep-faltantes'}" class="nav-link" :class="{active: this.$route.name == 'informe-rep-faltantes'}">
+                            <i class="fa fa-file-invoice nav-icon"></i>
+                            <p>REP Faltantes</p>
+                        </router-link>
+                    </li>
                     <li class="nav-item"   v-if="$root.can('consultar_autocorreccion_cfd_efo',true)">
                         <router-link :to="{name: 'autocorreccion-cfd-efos'}" class="nav-link" :class="{active: this.$route.name == 'autocorreccion-cfd-efos'}">
                             <i class="fa fa-check-circle nav-icon"></i>
@@ -41,6 +47,32 @@
                             <p>CFDI No Deducidos de EFOS</p>
                         </router-link>
                     </li>
+                </ul>
+            </li>
+            <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                <a href="#" class="nav-link" @click="mostrarMenu($event)">
+                    <i class="fa fa-file-invoice nav-icon"></i>
+                    <p>REP Faltantes</p>
+                    <i class="right fa fa-angle-left"></i>
+                </a>
+                <ul class="nav nav-treeview">
+
+
+                    <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                        <router-link :to="{name: 'informe-rep-faltantes'}" class="nav-link" :class="{active: this.$route.name == 'informe-rep-faltantes'}">
+                            <i class="fa fa-files-o nav-icon"></i>
+                            <p>Lista de CFDIs</p>
+                        </router-link>
+                    </li>
+
+                    <li class="nav-item"  v-if="$root.can('consultar_cfdi',true)">
+                        <router-link :to="{name: 'informe-rep-faltantes-proveedor'}" class="nav-link" :class="{active: this.$route.name == 'informe-rep-faltantes-proveedor'}">
+                            <i class="fa fa-users nav-icon"></i>
+                            <p>Lista de Proveedores</p>
+                        </router-link>
+                    </li>
+
+
                 </ul>
             </li>
             <li class="nav-item"  v-if="$root.can('consultar_informe_listado_efos_vs_cfdi_recibidos',true)">

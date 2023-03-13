@@ -9,10 +9,17 @@
 namespace App\Services\SEGURIDAD_ERP\Contabilidad;
 
 use App\CSV\Finanzas\CFDILayout;
+use App\CSV\Fiscal\CFDIREPPendiente;
 use App\Events\IncidenciaCI;
 use App\Jobs\ProcessCancelacionCFDI;
+use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\PDF\Fiscal\Comunicado;
+use App\PDF\Fiscal\InformeREPProveedor;
+use App\PDF\Fiscal\InformeREPEmpresa;
+use App\PDF\Fiscal\InformeREPEmpresaProveedor;
+use App\PDF\Fiscal\InformeREPProveedorEmpresa;
 use App\Repositories\SEGURIDAD_ERP\Contabilidad\CFDSATRepository;
 use DateTime;
 use DateTimeZone;
@@ -96,6 +103,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -106,6 +114,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -118,8 +127,29 @@ class CFDSATService
             $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
         }
         if (isset($data['total'])) {
-            $this->repository->where([['total', '=', $data['total'] ]]);
+            //$this->repository->where([['total', '=', $data['total'] ]]);
+
+            if (strpos($data['total'], ">=") !== false) {
+                $total_cfdi = str_replace(">=", "", $data['total']);
+                $this->repository->where([['total', ">=", $total_cfdi]]);
+            } else if (strpos($data['total'], ">") !== false) {
+                $total_cfdi = str_replace(">", "", $data['total']);
+                $this->repository->where([['total', ">", $total_cfdi]]);
+            } else if (strpos($data['total'], "<=") !== false) {
+                $total_cfdi = str_replace("<=", "", $data['total']);
+                $this->repository->where([['total', "<=", $total_cfdi]]);
+            } else if (strpos($data['total'], "<") !== false) {
+                $total_cfdi = str_replace("<", "", $data['total']);
+                $this->repository->where([['total', "<", $total_cfdi]]);
+            } else if (strpos($data['total'], "=") !== false) {
+                $total_cfdi = str_replace("=", "", $data['total']);
+                $this->repository->where([['total', "=", $total_cfdi]]);
+            } else {
+                $this->repository->where([['total', "=", $data['total']]]);
+            }
         }
+
+
         if (isset($data['tipo_cambio'])) {
             $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
         }
@@ -190,9 +220,14 @@ class CFDSATService
             }
         }
 
+        if (isset($data['solo_no_asociados_contabilidad'])) {
+            if($data['solo_no_asociados_contabilidad']==="true"){
+                $this->repository->whereDoesntHave("polizaCFDI");
+            }
+        }
+
         if (isset($data['base_datos_ctpq'])) {
-            $this->repository->join("Contabilidad.polizas_cfdi as pol_bd", "pol_bd.uuid","=","cfd_sat.uuid")
-                ->where([['pol_bd.base_datos_contpaq', 'like', '%' .$data['base_datos_ctpq']. '%' ]])->select("cfd_sat.*");
+            $this->repository->where([["ubicacion_contabilidad","like", '%'.$data['base_datos_ctpq']."%"]]);
         }
         if (isset($data['ejercicio'])) {
             $this->repository->join("Contabilidad.polizas_cfdi as pol_eje", "pol_eje.uuid","=","cfd_sat.uuid")
@@ -214,6 +249,39 @@ class CFDSATService
             $this->repository->join("Contabilidad.polizas_cfdi as pol_fecha", "pol_fecha.uuid","=","cfd_sat.uuid")
                 ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
         }
+
+        if(!isset($data['no_hermes']))
+        {
+            $data['no_hermes'] = true;
+        }
+
+        if(!isset($data['es_hermes']))
+        {
+            $data['es_hermes'] = true;
+        }
+
+        if(!isset($data['con_contactos']))
+        {
+            $data['con_contactos'] = true;
+        }
+
+        if(!isset($data['sin_contactos']))
+        {
+            $data['sin_contactos'] = true;
+        }
+
+        if($data['no_hermes'] === "false" && $data['es_hermes'] === "true"){
+            $this->repository->whereHas("proveedorHermes");
+        }else if($data['no_hermes'] === "true" && $data['es_hermes'] === "false"){
+            $this->repository->whereHas("proveedorNoHermes");
+        }
+
+        if($data['con_contactos'] === "false" && $data['sin_contactos'] === "true"){
+            $this->repository->whereHas("proveedorSinContactos");
+        }else if($data['con_contactos'] === "true" && $data['sin_contactos'] === "false"){
+            $this->repository->whereHas("proveedorConContactos");
+        }
+
         return $this->repository->paginate($data);
     }
 
@@ -274,14 +342,109 @@ class CFDSATService
         return ["path_zip" => $path_zip, "path_xml" => $path_xml, "dir_xml" => $dir_xml];
     }
 
+    public function reprocesaCFDILlenadoMetodoPago()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $cantidad= CFDSAT::whereNull("metodo_pago")
+            ->where("cancelado","=",0)
+            ->where("tipo_comprobante","=","I")
+            ->where("version","=","3.3")
+            ->count();
+
+        $take = 1000;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::whereNull("metodo_pago")
+                ->where("cancelado","=",0)
+                ->where("tipo_comprobante","=","I")
+                ->where("version","=","3.3")
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","desc")
+                ->get();
+
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd_util = new CFD($rcfd->xml);
+                    $arreglo_cfd = $cfd_util->getArregloFactura();
+
+                    try {
+                        if(key_exists("metodo_pago",$arreglo_cfd)){
+                            $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
+                            $rcfd->save();
+                        }
+                    }
+                    catch (\Exception $e)
+                    {
+                        //dd('1',$e->getMessage());
+                    }
+                } catch (\Exception $e){
+                    //dd('2',$e->getMessage());
+                }
+            }
+        }
+    }
+
+    public function reprocesaCFDILlenadoPago()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $cantidad= CFDSAT::pendienteProcesamientoDoctosPagados()->count();
+
+        $take = 1000;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::pendienteProcesamientoDoctosPagados()
+                //->where("uuid","=","ad84e2f6-911b-4294-a586-079ee751fa99") 00FB75DC-04A7-424A-B25F-97977CF23A82
+                //where("uuid","=","00FB75DC-04A7-424A-B25F-97977CF23A82")
+                ->skip($i)
+                ->take($take)
+                ->get();
+
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd_util = new CFD($rcfd->xml);
+                    $arreglo_cfd = $cfd_util->getArregloFactura();
+
+                    try {
+                        if(key_exists("forma_pago_p",$arreglo_cfd)){
+                            $rcfd->forma_pago_p = $arreglo_cfd["forma_pago_p"];
+                            $rcfd->moneda_pago = $arreglo_cfd["moneda_pago"];
+                            $rcfd->monto_pago = $arreglo_cfd["monto_pago"];
+                            $rcfd->save();
+                        }
+                    }
+                    catch (\Exception $e)
+                    {
+                        //dd('1',$e->getMessage());
+                    }
+                } catch (\Exception $e){
+                    //dd('2',$e->getMessage());
+                }
+
+                if(key_exists("documentos_pagados",$arreglo_cfd)){
+                    foreach($arreglo_cfd["documentos_pagados"] as $documento_pagado){
+                        $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
+                        if($cfdi_pagado){
+                            $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
+                        }
+                        $rcfd->documentosPagados()->create($documento_pagado);
+                    }
+                }
+            }
+        }
+    }
+
     public function reprocesaCFDObtenerTipo()
     {
         ini_set('max_execution_time', '7200');
         ini_set('memory_limit', -1);
         $cantidad = CFDSAT::where("id_empresa_sat","=",1)
             ->where("cancelado","=","0")
+            ->where("rfc_emisor","=","GMS971110BTA")
             ->whereIn("tipo_comprobante",["I","E"])
-            ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+            ->whereBetween("fecha",["2014-01-01 00:00:00","2016-12-31 23:59:59"])
             ->count();
 
         $take = 1000;
@@ -289,8 +452,9 @@ class CFDSATService
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::where("id_empresa_sat","=",1)
                 ->where("cancelado","=","0")
+                ->where("rfc_emisor","=","GMS971110BTA")
                 ->whereIn("tipo_comprobante",["I","E"])
-                ->whereBetween("fecha",["2020-01-01 00:00:00","2020-12-31 23:59:59"])
+                ->whereBetween("fecha",["2014-01-01 00:00:00","2016-12-31 23:59:59"])
                 ->skip($i)
                 ->take($take)
                 ->get();
@@ -965,6 +1129,9 @@ class CFDSATService
         try{
             copy($dir_xml.$uuid->uuid.".xml", $dir_descarga.$uuid->uuid.".xml");
         }catch (\Exception $e){
+            $data_cfdi =  base64_decode($uuid->xml_file);
+            $file = public_path($dir_descarga.$uuid->uuid.".xml");
+            file_put_contents($file, $data_cfdi);
         }
 
         if(file_exists(public_path($dir_descarga.$uuid->uuid.".xml"))){
@@ -986,6 +1153,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -996,6 +1164,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -1048,6 +1217,8 @@ class CFDSATService
         if (isset($data['obra'])) {
             $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
 
+            $id_obra = [];
+            $id_proyecto = [];
             foreach($obras as $obra){
                 $id_obra[] = $obra->id_obra;
                 $id_proyecto[] = $obra->id_proyecto;
@@ -1136,6 +1307,182 @@ class CFDSATService
             return response()->download(public_path($nombre_zip));
         } else {
             return response()->json(["mensaje"=>"No hay CFDI para la descarga "]);
+        }
+    }
+
+    public function descargarComunicados($data)
+    {
+        if (isset($data['startDate'])) {
+            $this->repository->where([['cfd_sat.fecha', '>=', $data['startDate']]]);
+        }
+        if (isset($data['endDate'])) {
+            $this->repository->where([['cfd_sat.fecha', '<=', $data['endDate']]]);
+        }
+        if (isset($data['rfc_emisor'])) {
+            $this->repository->where([['rfc_emisor', 'LIKE', '%' . $data['rfc_emisor'] . '%']]);
+        }
+        if (isset($data['emisor'])) {
+            $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
+            foreach ($proveedoresSAT as $e) {
+                $arreglo_proveedor[] = $e->id;
+            }
+            $this->repository->whereIn(['id_proveedor_sat', $arreglo_proveedor]);
+        }
+        if (isset($data['rfc_receptor'])) {
+            $this->repository->where([['rfc_receptor', 'LIKE', '%' . $data['rfc_receptor'] . '%']]);
+        }
+        if (isset($data['receptor'])) {
+            $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
+            foreach ($empresasSAT as $es) {
+                $arreglo_empresa[] = $es->id;
+            }
+            $this->repository->whereIn(['id_empresa_sat', $arreglo_empresa]);
+        }
+        if (isset($data['uuid'])) {
+            $this->repository->where([['cfd_sat.uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
+        }
+        if (isset($data['moneda'])) {
+            $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
+        }
+        if (isset($data['total'])) {
+            $this->repository->where([['total', '=', $data['total'] ]]);
+        }
+        if (isset($data['tipo_cambio'])) {
+            $this->repository->where([['tipo_cambio', '=', $data['tipo_cambio'] ]]);
+        }
+        if (isset($data['subtotal'])) {
+            $this->repository->where([['subtotal', '=', $data['subtotal'] ]]);
+        }
+        if (isset($data['descuento'])) {
+            $this->repository->where([['descuento', '=', $data['descuento'] ]]);
+        }
+        if (isset($data['impuestos_retenidos'])) {
+            $this->repository->where([['total_impuestos_retenidos', '=', $data['impuestos_retenidos'] ]]);
+        }
+        if (isset($data['impuestos_trasladados'])) {
+            $this->repository->where([['total_impuestos_trasladados', '=', $data['impuestos_trasladados'] ]]);
+        }
+        if (isset($data['fecha'])) {
+            $this->repository->whereBetween( ['cfd_sat.fecha', [ request( 'fecha' )." 00:00:00",request( 'fecha' )." 23:59:59"]] );
+        }
+        if (isset($data['tipo_comprobante'])) {
+            $this->repository->where([['cfd_sat.tipo_comprobante', 'LIKE', '%' .$data['tipo_comprobante']. '%' ]]);
+        }
+        if (isset($data['serie'])) {
+            $this->repository->where([['cfd_sat.serie', 'like', '' .$data['serie']. '' ]]);
+        }
+        if (isset($data['folio'])) {
+            $this->repository->where([['cfd_sat.folio', 'like', '' .$data['folio']. '' ]]);
+        }
+        if (isset($data['estado'])) {
+            if (strpos('CANCELADO', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['cancelado', '=', 1]]);
+            }
+            else if (strpos('VIGENTE', strtoupper($data['estado'])) !== FALSE) {
+                $this->repository->where([['cancelado', '=', 0]]);
+            }
+        }
+        if (isset($data['obra'])) {
+            $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
+
+            $id_obra = [];
+            $id_proyecto = [];
+            foreach($obras as $obra){
+                $id_obra[] = $obra->id_obra;
+                $id_proyecto[] = $obra->id_proyecto;
+            }
+
+            $uuid = FacturaRepositorio::whereIn("id_obra", $id_obra)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
+            $this->repository->whereIn(['cfd_sat.uuid', $uuid]);
+        }
+        if (isset($data['base_datos'])) {
+            $id_proyecto = Proyecto::where([['base_datos', 'LIKE', '%' . $data['base_datos'] . '%']])->pluck("id");
+
+            $uuid = FacturaRepositorio::whereIn("id_proyecto", $id_proyecto)->whereIn("id_proyecto", $id_proyecto)->pluck("uuid");
+            $this->repository->whereIn(['cfd_sat.uuid', $uuid]);
+        }
+
+        if (isset($data['solo_pendientes'])) {
+            if($data['solo_pendientes']==="true"){
+                $this->repository->whereDoesntHave("facturaRepositorio")->whereDoesntHave("polizaCFDI");
+            }
+        }
+
+        if (isset($data['solo_asociados'])) {
+            if($data['solo_asociados']==="true"){
+                $this->repository->whereHas("facturaRepositorio");
+            }
+        }
+
+        if (isset($data['solo_asociados_contabilidad'])) {
+            if($data['solo_asociados_contabilidad']==="true"){
+                $this->repository->whereHas("polizaCFDI");
+            }
+        }
+
+        if (isset($data['base_datos_ctpq'])) {
+            $this->repository->join("Contabilidad.polizas_cfdi as pol_bd", "pol_bd.uuid","=","cfd_sat.uuid")
+                ->where([['pol_bd.base_datos_contpaq', 'like', '%' .$data['base_datos_ctpq']. '%' ]])->select("cfd_sat.*");
+        }
+        if (isset($data['ejercicio'])) {
+            $this->repository->join("Contabilidad.polizas_cfdi as pol_eje", "pol_eje.uuid","=","cfd_sat.uuid")
+                ->where([['pol_eje.ejercicio', '=', $data['ejercicio'] ]])->select("cfd_sat.*");
+        }
+        if (isset($data['periodo'])) {
+            $this->repository->join("Contabilidad.polizas_cfdi as pol_per", "pol_per.uuid","=","cfd_sat.uuid")
+                ->where([['pol_per.periodo', '=', $data['periodo'] ]])->select("cfd_sat.*");
+        }
+        if (isset($data['tipo_poliza'])) {
+            $this->repository->join("Contabilidad.polizas_cfdi as pol_tipo", "pol_tipo.uuid","=","cfd_sat.uuid")
+                ->where([['pol_tipo.tipo', 'like', '%' .$data['tipo_poliza']. '%' ]])->select("cfd_sat.*");
+        }
+        if (isset($data['folio_poliza'])) {
+            $this->repository->join("Contabilidad.polizas_cfdi as pol_folio", "pol_folio.uuid","=","cfd_sat.uuid")
+                ->where([['pol_folio.folio', 'like', '%' .$data['folio_poliza']. '%' ]])->select("cfd_sat.*");
+        }
+        if (isset($data['fecha_poliza'])) {
+            $this->repository->join("Contabilidad.polizas_cfdi as pol_fecha", "pol_fecha.uuid","=","cfd_sat.uuid")
+                ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
+        }
+
+
+        $uuids =  $this->repository->all();
+        $arr_comunicados = [];
+        foreach ($uuids as $uuid)
+        {
+            $arr_comunicados[$uuid->rfc_emisor]["proveedor"] = $uuid->proveedor->razon_social;
+            $arr_comunicados[$uuid->rfc_emisor]["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
+            $arr_comunicados[$uuid->rfc_emisor]["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
+
+        }
+
+        $dir_descarga = "downloads/fiscal/descarga/comunicados/";
+        if (!file_exists($dir_descarga) && !is_dir($dir_descarga)) {
+            mkdir($dir_descarga, 777, true);
+        }
+
+        foreach ($arr_comunicados as $rfc=>$arr_comunicado) {
+            $comunicado = new Comunicado($arr_comunicado);
+            //return $comunicado->create();
+            $comunicado->create()->Output("F", $dir_descarga.$rfc.".pdf",1);
+        }
+
+        $path = "downloads/fiscal/descarga/";
+        $nombre_zip = $path.date("Ymd_his").".zip";
+
+        $zipper = new Zipper;
+        $zipper->make(public_path($nombre_zip))
+            ->add(public_path($dir_descarga));
+        $zipper->close();
+
+        //Files::eliminaDirectorio($dir_descarga);
+
+        if(file_exists(public_path($nombre_zip))){
+            return response()->download(public_path($nombre_zip));
+        } else {
+            return response()->json(["mensaje"=>"No hay comunicados para la descarga "]);
         }
     }
 
@@ -1370,6 +1717,7 @@ class CFDSATService
         }
         if (isset($data['emisor'])) {
             $proveedoresSAT = ProveedorSAT::query()->where([['razon_social', 'LIKE', '%' . $data['emisor'] . '%']])->get();
+            $arreglo_proveedor = [];
             foreach ($proveedoresSAT as $e) {
                 $arreglo_proveedor[] = $e->id;
             }
@@ -1380,6 +1728,7 @@ class CFDSATService
         }
         if (isset($data['receptor'])) {
             $empresasSAT = EmpresaSAT::query()->where([['razon_social', 'LIKE', '%' . $data['receptor'] . '%']])->get();
+            $arreglo_empresa = [];
             foreach ($empresasSAT as $es) {
                 $arreglo_empresa[] = $es->id;
             }
@@ -1431,7 +1780,8 @@ class CFDSATService
         }
         if (isset($data['obra'])) {
             $obras = ConfiguracionObra::withoutGlobalScopes()->where([['nombre', 'LIKE', '%' . $data['obra'] . '%']])->get();
-
+            $id_obra = [];
+            $id_proyecto = [];
             foreach($obras as $obra){
                 $id_obra[] = $obra->id_obra;
                 $id_proyecto[] = $obra->id_proyecto;
@@ -1465,6 +1815,12 @@ class CFDSATService
             }
         }
 
+        if (isset($data['solo_no_asociados_contabilidad'])) {
+            if($data['solo_no_asociados_contabilidad']==="true"){
+                $this->repository->whereDoesntHave("polizaCFDI");
+            }
+        }
+
         if (isset($data['base_datos_ctpq'])) {
             $this->repository->join("Contabilidad.polizas_cfdi as pol_bd", "pol_bd.uuid","=","cfd_sat.uuid")
                 ->where([['pol_bd.base_datos_contpaq', 'like', '%' .$data['base_datos_ctpq']. '%' ]])->select("cfd_sat.*");
@@ -1490,6 +1846,14 @@ class CFDSATService
                 ->whereBetween( ['pol_fecha.fecha', [ request( 'fecha_poliza' )." 00:00:00",request( 'fecha_poliza' )." 23:59:59"]] )->select("cfd_sat.*");
         }
         return Excel::download(new CFDILayout($this->repository->all()), 'cfdi_layout_'. date('Y-m-d H:i:s').'.xlsx');
+    }
+
+    public function descargaExcelCFDIRepPendiente($data)
+    {
+        ini_set('memory_limit', -1) ;
+        ini_set('max_execution_time', '7200') ;
+
+        return Excel::download(new CFDIREPPendiente($data), 'cfdi_rep_pendiente_'. date('Y-m-d H:i:s').'.xlsx');
     }
 
     public function cargaXMLComprobacion(array $data)
@@ -1579,6 +1943,42 @@ class CFDSATService
                 $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
                 $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
                 $id++;
+            }
+        }
+    }
+
+    public function reprocesaCFDIComplementarConceptosTxt()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $hoy_str = date('Y-m-d');
+        $hace_1Y_str = date("Y-m-d",strtotime($hoy_str."- 1 years"));
+        $hace_1Y = DateTime::createFromFormat('Y-m-d', $hace_1Y_str);
+
+        $cantidad = CFDSAT::where("cancelado","=","0")
+            ->whereNull("conceptos_txt")
+            ->count();
+
+        $take = 1000;
+
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=","0")
+                ->whereNull("conceptos_txt")
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","asc")
+                ->get();
+
+            $idistribucion = 0;
+            foreach ($cfd as $rcfd) {
+                ProcessComplementaConceptosTxtCFDI::dispatch($rcfd)
+                    ->onQueue("q".$idistribucion);
+                //$rcfd->complementarDatos();
+                $idistribucion ++;
+                if($idistribucion==5){
+                    $idistribucion=0;
+                }
             }
         }
     }
@@ -1695,5 +2095,53 @@ class CFDSATService
                 }
             }
         }*/
+    }
+
+    public function obtenerInformeREPProveedorPDF($data)
+    {
+        $informe = $this->obtenerInformeREPProveedor($data);
+        $pdf = new InformeREPProveedor($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREPProveedorEmpresaPDF($data)
+    {
+        $informe = $this->obtenerInformeREPProveedorEmpresa($data);
+        $pdf = new InformeREPProveedorEmpresa($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREPEmpresaProveedorPDF($data)
+    {
+        $informe = $this->obtenerInformeREPEmpresaProveedor($data);
+        $pdf = new InformeREPEmpresaProveedor($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREPEmpresaPDF($data)
+    {
+        $informe = $this->obtenerInformeREPEmpresa($data);
+        $pdf = new InformeREPEmpresa($informe);
+        return $pdf->create();
+    }
+
+    public function obtenerInformeREPProveedor($data)
+    {
+        return $this->repository->getInformeREPProveedor($data);
+    }
+
+    public function obtenerInformeREPProveedorEmpresa($data)
+    {
+        return $this->repository->getInformeREPProveedorEmpresa($data);
+    }
+
+    public function obtenerInformeREPEmpresaProveedor($data)
+    {
+        return $this->repository->getInformeREPEmpresaProveedor($data);
+    }
+
+    public function obtenerInformeREPEmpresa($data)
+    {
+        return $this->repository->getInformeREPEmpresa($data);
     }
 }

@@ -216,6 +216,8 @@ import fechaInhabilSat from './modules/fiscal/fecha-inhabil-sat';
 import noDeducido from './modules/fiscal/no-deducido';
 import noLocalizado from './modules/fiscal/no-localizado';
 import tipoFechaSat from './modules/fiscal/tipo-fecha-sat';
+import proveedorREP from './modules/fiscal/proveedor_rep';
+import informes from './modules/fiscal/informes';
 
 //SUBCONTRATOSESTIMACIONES
 import descuento from './modules/subcontratosEstimaciones/descuento';
@@ -228,6 +230,7 @@ import retencionTipo from './modules/subcontratosEstimaciones/retencion-tipo';
 //IGH
 import usuario from "./modules/igh/usuario";
 import aplicacion from "./modules/igh/aplicacion";
+import tipoCambio from "./modules/igh/tipo-cambio"
 
 //PRESUPUESTO
 import conceptoPresupuesto from './modules/presupuesto/concepto';
@@ -239,6 +242,15 @@ import proyectoMSAO from './modules/remesas/proyecto';
 
 //REPORTES
 import reporte from './modules/reportes/reporte';
+
+//SEGUIMIENTO
+import clienteSeg from './modules/seguimiento/cliente';
+import empresaSeg from './modules/seguimiento/empresa';
+import facturaSeg from './modules/seguimiento/factura';
+import ingresoPartida from './modules/seguimiento/ingreso-partida';
+import monedaSeg from './modules/seguimiento/moneda';
+import proyectoSeg from './modules/seguimiento/proyecto';
+import tipoIngresoSeg from './modules/seguimiento/tipo-ingreso';
 
 //SCI
 import marca from "./modules/sci/marca";
@@ -403,7 +415,7 @@ export default new Vuex.Store({
 
         'igh/usuario': usuario,
         'igh/aplicacion': aplicacion,
-
+        'igh/tipo-cambio' : tipoCambio,
 
         'sci/marca': marca,
         'sci/modelo': modelo,
@@ -435,6 +447,8 @@ export default new Vuex.Store({
         'fiscal/no-deducido' : noDeducido,
         'fiscal/no-localizado' : noLocalizado,
         'fiscal/tipo-fecha-sat' : tipoFechaSat,
+        'fiscal/proveedor-rep' : proveedorREP,
+        'fiscal/informes' : informes,
 
         'entrega-cfdi/solicitud-recepcion-cfdi' : solicitudRecepcionCFDI,
         'entrega-cfdi/tipo-archivo' : tipoArchivo,
@@ -458,6 +472,14 @@ export default new Vuex.Store({
         'remesas/documento-no-localizado' : documentoNoLocalizado,
         'remesas/remesa-folio' : folio,
         'remesas/proyecto' : proyectoMSAO,
+
+        'seguimiento/cliente' : clienteSeg,
+        'seguimiento/empresa' : empresaSeg,
+        'seguimiento/factura' : facturaSeg,
+        'seguimiento/ingreso-partida' : ingresoPartida,
+        'seguimiento/moneda' : monedaSeg,
+        'seguimiento/proyecto' : proyectoSeg,
+        'seguimiento/tipo-ingreso' : tipoIngresoSeg,
 
         'subcontratosEstimaciones/descuento': descuento,
         'subcontratosEstimaciones/penalizacion': penalizacion,

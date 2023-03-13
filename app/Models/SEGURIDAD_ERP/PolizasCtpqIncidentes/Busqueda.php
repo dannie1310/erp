@@ -91,6 +91,28 @@ class Busqueda extends Model
         $this->fecha_hora_inicio = date('Y-m-d H:i:s');
         $this->save();
         $polizas = $this->obtienePolizasRevisar();
+        $this->lote->setCantidadPolizasRevisadas(count($polizas));
+        $this->cantidad_polizas_existentes = $this->empresa_busqueda->getCantidadPolizas($this->ejercicio, $this->periodo);
+        $this->save();
+
+        foreach ($polizas as $poliza) {
+            $relaciones = $poliza->relaciona($this);
+            if(key_exists("relacion_poliza",$relaciones))
+            {
+                if($relaciones["relacion_poliza"]){
+                    $busqueda = New BusquedaDiferenciasPolizas($relaciones, $this);
+                    $busqueda->buscarDiferenciasPolizas();
+                }
+            }
+        }
+        $this->finaliza(count($polizas));
+    }
+
+    public function procesarBusquedaDiferenciasExtendida()
+    {
+        $this->fecha_hora_inicio = date('Y-m-d H:i:s');
+        $this->save();
+        $polizas = $this->obtienePolizasRevisar();
         //$this->cantidad_polizas_revisadas = count($polizas);
         $this->lote->setCantidadPolizasRevisadas(count($polizas));
         $this->cantidad_polizas_existentes = $this->empresa_busqueda->getCantidadPolizas($this->ejercicio, $this->periodo);

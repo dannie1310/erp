@@ -74,6 +74,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendCotizacionEnviadaNotification',
         ],
 
+        'App\Events\EnvioIngresoFactura' => [
+            'App\Listeners\SendIngresaFacturaNotification',
+        ],
+
         'App\Events\AperturaInvitacion' => [
             'App\Listeners\SendAperturaInvitacionNotification',
         ],
@@ -106,6 +110,11 @@ class EventServiceProvider extends ServiceProvider
 
         'App\Events\RechazoPagoAnticipado' => [
             'App\Listeners\SendRechazoPagoAnticipadoNotification',
+        ],
+
+        'App\Events\RegistroNotificacionREP' => [
+            'App\Listeners\SendNotificacionREPNotification',
+            'App\Listeners\GuardaComunicadoNotificacionREP',
         ],
 
 
