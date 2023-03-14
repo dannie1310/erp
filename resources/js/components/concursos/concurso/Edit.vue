@@ -1,7 +1,7 @@
 <template>
     <span>
         <nav>
-            <div  v-if="concurso == ''">
+            <div  v-if="this.cargando">
                 <div class="card">
                     <div class="card-body">
                         <div class="row" >
@@ -19,7 +19,7 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-12">
+                            <div class="col-md-10">
                                 <div class="form-group error-content">
                                     <label for="concurso">Nombre del Concurso:</label>
                                     <input class="form-control"
@@ -29,10 +29,16 @@
                                             id="concurso"
                                             data-vv-as="Nombre del concurso"
                                             v-validate="{required: true, max: 255}"
-                                            v-model="concurso.nombre"
+                                            v-model="concurso_nombre"
                                             :class="{'is-invalid': errors.has('concurso')}">
                                     <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>
                                 </div>
+                            </div>
+                            <div class="col-md-2" style="padding-top: 25px">
+                                <button type="button" @click="update" class="btn btn-primary pull-right">
+                                    <i class="fa fa-save"></i>
+                                    Guardar
+                                </button>
                             </div>
                         </div>
                         <br />
@@ -87,13 +93,10 @@
                     </div>
                     <div class="modal-footer">
                         <div class="pull-right">
-                            <button type="button" class="btn btn-secondary" v-on:click="salir">
+                            <button type="button" class="btn btn-secondary" v-on:click="regresar">
                                 <i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <button type="button" @click="update" class="btn btn-primary">
-                                <i class="fa fa-save"></i>
-                                Guardar
-                            </button>
+                            <cierre-concurso v-bind:id="this.concurso.id" v-bind:texto="'Cerrar'"></cierre-concurso>
                         </div>
                     </div>
                 </div>
@@ -102,7 +105,7 @@
                         <div class="modal-content" >
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i>&nbsp;AGREGAR PARTICIPANTE</h5>
-                                <button type="button" class="close" @click="cerrar" aria-label="Close">
+                                <button type="button" class="close" @click="cerrarModal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
                             </div>
@@ -156,8 +159,8 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" @click="cerrar"><i class="fa fa-close"></i>Cerrar</button>
-                                <button type="button" @click="guardar_participante" class="btn btn-primary">
+                                <button type="button" class="btn btn-secondary" @click="cerrarModal"><i class="fa fa-close"></i>Cerrar</button>
+                                <button type="button" @click="guardaParticipante" class="btn btn-primary">
                                     <i class="fa fa-plus"></i>Agregar
                                 </button>
                             </div>
@@ -171,19 +174,22 @@
 </template>
 
 <script>
+    import CierreConcurso from "./CierreConcurso.vue";
+
     export default {
-        name: "create",
+        name: "edit-concurso",
+        components: {CierreConcurso},
         props: ['id'],
         data(){
             return {
                 cargando: false,
-                concurso : '',
                 participante :
                 {
                     'nombre' : '',
                     'monto' : 0,
                     'es_empresa_hermes' : false
                 },
+                concurso_nombre: '',
                 es_hermes_seleccionado : 0
             }
         },
@@ -193,16 +199,21 @@
         },
         methods: {
             find() {
-                this.cargando = true;
-                this.$store.commit('concursos/concurso/SET_CONCURSO', null);
-                return this.$store.dispatch('concursos/concurso/find', {
-                    id: this.id,
-                    params:{include: []}
-                }).then(data => {
-                    this.concurso = data;
-                    this.checar_participantes_hermes();
-                    this.cargando = false
-                })
+                if(this.concurso == null || this.concurso.id != this.id)
+                {
+                    this.cargando = true;
+                    this.$store.dispatch('concursos/concurso/find', {
+                        id: this.id,
+                        params:{include: []}
+                    }).then(data => {
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                        this.checar_participantes_hermes();
+                        this.concurso_nombre = this.concurso.nombre;
+                        this.cargando = false
+                    })
+                }else{
+                    this.concurso_nombre = this.concurso.nombre;
+                }
             },
             checar_participantes_hermes()
             {
@@ -214,39 +225,23 @@
                 }
             },
             agregar(){
+                this.iniciar();
                 $(this.$refs.modal1).appendTo('body')
                 $(this.$refs.modal1).modal('show');
             },
             quitar(index){
-                if(this.concurso.participantes.data[index].es_empresa_hermes ==  true)
-                {
-                    this.es_hermes_seleccionado = 0;
-                }
-                this.concurso.participantes.data.splice(index, 1);
+                return this.$store.dispatch('concursos/concurso/quitaParticipante', {
+                    id: this.concurso.id,
+                    id_participante: this.concurso.participantes.data[index].id,
+                })
+                    .then(data => {
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                    })
+                    .finally(() => {
+                        this.cerrarModal();
+                    })
             },
-            salir() {
-                this.$router.go(-1);
-            },
-            guardar_participante()
-            {
-                if(this.participante.nombre == '')
-                {
-                   swal('¡Error!', 'Debe agregar un nombre del participante.', 'error')
-                }
-                else if(this.participante.monto <= 0)
-                {
-                   swal('¡Error!', 'Debe agregar un monto.', 'error')
-                }
-                else{
-                    if(this.participante.es_empresa_hermes == true)
-                    {
-                        this.es_hermes_seleccionado = 1;
-                    }
-                    this.concurso.participantes.data.push(this.participante);
-                    this.cerrar();
-                }
-            },
-            cerrar(){
+            iniciar(){
                 this.$validator.reset();
                 this.$validator.errors.clear();
                 this.participante = {
@@ -254,27 +249,58 @@
                     'monto' : 0,
                     'es_empresa_hermes' : false
                 }
+            },
+            cerrarModal(){
+                this.iniciar();
                 $(this.$refs.modal1).modal('hide');
             },
+            guardaParticipante() {
+                if(this.participante.nombre == '')
+                {
+                    swal('¡Error!', 'Debe agregar un nombre del participante.', 'error')
+                }
+                else if(this.participante.monto <= 0)
+                {
+                    swal('¡Error!', 'Debe agregar un monto.', 'error')
+                }
+                else{
+                    return this.$store.dispatch('concursos/concurso/guardaParticipante', {
+                        id: this.id,
+                        data: this.participante
+                    })
+                    .then(data => {
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                    })
+                    .finally(() => {
+                        this.cerrarModal();
+                    })
+                }
+
+            },
             update() {
-                if(this.concurso.nombre == '')
+                if(this.concurso_nombre == '')
                 {
                    swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error')
-                }
-                else if(this.concurso.participantes.data.length == 0)
-                {
-                   swal('¡Error!', 'Debe agregar al menos un participante.', 'error')
                 }
                 else {
                     return this.$store.dispatch('concursos/concurso/update', {
                         id: this.id,
-                        data: this.concurso
+                        data: {nombre : this.concurso_nombre}
                     })
                     .then(data => {
-                        this.salir();
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
                     })
                 }
-			}
+			},
+            regresar() {
+                this.iniciar();
+                this.$router.push({name: 'concursos'});
+            },
+        },
+        computed: {
+            concurso() {
+                return this.$store.getters['concursos/concurso/currentConcurso'];
+            }
         }
     }
 </script>

@@ -40,10 +40,15 @@ class ConcursoParticipante extends Model
      * Scopes
      */
 
+    public function scopeEsHermes($query)
+    {
+        return $query->where("es_empresa_hermes","=",1);
+    }
+
 
     /**
-     * Atributos 
-     */ 
+     * Atributos
+     */
     public function getMontoFormatAttribute()
     {
         return number_format($this->monto,2,".", ",");

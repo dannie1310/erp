@@ -46,15 +46,15 @@ class Concurso extends Model
         return $this->hasMany(ConcursoParticipante::class, 'id_concurso', 'id')
                     ->orderBy('monto', 'ASC');
     }
-    
+
     /**
      * Scopes
      */
 
 
     /**
-     * Atributos 
-     */ 
+     * Atributos
+     */
     public function getEstadoAttribute()
     {
         if($this->estatus == 1)
@@ -78,7 +78,7 @@ class Concurso extends Model
             case 2:
                 return '#00a65a';
                 break;
-                
+
             default:
                 return '#d2d6de';
                 break;
@@ -144,44 +144,11 @@ class Concurso extends Model
     public function editar($data)
     {
         $this->validarEditar($data);
+        DB::connection('seguridad')->beginTransaction();
         try {
-            DB::connection('seguridad')->beginTransaction();
             $this->update([
                 'nombre' => $data['nombre']
             ]);
-            $a = '';
-            foreach($data['participantes']['data'] as $p)
-            {
-                if(array_key_exists('id',$p))
-                {
-                    $a = $a == '' ? (string) $p['id'] : $a . "," . (string) $p['id'];
-                    $participante = $this->participantes()->where('id', $p['id'])->first();
-                    $participante->update([
-                        'nombre' => $p['nombre'],
-                        'monto' => $p['monto'],
-                        'es_empresa_hermes' => $p['es_empresa_hermes'] ? 1 : 0,
-                        'lugar' => 0
-                    ]);
-                }else{
-                    $participantes = $this->participantes()->create([
-                        'id_concurso' => $this->id,
-                        'nombre' => $p['nombre'],
-                        'monto' => $p['monto'],
-                        'es_empresa_hermes' => $p['es_empresa_hermes'] ? 1 : 0,
-                        'lugar' => 0
-                    ]);
-                    $a = $a == '' ? (string) $participantes['id'] : $a . "," . (string) $participantes['id'];
-                }
-            }
-            $participantes = ConcursoParticipante::where('id_concurso', $data['id'])->whereRaw('id not in (' . $a . ')')->get();
-
-            if(count($participantes) > 0)
-            {
-                foreach($participantes as $p)
-                {
-                    $p->delete();
-                }
-            }        
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -190,21 +157,44 @@ class Concurso extends Model
         }
     }
 
-    
+    public function agregaParticipante($data)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try {
+            $participante = $this->participantes()->create([
+                'nombre' => $data['nombre'],
+                'monto' => $data['monto'],
+                'es_empresa_hermes' => $data['es_empresa_hermes'] ? 1 : 0,
+                'lugar' => 0
+            ]);
+            DB::connection('seguridad')->commit();
+            return $participante;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    public function eliminaParticipante($id_participante)
+    {
+        DB::connection('seguridad')->beginTransaction();
+        try {
+            $this->participantes()
+            ->where("id","=",$id_participante)->first()->delete();
+            DB::connection('seguridad')->commit();
+            return null;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
     private function validarEditar($data)
     {
-        $existe = $this->where('nombre', $data['nombre'])->where('id', '!=', $data['id'])->first();
+        $existe = $this->where('nombre', $data['nombre'])->where('id', '!=', $this->id)->first();
         if($existe)
         {
             abort(400, "Este concurso ya existe con el nombre: \n" . $data['nombre'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
-        }
-
-        foreach($data['participantes']['data'] as $p)
-        {
-            if($p['monto'] <= 0)
-            {
-                abort(400, "El participante ".$p['nombre']." no puede tener un monto menor o igual a cero.");
-            }
         }
     }
 
@@ -212,17 +202,23 @@ class Concurso extends Model
     {
         try {
             DB::connection('seguridad')->beginTransaction();
+
             $this->update([
                 'estatus' => 2
             ]);
-            
+
+            if(!count($this->participantes()->esHermes()->get())>0)
+            {
+                abort("500","Debe especificar un participante como empresa del grupo Hermes");
+            }
+
             foreach($this->participantesOrdenados as $key => $p)
             {
                 $p->update([
                     'lugar' => $key + 1,
                     'estatus' => 2
                 ]);
-            }    
+            }
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {

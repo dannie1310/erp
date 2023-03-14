@@ -5088,7 +5088,7 @@ export const routes = [
                 component: require('./components/concursos/concurso/Create').default,
                 meta: {
                     title: 'Registrar Concurso',
-                    breadcrumb: {name: 'REGISTRAR', parent: 'concurso'},
+                    breadcrumb: {name: 'REGISTRAR', parent: 'concursos'},
                     middleware: [auth, permission],
                     permission: ['registrar_concurso'],
                     general: true
@@ -5101,7 +5101,7 @@ export const routes = [
                 component: require('./components/concursos/concurso/Edit').default,
                 meta: {
                     title: 'Editar Concurso',
-                    breadcrumb: { parent: 'concurso', name: 'EDITAR'},
+                    breadcrumb: { parent: 'concursos', name: 'EDITAR'},
                     middleware: [auth, permission],
                     permission: ['editar_concurso'],
                     general: true

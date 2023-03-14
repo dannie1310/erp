@@ -55,4 +55,21 @@ class ConcursoController extends Controller
         return $this->respondWithItem($this->service->cerrar($id));
     }
 
+    public function pdf($id)
+    {
+        return $this->service->pdf($id);
+    }
+
+    public function agregaParticipante(Request $request, $id)
+    {
+        $this->service->agregaParticipante($request->all(), $id);
+        return $this->respondWithItem($this->service->show($id));
+    }
+
+    public function eliminaParticipante($id, $id_participante)
+    {
+        $this->service->eliminaParticipante($id, $id_participante);
+        return $this->respondWithItem($this->service->show($id));
+    }
+
 }

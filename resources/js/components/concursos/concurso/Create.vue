@@ -71,7 +71,7 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                    <button type="button" class="btn btn-secondary" v-on:click="regresar">
                         <i class="fa fa-angle-left"></i>
                         Regresar</button>
                     <button type="button" @click="store" class="btn btn-primary">
@@ -191,9 +191,9 @@
                 }
                 this.participantes.splice(index, 1);
             },
-            salir() {
+            regresar() {
                 this.iniciar();
-                this.$router.go(-1);
+                this.$router.push({name: 'concursos'});
             },
             guardar_participante()
             {
@@ -229,20 +229,24 @@
                 {
                    swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error')
                 }
-                else if(this.participantes.length == 0)
-                {
-                   swal('¡Error!', 'Debe agregar al menos un participante.', 'error')
-                }
                 else {
-                    return this.$store.dispatch('concursos/concurso/store', {
+                    this.$store.dispatch('concursos/concurso/store', {
                     concurso: this.concurso,
                     participantes: this.participantes
                     })
                     .then(data=> {
-                        this.salir();
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                    })
+                    .finally(() => {
+                        this.$router.push({name: 'concurso-edit', params: {id: this.concurso_registrado.id}});
                     })
                 }
 			},
+        },
+        computed: {
+            concurso_registrado() {
+                return this.$store.getters['concursos/concurso/currentConcurso'];
+            }
         }
     }
 </script>

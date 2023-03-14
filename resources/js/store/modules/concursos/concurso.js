@@ -100,7 +100,7 @@ export default{
             return new Promise((resolve, reject) => {
                 swal({
                     title: "¿Estás seguro?",
-                    text: "Actualizar el Concurso",
+                    text: "Actualizar el nombre del concurso",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -135,6 +135,88 @@ export default{
                     });
             });
         },
+        guardaParticipante(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Guardar el participante",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Guardar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                .then((value) => {
+                    if (value) {
+                        axios
+                            .post(URI + payload.id +'/participante', payload.data,{ params: payload.params } )
+                            .then(r => r.data)
+                            .then(data => {
+                                swal("El participante se ha agregado correctamente", {
+                                    icon: "success",
+                                    timer: 1500,
+                                    buttons: false
+                                })
+                                    .then(() => {
+                                        context.commit('UPDATE_CONCURSOS',data);
+                                        resolve(data);
+                                    })
+                            })
+                            .catch(error => {
+                                reject(error);
+                            })
+                    }
+                });
+            });
+        },
+
+        quitaParticipante(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "¿Estás seguro?",
+                    text: "Eliminar el participante",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Eliminar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id +'/participante/'+payload.id_participante, payload.data,{ params: payload.params } )
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("El participante se ha eliminado correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    })
+                                        .then(() => {
+                                            context.commit('UPDATE_CONCURSOS',data);
+                                            resolve(data);
+                                        })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                })
+                        }
+                    });
+            });
+        },
+
         cerrar(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({

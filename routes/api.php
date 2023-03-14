@@ -1955,6 +1955,13 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@cerrar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+
+            $api->group(['prefix' => '{id}/participante'], function ($api){
+                $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@agregaParticipante')->where(['id' => '[0-9]+']);
+                $api->patch('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@eliminaParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+            });
         });
+
     });
 });

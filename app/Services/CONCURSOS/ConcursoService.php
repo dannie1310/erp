@@ -9,6 +9,7 @@
 namespace App\Services\CONCURSOS;
 
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
+use App\PDF\Concurso\InformeCierre;
 use App\Repositories\SEGURIDAD_ERP\Concursos\ConcursoRepository;
 
 class ConcursoService
@@ -58,7 +59,7 @@ class ConcursoService
 
         if($concurso->estatus != 1)
         {
-            abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+            abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
         }
         return $concurso->editar($data);
     }
@@ -66,5 +67,35 @@ class ConcursoService
     public function cerrar($id)
     {
         return $this->repository->show($id)->cerrar();
+    }
+
+    public function pdf($id)
+    {
+        $concurso = $this->repository->show($id);
+        $pdf = new InformeCierre($concurso);
+
+        $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->id, 1);
+    }
+
+    public function agregaParticipante(array $data, $id)
+    {
+        $concurso = $this->repository->show($id);
+
+        if($concurso->estatus != 1)
+        {
+            abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
+        }
+        return $concurso->agregaParticipante($data);
+    }
+
+    public function eliminaParticipante($id, $id_participante)
+    {
+        $concurso = $this->repository->show($id);
+
+        if($concurso->estatus != 1)
+        {
+            abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
+        }
+        return $concurso->eliminaParticipante($id_participante);
     }
 }
