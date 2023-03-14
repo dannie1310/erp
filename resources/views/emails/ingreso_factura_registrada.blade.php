@@ -49,7 +49,7 @@
         <h3>Factura {{ $factura->proyecto->proyecto }}</h3>
     </div>
     <br>
-    <span style="font-weight:bold; color: #000000">Se le notifica que {{ auth()->user()->nombre }}  {{ auth()->user()->apaterno }}  {{auth()->user()->amaterno }} ha registrado una nueva factura</span>
+    <span style="font-weight:bold; color: #000000">Se le notifica que {{ $factura->registro->nombre_completo }} ha registrado una nueva factura</span>
     <br><br>
     <table cellpadding="0" cellspacing="0" style="width:600px;" id="cuerpo">
         <tr>

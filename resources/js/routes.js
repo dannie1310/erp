@@ -4168,6 +4168,19 @@ export const routes = [
                         }
                     },
                     {
+                        path: ':id/notificaciones',
+                        name: 'historico-notificacion-rep',
+                        props:true,
+                        component: require('./components/fiscal/cfd/rep-pendientes/notificacion/Index.vue').default,
+                        meta: {
+                            title: 'Listado de Notificaciones Enviadas',
+                            breadcrumb: {name: 'Notificaciones', parent: 'informe-rep-faltantes-proveedor'},
+                            middleware: [auth, permission],
+                            permission: ['consultar_informe_cfd_x_empresa_x_mes'],
+                            general: true
+                        }
+                    },
+                    {
                         path: ':id/envio-comunicado',
                         //props:true,
                         props: route => ({
