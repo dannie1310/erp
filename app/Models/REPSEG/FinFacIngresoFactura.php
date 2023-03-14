@@ -274,10 +274,13 @@ class FinFacIngresoFactura extends Model
                 'motivo_cancelacion' => $motivo,
                 'fecha_cancelacion' => date('Y-m-d H:i:s')
             ]);
-            $this->CFDI->update([
-                'estado' => -1,
-                'cancelado' => -1
-            ]);
+            if($this->CFDI)
+            {
+                $this->CFDI->update([
+                    'estado' => -1,
+                    'cancelado' => -1
+                ]);
+            }
             DB::connection('repseg')->commit();
             return $this;
         } catch (\Exception $e) {
