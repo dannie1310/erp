@@ -88,7 +88,12 @@
                                                     <th class="index_corto">#</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
-                                                    <th></th>
+                                                    <th style="text-align:center; vertical-align:inherit;">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="desactivar" v-model="desactivar">
+                                                            <label class="custom-control-label" for="desactivar"></label>
+                                                        </div>
+                                                    </th>
                                                     <th >Cantidad Solicitada</th>
                                                     <th >Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
@@ -428,7 +433,8 @@
                 vigencia: 0,
                 descuento: [],
                 enable: [],
-                tasa_iva: 16
+                tasa_iva: 16,
+                desactivar: true,
             }
         },
         mounted() {
@@ -677,6 +683,15 @@
                     this.sucursal = (busqueda.sucursales.data.length) ? true : false;
                 }
             },
+            desactivar(value)
+            {
+                var x = 0;
+                while(x < this.contrato.conceptos.data.length)
+                {
+                    this.enable[x] = value;
+                    x++;
+                }
+            }
         }
     }
 </script>

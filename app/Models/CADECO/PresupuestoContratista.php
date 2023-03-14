@@ -427,6 +427,11 @@ class PresupuestoContratista extends Transaccion
         }
         return $colspan;
     }
+
+    public function getTasaIvaAttribute(){
+        return number_format(($this->impuesto / $this->subtotal), 0, '', '');
+    }
+
     /**
      * Scopes
     */

@@ -228,6 +228,10 @@
                                 <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                             </div>
                             <div class=" col-md-12" align="right">
+                                <label class="col-sm-2 col-form-label">Tasa de IVA:</label>
+                                <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(this.presupuesto.tasa_iva)).formatMoney(4,'.',',')}}</label>
+                            </div>
+                            <div class=" col-md-12" align="right">
                                 <label class="col-sm-2 col-form-label">IVA:</label>
                                 <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
                             </div>
@@ -641,7 +645,7 @@
             },
             iva()
             {
-                return this.subtotal * 0.16;
+                return this.subtotal * (this.presupuesto.tasa_iva/100);
             },
             total()
             {
