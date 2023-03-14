@@ -435,7 +435,7 @@ $api->version('v1', function ($api) {
             $api->post('{id_proveedor}/obtener-lista-cfdi-costos-cfdi-costos-balanza', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerListaCFDICostosCFDICostosBalanza')->where(['id_proveedor' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargaLayout');
             $api->get('descargar-comunicados', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarComunicados');
-            $api->get('informe-rep-pendientes-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPPDF');
+            $api->get('informe-rep-pendientes-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorPDF');
             $api->get('informe-rep-pendientes-proveedor-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorEmpresaPDF');
             $api->get('informe-rep-pendientes-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaPDF');
             $api->get('informe-rep-pendientes-empresa-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaProveedorPDF');
@@ -472,6 +472,11 @@ $api->version('v1', function ($api) {
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformePDF');
             $api->get('obtener-informe/empresa-proyecto/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformeEmpresaProyectoPDF');
         });
+
+        $api->group(['prefix' => 'notificacion_rep'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NotificacionREPController@paginate');
+        });
+
         $api->group(['prefix' => 'proveedor-rep'], function ($api){
             //proveedores-rep-pendiente-xls
             //            $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
@@ -1703,6 +1708,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@store');
             $api->post('CFDI', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cargarArchivo');
+            $api->patch('{id}/envioCorreo', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@envioCorreo')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix'=>'ingreso-partida'], function ($api){

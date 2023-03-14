@@ -110,14 +110,14 @@ class FacturaService
                 $factura = $this->repository->create($data);
                 $data['xml_file'] = explode("base64,", $data['xml'])[1];
                 $this->guardarXML($data);
-                $this->guardarPDF($data);
+                $this->guardarPDF($data, $factura->idfactura);
                 $this->repository->registrarXML($data, $factura);
                 if($factura){
                     event(new EnvioIngresoFactura($factura, $data['archivo_pdf'], $data['xml']));
                 }
             }else{
                 $factura = $this->repository->create($data);
-                $this->guardarPDF($data);
+                $this->guardarPDF($data,$factura->idfactura);
                 if($factura){
                     event(new EnvioIngresoFactura($factura, $data['archivo_pdf'], null));
                 }
@@ -244,10 +244,54 @@ class FacturaService
         }
     }
 
-    private function guardarPDF($datos)
+    private function guardarPDF($datos, $idfactura)
     {
         $xml_split = explode('base64,', $datos['archivo_pdf']);
         $xml = base64_decode($xml_split[1]);
-        Storage::disk('pdf_emitidos')->put($datos["uuid"] . ".pdf", $xml);
+        if(array_key_exists('uuid', $datos)){
+            Storage::disk('pdf_emitidos')->put($datos["uuid"] . ".pdf", $xml);
+        }else{
+            Storage::disk('pdf_emitidos')->put($idfactura . ".pdf", $xml);
+        }
+    }
+
+    public function envioCorreo($id)
+    {
+        $pdf = null;
+        $xml = null;
+        $factura = $this->repository->show($id);
+        if($factura->uuid != null)
+        {
+            $pdf = $this->getBase64PDF($factura->uuid);
+            if($pdf == null)
+            {
+                $pdf = $this->getBase64PDF($factura->idfactura);
+            }
+            $xml = $this->getBase64XML($factura->uuid);
+        }else{
+            $pdf = $this->getBase64PDF($factura->idfactura);   
+        }
+        event(new EnvioIngresoFactura($factura, $pdf, $xml));
+        return $factura;
+    }
+
+    private function getBase64PDF($nombre)
+    {
+        if (Storage::disk('pdf_emitidos')->exists($nombre.'.pdf')) 
+        {
+            $archivo = Storage::disk("pdf_emitidos")->get($nombre.'.pdf');
+            return "data:application/pdf;base64,".base64_encode($archivo); 
+        } 
+        return null;
+    }
+
+    private function getBase64XML($uuid)
+    {
+        if (Storage::disk('xml_emitidos')->exists($uuid.'.xml')) 
+        {
+            $archivo = Storage::disk("xml_emitidos")->get($uuid.".xml");
+            return "data:text/xml;base64,".base64_encode($archivo); 
+        } 
+        return null;
     }
 }

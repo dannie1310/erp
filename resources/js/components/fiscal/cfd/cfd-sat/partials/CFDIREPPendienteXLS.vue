@@ -1,6 +1,6 @@
 <template>
     <span>
-        <button @click="descargar()" type="button" class="btn btn-app btn-outline-success pull-right float-right" :disabled="cargando" title="Descargar Layout">
+        <button @click="descargar()" type="button" class="btn btn-app pull-right float-right" :disabled="cargando||cargando_padre" title="Descargar Layout">
             <i class="fa fa-download"></i>Descargar Excel
         </button>
     </span>
@@ -9,7 +9,7 @@
 <script>
     export default {
         name: "cfdi-rep-pendiente-xls",
-        props: ['query'],
+        props: ['query','cargando_padre'],
         data(){
             return{
                 cargando: false,

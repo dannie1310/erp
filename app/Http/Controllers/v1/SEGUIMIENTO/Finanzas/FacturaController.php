@@ -43,7 +43,8 @@ class FacturaController extends Controller
         $this->middleware('permisoGlobal:cancelar_factura_cuenta_x_cobrar')->only('cancelar');
         $this->middleware('permisoGlobal:consultar_factura_cuenta_x_cobrar')->only(['show','paginate','index','find']);
         $this->middleware('permisoGlobal:registrar_factura_cuenta_x_cobrar')->only(['store','cargarArchivo']);
-
+        $this->middleware('permisoGlobal:reenviar_email_factura_cuenta_x_cobrar')->only('envioCorreo');
+    
         $this->service = $service;
         $this->transformer = $transformer;
         $this->fractal = $fractal;
@@ -57,5 +58,9 @@ class FacturaController extends Controller
     public function cargarArchivo(Request $request){
         $respuesta = $this->service->cargarArchivo($request);
         return response()->json($respuesta, 200);
+    }
+
+    public function envioCorreo(Request $request, $id){
+        return $this->service->envioCorreo($id);
     }
 }
