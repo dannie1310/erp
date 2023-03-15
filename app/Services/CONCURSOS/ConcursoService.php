@@ -77,7 +77,7 @@ class ConcursoService
         $concurso = $this->repository->show($id);
         $pdf = new InformeCierre($concurso);
 
-        $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->id, 1);
+        $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->nombre_archivo, 1);
     }
 
     public function agregaParticipante(array $data, $id)

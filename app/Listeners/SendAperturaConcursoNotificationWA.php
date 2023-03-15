@@ -32,7 +32,9 @@ class SendAperturaConcursoNotificationWA
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $usuarios = Usuario::suscripcion($suscripciones)->get();
         $ruta_api = "concursos/concurso-scope/".$event->concurso->id."/pdf";
+        $ruta_api_img = "concursos/concurso-scope/".$event->concurso->id."/grafica-png";
         $mediaUrl = "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/".$ruta_api."?access_token=";
+        $mediaUrlImg = "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/".$ruta_api_img."?access_token=";
         $body = "Se le informa que la apertura del concurso ".$event->concurso->nombre." ha finalizado teniendo los siguientes resultados:"
             ."\nOferta Ganadora: ".$event->concurso->participanteGanador->nombre ." ".$event->concurso->participanteGanador->monto_format
             ."\nOferta Hermes: " .$event->concurso->participanteHermes->nombre ." ".$event->concurso->participanteHermes->monto_format
@@ -60,6 +62,11 @@ class SendAperturaConcursoNotificationWA
                 'body' => "Informe Apertura de Concurso",
                 'mediaUrl' => $mediaUrl.$token,
             ));
+            $client->messages->create($recipient, array(
+                'from' => "whatsapp:$twilio_whatsapp_number",
+                'body' => "Apertura de Concurso " . $event->concurso->nombre,
+                'mediaUrl' => $mediaUrlImg.$token,
+            ));
         }
 
         $recipient ="whatsapp:". $event->concurso->usuarioFinalizoApertura->numero_celular;
@@ -79,6 +86,11 @@ class SendAperturaConcursoNotificationWA
             'from' => "whatsapp:$twilio_whatsapp_number",
             'body' => "Informe Apertura de Concurso",
             'mediaUrl' => $mediaUrl.$token,
+        ));
+        $client->messages->create($recipient, array(
+            'from' => "whatsapp:$twilio_whatsapp_number",
+            'body' => "Apertura de Concurso " . $event->concurso->nombre,
+            'mediaUrl' => $mediaUrlImg.$token,
         ));
 
     }
