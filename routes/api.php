@@ -1958,8 +1958,11 @@ $api->version('v1', function ($api) {
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
 
             $api->group(['prefix' => '{id}/participante'], function ($api){
-                $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@agregaParticipante')->where(['id' => '[0-9]+']);
-                $api->patch('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@eliminaParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@storeParticipante')->where(['id' => '[0-9]+']);
+                $api->delete('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@destroyParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->get('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@showParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->patch('{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@updateParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+
             });
         });
 

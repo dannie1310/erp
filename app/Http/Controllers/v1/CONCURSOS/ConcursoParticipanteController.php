@@ -5,15 +5,14 @@ namespace App\Http\Controllers\v1\CONCURSOS;
 
 
 use App\Http\Controllers\Controller;
-use App\Http\Transformers\CONCURSOS\ConcursoTransformer;
+use App\Http\Transformers\CONCURSOS\ConcursoParticipanteTransformer;
 use App\Models\SEGURIDAD_ERP\Concursos\ConcursoParticipante;
 use App\Services\CONCURSOS\ConcursoParticipanteService;
-use App\Services\CONCURSOS\ConcursoService;
 use App\Traits\ControllerTrait;
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
 
-class ConcursoController extends Controller
+class ConcursoParticipanteController extends Controller
 {
     use ControllerTrait;
 
@@ -23,64 +22,50 @@ class ConcursoController extends Controller
     protected $fractal;
 
     /**
-     * @var ConcursoService Service
+     * @var ConcursoParticipanteService
      */
     protected $service;
 
     /**
-     * @var TagTransformer
+     * @var ConcursoParticipanteTransformer
      */
     protected $transformer;
 
     /**
-     * TagController constructor.
      * @param Manager $fractal
-     * @param ConcursoService $service
-     * @param ConcursoTransformer $transformer
+     * @param ConcursoParticipanteService $service
+     * @param ConcursoParticipanteTransformer $transformer
      */
-    public function __construct(Manager $fractal, ConcursoService $service, ConcursoTransformer $transformer)
+    public function __construct(Manager $fractal, ConcursoParticipanteService $service, ConcursoParticipanteTransformer $transformer)
     {
         $this->middleware('auth:api');
 
         $this->middleware('permisoGlobal:consultar_concurso')->only(['show', 'paginate']);
-        $this->middleware('permisoGlobal:registrar_concurso')->only('store');
+        $this->middleware('permisoGlobal:editar_concurso')->only('store');
         $this->middleware('permisoGlobal:editar_concurso')->only('update');
-        $this->middleware('permisoGlobal:cerrar_concurso')->only('cerrar');
+        $this->middleware('permisoGlobal:editar_concurso')->only('destroy');
 
         $this->fractal = $fractal;
         $this->service = $service;
         $this->transformer = $transformer;
     }
-
-    public function cerrar($id)
+    public function store(Request $request)
     {
-        return $this->respondWithItem($this->service->cerrar($id));
-    }
-
-    public function pdf($id)
-    {
-        return $this->service->pdf($id);
-    }
-
-    public function storeParticipante(Request $request, $id)
-    {
-        $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
-        $servicioParticipante->store($request->all());
-        return $this->respondWithItem($this->service->show($id));
+        $participante = $this->service->store($request->all());
+        return $this->respondWithItem($participante->concurso);
     }
 
     public function updateParticipante(Request $request, $id, $id_participante)
     {
         $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
         $servicioParticipante->update($request->all(), $id_participante);
+
         return $this->respondWithItem($this->service->show($id));
     }
 
-    public function destroyParticipante($id, $id_participante)
+    public function eliminaParticipante($id, $id_participante)
     {
-        //$this->service->eliminaParticipante($id, $id_participante);
-        $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
-        $servicioParticipante->destroy($id_participante);
+        $this->service->eliminaParticipante($id, $id_participante);
         return $this->respondWithItem($this->service->show($id));
     }
 

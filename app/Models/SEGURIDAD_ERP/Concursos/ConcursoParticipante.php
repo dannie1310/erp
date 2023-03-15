@@ -33,7 +33,7 @@ class ConcursoParticipante extends Model
      */
     public function concurso()
     {
-        return $this->belongsTo(Concurso::class, 'id', 'id_concurso');
+        return $this->belongsTo(Concurso::class, 'id_concurso', 'id');
     }
 
     /**
@@ -62,5 +62,128 @@ class ConcursoParticipante extends Model
      /**
       * Métodos
       */
+
+    public function editar($data)
+    {
+        $this->validarEditar($data);
+        DB::connection('seguridad')->beginTransaction();
+        try {
+            $this->update([
+                'nombre' => $data['nombre'],
+                'monto' => $data['monto'],
+                'es_empresa_hermes' => $data['es_empresa_hermes']
+            ]);
+
+            if($this->es_empresa_hermes)
+            {
+                $participantes = $this->concurso->participantes()->where("id","!=",$this->id)
+                    ->where("es_empresa_hermes","=","1")
+                    ->get();
+                foreach ($participantes as $participante)
+                {
+                    $participante->es_empresa_hermes = 0;
+                    $participante->save();
+                }
+            }
+
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+    }
+
+    private function validarEditar($data)
+    {
+        if($this->concurso->estatus != 1)
+        {
+            abort(400, "El concurso ". $this->concurso->nombre . " ya se encuentra cerrado, no es posible editar al participante.");
+        }
+        $existe = $this->where('nombre', $data['nombre'])
+            ->where("id_concurso","=",$this->concurso)
+            ->first();
+        if($existe)
+        {
+            abort(400, "Este nombre de participante ya existe \n\nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
+        }
+    }
+
+    public function registrar($data)
+    {
+        $this->validarRegistroNuevo($data);
+        try {
+            DB::connection('seguridad')->beginTransaction();
+
+            if($data["es_empresa_hermes"])
+            {
+                $data["es_empresa_hermes"] = 1;
+            } else {
+                $data["es_empresa_hermes"] = 0;
+            }
+
+            $participante = $this->create($data);
+
+            if($participante->es_empresa_hermes)
+            {
+                $participantes = $participante->concurso->participantes()->where("id","!=",$participante->id)
+                    ->where("es_empresa_hermes","=","1")
+                    ->get();
+                foreach ($participantes as $participante)
+                {
+                    $participante->es_empresa_hermes = 0;
+                    $participante->save();
+
+                }
+            }
+
+            DB::connection('seguridad')->commit();
+            return $participante;
+
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
+    }
+
+    public function validarRegistroNuevo($data)
+    {
+        $existe = $this->where('nombre', $data['nombre'])
+            ->where("id_concurso","=",$data["id_concurso"])
+            ->first();
+        if($existe)
+        {
+            abort(400, "Este participante ya ha sido registrado. \nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        }
+
+        if($data['monto'] <= 0)
+        {
+            abort(400, "El participante ".$data['nombre']." no puede tener un monto menor o igual a cero.");
+        }
+    }
+
+    public function eliminar()
+    {
+        if($this->concurso->estatus != 1)
+        {
+            abort(400, "El concurso ". $this->concurso->nombre . " ya se encuentra cerrado, no es posible editar al participante.");
+        }
+
+        DB::connection('seguridad')->beginTransaction();
+        try {
+
+            $this->delete();
+
+            DB::connection('seguridad')->commit();
+            return $this;
+        } catch (\Exception $e) {
+            DB::connection('seguridad')->rollBack();
+            abort(400, $e->getMessage());
+        }
+
+
+    }
+
 
 }
