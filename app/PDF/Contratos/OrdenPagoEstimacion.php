@@ -113,13 +113,13 @@ class OrdenPagoEstimacion extends Rotation
     }
 
     function Footer() {
-        if (!App::environment('production')) {
-            $this->SetFont('Arial','B',80);
-            $this->SetTextColor(155,155,155);
-            $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
-            $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
-            $this->SetTextColor('0,0,0');
-        }
+        // if (!App::environment('production')) {
+        //     $this->SetFont('Arial','B',80);
+        //     $this->SetTextColor(155,155,155);
+        //     $this->RotatedText(5,20,utf8_decode("MUESTRA"),45);
+        //     $this->RotatedText(6,26,utf8_decode("SIN VALOR"),45);
+        //     $this->SetTextColor('0,0,0');
+        // }
         $this->firmas();
         $this->SetY($this->GetPageHeight() - 1);
         $this->SetFont('Arial', '', 6);
@@ -383,6 +383,13 @@ class OrdenPagoEstimacion extends Rotation
         $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención IVA :'), 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.10, 0.4, $this->estimacion->iva_retenido_porcentaje, 'B', 0, 'L');
         $this->CellFitScale(($this->w - 2) * 0.15, 0.4, $this->estimacion->iva_retenido_format, 'B', 1, 'R');
+        $this->Ln(0.1);
+
+        $this->SetX(($this->w) * 0.45);
+        $this->SetFont('Arial', '', 8);
+        $this->Cell(($this->w - 2) * 0.30, 0.4, utf8_decode('Retención ISR :'), 0, 0, 'R');
+        $this->CellFitScale(($this->w - 2) * 0.10, 0.4, $this->estimacion->porcentaje_isr_retenido_format, 'B', 0, 'L');
+        $this->CellFitScale(($this->w - 2) * 0.15, 0.4, $this->estimacion->monto_isr_retenido_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
 
