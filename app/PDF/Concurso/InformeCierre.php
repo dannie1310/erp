@@ -28,6 +28,7 @@ class InformeCierre extends Rotation
         $this->AddPage();
         $this->partidasTitle();
         $this->partidas();
+        $this->resumen();
     }
 
     function SetTextColor($r, $g=null, $b=null)
@@ -47,7 +48,6 @@ class InformeCierre extends Rotation
         if(($r==0 && $g==0 && $b==0) || $g===null) {
 
             $this->TextColor = sprintf('%.3F g', $datos[0] / 255);
-            //dd(1,$this->TextColor);
         }
         else {
             $this->TextColor = sprintf('%.3F %.3F %.3F rg'
@@ -55,7 +55,6 @@ class InformeCierre extends Rotation
                 , ($g/255)
                 , ($b/255)
             );
-            //dd(2,$this->TextColor);
         }
         $this->ColorFlag = ($this->FillColor!=$this->TextColor);
     }
@@ -86,13 +85,21 @@ class InformeCierre extends Rotation
         $this->logo();
         $this->setXY(3.53, 1.2);
         $this->SetTextColor('0', '0', '0');
-        $this->SetFont('Helvetica', '', 12);
-        $this->Cell(17., .5, utf8_decode('Resultados de Apretura de Concurso') , 0, 1, 'C');
+        $this->SetFont('Helvetica', '', 13);
+        $this->Cell(17., .5, utf8_decode('Resultados de Apertura de Concurso') , 0, 1, 'C');
         $this->setX(3.53);
-        $this->SetFont('Helvetica', 'B', 12);
-
+        $this->SetFont('Helvetica', 'B', 13);
         $this->Cell(17.2, .5, utf8_decode($this->concurso->nombre) , 0, 1, 'C');
+    }
 
+    function Footer() {
+        $this->SetY($this->GetPageHeight() - 1);
+        $this->SetTextColor('0', '0', '0');
+        $this->SetFont('Arial', '', 6);
+        $this->Cell(6.5, .4, utf8_decode('Fecha de Consulta ').date("d/m/Y H:i:s"), 0, 0, 'L');
+        $this->SetFont('Arial', 'B', 6);
+        $this->Cell(29, .4, '', 0, 0, 'C');
+        $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
     public function partidasTitle()
@@ -148,6 +155,26 @@ class InformeCierre extends Rotation
             ]);
             $i++;
         }
+
+    }
+
+    public function resumen()
+    {
+        $this->SetFont('Helvetica', 'B', 13);
+        $this->SetFills('117,117,117');
+
+        $this->ln(1);
+        $this->cell(19.7,.5,utf8_decode("Resúmen"),0,1,"C", true);
+        $this->ln();
+        $this->SetFont('Arial', 'B', 12);
+        $this->cell(3,.5,utf8_decode("Promedio:"),0,0,"L");
+        $this->SetFont('Arial', '', 12);
+        $this->cell(5,.5, $this->concurso->promedio_format,0,0,"R");
+        $this->cell(.7,.5);
+        $this->SetFont('Arial', 'B', 12);
+        $this->cell(6,.5,utf8_decode("Distancia al Primer Lugar:"),0,0,"L");
+        $this->SetFont('Arial', '', 12);
+        $this->cell(5,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,1,"R");
 
     }
 

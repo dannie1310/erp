@@ -59,7 +59,26 @@ class ConcursoParticipante extends Model
         return $this->es_empresa_hermes == 1 ? true : false;
     }
 
-     /**
+    public function getDistanciaPrimerLugarAttribute()
+    {
+        $monto_primer_lugar = $this->concurso->participantes()->orderBy("monto","asc")->pluck("monto")->first();
+        $diferencia = $this->monto-$monto_primer_lugar;
+        return $diferencia;
+    }
+
+    public function getDistanciaPrimerLugarFormatAttribute()
+    {
+        return number_format($this->distancia_primer_lugar,2,".", ",");
+    }
+
+    public function getDistanciaPrimerLugarPorcentajeAttribute()
+    {
+        $monto_primer_lugar = $this->concurso->participantes()->orderBy("monto","asc")->pluck("monto")->first();
+        return number_format($this->distancia_primer_lugar * 100 / $monto_primer_lugar,2) ."%";
+    }
+
+
+    /**
       * Métodos
       */
 

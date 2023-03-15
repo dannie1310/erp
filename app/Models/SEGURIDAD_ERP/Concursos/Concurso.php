@@ -47,6 +47,12 @@ class Concurso extends Model
                     ->orderBy('monto', 'ASC');
     }
 
+    public function participanteHermes()
+    {
+        return $this->hasOne(ConcursoParticipante::class, 'id_concurso', 'id')
+            ->esHermes();
+    }
+
     /**
      * Scopes
      */
@@ -89,6 +95,21 @@ class Concurso extends Model
     {
         $date = date_create($this->fecha_hora_inicio_apertura);
         return date_format($date,"d/m/Y");
+    }
+
+    public function getPromedioAttribute($key)
+    {
+        $total = $this->participantes()->sum("monto");
+        $cantidad = count($this->participantes);
+        if(count($this->participantes)>0)
+        {
+            return $total / $cantidad;
+        }
+    }
+
+    public function getPromedioFormatAttribute()
+    {
+        return number_format($this->promedio,2,".", ",");
     }
 
     /**
