@@ -428,8 +428,9 @@ class PresupuestoContratista extends Transaccion
         return $colspan;
     }
 
-    public function getTasaIvaAttribute(){
-        return number_format(($this->impuesto / $this->subtotal), 0, '', '');
+    public function getTasaIvaAttribute()
+    {
+        return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
     }
 
     /**
@@ -535,7 +536,7 @@ class PresupuestoContratista extends Transaccion
                     'id_empresa' => $data['id_proveedor'],
                     'id_sucursal' => $data['id_sucursal'],
                     'monto' => $data['total'],
-                    'impuesto' => $data['impuesto'],
+                    'impuesto' => number_format($data['impuesto'], 4, '.', ''),
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observacion'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
@@ -602,7 +603,7 @@ class PresupuestoContratista extends Transaccion
                 }
             }
             DB::connection('cadeco')->commit();
-                return $this;
+            return $presupuesto;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
@@ -699,8 +700,8 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['porcentaje_descuento_global'] = $presupuesto->PorcentajeDescuento ? $presupuesto->PorcentajeDescuento : '-';
             $presupuestos[$cont]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
             $presupuestos[$cont]['subtotal'] = $presupuesto->subtotal_calculado;
-            $presupuestos[$cont]['iva'] = $presupuesto->impuesto_calculado;
-            $presupuestos[$cont]['total'] = $presupuesto->monto_calculado;
+            $presupuestos[$cont]['iva'] = $presupuesto->impuesto;
+            $presupuestos[$cont]['total'] = $presupuesto->subtotal_calculado + $presupuesto->impuesto;
             $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
             foreach ($presupuesto->partidas as $p) {

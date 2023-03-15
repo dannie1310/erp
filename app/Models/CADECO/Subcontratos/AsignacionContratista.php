@@ -586,9 +586,9 @@ class AsignacionContratista extends Model
 
                 $importe = ($partida->presupuestoPartida->precio_unitario_descuento_moneda_original) * $partida->cantidad_asignada;
                 $importe_descuento_general = $importe - ($importe * $subcontrato->PorcentajeDescuento/100);
-
+                $tasa_iva = $partida->presupuestoPartida->presupuesto->tasa_iva;
                 $subtotal = $importe_descuento_general;
-                $impuesto = $subtotal  * 0.16;
+                $impuesto = $subtotal  * ($tasa_iva / 100);
                 $monto = $subtotal + $impuesto;
 
                 $subcontrato->monto = $subcontrato->monto + $monto;

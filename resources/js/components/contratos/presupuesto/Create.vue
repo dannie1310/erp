@@ -667,7 +667,7 @@
             },
             iva()
             {
-                return this.subtotal * this.tasa_iva;
+                return this.subtotal * (this.tasa_iva / 100);
             },
             total()
             {

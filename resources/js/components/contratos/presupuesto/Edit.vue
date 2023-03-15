@@ -227,9 +227,18 @@
                                 <label class="col-sm-2 col-form-label">Subtotal:</label>
                                 <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                             </div>
-                            <div class=" col-md-12" align="right">
-                                <label class="col-sm-2 col-form-label">Tasa de IVA:</label>
-                                <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(this.presupuesto.tasa_iva)).formatMoney(4,'.',',')}}</label>
+                            <div class=" col-md-10" align="right">
+                                <label class="col-md-2 col-form-label">Tasa de IVA:</label>
+                            </div>
+                            <div class=" col-md-2 p-1" align="right">
+                                <input
+                                    type="text"
+                                    name="tasa_iva"
+                                    v-model="presupuesto.tasa_iva"
+                                    v-validate="{required: true, min_value:0, regex: /^[0-9]\d*$/}"
+                                    class="col-md-6 form-control"
+                                    id="tasa_iva"
+                                    :class="{'is-invalid': errors.has('tasa_iva')}">
                             </div>
                             <div class=" col-md-12" align="right">
                                 <label class="col-sm-2 col-form-label">IVA:</label>
@@ -464,6 +473,10 @@
                     ]}
                 }).then(data => {
                     this.presupuesto = data;
+                    if(this.xls)
+                    {
+                        this.presupuesto.tasa_iva = this.xls.tasa
+                    }
                     this.fecha = data.fecha;
                     this.ordenar();
                     this.cargando = false;

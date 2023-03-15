@@ -178,10 +178,11 @@ class PresupuestoContratistaService
             'tc_usd' => $celdas[$x + 5][6],
             'tc_euro' => $celdas[$x + 6][6],
             'tc_libra' => $celdas[$x + 7][6],
-            'anticipo' => $celdas[$x + 13][6],
-            'credito' => $celdas[$x + 14][6],
-            'vigencia' => $celdas[$x + 15][6],
-            'observaciones_generales' => $celdas[$x + 16][6],
+            'tasa' => $celdas[$x + 10][6],
+            'anticipo' => $celdas[$x + 14][6],
+            'credito' => $celdas[$x + 15][6],
+            'vigencia' => $celdas[$x + 16][6],
+            'observaciones_generales' => $celdas[$x + 17][6],
             'partidas' => $partidas
         ];
 
