@@ -80,6 +80,11 @@
                                     <td style="text-align: right">{{value.estimacion.retencion_iva_format}}</td>
                                 </tr>
                                 <tr>
+                                    <th style="text-align: left">Retención de ISR</th>
+                                    <td>{{value.estimacion.porcentaje_isr_retenido}} %</td>
+                                    <td style="text-align: right">{{value.estimacion.monto_isr_retenido_format}}</td>
+                                </tr>
+                                <tr>
                                     <th style="text-align: left" colspan="2">Total</th>
                                     <td style="text-align: right">{{value.estimacion.total_orden_pago}}</td>
                                 </tr>
