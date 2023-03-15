@@ -324,7 +324,7 @@
                     this.participante = {
                         'nombre' : _self.participante_store.nombre,
                         'monto' :  _self.participante_store.monto,
-                        'es_empresa_hermes' : _self.participante_store.es_empresa_hermes,
+                        'es_empresa_hermes' : (_self.participante_store.es_empresa_hermes == 0 || _self.participante_store.es_empresa_hermes == false)?false:true,
                         'id' : _self.participante_store.id
                     };
                     this.$validator.reset();
