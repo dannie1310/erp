@@ -189,14 +189,14 @@ class InformeCierre extends Rotation
         $this->SetFills('117,117,117');
 
         $this->ln();
-        $this->SetFont('Arial', 'B', 12);
+        $this->SetFont('Arial', 'B', 10);
         $this->cell(3,.5,utf8_decode("Promedio:"),0,0,"L");
-        $this->SetFont('Arial', '', 12);
-        $this->cell(5,.5, $this->concurso->promedio_format,0,0,"R");
+        $this->SetFont('Arial', '', 10);
+        $this->cell(3,.5, $this->concurso->promedio_format,0,0,"R");
         $this->cell(.7,.5);
-        $this->SetFont('Arial', 'B', 12);
-        $this->cell(6,.5,utf8_decode("Distancia al Primer Lugar:"),0,0,"L");
-        $this->SetFont('Arial', '', 12);
+        $this->SetFont('Arial', 'B', 10);
+        $this->cell(8,.5,utf8_decode("Diferencia Oferta Hermes vs Oferta Ganadora:"),0,0,"L");
+        $this->SetFont('Arial', '', 10);
         $this->cell(5,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,1,"R");
     }
 
@@ -296,7 +296,7 @@ class InformeCierre extends Rotation
         $graph->Add($band);
 
         $graph->title->Set("Ofertas de Licitación para Proyecto ".$this->concurso->nombre);
-
+        @unlink(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
         $graph->Stroke(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
 
     }

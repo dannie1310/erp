@@ -124,8 +124,9 @@ class ConcursoParticipante extends Model
         {
             abort(400, "El concurso ". $this->concurso->nombre . " ya se encuentra cerrado, no es posible editar al participante.");
         }
-        $existe = $this->where('nombre', $data['nombre'])
-            ->where("id_concurso","=",$this->concurso)
+        $existe = $this->where('nombre',"=", $data['nombre'])
+            ->where("id_concurso","=",$this->concurso->id)
+            ->where("id","!=",$this->id)
             ->first();
         if($existe)
         {

@@ -38,6 +38,13 @@ $api->version('v1', function ($api) {
         $api->get('solicitud-pago-anticipado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@indexVista');
     });
 
+    $api->group(['middleware' => ['auth:api','scope:consultar-formato-apertura-concurso'], 'prefix' => 'concursos'], function ($api) {
+        $api->group(['prefix' => 'concurso-scope'], function ($api){
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
+        });
+    });
+
 
     /**
      * DBO
@@ -1956,6 +1963,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@cerrar')->where(['id' => '[0-9]+']);
             $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
 
             $api->group(['prefix' => '{id}/participante'], function ($api){
                 $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@storeParticipante')->where(['id' => '[0-9]+']);

@@ -116,6 +116,10 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\SendNotificacionREPNotification',
             'App\Listeners\GuardaComunicadoNotificacionREP',
         ],
+        'App\Events\FinalizacionDeAperturaConcurso' => [
+            'App\Listeners\SendAperturaConcursoNotification',
+            'App\Listeners\SendAperturaConcursoNotificationWA'
+        ],
 
 
             Registered::class => [

@@ -8,6 +8,7 @@
 
 namespace App\Services\CONCURSOS;
 
+use App\Events\FinalizacionDeAperturaConcurso;
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
 use App\PDF\Concurso\InformeCierre;
 use App\Repositories\SEGURIDAD_ERP\Concursos\ConcursoRepository;
@@ -66,7 +67,9 @@ class ConcursoService
 
     public function cerrar($id)
     {
-        return $this->repository->show($id)->cerrar();
+        $concurso = $this->repository->show($id)->cerrar();
+        event(new FinalizacionDeAperturaConcurso($concurso));
+        return $concurso;
     }
 
     public function pdf($id)

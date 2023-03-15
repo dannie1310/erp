@@ -8,6 +8,7 @@
 
 namespace App\Models\SEGURIDAD_ERP\Concursos;
 
+use App\Models\IGH\Usuario;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
@@ -51,6 +52,17 @@ class Concurso extends Model
     {
         return $this->hasOne(ConcursoParticipante::class, 'id_concurso', 'id')
             ->esHermes();
+    }
+
+    public function participanteGanador()
+    {
+        return $this->hasOne(ConcursoParticipante::class, 'id_concurso', 'id')
+            ->ganador();
+    }
+
+    public function usuarioFinalizoApertura()
+    {
+        return $this->belongsTo(Usuario::class, 'id_usuario_finalizo_apertura', 'idusuario');
     }
 
     /**
@@ -114,6 +126,12 @@ class Concurso extends Model
         {
             return $total / $cantidad;
         }
+    }
+
+    public function getNombreArchivoAttribute()
+    {
+        $nombre = $this->nombre;
+        return str_replace(" ","",ucfirst($nombre));
     }
 
     public function getPromedioFormatAttribute()

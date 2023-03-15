@@ -62,6 +62,13 @@ class ConcursoController extends Controller
         return $this->service->pdf($id);
     }
 
+    public function graficaPNG($id)
+    {
+        header('Content-Type: image/png');
+        $image = imagecreatefrompng(public_path('downloads/concursos/graficas/'.$id.".png"));
+        return imagepng($image);
+    }
+
     public function storeParticipante(Request $request, $id)
     {
         $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
