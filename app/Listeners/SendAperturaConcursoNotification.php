@@ -29,11 +29,17 @@ class SendAperturaConcursoNotification
     public function handle(FinalizacionDeAperturaConcurso $event)
     {
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        $usuario = Usuario::suscripcion($suscripciones)->get();
+        $usuarios_suscripcion = Usuario::suscripcion($suscripciones)->get();
+
+        $usuarios_interesados_por_registro = Usuario::whereIn("idusuario",[$event->concurso->id_usuario_inicio_apertura
+            ,$event->concurso->id_usuario_finalizo_apertura])
+            ->get();
+
+        $usuarios_notificacion = $usuarios_suscripcion->merge($usuarios_interesados_por_registro);
+
         $tokenobj = $event->concurso->usuarioFinalizoApertura
             ->createToken('consultar-formato-apertura-concurso',['consultar-formato-apertura-concurso']);
         $token = $tokenobj->accessToken;
-        Notification::send($usuario, new NotificacionAperturaConcurso($event->concurso, $token));
-        Notification::send($event->concurso->usuarioFinalizoApertura, new NotificacionAperturaConcurso($event->concurso, $token));
+        Notification::send($usuarios_notificacion, new NotificacionAperturaConcurso($event->concurso, $token));
     }
 }
