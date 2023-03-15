@@ -97,6 +97,15 @@ class Concurso extends Model
         return date_format($date,"d/m/Y");
     }
 
+    public function getDivisorAttribute()
+    {
+        $monto_mayor = number_format($this->participantes()->orderBy("lugar","desc")->pluck("monto")->first(),0,"","");
+        $longitud_mayor = strlen($monto_mayor);
+        $divisor =  (int) str_pad(1, $longitud_mayor-2, '0', STR_PAD_RIGHT);
+
+        return $divisor;
+    }
+
     public function getPromedioAttribute($key)
     {
         $total = $this->participantes()->sum("monto");
@@ -110,6 +119,100 @@ class Concurso extends Model
     public function getPromedioFormatAttribute()
     {
         return number_format($this->promedio,2,".", ",");
+    }
+
+    public function getLabelsParticipantesAttribute()
+    {
+        $labels = [];
+        $i = 0;
+        foreach ($this->participantes()->orderBy("lugar")->get() as $participante) {
+            $nombre = explode(" ", $participante->nombre);
+            $labels[$i] = $participante->lugar."-".mb_substr($nombre[0],0,1);
+            if(key_exists(1, $nombre))
+            {
+                $labels[$i] .= mb_substr($nombre[1],0,1);
+            }
+            else{
+                $labels[$i] .= mb_substr($nombre[0],1,2);
+            }
+            if(key_exists(2, $nombre))
+            {
+                $labels[$i] .= mb_substr($nombre[2],0,1);
+            }
+            if(key_exists(3, $nombre))
+            {
+                $labels[$i] .= mb_substr($nombre[3],0,1);
+            }
+            $labels[$i] = mb_strtoupper($labels[$i]);
+            $i++;
+        }
+        return $labels;
+    }
+
+    public function getSaltosGraficaAttribute()
+    {
+        //$monto_primer_lugar = $this->participantes()->orderBy("monto","asc")->pluck("monto")->first();
+        $monto_ultimo_lugar = $this->participantes()->orderBy("monto","desc")->pluck("monto")->first();
+        $monto_ultimo_lugar_round = ceil($monto_ultimo_lugar / $this->divisor);
+        //dd($monto_ultimo_lugar_round, $this->divisor);
+        $saltos1 = [];
+        $saltos2 = [];
+        for($i= 0;$i<=$monto_ultimo_lugar_round+50;$i+=50)
+        {
+            $saltos1[] = $i;
+        }
+        for($i= 0;$i<=$monto_ultimo_lugar_round+25;$i+=25)
+        {
+            $saltos2[] = $i;
+        }
+        return [$saltos1, $saltos2];
+    }
+
+    public function getDatosPromedioGraficaAttribute()
+    {
+        $arreglo_promedio = [];
+        for($i = 0; $i<count($this->participantes);$i++)
+        {
+            $arreglo_promedio[] = ceil($this->promedio / $this->divisor);
+        }
+        return $arreglo_promedio;
+    }
+
+    public function getDatosOfertaGanadoraGraficaAttribute()
+    {
+        $arreglo = [];
+        for($i = 0; $i<count($this->participantes);$i++)
+        {
+            $arreglo[] = ceil($this->participantes()->ganador()->pluck("monto")->first() / $this->divisor);
+        }
+        return $arreglo;
+    }
+
+    public function getDatosIndicadorHermesAttribute()
+    {
+        $lugar_hermes = $this->participantes()->esHermes()->pluck("lugar")->first();
+        return [$lugar_hermes-1, $lugar_hermes];
+    }
+
+    public function getDatosOfertaHermesGraficaAttribute()
+    {
+        $arreglo = [];
+        for($i = 0; $i<count($this->participantes);$i++)
+        {
+            $arreglo[] = ceil($this->participantes()->esHermes()->pluck("monto")->first() / $this->divisor);
+        }
+        return $arreglo;
+    }
+
+    public function getDatosOfertasGraficaAttribute()
+    {
+        $arreglo_ofertas = [];
+        foreach ($this->participantes as $participante)
+        {
+            $arreglo_ofertas[] = ceil($participante->monto / $this->divisor);
+        }
+
+        return $arreglo_ofertas;
     }
 
     /**

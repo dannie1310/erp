@@ -3,6 +3,15 @@
 namespace App\PDF\Concurso;
 
 
+use Amenadiel\JpGraph\Graph\Graph;
+use Amenadiel\JpGraph\Graph\PieGraph;
+use Amenadiel\JpGraph\Plot\AccBarPlot;
+use Amenadiel\JpGraph\Plot\BarPlot;
+use Amenadiel\JpGraph\Plot\GroupBarPlot;
+use Amenadiel\JpGraph\Plot\LinePlot;
+use Amenadiel\JpGraph\Plot\PiePlot;
+use Amenadiel\JpGraph\Plot\PlotBand;
+use Amenadiel\JpGraph\Themes\UniversalTheme;
 use Ghidev\Fpdf\Rotation;
 
 
@@ -13,6 +22,8 @@ class InformeCierre extends Rotation
     const DPI = 96;
     const MAX_WIDTH = 180;
     const MAX_HEIGHT = 150;
+    const MAX_WIDTH_GRAPH = 750;
+    const MAX_HEIGHT_GRAPH = 525;
     const MM_IN_INCH = 25.4;
 
     private $en_cola = '';
@@ -29,6 +40,8 @@ class InformeCierre extends Rotation
         $this->partidasTitle();
         $this->partidas();
         $this->resumen();
+        $this->generaGrafica();
+        $this->muestraGrafica();
     }
 
     function SetTextColor($r, $g=null, $b=null)
@@ -73,6 +86,18 @@ class InformeCierre extends Rotation
         list($width, $height) = getimagesize($imgFilename);
         $widthScale = self::MAX_WIDTH / $width;
         $heightScale = self::MAX_HEIGHT / $height;
+        $scale = min($widthScale, $heightScale);
+        return [
+            round($this->pixelsToCM($scale * $width)),
+            round($this->pixelsToCM($scale * $height))
+        ];
+    }
+
+    function resizeToFitGraph($imgFilename)
+    {
+        list($width, $height) = getimagesize($imgFilename);
+        $widthScale = self::MAX_WIDTH_GRAPH / $width;
+        $heightScale = self::MAX_HEIGHT_GRAPH / $height;
         $scale = min($widthScale, $heightScale);
         return [
             round($this->pixelsToCM($scale * $width)),
@@ -151,7 +176,6 @@ class InformeCierre extends Rotation
                 $i,
                 utf8_decode($participante->nombre),
                 $participante->monto_format,
-
             ]);
             $i++;
         }
@@ -160,11 +184,10 @@ class InformeCierre extends Rotation
 
     public function resumen()
     {
+        $this->SetTextColor('0,0,0');
         $this->SetFont('Helvetica', 'B', 13);
         $this->SetFills('117,117,117');
 
-        $this->ln(1);
-        $this->cell(19.7,.5,utf8_decode("Resúmen"),0,1,"C", true);
         $this->ln();
         $this->SetFont('Arial', 'B', 12);
         $this->cell(3,.5,utf8_decode("Promedio:"),0,0,"L");
@@ -175,6 +198,237 @@ class InformeCierre extends Rotation
         $this->cell(6,.5,utf8_decode("Distancia al Primer Lugar:"),0,0,"L");
         $this->SetFont('Arial', '', 12);
         $this->cell(5,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,1,"R");
+    }
+
+    public function generaGrafica()
+    {
+        $saltos_grafica = $this->concurso->saltos_grafica;
+//ofertas
+        $data1y = $this->concurso->datos_ofertas_grafica;
+//promedio
+        $data6y = $this->concurso->datos_promedio_grafica;
+//ganadora
+        $data5y = $this->concurso->datos_oferta_ganadora_grafica;
+
+//hermes
+        $data4y = $this->concurso->datos_oferta_hermes_grafica;
+
+        $indicador_hermes = $this->concurso->datos_indicador_hermes;
+
+
+// Create the graph. These two calls are always required
+        $graph = new Graph(750,320,'auto');
+        $graph->SetScale("textlin");
+        $graph->SetY2Scale("lin",0,90);
+        $graph->SetY2OrderBack(false);
+
+        $theme_class = new UniversalTheme();
+        $graph->SetTheme($theme_class);
+
+        $graph->SetMargin(40,20,46,80);
+
+        $graph->yaxis->SetTickPositions($saltos_grafica[0]
+            , $saltos_grafica[1]);
+
+        $graph->SetBox(false);
+
+        $graph->ygrid->SetFill(false);
+        $graph->xaxis->SetTickLabels(array('A','B','C','D'));
+        $graph->yaxis->HideLine(false);
+        $graph->yaxis->HideTicks(false,false);
+// Setup participantes as labels on the X-axis
+        $graph->xaxis->SetTickLabels($this->concurso->labels_participantes);
+
+// Create the bar plot ofertas
+        $b1plot = new BarPlot($data1y);
+// Create the line plot promedio
+        $lplot = new LinePlot($data6y);
+
+// Create the line plot mejor oferta
+        $l2plot = new LinePlot($data5y);
+// Create the line plot oferta hermes
+        $l3plot = new LinePlot($data4y);
+
+// ...and add it to the graPH
+        $graph->Add($b1plot);
+        $graph->Add($lplot);
+        $graph->Add($l2plot);
+        $graph->Add($l3plot);
+
+        $b1plot->SetColor("#757575");
+        $b1plot->SetFillColor("#757575");
+        $b1plot->SetLegend("Ofertas");
+
+        $lplot->SetBarCenter();
+        $lplot->SetColor("red");
+        $lplot->SetLegend("Promedio");
+        $lplot->mark->SetType(MARK_X,'',1.0);
+        $lplot->mark->SetWeight(2);
+        $lplot->mark->SetWidth(8);
+        $lplot->mark->setColor("red");
+        $lplot->mark->setFillColor("red");
+
+        $l2plot->SetBarCenter();
+        $l2plot->SetColor("yellow");
+        $l2plot->SetLegend("Oferta Ganadora");
+        $l2plot->mark->SetType(MARK_X,'',1.0);
+        $l2plot->mark->SetWeight(2);
+        $l2plot->mark->SetWidth(8);
+        $l2plot->mark->setColor("yellow");
+        $l2plot->mark->setFillColor("yellow");
+
+        $l3plot->SetBarCenter();
+        $l3plot->SetColor([125,182,70]);
+        $l3plot->SetLegend("Oferta Hermes");
+        $l3plot->mark->SetType(MARK_X,'',1.0);
+        $l3plot->mark->SetWeight(2);
+        $l3plot->mark->SetWidth(8);
+        $l3plot->mark->setColor([125,182,70]);
+        $l3plot->mark->setFillColor([125,182,70]);
+
+        $graph->legend->SetFrameWeight(1);
+        $graph->legend->SetColumns(6);
+        $graph->legend->SetColor('#4E4E4E','#00A78A');
+
+        $band = new PlotBand(VERTICAL,BAND_RDIAG,$indicador_hermes[0],$indicador_hermes[1], [125,182,70]);
+        $band->ShowFrame(true);
+        $band->SetOrder(DEPTH_BACK);
+        $graph->Add($band);
+
+        $graph->title->Set("Ofertas de Licitación para Proyecto ".$this->concurso->nombre);
+
+        $graph->Stroke(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
+
+    }
+
+    public function generaGrafica1()
+    {
+
+        $data1y=array(115,130,135,130,110,130,130,150,130,130,150,120);
+//bar2
+        $data2y=array(180,200,220,190,170,195,190,210,200,205,195,150);
+//bar3
+        $data3y=array(220,230,210,175,185,195,200,230,200,195,180,130);
+        $data4y=array(40,45,70,80,50,75,70,70,80,75,80,50);
+        $data5y=array(20,20,25,22,30,25,35,30,27,25,25,45);
+//line1
+        $data6y=array(50,58,60,58,53,58,57,60,58,58,57,50);
+        foreach ($data6y as &$y) { $y -=10; }
+
+// Create the graph. These two calls are always required
+        $graph = new Graph(750,320,'auto');
+        $graph->SetScale("textlin");
+        $graph->SetY2Scale("lin",0,90);
+        $graph->SetY2OrderBack(false);
+
+        $theme_class = new UniversalTheme();
+        $graph->SetTheme($theme_class);
+
+        $graph->SetMargin(40,20,46,80);
+
+        $graph->yaxis->SetTickPositions(array(0,50,100,150,200,250,300,350), array(25,75,125,175,275,325));
+        $graph->y2axis->SetTickPositions(array(30,40,50,60,70,80,90));
+
+        $months = ["Ene","Feb","Mzo","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+        $months = array_merge(array_slice($months,3,9), array_slice($months,0,3));
+        $graph->SetBox(false);
+
+        $graph->ygrid->SetFill(false);
+        $graph->xaxis->SetTickLabels(array('A','B','C','D'));
+        $graph->yaxis->HideLine(false);
+        $graph->yaxis->HideTicks(false,false);
+// Setup month as labels on the X-axis
+        $graph->xaxis->SetTickLabels($months);
+
+// Create the bar plots
+        $b1plot = new BarPlot($data1y);
+        $b2plot = new BarPlot($data2y);
+
+        $b3plot = new BarPlot($data3y);
+        $b4plot = new BarPlot($data4y);
+        $b5plot = new BarPlot($data5y);
+
+        $lplot = new LinePlot($data6y);
+
+// Create the grouped bar plot
+        $gbbplot = new AccBarPlot(array($b3plot,$b4plot,$b5plot));
+        $gbplot = new GroupBarPlot(array($b1plot,$b2plot,$gbbplot));
+
+// ...and add it to the graPH
+        $graph->Add($gbplot);
+        $graph->AddY2($lplot);
+
+        $b1plot->SetColor("#0000CD");
+        $b1plot->SetFillColor("#0000CD");
+        $b1plot->SetLegend("Cliants");
+
+        $b2plot->SetColor("#B0C4DE");
+        $b2plot->SetFillColor("#B0C4DE");
+        $b2plot->SetLegend("Machines");
+
+        $b3plot->SetColor("#8B008B");
+        $b3plot->SetFillColor("#8B008B");
+        $b3plot->SetLegend("First Track");
+
+        $b4plot->SetColor("#DA70D6");
+        $b4plot->SetFillColor("#DA70D6");
+        $b4plot->SetLegend("All");
+
+        $b5plot->SetColor("#9370DB");
+        $b5plot->SetFillColor("#9370DB");
+        $b5plot->SetLegend("Single Only");
+
+        $lplot->SetBarCenter();
+        $lplot->SetColor("yellow");
+        $lplot->SetLegend("Houses");
+        $lplot->mark->SetType(MARK_X,'',1.0);
+        $lplot->mark->SetWeight(2);
+        $lplot->mark->SetWidth(8);
+        $lplot->mark->setColor("yellow");
+        $lplot->mark->setFillColor("yellow");
+
+        $graph->legend->SetFrameWeight(1);
+        $graph->legend->SetColumns(6);
+        $graph->legend->SetColor('#4E4E4E','#00A78A');
+
+        $band = new PlotBand(VERTICAL,BAND_RDIAG,11,"max",'khaki4');
+        $band->ShowFrame(true);
+        $band->SetOrder(DEPTH_BACK);
+        $graph->Add($band);
+
+        $graph->title->Set("Combined Line and Bar plots");
+
+        $graph->Stroke(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
+
+    }
+
+    public function muestraGrafica()
+    {
+        $y = $this->getY()+0.5;
+        $x = $this->getX();
+        list($width, $height) = $this->resizeToFitGraph(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
+        $this->Image(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"), $x, $y,$width,$height);
+
+    }
+
+    public function grafica1()
+    {
+        $y = $this->getY();
+        $x = $this->getX();
+
+        $graph = new PieGraph(350, 250);
+        $graph->title->Set("");
+        $graph->SetBox(true);
+
+        $data = array(40, 21, 17, 14, 23);
+        $p1   = new PiePlot($data);
+        $p1->ShowBorder();
+        $p1->SetColor('black');
+        $p1->SetSliceColors(array('#1E90FF', '#2E8B57', '#ADFF2F', '#DC143C', '#BA55D3'));
+
+        $graph->Add($p1);
+        $graph->Stroke(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
+        $this->Image(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"),$x,$y,19.7,13);
 
     }
 

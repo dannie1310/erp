@@ -45,6 +45,11 @@ class ConcursoParticipante extends Model
         return $query->where("es_empresa_hermes","=",1);
     }
 
+    public function scopeGanador($query)
+    {
+        return $query->where("lugar","=",1);
+    }
+
 
     /**
      * Atributos
