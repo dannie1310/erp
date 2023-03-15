@@ -687,7 +687,7 @@ class Estimacion extends Transaccion
     public function getTotalOrdenPagoAttribute()
     {
         $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
-                
+
         if($this->porcentaje_isr_retenido && $this->porcentaje_isr_retenido > 0){
             $total -= $this->monto_isr_retenido;
         }
@@ -764,6 +764,11 @@ class Estimacion extends Transaccion
     public function getIvaRetenidoCalculadoAttribute()
     {
         return $this->IVARetenido + $this->retencionIVA_2_3;
+    }
+
+    public function getIsrRetenidoCalculadoAttribute()
+    {
+        return $this->monto_isr_retenido;
     }
 
     public function getIvaRetenidoFormatAttribute()
@@ -924,6 +929,12 @@ class Estimacion extends Transaccion
             'folio'                   => $this->numero_folio_format,
             'subtotal'                => $this->subtotal_orden_pago,
             'iva'                     => $this->iva_orden_pago,
+            'retencion_iva_tasa'      => $this->iva_retenido_porcentaje,
+            'retencion_iva_monto'     => $this->iva_retenido,
+            'retencion_iva_monto_format'     => $this->iva_retenido_format,
+            'retencion_isr_tasa'      => $this->porcentaje_isr_retenido_format,
+            'retencion_isr_monto'     => $this->monto_isr_retenido,
+            'retencion_isr_monto_format'     => $this->monto_isr_retenido_format,
             'total'                   => $this->total_orden_pago,
             'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
             'folio_consecutivo_num'   => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
@@ -1174,6 +1185,19 @@ class Estimacion extends Transaccion
             $iva_retenido += $estimacion->iva_retenido_calculado;
         }
         return $iva_retenido;
+    }
+
+    public function getIsrRetenidoCalculadoAnteriorAttribute()
+    {
+        $isr_retenido = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $isr_retenido += $estimacion->isr_retenido_calculado;
+        }
+        return $isr_retenido;
     }
 
     public function getAcumuladoPenalizacionesAnterioresAttribute()
