@@ -184,7 +184,7 @@ import {ModelListSelect} from "vue-search-select";
                     params: {
                         sort: 'Nombre',
                         order: 'asc',
-                        scope:'consolidadora',
+                        scope:'paraInformeCostosCFDIvsCostosBza',
                     }
                 })
                     .then(data => {

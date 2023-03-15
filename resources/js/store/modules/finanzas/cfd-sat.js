@@ -154,7 +154,7 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.base_datos !== 'undefined') {
-                search = search + 'base_datos='+ payload.params.obra + '&';
+                search = search + 'base_datos='+ payload.params.base_datos + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.obra !== 'undefined') {
@@ -387,7 +387,7 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.base_datos !== 'undefined') {
-                search = search + 'base_datos='+ payload.params.obra + '&';
+                search = search + 'base_datos='+ payload.params.base_datos + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.obra !== 'undefined') {
@@ -521,7 +521,7 @@ export default {
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.base_datos !== 'undefined') {
-                search = search + 'base_datos='+ payload.params.obra + '&';
+                search = search + 'base_datos='+ payload.params.base_datos + '&';
                 filtros = +filtros + 1;
             }
             if (typeof payload.params.obra !== 'undefined') {
@@ -529,7 +529,15 @@ export default {
                 filtros = +filtros + 1;
             }
 
-            //
+            if (typeof payload.params.base_datos_ctpq !== 'undefined') {
+                search = search + 'base_datos_ctpq='+ payload.params.base_datos_ctpq + '&';
+                filtros = +filtros + 1;
+            }
+
+            search = search + 'es_hermes='+ payload.params.es_hermes + '&';
+            search = search + 'no_hermes='+ payload.params.no_hermes + '&';
+            search = search + 'con_contactos='+ payload.params.con_contactos + '&';
+            search = search + 'sin_contactos='+ payload.params.sin_contactos + '&';
 
             var urr = URI + 'cfdi-rep-pendiente-xls'+ search+'&db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");

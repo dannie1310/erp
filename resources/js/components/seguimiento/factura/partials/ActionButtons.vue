@@ -4,6 +4,7 @@
             <i class="fa fa-eye"></i>
         </router-link>
         <button @click="cancelar"  v-if="value.cancelar" type="button" class="btn btn-sm btn-outline-danger" title="Cancelar"><i class="fa fa-ban"></i></button>
+        <button @click="reenvio"  v-if="value.envioCorreo" type="button" class="btn btn-sm btn-outline-secondary" title="Reenvio de Correo"><i class="fa fa-envelope"></i></button>
     </div>
 </template>
 
@@ -23,6 +24,12 @@
                             this.$store.commit('seguimiento/factura/SET_FACTURAS', data.data);
                             this.$store.commit('seguimiento/factura/SET_META', data.meta);
                         })
+                    })
+            },
+            reenvio() {
+                return this.$store.dispatch('seguimiento/factura/envioCorreo', {id: this.value.id})
+                    .then(() => {
+                        this.$emit('success')
                     })
             },
         }

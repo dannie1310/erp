@@ -14,7 +14,7 @@
                                     data-vv-as="Nombre del concurso"
                                     v-validate="{required: true, max: 255}"
                                     v-model="concurso"
-                                    :class="{'is-invalid': errors.has('concurso')}">    
+                                    :class="{'is-invalid': errors.has('concurso')}">
                             <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>
                         </div>
                     </div>
@@ -23,7 +23,7 @@
                 <div class="row">
                     <div  class="col-12">
                         <div class="table-responsive">
-                            <table class="table  table-sm table-bordered">
+                            <table class="table  table-sm table-bordered" style="font-size: 11px">
                                 <thead>
                                     <tr>
                                         <th class="encabezado index_corto">
@@ -35,7 +35,7 @@
                                         <th class="encabezado c100">
                                             Monto
                                         </th>
-                                        <th class="encabezado">
+                                        <th class="encabezado c60">
                                             Es Hermes
                                         </th>
                                         <th class="encabezado icono">
@@ -51,7 +51,7 @@
                                         <td>
                                            {{participante.nombre}}
                                         </td>
-                                        <td style="text-align: right: inherit;">
+                                        <td style="text-align: right;">
                                             {{parseFloat(participante.monto).formatMoney(2,'.',',')}}
                                         </td>
                                         <td style="text-align: center">
@@ -71,7 +71,7 @@
             </div>
             <div class="modal-footer">
                 <div class="pull-right">
-                    <button type="button" class="btn btn-secondary" v-on:click="salir">
+                    <button type="button" class="btn btn-secondary" v-on:click="regresar">
                         <i class="fa fa-angle-left"></i>
                         Regresar</button>
                     <button type="button" @click="store" class="btn btn-primary">
@@ -82,7 +82,7 @@
             </div>
         </div>
         <div class="modal fade" ref="modal1" role="dialog">
-            <div class="modal-dialog modal-dialog-centered modal-md" role="document">
+            <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
                 <div class="modal-content" >
                     <div class="modal-header">
                         <h5 class="modal-title" id="exampleModalLongTitle"> <i class="fa fa-plus"></i>&nbsp;AGREGAR PARTICIPANTE</h5>
@@ -109,7 +109,7 @@
                                 </div>
                             </div>
                             <div class="row">
-                                <div class="col-md-5">
+                                <div class="col-md-12">
                                     <div class="form-group">
                                         <label for="nombre">Monto:</label>
                                         <input
@@ -120,6 +120,7 @@
                                                 v-validate="{min_value: 0.1, regex: /^[0-9]\d*(\.\d{0,2})?$/}"
                                                 class="form-control"
                                                 :class="{'is-invalid': errors.has(`monto`)}"
+                                                style="text-align: right"
                                                 id="monto"
                                                 placeholder="Monto">
                                         <div class="invalid-feedback"
@@ -129,10 +130,10 @@
                                 </div>
                             </div>
                             <div class="row" v-if="this.es_hermes_seleccionado == 0">
-                                <div class="col-md-12" style="text-align: center;">
+                                <div class="col-md-12" >
                                     <div class="form-group">
-                                        <label for="nombre">Es Hermes:</label>
-                                        <input type="checkbox" id="es_hermes" v-model="participante.es_hermes">
+                                        <input type="checkbox" id="es_hermes" v-model="participante.es_hermes" >
+                                        <label for="nombre">&nbsp;Es Hermes</label>
                                     </div>
                                 </div>
                             </div>
@@ -162,7 +163,7 @@
                 {
                     'nombre' : '',
                     'monto' : 0,
-                    'es_hermes' : false   
+                    'es_hermes' : false
                 },
                 es_hermes_seleccionado : 0
             }
@@ -175,7 +176,7 @@
                 {
                     'nombre' : '',
                     'monto' : 0,
-                    'es_hermes' : false   
+                    'es_hermes' : false
                 };
                 this.es_hermes_seleccionado = 0;
             },
@@ -190,19 +191,19 @@
                 }
                 this.participantes.splice(index, 1);
             },
-            salir() {
+            regresar() {
                 this.iniciar();
-                this.$router.go(-1);
+                this.$router.push({name: 'concursos'});
             },
             guardar_participante()
             {
                 if(this.participante.nombre == '')
                 {
-                   swal('¡Error!', 'Debe agregar un nombre del participante.', 'error') 
+                   swal('¡Error!', 'Debe agregar un nombre del participante.', 'error')
                 }
                 else if(this.participante.monto <= 0)
                 {
-                   swal('¡Error!', 'Debe agregar un monto.', 'error') 
+                   swal('¡Error!', 'Debe agregar un monto.', 'error')
                 }
                 else{
                     if(this.participante.es_hermes == true)
@@ -219,29 +220,33 @@
                 this.participante = {
                     'nombre' : '',
                     'monto' : 0,
-                    'es_hermes' : false  
+                    'es_hermes' : false
                 }
                 $(this.$refs.modal1).modal('hide');
             },
             store() {
-                if(this.concurso == '') 
+                if(this.concurso == '')
                 {
-                   swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error') 
-                }
-                else if(this.participantes.length == 0) 
-                {
-                   swal('¡Error!', 'Debe agregar al menos un participante.', 'error') 
+                   swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error')
                 }
                 else {
-                    return this.$store.dispatch('concursos/concurso/store', {
+                    this.$store.dispatch('concursos/concurso/store', {
                     concurso: this.concurso,
                     participantes: this.participantes
                     })
                     .then(data=> {
-                        this.salir();
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                    })
+                    .finally(() => {
+                        this.$router.push({name: 'concurso-edit', params: {id: this.concurso_registrado.id}});
                     })
                 }
 			},
+        },
+        computed: {
+            concurso_registrado() {
+                return this.$store.getters['concursos/concurso/currentConcurso'];
+            }
         }
     }
 </script>

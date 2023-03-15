@@ -290,6 +290,16 @@ class Poliza extends Model
                 $relaciones["relaciones_movimientos"] = $relaciones_movimientos;
             }
         } else {
+
+            $relacion = RelacionPolizas::where("id_poliza_a","=", $this->Id)
+                ->where("base_datos_a", "=", $busqueda->base_datos_busqueda)
+                ->where("tipo_relacion","=", $busqueda->id_tipo_busqueda)
+                ->first();
+            if($relacion)
+            {
+                $relacion->activa = 0;
+                $relacion->save();
+            }
             $this->registraIncidenteNoEncontrada($busqueda);
         }
         return $relaciones;

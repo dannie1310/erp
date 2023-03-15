@@ -18,7 +18,7 @@
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
-                        <datatable v-bind="$data" />
+                        <datatable v-bind="$data" v-bind:class="'table-sm table-bordered'" v-bind:style="'font-size: 11px'" />
                     </div>
                 </div>
                 <!-- /.card-body -->
@@ -40,10 +40,10 @@
                 HeaderSettings: false,
                 columns: [
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
-                    { title: 'Nombre', field: 'nombre', tdClass: 'td_c250', sortable: true, thComp: require('../../globals/th-Filter').default},
-                    { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c150', sortable: true, thComp: require('../../globals/th-Date').default},
-                    { title: 'Estatus', field: 'estatus', tdClass: 'th_c120', tdComp: require('./partials/EstatusLabel').default, sortable: true},
-                    { title: 'Acciones', field: 'buttons', thClass: 'th_c100', tdComp: require('./partials/ActionButtons').default},
+                    { title: 'Nombre', field: 'nombre',  sortable: true, thComp: require('../../globals/th-Filter').default},
+                    { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c70', sortable: true, thComp: require('../../globals/th-Date').default},
+                    { title: 'Estatus', field: 'estatus', thClass: 'th_c70', tdComp: require('./partials/EstatusLabel').default, sortable: true},
+                    { title: 'Acciones', field: 'buttons', thClass: 'th_c70', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],
                 total: 0,

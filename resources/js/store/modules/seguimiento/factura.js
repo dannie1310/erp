@@ -151,6 +151,50 @@ export default {
                     })
             });
         },
+        envioCorreo(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Reenviar el Correo de Factura",
+                    text: "¿Está seguro de reenvio de la factura?",
+                    dangerMode: true,
+                    icon: "info",
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, reenviar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value)
+                        {
+                            axios
+                                .patch(URI+ payload.id+'/envioCorreo',  {id:payload.id}, { params: payload.params })
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Factura reenviada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        }
+                        else if(value == '')
+                        {
+                            swal("Ingrese el motivo de cancelación de la factura.",{icon: "error"});
+                        }
+                    });
+            });
+        },
     },
 
     getters: {

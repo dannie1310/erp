@@ -1,15 +1,19 @@
 <template>
     <div class="btn-group">
-        <router-link :to="{ name: 'concurso-edit', params: {id: this.value.id}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-info" title="Editar">
+        <router-link :to="{ name: 'concurso-edit', params: {id: this.value.id}}" v-if="value.edit" type="button" class="btn btn-sm btn-outline-primary" title="Editar">
             <i class="fa fa-pencil"></i>
         </router-link>
-        <button @click="cerrar" v-if="value.close" type="button" class="btn btn-sm btn-outline-danger" title="Cerrar Concurso"><i class="fa fa-lock"></i> </button>
+        <cierre-concurso v-if="value.close" v-bind:id="value.id"></cierre-concurso>
+        <formato-apertura-concurso v-bind:id="value.id" v-if="!value.edit"></formato-apertura-concurso>
     </div>
 </template>
 <script>
+    import FormatoAperturaConcurso from "../FormatoAperturaConcurso.vue";
+    import CierreConcurso from "../CierreConcurso.vue";
+
     export default {
         name: "concurso-buttons",
-        components: {},
+        components: {CierreConcurso, FormatoAperturaConcurso},
         props: ['value'],
         data()
         {
@@ -18,12 +22,7 @@
         },
 
         methods: {
-            cerrar() {
-                return this.$store.dispatch('concursos/concurso/cerrar', {id: this.value.id})
-                    .then(() => {
-                        this.$emit('success')
-                    })
-            },
+
         }
     }
 </script>

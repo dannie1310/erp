@@ -44,6 +44,7 @@ class AuthServiceProvider extends ServiceProvider
         Passport::useTokenModel(Token::class);
         Passport::tokensCan([
             'autorizar-solicitudes-pago-anticipado' => 'Autorizar Solicitudes de Pago Anticipado',
+            'consultar-formato-apertura-concurso' => 'Consultar Formato de Apertura de Concurso',
             'solicitudes-pago-anticipado' => 'Solicitudes de Pago Anticipado'
         ]);
     }

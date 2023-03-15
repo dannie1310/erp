@@ -38,6 +38,13 @@ $api->version('v1', function ($api) {
         $api->get('solicitud-pago-anticipado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@indexVista');
     });
 
+    $api->group(['middleware' => ['auth:api','scope:consultar-formato-apertura-concurso'], 'prefix' => 'concursos'], function ($api) {
+        $api->group(['prefix' => 'concurso-scope'], function ($api){
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
+        });
+    });
+
 
     /**
      * DBO
@@ -435,7 +442,7 @@ $api->version('v1', function ($api) {
             $api->post('{id_proveedor}/obtener-lista-cfdi-costos-cfdi-costos-balanza', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerListaCFDICostosCFDICostosBalanza')->where(['id_proveedor' => '[0-9]+']);
             $api->get('descargaLayout', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargaLayout');
             $api->get('descargar-comunicados', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@descargarComunicados');
-            $api->get('informe-rep-pendientes-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPPDF');
+            $api->get('informe-rep-pendientes-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorPDF');
             $api->get('informe-rep-pendientes-proveedor-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorEmpresaPDF');
             $api->get('informe-rep-pendientes-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaPDF');
             $api->get('informe-rep-pendientes-empresa-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaProveedorPDF');
@@ -472,6 +479,11 @@ $api->version('v1', function ($api) {
             $api->get('obtener-informe/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformePDF');
             $api->get('obtener-informe/empresa-proyecto/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\CtgNoLocalizadoController@obtenerInformeEmpresaProyectoPDF');
         });
+
+        $api->group(['prefix' => 'notificacion_rep'], function ($api){
+            $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NotificacionREPController@paginate');
+        });
+
         $api->group(['prefix' => 'proveedor-rep'], function ($api){
             //proveedores-rep-pendiente-xls
             //            $api->get('cfdi-rep-pendiente-xls', 'App\Http\Controllers\v1\CADECO\Finanzas\CFDSATController@descargaCFDIREPPendienteXLS');
@@ -1703,6 +1715,7 @@ $api->version('v1', function ($api) {
             $api->patch('{id}/cancelar', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cancelar')->where(['id' => '[0-9]+']);
             $api->post('/', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@store');
             $api->post('CFDI', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@cargarArchivo');
+            $api->patch('{id}/envioCorreo', 'App\Http\Controllers\v1\SEGUIMIENTO\Finanzas\FacturaController@envioCorreo')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix'=>'ingreso-partida'], function ($api){
@@ -1949,6 +1962,17 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@update')->where(['id' => '[0-9]+']);
             $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@cerrar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
+
+            $api->group(['prefix' => '{id}/participante'], function ($api){
+                $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@storeParticipante')->where(['id' => '[0-9]+']);
+                $api->delete('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@destroyParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->get('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@showParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->patch('{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@updateParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+
+            });
         });
+
     });
 });
