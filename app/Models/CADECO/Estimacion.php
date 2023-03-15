@@ -687,6 +687,10 @@ class Estimacion extends Transaccion
     public function getTotalOrdenPagoAttribute()
     {
         $total = ($this->subtotal_orden_pago + $this->iva_orden_pago) - $this->IVARetenido;
+
+        if($this->porcentaje_isr_retenido && $this->porcentaje_isr_retenido > 0){
+            $total -= $this->monto_isr_retenido;
+        }
         return $total;
     }
 
@@ -762,6 +766,11 @@ class Estimacion extends Transaccion
         return $this->IVARetenido + $this->retencionIVA_2_3;
     }
 
+    public function getIsrRetenidoCalculadoAttribute()
+    {
+        return $this->monto_isr_retenido;
+    }
+
     public function getIvaRetenidoFormatAttribute()
     {
         return '$ ' . number_format($this->iva_retenido_calculado, 2);
@@ -774,6 +783,13 @@ class Estimacion extends Transaccion
         } else {
             return "0 %";
         }
+    }
+
+    public function getPorcentajeIsrRetenidoFormatAttribute(){
+        if($this->porcentaje_isr_retenido && $this->porcentaje_isr_retenido > 0){
+            return number_format($this->porcentaje_isr_retenido, 2) . " %";
+        }
+        return "0 %";
     }
 
     /**
@@ -873,6 +889,29 @@ class Estimacion extends Transaccion
         return $this;
     }
 
+    public function registrarISRRetenido($data){
+        if($data['retencionISR125'] && $data['retencionISR10']){
+            abort(403, 'Favor de solo ingresar una retención.');
+        }
+
+        if($data['retencionISR125']){
+            if(abs(($this->subtotal_orden_pago * 0.0125) - $data['retencionISR125']) > 0.99){
+                abort(403, 'La retención de ISR no es del 1.25%');
+            }
+            $this->porcentaje_isr_retenido = 1.25;
+            $this->monto_isr_retenido = $data['retencionISR125'];
+        }
+        if($data['retencionISR10']){
+            if(abs(($this->subtotal_orden_pago * 0.1) - $data['retencionISR10']) > 0.99){
+                abort(403, 'La retención de ISR no es del 10%');
+            }
+            $this->porcentaje_isr_retenido = 10;
+            $this->monto_isr_retenido = $data['retencionISR10'];
+        }
+        $this->save();
+        return $this;
+    }
+
     /**
      * Obtener estimación con las partidas ordenadas dependiendo los niveles de los contratos.
      * @return array
@@ -890,6 +929,12 @@ class Estimacion extends Transaccion
             'folio'                   => $this->numero_folio_format,
             'subtotal'                => $this->subtotal_orden_pago,
             'iva'                     => $this->iva_orden_pago,
+            'retencion_iva_tasa'      => $this->iva_retenido_porcentaje,
+            'retencion_iva_monto'     => $this->iva_retenido,
+            'retencion_iva_monto_format'     => $this->iva_retenido_format,
+            'retencion_isr_tasa'      => $this->porcentaje_isr_retenido_format,
+            'retencion_isr_monto'     => $this->monto_isr_retenido,
+            'retencion_isr_monto_format'     => $this->monto_isr_retenido_format,
             'total'                   => $this->total_orden_pago,
             'folio_consecutivo'       => $this->subcontratoEstimacion->folio_consecutivo_format,
             'folio_consecutivo_num'   => $this->subcontratoEstimacion->NumeroFolioConsecutivo,
@@ -1107,6 +1152,10 @@ class Estimacion extends Transaccion
         return '$ ' . number_format($this->retencionIVA_2_3, 2);
     }
 
+    public function getMontoIsrRetenidoFormatAttribute(){
+        return '$ ' . number_format($this->monto_isr_retenido, 2);
+    }
+
     public function getEstadoDescripcionAttribute()
     {
         switch ($this->estado) {
@@ -1136,6 +1185,19 @@ class Estimacion extends Transaccion
             $iva_retenido += $estimacion->iva_retenido_calculado;
         }
         return $iva_retenido;
+    }
+
+    public function getIsrRetenidoCalculadoAnteriorAttribute()
+    {
+        $isr_retenido = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $isr_retenido += $estimacion->isr_retenido_calculado;
+        }
+        return $isr_retenido;
     }
 
     public function getAcumuladoPenalizacionesAnterioresAttribute()
