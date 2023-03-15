@@ -766,6 +766,11 @@ class Estimacion extends Transaccion
         return $this->IVARetenido + $this->retencionIVA_2_3;
     }
 
+    public function getIsrRetenidoCalculadoAttribute()
+    {
+        return $this->monto_isr_retenido;
+    }
+
     public function getIvaRetenidoFormatAttribute()
     {
         return '$ ' . number_format($this->iva_retenido_calculado, 2);
@@ -1180,6 +1185,19 @@ class Estimacion extends Transaccion
             $iva_retenido += $estimacion->iva_retenido_calculado;
         }
         return $iva_retenido;
+    }
+
+    public function getIsrRetenidoCalculadoAnteriorAttribute()
+    {
+        $isr_retenido = 0;
+        $estimaciones_anteriores = $this->where('id_antecedente', '=', $this->id_antecedente)
+            ->where('numero_folio', '<', $this->numero_folio)
+            ->where('estado', '>=', 0)->get();
+
+        foreach($estimaciones_anteriores as $estimacion){
+            $isr_retenido += $estimacion->isr_retenido_calculado;
+        }
+        return $isr_retenido;
     }
 
     public function getAcumuladoPenalizacionesAnterioresAttribute()
