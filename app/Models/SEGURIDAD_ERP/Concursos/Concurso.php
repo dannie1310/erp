@@ -20,6 +20,9 @@ class Concurso extends Model
     protected $primaryKey = 'id';
 
     protected $fillable =[
+        'fecha',
+        'entidad_licitante',
+        'numero_licitacion',
         'nombre',
         'fecha_hora_inicio_apertura',
         'id_usuario_inicio_apertura',
@@ -29,6 +32,9 @@ class Concurso extends Model
     public $timestamps = false;
 
     public $searchable = [
+        'fecha',
+        'entidad_licitante',
+        'numero_licitacion',
         'nombre',
         'fecha_hora_inicio_apertura',
         'estatus'
@@ -241,11 +247,7 @@ class Concurso extends Model
         $this->validarRegistroNuevo($data);
         try {
             DB::connection('seguridad')->beginTransaction();
-            $concurso = $this->create([
-                'nombre' => $data['concurso'],
-                'fecha_hora_inicio_apertura' => date('Y-m-d H:i:s'),
-                'id_usuario_inicio_apertura' => auth()->id(),
-            ]);
+            $concurso = $this->create($data);
 
             foreach($data['participantes'] as $p)
             {
