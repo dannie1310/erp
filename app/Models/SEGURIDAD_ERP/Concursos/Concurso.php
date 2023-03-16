@@ -111,7 +111,7 @@ class Concurso extends Model
 
     public function getFechaFormatAttribute()
     {
-        $date = date_create($this->fecha_hora_inicio_apertura);
+        $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
     }
 
@@ -244,21 +244,11 @@ class Concurso extends Model
     */
     public function registrar($data)
     {
-        $this->validarRegistroNuevo($data);
+        $this->validarNombreConcurso($data);
         try {
             DB::connection('seguridad')->beginTransaction();
             $concurso = $this->create($data);
 
-            foreach($data['participantes'] as $p)
-            {
-                $participantes = $concurso->participantes()->create([
-                    'id_concurso' => $concurso->id,
-                    'nombre' => $p['nombre'],
-                    'monto' => $p['monto'],
-                    'es_empresa_hermes' => $p['es_hermes'] ? 1 : 0,
-                    'lugar' => 0
-                ]);
-            }
             DB::connection('seguridad')->commit();
             return $concurso;
 
@@ -268,31 +258,28 @@ class Concurso extends Model
         }
     }
 
-    public function validarRegistroNuevo($data)
+    public function validarNombreConcurso($data)
     {
-        $existe = $this->where('nombre', $data['concurso'])->first();
-        if($existe)
-        {
-            abort(400, "Este concurso ya existe con el nombre: \n" . $data['concurso'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        if($this->id > 0){
+            $existe = $this->where('nombre', $data['nombre'])
+                ->where("id","!=",$this->id)
+                ->first();
+        } else{
+            $existe = $this->where('nombre', $data['nombre'])->first();
         }
 
-        foreach($data['participantes'] as $p)
+        if($existe)
         {
-            if($p['monto'] <= 0)
-            {
-                abort(400, "El participante ".$p['nombre']." no puede tener un monto menor o igual a cero.");
-            }
+            abort(400, "Ya existe un concurso con el nombre: \n'" . $data['nombre'] . "'\n\nFavor de modificarlo.");
         }
     }
 
     public function editar($data)
     {
-        $this->validarEditar($data);
+        $this->validarNombreConcurso($data);
         DB::connection('seguridad')->beginTransaction();
         try {
-            $this->update([
-                'nombre' => $data['nombre']
-            ]);
+            $this->update($data);
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -330,15 +317,6 @@ class Concurso extends Model
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
-        }
-    }
-
-    private function validarEditar($data)
-    {
-        $existe = $this->where('nombre', $data['nombre'])->where('id', '!=', $this->id)->first();
-        if($existe)
-        {
-            abort(400, "Este concurso ya existe con el nombre: \n" . $data['nombre'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
     }
 

@@ -95,11 +95,11 @@
     import {es} from 'vuejs-datepicker/dist/locale';
     export default {
         name: "create",
-        components: {
-            Datepicker},
+        components: {Datepicker},
         mounted() {
             this.fecha = new Date();
             this.$validator.reset();
+            this.$validator.errors.clear();
             this.fechasDeshabilitadas.from = new Date();
         },
         data(){
@@ -162,25 +162,6 @@
                 this.iniciar();
                 this.$router.push({name: 'concursos'});
             },
-            guardar_participante()
-            {
-                if(this.participante.nombre == '')
-                {
-                   swal('¡Error!', 'Debe agregar un nombre del participante.', 'error')
-                }
-                else if(this.participante.monto <= 0)
-                {
-                   swal('¡Error!', 'Debe agregar un monto.', 'error')
-                }
-                else{
-                    if(this.participante.es_hermes == true)
-                    {
-                        this.es_hermes_seleccionado = 1;
-                    }
-                    this.participantes.push(this.participante);
-                    this.cerrar();
-                }
-            },
             cerrar(){
                 this.$validator.reset();
                 this.$validator.errors.clear();
@@ -201,29 +182,14 @@
                 })
                     .then(data=> {
                         this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                        this.$router.push({name: 'concurso-edit', params: {id: this.concurso_registrado.id}});
+
                     })
                     .catch(error => {
-                        reject(error);
                     })
                     .finally(() => {
-                        this.$router.push({name: 'concurso-edit', params: {id: this.concurso_registrado.id}});
+
                     })
-                /*if(this.concurso == '')
-                {
-                   swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error')
-                }
-                else {
-                    this.$store.dispatch('concursos/concurso/store', {
-                    concurso: this.concurso,
-                    participantes: this.participantes
-                    })
-                    .then(data=> {
-                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
-                    })
-                    .finally(() => {
-                        this.$router.push({name: 'concurso-edit', params: {id: this.concurso_registrado.id}});
-                    })
-                }*/
 			},
         },
         computed: {

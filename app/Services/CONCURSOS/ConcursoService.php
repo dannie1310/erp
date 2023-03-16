@@ -68,6 +68,11 @@ class ConcursoService
         {
             abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
         }
+
+        $fecha = new DateTime($data['fecha']);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha"] = $fecha->format("Y/m/d");
+
         return $concurso->editar($data);
     }
 

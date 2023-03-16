@@ -1,7 +1,7 @@
 <template>
     <span>
         <nav>
-            <div  v-if="this.cargando || this.concurso == null">
+            <div  v-if="this.cargando || this.concurso_store == null">
                 <div class="card">
                     <div class="card-body">
                         <div class="row" >
@@ -19,28 +19,81 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-10">
+                            <div class="col-md-2">
+                                <div class="form-group error-content">
+                                    <label for="concurso">Fecha:</label>
+                                   <datepicker v-model = "fecha"
+                                               id="fecha"
+                                               name = "fecha"
+                                               :format = "formatoFecha"
+                                               :language = "es"
+                                               :bootstrap-styling = "true"
+                                               class = "form-control"
+                                               v-validate="{required: true}"
+                                               :disabled-dates="fechasDeshabilitadas"
+                                               :class="{'is-invalid': errors.has('fecha')}"
+                                   ></datepicker>
+                                    <div class="invalid-feedback" v-show="errors.has('fecha')">{{ errors.first('fecha') }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group error-content">
+                                    <label for="concurso">Número de Licitación:</label>
+                                    <input class="form-control"
+                                           type="text"
+                                           placeholder="Número de Licitación"
+                                           name="numero_licitacion"
+                                           id="numero_licitacion"
+                                           data-vv-as="'Número de Licitación'"
+                                           v-validate="{required: true, max: 255}"
+                                           v-model="numero_licitacion"
+                                           :class="{'is-invalid': errors.has('numero_licitacion')}">
+                                    <div class="invalid-feedback" v-show="errors.has('numero_licitacion')">{{ errors.first('numero_licitacion') }}</div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group error-content">
+                                    <label for="concurso">Entidad Licitante:</label>
+                                    <input class="form-control"
+                                           type="text"
+                                           placeholder="Entidad Licitante"
+                                           name="entidad_licitante"
+                                           id="entidad_licitante"
+                                           data-vv-as="'Entidad Licitante'"
+                                           v-validate="{required: true, max: 255}"
+                                           v-model="entidad_licitante"
+                                           :class="{'is-invalid': errors.has('entidad_licitante')}">
+                                    <div class="invalid-feedback" v-show="errors.has('entidad_licitante')">{{ errors.first('entidad_licitante') }}</div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
                                 <div class="form-group error-content">
                                     <label for="concurso">Nombre del Concurso:</label>
                                     <input class="form-control"
-                                            type="text"
-                                            placeholder="Nombre del Concurso"
-                                            name="concurso"
-                                            id="concurso"
-                                            data-vv-as="Nombre del concurso"
-                                            v-validate="{required: true, max: 255}"
-                                            v-model="concurso_nombre"
-                                            :class="{'is-invalid': errors.has('concurso')}">
+                                           type="text"
+                                           placeholder="Nombre del Concurso"
+                                           name="concurso"
+                                           id="concurso"
+                                           data-vv-as="'Nombre del concurso'"
+                                           v-validate="{required: true, max: 255}"
+                                           v-model="concurso"
+                                           :class="{'is-invalid': errors.has('concurso')}">
                                     <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>
                                 </div>
                             </div>
-                            <div class="col-md-2" style="padding-top: 25px">
-                                <button type="button" @click="update" class="btn btn-primary pull-right">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" >
+                                <button type="button" @click="validateConcurso" class="btn btn-primary pull-right">
                                     <i class="fa fa-save"></i>
                                     Guardar
                                 </button>
                             </div>
                         </div>
+
                         <br />
                         <div class="row">
                             <div  class="col-12">
@@ -68,7 +121,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr v-for="(participante, i) in this.concurso.participantes.data">
+                                            <tr v-for="(participante, i) in this.concurso_store.participantes.data">
                                                 <td>{{i+1}}</td>
                                                 <td>
                                                 {{participante.nombre}}
@@ -99,7 +152,7 @@
                             <button type="button" class="btn btn-secondary" v-on:click="regresar">
                                 <i class="fa fa-angle-left"></i>
                                 Regresar</button>
-                            <cierre-concurso v-bind:id="this.concurso.id" v-bind:texto="'Cerrar'"></cierre-concurso>
+                            <cierre-concurso v-bind:id="this.concurso_store.id" v-bind:texto="'Cerrar'"></cierre-concurso>
                         </div>
                     </div>
                 </div>
@@ -245,14 +298,17 @@
 </template>
 
 <script>
+    import Datepicker from 'vuejs-datepicker';
+    import {es} from 'vuejs-datepicker/dist/locale';
     import CierreConcurso from "./CierreConcurso.vue";
 
     export default {
         name: "edit-concurso",
-        components: {CierreConcurso},
+        components: {CierreConcurso, Datepicker},
         props: ['id'],
         data(){
             return {
+                es:es,
                 cargando: false,
                 participante :
                 {
@@ -261,17 +317,33 @@
                     'es_empresa_hermes' : false,
                     'id_concurso' : '',
                 },
-                concurso_nombre: '',
-                es_hermes_seleccionado : 0
+                concurso: '',
+                numero_licitacion: '',
+                fecha:'',
+                entidad_licitante : '',
+                es_hermes_seleccionado : 0,
+                fechasDeshabilitadas :{},
             }
         },
         mounted() {
             this.find();
             this.$validator.reset();
+            this.fechasDeshabilitadas.from = new Date();
         },
         methods: {
+            formatoFecha(date){
+                return moment(date).format('DD/MM/YYYY');
+            },
+            validateConcurso() {
+                this.$validator.detach("monto");
+                this.$validator.validate().then(result => {
+                    if (result){
+                        this.update();
+                    }
+                });
+            },
             find() {
-                if(this.concurso == null || this.concurso.id != this.id)
+                if(this.concurso_store == null || this.concurso_store.id != this.id)
                 {
                     this.cargando = true;
                     this.$store.dispatch('concursos/concurso/find', {
@@ -280,17 +352,23 @@
                     }).then(data => {
                         this.$store.commit('concursos/concurso/SET_CONCURSO', data);
                         this.checar_participantes_hermes();
-                        this.concurso_nombre = this.concurso.nombre;
+                        this.concurso = this.concurso_store.nombre;
+                        this.entidad_licitante = this.concurso_store.entidad_licitante;
+                        this.fecha = this.concurso_store.fecha;
+                        this.numero_licitacion = this.concurso_store.numero_licitacion;
                         this.cargando = false
                     })
                 }else{
-                    this.concurso_nombre = this.concurso.nombre;
+                    this.concurso = this.concurso_store.nombre;
+                    this.entidad_licitante = this.concurso_store.entidad_licitante;
+                    this.fecha = this.concurso_store.fecha;
+                    this.numero_licitacion = this.concurso_store.numero_licitacion;
                 }
             },
             checar_participantes_hermes()
             {
-                for (var key in this.concurso.participantes.data) {
-                    var obj = this.concurso.participantes.data[key];
+                for (var key in this.concurso_store.participantes.data) {
+                    var obj = this.concurso_store.participantes.data[key];
                     if(obj.es_empresa_hermes == true) {
                         this.es_hermes_seleccionado = 1;
                     }
@@ -303,8 +381,8 @@
             },
             quitarParticipante(index){
                 return this.$store.dispatch('concursos/concurso/quitaParticipante', {
-                    id: this.concurso.id,
-                    id_participante: this.concurso.participantes.data[index].id,
+                    id: this.concurso_store.id,
+                    id_participante: this.concurso_store.participantes.data[index].id,
                 })
                     .then(data => {
                         this.$store.commit('concursos/concurso/SET_CONCURSO', data);
@@ -317,7 +395,7 @@
                 let _self = this;
                 this.$store.dispatch('concursos/concurso/findParticipante', {
                     id: this.id,
-                    id_participante: this.concurso.participantes.data[index].id,
+                    id_participante: this.concurso_store.participantes.data[index].id,
                     params:{include: []}
                 }).then(data => {
                     this.$store.commit('concursos/concurso/SET_PARTICIPANTE', data);
@@ -358,7 +436,7 @@
                     swal('¡Error!', 'Debe agregar un monto.', 'error')
                 }
                 else{
-                    this.participante.id_concurso = this.concurso.id;
+                    this.participante.id_concurso = this.concurso_store.id;
                     return this.$store.dispatch('concursos/concurso/guardaParticipante', {
                         id: this.id,
                         data: this.participante
@@ -371,7 +449,6 @@
 
                     })
                 }
-
             },
             updateParticipante() {
                 if(this.participante.nombre == '')
@@ -388,29 +465,28 @@
                         id_participante: this.participante.id,
                         data: this.participante
                     })
-                        .then(data => {
-                            this.$store.commit('concursos/concurso/SET_CONCURSO', data);
-                        })
-                        .finally(() => {
-                            this.cerrarModal();
-                        })
+                    .then(data => {
+                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                    })
+                    .finally(() => {
+                        this.cerrarModal();
+                    })
                 }
 
             },
             update() {
-                if(this.concurso_nombre == '')
-                {
-                   swal('¡Error!', 'Debe colocar el nombre del concurso.', 'error')
-                }
-                else {
-                    return this.$store.dispatch('concursos/concurso/update', {
-                        id: this.id,
-                        data: {nombre : this.concurso_nombre}
-                    })
-                    .then(data => {
-                        this.$store.commit('concursos/concurso/SET_CONCURSO', data);
-                    })
-                }
+                return this.$store.dispatch('concursos/concurso/update', {
+                    id: this.id,
+                    data: {
+                        fecha : this.fecha,
+                        entidad_licitante : this.entidad_licitante,
+                        numero_licitacion : this.numero_licitacion,
+                        nombre : this.concurso
+                    }
+                })
+                .then(data => {
+                    this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                })
 			},
             regresar() {
                 this.iniciar();
@@ -418,7 +494,7 @@
             },
         },
         computed: {
-            concurso() {
+            concurso_store() {
                 return this.$store.getters['concursos/concurso/currentConcurso'];
             },
             participante_store() {

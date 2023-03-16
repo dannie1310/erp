@@ -104,8 +104,8 @@ export default{
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar el nombre del concurso",
+                    title: "¿Está seguro?",
+                    text: "Actualizar datos del concurso",
                     icon: "warning",
                     buttons: {
                         cancel: {
