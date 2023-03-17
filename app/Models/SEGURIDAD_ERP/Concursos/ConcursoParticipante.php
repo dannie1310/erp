@@ -156,9 +156,12 @@ class ConcursoParticipante extends Model
         $lugar = 1;
         foreach ($participantes as $participante)
         {
-            if($participante->es_empresa_hermes == 1 and $participante->id != $participante_registrado->id)
+            if($participante_registrado->es_empresa_hermes == 1)
             {
-                $participante->es_empresa_hermes = 0;
+                if($participante->es_empresa_hermes == 1 and $participante->id != $participante_registrado->id)
+                {
+                    $participante->es_empresa_hermes = 0;
+                }
             }
             $participante->lugar = $lugar;
             $participante->save();
