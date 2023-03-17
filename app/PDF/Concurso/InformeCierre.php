@@ -41,8 +41,11 @@ class InformeCierre extends Rotation
         $this->partidasTitle();
         $this->partidas();
         $this->resumen();
-        $this->generaGrafica();
-        $this->muestraGrafica();
+        if($this->concurso->participantes()->count()>0)
+        {
+            $this->generaGrafica();
+            $this->muestraGrafica();
+        }
     }
 
     function SetFillColor($r, $g=null, $b=null)
