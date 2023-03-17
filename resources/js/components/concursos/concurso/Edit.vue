@@ -271,6 +271,7 @@
                                                     :class="{'is-invalid': errors.has(`monto`)}"
                                                     style="text-align: right"
                                                     id="monto"
+                                                    v-on:keyup="formatea(participante)"
                                                     placeholder="Monto">
                                                 <div class="invalid-feedback"
                                                      v-show="errors.has(`monto`)">{{ errors.first(`monto`) }}
@@ -346,6 +347,11 @@
             this.fechasDeshabilitadas.from = new Date();
         },
         methods: {
+            formatea(participante){
+                let monto_formateado = 0;
+                monto_formateado = participante.monto.formatearkeyUp();
+                participante.monto = monto_formateado;
+            },
             formatoFecha(date){
                 return moment(date).format('DD/MM/YYYY');
             },
