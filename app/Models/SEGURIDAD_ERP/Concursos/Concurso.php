@@ -350,6 +350,14 @@ class Concurso extends Model
         }
     }
 
+    public function ultimo()
+    {
+        $ultimo = Concurso::where("estatus",">=",1)
+            ->orderBy("id","desc")
+            ->first();
+        return $ultimo;
+    }
+
     public function validarNombreConcurso($data)
     {
         if($this->id > 0){

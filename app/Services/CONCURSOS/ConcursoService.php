@@ -86,11 +86,15 @@ class ConcursoService
         return $concurso;
     }
 
-    public function pdf($id)
+    public function pdf($id = null)
     {
-        $concurso = $this->repository->show($id);
-        $pdf = new InformeCierre($concurso);
+        if($id){
+            $concurso = $this->repository->show($id);
 
+        }else{
+            $concurso = $this->repository->ultimo();
+        }
+        $pdf = new InformeCierre($concurso);
         $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->nombre_archivo.".pdf", 1);
     }
 
