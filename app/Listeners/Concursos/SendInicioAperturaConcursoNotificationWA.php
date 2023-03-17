@@ -29,10 +29,9 @@ class SendInicioAperturaConcursoNotificationWA
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $usuarios_notificacion = Usuario::suscripcion($suscripciones)->get();
 
-        $body = "Se le informa que se ha iniciado el proceso de apertura de ofertas del concurso ".$event->concurso->nombre.", ¿Desea recibir las notificaciones relacionadas con este proceso?";
-        $body = "Se le informa que se ha iniciado el proceso de presentación y apertura de ofertas del concurso *".$event->concurso->nombre."*.
+        $body = "Se le informa que ha iniciado el proceso de presentación y apertura de ofertas del concurso *".$event->concurso->nombre."*.
 
-Puede realizar el seguimiento visitando el sitio web o teclear *SI* para recibir las notificaciones relacionadas.";
+Puede realizar el seguimiento visitando el sitio web *Seguimiento de Concursos* o teclear *SI* para recibir las notificaciones relacionadas de manera automática.";
         foreach ($usuarios_notificacion as $usuario)
         {
             $recipient ="whatsapp:". $usuario->numero_celular;

@@ -212,7 +212,7 @@
                                                 <label for="nombre">&nbsp;Es Hermes</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6" >
+                                        <div class="col-md-6" style="display: none" >
                                             <div class="form-group">
                                                 <input type="checkbox" id="notificar" v-model="participante.notificar" >
                                                 <label for="notificar">&nbsp;Notificar <i class="fa fa-comment"></i></label>
@@ -285,7 +285,7 @@
                                                 <label for="nombre">&nbsp;Es Hermes</label>
                                             </div>
                                         </div>
-                                        <div class="col-md-6" >
+                                        <div class="col-md-6" style="display: none">
                                             <div class="form-group">
                                                 <input type="checkbox" id="notificar" v-model="participante.notificar" >
                                                 <label for="notificar">&nbsp;Notificar <i class="fa fa-comment"></i></label>

@@ -2,12 +2,13 @@
 
 namespace App\Listeners\Concursos;
 
+use App\Events\Concursos\ActualizacionDatosAperturaConcurso;
 use App\Events\Concursos\FinalizacionDeAperturaConcurso;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use Twilio\Rest\Client;
 
-class SendAperturaConcursoNotificationWA
+class SendActualizacionConcursoNotificationWA
 {
     /**
      * Create the event listener.
@@ -23,7 +24,7 @@ class SendAperturaConcursoNotificationWA
      * @param FinalizacionDeAperturaConcurso $event
      * @return void
      */
-    public function handle(FinalizacionDeAperturaConcurso $event)
+    public function handle(ActualizacionDatosAperturaConcurso $event)
     {
         $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
         $usuarios_suscripcion = Usuario::suscripcion($suscripciones)->get();
@@ -35,9 +36,8 @@ class SendAperturaConcursoNotificationWA
 
         $ruta_api = "concursos/concurso-scope/".$event->concurso->id."/pdf";
         $mediaUrl = "https://{$_SERVER['SERVER_NAME']}:{$_SERVER['SERVER_PORT']}/api/".$ruta_api."?access_token=";
-        $body = "Se le informa que ha finalizado el proceso de presentación y apertura de ofertas del concurso *".$event->concurso->nombre."*.
 
-Puede consultar el resultado visitando el sitio web de seguimiento.";
+
         foreach ($usuarios_notificacion as $usuario)
         {
             $recipient ="whatsapp:". $usuario->numero_celular;
@@ -45,6 +45,22 @@ Puede consultar el resultado visitando el sitio web de seguimiento.";
             $account_sid = config('app.env_variables.TWILIO_SID');
             $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
 
+            $body = "La información de las ofertas ha sido actualizada; hasta el momento estos son los resultados:"
+                ."\n\nPrimer Lugar: ".$event->concurso->participanteGanador->nombre ." ".$event->concurso->participanteGanador->monto_format;
+            $body .= "\nPromedio de Ofertas: " . $event->concurso->promedio_format
+            ;
+            if($event->concurso->participanteHermes)
+            {
+                $body .= "\nOferta Hermes: ".$event->concurso->participanteHermes->monto_format.
+                "\nResultado: " .$event->concurso->resultado_txt." ";
+            }else{
+                $body .= "\nOferta Hermes: No registrada";
+            }
+
+            if($event->concurso->participanteHermes)
+            {
+                $body .= "\nDiferencia Oferta Hermes vs Oferta Ganadora: " .$event->concurso->participanteHermes->distancia_primer_lugar_format." (".$event->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")";
+            }
             $tokenobj = $usuario->createToken('consultar-formato-apertura-concurso',['consultar-formato-apertura-concurso']);
             $token = $tokenobj->accessToken;
 

@@ -294,16 +294,11 @@ class Concurso extends Model
         {
             return ucfirst(NumberToLetterConverterStatic::Num2Ordinales($this->participanteHermes->lugar))." lugar de ".NumberToLetterConverterStatic::num2letras(count($this->participantes)). " participantes";
         }else{
-            "No hay oferta de Hermes ingresada";
+            return "No hay oferta de Hermes ingresada";
         }
     }
 
-    public function getEstadoTxtAttribute()
-    {
-    }
-
-
-    /**
+     /**
      * Métodos
     */
 
