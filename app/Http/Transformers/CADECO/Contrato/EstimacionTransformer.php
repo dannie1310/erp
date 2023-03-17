@@ -101,6 +101,8 @@ class EstimacionTransformer extends TransformerAbstract
             'seleccionado' => false,
             'consecutivo' => $model->estimacion_folio_consecutivo_format,
             'tc_actualizado' => false,
+            'tasa_iva' => $model->tasa_iva,
+            'tasa_iva_format' => $model->tasa_iva_format
         ];
     }
 
