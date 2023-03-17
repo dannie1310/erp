@@ -5,6 +5,7 @@ namespace App\Http\Controllers\v1\CONCURSOS;
 
 
 use App\Http\Controllers\Controller;
+use App\Http\Transformers\CONCURSOS\ConcursoParticipanteTransformer;
 use App\Http\Transformers\CONCURSOS\ConcursoTransformer;
 use App\Models\SEGURIDAD_ERP\Concursos\ConcursoParticipante;
 use App\Services\CONCURSOS\ConcursoParticipanteService;
@@ -94,7 +95,8 @@ class ConcursoController extends Controller
     public function showParticipante($id, $id_participante)
     {
         $servicioParticipante = new ConcursoParticipanteService(new ConcursoParticipante());
-        return $servicioParticipante->show($id_participante);
+        $transformerParticipante = new ConcursoParticipanteTransformer();
+        return $transformerParticipante->transform($servicioParticipante->show($id_participante));
     }
 
 }

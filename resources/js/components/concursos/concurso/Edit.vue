@@ -173,14 +173,16 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="nombre">Nombre Participante:</label>
-                                                <input class="form-control"
+                                                <textarea class="form-control"
+                                                          rows="3"
                                                         placeholder="Nombre del Participante"
                                                         name="nombre"
                                                         id="nombre"
-                                                        v-validate="{max: 255}"
+                                                        v-validate="{max: 100}"
                                                         data-vv-as="Nombre del Participante"
                                                         v-model="participante.nombre"
                                                         :class="{'is-invalid': errors.has('nombre')}">
+                                                </textarea>
                                                 <div class="invalid-feedback" v-show="errors.has('nombre')">{{ errors.first('nombre') }}</div>
                                             </div>
                                         </div>
@@ -193,7 +195,8 @@
                                                         name="monto"
                                                         v-model="participante.monto"
                                                         data-vv-as="Monto"
-                                                        v-validate="{min_value: 0.1, regex: /^[0-9]\d*(\.\d{0,2})?$/}"
+                                                        v-on:keyup="formatea(participante)"
+                                                        v-validate="{regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                                         class="form-control"
                                                         :class="{'is-invalid': errors.has(`monto`)}"
                                                         style="text-align: right"
@@ -246,14 +249,15 @@
                                         <div class="col-md-12">
                                             <div class="form-group">
                                                 <label for="nombre">Nombre Participante:</label>
-                                                <input class="form-control"
+                                                <textarea class="form-control"
+                                                          rows="3"
                                                        placeholder="Nombre del Participante"
                                                        name="nombre"
                                                        id="nombre"
-                                                       v-validate="{max: 255}"
-                                                       data-vv-as="Nombre del Participante"
+                                                       v-validate="{max: 100}"
+                                                       data-vv-as="'Nombre del Participante'"
                                                        v-model="participante.nombre"
-                                                       :class="{'is-invalid': errors.has('nombre')}">
+                                                          :class="{'is-invalid': errors.has('nombre')}"></textarea>
                                                 <div class="invalid-feedback" v-show="errors.has('nombre')">{{ errors.first('nombre') }}</div>
                                             </div>
                                         </div>
@@ -265,8 +269,8 @@
                                                 <input
                                                     name="monto"
                                                     v-model="participante.monto"
-                                                    data-vv-as="Monto"
-                                                    v-validate="{min_value: 0.1, regex: /^[0-9]\d*(\.\d{0,2})?$/}"
+                                                    data-vv-as="'Monto'"
+                                                    v-validate="{regex: /^(\d|-)?(\d|,)*(\.\d{0,2})?$/}"
                                                     class="form-control"
                                                     :class="{'is-invalid': errors.has(`monto`)}"
                                                     style="text-align: right"
@@ -425,7 +429,7 @@
                     this.$store.commit('concursos/concurso/SET_PARTICIPANTE', data);
                     this.participante = {
                         'nombre' : _self.participante_store.nombre,
-                        'monto' :  _self.participante_store.monto,
+                        'monto' :  _self.participante_store.monto_format,
                         'es_empresa_hermes' : (_self.participante_store.es_empresa_hermes == 0 || _self.participante_store.es_empresa_hermes == false)?false:true,
                         'id' : _self.participante_store.id,
                         'notificar' : true,
@@ -443,7 +447,7 @@
                 this.$validator.errors.clear();
                 this.participante = {
                     'nombre' : '',
-                    'monto' : 0,
+                    'monto' : '',
                     'es_empresa_hermes' : false,
                     'id_concurso' : '',
                     'notificar' : true,
