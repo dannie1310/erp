@@ -311,7 +311,7 @@ class Concurso extends Model
     {
         if($monto>0){
             $monto_ganador = $this->participanteGanador->monto;
-            $porcentaje = $monto / $monto_ganador  *100;
+            $porcentaje = (($monto / $monto_ganador)-1)  *100;
             return number_format($porcentaje,2) . " %";
         }
         return "N/A";
@@ -320,7 +320,7 @@ class Concurso extends Model
     {
         if($monto>0){
             $monto_promedio = $this->promedio;
-            $porcentaje = $monto  / $monto_promedio *100;
+            $porcentaje = (($monto  / $monto_promedio)-1) *100;
             return number_format($porcentaje,2). " %";;
         }
         return "N/A";
@@ -329,7 +329,7 @@ class Concurso extends Model
     {
         if($monto>0 && $this->participanteHermes){
             $monto_hermes = $this->participanteHermes->monto;
-            $porcentaje = $monto / $monto_hermes  *100;
+            $porcentaje = (($monto / $monto_hermes)-1)  *100;
             return number_format($porcentaje,2). " %";;
         }
         return "N/A";
