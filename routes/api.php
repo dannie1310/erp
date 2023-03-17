@@ -19,6 +19,9 @@ $api->version('v1', function ($api) {
     //     $api->post('authorizeMovil', 'App\Http\Controllers\Auth\Passport\AuthorizationController@authorizeMovil');
     // });
 
+    Route::get('/seguimiento-concursos', 'ConcursoController@showPDF');
+
+
     Route::get('movil', 'Auth\Passport\AuthorizationController@movil');
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');

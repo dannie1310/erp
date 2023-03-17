@@ -8,6 +8,8 @@
 
 namespace App\Services\CONCURSOS;
 
+use App\Events\Concursos\ActualizacionDatosAperturaConcurso;
+use App\Events\Concursos\InicioDeAperturaConcurso;
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
 use App\Models\SEGURIDAD_ERP\Concursos\ConcursoParticipante;
 use App\PDF\Concurso\InformeCierre;
@@ -31,7 +33,12 @@ class ConcursoParticipanteService
 
     public function store(array $data)
     {
-       return $this->repository->create($data);
+        $participante = $this->repository->create($data);
+        if($participante && $participante->concurso)
+        {
+            event(new ActualizacionDatosAperturaConcurso($participante->concurso));
+        }
+       return $participante;
     }
 
     public function show($id)
@@ -47,12 +54,29 @@ class ConcursoParticipanteService
         {
             abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
         }
-        return $participante->editar($data);
+
+        $participante = $participante->editar($data);
+
+        if($participante && $participante->concurso)
+        {
+            event(new ActualizacionDatosAperturaConcurso($participante->concurso));
+        }
+
+        return $participante;
     }
 
     public function destroy($id)
     {
-        return $this->repository->show($id)->delete();
+        $participante = $this->repository->show($id);
+        $concurso = $participante->concurso;
+        $participante->eliminar();
+
+        if($concurso)
+        {
+            event(new ActualizacionDatosAperturaConcurso($concurso));
+        }
+
+        return $participante;
     }
 
 }

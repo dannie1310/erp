@@ -29,7 +29,10 @@ class ConcursoTransformer extends TransformerAbstract
         return [
             'id' => (int)$model->getKey(),
             'nombre' => (string) $model->nombre,
+            'entidad_licitante' => (string) $model->entidad_licitante,
+            'numero_licitacion' => (string) $model->numero_licitacion,
             'fecha_format' => $model->fecha_format,
+            'fecha' => $model->fecha,
             'estatus_descripcion' => $model->estado,
             'estatus' => $model-> estatus,
             'estatus_color' => $model->estado_color
@@ -38,7 +41,7 @@ class ConcursoTransformer extends TransformerAbstract
 
     public function includeParticipantes(Concurso $model)
     {
-        if($participantes = $model->participantes)
+        if($participantes = $model->participantes()->orderBy("lugar")->get())
         {
             return $this->collection($participantes, new ConcursoParticipanteTransformer);
         }

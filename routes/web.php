@@ -16,6 +16,8 @@ use App\Models\SEGURIDAD_ERP\Aviso;
 Route::get('/.well-known/pki-validation/6EBD6E1BD95FC91D52F9A7816E945700.txt', function () {
     return response()->download(public_path("6EBD6E1BD95FC91D52F9A7816E945700.txt"));
 });
+Route::get('/seguimiento-concursos', 'ConcursoController@showPDF');
+
 
 Route::post('/chat-bot', 'ChatBotController@listenToReplies');
 
@@ -42,3 +44,5 @@ Route::get('{any}', function () {
 })
     ->middleware('auth')
     ->where('any', '.*');
+
+

@@ -42,7 +42,7 @@
                     { title: '#', field: 'index', thClass:"th_index_corto", sortable: false },
                     { title: 'Nombre', field: 'nombre',  sortable: true, thComp: require('../../globals/th-Filter').default},
                     { title: 'Fecha de Apertura', field: 'fecha_hora_inicio_apertura', tdClass: 'td_c70', sortable: true, thComp: require('../../globals/th-Date').default},
-                    { title: 'Estatus', field: 'estatus', thClass: 'th_c70', tdComp: require('./partials/EstatusLabel').default, sortable: true},
+                    { title: 'Estatus Apertura', field: 'estatus', thClass: 'th_c70', tdComp: require('./partials/EstatusLabel').default, sortable: true},
                     { title: 'Acciones', field: 'buttons', thClass: 'th_c70', tdComp: require('./partials/ActionButtons').default},
                 ],
                 data: [],

@@ -17,6 +17,9 @@
                     .then(() => {
                         this.$router.push({name: 'concursos'});
                     })
+                    .catch(error => {
+                    })
+
             },
         }
     }

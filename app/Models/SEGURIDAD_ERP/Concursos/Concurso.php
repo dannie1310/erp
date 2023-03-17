@@ -9,9 +9,11 @@
 namespace App\Models\SEGURIDAD_ERP\Concursos;
 
 use App\Models\IGH\Usuario;
+use App\Utils\NumberToLetterConverterStatic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class Concurso extends Model
 {
@@ -20,6 +22,9 @@ class Concurso extends Model
     protected $primaryKey = 'id';
 
     protected $fillable =[
+        'fecha',
+        'entidad_licitante',
+        'numero_licitacion',
         'nombre',
         'fecha_hora_inicio_apertura',
         'id_usuario_inicio_apertura',
@@ -29,6 +34,9 @@ class Concurso extends Model
     public $timestamps = false;
 
     public $searchable = [
+        'fecha',
+        'entidad_licitante',
+        'numero_licitacion',
         'nombre',
         'fecha_hora_inicio_apertura',
         'estatus'
@@ -77,12 +85,12 @@ class Concurso extends Model
     {
         if($this->estatus == 1)
         {
-            return 'Activo';
+            return 'En Proceso';
         }else if($this->estatus == 2)
         {
-            return 'Cerrado';
+            return 'Finalizada';
         }else{
-            return '-';
+            return '';
         }
     }
 
@@ -105,7 +113,7 @@ class Concurso extends Model
 
     public function getFechaFormatAttribute()
     {
-        $date = date_create($this->fecha_hora_inicio_apertura);
+        $date = date_create($this->fecha);
         return date_format($date,"d/m/Y");
     }
 
@@ -212,7 +220,7 @@ class Concurso extends Model
         return [$lugar_hermes-1, $lugar_hermes];
     }
 
-    public function getDatosOfertaHermesGraficaAttribute()
+    public function getDatosOfertaHermesLineaAttribute()
     {
         $arreglo = [];
         for($i = 0; $i<count($this->participantes);$i++)
@@ -222,41 +230,112 @@ class Concurso extends Model
         return $arreglo;
     }
 
+    public function getDatosOfertaHermesGraficaAttribute()
+    {
+        $arreglo = [];
+        foreach ($this->participantesOrdenados as $participante) {
+            if($participante->esHermes)
+            {
+                $arreglo[] = ceil($participante->monto / $this->divisor);
+            }else{
+                $arreglo[] = 0;
+            }
+
+        }
+        return $arreglo;
+    }
+
     public function getDatosOfertasGraficaAttribute()
     {
         $arreglo_ofertas = [];
-        foreach ($this->participantes as $participante)
+        foreach ($this->participantesOrdenados as $participante)
         {
             $arreglo_ofertas[] = ceil($participante->monto / $this->divisor);
         }
 
         return $arreglo_ofertas;
     }
-
     /**
+    participantes_para_informe
+     */
+
+    public function getParticipantesParaInformeAttribute()
+    {
+        $participantes = $this->participantes()->select(["id","nombre","monto","es_empresa_hermes"])->get()->toArray();
+
+        $promedio =  [[
+            "nombre"=>"PROMEDIO"
+            , "monto_format"=>$this->promedio_format
+            , "monto"=>$this->promedio
+            , "es_empresa_hermes"=>0
+            , "porcentaje_vs_primer_lugar"=>$this->porcentajePrimerLugar($this->promedio)
+            , "porcentaje_vs_promedio"=>$this->porcentajePromedio($this->promedio)
+            , "porcentaje_vs_hermes"=>$this->porcentajeHermes($this->promedio)
+        ]];
+
+        $participantes_completos = array_merge($participantes,$promedio);
+        $participantesObj = [];
+        foreach ($participantes_completos as $participante_completo) {
+            $participante_completo["monto_format"] = number_format($participante_completo["monto"],2);
+            $participante_completo["porcentaje_vs_primer_lugar"] = $this->porcentajePrimerLugar($participante_completo["monto"]);
+            $participante_completo["porcentaje_vs_promedio"] = $this->porcentajePromedio($participante_completo["monto"]);
+            $participante_completo["porcentaje_vs_hermes"] = $this->porcentajeHermes($participante_completo["monto"]);
+
+            $participantesObj[] = (object) $participante_completo;
+        }
+        $participantes = collect($participantesObj);
+
+        return $participantes->sortBy("monto");
+    }
+
+    public function getResultadoTxtAttribute()
+    {
+        if($this->participanteHermes)
+        {
+            return ucfirst(NumberToLetterConverterStatic::Num2Ordinales($this->participanteHermes->lugar))." lugar de ".NumberToLetterConverterStatic::num2letras(count($this->participantes)). " participantes";
+        }else{
+            return "No hay oferta de Hermes ingresada";
+        }
+    }
+
+     /**
      * Métodos
     */
+
+    private function porcentajePrimerLugar($monto)
+    {
+        if($monto>0){
+            $monto_ganador = $this->participanteGanador->monto;
+            $porcentaje = (($monto / $monto_ganador)-1)  *100;
+            return number_format($porcentaje,2) . " %";
+        }
+        return "N/A";
+    }
+    private function porcentajePromedio($monto)
+    {
+        if($monto>0){
+            $monto_promedio = $this->promedio;
+            $porcentaje = (($monto  / $monto_promedio)-1) *100;
+            return number_format($porcentaje,2). " %";;
+        }
+        return "N/A";
+    }
+    private function porcentajeHermes($monto)
+    {
+        if($monto>0 && $this->participanteHermes){
+            $monto_hermes = $this->participanteHermes->monto;
+            $porcentaje = (($monto / $monto_hermes)-1)  *100;
+            return number_format($porcentaje,2). " %";;
+        }
+        return "N/A";
+    }
     public function registrar($data)
     {
-        $this->validarRegistroNuevo($data);
+        $this->validarNombreConcurso($data);
         try {
             DB::connection('seguridad')->beginTransaction();
-            $concurso = $this->create([
-                'nombre' => $data['concurso'],
-                'fecha_hora_inicio_apertura' => date('Y-m-d H:i:s'),
-                'id_usuario_inicio_apertura' => auth()->id(),
-            ]);
+            $concurso = $this->create($data);
 
-            foreach($data['participantes'] as $p)
-            {
-                $participantes = $concurso->participantes()->create([
-                    'id_concurso' => $concurso->id,
-                    'nombre' => $p['nombre'],
-                    'monto' => $p['monto'],
-                    'es_empresa_hermes' => $p['es_hermes'] ? 1 : 0,
-                    'lugar' => 0
-                ]);
-            }
             DB::connection('seguridad')->commit();
             return $concurso;
 
@@ -266,31 +345,36 @@ class Concurso extends Model
         }
     }
 
-    public function validarRegistroNuevo($data)
+    public function ultimo()
     {
-        $existe = $this->where('nombre', $data['concurso'])->first();
-        if($existe)
-        {
-            abort(400, "Este concurso ya existe con el nombre: \n" . $data['concurso'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
+        $ultimo = Concurso::where("estatus",">=",1)
+            ->orderBy("id","desc")
+            ->first();
+        return $ultimo;
+    }
+
+    public function validarNombreConcurso($data)
+    {
+        if($this->id > 0){
+            $existe = $this->where('nombre', $data['nombre'])
+                ->where("id","!=",$this->id)
+                ->first();
+        } else{
+            $existe = $this->where('nombre', $data['nombre'])->first();
         }
 
-        foreach($data['participantes'] as $p)
+        if($existe)
         {
-            if($p['monto'] <= 0)
-            {
-                abort(400, "El participante ".$p['nombre']." no puede tener un monto menor o igual a cero.");
-            }
+            abort(400, "Ya existe un concurso con el nombre: \n'" . $data['nombre'] . "'\n\nFavor de modificarlo.");
         }
     }
 
     public function editar($data)
     {
-        $this->validarEditar($data);
+        $this->validarNombreConcurso($data);
         DB::connection('seguridad')->beginTransaction();
         try {
-            $this->update([
-                'nombre' => $data['nombre']
-            ]);
+            $this->update($data);
             DB::connection('seguridad')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -328,15 +412,6 @@ class Concurso extends Model
         } catch (\Exception $e) {
             DB::connection('seguridad')->rollBack();
             abort(400, $e->getMessage());
-        }
-    }
-
-    private function validarEditar($data)
-    {
-        $existe = $this->where('nombre', $data['nombre'])->where('id', '!=', $this->id)->first();
-        if($existe)
-        {
-            abort(400, "Este concurso ya existe con el nombre: \n" . $data['nombre'] . "\nFavor de comunicarse con Soporte a Aplicaciones y Coordinación SAO en caso de tener alguna duda.");
         }
     }
 

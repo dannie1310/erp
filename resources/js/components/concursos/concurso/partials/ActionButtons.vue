@@ -4,7 +4,7 @@
             <i class="fa fa-pencil"></i>
         </router-link>
         <cierre-concurso v-if="value.close" v-bind:id="value.id"></cierre-concurso>
-        <formato-apertura-concurso v-bind:id="value.id" v-if="!value.edit"></formato-apertura-concurso>
+        <formato-apertura-concurso v-bind:id="value.id" ></formato-apertura-concurso>
     </div>
 </template>
 <script>

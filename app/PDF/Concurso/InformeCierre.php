@@ -37,11 +37,39 @@ class InformeCierre extends Rotation
         $this->SetAutoPageBreak(true, 1);
         $this->AliasNbPages();
         $this->AddPage();
+        $this->datosGenerales();
         $this->partidasTitle();
         $this->partidas();
         $this->resumen();
-        $this->generaGrafica();
-        $this->muestraGrafica();
+        if($this->concurso->participantes()->count()>0)
+        {
+            $this->generaGrafica();
+            $this->muestraGrafica();
+        }
+    }
+
+    function SetFillColor($r, $g=null, $b=null)
+    {
+        $datos = explode(',', $r);
+        if(count($datos)==3){
+            $r = $datos[0];
+            $g = $datos[1];
+            $b = $datos[2];
+        }else{
+            $r = $r;
+            $g = $g;
+            $b = $b;
+        }
+        // Set color for all filling operations
+        if(($r==0 && $g==0 && $b==0) || $g===null) {
+            $this->FillColor = sprintf('%.3F g', $datos[0]/ 255);
+        }
+        else {
+            $this->FillColor = sprintf('%.3F %.3F %.3F rg', $r / 255, $g / 255, $b / 255);
+        }
+        $this->ColorFlag = ($this->FillColor!=$this->TextColor);
+        if($this->page>0)
+            $this->_out($this->FillColor);
     }
 
     function SetTextColor($r, $g=null, $b=null)
@@ -127,57 +155,120 @@ class InformeCierre extends Rotation
         $this->Cell(6.5, .4, utf8_decode('Página ') . $this->PageNo() . '/{nb}', 0, 0, 'R');
     }
 
+    public function datosGenerales()
+    {
+        $this->setXY(1, 3);
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(4, .5, utf8_decode('Fecha: '), 0, 0, 'L');
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(6.5, .5, $this->concurso->fecha_format, 0, 0, 'L');
+
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(7, .5, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(2, .5, $this->concurso->estado, 0, 1, 'R');
+
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(4, .5, utf8_decode('No. de Licitación: '), 0, 0, 'L');
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(6.5, .5, $this->concurso->numero_licitacion, 0, 1, 'L');
+
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(4, .5, utf8_decode('Entidad Licitante: '), 0, 0, 'L');
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(6.5, .5, $this->concurso->entidad_licitante, 0, 1, 'L');
+
+        $this->ln();
+
+        $this->SetFont('Arial', 'B', 10);
+        $this->Cell(4, .5, utf8_decode('Resultado: '), 0, 0, 'L');
+        $this->SetFont('Arial', '', 10);
+        $this->Cell(15.7, .5, $this->concurso->resultado_txt, 0, 1, 'L');
+    }
+
     public function partidasTitle()
     {
-        $this->SetFont('Arial', '', 12);
+        $this->SetFont('Arial', '', 9);
 
-        $this->setXY(1, 3.5);
+
 
         $this->SetFillColor(180,180,180);
-        $this->SetWidths([1,13.8,5]);
-        $this->SetStyles(['DF','DF','DF','DF','DF','DF','DF','DF']);
-        $this->SetRounds(['','','','','','','','']);
-        $this->SetRadius([0.2,0,0,0,0,0,0,0.2]);
 
-        $this->SetFills(['117,117,117','117,117,117','117,117,117']);
-        $this->SetTextColors(['255,255,255','255,255,255','255,255,255']);
         $this->SetDrawColor(100,100,100);
         $this->SetHeights([0.7]);
-        $this->SetAligns(['C','C','C']);
+        $this->SetAligns(['C','C','C','C']);
 
+        $this->SetWidths([1,9.8,3,6]);
+        $this->SetStyles(['DF','DF','DF','DF']);
+        $this->SetRounds(['','','','']);
+        $this->SetRadius([0.2,0,0,0.2]);
 
-        $this->Row(["#", "Participante", "Oferta",]);
+        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117']);
+        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255']);
+
+        $this->Row(["", "", "Montos", utf8_decode("% en relación a")]);
+
+        $this->SetWidths([1,9.8,3,2,2,2]);
+        $this->SetStyles(['DF','DF','DF','DF','DF','DF']);
+        $this->SetRounds(['','','','','','']);
+        $this->SetRadius([0.2,0,0,0,0,0.2]);
+        $this->SetAligns(['C','C','C','C','C','C']);
+
+        $this->SetFills(['117,117,117','117,117,117','117,117,117','117,117,117','117,117,117','117,117,117']);
+        $this->SetTextColors(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
+        $this->Row(["#", "Participante", "Sin IVA", "1er Lugar", "Promedio", "Hermes"]);
 
     }
 
     public function partidas()
     {
         $i = 1;
-        foreach($this->concurso->participantesOrdenados as $participante){
+        foreach($this->concurso->participantes_para_informe as $participante){
 
             if ($participante->es_empresa_hermes == 1) {
-                $this->SetTextColors([
+                $this->SetFills([
                     "125,182,70"
                     , "125,182,70"
                     , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
+                    , "125,182,70"
                 ]);
-                $this->SetFills(['240,240,240','240,240,240','240,240,240']);
+                //$this->SetFills(['240,240,240','240,240,240','240,240,240','240,240,240','240,240,240','240,240,240']);
             }else{
-                $this->SetTextColors(['0,0,0','0,0,0','0,0,0']);
-                $this->SetFills(['255,255,255','255,255,255','255,255,255']);
+                $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
+                $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);
             }
 
-            $this->SetWidths([1,13.8,5]);
+            $this->SetWidths([1,9.8,3,2,2,2]);
             $this->SetDrawColor(100,100,100);
-            $this->SetFont('Arial', '', 12);
-            $this->SetAligns(['C','L','R']);
+            $this->SetFont('Arial', '', 9);
+            $this->SetAligns(['C','L','R','R','R','R']);
 
-            $this->Row([
-                $i,
-                utf8_decode($participante->nombre),
-                $participante->monto_format,
-            ]);
-            $i++;
+            if($participante->nombre != "PROMEDIO")
+            {
+                $this->Row([
+                    $i,
+                    utf8_decode($participante->nombre),
+                    $participante->monto_format,
+                    $participante->porcentaje_vs_primer_lugar,
+                    $participante->porcentaje_vs_promedio,
+                    $participante->porcentaje_vs_hermes,
+                ]);
+                $i++;
+            }
+            else{
+                $this->SetFills(['249,203,152','249,203,152','249,203,152','249,203,152','249,203,152','249,203,152']);
+                $this->SetAligns(['C','R','R','R','R','R']);
+                $this->Row([
+                    "",
+                    utf8_decode($participante->nombre),
+                    $participante->monto_format,
+                    $participante->porcentaje_vs_primer_lugar,
+                    $participante->porcentaje_vs_promedio,
+                    $participante->porcentaje_vs_hermes,
+                ]);
+            }
         }
 
     }
@@ -189,15 +280,27 @@ class InformeCierre extends Rotation
         $this->SetFills('117,117,117');
 
         $this->ln();
-        $this->SetFont('Arial', 'B', 10);
+        $this->SetFont('Arial', 'B', 9);
         $this->cell(3,.5,utf8_decode("Promedio:"),0,0,"L");
-        $this->SetFont('Arial', '', 10);
+        $this->SetFont('Arial', '', 9);
         $this->cell(3,.5, $this->concurso->promedio_format,0,0,"R");
         $this->cell(.7,.5);
-        $this->SetFont('Arial', 'B', 10);
-        $this->cell(8,.5,utf8_decode("Diferencia Oferta Hermes vs Oferta Ganadora:"),0,0,"L");
-        $this->SetFont('Arial', '', 10);
-        $this->cell(5,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,1,"R");
+        $this->SetFont('Arial', 'B', 9);
+        $this->cell(8,.5,utf8_decode("Diferencia Oferta Hermes vs Primer Lugar:"),0,0,"L");
+        $this->SetFont('Arial', '', 9);
+        if($this->concurso->participanteHermes)
+        {
+            $this->cell(5,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
+
+        }else{
+            $this->SetTextColor('255,99,99');
+
+            $this->SetFont('Arial', 'I', 9);
+            $this->cell(5,.5, "No Registrada",0,0,"R");
+
+        }
+
+        $this->ln();
     }
 
     public function generaGrafica()
@@ -205,13 +308,15 @@ class InformeCierre extends Rotation
         $saltos_grafica = $this->concurso->saltos_grafica;
 //ofertas
         $data1y = $this->concurso->datos_ofertas_grafica;
+//oferta hermes
+        $data2y = $this->concurso->datos_oferta_hermes_grafica;
 //promedio
         $data6y = $this->concurso->datos_promedio_grafica;
-//ganadora
+//primer lugar
         $data5y = $this->concurso->datos_oferta_ganadora_grafica;
 
 //hermes
-        $data4y = $this->concurso->datos_oferta_hermes_grafica;
+        $data4y = $this->concurso->datos_oferta_hermes_linea;
 
         $indicador_hermes = $this->concurso->datos_indicador_hermes;
 
@@ -241,6 +346,8 @@ class InformeCierre extends Rotation
 
 // Create the bar plot ofertas
         $b1plot = new BarPlot($data1y);
+// Create the bar plot oferta hermes
+        $b2plot = new BarPlot($data2y);
 // Create the line plot promedio
         $lplot = new LinePlot($data6y);
 
@@ -251,6 +358,7 @@ class InformeCierre extends Rotation
 
 // ...and add it to the graPH
         $graph->Add($b1plot);
+        $graph->Add($b2plot);
         $graph->Add($lplot);
         $graph->Add($l2plot);
         $graph->Add($l3plot);
@@ -258,6 +366,10 @@ class InformeCierre extends Rotation
         $b1plot->SetColor("#757575");
         $b1plot->SetFillColor("#757575");
         $b1plot->SetLegend("Ofertas");
+
+        $b2plot->SetColor("#7DB646");
+        $b2plot->SetFillColor("#7DB646");
+        $b2plot->SetLegend("Oferta Hermes");
 
         $lplot->SetBarCenter();
         $lplot->SetColor("red");
@@ -270,7 +382,7 @@ class InformeCierre extends Rotation
 
         $l2plot->SetBarCenter();
         $l2plot->SetColor("yellow");
-        $l2plot->SetLegend("Oferta Ganadora");
+        $l2plot->SetLegend("Primer Lugar");
         $l2plot->mark->SetType(MARK_X,'',1.0);
         $l2plot->mark->SetWeight(2);
         $l2plot->mark->SetWidth(8);
@@ -290,10 +402,10 @@ class InformeCierre extends Rotation
         $graph->legend->SetColumns(6);
         $graph->legend->SetColor('#4E4E4E','#00A78A');
 
-        $band = new PlotBand(VERTICAL,BAND_RDIAG,$indicador_hermes[0],$indicador_hermes[1], [125,182,70]);
+        /*$band = new PlotBand(VERTICAL,BAND_RDIAG,$indicador_hermes[0],$indicador_hermes[1], [125,182,70]);
         $band->ShowFrame(true);
         $band->SetOrder(DEPTH_BACK);
-        $graph->Add($band);
+        $graph->Add($band);*/
 
         $graph->title->Set("Ofertas de Licitación para Proyecto ".$this->concurso->nombre);
         @unlink(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));

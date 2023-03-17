@@ -1,18 +1,14 @@
 <?php
 
-namespace App\Events;
+namespace App\Events\Concursos;
 
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
-use App\Models\SEGURIDAD_ERP\ControlInterno\Incidencia;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class FinalizacionDeAperturaConcurso
+class InicioDeAperturaConcurso
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
     public $concurso;

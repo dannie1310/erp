@@ -19,4 +19,9 @@ class ConcursoRepository extends Repository implements RepositoryInterface
     {
         return $this->model->registrar($data);
     }
+
+    public function ultimo()
+    {
+        return $this->model->ultimo();
+    }
 }

@@ -104,8 +104,8 @@ export default{
         update(context, payload) {
             return new Promise((resolve, reject) => {
                 swal({
-                    title: "¿Estás seguro?",
-                    text: "Actualizar el nombre del concurso",
+                    title: "¿Está seguro?",
+                    text: "Actualizar datos del concurso",
                     icon: "warning",
                     buttons: {
                         cancel: {
@@ -232,6 +232,20 @@ export default{
                                 })
                         }
                     });
+            });
+        },
+        updateParticipanteDirecto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id +'/participante/'+payload.id_participante, payload.data,{ params: payload.params } )
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit('UPDATE_CONCURSOS',data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
             });
         },
 

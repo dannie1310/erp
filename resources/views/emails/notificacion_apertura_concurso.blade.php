@@ -25,7 +25,7 @@
             <br>
             Oferta Hermes: <strong>{{$concurso->participanteHermes->nombre}} {{$concurso->participanteHermes->monto_format}}</strong>
             <br>
-            Lugar Obtenido: <strong>{{$concurso->participanteGanador->lugar}}</strong>
+            Resultado: <strong>{{$concurso->resultado_txt}}</strong>
             <br>
             Promedio de Ofertas: <strong>{{$concurso->promedio_format}}</strong>
             <br>

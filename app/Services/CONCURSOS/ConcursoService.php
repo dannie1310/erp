@@ -8,10 +8,13 @@
 
 namespace App\Services\CONCURSOS;
 
-use App\Events\FinalizacionDeAperturaConcurso;
+use App\Events\Concursos\FinalizacionDeAperturaConcurso;
+use App\Events\Concursos\InicioDeAperturaConcurso;
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
 use App\PDF\Concurso\InformeCierre;
 use App\Repositories\SEGURIDAD_ERP\Concursos\ConcursoRepository;
+use DateTime;
+use DateTimeZone;
 
 class ConcursoService
 {
@@ -32,7 +35,13 @@ class ConcursoService
 
     public function store(array $data)
     {
-       return $this->repository->create($data);
+        $fecha = new DateTime($data['fecha']);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha"] = $fecha->format("Y/m/d");
+        $data["nombre"] = $data["concurso"];
+        $concurso = $this->repository->create($data);
+        event(new InicioDeAperturaConcurso($concurso));
+        return $concurso;
     }
 
     public function paginate($data)
@@ -62,6 +71,11 @@ class ConcursoService
         {
             abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
         }
+
+        $fecha = new DateTime($data['fecha']);
+        $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $data["fecha"] = $fecha->format("Y/m/d");
+
         return $concurso->editar($data);
     }
 
@@ -72,15 +86,19 @@ class ConcursoService
         return $concurso;
     }
 
-    public function pdf($id)
+    public function pdf($id = null)
     {
-        $concurso = $this->repository->show($id);
-        $pdf = new InformeCierre($concurso);
+        if($id){
+            $concurso = $this->repository->show($id);
 
-        $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->nombre_archivo, 1);
+        }else{
+            $concurso = $this->repository->ultimo();
+        }
+        $pdf = new InformeCierre($concurso);
+        $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->nombre_archivo.".pdf", 1);
     }
 
-    public function agregaParticipante(array $data, $id)
+    /*public function agregaParticipante(array $data, $id)
     {
         $concurso = $this->repository->show($id);
 
@@ -100,5 +118,5 @@ class ConcursoService
             abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
         }
         return $concurso->eliminaParticipante($id_participante);
-    }
+    }*/
 }
