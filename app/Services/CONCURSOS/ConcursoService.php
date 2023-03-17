@@ -8,7 +8,8 @@
 
 namespace App\Services\CONCURSOS;
 
-use App\Events\FinalizacionDeAperturaConcurso;
+use App\Events\Concursos\FinalizacionDeAperturaConcurso;
+use App\Events\Concursos\InicioDeAperturaConcurso;
 use App\Models\SEGURIDAD_ERP\Concursos\Concurso;
 use App\PDF\Concurso\InformeCierre;
 use App\Repositories\SEGURIDAD_ERP\Concursos\ConcursoRepository;
@@ -38,7 +39,9 @@ class ConcursoService
         $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
         $data["fecha"] = $fecha->format("Y/m/d");
         $data["nombre"] = $data["concurso"];
-        return $this->repository->create($data);
+        $concurso = $this->repository->create($data);
+        event(new InicioDeAperturaConcurso($concurso));
+        return $concurso;
     }
 
     public function paginate($data)

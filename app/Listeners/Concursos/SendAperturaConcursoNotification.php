@@ -1,13 +1,11 @@
 <?php
 
-namespace App\Listeners;
+namespace App\Listeners\Concursos;
 
-use App\Events\AperturaInvitacion;
-use App\Events\FinalizacionDeAperturaConcurso;
+use App\Events\Concursos\FinalizacionDeAperturaConcurso;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
 use App\Notifications\NotificacionAperturaConcurso;
-use App\Notifications\NotificacionInvitacionAbierta;
 use Illuminate\Support\Facades\Notification;
 
 class SendAperturaConcursoNotification
