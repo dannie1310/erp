@@ -98,17 +98,7 @@ class ConcursoParticipante extends Model
                 'es_empresa_hermes' => $data['es_empresa_hermes']
             ]);
 
-            if($this->es_empresa_hermes)
-            {
-                $participantes = $this->concurso->participantes()->where("id","!=",$this->id)
-                    ->where("es_empresa_hermes","=","1")
-                    ->get();
-                foreach ($participantes as $participante)
-                {
-                    $participante->es_empresa_hermes = 0;
-                    $participante->save();
-                }
-            }
+            $this->actualizaParticipantes($this);
 
             DB::connection('seguridad')->commit();
             return $this;
@@ -146,22 +136,8 @@ class ConcursoParticipante extends Model
             } else {
                 $data["es_empresa_hermes"] = 0;
             }
-
             $participante = $this->create($data);
-
-            if($participante->es_empresa_hermes)
-            {
-                $participantes = $participante->concurso->participantes()->where("id","!=",$participante->id)
-                    ->where("es_empresa_hermes","=","1")
-                    ->get();
-                foreach ($participantes as $participante)
-                {
-                    $participante->es_empresa_hermes = 0;
-                    $participante->save();
-
-                }
-            }
-
+            $this->actualizaParticipantes($participante);
             DB::connection('seguridad')->commit();
             return $participante;
 
@@ -170,6 +146,24 @@ class ConcursoParticipante extends Model
             abort(400, $e->getMessage());
         }
 
+    }
+
+    private function actualizaParticipantes($participante_registrado)
+    {
+        $participantes = $participante_registrado->concurso->participantes()
+            ->orderBy("monto","asc")
+            ->get();
+        $lugar = 1;
+        foreach ($participantes as $participante)
+        {
+            if($participante->es_empresa_hermes == 1 and $participante->id != $participante_registrado->id)
+            {
+                $participante->es_empresa_hermes = 0;
+            }
+            $participante->lugar = $lugar;
+            $participante->save();
+            $lugar ++;
+        }
     }
 
     public function validarRegistroNuevo($data)
@@ -197,8 +191,8 @@ class ConcursoParticipante extends Model
 
         DB::connection('seguridad')->beginTransaction();
         try {
-
             $this->delete();
+            $this->actualizaParticipantes($this);
 
             DB::connection('seguridad')->commit();
             return $this;

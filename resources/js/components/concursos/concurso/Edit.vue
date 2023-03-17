@@ -263,7 +263,6 @@
                                             <div class="form-group">
                                                 <label for="monto">Monto:</label>
                                                 <input
-                                                    type="number"
                                                     name="monto"
                                                     v-model="participante.monto"
                                                     data-vv-as="Monto"

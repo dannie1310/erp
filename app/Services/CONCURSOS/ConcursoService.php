@@ -91,7 +91,7 @@ class ConcursoService
         $pdf->create()->Output('I', 'AperturaConcurso-' . $concurso->nombre_archivo, 1);
     }
 
-    public function agregaParticipante(array $data, $id)
+    /*public function agregaParticipante(array $data, $id)
     {
         $concurso = $this->repository->show($id);
 
@@ -111,5 +111,5 @@ class ConcursoService
             abort(400, "El concurso se encuentra con estado cerrado, por lo tanto, no se puede editar \nFavor de comunicarse con Soporte a Aplicaciones y/o Coordinación SAO en caso de tener alguna duda.");
         }
         return $concurso->eliminaParticipante($id_participante);
-    }
+    }*/
 }

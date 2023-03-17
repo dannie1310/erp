@@ -52,7 +52,7 @@ class ConcursoParticipanteService
 
     public function destroy($id)
     {
-        return $this->repository->show($id)->delete();
+        return $this->repository->show($id)->eliminar();
     }
 
 }
