@@ -55,21 +55,15 @@ String.prototype.formatearkeyUp =function () {
         if (index == -1) {
             fin = fin1.replace(/,/g, '');
             resultado1 = parseFloat(fin).toString();
-            resultados = resultado1.split(".");
             var cadena = "";
             cont = 1
-            for (m = resultados[0].length - 1; m >= 0; m--) {
-                cadena = resultados[0].charAt(m) + cadena
+            for (m = resultado1.length - 1; m >= 0; m--) {
+                cadena = resultado1.charAt(m) + cadena
                 cont % 3 == 0 && m > 0 ? cadena = "," + cadena : cadena = cadena
                 cont == 3 ? cont = 1 : cont++
             }
-            if (resultados[1]) {
-                campo = cadena + "." + resultados[1];
-                return campo;
-            } else {
-                campo = cadena;
-                return campo;
-            }
+            campo = cadena;
+            return campo;
         } else {
             fin = fin1.replace(/,/g, '');
             resultados = fin.split(".");
