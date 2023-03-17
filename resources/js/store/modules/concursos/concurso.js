@@ -234,6 +234,20 @@ export default{
                     });
             });
         },
+        updateParticipanteDirecto(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .patch(URI + payload.id +'/participante/'+payload.id_participante, payload.data,{ params: payload.params } )
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit('UPDATE_CONCURSOS',data);
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
 
         quitaParticipante(context, payload) {
             return new Promise((resolve, reject) => {

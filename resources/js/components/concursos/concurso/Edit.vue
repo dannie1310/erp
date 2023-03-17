@@ -21,7 +21,7 @@
                         <div class="row">
                             <div class="col-md-2">
                                 <div class="form-group error-content">
-                                    <label for="concurso">Fecha:</label>
+                                    <label for="fecha">Fecha:</label>
                                    <datepicker v-model = "fecha"
                                                id="fecha"
                                                name = "fecha"
@@ -40,7 +40,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group error-content">
-                                    <label for="concurso">Número de Licitación:</label>
+                                    <label for="numero_licitacion">Número de Licitación:</label>
                                     <input class="form-control"
                                            type="text"
                                            placeholder="Número de Licitación"
@@ -56,7 +56,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group error-content">
-                                    <label for="concurso">Entidad Licitante:</label>
+                                    <label for="entidad_licitante">Entidad Licitante:</label>
                                     <input class="form-control"
                                            type="text"
                                            placeholder="Entidad Licitante"
@@ -95,6 +95,7 @@
                         </div>
 
                         <br />
+<!-- INICIA TABLA DE PARTICIPANTES -->
                         <div class="row">
                             <div  class="col-12">
                                 <div class="table-responsive">
@@ -130,7 +131,7 @@
                                                     {{parseFloat(participante.monto).formatMoney(2,'.',',')}}
                                                 </td>
                                                 <td style="text-align: center">
-                                                    <input type="checkbox" id="es_empresa_hermes" v-model="participante.es_empresa_hermes" disabled>
+                                                    <check-es-hermes v-bind:id="concurso_store.id" v-bind:participante="participante" ></check-es-hermes>
                                                 </td>
                                                 <td style="text-align: center">
                                                     <button type="button" class="btn btn-sm btn-outline-primary" v-on:click="editarParticipante(i)">
@@ -156,6 +157,7 @@
                         </div>
                     </div>
                 </div>
+<!--MODAL PARA AGREGAR PARTICIPANTE -->
                 <div class="modal fade" ref="modal1" role="dialog">
                     <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
                         <div class="modal-content" >
@@ -188,7 +190,6 @@
                                             <div class="form-group">
                                                 <label for="nombre">Monto:</label>
                                                 <input
-                                                        type="number"
                                                         name="monto"
                                                         v-model="participante.monto"
                                                         data-vv-as="Monto"
@@ -205,10 +206,16 @@
                                         </div>
                                     </div>
                                     <div class="row" >
-                                        <div class="col-md-12" >
+                                        <div class="col-md-6" >
                                             <div class="form-group">
                                                 <input type="checkbox" id="es_empresa_hermes" v-model="participante.es_empresa_hermes" >
                                                 <label for="nombre">&nbsp;Es Hermes</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6" >
+                                            <div class="form-group">
+                                                <input type="checkbox" id="notificar" v-model="participante.notificar" >
+                                                <label for="notificar">&nbsp;Notificar <i class="fa fa-comment"></i></label>
                                             </div>
                                         </div>
                                     </div>
@@ -223,6 +230,7 @@
                         </div>
                     </div>
                 </div>
+<!--MODAL PARA EDITAR PARTICIPANTE -->
                 <div class="modal fade" ref="modal2" role="dialog">
                     <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
                         <div class="modal-content" >
@@ -253,7 +261,7 @@
                                     <div class="row">
                                         <div class="col-md-12">
                                             <div class="form-group">
-                                                <label for="nombre">Monto:</label>
+                                                <label for="monto">Monto:</label>
                                                 <input
                                                     type="number"
                                                     name="monto"
@@ -272,10 +280,16 @@
                                         </div>
                                     </div>
                                     <div class="row" >
-                                        <div class="col-md-12" >
+                                        <div class="col-md-6" >
                                             <div class="form-group">
                                                 <input type="checkbox" id="es_empresa_hermes" v-model="participante.es_empresa_hermes" >
                                                 <label for="nombre">&nbsp;Es Hermes</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6" >
+                                            <div class="form-group">
+                                                <input type="checkbox" id="notificar" v-model="participante.notificar" >
+                                                <label for="notificar">&nbsp;Notificar <i class="fa fa-comment"></i></label>
                                             </div>
                                         </div>
                                     </div>
@@ -301,10 +315,11 @@
     import Datepicker from 'vuejs-datepicker';
     import {es} from 'vuejs-datepicker/dist/locale';
     import CierreConcurso from "./CierreConcurso.vue";
+    import CheckEsHermes from "./partials/CheckEsHermes.vue";
 
     export default {
         name: "edit-concurso",
-        components: {CierreConcurso, Datepicker},
+        components: {CheckEsHermes, CierreConcurso, Datepicker},
         props: ['id'],
         data(){
             return {
@@ -316,6 +331,7 @@
                     'monto' : 0,
                     'es_empresa_hermes' : false,
                     'id_concurso' : '',
+                    'notificar' : true,
                 },
                 concurso: '',
                 numero_licitacion: '',
@@ -357,6 +373,7 @@
                         this.fecha = this.concurso_store.fecha;
                         this.numero_licitacion = this.concurso_store.numero_licitacion;
                         this.cargando = false
+                    }).catch(error => {
                     })
                 }else{
                     this.concurso = this.concurso_store.nombre;
@@ -387,6 +404,8 @@
                     .then(data => {
                         this.$store.commit('concursos/concurso/SET_CONCURSO', data);
                     })
+                    .catch(error => {
+                    })
                     .finally(() => {
                         this.cerrarModal();
                     })
@@ -403,13 +422,16 @@
                         'nombre' : _self.participante_store.nombre,
                         'monto' :  _self.participante_store.monto,
                         'es_empresa_hermes' : (_self.participante_store.es_empresa_hermes == 0 || _self.participante_store.es_empresa_hermes == false)?false:true,
-                        'id' : _self.participante_store.id
+                        'id' : _self.participante_store.id,
+                        'notificar' : true,
                     };
                     this.$validator.reset();
                     this.$validator.errors.clear();
                     $(this.$refs.modal2).appendTo('body')
                     $(this.$refs.modal2).modal('show');
                 })
+                    .catch(error => {
+                    })
             },
             iniciar(){
                 this.$validator.reset();
@@ -418,7 +440,8 @@
                     'nombre' : '',
                     'monto' : 0,
                     'es_empresa_hermes' : false,
-                    'id_concurso' : ''
+                    'id_concurso' : '',
+                    'notificar' : true,
                 }
             },
             cerrarModal(){
@@ -439,11 +462,13 @@
                     this.participante.id_concurso = this.concurso_store.id;
                     return this.$store.dispatch('concursos/concurso/guardaParticipante', {
                         id: this.id,
-                        data: this.participante
+                        data: this.participante,
                     })
                     .then(data => {
                         this.$store.commit('concursos/concurso/SET_CONCURSO', data);
                         this.cerrarModal();
+                    })
+                    .catch(error => {
                     })
                     .finally(() => {
 
@@ -468,6 +493,8 @@
                     .then(data => {
                         this.$store.commit('concursos/concurso/SET_CONCURSO', data);
                     })
+                    .catch(error => {
+                    })
                     .finally(() => {
                         this.cerrarModal();
                     })
@@ -486,6 +513,8 @@
                 })
                 .then(data => {
                     this.$store.commit('concursos/concurso/SET_CONCURSO', data);
+                })
+                .catch(error => {
                 })
 			},
             regresar() {
