@@ -41,7 +41,7 @@ class ConcursoTransformer extends TransformerAbstract
 
     public function includeParticipantes(Concurso $model)
     {
-        if($participantes = $model->participantes)
+        if($participantes = $model->participantes()->orderBy("lugar")->get())
         {
             return $this->collection($participantes, new ConcursoParticipanteTransformer);
         }
