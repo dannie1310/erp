@@ -47,7 +47,7 @@
                                            name="numero_licitacion"
                                            id="numero_licitacion"
                                            data-vv-as="'Número de Licitación'"
-                                           v-validate="{required: true, max: 255}"
+                                           v-validate="{required: true, max: 40}"
                                            v-model="numero_licitacion"
                                            :class="{'is-invalid': errors.has('numero_licitacion')}">
                                     <div class="invalid-feedback" v-show="errors.has('numero_licitacion')">{{ errors.first('numero_licitacion') }}</div>
@@ -63,7 +63,7 @@
                                            name="entidad_licitante"
                                            id="entidad_licitante"
                                            data-vv-as="'Entidad Licitante'"
-                                           v-validate="{required: true, max: 255}"
+                                           v-validate="{required: true, max: 100}"
                                            v-model="entidad_licitante"
                                            :class="{'is-invalid': errors.has('entidad_licitante')}">
                                     <div class="invalid-feedback" v-show="errors.has('entidad_licitante')">{{ errors.first('entidad_licitante') }}</div>
@@ -78,7 +78,7 @@
                                            name="concurso"
                                            id="concurso"
                                            data-vv-as="'Nombre del concurso'"
-                                           v-validate="{required: true, max: 255}"
+                                           v-validate="{required: true, max: 40}"
                                            v-model="concurso"
                                            :class="{'is-invalid': errors.has('concurso')}">
                                     <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>

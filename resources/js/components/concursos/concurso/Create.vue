@@ -62,7 +62,7 @@
                                    name="concurso"
                                    id="concurso"
                                    data-vv-as="'Nombre del concurso'"
-                                   v-validate="{required: true, max: 255}"
+                                   v-validate="{required: true, max: 40}"
                                    v-model="concurso"
                                    :class="{'is-invalid': errors.has('concurso')}">
                             <div class="invalid-feedback" v-show="errors.has('concurso')">{{ errors.first('concurso') }}</div>

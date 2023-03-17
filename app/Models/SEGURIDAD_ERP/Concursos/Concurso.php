@@ -9,9 +9,11 @@
 namespace App\Models\SEGURIDAD_ERP\Concursos;
 
 use App\Models\IGH\Usuario;
+use App\Utils\NumberToLetterConverterStatic;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\DB;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class Concurso extends Model
 {
@@ -83,12 +85,12 @@ class Concurso extends Model
     {
         if($this->estatus == 1)
         {
-            return 'Activo';
+            return 'En Proceso';
         }else if($this->estatus == 2)
         {
-            return 'Cerrado';
+            return 'Finalizada';
         }else{
-            return '-';
+            return '';
         }
     }
 
@@ -218,7 +220,7 @@ class Concurso extends Model
         return [$lugar_hermes-1, $lugar_hermes];
     }
 
-    public function getDatosOfertaHermesGraficaAttribute()
+    public function getDatosOfertaHermesLineaAttribute()
     {
         $arreglo = [];
         for($i = 0; $i<count($this->participantes);$i++)
@@ -228,20 +230,110 @@ class Concurso extends Model
         return $arreglo;
     }
 
+    public function getDatosOfertaHermesGraficaAttribute()
+    {
+        $arreglo = [];
+        foreach ($this->participantesOrdenados as $participante) {
+            if($participante->esHermes)
+            {
+                $arreglo[] = ceil($participante->monto / $this->divisor);
+            }else{
+                $arreglo[] = 0;
+            }
+
+        }
+        return $arreglo;
+    }
+
     public function getDatosOfertasGraficaAttribute()
     {
         $arreglo_ofertas = [];
-        foreach ($this->participantes as $participante)
+        foreach ($this->participantesOrdenados as $participante)
         {
             $arreglo_ofertas[] = ceil($participante->monto / $this->divisor);
         }
 
         return $arreglo_ofertas;
     }
+    /**
+    participantes_para_informe
+     */
+
+    public function getParticipantesParaInformeAttribute()
+    {
+        $participantes = $this->participantes()->select(["id","nombre","monto","es_empresa_hermes"])->get()->toArray();
+
+        $promedio =  [[
+            "nombre"=>"PROMEDIO"
+            , "monto_format"=>$this->promedio_format
+            , "monto"=>$this->promedio
+            , "es_empresa_hermes"=>0
+            , "porcentaje_vs_primer_lugar"=>$this->porcentajePrimerLugar($this->promedio)
+            , "porcentaje_vs_promedio"=>$this->porcentajePromedio($this->promedio)
+            , "porcentaje_vs_hermes"=>$this->porcentajeHermes($this->promedio)
+        ]];
+
+        $participantes_completos = array_merge($participantes,$promedio);
+        $participantesObj = [];
+        foreach ($participantes_completos as $participante_completo) {
+            $participante_completo["monto_format"] = number_format($participante_completo["monto"],2);
+            $participante_completo["porcentaje_vs_primer_lugar"] = $this->porcentajePrimerLugar($participante_completo["monto"]);
+            $participante_completo["porcentaje_vs_promedio"] = $this->porcentajePromedio($participante_completo["monto"]);
+            $participante_completo["porcentaje_vs_hermes"] = $this->porcentajeHermes($participante_completo["monto"]);
+
+            $participantesObj[] = (object) $participante_completo;
+        }
+        $participantes = collect($participantesObj);
+
+        return $participantes->sortBy("monto");
+    }
+
+    public function getResultadoTxtAttribute()
+    {
+        if($this->participanteHermes)
+        {
+            return ucfirst(NumberToLetterConverterStatic::Num2Ordinales($this->participanteHermes->lugar))." lugar de ".NumberToLetterConverterStatic::num2letras(count($this->participantes)). " participantes";
+        }else{
+            "No hay oferta de Hermes ingresada";
+        }
+    }
+
+    public function getEstadoTxtAttribute()
+    {
+    }
+
 
     /**
      * Métodos
     */
+
+    private function porcentajePrimerLugar($monto)
+    {
+        if($monto>0){
+            $monto_ganador = $this->participanteGanador->monto;
+            $porcentaje = $monto / $monto_ganador  *100;
+            return number_format($porcentaje,2) . " %";
+        }
+        return "N/A";
+    }
+    private function porcentajePromedio($monto)
+    {
+        if($monto>0){
+            $monto_promedio = $this->promedio;
+            $porcentaje = $monto  / $monto_promedio *100;
+            return number_format($porcentaje,2). " %";;
+        }
+        return "N/A";
+    }
+    private function porcentajeHermes($monto)
+    {
+        if($monto>0 && $this->participanteHermes){
+            $monto_hermes = $this->participanteHermes->monto;
+            $porcentaje = $monto / $monto_hermes  *100;
+            return number_format($porcentaje,2). " %";;
+        }
+        return "N/A";
+    }
     public function registrar($data)
     {
         $this->validarNombreConcurso($data);
