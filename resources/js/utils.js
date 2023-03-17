@@ -58,9 +58,12 @@ String.prototype.formatearkeyUp =function () {
             var cadena = "";
             cont = 1
             for (m = resultado1.length - 1; m >= 0; m--) {
-                cadena = resultado1.charAt(m) + cadena
-                cont % 3 == 0 && m > 0 ? cadena = "," + cadena : cadena = cadena
-                cont == 3 ? cont = 1 : cont++
+                if(!isNaN(resultado1.charAt(m)))
+                {
+                    cadena = resultado1.charAt(m) + cadena
+                    cont % 3 == 0 && m > 0 ? cadena = "," + cadena : cadena = cadena
+                    cont == 3 ? cont = 1 : cont++
+                }
             }
             campo = cadena;
             return campo;
@@ -70,9 +73,12 @@ String.prototype.formatearkeyUp =function () {
             var cadena = "";
             cont = 1
             for (m = resultados[0].length - 1; m >= 0; m--) {
-                cadena = resultados[0].charAt(m) + cadena
-                cont % 3 == 0 && m > 0 ? cadena = "," + cadena : cadena = cadena
-                cont == 3 ? cont = 1 : cont++
+                if(!isNaN(resultados[0].charAt(m)))
+                {
+                    cadena = resultados[0].charAt(m) + cadena
+                    cont % 3 == 0 && m > 0 ? cadena = "," + cadena : cadena = cadena
+                    cont == 3 ? cont = 1 : cont++
+                }
             }
             if (resultados[1]) {
                 campo = cadena + "." + resultados[1];
