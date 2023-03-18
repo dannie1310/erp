@@ -459,6 +459,7 @@
                 $(this.$refs.modal2).modal('hide');
             },
             guardaParticipante() {
+                this.participante.monto = this.participante.monto.replace(/,/g, '');
                 if(this.participante.nombre == '')
                 {
                     swal('¡Error!', 'Debe agregar un nombre del participante.', 'error')
@@ -485,6 +486,7 @@
                 }
             },
             updateParticipante() {
+                this.participante.monto = this.participante.monto.replace(/,/g, '');
                 if(this.participante.nombre == '')
                 {
                     swal('¡Error!', 'Debe agregar un nombre del participante.', 'error')
