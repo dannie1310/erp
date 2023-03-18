@@ -70,10 +70,11 @@
                                     <th style="text-align: left" colspan="2">Subtotal</th>
                                     <td style="text-align: right">{{value.estimacion.subtotal_orden_pago}}</td>
                                 </tr>
-                                <tr>
-                                    <th style="text-align: left" colspan="2">IVA</th>
-                                    <td style="text-align: right">{{value.estimacion.iva_orden_pago}}</td>
-                                </tr>
+                                 <tr>
+                                     <th style="text-align: left">IVA</th>
+                                     <td>{{ value.estimacion.tasa_iva_format }} %</td>
+                                     <td style="text-align: right">{{value.estimacion.iva_orden_pago}}</td>
+                                 </tr>
                                 <tr>
                                     <th style="text-align: left">Retención de IVA</th>
                                     <td>{{value.estimacion.retencion_iva_porcentaje}}</td>
