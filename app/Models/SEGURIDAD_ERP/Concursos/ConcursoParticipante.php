@@ -127,6 +127,11 @@ class ConcursoParticipante extends Model
     public function registrar($data)
     {
         $this->validarRegistroNuevo($data);
+        $concurso = Concurso::find($data["id_concurso"]);
+        if($concurso->estatus != 1)
+        {
+            abort(400, "El concurso ". $concurso->nombre . " ya se encuentra cerrado, no es posible agregar al participante.");
+        }
         try {
             DB::connection('seguridad')->beginTransaction();
 

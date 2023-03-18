@@ -141,7 +141,7 @@ class InformeCierre extends Rotation
         $this->SetFont('Helvetica', '', 13);
         $this->Cell(17., .5, utf8_decode('Resultados de Apertura de Concurso') , 0, 1, 'C');
         $this->setX(3.53);
-        $this->SetFont('Helvetica', 'B', 13);
+        $this->SetFont('Helvetica', 'B', 14);
         $this->Cell(17.2, .5, utf8_decode($this->concurso->nombre) , 0, 1, 'C');
     }
 
@@ -163,10 +163,20 @@ class InformeCierre extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(6.5, .5, $this->concurso->fecha_format, 0, 0, 'L');
 
+        if($this->concurso->estatus == 1)
+        {
+            $this->SetFillColor(255,0,0);
+        }
+        if($this->concurso->estatus == 2)
+        {
+            $this->SetFillColor(125,182,70);
+        }
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(7, .5, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(2, .5, $this->concurso->estado, 0, 1, 'R');
+        $this->Cell(2, .5, $this->concurso->estado, 0, 1, 'R',1);
+
+        $this->SetFillColor(255,255,255);
 
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .5, utf8_decode('No. de Licitación: '), 0, 0, 'L');
@@ -178,24 +188,22 @@ class InformeCierre extends Rotation
         $this->SetFont('Arial', '', 10);
         $this->Cell(6.5, .5, $this->concurso->entidad_licitante, 0, 1, 'L');
 
-        $this->ln();
+        $this->ln(0.3);
 
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .5, utf8_decode('Resultado: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
         $this->Cell(15.7, .5, $this->concurso->resultado_txt, 0, 1, 'L');
+        $this->ln(0.2);
     }
 
     public function partidasTitle()
     {
         $this->SetFont('Arial', '', 9);
 
-
-
         $this->SetFillColor(180,180,180);
-
         $this->SetDrawColor(100,100,100);
-        $this->SetHeights([0.7]);
+        $this->SetHeights([0.5]);
         $this->SetAligns(['C','C','C','C']);
 
         $this->SetWidths([1,9.8,3,6]);
@@ -234,7 +242,6 @@ class InformeCierre extends Rotation
                     , "125,182,70"
                     , "125,182,70"
                 ]);
-                //$this->SetFills(['240,240,240','240,240,240','240,240,240','240,240,240','240,240,240','240,240,240']);
             }else{
                 $this->SetTextColors(['0,0,0','0,0,0','0,0,0','0,0,0','0,0,0','0,0,0']);
                 $this->SetFills(['255,255,255','255,255,255','255,255,255','255,255,255','255,255,255','255,255,255']);

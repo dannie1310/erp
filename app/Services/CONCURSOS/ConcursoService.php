@@ -81,8 +81,12 @@ class ConcursoService
 
     public function cerrar($id)
     {
-        $concurso = $this->repository->show($id)->cerrar();
-        event(new FinalizacionDeAperturaConcurso($concurso));
+        $concurso = $this->repository->show($id);
+        if($concurso->estatus == 1)
+        {
+            $concurso->cerrar();
+            event(new FinalizacionDeAperturaConcurso($concurso));
+        }
         return $concurso;
     }
 
