@@ -161,22 +161,26 @@ class InformeCierre extends Rotation
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .5, utf8_decode('Fecha: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(6.5, .5, $this->concurso->fecha_format, 0, 0, 'L');
+        $this->Cell(4, .5, $this->concurso->fecha_format, 0, 0, 'L');
 
+
+        $this->SetFont('Arial', 'B', 13);
+        $this->Cell(9, .7, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
         if($this->concurso->estatus == 1)
         {
+            $this->SetTextColor('255', '255', '255');
             $this->SetFillColor(255,0,0);
         }
         if($this->concurso->estatus == 2)
         {
+            $this->SetTextColor('0', '0', '0');
             $this->SetFillColor(125,182,70);
         }
-        $this->SetFont('Arial', 'B', 10);
-        $this->Cell(7, .5, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
-        $this->SetFont('Arial', '', 10);
-        $this->Cell(2, .5, $this->concurso->estado, 0, 1, 'R',1);
+        $this->SetFont('Arial', '', 13);
+        $this->Cell(2.5, .7, $this->concurso->estado, 0, 1, 'C',1);
 
         $this->SetFillColor(255,255,255);
+        $this->SetTextColor('0', '0', '0');
 
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .5, utf8_decode('No. de Licitación: '), 0, 0, 'L');
