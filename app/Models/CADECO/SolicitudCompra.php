@@ -817,6 +817,7 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['subtotal_con_descuento'] = $cotizacion->subtotal_con_descuento_comparativa;
             $cotizaciones[$cotizacion->id_transaccion]['iva_partidas'] = $cotizacion->iva_partidas;
             $cotizaciones[$cotizacion->id_transaccion]['iva'] = $cotizacion->iva_con_descuento_comparativa;
+            $cotizaciones[$cotizacion->id_transaccion]['tasa_iva_format'] = $cotizacion->tasa_iva_format;
             $cotizaciones[$cotizacion->id_transaccion]['total'] = $cotizacion->total_con_descuento_comparativa;
             $cotizaciones[$cotizacion->id_transaccion]['total_partidas'] = $cotizacion->total_partidas;
             $cotizaciones[$cotizacion->id_transaccion]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';

@@ -217,7 +217,7 @@ class AsignacionProveedorService
                 ]);
 
                 $subtotal = $importe;
-                $impuesto = $subtotal  * 0.16;
+                $impuesto = $subtotal  * $partida->cotizacion->cotizacion->tasa_iva;
                 $monto = $subtotal + $impuesto;
 
                 $orden_c->monto = $orden_c->monto + $monto;

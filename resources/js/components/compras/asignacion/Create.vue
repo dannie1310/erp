@@ -19,7 +19,7 @@
                             <div class="col-md-12">
                                 <tabla-datos-solicitud-compra v-bind:solicitud_compra="solicitud_compra"></tabla-datos-solicitud-compra>
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col-md-12">
@@ -143,71 +143,73 @@
                             </div>
                             <div class="row" v-for="(cotizacion, id_empresa) in data.cotizaciones" v-if="cotizacion.justificar">
                                     <div class="col-sm-12">
-                                        <table class="table table-striped table-sm">
-                                            <tr>
-                                                <td colspan="6" style="border:none">
-                                                    <b>[{{cotizacion.folio_format}}] {{cotizacion.razon_social}}</b>
-                                                </td>
-                                            </tr>
-                                            <tr class="encabezado">
-                                                <th class="th_c350">
-                                                    Descripción
-                                                </th>
-                                                <th class="unidad">
-                                                    Unidad
-                                                </th>
-                                                <th class="th_c100">
-                                                    Importe Pesos (MXN) (Asignado)
-                                                </th>
-                                                <th class="th_c100">
-                                                    Importe Pesos (MXN) (Mejor Opción)
-                                                </th>
-                                                <th class="th_c100">
-                                                    Diferencia
-                                                </th>
-                                                <th class="th_c100">
-                                                    Cantidad Asignada
-                                                </th>
-                                                <th>
-                                                    Justificación
-                                                </th>
-                                            </tr>
-                                            <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i] !== null && cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0">
-                                                <td>
-                                                    {{item.descripcion}}
-                                                </td>
-                                                <td>
-                                                    {{item.unidad}}
-                                                </td>
-                                                <td class="td_money">
-                                                    ${{getAsignadoPrecioMC(cotizacion.partidas[i].precio_con_descuento_mn, cotizacion.partidas[i].cantidad_asignada)}}
-                                                </td>
-                                                <td class="td_money">
-                                                    ${{getMejorOpcionPrecioMC(i, cotizacion.partidas[i].cantidad_asignada)}}
-                                                </td>
-                                                <td class="td_money">
-                                                    {{getPorcentajeDiferencia(i, cotizacion.partidas[i].precio_con_descuento_mn)}} %
-                                                </td>
-                                                <td class="td_money">
-                                                    {{parseFloat(cotizacion.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}}
-                                                </td>
-                                                <td>
-                                                    <textarea
-                                                        :disabled="!validaPrimeraPartida(id_empresa,cotizacion.partidas[i].id_material)"
-                                                        v-on:keyup="keyupReplicarjustificacion()"
-                                                        name="justificacion"
-                                                        id="justificacion"
-                                                        class="form-control"
-                                                        v-model="cotizacion.partidas[i].justificacion"
-                                                        v-validate="{required: true, max:500}"
-                                                        data-vv-as="Justificación"
-                                                        :class="{'is-invalid': errors.has('justificacion')}"
-                                                    ></textarea>
-                                                    <div class="invalid-feedback" v-show="errors.has('justificacion')">{{ errors.first('justificacion') }}</div>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </div>                                
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-sm">
+                                                <tr>
+                                                    <td colspan="6" style="border:none">
+                                                        <b>[{{cotizacion.folio_format}}] {{cotizacion.razon_social}}</b>
+                                                    </td>
+                                                </tr>
+                                                <tr class="encabezado">
+                                                    <th class="th_c350">
+                                                        Descripción
+                                                    </th>
+                                                    <th class="unidad">
+                                                        Unidad
+                                                    </th>
+                                                    <th class="th_c100">
+                                                        Importe Pesos (MXN) (Asignado)
+                                                    </th>
+                                                    <th class="th_c100">
+                                                        Importe Pesos (MXN) (Mejor Opción)
+                                                    </th>
+                                                    <th class="th_c100">
+                                                        Diferencia
+                                                    </th>
+                                                    <th class="th_c100">
+                                                        Cantidad Asignada
+                                                    </th>
+                                                    <th>
+                                                        Justificación
+                                                    </th>
+                                                </tr>
+                                                <tr v-for="(item, i) in data.items" v-if="cotizacion.partidas[i] !== null && cotizacion.partidas[i].mejor_opcion == false && cotizacion.partidas[i].cantidad_asignada > 0">
+                                                    <td>
+                                                        {{item.descripcion}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.unidad}}
+                                                    </td>
+                                                    <td class="td_money">
+                                                        ${{getAsignadoPrecioMC(cotizacion.partidas[i].precio_con_descuento_mn, cotizacion.partidas[i].cantidad_asignada)}}
+                                                    </td>
+                                                    <td class="td_money">
+                                                        ${{getMejorOpcionPrecioMC(i, cotizacion.partidas[i].cantidad_asignada)}}
+                                                    </td>
+                                                    <td class="td_money">
+                                                        {{getPorcentajeDiferencia(i, cotizacion.partidas[i].precio_con_descuento_mn)}} %
+                                                    </td>
+                                                    <td class="td_money">
+                                                        {{parseFloat(cotizacion.partidas[i].cantidad_asignada).formatMoney(2,'.',',')}}
+                                                    </td>
+                                                    <td>
+                                                        <textarea
+                                                            :disabled="!validaPrimeraPartida(id_empresa,cotizacion.partidas[i].id_material)"
+                                                            v-on:keyup="keyupReplicarjustificacion()"
+                                                            name="justificacion"
+                                                            id="justificacion"
+                                                            class="form-control"
+                                                            v-model="cotizacion.partidas[i].justificacion"
+                                                            v-validate="{required: true, max:500}"
+                                                            data-vv-as="Justificación"
+                                                            :class="{'is-invalid': errors.has('justificacion')}"
+                                                        ></textarea>
+                                                        <div class="invalid-feedback" v-show="errors.has('justificacion')">{{ errors.first('justificacion') }}</div>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </div>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -218,7 +220,7 @@
                 </div>
             </div>
     </span>
-    
+
 </template>
 
 <script>
@@ -383,7 +385,7 @@ export default {
         validar_partidas_justificadas(){
             let self = this;
             let cant = 0;
-            
+
             Object.entries(this.data.cotizaciones).forEach(([id_empresa, cotizacion]) =>{
                 cotizacion.justificar = false;
                 Object.entries(cotizacion.partidas).forEach(([i, partida]) =>{

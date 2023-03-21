@@ -140,21 +140,20 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getStyle('G'.($i+6))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+7))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+8))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+12))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-                $event->sheet->getStyle('G'.($i+13))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+11))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+14))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+15))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+16))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+17))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+18))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
-
                 $event->sheet->setCellValue("G".($i+2), '=SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+3), '=SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+4), '=SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+5), '=SUMIF(J3:J'.$i.',"LIBRA",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"LIBRA",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+10), '=SUM(K3:K'.$i.')-(SUM(K3:K'.$i.')*G'.($i+1).'/100)');
-                $event->sheet->setCellValue("G".($i+11), '=G'.($i+10).'*0.16');
-                $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'+G'.($i+11));
+                $event->sheet->setCellValue("G".($i+11), $this->cotizacion->tasa_iva_format);
+                $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'*(G'.($i+11).'/100)');
+                $event->sheet->setCellValue("G".($i+13), '=G'.($i+10).'+G'.($i+12));
                 $event->sheet->setCellValue("F".($i+1), '%Descuento');
                 $event->sheet->setCellValue("G".($i+1), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->descuento : 0);
                 $event->sheet->setCellValue("F".($i+2), 'Subtotal Precios Peso (MXN)');
@@ -166,27 +165,29 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+8), 'TC LIBRA');
                 $event->sheet->setCellValue("F".($i+9), 'Moneda de Conv.');
                 $event->sheet->setCellValue("F".($i+10), 'Subtotal Moneda Conv.');
-                $event->sheet->setCellValue("F".($i+11), 'IVA');
-                $event->sheet->setCellValue("F".($i+12), 'TOTAL');
-                $event->sheet->setCellValue("F".($i+13), 'Fecha de Cotizacion');
+                $event->sheet->setCellValue("F".($i+11), 'Tasa de IVA');
+                $event->sheet->setCellValue("F".($i+12), 'IVA');
+                $event->sheet->setCellValue("F".($i+13), 'TOTAL');
+                $event->sheet->setCellValue("F".($i+14), 'Fecha de Cotizacion');
+
                 $event->sheet
-                    ->getStyle('G'.($i+13).":G".($i+13))
+                    ->getStyle('G'.($i+14).":G".($i+14))
                     ->getNumberFormat()
                     ->setFormatCode(\PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_DATE_DDMMYYYY);
                 $fechaCotizacion = date_create($this->cotizacion->fecha);
-                $event->sheet->setCellValue("G".($i+13), \PhpOffice\PhpSpreadsheet\Shared\Date::dateTimeToExcel($fechaCotizacion));
-                $event->sheet->setCellValue("F".($i+14), 'Pago en Parcialdades (%)');
-                $event->sheet->setCellValue("G".($i+14), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->parcialidades : 0);
-                $event->sheet->setCellValue("F".($i+15), 'Anticipo (%)');
-                $event->sheet->setCellValue("G".($i+15), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->anticipo : 0);
-                $event->sheet->setCellValue("F".($i+16), 'Credito (días)');
-                $event->sheet->setCellValue("G".($i+16), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->dias_credito : 0);
-                $event->sheet->setCellValue("F".($i+17), 'Tiempo de Entraga (días)');
-                $event->sheet->setCellValue("G".($i+17), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->plazo_entrega : 0);
-                $event->sheet->setCellValue("F".($i+18), 'Vigencia (días)');
-                $event->sheet->setCellValue("G".($i+18), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->vigencia : 0);
-                $event->sheet->setCellValue("F".($i+19), 'Observaciones Generales');
-                $event->sheet->setCellValue("G".($i+19), $this->cotizacion->observaciones);
+                $event->sheet->setCellValue("G".($i+14), \PhpOffice\PhpSpreadsheet\Shared\Date::dateTimeToExcel($fechaCotizacion));
+                $event->sheet->setCellValue("F".($i+15), 'Pago en Parcialdades (%)');
+                $event->sheet->setCellValue("G".($i+15), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->parcialidades : 0);
+                $event->sheet->setCellValue("F".($i+16), 'Anticipo (%)');
+                $event->sheet->setCellValue("G".($i+16), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->anticipo : 0);
+                $event->sheet->setCellValue("F".($i+17), 'Credito (días)');
+                $event->sheet->setCellValue("G".($i+17), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->dias_credito : 0);
+                $event->sheet->setCellValue("F".($i+18), 'Tiempo de Entraga (días)');
+                $event->sheet->setCellValue("G".($i+18), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->plazo_entrega : 0);
+                $event->sheet->setCellValue("F".($i+19), 'Vigencia (días)');
+                $event->sheet->setCellValue("G".($i+19), ($this->cotizacion->complemento) ? $this->cotizacion->complemento->vigencia : 0);
+                $event->sheet->setCellValue("F".($i+20), 'Observaciones Generales');
+                $event->sheet->setCellValue("G".($i+20), $this->cotizacion->observaciones);
                 $event->sheet->setCellValue("G".($i+6), $this->tc_partida_dlls);
                 $event->sheet->setCellValue("G".($i+7), $this->tc_partida_euro);
                 $event->sheet->setCellValue("G".($i+8), $this->tc_partida_libra);

@@ -218,6 +218,20 @@
                                         <label class="col-sm-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-md-2 col-form-label">TASA DE IVA (%):</label>
+                                    </div>
+                                    <div class="col-md-2 p-1" align="right">
+                                        <input
+                                            type="text"
+                                            name="tasa_iva"
+                                            v-model="cotizacion.tasa_iva_format"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*$/}"
+                                            class="col-md-6 form-control"
+                                            style="text-align: right"
+                                            id="tasa_iva"
+                                            :class="{'is-invalid': errors.has('tasa_iva')}">
+                                    </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
@@ -637,7 +651,7 @@
             },
             iva()
             {
-                return this.subtotal * 0.16;
+                return this.subtotal * (this.cotizacion.tasa_iva_format / 100);
             },
             total()
             {
