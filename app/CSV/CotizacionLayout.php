@@ -146,6 +146,8 @@ class CotizacionLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->getStyle('G'.($i+16))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+17))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->getStyle('G'.($i+18))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+19))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+                $event->sheet->getStyle('G'.($i+20))->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
                 $event->sheet->setCellValue("G".($i+2), '=SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"PESO MXN",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+3), '=SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"DOLAR USD",I3:I'.$i.')*G'.($i+1).'/100)');
                 $event->sheet->setCellValue("G".($i+4), '=SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')-(SUMIF(J3:J'.$i.',"EURO",I3:I'.$i.')*G'.($i+1).'/100)');

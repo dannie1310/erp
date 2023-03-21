@@ -477,6 +477,11 @@
                     ]}
                 }).then(data => {
                     this.cotizacion = data;
+                    if(this.xls)
+                    {
+                        this.cotizacion.tasa_iva_format = this.xls.tasa_iva_format;
+                        this.cotizacion.tasa_iva = this.xls.tasa_iva / 100;
+                    }
                     this.cotizacion.partidas = data.partidasEdicion;
                     this.fecha = data.fecha;
                     this.ordenar();
