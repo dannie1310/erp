@@ -390,6 +390,47 @@ export default {
                     });
             });
         },
+        registrarRetencionISR(context, payload) {
+            return new Promise((resolve, reject) => {
+                swal({
+                    title: "Registrar Retención ISR",
+                    text: "¿Está seguro de que desea registrar esta retención de ISR?",
+                    icon: "warning",
+                    closeOnClickOutside: false,
+                    buttons: {
+                        cancel: {
+                            text: 'Cancelar',
+                            visible: true
+                        },
+                        confirm: {
+                            text: 'Si, Registrar',
+                            closeModal: false,
+                        }
+                    }
+                })
+                    .then((value) => {
+                        if (value) {
+                            axios
+                                .patch(URI + payload.id + '/registrarRetencionIsr', payload.params)
+                                .then(r => r.data)
+                                .then(data => {
+                                    swal("Retención ISR registrada correctamente", {
+                                        icon: "success",
+                                        timer: 1500,
+                                        buttons: false
+                                    }).then(() => {
+                                        resolve(data);
+                                    })
+                                })
+                                .catch(error => {
+                                    reject(error);
+                                });
+                        } else {
+                            reject();
+                        }
+                    });
+            });
+        },
         descargaLayout(context, payload){
             var urr = URI + 'descargaLayout/'+ payload.id +'?db=' + this._vm.$session.get('db') + '&idobra=' + this._vm.$session.get('id_obra') + '&access_token=' + this._vm.$session.get('jwt');
             var win = window.open(urr, "_blank");

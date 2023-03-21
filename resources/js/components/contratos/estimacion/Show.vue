@@ -109,8 +109,8 @@
                         <div class="card-body">
                             <form>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Subtotal</label>
-                                    <div class="col-md-8">
+                                    <label class="col-md-5 col-form-label">Subtotal:</label>
+                                    <div class="col-md-7">
                                         <input
                                             style="text-align:right;"
                                             :disabled="true"
@@ -122,8 +122,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">IVA</label>
-                                    <div class="col-md-8">
+                                    <label class="col-md-5 col-form-label">IVA:</label>
+                                    <div class="col-md-7">
                                          <input
                                              style="text-align:right;"
                                              :disabled="true"
@@ -134,9 +134,35 @@
                                              v-model="parseFloat(estimacion.iva).formatMoney(2)" />
                                     </div>
                                 </div>
+                                <div class="form-group row" v-if="estimacion.retencion_iva_monto > 0">
+                                    <label class="col-md-5 col-form-label">IVA Retenido ({{estimacion.retencion_iva_tasa}}):</label>
+                                    <div class="col-md-7">
+                                         <input
+                                             style="text-align:right;"
+                                             :disabled="true"
+                                             type="text"
+                                             data-vv-as="IVA"
+                                             class="form-control"
+                                             placeholder="IVA"
+                                             v-model="parseFloat(estimacion.retencion_iva_monto).formatMoney(2)" />
+                                    </div>
+                                </div>
+                                <div class="form-group row" v-if="estimacion.retencion_isr_monto > 0">
+                                    <label class="col-md-5 col-form-label">ISR Retenido ({{estimacion.retencion_isr_tasa}}):</label>
+                                    <div class="col-md-7">
+                                         <input
+                                             style="text-align:right;"
+                                             :disabled="true"
+                                             type="text"
+                                             data-vv-as="IVA"
+                                             class="form-control"
+                                             placeholder="IVA"
+                                             v-model="parseFloat(estimacion.retencion_isr_monto).formatMoney(2)" />
+                                    </div>
+                                </div>
                                 <div class="form-group row">
-                                    <label class="col-md-4 col-form-label">Total</label>
-                                    <div class="col-md-8">
+                                    <label class="col-md-5 col-form-label">Total:</label>
+                                    <div class="col-md-7">
                                          <input
                                              style="text-align:right;"
                                              :disabled="true"

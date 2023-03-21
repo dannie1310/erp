@@ -266,6 +266,7 @@ class FinFacIngresoFactura extends Model
      */
     public function cancelar($motivo)
     {
+        $this->validarCancelacion();
         try {
             DB::connection('repseg')->beginTransaction();
             $this->update([
@@ -274,10 +275,13 @@ class FinFacIngresoFactura extends Model
                 'motivo_cancelacion' => $motivo,
                 'fecha_cancelacion' => date('Y-m-d H:i:s')
             ]);
-            $this->CFDI->update([
-                'estado' => -1,
-                'cancelado' => -1
-            ]);
+            if($this->CFDI)
+            {
+                $this->CFDI->update([
+                    'estado' => -1,
+                    'cancelado' => -1
+                ]);
+            }
             DB::connection('repseg')->commit();
             return $this;
         } catch (\Exception $e) {
@@ -370,5 +374,13 @@ class FinFacIngresoFactura extends Model
     public function getCCONotificacionIngreso()
     {
         return GrlNotificacion::activo()->seccion(1)->proyecto($this->idproyecto)->where('tipo', 'CCO')->pluck('cuenta');
+    }
+
+    public function validarCancelacion()
+    {
+        if($this->estado != 1)
+        {
+            abort(500, "La factura no se puede cancelar por que su estado cambio a ".$this->estado_descripcion);
+        }
     }
 }

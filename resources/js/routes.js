@@ -5063,6 +5063,53 @@ export const routes = [
         ]
     },
     {
+        path: '/concursos',
+        component: require('./components/concursos/concurso/Layout').default,
+        components:  {
+            default: require('./components/concursos/partials/Layout.vue').default,
+            menu: require('./components/concursos/partials/Menu.vue').default
+        },
+        children: [
+            {
+                path: '/',
+                name: 'concursos',
+                component: require('./components/concursos/concurso/Index').default,
+                meta: {
+                    title: 'Lista de Concursos',
+                    breadcrumb: {name: 'CONCURSO'},
+                    middleware: [auth, permission],
+                    permission: 'consultar_concurso',
+                    general: true
+                }
+            },
+            {
+                path: 'create',
+                name: 'concurso-create',
+                component: require('./components/concursos/concurso/Create').default,
+                meta: {
+                    title: 'Registrar Concurso',
+                    breadcrumb: {name: 'REGISTRAR', parent: 'concursos'},
+                    middleware: [auth, permission],
+                    permission: ['registrar_concurso'],
+                    general: true
+                }
+            },
+            {
+                path: ':id/editar',
+                name: 'concurso-edit',
+                props: true,
+                component: require('./components/concursos/concurso/Edit').default,
+                meta: {
+                    title: 'Editar Concurso',
+                    breadcrumb: { parent: 'concursos', name: 'EDITAR'},
+                    middleware: [auth, permission],
+                    permission: ['editar_concurso'],
+                    general: true
+                }
+            },
+        ]
+    },
+    {
         path: '/auth',
         name: 'login',
         component: require('./components/pages/Login.vue').default,

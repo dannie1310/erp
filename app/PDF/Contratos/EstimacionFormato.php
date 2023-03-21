@@ -781,13 +781,34 @@ class EstimacionFormato extends Rotation
         }
 
         $total_acum_estimado_anterior -= $this->estimacion->iva_retenido_calculado_anterior;
+        $total_acum_estimado_anterior -= $this->estimacion->isr_retenido_calculado_anterior;
         $total_estimacion -= $this->estimacion->iva_retenido_calculado;
+        $total_estimacion -= $this->estimacion->isr_retenido_calculado;
         $total_acumulado -= ($this->estimacion->iva_retenido_calculado_anterior + $this->estimacion->iva_retenido_calculado);
+        $total_acumulado -= ($this->estimacion->isr_retenido_calculado_anterior + $this->estimacion->isr_retenido_calculado);
 
-        $this->Row([utf8_decode('Retención IVA '), ' ', '', '', ' ', '', ' ', number_format($this->estimacion->iva_retenido_calculado_anterior, 4, ".", ","),'', number_format($this->estimacion->iva_retenido_calculado, 4, ".", ","), ' ', number_format(($this->estimacion->iva_retenido_calculado_anterior + $this->estimacion->iva_retenido_calculado), 4, ".", ","), ' ', '']);
+
+        $this->Row([
+            utf8_decode('Retención IVA '), ' ', '', '', ' ', '', ' '
+            , number_format($this->estimacion->iva_retenido_calculado_anterior, 4, ".", ","),''
+            , number_format($this->estimacion->iva_retenido_calculado, 4, ".", ","), ' '
+            , number_format(($this->estimacion->iva_retenido_calculado_anterior + $this->estimacion->iva_retenido_calculado), 4, ".", ",")
+            , ' ', '']);
+
+        $this->Row([
+            utf8_decode('Retención ISR '), ' ', '', '', ' ', '', ' '
+            , number_format($this->estimacion->isr_retenido_calculado_anterior, 4, ".", ","),''
+            , number_format($this->estimacion->isr_retenido_calculado, 4, ".", ","), ' '
+            , number_format(($this->estimacion->isr_retenido_calculado_anterior + $this->estimacion->isr_retenido_calculado), 4, ".", ",")
+            , ' ', '']);
 
         $this->SetFills(['180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180','180,180,180']);
-        $this->Row(['Total','', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($total_contrato, 4, ".", ","), ' ', number_format($total_acum_estimado_anterior, 4, ".", ","), ' ', number_format($total_estimacion, 4, ".", ","), ' ', number_format($total_acumulado, 4, ".", ","), ' ', number_format($total_a_estimar, 4, ".", ",")]);
+        $this->Row(['Total','', $this->conceptos_ordenados['moneda'], ' ', ' ',
+            number_format($total_contrato, 4, ".", ","), ' ',
+            number_format($total_acum_estimado_anterior, 4, ".", ","), ' ',
+            number_format($total_estimacion, 4, ".", ","), ' ',
+            number_format($total_acumulado, 4, ".", ","), ' ',
+            number_format($total_a_estimar, 4, ".", ",")]);
 
         if($this->estimacion->configuracion->ret_fon_gar_antes_iva==0)
         {

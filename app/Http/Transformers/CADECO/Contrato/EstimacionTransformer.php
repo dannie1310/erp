@@ -101,6 +101,9 @@ class EstimacionTransformer extends TransformerAbstract
             'seleccionado' => false,
             'consecutivo' => $model->estimacion_folio_consecutivo_format,
             'tc_actualizado' => false,
+            'porcentaje_isr_retenido' => $model->porcentaje_isr_retenido?$model->porcentaje_isr_retenido:0,
+            'monto_isr_retenido' => $model->monto_isr_retenido?$model->monto_isr_retenido:0,
+            'monto_isr_retenido_format' => $model->monto_isr_retenido_format,
             'tasa_iva' => $model->tasa_iva,
             'tasa_iva_format' => $model->tasa_iva_format
         ];

@@ -37,9 +37,10 @@ class PeticionService
     {
         $from = $parametros['From'];
         $body = $parametros['Body'];
+        if(strtoupper($body) == 'SI')
+            exit;
         $numero_celular = str_replace("whatsapp:","", $from);
         $usuario_from = Usuario::where("numero_celular","=",$numero_celular)->first();
-
 
         if(!$usuario_from){
             $mensaje = "Este servicio es para uso del personal de Hermes Infraestructura; el número celular: ".$numero_celular." no está asociado a ningún usuario.

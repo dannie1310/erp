@@ -173,6 +173,12 @@ class EstimacionService
         return $estimacion->registrarIVARetenido($data);
     }
 
+    public function registrarRetencionIsr($data, $id)
+    {
+        $estimacion = $this->repository->show($id);
+        return $estimacion->registrarISRRetenido($data);
+    }
+
     public function ordenado($id)
     {
         return $this->show($id)->subcontratoAEstimar();

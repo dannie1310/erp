@@ -19,6 +19,9 @@ $api->version('v1', function ($api) {
     //     $api->post('authorizeMovil', 'App\Http\Controllers\Auth\Passport\AuthorizationController@authorizeMovil');
     // });
 
+    Route::get('/seguimiento-concursos', 'ConcursoController@showPDF');
+
+
     Route::get('movil', 'Auth\Passport\AuthorizationController@movil');
     $api->group(['middleware' => 'api', 'prefix' => 'auth'], function ($api) {
         $api->post('login', 'App\Http\Controllers\v1\AuthController@login');
@@ -36,6 +39,13 @@ $api->version('v1', function ($api) {
         $api->get('solicitud-pago-anticipado/{id}/autorizar', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@autorizar')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado/{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@showVista')->where(['id' => '[0-9]+']);
         $api->get('solicitud-pago-anticipado', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Finanzas\SolicitudPagoAutorizacionController@indexVista');
+    });
+
+    $api->group(['middleware' => ['auth:api','scope:consultar-formato-apertura-concurso'], 'prefix' => 'concursos'], function ($api) {
+        $api->group(['prefix' => 'concurso-scope'], function ($api){
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
+        });
     });
 
 
@@ -1229,6 +1239,7 @@ $api->version('v1', function ($api) {
             $api->get('{id}/formato-estimacion', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@pdfEstimacion')->where(['id' => '[0-9]+']);
             $api->delete('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@destroy')->where(['id' => '[0-9]+']);
             $api->patch('{id}/registrarRetencionIva', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIva')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/registrarRetencionIsr', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@registrarRetencionIsr')->where(['id' => '[0-9]+']);
             $api->get('{id}/ordenarConceptos', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@ordenarConceptos')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@update')->where(['id' => '[0-9]+']);
             $api->get('descargaLayout/{id}', 'App\Http\Controllers\v1\CADECO\Contratos\EstimacionController@descargaLayout')->where(['id' => '[0-9]+']);
@@ -1943,5 +1954,29 @@ $api->version('v1', function ($api) {
             $api->get('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@show')->where(['id' => '[0-9]+']);
             $api->patch('{id}', 'App\Http\Controllers\v1\MODULOSSAO\ProyectoController@update')->where(['id' => '[0-9]+']);
         });
+    });
+
+    /**
+     * CONCURSOS
+     */
+    $api->group(['middleware' => 'api', 'prefix' => 'concursos'], function ($api) {
+        $api->group(['prefix' => 'concurso'], function ($api){
+            $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@store');
+            $api->get('paginate', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@show')->where(['id' => '[0-9]+']);
+            $api->patch('{id}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@update')->where(['id' => '[0-9]+']);
+            $api->patch('{id}/cerrar', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@cerrar')->where(['id' => '[0-9]+']);
+            $api->get('{id}/pdf', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@pdf')->where(['id' => '[0-9]+']);
+            $api->get('{id}/grafica-png', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@graficaPNG')->where(['id' => '[0-9]+']);
+
+            $api->group(['prefix' => '{id}/participante'], function ($api){
+                $api->post('/', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@storeParticipante')->where(['id' => '[0-9]+']);
+                $api->delete('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@destroyParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->get('/{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@showParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+                $api->patch('{id_participante}', 'App\Http\Controllers\v1\CONCURSOS\ConcursoController@updateParticipante')->where(['id' => '[0-9]+'])->where(['id_participante' => '[0-9]+']);
+
+            });
+        });
+
     });
 });

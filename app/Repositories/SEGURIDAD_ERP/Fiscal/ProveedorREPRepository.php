@@ -56,7 +56,12 @@ class ProveedorREPRepository extends Repository implements RepositoryInterface
         $id_cfdis_actuales = $proveedor->cfdiConAdeudoREP()->pluck("id_cfdi")->toArray();
 
         $ultima_notificacion = $proveedor->notificaciones()->orderBy("id","desc")->first();
-        $id_cfdis_anteriores = $ultima_notificacion->notificacionCFDI()->pluck("id_cfdi")->toArray();
+        if($ultima_notificacion)
+        {
+            $id_cfdis_anteriores = $ultima_notificacion->notificacionCFDI()->pluck("id_cfdi")->toArray();
+        }else{
+            $id_cfdis_anteriores = [];
+        }
 
         $cantidad_nuevos = count(array_diff($id_cfdis_actuales, $id_cfdis_anteriores));
         $cantidad_atendidos = count(array_diff($id_cfdis_anteriores, $id_cfdis_actuales));
