@@ -263,7 +263,8 @@ class CFD
         {
             $factura_xml->registerXPathNamespace('p', $ns['pago10']);
 
-        }else{
+        }else if(key_exists("pago20",$ns))
+        {
             $factura_xml->registerXPathNamespace('p', $ns['pago20']);
         }
         $pagos = $factura_xml->xpath('//p:Pago');
