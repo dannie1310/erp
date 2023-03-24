@@ -275,6 +275,7 @@ class CFD
             {
                 $monto += (float) $pago["Monto"];
                 $moneda = (string) $pago["MonedaP"];
+                $tipo_cambio = (float) $pago["TipoCambioP"];
                 $forma_pago = (int) $pago["FormaDePagoP"];
                 $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
             }
@@ -285,6 +286,7 @@ class CFD
             $this->arreglo_factura["forma_pago_p"] = $forma_pago;
             $this->arreglo_factura["fecha_pago"] = $fecha_pago;
             $this->arreglo_factura["moneda_pago"] = $moneda;
+            $this->arreglo_factura["tipo_cambio"] = $tipo_cambio;
             $this->arreglo_factura["monto_pago"] = (float) $pago["Monto"];
         }
 
@@ -299,6 +301,7 @@ class CFD
                 $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
                 $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
                 $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+                $this->arreglo_factura["documentos_pagados"][$id]["tipo_cambio"] = $tipo_cambio;
                 $id++;
             }
         }

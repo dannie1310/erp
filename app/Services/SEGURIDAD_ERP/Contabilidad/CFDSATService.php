@@ -15,6 +15,7 @@ use App\Jobs\ProcessCancelacionCFDI;
 use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSATDocumentosPagados;
 use App\PDF\Fiscal\Comunicado;
 use App\PDF\Fiscal\InformeREPProveedor;
 use App\PDF\Fiscal\InformeREPEmpresa;
@@ -373,6 +374,50 @@ class CFDSATService
                         if(key_exists("metodo_pago",$arreglo_cfd)){
                             $rcfd->metodo_pago = $arreglo_cfd["metodo_pago"];
                             $rcfd->save();
+                        }
+                    }
+                    catch (\Exception $e)
+                    {
+                        //dd('1',$e->getMessage());
+                    }
+                } catch (\Exception $e){
+                    //dd('2',$e->getMessage());
+                }
+            }
+        }
+    }
+
+    public function reprocesaCFDILlenadoTipoCambioPago()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $cantidad= CFDSAT::where("cancelado","=",0)
+            ->where("tipo_comprobante","=","P")
+            ->whereNull("tipo_cambio")
+            ->count();
+
+        $take = 1000;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=",0)
+                ->where("tipo_comprobante","=","P")
+                ->whereNull("tipo_cambio")
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","desc")
+                ->get();
+
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd_util = new CFD($rcfd->xml);
+                    $arreglo_cfd = $cfd_util->getArregloFactura();
+
+                    try {
+                        if(key_exists("tipo_cambio",$arreglo_cfd)){
+                            $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
+                            $rcfd->save();
+                            CFDSATDocumentosPagados::where("id_cfdi_pago","=",$rcfd->id)
+                            ->update(["tipo_cambio"=>$arreglo_cfd["tipo_cambio"]]);
                         }
                     }
                     catch (\Exception $e)
@@ -1930,6 +1975,7 @@ class CFDSATService
             {
                 $monto += (float) $pago["Monto"];
                 $moneda = (string) $pago["MonedaP"];
+                $tipo_cambio = (float) $pago["TipoCambioP"];
                 $forma_pago = (int) $pago["FormaDePagoP"];
                 $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
             }
@@ -1940,6 +1986,7 @@ class CFDSATService
             $this->arreglo_factura["forma_pago_p"] = $forma_pago;
             $this->arreglo_factura["fecha_pago"] = $fecha_pago;
             $this->arreglo_factura["moneda_pago"] = $moneda;
+            $this->arreglo_factura["tipo_cambio"] = $tipo_cambio;
             $this->arreglo_factura["monto_pago"] = (float) $pago["Monto"];
         }
 
@@ -1954,6 +2001,8 @@ class CFDSATService
                 $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
                 $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
                 $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+                $this->arreglo_factura["documentos_pagados"][$id]["tipo_cambio"] = $tipo_cambio;
+
                 $id++;
             }
         }
