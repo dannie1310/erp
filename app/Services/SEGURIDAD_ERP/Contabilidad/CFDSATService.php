@@ -394,14 +394,16 @@ class CFDSATService
 
         $cantidad= CFDSAT::where("cancelado","=",0)
             ->where("tipo_comprobante","=","P")
-            ->whereNull("tipo_cambio")
+            ->where("tipo_cambio","=",0)
             ->count();
+
+
 
         $take = 1000;
         for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
             $cfd = CFDSAT::where("cancelado","=",0)
                 ->where("tipo_comprobante","=","P")
-                ->whereNull("tipo_cambio")
+                ->where("tipo_cambio","=",0)
                 ->skip($i)
                 ->take($take)
                 ->orderBy("id","desc")
@@ -422,10 +424,10 @@ class CFDSATService
                     }
                     catch (\Exception $e)
                     {
-                        //dd('1',$e->getMessage());
+                        dd('1',$e->getMessage(),$rcfd->uuid, $e->getLine(),$e->getFile());
                     }
                 } catch (\Exception $e){
-                    //dd('2',$e->getMessage());
+                    dd('2',$e->getMessage(),$rcfd->uuid, $e->getLine(),$e->getFile());
                 }
             }
         }
@@ -1963,7 +1965,8 @@ class CFDSATService
         {
             $factura_xml->registerXPathNamespace('p', $ns['pago10']);
 
-        }else{
+        }else if(key_exists("pago20",$ns))
+        {
             $factura_xml->registerXPathNamespace('p', $ns['pago20']);
         }
         $pagos = $factura_xml->xpath('//p:Pago');
