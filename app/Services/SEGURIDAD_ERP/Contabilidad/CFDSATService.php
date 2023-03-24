@@ -1913,22 +1913,34 @@ class CFDSATService
     }
     private function setDatosPago($factura_xml)
     {
-        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
-        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $ns = $factura_xml->getNamespaces(true);
+        if(key_exists("pago10",$ns))
+        {
+            $factura_xml->registerXPathNamespace('p', $ns['pago10']);
+
+        }else{
+            $factura_xml->registerXPathNamespace('p', $ns['pago20']);
+        }
+        $pagos = $factura_xml->xpath('//p:Pago');
+        $doctos = $factura_xml->xpath('//p:Pago//p:DoctoRelacionado');
+
         $monto = 0 ;
         if($pagos){
             foreach($pagos as $pago)
             {
                 $monto += (float) $pago["Monto"];
                 $moneda = (string) $pago["MonedaP"];
-                $forma_pago = (string) $pago["FormaDePagoP"];
+                $forma_pago = (int) $pago["FormaDePagoP"];
                 $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
             }
 
             $this->arreglo_factura["total"] = $monto;
             $this->arreglo_factura["moneda"] = $moneda;
             $this->arreglo_factura["forma_pago"] = $forma_pago;
+            $this->arreglo_factura["forma_pago_p"] = $forma_pago;
             $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+            $this->arreglo_factura["moneda_pago"] = $moneda;
+            $this->arreglo_factura["monto_pago"] = (float) $pago["Monto"];
         }
 
         if($doctos){
