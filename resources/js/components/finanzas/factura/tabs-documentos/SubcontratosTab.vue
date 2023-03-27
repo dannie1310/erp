@@ -48,7 +48,14 @@ export default {
             });
         },
         getMontoMoneda(item){
-            return item.monto_revision * this.cambios[item.id_moneda];
+            if(parseInt(item.tipo_transaccion) === 52){
+                let importe = item.monto - item.impuesto;
+                return '$ ' + parseFloat(importe * this.cambios[item.id_moneda]).formatMoney(2);
+            }else if(parseInt(item.tipo_transaccion) === 51){
+                return item.monto_revision * this.cambios[item.id_moneda];;
+            } else if(parseInt(item.tipo_transaccion) === 53){
+                return item.monto_revision_format
+            }
         },
     },
     computed:{
