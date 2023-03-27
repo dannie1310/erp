@@ -194,6 +194,8 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
         {
             $diferencia[$i] = 0;
             $diferencia_real[$i] = 0;
+            $costo_cfdi[$i] = 0;
+
         }
 
         foreach($costos_cfdi_i_ini as $costo_cfdi_i_ini)
