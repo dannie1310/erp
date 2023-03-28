@@ -29,6 +29,7 @@ class CFDSATDocumentosPagados extends Model
         ,"num_parcialidad"
         ,"metodo_pago"
         ,"uuid"
+        ,"tipo_cambio"
     ];
 
     public function cfdiPago()

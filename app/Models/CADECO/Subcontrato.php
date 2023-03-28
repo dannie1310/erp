@@ -306,7 +306,12 @@ class Subcontrato extends Transaccion
 
     public function getTasaIvaAttribute()
     {
-        return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
+        if($this->impuesto == 0 || $this->subtotal == 0)
+        {
+            return 0;
+        }else {
+            return number_format((($this->impuesto / $this->subtotal) * 100), 0, '.', '');
+        }
     }
 
     public function scopeSubcontratosDisponible($query, $id_empresa)
