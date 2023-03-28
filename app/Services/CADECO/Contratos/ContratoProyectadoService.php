@@ -516,8 +516,8 @@ class ContratoProyectadoService
 
     public function pdfComparativaCotizaciones($id)
     {
-        $cotizacion = $this->repository->show($id)->cotizaciones()->first();
-        $pdf = new PresupuestoContratistaTablaComparativaFormato($cotizacion);
+        $presupuestos = $this->repository->show($id)->presupuestos()->first();
+        $pdf = new PresupuestoContratistaTablaComparativaFormato($presupuestos);
         return $pdf;
     }
 

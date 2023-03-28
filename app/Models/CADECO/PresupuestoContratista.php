@@ -248,7 +248,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getImpuestoCalculadoAttribute()
     {
-        return $this->subtotal_calculado * 0.16;
+        return $this->subtotal_calculado * ($this->impuesto / $this->subtotal);
     }
 
     #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
@@ -287,7 +287,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getIvaConDescuentoAttribute()
     {
-        return $this->subtotal_con_descuento * 0.16;
+        return $this->subtotal_con_descuento * ($this->impuesto / $this->subtotal);
     }
 
     public function getTotalConDescuentoAttribute()
@@ -297,7 +297,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getIvaPartidasAttribute()
     {
-        return $this->suma_subtotal_partidas * 0.16;
+        return $this->suma_subtotal_partidas * ($this->impuesto / $this->subtotal);
     }
 
     public function getTotalPartidasAttribute()
