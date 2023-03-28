@@ -938,12 +938,12 @@ class SolicitudCompra extends Transaccion
             'exclusiones' => $exclusiones,
             'proveedores' => $proveedores,
             'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0,
-            'mejor_anticipo' =>$anticipos[0],
-            'peor_anticipo'=>$anticipos[count($anticipos)-1],
-            'mejor_credito' =>$dias_credito[0],
-            'peor_credito'=>$dias_credito[count($dias_credito)-1],
-            'mejor_plazo' =>$plazos_entrega[0],
-            'peor_plazo'=>$plazos_entrega[count($plazos_entrega)-1],
+            'mejor_anticipo' =>$anticipos != [] ? $anticipos[0] : '',
+            'peor_anticipo'=> $anticipos != [] ? $anticipos[count($anticipos)-1] : '',
+            'mejor_credito' =>$dias_credito != [] ? $dias_credito[0] : '',
+            'peor_credito'=> $dias_credito != [] ? $dias_credito[count($dias_credito)-1] : '',
+            'mejor_plazo' =>$plazos_entrega != [] ? $plazos_entrega[0] : '',
+            'peor_plazo'=>$plazos_entrega != [] ? $plazos_entrega[count($plazos_entrega)-1] : '',
             'suma_mejor_opcion'=>$suma_mejor_opcion,
         ];
     }
