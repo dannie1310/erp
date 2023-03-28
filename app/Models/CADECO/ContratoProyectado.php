@@ -588,6 +588,8 @@ class ContratoProyectado extends Transaccion
             $presupuestos[$presupuesto->id_transaccion]['total'] = $presupuesto->monto_calculado;
             $presupuestos[$presupuesto->id_transaccion]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$presupuesto->id_transaccion]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
+            $presupuestos[$presupuesto->id_transaccion]['tasa_iva'] = $presupuesto->tasa_iva;
+            $presupuestos[$presupuesto->id_transaccion]['tasa_iva_format'] = $presupuesto->tasa_iva / 100;
             if($presupuesto->invitacion){
                 $presupuestos[$presupuesto->id_transaccion]['folio_invitacion'] = $presupuesto->invitacion->numero_folio_format;
                 $presupuestos[$presupuesto->id_transaccion]['tipo_str'] = $presupuesto->invitacion->tipo == 1 ? 'Cotización' : 'Contraoferta';
@@ -841,7 +843,7 @@ class ContratoProyectado extends Transaccion
                                 if($partida->movimiento){
                                     $partida->movimiento->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
                                     $partida->movimiento->save();
-                                }                               
+                                }
                             }
                         }
                     }
