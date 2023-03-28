@@ -190,7 +190,7 @@ class InformeCierre extends Rotation
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .5, utf8_decode('Entidad Licitante: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(6.5, .5, $this->concurso->entidad_licitante, 0, 1, 'L');
+        $this->Cell(6.5, .5, utf8_decode($this->concurso->entidad_licitante), 0, 1, 'L');
 
         $this->ln(0.3);
 
@@ -287,27 +287,27 @@ class InformeCierre extends Rotation
     public function resumen()
     {
         $this->SetTextColor('0,0,0');
-        $this->SetFont('Helvetica', 'B', 13);
+        $this->SetFont('Helvetica', 'B', 15);
         $this->SetFills('117,117,117');
 
         $this->ln();
-        $this->SetFont('Arial', 'B', 9);
-        $this->cell(3,.5,utf8_decode("Promedio:"),0,0,"L");
-        $this->SetFont('Arial', '', 9);
-        $this->cell(3,.5, $this->concurso->promedio_format,0,0,"R");
-        $this->cell(.7,.5);
-        $this->SetFont('Arial', 'B', 9);
-        $this->cell(8,.5,utf8_decode("Diferencia Oferta Hermes vs Primer Lugar:"),0,0,"L");
-        $this->SetFont('Arial', '', 9);
+        $this->SetFont('Arial', 'B', 12);
+        $this->cell(2.2,.5,utf8_decode("Promedio:"),0,0,"L");
+        $this->SetFont('Arial', '', 12);
+        $this->CellFitScale(3.5,.5, $this->concurso->promedio_format,0,0,"R");
+        $this->cell(.2,.5);
+        $this->SetFont('Arial', 'B', 12);
+        $this->cell(8.7,.5,utf8_decode("Diferencia Oferta Hermes vs Primer Lugar:"),0,0,"L");
+        $this->SetFont('Arial', '', 12);
         if($this->concurso->participanteHermes)
         {
-            $this->cell(5,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
+            $this->CellFitScale(5.2,.5, $this->concurso->participanteHermes->distancia_primer_lugar_format ." (".$this->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")",0,0,"R");
 
         }else{
             $this->SetTextColor('255,99,99');
 
             $this->SetFont('Arial', 'I', 9);
-            $this->cell(5,.5, "No Registrada",0,0,"R");
+            $this->CellFitScale(5.2,.5, "No Registrada",0,0,"R");
 
         }
 
