@@ -15,6 +15,7 @@ use App\Jobs\ProcessCancelacionCFDI;
 use App\Jobs\ProcessComplementaConceptosTxtCFDI;
 use App\Jobs\ProcessComplementaDatosCFDI;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSATDocumentosPagados;
 use App\PDF\Fiscal\Comunicado;
 use App\PDF\Fiscal\InformeREPProveedor;
 use App\PDF\Fiscal\InformeREPEmpresa;
@@ -381,6 +382,52 @@ class CFDSATService
                     }
                 } catch (\Exception $e){
                     //dd('2',$e->getMessage());
+                }
+            }
+        }
+    }
+
+    public function reprocesaCFDILlenadoTipoCambioPago()
+    {
+        ini_set('max_execution_time', '7200');
+        ini_set('memory_limit', -1);
+
+        $cantidad= CFDSAT::where("cancelado","=",0)
+            ->where("tipo_comprobante","=","P")
+            ->where("tipo_cambio","=",0)
+            ->count();
+
+
+
+        $take = 1000;
+        for ($i = 0; $i <= ($cantidad + 1000); $i += $take) {
+            $cfd = CFDSAT::where("cancelado","=",0)
+                ->where("tipo_comprobante","=","P")
+                ->where("tipo_cambio","=",0)
+                ->skip($i)
+                ->take($take)
+                ->orderBy("id","desc")
+                ->get();
+
+            foreach ($cfd as $rcfd) {
+                try{
+                    $cfd_util = new CFD($rcfd->xml);
+                    $arreglo_cfd = $cfd_util->getArregloFactura();
+
+                    try {
+                        if(key_exists("tipo_cambio",$arreglo_cfd)){
+                            $rcfd->tipo_cambio = $arreglo_cfd["tipo_cambio"];
+                            $rcfd->save();
+                            CFDSATDocumentosPagados::where("id_cfdi_pago","=",$rcfd->id)
+                            ->update(["tipo_cambio"=>$arreglo_cfd["tipo_cambio"]]);
+                        }
+                    }
+                    catch (\Exception $e)
+                    {
+                        dd('1',$e->getMessage(),$rcfd->uuid, $e->getLine(),$e->getFile());
+                    }
+                } catch (\Exception $e){
+                    dd('2',$e->getMessage(),$rcfd->uuid, $e->getLine(),$e->getFile());
                 }
             }
         }
@@ -1913,22 +1960,37 @@ class CFDSATService
     }
     private function setDatosPago($factura_xml)
     {
-        $pagos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago');
-        $doctos = $factura_xml->xpath('//cfdi:Comprobante//cfdi:Complemento//pago10:Pagos//pago10:Pago//pago10:DoctoRelacionado');
+        $ns = $factura_xml->getNamespaces(true);
+        if(key_exists("pago10",$ns))
+        {
+            $factura_xml->registerXPathNamespace('p', $ns['pago10']);
+
+        }else if(key_exists("pago20",$ns))
+        {
+            $factura_xml->registerXPathNamespace('p', $ns['pago20']);
+        }
+        $pagos = $factura_xml->xpath('//p:Pago');
+        $doctos = $factura_xml->xpath('//p:Pago//p:DoctoRelacionado');
+
         $monto = 0 ;
         if($pagos){
             foreach($pagos as $pago)
             {
                 $monto += (float) $pago["Monto"];
                 $moneda = (string) $pago["MonedaP"];
-                $forma_pago = (string) $pago["FormaDePagoP"];
+                $tipo_cambio = (float) $pago["TipoCambioP"];
+                $forma_pago = (int) $pago["FormaDePagoP"];
                 $fecha_pago = $this->getFecha((string)$pago["FechaPago"]);
             }
 
             $this->arreglo_factura["total"] = $monto;
             $this->arreglo_factura["moneda"] = $moneda;
             $this->arreglo_factura["forma_pago"] = $forma_pago;
+            $this->arreglo_factura["forma_pago_p"] = $forma_pago;
             $this->arreglo_factura["fecha_pago"] = $fecha_pago;
+            $this->arreglo_factura["moneda_pago"] = $moneda;
+            $this->arreglo_factura["tipo_cambio"] = $tipo_cambio;
+            $this->arreglo_factura["monto_pago"] = (float) $pago["Monto"];
         }
 
         if($doctos){
@@ -1942,6 +2004,8 @@ class CFDSATService
                 $this->arreglo_factura["documentos_pagados"][$id]["imp_saldo_ant"] = (float)$docto["ImpSaldoAnt"];
                 $this->arreglo_factura["documentos_pagados"][$id]["num_parcialidad"] = (int)$docto["NumParcialidad"];
                 $this->arreglo_factura["documentos_pagados"][$id]["metodo_pago"] = (string)$docto["MetodoDePagoDR"];
+                $this->arreglo_factura["documentos_pagados"][$id]["tipo_cambio"] = $tipo_cambio;
+
                 $id++;
             }
         }

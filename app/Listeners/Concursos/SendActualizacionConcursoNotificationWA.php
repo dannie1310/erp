@@ -59,7 +59,7 @@ class SendActualizacionConcursoNotificationWA
 
             if($event->concurso->participanteHermes)
             {
-                $body .= "\nDiferencia Oferta Hermes vs Oferta Ganadora: " .$event->concurso->participanteHermes->distancia_primer_lugar_format." (".$event->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")";
+                $body .= "\nDiferencia Oferta Hermes vs Primer Lugar: " .$event->concurso->participanteHermes->distancia_primer_lugar_format." (".$event->concurso->participanteHermes->distancia_primer_lugar_porcentaje.")";
             }
             $tokenobj = $usuario->createToken('consultar-formato-apertura-concurso',['consultar-formato-apertura-concurso']);
             $token = $tokenobj->accessToken;

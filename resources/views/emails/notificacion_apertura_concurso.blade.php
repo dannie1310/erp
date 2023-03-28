@@ -21,7 +21,7 @@
         <div class="col-md-12" >
             Se le informa que la apertura del concurso {{$concurso->nombre}} ha finalizado.
             <br><br>
-            Oferta Ganadora: <strong>{{$concurso->participanteGanador->nombre}} {{$concurso->participanteGanador->monto_format}}</strong>
+            Primer Lugar: <strong>{{$concurso->participanteGanador->nombre}} {{$concurso->participanteGanador->monto_format}}</strong>
             <br>
             Oferta Hermes: <strong>{{$concurso->participanteHermes->nombre}} {{$concurso->participanteHermes->monto_format}}</strong>
             <br>
@@ -29,7 +29,7 @@
             <br>
             Promedio de Ofertas: <strong>{{$concurso->promedio_format}}</strong>
             <br>
-            Diferencia Oferta Hermes vs Oferta Ganadora: <strong>{{$concurso->participanteHermes->distancia_primer_lugar_format}} ({{$concurso->participanteHermes->distancia_primer_lugar_porcentaje}})</strong>
+            Diferencia Oferta Hermes vs Primer Lugar: <strong>{{$concurso->participanteHermes->distancia_primer_lugar_format}} ({{$concurso->participanteHermes->distancia_primer_lugar_porcentaje}})</strong>
 
             <br>
             <br>
