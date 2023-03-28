@@ -687,11 +687,12 @@ class ContratoProyectado extends Transaccion
             'precios_menores' => $precios,
             'exclusiones' => $exclusiones,
             'proveedores' => $proveedores,
+            'cantidad_cotizaciones' => count($presupuestos),
             'mejor_cotizacion' => key_exists(0,$indices)? $indices[0]["id_cotizacion"]:0,
-            'mejor_anticipo' =>$anticipos[0],
-            'peor_anticipo'=>$anticipos[count($anticipos)-1],
-            'mejor_credito' =>$dias_credito[0],
-            'peor_credito'=>$dias_credito[count($dias_credito)-1],
+            'mejor_anticipo' => $anticipos != [] ? $anticipos[0] : '',
+            'peor_anticipo'=> $anticipos != [] ? $anticipos[count($anticipos)-1] : '',
+            'mejor_credito' => $dias_credito != [] ? $dias_credito[0] : '',
+            'peor_credito'=>$dias_credito != [] ? $dias_credito[count($dias_credito)-1] : '',
             'suma_mejor_opcion'=>$suma_mejor_opcion,
         ];
     }
@@ -841,7 +842,7 @@ class ContratoProyectado extends Transaccion
                                 if($partida->movimiento){
                                     $partida->movimiento->id_concepto = array_key_exists('id_destino', $contrato) ? $contrato['id_destino'] : $contrato['destino']['id_concepto'];
                                     $partida->movimiento->save();
-                                }                               
+                                }
                             }
                         }
                     }
