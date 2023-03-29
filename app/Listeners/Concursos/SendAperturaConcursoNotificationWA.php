@@ -5,6 +5,8 @@ namespace App\Listeners\Concursos;
 use App\Events\Concursos\FinalizacionDeAperturaConcurso;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
+use DateTime;
+use DateTimeZone;
 use Twilio\Rest\Client;
 
 class SendAperturaConcursoNotificationWA

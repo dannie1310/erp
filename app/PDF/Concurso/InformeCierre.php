@@ -12,6 +12,8 @@ use Amenadiel\JpGraph\Plot\LinePlot;
 use Amenadiel\JpGraph\Plot\PiePlot;
 use Amenadiel\JpGraph\Plot\PlotBand;
 use Amenadiel\JpGraph\Themes\UniversalTheme;
+use DateTime;
+use DateTimeZone;
 use Ghidev\Fpdf\Rotation;
 
 
@@ -157,6 +159,12 @@ class InformeCierre extends Rotation
 
     public function datosGenerales()
     {
+        $fecha_registro_apertura = new DateTime($this->concurso->fecha_hora_inicio_apertura);
+        $fecha_registro_apertura->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_apertura = new DateTime($this->concurso->fecha);
+        $fecha_apertura->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $diferencia_dias = $fecha_registro_apertura->diff($fecha_apertura)->days;
+
         $this->setXY(1, 3);
         $this->SetFont('Arial', 'B', 10);
         $this->Cell(4, .5, utf8_decode('Fecha: '), 0, 0, 'L');
@@ -165,7 +173,7 @@ class InformeCierre extends Rotation
 
 
         $this->SetFont('Arial', 'B', 13);
-        $this->Cell(9, .7, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
+        $this->Cell(8, .7, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
         if($this->concurso->estatus == 1)
         {
             $this->SetTextColor('255', '255', '255');
@@ -176,8 +184,26 @@ class InformeCierre extends Rotation
             $this->SetTextColor('0', '0', '0');
             $this->SetFillColor(125,182,70);
         }
-        $this->SetFont('Arial', '', 13);
-        $this->Cell(2.5, .7, $this->concurso->estado, 0, 1, 'C',1);
+
+        if($diferencia_dias == 0)
+        {
+            $this->Cell(1, .5, '', 0, 0, 'L');
+            $this->SetFont('Arial', '', 13);
+            $this->Cell(2.5, .7, $this->concurso->estado, 0, 1, 'C',1);
+        } else if($diferencia_dias != 0 && $this->concurso->estatus == 1){
+            $this->SetTextColor('255', '255', '255');
+            $this->SetFillColor(245,147,28);
+
+            $x = $this->getX();
+            $y = $this->getY();
+
+            $this->SetFont('Arial', '', 13);
+            $this->CellFitScale(3.5, .5, 'Finalizada', 0, 1, 'C',1);
+            $this->setXY($x,$y+.5);
+            $this->CellFitScale(3.5, .5, 'Capturando Datos', 0, 1, 'C',1);
+            $this->setY($y + 0.7);
+        }
+
 
         $this->SetFillColor(255,255,255);
         $this->SetTextColor('0', '0', '0');
