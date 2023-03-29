@@ -360,7 +360,7 @@ class AsignacionFormato extends Rotation
                             $border = "R L B";
                         }
                         $this->MultiCell($anchos["op"], $heigth, array_key_exists($i, $partida['presupuestos']) && $partida['presupuestos'][$i]['observaciones'] ? utf8_decode($partida['presupuestos'][$i]['observaciones']) : '-', $border, "L", 1);
-                        
+
                     }else{
                         $this->MultiCell($anchos["op"], $heigth, '-', "T R L B", "L", 1);
                     }
@@ -459,7 +459,7 @@ class AsignacionFormato extends Rotation
                 $this->SetDrawColor(199, 199, 199);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["pu"] * 2, $heigth);
+                $this->Cell($anchos["pu"] * 2, $heigth,array_key_exists($i, $datos['presupuestos']) ? $datos['presupuestos'][$i]['tasa_iva'].' %' : '', 1,0,'R',1);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, array_key_exists($i, $datos['presupuestos']) ? number_format($datos['presupuestos'][$i]['iva_partidas'], 2, '.', ',') : '-', 1, 0, 'R', 1);
                 if (array_key_exists($i, $datos['presupuestos']) && array_key_exists('asignacion_subtotal_partidas', $datos['presupuestos'][$i])) {

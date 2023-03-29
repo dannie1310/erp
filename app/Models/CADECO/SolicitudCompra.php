@@ -843,13 +843,13 @@ class SolicitudCompra extends Transaccion
 
             foreach ($cotizacion->partidas as $p) {
                 if (key_exists($p->id_material, $precios)) {
-                    if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
+                    if($p->precio_unitario_compuesto != null && $p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
-                        $importes[$p->id_material] =  $precios[$p->id_material] * $p->cantidad;
+                        $importes[$p->id_material] =  ($precios[$p->id_material] * $p->cantidad) + (($precios[$p->id_material] * $p->cantidad) * $p->tasa_iva);
                 } else {
                     if($p->precio_unitario_compuesto > 0) {
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
-                        $importes[$p->id_material] = $precios[$p->id_material]  * $p->cantidad;
+                        $importes[$p->id_material] = ($precios[$p->id_material] * $p->cantidad) + (($precios[$p->id_material]  * $p->cantidad) * $p->tasa_iva);
                     }
                 }
                 if (array_key_exists($p->id_material, $partidas)) {
@@ -876,7 +876,7 @@ class SolicitudCompra extends Transaccion
             $suma_mejor_opcion += $importe;
         }
 
-        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
+        //$suma_mejor_opcion = $suma_mejor_opcion * 1.16;
 
         foreach($partidas as $key=>$partida)
         {

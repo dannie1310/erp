@@ -433,6 +433,11 @@ class PresupuestoContratista extends Transaccion
         return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
     }
 
+    public function getObtenerTasaIvaAttribute()
+    {
+        return $this->impuesto / $this->subtotal;
+    }
+
     /**
      * Scopes
     */
