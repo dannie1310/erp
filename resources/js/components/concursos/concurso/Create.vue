@@ -5,7 +5,7 @@
                 <div class="row">
                     <div class="col-md-2">
                         <div class="form-group error-content">
-                            <label for="concurso">Fecha:</label>
+                            <label for="concurso">Fecha de Apertura:</label>
                            <datepicker v-model = "fecha"
                                        id="fecha"
                                        name = "fecha"
