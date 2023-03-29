@@ -167,7 +167,7 @@ class InformeCierre extends Rotation
 
         $this->setXY(1, 3);
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4, .5, utf8_decode('Fecha: '), 0, 0, 'L');
+        $this->Cell(4, .5, utf8_decode('Fecha de Apertura: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
         $this->Cell(4, .5, $this->concurso->fecha_format, 0, 0, 'L');
 
@@ -202,6 +202,10 @@ class InformeCierre extends Rotation
             $this->setXY($x,$y+.5);
             $this->CellFitScale(3.5, .5, 'Capturando Datos', 0, 1, 'C',1);
             $this->setY($y + 0.7);
+        } else {
+            $this->Cell(1, .5, '', 0, 0, 'L');
+            $this->SetFont('Arial', '', 13);
+            $this->Cell(2.5, .7, $this->concurso->estado, 0, 1, 'C',1);
         }
 
 
