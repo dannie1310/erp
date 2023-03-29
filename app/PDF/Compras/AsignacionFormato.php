@@ -522,7 +522,7 @@ class AsignacionFormato extends Rotation
                 $this->SetDrawColor(199, 199, 199);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["pu"] * 2, $heigth);
+                $this->Cell($anchos["pu"] * 2, $heigth,$cotizaciones[$i]->tasa_iva_format.' %', 1,0,'R',1);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->IVA_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
                 if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
