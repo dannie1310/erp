@@ -6,6 +6,8 @@ use App\Events\Concursos\FinalizacionDeAperturaConcurso;
 use App\Events\Concursos\InicioDeAperturaConcurso;
 use App\Models\IGH\Usuario;
 use App\Models\SEGURIDAD_ERP\Notificaciones\Suscripcion;
+use DateTime;
+use DateTimeZone;
 use Twilio\Rest\Client;
 
 class SendInicioAperturaConcursoNotificationWA
@@ -26,25 +28,32 @@ class SendInicioAperturaConcursoNotificationWA
      */
     public function handle(InicioDeAperturaConcurso $event)
     {
-        $suscripciones = Suscripcion::activa()->where("id_evento",$event->tipo)->get();
-        $usuarios_notificacion = Usuario::suscripcion($suscripciones)->get();
+        $fecha_registro_apertura = new DateTime($event->concurso->fecha_hora_inicio_apertura);
+        $fecha_registro_apertura->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_apertura = new DateTime($event->concurso->fecha);
+        $fecha_apertura->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $diferencia_dias = $fecha_registro_apertura->diff($fecha_apertura)->days;
 
-        $body = "Se le informa que ha iniciado el proceso de presentación y apertura de ofertas del concurso *".$event->concurso->nombre."*.
+        if($diferencia_dias == 0) {
+            $suscripciones = Suscripcion::activa()->where("id_evento", $event->tipo)->get();
+            $usuarios_notificacion = Usuario::suscripcion($suscripciones)->get();
+
+            $body = "Se le informa que ha iniciado el proceso de presentación y apertura de ofertas del concurso *" . $event->concurso->nombre . "*.
 
 Puede realizar el seguimiento visitando el sitio web *Seguimiento de Concursos* o teclear *SI* para recibir las notificaciones relacionadas de manera automática.";
-        foreach ($usuarios_notificacion as $usuario)
-        {
-            $recipient ="whatsapp:". $usuario->numero_celular;
-            $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
-            $account_sid = config('app.env_variables.TWILIO_SID');
-            $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
+            foreach ($usuarios_notificacion as $usuario) {
+                $recipient = "whatsapp:" . $usuario->numero_celular;
+                $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
+                $account_sid = config('app.env_variables.TWILIO_SID');
+                $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
 
 
-            $client = new Client($account_sid, $auth_token);
-            $client->messages->create($recipient, array(
-                'from' => "whatsapp:$twilio_whatsapp_number",
-                'body' => $body
-            ));
+                $client = new Client($account_sid, $auth_token);
+                $client->messages->create($recipient, array(
+                    'from' => "whatsapp:$twilio_whatsapp_number",
+                    'body' => $body
+                ));
+            }
         }
     }
 }
