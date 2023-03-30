@@ -206,8 +206,8 @@ class AvanceSubcontrato extends Transaccion
     public function calcularSubtotal()
     {
         $this->refresh('itemsAvance');
-        $this->monto = (1 + ($this->obra->iva / 100)) * $this->suma_importe_partidas;
-        $this->impuesto = $this->suma_importe_partidas * ($this->obra->iva / 100);
+        $this->monto = (1 + ($this->subcontrato->tasa_iva / 100)) * $this->suma_importe_partidas;
+        $this->impuesto = $this->suma_importe_partidas * ($this->subcontrato->tasa_iva / 100);
         $this->save();
     }
 
