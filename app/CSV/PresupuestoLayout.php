@@ -203,26 +203,29 @@ class PresupuestoLayout implements WithHeadings, ShouldAutoSize, WithEvents
                 $event->sheet->setCellValue("F".($i+10), 'Subtotal Moneda Conv.');
                 $event->sheet->setCellValue("G".($i+10), '=SUM(N3:N'.$i.')-(SUM(N3:N'.$i.')*G'.($i+1).'/100)');
 
-                $event->sheet->setCellValue("F".($i+11), 'IVA');
-                $event->sheet->setCellValue("G".($i+11), '=G'.($i+10).'*0.16');
+                $event->sheet->setCellValue("F".($i+11), 'Tasa de IVA');
+                $event->sheet->setCellValue("G".($i+11), $this->presupuesto->tasa_iva);
 
-                $event->sheet->setCellValue("F".($i+12), 'TOTAL');
-                $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'+G'.($i+11));
+                $event->sheet->setCellValue("F".($i+12), 'IVA');
+                $event->sheet->setCellValue("G".($i+12), '=G'.($i+10).'*(G'.($i+11).'/100)');
 
-                $event->sheet->setCellValue("F".($i+13), 'Fecha de Presupuesto');
-                $event->sheet->setCellValue("G".($i+13), date("d/m/Y"));
+                $event->sheet->setCellValue("F".($i+13), 'TOTAL');
+                $event->sheet->setCellValue("G".($i+13), '=G'.($i+10).'+G'.($i+12));
 
-                $event->sheet->setCellValue("F".($i+14), '% Anticipo');
-                $event->sheet->setCellValue("G".($i+14), ($this->presupuesto->anticipo) ? $this->presupuesto->anticipo : 0);
+                $event->sheet->setCellValue("F".($i+14), 'Fecha de Presupuesto');
+                $event->sheet->setCellValue("G".($i+14), date("d/m/Y"));
 
-                $event->sheet->setCellValue("F".($i+15), 'Credito (dias)');
-                $event->sheet->setCellValue("G".($i+15), ($this->presupuesto->DiasCredito) ? $this->presupuesto->DiasCredito : 0);
+                $event->sheet->setCellValue("F".($i+15), '% Anticipo');
+                $event->sheet->setCellValue("G".($i+15), ($this->presupuesto->anticipo) ? $this->presupuesto->anticipo : 0);
 
-                $event->sheet->setCellValue("F".($i+16), 'Vigencia (dias)');
-                $event->sheet->setCellValue("G".($i+16), ($this->presupuesto->DiasVigencia) ? $this->presupuesto->DiasVigencia : 0);
+                $event->sheet->setCellValue("F".($i+16), 'Credito (dias)');
+                $event->sheet->setCellValue("G".($i+16), ($this->presupuesto->DiasCredito) ? $this->presupuesto->DiasCredito : 0);
 
-                $event->sheet->setCellValue("F".($i+17), 'Observaciones Generales');
-                $event->sheet->setCellValue("G".($i+17), $this->presupuesto->observaciones);
+                $event->sheet->setCellValue("F".($i+17), 'Vigencia (dias)');
+                $event->sheet->setCellValue("G".($i+17), ($this->presupuesto->DiasVigencia) ? $this->presupuesto->DiasVigencia : 0);
+
+                $event->sheet->setCellValue("F".($i+18), 'Observaciones Generales');
+                $event->sheet->setCellValue("G".($i+18), $this->presupuesto->observaciones);
 
                 //PESOS
                 $objValidation = $event->sheet->getCell('G'.($i+9))->getDataValidation();

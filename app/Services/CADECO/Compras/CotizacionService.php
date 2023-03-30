@@ -140,13 +140,14 @@ class CotizacionService
             'tc_usd' => $celdas[$x + 5][6],
             'tc_eur' => $celdas[$x + 6][6],
             'tc_libra' => $celdas[$x + 7][6],
-            'fecha_cotizacion' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($celdas[$x + 12][6])->format("Y/m/d"),
-            'pago_parcialidades' => $celdas[$x + 13][6],
-            'anticipo' => $celdas[$x + 14][6],
-            'credito' => $celdas[$x + 15][6],
-            'tiempo_entrega' => $celdas[$x + 16][6],
-            'vigencia' => $celdas[$x + 17][6],
-            'observaciones_generales' => $celdas[$x + 18][6],
+            'tasa_iva' => $celdas[$x + 10][6],
+            'fecha_cotizacion' => \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($celdas[$x + 13][6])->format("Y/m/d"),
+            'pago_parcialidades' => $celdas[$x + 14][6],
+            'anticipo' => $celdas[$x + 15][6],
+            'credito' => $celdas[$x + 16][6],
+            'tiempo_entrega' => $celdas[$x + 17][6],
+            'vigencia' => $celdas[$x + 18][6],
+            'observaciones_generales' => $celdas[$x + 19][6],
             'partidas' => $partidas
         ];
 

@@ -310,6 +310,16 @@ class Subcontrato extends Transaccion
         return count($this->estimaciones) > 0;
     }
 
+    public function getTasaIvaAttribute()
+    {
+        if($this->impuesto == 0 || $this->subtotal == 0)
+        {
+            return 0;
+        }else {
+            return number_format((($this->impuesto / $this->subtotal) * 100), 0, '.', '');
+        }
+    }
+
     public function scopeSubcontratosDisponible($query, $id_empresa)
     {
         $transacciones = DB::connection('cadeco')->select(DB::raw("

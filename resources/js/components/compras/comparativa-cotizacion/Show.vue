@@ -219,7 +219,7 @@
                                 <tr>
                                     <td colspan="4" style="border: none"></td>
                                     <template v-for = "(cotizacion, c) in cotizaciones" >
-                                        <td colspan="4" style="text-align: right;border:none" class="titulo" >IVA:</td>
+                                        <td colspan="4" style="text-align: right;border:none" class="titulo" >IVA ({{cotizacion.tasa_iva_format}}%):</td>
                                         <td style="text-align: right" :class=" c == mejor_cotizacion ?`mejor_cotizacion`:``">${{ parseFloat(cotizacion.iva).formatMoney(2,".",",")}}</td>
                                     </template>
                                 </tr>

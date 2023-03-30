@@ -643,7 +643,7 @@ class Estimacion extends Transaccion
     {
         if ($this->subcontratoSinGlobal->impuesto != 0)
         {
-            return $this->subtotal_orden_pago * 0.16;
+            return $this->subtotal_orden_pago * ($this->subcontrato->tasa_iva / 100);
         } else {
             return 0;
         }
@@ -790,6 +790,16 @@ class Estimacion extends Transaccion
             return number_format($this->porcentaje_isr_retenido, 2) . " %";
         }
         return "0 %";
+    }
+
+    public function getTasaIvaAttribute()
+    {
+        return $this->impuesto / $this->subtotal;
+    }
+
+    public function getTasaIvaFormatAttribute()
+    {
+        return number_format($this->tasa_iva*100, 0, '.', '');
     }
 
     /**

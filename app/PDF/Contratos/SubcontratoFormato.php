@@ -363,7 +363,7 @@ class SubcontratoFormato extends FPDI
         $this->Cell(17.5, .5, 'Subtotal:', 0, 0,'R');
         $this->Cell(2, .5, number_format($this->subcontrato->subtotal,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
-        $this->Cell(17.5, .5, 'IVA:', 0, 0,'R');
+        $this->Cell(17.5, .5, 'IVA ('.$this->subcontrato->tasa_iva.'%):', 0, 0,'R');
         $this->Cell(2, .5, number_format($this->subcontrato->impuesto,2, '.', ','), 1, 0,'R');
         $this->Ln(.5);
         $this->Cell(17.5, .5, 'Total:', 0, 0,'R');

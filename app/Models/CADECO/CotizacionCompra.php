@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
-class    CotizacionCompra  extends Transaccion
+class CotizacionCompra  extends Transaccion
 {
     public const TIPO_ANTECEDENTE = 17;
     public const OPCION_ANTECEDENTE = 1;
@@ -193,7 +193,7 @@ class    CotizacionCompra  extends Transaccion
 
     public function getIVAPartidasAttribute()
     {
-        return $this->suma_subtotal_partidas * 0.16;
+        return $this->suma_subtotal_partidas * $this->tasa_iva;
     }
 
     public function getTotalPartidasAttribute()
@@ -223,12 +223,12 @@ class    CotizacionCompra  extends Transaccion
 
     public function getIVAConDescuentoAttribute()
     {
-        return $this->subtotal_con_descuento * 0.16;
+        return $this->subtotal_con_descuento * $this->tasa_iva;
     }
 
     public function getIVAConDescuentoComparativaAttribute()
     {
-        return $this->subtotal_con_descuento_comparativa * 0.16;
+        return $this->subtotal_con_descuento_comparativa * $this->tasa_iva;
     }
 
     public function getTotalConDescuentoAttribute()
@@ -274,6 +274,15 @@ class    CotizacionCompra  extends Transaccion
         return $datos;
     }
 
+    public function getTasaIvaAttribute()
+    {
+        return $this->impuesto / $this->subtotal;
+    }
+
+    public function getTasaIvaFormatAttribute()
+    {
+        return number_format($this->tasa_iva*100, 0, '.', '');
+    }
 
     /**
      * Metodos

@@ -97,7 +97,7 @@
                                             <label class="col-md-2 col-form-label" style="text-align: right">{{cotizacion.subtotal}}</label>
                                         </div>
                                         <div class=" col-md-12" align="right">
-                                            <label class="col-md-2 col-form-label">IVA:</label>
+                                            <label class="col-md-2 col-form-label">IVA ({{cotizacion.tasa_iva_format}}%):</label>
                                             <label class="col-md-2 col-form-label money" style="text-align: right">{{cotizacion.impuesto}}</label>
                                         </div>
                                         <div class=" col-md-12" align="right">

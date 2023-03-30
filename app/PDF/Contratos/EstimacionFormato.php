@@ -769,15 +769,15 @@ class EstimacionFormato extends Rotation
         $this->Row(['Sub-total valor de los trabajos', ' ', $this->conceptos_ordenados['moneda'], ' ', ' ', number_format($subtotal_contrato, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior, 4, ".", ","), ' ',  number_format($subtotal_estimacion, 4, ".", ","), ' ', number_format($subtotal_acumulado, 4, ".", ","), ' ', number_format($subtotal_a_estimar, 4, ".", ",")]);
         $this->SetFills(['255,255,255', '255,255,255', '255,255,255','255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255', '255,255,255']);
         if($this->estimacion->iva_orden_pago == 0){
-            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
+            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto != 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ","), ' ', number_format(0, 4, ".", ",")]);
         }else {
-            $total_contrato += $subtotal_contrato * 0.16;
-            $total_acum_estimado_anterior += $subtotal_acum_estimado_anterior * 0.16;
-            $total_estimacion += $subtotal_estimacion * 0.16;
-            $total_acumulado += $subtotal_acumulado * 0.16;
-            $total_a_estimar += $subtotal_a_estimar * 0.16;
+            $total_contrato += $subtotal_contrato * $this->estimacion->tasa_iva;
+            $total_acum_estimado_anterior += $subtotal_acum_estimado_anterior * $this->estimacion->tasa_iva;
+            $total_estimacion += $subtotal_estimacion * $this->estimacion->tasa_iva;
+            $total_acumulado += $subtotal_acumulado * $this->estimacion->tasa_iva;
+            $total_a_estimar += $subtotal_a_estimar * $this->estimacion->tasa_iva;
 
-            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format($subtotal_contrato * 0.16, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * 0.16, 4, ".", ","), ' ', number_format($subtotal_estimacion * 0.16, 4, ".", ","), ' ', number_format($subtotal_acumulado * 0.16, 4, ".", ","), ' ', number_format($subtotal_a_estimar * 0.16, 4, ".", ",")]);
+            $this->Row(['IVA', ' ', '%', number_format($this->estimacion->impuesto!= 0 ? $this->estimacion->porcentaje_iva : 0, 4, ".", ","), ' ', number_format($subtotal_contrato * $this->estimacion->tasa_iva, 4, ".", ","), ' ', number_format($subtotal_acum_estimado_anterior * $this->estimacion->tasa_iva, 4, ".", ","), ' ', number_format($subtotal_estimacion * $this->estimacion->tasa_iva, 4, ".", ","), ' ', number_format($subtotal_acumulado * $this->estimacion->tasa_iva, 4, ".", ","), ' ', number_format($subtotal_a_estimar * $this->estimacion->tasa_iva, 4, ".", ",")]);
         }
 
         $total_acum_estimado_anterior -= $this->estimacion->iva_retenido_calculado_anterior;

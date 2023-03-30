@@ -143,7 +143,19 @@ class AsignacionContratista extends Model
 
     public function getSumaSubtotalPartidasIvaAttribute()
     {
-        return $this->suma_total_con_descuento * 0.16;
+        $suma_global = 0;
+        $suma = 0;
+        foreach ($this->contratoProyectado->presupuestos as $presupuesto)
+        {
+            foreach ($presupuesto->partidasAsignaciones->where('id_asignacion', $this->id_asignacion) as $asignacion)
+            {
+                $suma += $asignacion->importe_con_descuento;
+            }
+
+            $suma_global += $suma * $presupuesto->obtener_tasa_iva;
+            $suma = 0;
+        }
+        return $suma_global;
     }
 
     public function getSumaSubtotalPartidasTotalAttribute()
@@ -180,7 +192,29 @@ class AsignacionContratista extends Model
 
     public function getMejorAsignadoIvaAttribute()
     {
-        return $this->mejor_asignado * 0.16;
+        $suma_mejor_asignado = 0;
+        $valor_calculado = 0;
+        $suma_mejor_por_partida = 0;
+        $conceptos = $this->partidas()->groupBy('id_concepto')->pluck('id_concepto');
+        foreach ($conceptos as $concepto) {
+            $partida_asignacion = $this->partidas()->where('id_concepto', $concepto)->first();
+            foreach ($this->contratoProyectado->presupuestos as $presupuesto) {
+                $partida_encontrada = $presupuesto->partidas()->where('id_concepto', '=', $concepto)->first();
+                if ($partida_encontrada) {
+                    $valor_calculado = $partida_asignacion->suma_importes_con_descuento;
+
+                    if ($suma_mejor_por_partida === 0) {
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                    if ($valor_calculado < $suma_mejor_por_partida) {
+                        $suma_mejor_por_partida = $valor_calculado;
+                    }
+                }
+            }
+            $suma_mejor_asignado = ($suma_mejor_asignado + (float)$suma_mejor_por_partida) * $presupuesto->obtener_tasa_iva;
+            $suma_mejor_por_partida = 0;
+        }
+        return $suma_mejor_asignado;
     }
 
     public function getMejorAsignadoTotalAttribute()
@@ -195,7 +229,7 @@ class AsignacionContratista extends Model
 
     public function getDiferenciaIvaAttribute()
     {
-        return $this->diferencia * 0.16;
+        return $this->suma_subtotal_partidas_iva - $this->mejor_asignado_iva;
     }
 
     public function getDiferenciaTotalAttribute()
@@ -372,6 +406,8 @@ class AsignacionContratista extends Model
             $presupuestos[$p]['tc_usd'] = number_format($tcUSD, 2, '.', ',');
             $presupuestos[$p]['tc_eur'] = number_format($tcEUR, 2, '.', ',');
             $presupuestos[$p]['tc_libra'] = number_format($tcLibra, 2, '.', ',');
+            $presupuestos[$p]['obtener_tasa_iva'] = $presupuesto->obtener_tasa_iva;
+            $presupuestos[$p]['tasa_iva'] = $presupuesto->tasa_iva;
 
             $partidas_asignadas = $this->partidas->where('id_transaccion', $presupuesto->id_transaccion);
             if(count($partidas_asignadas)>0) {
@@ -386,12 +422,12 @@ class AsignacionContratista extends Model
                 $presupuestos[$p]['asignacion_subtotal_partidas_descuento_global'] = $suma;
                 $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($descuento) : '-';
                 $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
-                $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
-                $presupuestos[$p]['asignacion_total'] = $suma + ($suma * 0.16);
-                $peso = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(1, $presupuesto->id_transaccion));
-                $dolar = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(2, $presupuesto->id_transaccion));
-                $euro = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(3, $presupuesto->id_transaccion));
-                $libra = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(4, $presupuesto->id_transaccion));
+                $presupuestos[$p]['asignacion_iva'] = $suma * $presupuesto->obtener_tasa_iva;
+                $presupuestos[$p]['asignacion_total'] = $suma + ($suma * $presupuesto->obtener_tasa_iva);
+                $peso = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(1, $presupuesto->id_transaccion), $presupuesto->obtener_tasa_iva);
+                $dolar = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(2, $presupuesto->id_transaccion), $presupuesto->obtener_tasa_iva);
+                $euro = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(3, $presupuesto->id_transaccion), $presupuesto->obtener_tasa_iva);
+                $libra = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(4, $presupuesto->id_transaccion), $presupuesto->obtener_tasa_iva);
                 $presupuestos[$p]['subtotal_peso'] = $peso == 0 ? '-' : $this->monedaFormato($peso);
                 $presupuestos[$p]['subtotal_dolar'] = $dolar == 0 ? '-' : $this->monedaFormato($dolar);
                 $presupuestos[$p]['subtotal_euro'] = $euro == 0 ? '-' : $this->monedaFormato($euro);
@@ -453,12 +489,12 @@ class AsignacionContratista extends Model
                 $presupuestos[$p]['asignacion_subtotal_partidas_descuento_global'] = $suma;
                 $presupuestos[$p]['asignacion_descuento'] = $presupuesto->PorcentajeDescuento != 0 ? $this->numeroFormato($descuento) : '-';
                 $presupuestos[$p]['asignacion_subtotal_descuento'] = $suma;
-                $presupuestos[$p]['asignacion_iva'] = $suma * 0.16;
-                $presupuestos[$p]['asignacion_total'] = $suma + ($suma * 0.16);
-                $peso = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(1, $presupuesto->id_transaccion));
-                $dolar = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(2, $presupuesto->id_transaccion));
-                $euro = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(3, $presupuesto->id_transaccion));
-                $libra = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(4, $presupuesto->id_transaccion));
+                $presupuestos[$p]['asignacion_iva'] = $suma * $presupuesto->obtener_tasa_iva;
+                $presupuestos[$p]['asignacion_total'] = $suma + ($suma * $presupuesto->obtener_tasa_iva);
+                $peso = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(1, $presupuesto->id_transaccion),$presupuesto->obtener_tasa_iva);
+                $dolar = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(2, $presupuesto->id_transaccion),$presupuesto->obtener_tasa_iva);
+                $euro = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(3, $presupuesto->id_transaccion),$presupuesto->obtener_tasa_iva);
+                $libra = $this->sumaSubtotalTotalPorMoneda($this->sumaSubtotalPartidas(4, $presupuesto->id_transaccion),$presupuesto->obtener_tasa_iva);
                 $presupuestos[$p]['subtotal_peso'] = $peso == 0 ? '-' : $this->monedaFormato($peso);
                 $presupuestos[$p]['subtotal_dolar'] = $dolar == 0 ? '-' : $this->monedaFormato($dolar);
                 $presupuestos[$p]['subtotal_euro'] = $euro == 0 ? '-' : $this->monedaFormato($euro);
@@ -586,9 +622,9 @@ class AsignacionContratista extends Model
 
                 $importe = ($partida->presupuestoPartida->precio_unitario_descuento_moneda_original) * $partida->cantidad_asignada;
                 $importe_descuento_general = $importe - ($importe * $subcontrato->PorcentajeDescuento/100);
-
+                $tasa_iva = $partida->presupuestoPartida->presupuesto->tasa_iva;
                 $subtotal = $importe_descuento_general;
-                $impuesto = $subtotal  * 0.16;
+                $impuesto = $subtotal  * ($tasa_iva / 100);
                 $monto = $subtotal + $impuesto;
 
                 $subcontrato->monto = $subcontrato->monto + $monto;
@@ -637,9 +673,9 @@ class AsignacionContratista extends Model
         return $suma;
     }
 
-    public function sumaSubtotalTotalPorMoneda($suma)
+    public function sumaSubtotalTotalPorMoneda($suma, $iva)
     {
-        return $suma + ($suma * 0.16);
+        return $suma + ($suma *  $iva);
     }
 
     public function numeroFormato($numero)

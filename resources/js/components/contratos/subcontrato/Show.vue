@@ -100,6 +100,10 @@
                                             <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.subtotal_format}}</label>
                                          </div>
                                          <div class=" col-md-12" align="right">
+                                            <label class="col-sm-2 col-form-label" style="text-align: left">Tasa de IVA:</label>
+                                            <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.tasa_iva}} %</label>
+                                         </div>
+                                         <div class=" col-md-12" align="right">
                                             <label class="col-sm-2 col-form-label" style="text-align: left">IVA:</label>
                                             <label class="col-sm-2 col-form-label" style="text-align: right">{{subcontratos.impuesto_format}}</label>
                                          </div>

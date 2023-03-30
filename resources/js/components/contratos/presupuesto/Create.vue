@@ -88,7 +88,12 @@
                                                     <th class="index_corto">#</th>
                                                     <th>Descripción</th>
                                                     <th class="unidad">Unidad</th>
-                                                    <th></th>
+                                                    <th style="text-align:center; vertical-align:inherit;">
+                                                        <div class="custom-control custom-switch">
+                                                            <input type="checkbox" class="custom-control-input" id="desactivar" v-model="desactivar">
+                                                            <label class="custom-control-label" for="desactivar"></label>
+                                                        </div>
+                                                    </th>
                                                     <th >Cantidad Solicitada</th>
                                                     <th >Cantidad Aprobada</th>
                                                     <th class="cantidad_input">Precio Unitario</th>
@@ -256,6 +261,19 @@
                                         <label class="col-sm-2 col-form-label">Subtotal Moneda Conversión (MXN):</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-md-2 col-form-label">TASA DE IVA:</label>
+                                    </div>
+                                    <div class="col-md-2 p-1" align="right">  
+                                        <input
+                                            type="text"
+                                            name="tasa_iva"
+                                            v-model="tasa_iva"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*$/}"
+                                            class="col-md-6 form-control"
+                                            id="tasa_iva"
+                                            :class="{'is-invalid': errors.has('tasa_iva')}">
+                                    </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-sm-2 col-form-label">IVA:</label>
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(iva)).formatMoney(4,'.',',')}}</label>
@@ -414,8 +432,9 @@
                 credito: 0,
                 vigencia: 0,
                 descuento: [],
-                enable: []
-
+                enable: [],
+                tasa_iva: 16,
+                desactivar: true,
             }
         },
         mounted() {
@@ -648,7 +667,7 @@
             },
             iva()
             {
-                return this.subtotal * 0.16;
+                return this.subtotal * (this.tasa_iva / 100);
             },
             total()
             {
@@ -664,6 +683,15 @@
                     this.sucursal = (busqueda.sucursales.data.length) ? true : false;
                 }
             },
+            desactivar(value)
+            {
+                var x = 0;
+                while(x < this.contrato.conceptos.data.length)
+                {
+                    this.enable[x] = value;
+                    x++;
+                }
+            }
         }
     }
 </script>

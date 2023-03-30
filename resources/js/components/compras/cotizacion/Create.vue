@@ -255,6 +255,19 @@
                                         <label class="col-md-4 col-form-label">Subtotal Moneda Conversión (MXN):</label>
                                         <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
                                     </div>
+                                    <div class=" col-md-10" align="right">
+                                        <label class="col-md-2 col-form-label">TASA DE IVA (%):</label>
+                                    </div>
+                                    <div class="col-md-2 p-1" align="right">
+                                        <input
+                                            type="text"
+                                            name="tasa_iva"
+                                            v-model="tasa_iva"
+                                            v-validate="{required: true, min_value:0, regex: /^[0-9]\d*$/}"
+                                            class="col-md-6 form-control"
+                                            id="tasa_iva"
+                                            :class="{'is-invalid': errors.has('tasa_iva')}">
+                                    </div>
                                     <div class=" col-md-12" align="right">
                                         <label class="col-md-2 col-form-label">IVA:</label>
                                         <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(iva)).formatMoney(2,'.',',')}}</label>
@@ -447,7 +460,8 @@
                 tiempo: 0,
                 vigencia: 0,
                 enable: [],
-                solicitud_editar: []
+                solicitud_editar: [],
+                tasa_iva : 16
             }
         },
         mounted() {
@@ -664,7 +678,7 @@
                         this.euro) + (this.libras * this.libra)) * parseFloat(this.descuento_cot)) / 100) : 0));
             },
             iva() {
-                return this.subtotal * 0.16;
+                return this.subtotal * (this.tasa_iva/100);
             },
             total() {
                 return this.subtotal + this.iva;

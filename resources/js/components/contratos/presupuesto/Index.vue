@@ -125,7 +125,7 @@
                         fecha: presupuesto.fecha_format,
                         contratista: presupuesto.empresa.razon_social,
                         referencia_cp: presupuesto.contrato_proyectado.referencia ,
-                        monto: presupuesto.monto_calculado_format,
+                        monto: presupuesto.monto_format,
                         usuario: (presupuesto.usuario) ? presupuesto.usuario.nombre : '-',
                         estado: this.getEstado(presupuesto.estado),
                         numero_folio_cp: presupuesto.contrato_proyectado.numero_folio_format,

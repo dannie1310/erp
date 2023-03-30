@@ -570,7 +570,7 @@ class OrdenCompraFormato extends FPDI
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5, number_format($subtotal, 2, '.', ','), 1, 1,'R');
         $this->SetFont('Arial', 'B', 9);
-        $this->CellFitScale(17.5, .5, 'IVA:', 0, 0,'R');
+        $this->CellFitScale(17.5, .5, 'IVA('.$this->ordenCompra->tasa_iva_format.'%):', 0, 0,'R');
         $this->SetFont('Arial', '', 9);
         $this->CellFitScale(2, .5, number_format($iva, 2, '.', ','), 1, 1,'R');
         $this->SetFont('Arial', 'B', 9);
