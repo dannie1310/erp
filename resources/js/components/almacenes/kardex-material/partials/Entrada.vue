@@ -25,13 +25,13 @@
                                                 Existencia
                                             </th>
                                             <th class="encabezado">
-                                                Adquirido
+                                                Importe Adquirido
                                             </th>
                                             <th class="encabezado">
-                                                Pagado
+                                                Importe Pagado
                                             </th>
                                             <th class="encabezado">
-                                                x Pagar
+                                                Importe Por Pagar
                                             </th>
                                             <th class="encabezado">
                                                 Referencia
