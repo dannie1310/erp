@@ -220,6 +220,13 @@ class Documento extends Model
     {
         if($this->IDTransaccionCDC == null && $this->IDOrigenDocumento == 2){
             return $this->empresaDocumentoManual->razon_social;
+        }
+        if($this->transaccion == null){
+            $pre = '"';
+            if(in_array('IDTipoDocumento', [12,13,14,15])){
+                $pre = 'solicitud de "';
+            }
+            abort(403, 'La dispersión no puede descargarse porque la '.$pre.$this->tipoDocumento->TipoDocumento.'" con número de folio "'.$this->NumeroFolio.'" y de concepto"'.$this->Observaciones.'" fue eliminado de SAO');
         }else if($this->transaccion->id_referente != null){
             if($this->transaccion->fondoFijo->empresa){
                 return $this->transaccion->fondoFijo->empresa->razon_social;
