@@ -251,6 +251,12 @@ class Subcontrato extends Transaccion
         return (($this->monto - $this->impuesto + $this->impuesto_retenido) * 100) / (100 - $this->PorcentajeDescuento);
     }
 
+    public function getAnticipoMontoFormatAttribute()
+    {
+        return '$ '.number_format($this->anticipo_monto, 2, ".", ",");
+    }
+
+
     public function scopeEstimable($query)
     {
         return $query->whereIn("estado", [0, 1]);
