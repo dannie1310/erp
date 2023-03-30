@@ -34,13 +34,13 @@
                                              Existencia
                                          </th>
                                          <th class="encabezado">
-                                             Total
+                                             Importe Total
                                          </th>
                                          <th class="encabezado">
-                                             Pagado
+                                             Importe Pagado
                                          </th>
                                          <th class="encabezado">
-                                             x Pagar
+                                             Importe Por Pagar
                                          </th>
                                      </tr>
                                  </thead>
