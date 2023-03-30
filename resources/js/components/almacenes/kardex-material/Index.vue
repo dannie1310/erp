@@ -21,9 +21,9 @@ export default {
             columns: [
                 { title: '#', field:'index',sortable: false},
                 { title: 'Almacén', field:'descripcion', sortable: true,  thComp: require('../../globals/th-Filter').default},
-                { title: 'Adquirido', field:'adquirido'},
-                { title: 'Pagado', field:'pagado'},
-                { title: 'Por Pagar', field:'por_pagar'},
+                { title: 'Importe Adquirido',  tdClass: 'td_money', thClass: 'th_money', field:'adquirido'},
+                { title: 'Importe Pagado',  tdClass: 'td_money', thClass: 'th_money', field:'pagado'},
+                { title: 'Importe Por Pagar',  tdClass: 'td_money', thClass: 'th_money', field:'por_pagar'},
                 { title: 'Acciones', field: 'buttons', tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
