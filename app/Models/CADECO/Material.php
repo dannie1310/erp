@@ -426,7 +426,7 @@ class Material extends Model
         $materiales = $this->join('items','materiales.id_material', 'items.id_material')
             ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->where('inventarios.id_almacen', $id)
-            ->selectRaw('materiales.id_material, sum(inventarios.cantidad) as existencia, sum(inventarios.monto_total) as total, 
+            ->selectRaw('materiales.id_material, sum(inventarios.cantidad) as existencia, sum(inventarios.monto_total) as total,
                         sum(inventarios.monto_pagado) as pagado, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar')
             ->groupBy(['materiales.id_material', 'materiales.descripcion'])->orderBy('materiales.descripcion')->get();
 
@@ -438,12 +438,12 @@ class Material extends Model
             ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->where('transacciones.id_almacen', '=', $id)
             ->where('items.id_material', '=', $material->id_material)
-            ->selectRaw('sum(movimientos.cantidad) as suma_salida_m, sum(movimientos.monto_total) as total_salida_m, 
+            ->selectRaw('sum(movimientos.cantidad) as suma_salida_m, sum(movimientos.monto_total) as total_salida_m,
         sum(movimientos.monto_pagado) as pagado_salida_m, (sum(movimientos.monto_total) - sum(movimientos.monto_pagado)) as por_pagar_salida_m,
-        sum(inventarios.cantidad) as suma_salida_i, sum(inventarios.monto_total) as total_salida_i, 
+        sum(inventarios.cantidad) as suma_salida_i, sum(inventarios.monto_total) as total_salida_i,
         sum(inventarios.monto_pagado) as pagado_salida_i, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar_salida_i')->first();
-           
-        
+
+
             $existencia = $material->existencia - ($salida->suma_salida_m + $salida->suma_salida_i);
             $total = $material->total - ($salida->total_salida_m + $salida->total_salida_i);
             $pagado = $material->pagado - ($salida->pagado_salida_m + $salida->pagado_salida_i);
@@ -490,7 +490,7 @@ class Material extends Model
 
         foreach ($inventarios as $i => $inventario) {
             $movimientos_totales = $this->getTotalesSalida([$inventario->id_lote]);
-    
+
             $fecha= date_create($inventario->fecha);
             $array[$i]['id'] = $inventario->getKey();
             $array[$i]['fecha'] = date_format($fecha,"d/m/Y");
@@ -501,7 +501,7 @@ class Material extends Model
             $array[$i]['adquirido'] = number_format($inventario->monto_total, 2, ".", ",");
             $array[$i]['pagado'] = number_format($inventario->monto_pagado,2, ".", ",");
             $array[$i]['x_pagar'] =  number_format(($inventario->monto_total - $inventario->monto_pagado),2,".",",");
-            $array[$i]['referencia'] = 'REM #'.$inventario->numero_folio;
+            $array[$i]['referencia'] = 'ENT #'.$inventario->numero_folio;
             $entrada+= $inventario->cantidad;
             $salida+= $movimientos_totales ? $movimientos_totales->suma_salida : 0;
             $existencia += ($inventario->cantidad - ($movimientos_totales ? $movimientos_totales->suma_salida : 0));
@@ -526,14 +526,14 @@ class Material extends Model
     private function getTotalesSalida($lotes)
     {
         $totales = Movimiento::whereIn('lote_antecedente', $lotes)
-                    ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida, 
+                    ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida,
                     sum(monto_pagado) as pagado_salida, (sum(monto_total) - sum(monto_pagado)) as por_pagar_salida')->first();
         if($totales->suma_salida)
         {
             return $totales;
         }else{
             return Inventario::whereIn('id_lote', $lotes)
-                     ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida, 
+                     ->selectRaw('sum(cantidad) as suma_salida, sum(monto_total) as total_salida,
                      sum(monto_pagado) as pagado_salida, (sum(monto_total) - sum(monto_pagado)) as por_pagar_salida')->first();
         }
     }
@@ -547,7 +547,7 @@ class Material extends Model
             ->leftjoin('movimientos', 'movimientos.id_item', 'items.id_item')
             ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
             ->selectRaw('[transacciones].id_transaccion, [transacciones].fecha, [transacciones].numero_folio,
-            movimientos.cantidad as cant_mov, inventarios.cantidad as cant_inv, 
+            movimientos.cantidad as cant_mov, inventarios.cantidad as cant_inv,
             movimientos.monto_total as monto_total_mov, inventarios.monto_total as monto_total_inv,
             movimientos.monto_pagado as monto_pagado_mov, inventarios.monto_pagado as monto_pagado_inv,
             items.id_almacen, items.id_concepto')
@@ -602,7 +602,7 @@ class Material extends Model
             ->where('transacciones.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id_material)
             ->where('movimientos.id_concepto', '=', $id_concepto)
-            ->selectRaw('sum(movimientos.cantidad) as suma_salida, sum(movimientos.monto_total) as total_salida, 
+            ->selectRaw('sum(movimientos.cantidad) as suma_salida, sum(movimientos.monto_total) as total_salida,
             sum(movimientos.monto_pagado) as pagado_salida, (sum(movimientos.monto_total) - sum(movimientos.monto_pagado)) as por_pagar_salida')->first();
         }else{
             return SalidaAlmacen::join('items', 'transacciones.id_transaccion','items.id_transaccion')
@@ -610,7 +610,7 @@ class Material extends Model
             ->where('transacciones.id_almacen', '=', $id_almacen)
             ->where('items.id_material', '=', $id_material)
             ->where('inventarios.id_almacen', '=', $almacen)
-            ->selectRaw('sum(inventarios.cantidad) as suma_salida, sum(inventarios.monto_total) as total_salida, 
+            ->selectRaw('sum(inventarios.cantidad) as suma_salida, sum(inventarios.monto_total) as total_salida,
             sum(inventarios.monto_pagado) as pagado_salida, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar_salida')->first();
         }
     }
@@ -622,7 +622,7 @@ class Material extends Model
         ->leftjoin('inventarios', 'inventarios.id_item', 'items.id_item')
         ->where('transacciones.id_almacen', '=', $id_almacen)
         ->where('items.id_material', '=', $id_material)
-        ->selectRaw('sum(inventarios.cantidad) as suma_salida, sum(inventarios.monto_total) as total_salida, 
+        ->selectRaw('sum(inventarios.cantidad) as suma_salida, sum(inventarios.monto_total) as total_salida,
         sum(inventarios.monto_pagado) as pagado_salida, (sum(inventarios.monto_total) - sum(inventarios.monto_pagado)) as por_pagar_salida,
         sum([movimientos].cantidad) as suma_salida_m, sum([movimientos].monto_total) as total_salida_m,
         sum([movimientos].monto_pagado) as pagado_salida_m, (sum([movimientos].monto_total) - sum([movimientos].monto_pagado)) as por_pagar_salida_m')->first();

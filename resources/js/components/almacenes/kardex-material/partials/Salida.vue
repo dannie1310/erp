@@ -17,13 +17,13 @@
                                                     Cantidad
                                                 </th>
                                                 <th class="encabezado">
-                                                    Total
+                                                    Importe Total
                                                 </th>
                                                 <th class="encabezado">
-                                                    Pagado
+                                                    Importe Pagado
                                                 </th>
                                                 <th class="encabezado">
-                                                    x Pagar
+                                                    Importe Por Pagar
                                                 </th>
                                                 <th class="encabezado">
                                                     Referencia
@@ -80,7 +80,7 @@
                                                 <td style="text-align: center">
                                                 </td>
                                             </tr>
-                                        
+
                                         </tbody>
                                         <tfoot>
                                             <tr v-if="totales" style="background-color: yellow;">
