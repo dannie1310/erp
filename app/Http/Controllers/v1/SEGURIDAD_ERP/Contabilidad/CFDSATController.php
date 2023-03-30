@@ -9,6 +9,8 @@
 namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad;
 
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer as Transformer;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDISATNomina;
+use App\Services\SEGURIDAD_ERP\Contabilidad\CFDISATNominaService;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService as Service;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
@@ -52,6 +54,10 @@ class CFDSATController extends Controller
 
     public function procesaDirectorioZIPCFD(Request $request)
     {
+        //$servicioCFDINomina = new CFDISATNominaService(new CFDISATNomina());
+        //$servicioCFDINomina->procesaDirectorioZIPCFDI();
+        //return response()->json([], 200);
+
         //$this->service->reprocesaCFDILlenadoPago();
         //return response()->json([], 200);
         /*$this->service->reprocesaCFDObtenerTipo();
