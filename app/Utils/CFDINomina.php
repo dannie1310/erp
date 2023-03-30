@@ -34,7 +34,6 @@ class CFDINomina
         $this->log["archivos_no_cargados_error_app"] = 0;
         $this->log["cfd_no_cargados_error_app"] = 0;
         $this->log["errores"] = [];
-        $this->getArreglo();
     }
 
     public function getArreglo()
@@ -175,7 +174,7 @@ class CFDINomina
             $percepciones[$i]["clave"] = (int)$percepcion_cfdi["Clave"];
             $percepciones[$i]["concepto"] = (string)$percepcion_cfdi["Concepto"];
             $percepciones[$i]["importe_gravado"] = (float)$percepcion_cfdi["ImporteGravado"];
-            $percepciones[$i]["importe_excento"] = (float)$percepcion_cfdi["ImporteExento"];
+            $percepciones[$i]["importe_exento"] = (float)$percepcion_cfdi["ImporteExento"];
 
             $i++;
         }
@@ -233,7 +232,7 @@ class CFDINomina
                 $fecha_xml = substr($fecha, 0, 19);
             }
         }
-        return $fecha_xml;
+        return $fecha_xml->format("Y-m-d H:i:s");
     }
 
     private function getFechaHora(string $fecha)

@@ -16,6 +16,7 @@ use App\Models\SEGURIDAD_ERP\catCFDI\TipoComprobante;
 use App\Models\SEGURIDAD_ERP\ConfiguracionObra;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CargaCFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDISATNomina;
+use App\Models\SEGURIDAD_ERP\Contabilidad\CFDISATNominaReceptor;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\EmpresaSAT;
 use App\Models\SEGURIDAD_ERP\Contabilidad\ProveedorSAT;
@@ -53,67 +54,74 @@ class CFDISATNominaRepository extends Repository implements RepositoryInterface
         return $empresas;
     }
 
-    public function getIdEmpresa($datos_receptor){
-        try{
-            $empresa = EmpresaSAT::where("rfc","=",$datos_receptor["rfc"])
-                ->first();
-            $salida = null;
-
-            if($empresa){
-                return $empresa->id;
-            } else {
-                /*$empresa = EmpresaSAT::create(
-                    ["rfc"=>$datos_receptor["rfc"], "razon_social"=>$datos_receptor["nombre"]]
-                );
-                return $empresa->id;*/
-                return -1;
-            }
-        } catch (\Exception $e){
-            dd($datos_receptor);
-        }
-
-    }
-
-    public function iniciaCarga($nombre_archivo){
-        return $this->model->carga()->create(["nombre_archivo_zip"=>$nombre_archivo]);
-    }
-
-    public function finalizaCarga($carga){
-        EFOS::actualizaEFOS(null,$carga);
-    }
-
-    public function getIdProveedorSAT($datos, $id_empresa){
-
-        $proveedor = ProveedorSAT::where("rfc","=",$datos["rfc"])
+    public function getIdEmisor($datos_emisor)
+    {
+        $empresa = EmpresaSAT::where("rfc", "=", $datos_emisor["rfc"])
             ->first();
-        if($proveedor){
+
+        if ($empresa) {
+            return $empresa->id;
+        } else {
+            return -1;
+        }
+    }
+
+    public function getIdReceptor($datos_receptor)
+    {
+        $receptor = CFDISATNominaReceptor::where("rfc", "=", $datos_receptor["rfc"])
+            ->first();
+        if (!$receptor) {
+            $receptor = CFDISATNominaReceptor::create(
+                ["rfc" => $datos_receptor["rfc"], "nombre" => $datos_receptor["nombre"]]
+            );
+        }
+        return $receptor->id;
+    }
+
+    public function iniciaCarga($nombre_archivo)
+    {
+        return $this->model->carga()->create(["nombre_archivo_zip" => $nombre_archivo]);
+    }
+
+    public function finalizaCarga($carga)
+    {
+        EFOS::actualizaEFOS(null, $carga);
+    }
+
+    public function getIdProveedorSAT($datos, $id_empresa)
+    {
+
+        $proveedor = ProveedorSAT::where("rfc", "=", $datos["rfc"])
+            ->first();
+        if ($proveedor) {
             return $proveedor->id;
-        }  else{
-            if($id_empresa>0){
+        } else {
+            if ($id_empresa > 0) {
                 $proveedor = ProveedorSAT::create(
                     $datos
                 );
                 return $proveedor->id;
-            }else{
+            } else {
                 return null;
             }
 
         }
     }
 
-    public function getProveedorSAT($datos, $id_empresa){
+    public function getProveedorSAT($datos, $id_empresa)
+    {
 
-        $proveedor = ProveedorSAT::where("rfc","=",$datos["rfc"])
+        $proveedor = ProveedorSAT::where("rfc", "=", $datos["rfc"])
             ->first();
-        if($proveedor){
+        if ($proveedor) {
             return ["id_proveedor" => $proveedor->id, "nuevo" => 0];
-        }  else{
-            if($id_empresa>0){
+        } else {
+            if ($id_empresa > 0) {
                 $proveedor = ProveedorSAT::create(
                     $datos
                 );
                 return ["id_proveedor" => $proveedor->id, "nuevo" => 1];
-            }else{
+            } else {
                 return null;
             }
 
@@ -124,20 +132,19 @@ class CFDISATNominaRepository extends Repository implements RepositoryInterface
     public function getEstadoEFO($rfc)
     {
         $efo = DB::connection("seguridad")->table("Finanzas.ctg_efos")
-            ->where("rfc","=",$rfc)
+            ->where("rfc", "=", $rfc)
             ->first();
-        if($efo){
+        if ($efo) {
             return $efo->estado;
-        }
-        else{
+        } else {
             return null;
         }
     }
 
     public function validaExistencia($uuid)
     {
-        $cfd = CFDSAT::where("uuid","=", $uuid)->first();
-        return $cfd;
+        $cfdi_nomina = CFDISATNomina::where("uuid", "=", $uuid)->first();
+        return $cfdi_nomina;
     }
 
     public function obtenerInformeCostosCFDIvsCostosBalanza($data)
@@ -154,7 +161,7 @@ class CFDISATNominaRepository extends Repository implements RepositoryInterface
 
     public function obtenerListaCFDICostosCFDIBalanza($data)
     {
-        if($data["tipo"] == 9){
+        if ($data["tipo"] == 9) {
             $cfdi = InformeCostosCFDIvsCostosBalanza::getListaCFDIEjercicioPosterior($data);
         } else {
             $cfdi = InformeCostosCFDIvsCostosBalanza::getListaCFDI($data);
@@ -168,15 +175,14 @@ class CFDISATNominaRepository extends Repository implements RepositoryInterface
         $id_obra = Context::getIdObra();
         $base_datos = Context::getDatabase();
 
-        $proyecto = Proyecto::query()->where('base_datos','=',Context::getDatabase())->first();
+        $proyecto = Proyecto::query()->where('base_datos', '=', Context::getDatabase())->first();
 
-        $configuracion = ConfiguracionObra::where('id_proyecto','=',$proyecto->id)
-            ->where('id_obra','=',$id_obra)->first();
+        $configuracion = ConfiguracionObra::where('id_proyecto', '=', $proyecto->id)
+            ->where('id_obra', '=', $id_obra)->first();
 
-        if($configuracion->numero_obra_contpaq)
-        {
+        if ($configuracion->numero_obra_contpaq) {
             return $configuracion->numero_obra_contpaq;
-        }else {
+        } else {
             abort(500, "No se ha configurado el número de empresa contpaq para este proyecto en SAO. \n \n Por favor comuniquese con soporte a aplicaciones enviando un correo a la dirección: soporte_aplicaciones@desarrollo-hi.atlassian.net");
         }
 
@@ -186,7 +192,7 @@ class CFDISATNominaRepository extends Repository implements RepositoryInterface
     public function getRFCObra()
     {
         $obra = Obra::find(Context::getIdObra());
-        if($obra){
+        if ($obra) {
             return $obra->rfc;
         }
     }

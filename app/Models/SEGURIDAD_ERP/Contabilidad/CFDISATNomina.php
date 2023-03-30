@@ -9,7 +9,7 @@ class CFDISATNomina extends Model
 {
     protected $connection = 'seguridad';
     protected $table = 'Contabilidad.cfdi_sat_nominas';
-    protected $fillable =[
+    protected $fillable = [
         "id_carga_zip_cfdi",
         "xml_file",
         "version",
@@ -20,7 +20,8 @@ class CFDISATNomina extends Model
         "serie",
         "folio",
         "lugar_expedicion",
-        "sutotal",
+        "descuento",
+        "subtotal",
         "total",
         "id_emisor",
         "rfc_emisor",
@@ -30,7 +31,8 @@ class CFDISATNomina extends Model
         "domicilio_fiscal_receptor",
         "regimen_fiscal_receptor",
         "uso_cfdi_receptor",
-        "uuid"
+        "uuid",
+        "conceptos_txt"
     ];
     public $timestamps = false;
 
@@ -39,62 +41,70 @@ class CFDISATNomina extends Model
         return $this->belongsTo(CargaCFDSAT::class, 'id_carga_zip_cfdi', 'id');
     }
 
+    public function conceptos()
+    {
+        return $this->hasMany(CFDISATNominaConcepto::class, "id_cfdi_sat_nomina", "id");
+    }
+
+    public function percepciones()
+    {
+        return $this->hasMany(CFDISATNominaPercepcion::class, "id_cfdi_sat_nomina", "id");
+    }
+
+    public function deducciones()
+    {
+        return $this->hasMany(CFDISATNominaDeduccion::class, "id_cfdi_sat_nomina", "id");
+    }
+
+
+    public function otros_pagos()
+    {
+        return $this->hasMany(CFDISATNominaOtroPago::class, "id_cfdi_sat_nomina", "id");
+    }
+
 
     public function registrar($data)
     {
-        $factura = null;
+        $cfdi = null;
         try {
             DB::connection('seguridad')->beginTransaction();
 
-            $cfd = $this->create($data);
+            $cfdi = $this->create($data);
             $conceptos_arr = [];
-            if(key_exists("conceptos",$data)){
-                foreach($data["conceptos"] as $concepto){
+            if (key_exists("conceptos", $data)) {
+                foreach ($data["conceptos"] as $concepto) {
                     $conceptos_arr[] = $concepto["descripcion"];
-                    $conceptoObj = $cfd->conceptos()->create($concepto);
-                    if(key_exists("traslados",$concepto)){
-                        foreach($concepto["traslados"] as $traslado){
-                            $conceptoObj->traslados()->create($traslado);
-                        }
-                    }
-                    if(key_exists("retenciones",$concepto)){
-                        foreach($concepto["retenciones"] as $retencion){
-                            $conceptoObj->retenciones()->create($retencion);
-                        }
-                    }
+                    $cfdi->conceptos()->create($concepto);
                 }
             }
 
-            $cfd->conceptos_txt = implode(" | ",$conceptos_arr);
-            $cfd->save();
+            $cfdi->conceptos_txt = implode(" | ", $conceptos_arr);
+            $cfdi->save();
 
-            if(key_exists("traslados",$data)){
-                foreach($data["traslados"] as $traslado){
-                    $cfd->traslados()->create($traslado);
+            if (key_exists("percepciones", $data)) {
+                foreach ($data["percepciones"] as $percepcion) {
+                    $cfdi->percepciones()->create($percepcion);
                 }
             }
 
-            if(key_exists("retenciones",$data)){
-                foreach($data["retenciones"] as $retencion){
-                    $cfd->retenciones()->create($retencion);
+            if (key_exists("deducciones", $data)) {
+                foreach ($data["deducciones"] as $deduccion) {
+                    $cfdi->deducciones()->create($deduccion);
                 }
             }
 
-            if(key_exists("documentos_pagados",$data)){
-                foreach($data["documentos_pagados"] as $documento_pagado){
-                    $cfdi_pagado = CFDSAT::where("uuid", $documento_pagado["uuid"])->first();
-                    if($cfdi_pagado){
-                        $documento_pagado["id_cfdi_pagado"] = $cfdi_pagado->id;
-                    }
-                    $cfd->documentosPagados()->create($documento_pagado);
+            if (key_exists("otros_pagos", $data)) {
+                foreach ($data["otros_pagos"] as $otro_pago) {
+                    $cfdi->otros_pagos()->create($otro_pago);
                 }
             }
+
             DB::connection('seguridad')->commit();
-            return $cfd;
+            return $cfdi;
 
         } catch (\Exception $e) {
-            dd($e->getMessage(),$data);
             DB::connection('seguridad')->rollBack();
+            dd($e->getMessage(),$data);
             abort(400, $e->getMessage());
         }
     }
