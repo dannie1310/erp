@@ -269,6 +269,7 @@ and '".$ultima_verificacion_dt->format("Y-m-d")." 23:59:59'
             $costo_cfdi[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
             $diferencia[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
             $diferencia_real[$relacion_ejercicios_anteriores_ini["mes"]] +=$relacion_ejercicios_anteriores_ini["neto_subtotal"];
+            $diferencia_final[$relacion_ejercicios_anteriores_ini["mes"]] += $relacion_ejercicios_anteriores_ini["neto_subtotal"];
         }
 
         foreach($costos_balanza_ini as $costo_balanza_ini)
