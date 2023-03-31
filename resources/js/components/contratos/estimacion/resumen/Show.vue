@@ -57,7 +57,8 @@
                                             <td style="text-align: right">{{estimacion.subtotal_orden_pago}}</td>
                                         </tr>
                                         <tr>
-                                            <th style="text-align: left" colspan="2">IVA</th>
+                                            <th style="text-align: left">IVA</th>
+                                            <td>{{ estimacion.tasa_iva_format }} %</td>
                                             <td style="text-align: right">{{estimacion.iva_orden_pago}}</td>
                                         </tr>
                                         <tr>

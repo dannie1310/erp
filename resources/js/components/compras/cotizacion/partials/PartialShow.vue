@@ -92,7 +92,7 @@
                                     <td class="numerico">{{cotizacion.subtotal}}</td>
                                 </tr>
                                 <tr>
-                                    <td colspan="9" style="text-align: right" class="sin_borde">IVA:</td>
+                                    <td colspan="9" style="text-align: right" class="sin_borde">IVA ({{cotizacion.tasa_iva_format}}%):</td>
                                     <td class="numerico">{{cotizacion.impuesto}}</td>
                                 </tr>
                                 <tr>

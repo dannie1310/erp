@@ -176,7 +176,45 @@ class AsignacionProveedor extends Model
 
     public function getMejorAsignadoIvaAttribute()
     {
-        return $this->mejor_asignado * 0.16;
+        $suma_mejor_asignado = 0;
+        $valor_calculado = 0;
+        $suma_mejor_por_partida = 0;
+        $dolar = $this->tipo_cambio(2);
+        $euro = $this->tipo_cambio(3);
+        $libra = $this->tipo_cambio(4);
+        $materiales = $this->partidas()->groupBy('id_material')->pluck('id_material');
+        foreach ($materiales as $material) {
+            $partida_asignacion = $this->partidas()->where('id_material', $material)->first();
+            foreach ($this->solicitud->cotizaciones as $cotizacion) {
+                $partida_encontrada = $cotizacion->partidas()->where('id_material', '=', $material)->first();
+                if ($partida_encontrada) {
+                    switch ($partida_encontrada->id_moneda) {
+                        case (1):
+                            $valor_calculado = $partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto;
+                            break;
+                        case (2):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $dolar);
+                            break;
+                        case (3):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $euro);
+                            break;
+                        case (4):
+                            $valor_calculado = ($partida_asignacion->suma_cantidad_asignada * $partida_encontrada->precio_compuesto * $libra);
+                            break;
+                    }
+
+                    if ($suma_mejor_por_partida === 0) {
+                        $suma_mejor_por_partida = $valor_calculado * $cotizacion->tasa_iva;
+                    }
+                    if ($valor_calculado < $suma_mejor_por_partida) {
+                        $suma_mejor_por_partida = $valor_calculado * $cotizacion->tasa_iva;
+                    }
+                }
+            }
+            $suma_mejor_asignado = $suma_mejor_asignado + (float)$suma_mejor_por_partida;
+            $suma_mejor_por_partida = 0;
+        }
+        return $suma_mejor_asignado;
     }
 
     public function getMejorAsignadoTotalAttribute()
@@ -219,7 +257,20 @@ class AsignacionProveedor extends Model
 
     public function getSumaSubtotalPartidasIvaAttribute()
     {
-        return $this->suma_total_con_descuento * 0.16;
+        $suma_global = 0;
+        $suma = 0;
+        foreach ($this->solicitud->cotizaciones as $cotizacion) {
+            foreach ($cotizacion->asignacionPartida->where('id_asignacion_proveedores', $this->id) as $asignacion) {
+                $suma += $asignacion->total_precio_moneda;
+            }
+
+            if ($suma != 0 && $cotizacion->complemento) {
+                $suma -= $suma * $cotizacion->complemento->descuento / 100;
+            }
+            $suma_global += $suma * $cotizacion->tasa_iva;
+            $suma = 0;
+        }
+        return $suma_global;
     }
 
     public function getSumaSubtotalPartidasTotalAttribute()
@@ -296,7 +347,7 @@ class AsignacionProveedor extends Model
         if($this->solicitud->partidas->count() != $this->partidas->count()){
             return true;
         }
-        
+
         foreach($this->partidas as $partida){
             if($partida->cantidad_asignada != $partida->itemSolicitud->cantidad){
                 return true;

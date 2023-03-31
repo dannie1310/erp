@@ -86,7 +86,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'retencion_fg'=>$model->retencion,
             'anticipo'=>(float)$model->anticipo,
             'anticipo_format' => $model->anticipo_format,
-            'anticipo_monto_format'=>(string) '$ '.number_format($model->anticipo_monto, 2, ".", ","),
+            'anticipo_monto_format'=> $model->anticipo_monto_format,
             'anticipo_monto'=>$model->anticipo_monto,
             'observaciones'=>(string)$model->observaciones,
             'id_moneda' =>(int)$model->id_moneda,
@@ -105,6 +105,7 @@ class SubcontratoTransformer extends TransformerAbstract
             'tiene_nodo_cambio_precio'=>$model->tiene_nodo_cambio_precio,
             'tc_actualizado' => false,
             'tiene_estimaciones' => $model->tiene_estimaciones,
+            'tasa_iva' => $model->tasa_iva
         ];
     }
     /**

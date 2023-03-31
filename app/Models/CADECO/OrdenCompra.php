@@ -287,6 +287,16 @@ class OrdenCompra extends Transaccion
         }
     }
 
+    public function getTasaIvaAttribute()
+    {
+        return $this->impuesto / $this->subtotal;
+    }
+
+    public function getTasaIvaFormatAttribute()
+    {
+        return number_format($this->tasa_iva*100, 0, '.', '');
+    }
+
     /**
      * Métodos
      */

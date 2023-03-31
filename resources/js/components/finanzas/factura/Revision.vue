@@ -100,7 +100,6 @@
                                 </tr>
                             </thead>
                             <tbody v-if="Object.keys(items).length > 0">
-
                                 <tr v-for="item in items.pendientes" v-if="item.seleccionado">
 
                                         <td>{{item.insumo}}</td>
@@ -132,8 +131,8 @@
                                         >
                                         <div class="invalid-feedback" v-show="errors.has('monto_revision')">{{ errors.first('monto_revision') }}</div>
                                     </td>
-                                    <td>{{getTipoCambioItem(item)}}</td>
-                                    <td></td>
+                                    <td>{{ tipo_cambio[item.id_moneda]}}</td>
+                                    <td>{{item.remision}}</td>
                                 </tr>
                                 <tr v-for="item in items.anticipos" v-if="item.seleccionado">
                                     <td colspan="5">{{item.descripcion_item}}</td>
@@ -852,7 +851,7 @@ export default {
                 if(subcontrato.seleccionado){
                     if(parseInt(subcontrato.tipo_transaccion) == 51){
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
-                        // this.resumen.iva_subtotal = parseFloat(this.resumen.iva_subtotal) + parseFloat(subcontrato.monto_revision * 0.16);
+                        //this.resumen.iva_subtotal = parseFloat(this.resumen.iva_subtotal) + parseFloat(subcontrato.monto_revision * 0.16);
                     }
                     if(parseInt( subcontrato.tipo_transaccion) == 52){
                         this.resumen.subtotal = parseFloat(this.resumen.subtotal) + parseFloat(subcontrato.monto_revision);
@@ -889,7 +888,7 @@ export default {
             let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6) + parseFloat(this.resumen.ret_isr_10);
             this.resumen.subtotal = (this.resumen.subtotal) - (this.resumen.monto_anticipo_aplicado);
 
-            //this.resumen.iva_subtotal = parseFloat(this.resumen.subtotal * 0.16);
+            this.resumen.iva_subtotal = parseFloat(this.resumen.subtotal * 0.16);
             this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
 
             if(this.configuracion.ret_fon_gar_antes_iva == 0 && this.configuracion.ret_fon_gar_con_iva == 0){
@@ -907,6 +906,7 @@ export default {
             this.actualizar_resumen();
         },
         actualizar_resumen(){
+
             this.resumen.iva_pagar =  parseFloat(this.resumen.iva_subtotal) - parseFloat(this.resumen.ret_iva_23);
             let otros_impuestos =  parseFloat(this.resumen.imp_hospedaje)  +  parseFloat(this.resumen.ieps);
             let retenciones = parseFloat(this.resumen.ret_iva_4) + parseFloat(this.resumen.ret_iva_6) + parseFloat(this.resumen.ret_isr_10) + parseFloat(this.resumen.ret_isr_125);
@@ -926,7 +926,7 @@ export default {
         },
         getConfiguracionObra(){
             return this.$store.dispatch('finanzas/estimacion/index', {
-                    params: { scope: 'porObra' } 
+                    params: { scope: 'porObra' }
                 })
                 .then(data => {
                     this.configuracion = data.data[0]

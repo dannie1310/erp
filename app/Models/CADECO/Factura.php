@@ -1113,7 +1113,7 @@ class Factura extends Transaccion
                 if($subcontrato['tipo_transaccion'] == 51){
                     $subcont = Subcontrato::withoutGlobalScopes()->find($subcontrato['id']);
                     $subcont->estado = 1;
-                    $subcont->anticipo_saldo = 0;
+                    $subcont->anticipo_saldo = $subcont->anticipo_saldo - $subcontrato['monto_revision'];
                     $subcont->save();
                 }
 

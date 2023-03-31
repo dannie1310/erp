@@ -817,6 +817,7 @@ class SolicitudCompra extends Transaccion
             $cotizaciones[$cotizacion->id_transaccion]['subtotal_con_descuento'] = $cotizacion->subtotal_con_descuento_comparativa;
             $cotizaciones[$cotizacion->id_transaccion]['iva_partidas'] = $cotizacion->iva_partidas;
             $cotizaciones[$cotizacion->id_transaccion]['iva'] = $cotizacion->iva_con_descuento_comparativa;
+            $cotizaciones[$cotizacion->id_transaccion]['tasa_iva_format'] = $cotizacion->tasa_iva_format;
             $cotizaciones[$cotizacion->id_transaccion]['total'] = $cotizacion->total_con_descuento_comparativa;
             $cotizaciones[$cotizacion->id_transaccion]['total_partidas'] = $cotizacion->total_partidas;
             $cotizaciones[$cotizacion->id_transaccion]['tipo_moneda'] = $cotizacion->moneda ? $cotizacion->moneda->nombre : '';
@@ -842,13 +843,13 @@ class SolicitudCompra extends Transaccion
 
             foreach ($cotizacion->partidas as $p) {
                 if (key_exists($p->id_material, $precios)) {
-                    if($p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
+                    if($p->precio_unitario_compuesto != null && $p->precio_unitario_compuesto > 0 && $precios[$p->id_material] > $p->precio_unitario_compuesto)
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
-                        $importes[$p->id_material] =  $precios[$p->id_material] * $p->cantidad;
+                        $importes[$p->id_material] =  ($precios[$p->id_material] * $p->cantidad) + (($precios[$p->id_material] * $p->cantidad) * $p->tasa_iva);
                 } else {
                     if($p->precio_unitario_compuesto > 0) {
                         $precios[$p->id_material] = (float) $p->precio_unitario_compuesto;
-                        $importes[$p->id_material] = $precios[$p->id_material]  * $p->cantidad;
+                        $importes[$p->id_material] = ($precios[$p->id_material] * $p->cantidad) + (($precios[$p->id_material]  * $p->cantidad) * $p->tasa_iva);
                     }
                 }
                 if (array_key_exists($p->id_material, $partidas)) {
@@ -875,7 +876,7 @@ class SolicitudCompra extends Transaccion
             $suma_mejor_opcion += $importe;
         }
 
-        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
+        //$suma_mejor_opcion = $suma_mejor_opcion * 1.16;
 
         foreach($partidas as $key=>$partida)
         {

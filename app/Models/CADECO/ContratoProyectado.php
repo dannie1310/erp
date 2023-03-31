@@ -527,6 +527,7 @@ class ContratoProyectado extends Transaccion
         $dias_credito = [];
         $plazos_entrega = [];
         $suma_mejor_opcion = 0;
+        $tasa_iva = [];
 
 
         if($data["cotizaciones_completas"] === "true"){
@@ -588,6 +589,8 @@ class ContratoProyectado extends Transaccion
             $presupuestos[$presupuesto->id_transaccion]['total'] = $presupuesto->monto_calculado;
             $presupuestos[$presupuesto->id_transaccion]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$presupuesto->id_transaccion]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
+            $presupuestos[$presupuesto->id_transaccion]['tasa_iva'] = $presupuesto->tasa_iva;
+            $presupuestos[$presupuesto->id_transaccion]['tasa_iva_format'] = $presupuesto->tasa_iva / 100;
             if($presupuesto->invitacion){
                 $presupuestos[$presupuesto->id_transaccion]['folio_invitacion'] = $presupuesto->invitacion->numero_folio_format;
                 $presupuestos[$presupuesto->id_transaccion]['tipo_str'] = $presupuesto->invitacion->tipo == 1 ? 'Cotización' : 'Contraoferta';
@@ -597,13 +600,14 @@ class ContratoProyectado extends Transaccion
             }
             foreach ($presupuesto->partidas as $p) {
                 if (key_exists($p->id_concepto, $precios)) {
-                    if ($p->precio_unitario > 0 && $precios[$p->id_concepto] > $p->precio_unitario)
+                    if (($p->precio_unitario != null) && $p->precio_unitario > 0 && $precios[$p->id_concepto] > $p->precio_unitario) {
                         $precios[$p->id_concepto] = (float)$p->precio_unitario;
-                        $importes[$p->id_concepto] =  $precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada;
+                        $importes[$p->id_concepto] = ($precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada) + (($precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada) * $presupuesto->obtener_tasa_iva);
+                    }
                 } else {
                     if ($p->precio_unitario > 0) {
                         $precios[$p->id_concepto] = (float)$p->precio_unitario;
-                        $importes[$p->id_concepto] =  $precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada;
+                        $importes[$p->id_concepto] =  ($precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada) + (($precios[$p->id_concepto] * $p->concepto->cantidad_presupuestada) * $presupuesto->obtener_tasa_iva);
                     }
                 }
                 if (array_key_exists($p->id_concepto, $partidas)) {
@@ -621,7 +625,6 @@ class ContratoProyectado extends Transaccion
                     $partidas[$p->id_concepto]['cotizaciones'][$presupuesto->id_transaccion]['descuento_partida_format'] = $p->PorcentajeDescuento>0? number_format($p->PorcentajeDescuento,2,".",",")."%" : '-';
                 }
             }
-
             $importe = 0;
             foreach($presupuesto->exclusiones as $exc => $exclusion){
                 $t_cambio = 1;
@@ -641,8 +644,6 @@ class ContratoProyectado extends Transaccion
         {
             $suma_mejor_opcion += $importe;
         }
-
-        $suma_mejor_opcion = $suma_mejor_opcion * 1.16;
 
         foreach($partidas as $key=>$partida)
         {

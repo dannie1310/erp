@@ -383,6 +383,7 @@ class ContratoProyectadoService
             $contratos = $contrato_p->conceptos;
             $presupuesto_contratistas = $contrato_p->presupuestos;
 
+
             foreach($contratos as $i => $contrato){
                 $cantidad_pendiente = 0;
                 if(($contrato->cantidad_original - $contrato->asignados->sum('cantidad_asignada')) > 0){

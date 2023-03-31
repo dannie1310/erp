@@ -123,6 +123,10 @@
                                     <td class="numerico">{{presupuesto.subtotal_format}}</td>
                                 </tr>
                                 <tr>
+                                    <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">Tasa de IVA:</td>
+                                    <td class="numerico">{{presupuesto.tasa_iva}}</td>
+                                </tr>
+                                <tr>
                                     <td :colspan ="presupuesto.colspan" style="text-align: right" class="sin_borde">IVA:</td>
                                     <td class="numerico">{{presupuesto.impuesto_format}}</td>
                                 </tr>

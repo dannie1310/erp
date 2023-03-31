@@ -248,7 +248,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getImpuestoCalculadoAttribute()
     {
-        return $this->subtotal_calculado * 0.16;
+        return $this->subtotal_calculado * ($this->impuesto / $this->subtotal);
     }
 
     #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
@@ -287,7 +287,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getIvaConDescuentoAttribute()
     {
-        return $this->subtotal_con_descuento * 0.16;
+        return $this->subtotal_con_descuento * ($this->impuesto / $this->subtotal);
     }
 
     public function getTotalConDescuentoAttribute()
@@ -297,7 +297,7 @@ class PresupuestoContratista extends Transaccion
 
     public function getIvaPartidasAttribute()
     {
-        return $this->suma_subtotal_partidas * 0.16;
+        return $this->suma_subtotal_partidas * ($this->impuesto / $this->subtotal);
     }
 
     public function getTotalPartidasAttribute()
@@ -427,6 +427,17 @@ class PresupuestoContratista extends Transaccion
         }
         return $colspan;
     }
+
+    public function getTasaIvaAttribute()
+    {
+        return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
+    }
+
+    public function getObtenerTasaIvaAttribute()
+    {
+        return $this->impuesto / $this->subtotal;
+    }
+
     /**
      * Scopes
     */
@@ -530,7 +541,7 @@ class PresupuestoContratista extends Transaccion
                     'id_empresa' => $data['id_proveedor'],
                     'id_sucursal' => $data['id_sucursal'],
                     'monto' => $data['total'],
-                    'impuesto' => $data['impuesto'],
+                    'impuesto' => number_format($data['impuesto'], 4, '.', ''),
                     'anticipo' => $data['anticipo'],
                     'observaciones' => $data['observacion'],
                     'PorcentajeDescuento' => $data['descuento_cot'],
@@ -597,7 +608,7 @@ class PresupuestoContratista extends Transaccion
                 }
             }
             DB::connection('cadeco')->commit();
-                return $this;
+            return $presupuesto;
         } catch (\Exception $e) {
             DB::connection('cadeco')->rollBack();
             abort(400, $e);
@@ -694,8 +705,8 @@ class PresupuestoContratista extends Transaccion
             $presupuestos[$cont]['porcentaje_descuento_global'] = $presupuesto->PorcentajeDescuento ? $presupuesto->PorcentajeDescuento : '-';
             $presupuestos[$cont]['suma_subtotal_partidas'] = $presupuesto->suma_subtotal_partidas;
             $presupuestos[$cont]['subtotal'] = $presupuesto->subtotal_calculado;
-            $presupuestos[$cont]['iva'] = $presupuesto->impuesto_calculado;
-            $presupuestos[$cont]['total'] = $presupuesto->monto_calculado;
+            $presupuestos[$cont]['iva'] = $presupuesto->impuesto;
+            $presupuestos[$cont]['total'] = $presupuesto->subtotal_calculado + $presupuesto->impuesto;
             $presupuestos[$cont]['tipo_moneda'] = $presupuesto->moneda ? $presupuesto->moneda->nombre : '';
             $presupuestos[$cont]['observaciones'] = $presupuesto->observaciones ? $presupuesto->observaciones : '';
             foreach ($presupuesto->partidas as $p) {

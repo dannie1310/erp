@@ -54,6 +54,8 @@ class CotizacionCompraTransformer extends TransformerAbstract
             'impuesto' => $model->impuesto_format,
             'asignada' => $model->asignada,
             'id_referente' => $model->id_referente,
+            'tasa_iva' => $model->tasa_iva,
+            'tasa_iva_format' => $model->tasa_iva_format
         ];
     }
 

@@ -330,7 +330,7 @@ class AsignacionFormato extends Rotation
                         ->where('id_material', '=', $partida_solicitud->id_material)
                         ->where('precio_unitario', '!=', 0)
                         ->first();
-                    
+
                     $this->SetDrawColor('200', '200', '200');
                     if($partida_cotizacion) {
                         if (array_key_exists($partida_solicitud->id_material, $mejor_opcion_partida) && $mejor_opcion_partida[$partida_solicitud->id_material] == $cotizaciones[$i]->id_transaccion) {
@@ -395,7 +395,7 @@ class AsignacionFormato extends Rotation
                         ->where('id_material', '=', $partida_solicitud->id_material)
                         ->where('precio_unitario', '!=', 0)
                         ->first();
-                    
+
                     $this->SetDrawColor('200', '200', '200');
                     if ($partida_cotizacion) {
                         if (array_key_exists($partida_solicitud->id_material, $mejor_opcion_partida) && $mejor_opcion_partida[$partida_solicitud->id_material] == $cotizaciones[$i]->id_transaccion) {
@@ -406,11 +406,11 @@ class AsignacionFormato extends Rotation
                             $this->SetFillColor(255, 255, 255);
                             $this->SetTextColor(0, 0, 0);
                         }
-                        
+
                         $this->SetFont('Arial', '', $font2);
                         $this->setY($yop_ini);
                         $this->setX($xop_ini);
-                        
+
                         $border = "T R L B";
 
                         $asignacion_partida = AsignacionProveedorPartida::where('id_transaccion_cotizacion', '=', $cotizaciones[$i]->id_transaccion)
@@ -522,14 +522,14 @@ class AsignacionFormato extends Rotation
                 $this->SetDrawColor(199, 199, 199);
                 $this->SetTextColor(0, 0, 0);
                 $this->SetFont('Arial', 'B', $font);
-                $this->Cell($anchos["pu"] * 2, $heigth);
+                $this->Cell($anchos["pu"] * 2, $heigth,$cotizaciones[$i]->tasa_iva_format.' %', 1,0,'R',1);
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->IVA_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
                 if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
                     $this->SetFillColor(0, 0, 0);
                     $this->SetTextColor(255, 255, 255);
                 }
-                $this->Cell($anchos["pu"] * 2, $heigth,array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format(($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] * 0.16), 2, ".", ",") : '-', 1, 0, 'R', 1);
+                $this->Cell($anchos["pu"] * 2, $heigth,array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales) ? number_format(($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] * $cotizaciones[$i]->tasa_iva), 2, ".", ",") : '-', 1, 0, 'R', 1);
             }
             $this->Ln();
             $this->SetFillColor(100, 100, 100);
@@ -547,7 +547,7 @@ class AsignacionFormato extends Rotation
                 $this->Cell($anchos["pu"], $heigth, 'PESO (MX)', 1, 0, 'R', 1);
                 if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales))
                 {
-                    $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['total']  = $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] + ($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento']  * 0.16);
+                    $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['total']  = $datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento'] + ($datos_partidas_globales[$cotizaciones[$i]->id_transaccion]['subtotal_con_descuento']  * $cotizaciones[$i]->tasa_iva);
                 }
                 $this->Cell($anchos["pu"], $heigth, number_format($cotizaciones[$i]->total_con_descuento, 2, ".", ","), 1, 0, 'R', 1);
                 if(array_key_exists($cotizaciones[$i]->id_transaccion, $datos_partidas_globales)) {
@@ -1096,7 +1096,7 @@ class AsignacionFormato extends Rotation
             $this->Cell(.25);
             $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
 
-        }else if($this->asignacion->solicitud->id_area_compradora == 4 && 
+        }else if($this->asignacion->solicitud->id_area_compradora == 4 &&
                 ((Context::getDatabase() == "SAO1814" && in_array(Context::getIdObra(), array(52,53,60))) || (Context::getDatabase() == "SAO_CORP" && Context::getIdObra() == 12))
             ){
             $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
