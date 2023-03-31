@@ -98,6 +98,8 @@
                                     <th class="c100">(-) CFDI TIPO E <br>Recibidos en un ejercicio posterior</th>
 
                                     <th class="c100">Diferencia Real</th>
+                                    <th class="c100">(+) CFDI Emitidos <br>TIPO N</th>
+                                     <th class="c100">Diferencia Real mas CFDI Tipo N</th>
                                 </tr>
                             <tr>
 
@@ -121,8 +123,8 @@
                                 <th class="c100">F</th>
 
                                 <th class="c100">G = E - F</th>
-
-
+                                <th class="c100">H</th>
+                                <th class="c100">I = G + H</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -149,6 +151,10 @@
                                     <td_informe_link_cfdi @ver-cfdi="verCFDI" v-bind:value="partida.relacion_ejercicios_posteriores_sf" v-bind:partida="partida" v-bind:tipo="9"></td_informe_link_cfdi>
 
                                     <td_informe v-bind:value="partida.diferencia_real_sf" />
+                                    <td_informe v-bind:value="partida.cfdi_n_sf" />
+                                    <td_informe v-bind:value="partida.diferencia_final_sf" />
+
+
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -172,6 +178,9 @@
                                 <td_informe v-bind:value="informe.sumatorias.suma_relacion_ejercicios_posteriores_sf" />
 
                                 <td_informe v-bind:value="informe.sumatorias.suma_diferencia_real_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_cfdi_n_sf" />
+                                <td_informe v-bind:value="informe.sumatorias.suma_diferencia_final_sf" />
+
                             </tr>
                             </tfoot>
                         </table>
