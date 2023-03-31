@@ -643,7 +643,7 @@ class Estimacion extends Transaccion
     {
         if ($this->subcontratoSinGlobal->impuesto != 0)
         {
-            return $this->subtotal_orden_pago * ($this->subcontrato->tasa_iva / 100);
+            return $this->subtotal_orden_pago * ($this->subcontratoSinGlobal->tasa_iva / 100);
         } else {
             return 0;
         }
