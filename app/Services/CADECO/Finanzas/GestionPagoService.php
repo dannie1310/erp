@@ -463,8 +463,8 @@ class GestionPagoService
             if(BitacoraSantander::where('hash_file_bitacora', '=', $file_fingerprint)->first()){
                 abort(403, 'Archivo de bitácora procesado previamente.');
             }
-        
-            $cod_operacion = ['FUE001', 'FUE002', 'FUE003', 'FUE542', 'FUE543', 'FUE707'];
+
+            $cod_operacion = ['FUE001', 'FUE002', 'FUE003', 'FUE542', 'FUE543', 'FUE707','FUA543'];
             $myfile = fopen($bitacora, "r") or die("Unable to open file!");
             $content = array();
             while(!feof($myfile)) {
@@ -513,10 +513,10 @@ class GestionPagoService
                         );
                     }
                 }
-                
+
                 return $this->validarBitacoraV2($data, $bitacora_nombre, $id_dispersion);
             }
-            
+
             return array(
                 'data' => [],
                 'resumen' => []
@@ -536,7 +536,7 @@ class GestionPagoService
                         ->where('NumeroSemana', $dispersion->remesaLiberada->remesa->NumeroSemana)->pluck('IDRemesa');
 
         $disp_remesas = $dispersion->whereIn('id_remesa', $remesas)->pluck('id');
-        
+
         $dist_partidas = DistribucionRecursoRemesaPartida::transaccionPago()->partidaVigente()->partidaPagable()
                             ->whereIn('id_distribucion_recurso',$disp_remesas)->get();
 
@@ -555,7 +555,7 @@ class GestionPagoService
                     $empresa = $transaccion_pagada->fondoFijo->empresa;
                     $cuenta_abono = $transaccion_pagada->fondoFijo->empresa->cuentasBancarias[0];
                 }
-                
+
                 $cta_cargo = Cuenta::find($transaccion_pagada->id_cuenta);
                 $registros_bitacora[] = array(
                     'id_documento' => null,
