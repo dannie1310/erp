@@ -1096,7 +1096,8 @@ class AsignacionFormato extends Rotation
             $this->Cell(.25);
             $this->Cell(4.2, .4, utf8_decode(''), 'RLB', 0, 'C', 0);
 
-        }else if($this->asignacion->solicitud->id_area_compradora == 4 &&
+        }
+        else if($this->asignacion->solicitud->id_area_compradora == 4 &&
                 ((Context::getDatabase() == "SAO1814" && in_array(Context::getIdObra(), array(52,53,60))) || (Context::getDatabase() == "SAO_CORP" && Context::getIdObra() == 12))
             ){
             $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
@@ -1118,7 +1119,8 @@ class AsignacionFormato extends Rotation
             $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(.25);
             $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
-        }else if($this->asignacion->solicitud->id_area_compradora == 4){
+        }
+        else if($this->asignacion->solicitud->id_area_compradora == 4){
             $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
             $this->Cell(.25);
             $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
@@ -1138,7 +1140,8 @@ class AsignacionFormato extends Rotation
             $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
             $this->Cell(.25);
             $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
-        }else {
+        }
+        else {
             $encabezados[0] = utf8_decode("Elaboró");
             $encabezados[1] = utf8_decode("Validó Gerencia Responsable Compra");
             $encabezados[2] = "Gerencia Solicitante";
