@@ -374,7 +374,7 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(($this->w - 2) * 0.30, 0.4, 'IVA :', 0, 0, 'R');
+        $this->Cell(($this->w - 2) * 0.30, 0.4, 'IVA ('.$this->estimacion->tasa_iva_format.'%):', 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->iva_orden_pago_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
