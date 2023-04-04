@@ -374,7 +374,7 @@ class OrdenPagoEstimacion extends Rotation
 
         $this->SetX(($this->w) * 0.45);
         $this->SetFont('Arial', '', 8);
-        $this->Cell(($this->w - 2) * 0.30, 0.4, 'IVA :', 0, 0, 'R');
+        $this->Cell(($this->w - 2) * 0.30, 0.4, 'IVA ('.$this->estimacion->tasa_iva_format.'%):', 0, 0, 'R');
         $this->CellFitScale(($this->w - 2) * 0.25, 0.4, $this->estimacion->iva_orden_pago_format, 'B', 1, 'R');
         $this->Ln(0.1);
 
@@ -630,7 +630,7 @@ class OrdenPagoEstimacion extends Rotation
             $this->Cell(0.2);
             $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Moisés Martínez'), 'RLB', 0, 'C', 0);
             $this->Cell(0.2);
-            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Arturo Meléndez Arratia'), 'RLB', 0, 'C', 0);
+            $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Edgar J. Rodríguez Gómez'), 'RLB', 0, 'C', 0);
             $this->Cell(0.2);
             $this->Cell(($this->GetPageWidth() - 3) / 6, 0.4, utf8_decode('Ing. Miguel Angel Bonola Chacon'), 'RLB', 0, 'C', 0);
 

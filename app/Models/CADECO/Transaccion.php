@@ -487,6 +487,16 @@ class Transaccion extends Model
         return 0;
     }
 
+    public function getTasaIvaAttribute()
+    {
+        if($this->impuesto == 0 || $this->subtotal == 0)
+        {
+            return 0;
+        }else {
+            return number_format((($this->impuesto / $this->subtotal) * 100), 0, '.', '');
+        }
+    }
+
     public  function costo(){
         return $this->belongsTo(Costo::class, 'id_costo', 'id_costo');
     }
