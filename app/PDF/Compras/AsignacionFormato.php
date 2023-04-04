@@ -1120,6 +1120,37 @@ class AsignacionFormato extends Rotation
             $this->Cell(.25);
             $this->Cell(5, 1.2, '', 'TRLB', 0, 'C');
         }
+        else if(Context::getDatabase() == "SAO1814_SANEAMIENTO" && Context::getIdObra() == 10 ){
+            $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Validó Gerencia Responsable Compra'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Gerencia Solicitante'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('VoBo Dir. General de Construcción'), 'TRLB', 0, 'C', 0);
+            $this->Cell(.25);
+            $this->Cell(5, .4, utf8_decode('Autoriza Dir. Ejec. Admon. y Fianzs '), 'TRLB', 0, 'C', 0);
+            $this->Ln();
+            $this->Cell(5, 1.1, '', 'TRL', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.1, '', 'TRL', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.1, '', 'TRL', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.1, '', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 1.1, '', 'TRL', 0, 'C');
+            $this->Ln();
+            $this->Cell(5, 0.4, '', 'RLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 0.4, '', 'RLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 0.4, '', 'RLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 0.4, 'ING. LUIS HORCASITAS MANJARREZ', 'TRLB', 0, 'C');
+            $this->Cell(.25);
+            $this->Cell(5, 0.4, '', 'RLB', 0, 'C');
+        }
         else if($this->asignacion->solicitud->id_area_compradora == 4){
             $this->Cell(5, .4, utf8_decode('Elaboró'), 'TRLB', 0, 'C', 0);
             $this->Cell(.25);
