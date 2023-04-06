@@ -402,6 +402,19 @@ class CFDSAT extends Model
         }
     }
 
+    public function getEstadoColorAttribute()
+    {
+        switch ($this->cancelado) {
+            case 0:
+                return '#00a65a';
+                break;
+
+            case 1:
+                return '#f32c12';
+                break;
+        }
+    }
+
     public function registrar($data)
     {
         $factura = null;

@@ -73,7 +73,9 @@ class CFDSATTransformer extends TransformerAbstract
             'moneda' => $model->moneda,
             'tipo_cambio' => $model->tipo_cambio,
             'tipo_relacion' => $model->tipo_relacion,
-            'estado' => $model->estado_txt,
+            'estado' => $model->cancelado == 1? 'Cancelado':'Vigente',
+            'estado_lbl' => $model->cancelado == 1? 'Cancelado':'Vigente',
+            'estado_color' => $model->estado_color,
             'total_xls' => (float) $model->total_xls,
         ];
     }

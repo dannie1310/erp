@@ -5,6 +5,7 @@ export default {
         CFDSAT: [],
         currentCFDSAT: null,
         meta: {},
+        currentEstado : false,
     },
 
     mutations: {
@@ -27,6 +28,9 @@ export default {
                 return cfd
             })
             state.currentCFDSAT = state.currentCFDSAT ? data : null;
+        },
+        SET_CURRENT_ESTADO(state, data) {
+            state.currentEstado = data;
         },
     },
 
@@ -72,6 +76,23 @@ export default {
                     })
             });
         },
+        validaVigencia(context, payload)
+        {
+            return new Promise((resolve, reject) => {
+                context.commit("SET_CURRENT_ESTADO", true);
+
+                axios.get(URI + payload.id + '/valida-vigencia', { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        context.commit("UPDATE_CFDSAT", data)
+                        resolve(data);
+                        context.commit("SET_CURRENT_ESTADO", false);
+                    })
+                    .catch(error => {
+                        reject(error);
+                    })
+            });
+        },
         cargarXMLProveedor(context, payload) {
             return new Promise((resolve, reject) => {
                 axios
@@ -88,7 +109,6 @@ export default {
         descargarIndividual(context, payload) {
 
             var urr = URI + payload.id +  '/descargar?access_token=' + this._vm.$session.get('jwt');
-
             var win = window.open(urr, "_blank");
 
             win.onbeforeunload = () => {
@@ -772,6 +792,10 @@ export default {
 
         currentCFDSAT(state) {
             return state.currentCFDSAT
+        },
+
+        currentEstado(state) {
+            return state.currentEstado
         }
     }
 }
