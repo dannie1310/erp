@@ -449,6 +449,8 @@ $api->version('v1', function ($api) {
             $api->get('informe-rep-pendientes-proveedor-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPProveedorEmpresaPDF');
             $api->get('informe-rep-pendientes-empresa/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaPDF');
             $api->get('informe-rep-pendientes-empresa-proveedor/pdf', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@obtenerInformeREPEmpresaProveedorPDF');
+            $api->get('{id}/valida-vigencia', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad\CFDSATController@validaVigencia');
+
         });
         $api->group(['prefix' => 'autocorreccion'], function ($api){
             $api->post('/', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\AutocorreccionController@store');

@@ -1,9 +1,9 @@
 <template>
     <span>
-        <button @click="descargar" class="btn btn-sm btn-outline-primary" title="Descargar" v-if="txt!=1">
+        <button @click="descargar" class="btn btn-sm btn-outline-primary" title="Descargar" v-if="txt!=1" :disabled="cargandoEstado">
             <i class="fa fa-download"></i>
         </button>
-        <button @click="descargar" class="btn btn-sm btn-primary" title="Descargar" v-else>
+        <button @click="descargar" class="btn btn-sm btn-primary" title="Descargar"  :disabled="cargandoEstado" v-else>
             <i class="fa fa-download"></i> Descargar XML
         </button>
     </span>
@@ -13,6 +13,11 @@
 export default {
     name: "DescargaCFDI",
     props: ['id','txt'],
+    computed: {
+        cargandoEstado(){
+            return this.$store.getters['fiscal/cfd-sat/currentEstado'];
+        }
+    },
     methods:{
         descargar(){
             this.descargando = true;

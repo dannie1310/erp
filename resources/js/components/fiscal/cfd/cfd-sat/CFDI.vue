@@ -1,7 +1,8 @@
 <template>
     <span>
             <span v-if="txt" @click="init" style="cursor: pointer; text-decoration: underline; color: #003eff" >{{txt}}</span>
-            <button @click="init" v-else type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato CFDI"><i class="fa fa-file-invoice-dollar"></i> </button>
+            <button @click="init" v-else type="button" class="btn btn-sm btn-outline-primary" title="Ver Formato CFDI" :disabled="cargandoEstado">
+                <i class="fa fa-file-invoice-dollar"></i> </button>
 
              <div class="modal fade" ref="modal" tabindex="-1" role="dialog" aria-labelledby="PDFModal">
                  <div class="modal-dialog modal-lg" id="mdialTamanio">
@@ -29,6 +30,11 @@
     export default {
         name: "CFDI",
         props: ['id','txt'],
+        computed: {
+            cargandoEstado(){
+                return this.$store.getters['fiscal/cfd-sat/currentEstado'];
+            }
+        },
         methods: {
             init() {
                 this.pdf()
