@@ -4,7 +4,6 @@
             <div class="card-body">
                 <div class="row" >
                     <div class="col-md-12">
-                        <label>{{notificacion}} {{this.notificacion}}</label>
                         <div class="spinner-border text-success" role="status">
                             <span class="sr-only">Cargando...</span>
                         </div>
@@ -34,17 +33,12 @@
                                         <th class="encabezado" >
                                             Contacto
                                         </th>
-                                        <th class="encabezado icono">
-                                            <button type="button" class="btn btn-sm btn-outline-success" @click="agregarDestinatario">
-                                                <i class="fa fa-spin fa-spinner" v-if="cargando"></i>
-                                                <i class="fa fa-plus" v-else></i>
-                                            </button>
-                                        </th>
                                     </tr>
                                     <tr v-for="(destinatario, i) in this.notificacion.destinatarios.data">
                                         <td>{{i+1}}</td>
                                         <td>
                                             <input
+                                                disabled="true"
                                                 :name="`correo_${i}`"
                                                 :id="`correo_${i}`"
                                                 v-model="destinatario.correo"
@@ -57,6 +51,7 @@
                                         </td>
                                         <td>
                                             <input
+                                                disabled="true"
                                                 :name="`contacto_${i}`"
                                                 :id="`contacto_${i}`"
                                                 v-model="destinatario.nombre"
@@ -67,11 +62,6 @@
                                             />
                                             <div style="display:block" class="invalid-feedback" v-show="errors.has(`contacto_${i}`)">{{ errors.first(`contacto_${i}`) }}</div>
                                         </td>
-                                        <td style="text-align: center">
-                                            <button type="button" class="btn btn-sm btn-outline-danger" @click="quitarDestinatario(i)" :disabled="notificacion.destinatarios.length == 1" >
-                                                <i class="fa fa-trash"></i>
-                                            </button>
-                                        </td>
                                     </tr>
                                 </table>
                             </div>
@@ -81,15 +71,6 @@
                                 <div class="col-md-3">
                                     <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"  ></i>
                                             Regresar</button>
-                                </div>
-
-                                <div class="col-md-9">
-                                    <div class="pull-right">
-                                        <button type="button" class="btn btn-primary" v-on:click="actualizarContactos" title="Actualizar Contactos"><i class="fa fa-save"  ></i>
-                                            Actualizar Contactos</button>
-                                        <button type="button" class="btn btn-danger" v-on:click="enviar" :disabled="errors.count() > 0 || cargando" title="Enviar Comunicado"><i class="fa fa-envelope"></i>
-                                            Enviar Comunicado</button>
-                                    </div>
                                 </div>
                             </div>
                         </div>
