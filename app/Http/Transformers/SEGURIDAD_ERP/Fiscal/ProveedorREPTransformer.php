@@ -31,7 +31,7 @@ class ProveedorREPTransformer extends TransformerAbstract
             'fecha_ultimo_cfdi_con_ubicacion' => $model->fecha_ultimo_cfdi_con_ubicacion,
             'ultima_ubicacion_sao' => $model->ultima_ubicacion_sao,
             'ultima_ubicacion_contabilidad' => $model->ultima_ubicacion_contabilidad,
-            'fecha_ultimo_cfdi_con_ubicacion' => $model->fecha_ultimo_cfdi_con_ubicacion_format,
+            'fecha_ultimo_cfdi_con_ubicacion_format' => $model->fecha_ultimo_cfdi_con_ubicacion_format,
             'fecha_ultima_notificacion' => $model->fecha_ultima_notificacion_format,
             'con_contactos' => $model->con_contactos
         ];

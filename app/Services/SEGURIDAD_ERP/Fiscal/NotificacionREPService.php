@@ -13,9 +13,14 @@ class NotificacionREPService
     {
         $this->repository = new Repository($model);
     }
-    
+
     public function paginate($data)
     {
         return $this->repository->paginate($data);
+    }
+
+    public function show($id)
+    {
+        return $this->repository->show($id);
     }
 }
