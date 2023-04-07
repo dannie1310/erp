@@ -152,7 +152,6 @@ class ProveedorREPService
     {
         //print_r( date("h:i:s")."\n");
         $proveedor = $this->repository->show($id);
-
         $uuids = $proveedor->cfdi()->repPendiente()->get();
         //print_r( date("h:i:s")."\n");
         $arr_comunicados = [];

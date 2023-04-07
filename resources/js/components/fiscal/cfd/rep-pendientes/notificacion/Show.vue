@@ -66,14 +66,6 @@
                                 </table>
                             </div>
                         </div>
-                        <div class="card-footer">
-                            <div class="row" >
-                                <div class="col-md-3">
-                                    <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"  ></i>
-                                            Regresar</button>
-                                </div>
-                            </div>
-                        </div>
                         <div class="row">
                             <div class="col-md-12">
                                 <ckeditor v-model="notificacion.cuerpo_correo" ></ckeditor>
@@ -100,28 +92,21 @@
                                         <th class="encabezado" >
                                             Ubicación
                                         </th>
-
                                         <th class="encabezado" >
                                             Responsable
                                         </th>
                                         <th class="encabezado" >
                                             Administrador
                                         </th>
-
-
                                     </tr>
-
-                                    <tr v-for="(ubicacion, i) in this.notificacion.proveedores_rep.ubicaciones.data">
+                                    <tr v-for="(ubicacion, i) in notificacion.proveedor_rep.ubicaciones.data">
                                         <td>{{i+1}}</td>
-
                                         <td>
                                             {{ ubicacion.ubicacion }}
                                         </td>
-
                                         <td>
                                             {{ ubicacion.correo_responsable }}
                                         </td>
-
                                         <td>
                                             {{ ubicacion.correo_administrador }}
                                         </td>
@@ -129,7 +114,14 @@
                                 </table>
                             </div>
                         </div>
-
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="row" >
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-secondary" v-on:click="salir"><i class="fa fa-angle-left"></i>
+                            Regresar</button>
                     </div>
                 </div>
             </div>
@@ -160,6 +152,7 @@ export default {
                 params: {include: ['destinatarios', 'proveedor', 'proveedor_rep.ubicaciones']}
             }).then(data => {
                 this.notificacion = data;
+                this.verPDF();
             }).finally(() => {
                 this.cargando = false;
             })
@@ -182,6 +175,7 @@ export default {
             var url = '/api/fiscal/proveedor-rep/' + this.notificacion.proveedor.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
             $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Contrato Proyectado</iframe>');
             $(this.$refs.modal).appendTo('body')
+            $(this.$refs.modal).modal('show');
         },
     }
 }
