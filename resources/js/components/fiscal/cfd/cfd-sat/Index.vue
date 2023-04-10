@@ -117,7 +117,7 @@
                     { title: 'Total', field: 'total',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'Moneda', field: 'moneda',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
                     { title: 'TC', field: 'tipo_cambio',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, sortable: true},
-                    { title: 'Estado', field: 'estado',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
+                    { title: 'Estado', field: 'estado_lbl',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default, tdComp: require('./partials/EstatusLabel').default},
                     { title: 'BD SAO', field: 'base_datos',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Proyecto', field: 'obra',tdClass: 'td_money', thComp: require('../../../globals/th-Filter').default},
                     { title: 'Fecha Carga Proyecto', field: 'fecha_carga_proyecto',tdClass: 'td_money',},
@@ -140,10 +140,10 @@
         },
         mounted(){
             this.$Progress.start();
-            this.paginate()
+            /*this.paginate()
                 .finally(() => {
                     this.$Progress.finish();
-                })
+                })*/
         },
 
         methods: {
@@ -179,7 +179,15 @@
                     }).finally(() => {
                         this.descargando = false;
                     });
-            }
+            },
+            getEstado(descripcion, color) {
+                return {
+                    color: color,
+                    descripcion: descripcion
+                }
+
+            },
+
         },
         computed: {
             cfdi(){
@@ -190,6 +198,9 @@
             },
             tbodyStyle() {
                 return this.cargando ?  { '-webkit-filter': 'blur(2px)' } : {}
+            },
+            cargandoEstado(){
+                return this.$store.getters['fiscal/cfd-sat/currentEstado'];
             }
         },
         watch: {
@@ -229,7 +240,8 @@
                             monto: ccfdi.poliza_cfdi?ccfdi.poliza_cfdi.monto_format:'',
                             buttons: $.extend({}, {
                                 id: ccfdi.id,
-                            })
+                            }),
+                            estado_lbl: self.getEstado(ccfdi.estado_lbl, ccfdi.estado_color),
                         })
 
                     });

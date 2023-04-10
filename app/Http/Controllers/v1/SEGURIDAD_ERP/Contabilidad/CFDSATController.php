@@ -58,6 +58,9 @@ class CFDSATController extends Controller
         //$servicioCFDINomina->procesaDirectorioZIPCFDI();
         //return response()->json([], 200);
 
+        //$this->service->reprocesaCFDILlenadoTipoCambioPago();
+        //return response()->json([], 200);
+
         //$this->service->reprocesaCFDILlenadoPago();
         //return response()->json([], 200);
         /*$this->service->reprocesaCFDObtenerTipo();
@@ -183,5 +186,12 @@ class CFDSATController extends Controller
     public function obtenerInformeREPEmpresaPDF(Request $request)
     {
         $this->service->obtenerInformeREPEmpresaPDF($request->all())->create();
+    }
+
+    public function validaVigencia(Request $request, $id)
+    {
+        $cfdi = $this->service->show($id);
+        $cfdi->validaVigencia();
+        return $this->respondWithItem($cfdi);
     }
 }

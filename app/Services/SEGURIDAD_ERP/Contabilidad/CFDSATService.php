@@ -122,7 +122,17 @@ class CFDSATService
             $this->repository->whereIn(['id_empresa_sat', $arreglo_empresa]);
         }
         if (isset($data['uuid'])) {
-            $this->repository->where([['cfd_sat.uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
+            if (strpos($data['uuid'], "id:") !== false) {
+                $ids = str_replace("id:", "", $data['uuid']);
+                $this->repository->whereIn(['cfd_sat.id', $ids]);
+
+            }else if (strpos($data['uuid'], ",") !== false) {
+                $arr_uuid = explode(",",preg_replace( "/\r|\n|\t/", "", $data['uuid'] ));
+                $this->repository->whereIn(['cfd_sat.uuid', $arr_uuid]);
+
+            }else{
+                $this->repository->where([['cfd_sat.uuid', 'LIKE', '%' . $data['uuid'] . '%']]);
+            }
         }
         if (isset($data['moneda'])) {
             $this->repository->where([['moneda', 'LIKE', '%' . $data['moneda'] . '%']]);
