@@ -174,7 +174,6 @@ export default {
             var url = '/api/fiscal/proveedor-rep/' + this.notificacion.proveedor_rep.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
             $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Notificación</iframe>');
             $(this.$refs.modal).appendTo('body')
-            $(this.$refs.modal).modal('show');
         },
     }
 }
