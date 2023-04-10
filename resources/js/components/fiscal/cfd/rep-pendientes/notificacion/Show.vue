@@ -146,7 +146,6 @@ export default {
         find() {
             this.notificacion = null;
             this.cargando = true;
-            console.log(this.notificacion)
             return this.$store.dispatch('fiscal/notificacion-rep/find', {
                 id: this.id,
                 params: {include: ['destinatarios', 'proveedor', 'proveedor_rep.ubicaciones']}
@@ -172,8 +171,8 @@ export default {
             this.$router.go(-1);
         },
         verPDF(){
-            var url = '/api/fiscal/proveedor-rep/' + this.notificacion.proveedor.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
-            $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Contrato Proyectado</iframe>');
+            var url = '/api/fiscal/proveedor-rep/' + this.notificacion.proveedor_rep.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
+            $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Notificación</iframe>');
             $(this.$refs.modal).appendTo('body')
             $(this.$refs.modal).modal('show');
         },

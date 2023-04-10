@@ -150,22 +150,17 @@ class ProveedorREPService
 
     public function comunicadoPdf($id)
     {
-        //print_r( date("h:i:s")."\n");
         $proveedor = $this->repository->show($id);
         $uuids = $proveedor->cfdi()->repPendiente()->get();
-        //print_r( date("h:i:s")."\n");
         $arr_comunicados = [];
         foreach ($uuids as $uuid) {
             $arr_comunicados["proveedor"] = $proveedor->proveedor;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["empresa"] = $uuid->empresa->razon_social;
             $arr_comunicados["receptores"][$uuid->rfc_receptor]["uuid"][] = $uuid;
         }
-        //print_r( date("h:i:s")."\n");
-
         $pdf = new Comunicado($arr_comunicados);
 
         $pdf->create()->Output('I', 'Comunicado-' . $proveedor->rfc_proveedor, 1);
-        //print_r( date("h:i:s"));
     }
 
     public function descargaXls($data)
