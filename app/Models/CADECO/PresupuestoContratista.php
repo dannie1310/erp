@@ -248,7 +248,11 @@ class PresupuestoContratista extends Transaccion
 
     public function getImpuestoCalculadoAttribute()
     {
-        return $this->subtotal_calculado * ($this->impuesto / $this->subtotal);
+        if($this->subtotal != 0 && $this->impuesto != 0)
+        {
+            return $this->subtotal_calculado * ($this->impuesto / $this->subtotal);
+        }
+        return 0;
     }
 
     #SE CREAN ESTOS CAMPOS CALCULADOS PARA SOLVENTAR EL PROBLEMA DEL REGISTRO INCORRECTO QUE REALIZA SAOWEB, PARA ASÍ HOMOLOGAR LA VISTA
@@ -402,12 +406,11 @@ class PresupuestoContratista extends Transaccion
 
     public function getSubtotalAttribute()
     {
-        /*$suma = 0;
-        foreach ($this->partidas as $partida) {
-            $suma += $partida->total_despues_descuento_partida_mc;
+        if($this->monto != 0)
+        {
+            return $this->monto-$this->impuesto;
         }
-        return $suma;*/
-        return $this->monto-$this->impuesto;
+        return 0;
     }
 
     public function getColspanAttribute()
@@ -430,12 +433,23 @@ class PresupuestoContratista extends Transaccion
 
     public function getTasaIvaAttribute()
     {
-        return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
+        if($this->subtotal != 0 && $this->impuesto != 0)
+        {
+            return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
+        }else{
+            $obra = Obra::where('id_obra', Context::getIdObra())->first();
+            return $obra->iva;
+        }
+
     }
 
     public function getObtenerTasaIvaAttribute()
     {
-        return $this->impuesto / $this->subtotal;
+        if($this->subtotal != 0 && $this->impuesto != 0)
+        {
+            return $this->impuesto / $this->subtotal;
+        }
+        return 0;
     }
 
     /**
