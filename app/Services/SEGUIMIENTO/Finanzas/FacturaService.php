@@ -6,6 +6,7 @@ namespace App\Services\SEGUIMIENTO\Finanzas;
 
 use App\Events\EnvioIngresoFactura;
 use App\Events\IncidenciaCI;
+use App\Models\REPSEG\FinDimClaveSatIngreso;
 use App\Models\REPSEG\FinDimIngresoCliente;
 use App\Models\REPSEG\FinDimIngresoEmpresa;
 use App\Models\REPSEG\FinDimIngresoPartida;
@@ -180,11 +181,13 @@ class FacturaService
         $arreglo["complemento"]["uuid"] = $arreglo_cfd["uuid"];
         foreach ($arreglo_cfd['conceptos'] as $key => $concepto)
         {
+            $claveSat = FinDimClaveSatIngreso::where('idclave_sat', $concepto['clave_prod_serv'])->orderBy('id','asc')->first();
             $arreglo['conceptos'][$key]['cantidad'] = $concepto['cantidad'];
             $arreglo['conceptos'][$key]['valor_unitario'] = $concepto['valor_unitario'];
-            $arreglo['conceptos'][$key]['idconcepto'] = '';
+            $arreglo['conceptos'][$key]['idconcepto'] = $claveSat != null ? $claveSat->idtipo_ingreso : '';
             $arreglo['conceptos'][$key]['importe'] = $concepto['importe'];
             $arreglo['conceptos'][$key]['descuento'] = $concepto['descuento'] ? $concepto['descuento'] : 0.0;
+            $arreglo['conceptos'][$key]['clave_sat'] = $concepto['clave_prod_serv'];
         }
         $arreglo['tipoConceptos'] = FinDimTipoIngreso::activos()->orderBy('tipo_ingreso','ASC')->selectRaw('idtipo_ingreso as id, tipo_ingreso as nombre')->get()->toArray();
         $arreglo['tipos_partida'] = FinDimIngresoPartida::activos()->selectRaw('idpartida as id, partida as partida, nombre_operador')->orderBy('partida','ASC')->get()->toArray();
@@ -269,7 +272,7 @@ class FacturaService
             }
             $xml = $this->getBase64XML($factura->uuid);
         }else{
-            $pdf = $this->getBase64PDF($factura->idfactura);   
+            $pdf = $this->getBase64PDF($factura->idfactura);
         }
         event(new EnvioIngresoFactura($factura, $pdf, $xml));
         return $factura;
@@ -277,21 +280,21 @@ class FacturaService
 
     private function getBase64PDF($nombre)
     {
-        if (Storage::disk('pdf_emitidos')->exists($nombre.'.pdf')) 
+        if (Storage::disk('pdf_emitidos')->exists($nombre.'.pdf'))
         {
             $archivo = Storage::disk("pdf_emitidos")->get($nombre.'.pdf');
-            return "data:application/pdf;base64,".base64_encode($archivo); 
-        } 
+            return "data:application/pdf;base64,".base64_encode($archivo);
+        }
         return null;
     }
 
     private function getBase64XML($uuid)
     {
-        if (Storage::disk('xml_emitidos')->exists($uuid.'.xml')) 
+        if (Storage::disk('xml_emitidos')->exists($uuid.'.xml'))
         {
             $archivo = Storage::disk("xml_emitidos")->get($uuid.".xml");
-            return "data:text/xml;base64,".base64_encode($archivo); 
-        } 
+            return "data:text/xml;base64,".base64_encode($archivo);
+        }
         return null;
     }
 }
