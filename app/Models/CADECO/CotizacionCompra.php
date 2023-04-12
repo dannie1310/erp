@@ -276,7 +276,11 @@ class CotizacionCompra  extends Transaccion
 
     public function getTasaIvaAttribute()
     {
-        return $this->impuesto / $this->subtotal;
+        if($this->subtotal != 0 && $this->impuesto != 0)
+        {
+            return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
+        }
+        return 0;
     }
 
     public function getTasaIvaFormatAttribute()
