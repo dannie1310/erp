@@ -278,7 +278,7 @@ class CotizacionCompra  extends Transaccion
     {
         if($this->subtotal != 0 && $this->impuesto != 0)
         {
-            return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
+            return number_format(($this->impuesto /$this->subtotal), 0, '.', '');
         }
         return 0;
     }
