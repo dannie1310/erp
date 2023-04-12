@@ -279,10 +279,8 @@ class CotizacionCompra  extends Transaccion
         if($this->subtotal != 0 && $this->impuesto != 0)
         {
             return number_format((($this->impuesto /$this->subtotal)*100), 0, '.', '');
-        }else{
-            $obra = Obra::where('id_obra', Context::getIdObra())->first();
-            return $obra->iva;
         }
+        return 0;
     }
 
     public function getTasaIvaFormatAttribute()
