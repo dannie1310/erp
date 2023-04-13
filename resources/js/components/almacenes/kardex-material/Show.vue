@@ -93,6 +93,8 @@
                             id="nav-home-tab" role="tab">Entradas</a>
                             <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
                             href="#nav-profile" id="nav-profile-tab" role="tab">Salidas</a>
+                            <a aria-controls="nav-profile" aria-selected="false" class="nav-item nav-link" data-toggle="tab"
+                            href="#nav-profile_2" id="nav-profile-tab-2" role="tab">Movimientos</a>
                         </div>
                     </nav>
                     <div class="tab-content" id="nav-tabContent" v-if="inventarios">
@@ -101,6 +103,9 @@
                         </div>
                         <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
                             <salida v-bind:salidas="salidas" v-bind:totales="total_sal"/>
+                        </div>
+                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile-2" role="tabpanel">
+                            <movimiento v-bind:movimientos="salidas" v-bind:totales="total_sal"/>
                         </div>
                     </div>
                 </div>
@@ -118,9 +123,10 @@
 <script>
 import Entrada from './partials/Entrada.vue';
 import Salida from './partials/Salida.vue';
+import Movimiento from './partials/Movimiento.vue';
 export default {
     name: "kardex-show",
-    components: {Entrada, Salida},
+    components: {Entrada, Salida, Movimiento},
     props: ['id'],
     mounted() {
         this.findAlmacen();
