@@ -4,6 +4,7 @@
 namespace App\Models\SEGURIDAD_ERP\Fiscal;
 
 
+use App\Models\SEGURIDAD_ERP\catCFDI\ClaveProductoServicio;
 use App\Models\SEGURIDAD_ERP\Fiscal\CtgNoLocalizado;
 use App\Scopes\EstadoActivoScope;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,8 @@ class ConceptosCFDIEmitidos extends Model
 
     protected $fillable = [
         'uuid',
-        'conceptos_txt'
+        'conceptos_txt',
+        'conceptos_largos_txt'
     ];
 
     public $timestamps = false;
@@ -31,13 +33,25 @@ class ConceptosCFDIEmitidos extends Model
 
             $cfdi = $this->create($data);
             $conceptos_arr = [];
+            $conceptos2_arr =[];
             if (key_exists("conceptos", $data)) {
+
                 foreach ($data["conceptos"] as $concepto) {
+                    $clave = ClaveProductoServicio::where("clave","=",$concepto["clave_prod_serv"])
+                    ->first();
+
+                    $concepto_largo = ($clave)?$clave->descripcion: "";
+
+                    $conceptos2_arr[] = $concepto["unidad"] ." ". $concepto_largo. " ".ucwords(strtolower($concepto["descripcion"]));
+
                     $conceptos_arr[] = $concepto["descripcion"];
                 }
             }
 
+            //dd($conceptos2_arr);
+
             $cfdi->conceptos_txt = implode(" | ", $conceptos_arr);
+            $cfdi->conceptos_largos_txt = implode(" | ", $conceptos2_arr);
             $cfdi->save();
 
             DB::connection('seguridad')->commit();
