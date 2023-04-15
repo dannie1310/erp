@@ -9,6 +9,7 @@
 namespace App\Models\CADECO;
 
 use App\CSV\ListaMaterialesLayout;
+use App\Models\CADECO\Almacenes\TransaccionKardexVw;
 use App\Models\CADECO\Contabilidad\CuentaMaterial;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -582,6 +583,8 @@ class Material extends Model
             }
         }
         $total_almacen = $this->getTotalesSalidasAlmacen($id,$id_almacen);
+
+        $datos = TransaccionKardexVw::whereRaw('id_almacen_origen = '.$id_almacen.' and id_material = '.$id)->get();
         return [
             'salidas' => $array,
             'totales' => [
@@ -589,7 +592,8 @@ class Material extends Model
                 'total' => number_format($total_almacen['total_salida'],2,".",","),
                 'pagado' => number_format($total_almacen['pagado_salida'],2,".",","),
                 'x_pagar' => number_format($total_almacen['por_pagar_salida'],2,".",","),
-            ]
+            ],
+            'movimientos' => $datos
         ];
     }
 

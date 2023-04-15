@@ -14,13 +14,16 @@
                                                     Fecha
                                                 </th>
                                                 <th class="encabezado">
-                                                    Tipo
+                                                    Fecha de Registro
                                                 </th>
                                                 <th class="encabezado">
                                                     Folio
                                                 </th>
                                                 <th class="encabezado">
-                                                    Cantidad
+                                                    Cantidad Entrada
+                                                </th>
+                                                <th class="encabezado">
+                                                    Cantidad Salida
                                                 </th>
                                                 <th class="encabezado">
                                                     Saldo Resultante
@@ -30,23 +33,26 @@
                                         <tbody v-for="movimiento in movimientos">
                                             <tr>
                                                 <td style="text-align: center">
-                                                    {{movimiento.fecha}}
+                                                    {{movimiento.Fecha}}
                                                 </td>
                                                 <td style="text-align: center">
-                                                    {{movimiento.tipo_transaccion}}
+                                                    {{movimiento.FechaHoraRegistro}}
                                                 </td>
                                                 <td style="text-align: center">
                                                     {{movimiento.folio}}
                                                 </td>
                                                 <td style="text-align: right">
-                                                    {{movimiento.cantidad}}
+                                                    {{movimiento.cantidad_entrada}}
+                                                </td>
+                                                <td style="text-align: right">
+                                                    {{movimiento.cantidad_salida}}
                                                 </td>
                                                 <td style="text-align: right">
                                                     {{movimiento.saldo_restante}}
                                                 </td>
                                             </tr>
                                         </tbody>
-                                        <tfoot>
+                                       <!-- <tfoot>
                                             <tr v-if="totales" style="background-color: yellow;">
                                                 <td class="encabezado"><b>TOTAL</b></td>
                                                 <td style="text-align: right">
@@ -64,7 +70,7 @@
                                                 <td style="text-align: center">
                                                 </td>
                                             </tr>
-                                        </tfoot>
+                                        </tfoot>-->
                                     </table>
                                 </div>
                             </div>

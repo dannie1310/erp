@@ -104,8 +104,8 @@
                         <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile" role="tabpanel">
                             <salida v-bind:salidas="salidas" v-bind:totales="total_sal"/>
                         </div>
-                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile-2" role="tabpanel">
-                            <movimiento v-bind:movimientos="salidas" v-bind:totales="total_sal"/>
+                        <div aria-labelledby="nav-profile-tab" class="tab-pane fade" id="nav-profile_2" role="tabpanel">
+                            <movimiento v-bind:movimientos="movimientos" v-bind:totales="total_sal"/>
                         </div>
                     </div>
                 </div>
@@ -142,7 +142,8 @@ export default {
             total_mat: null,
             num_pas: 0,
             total_sal: null,
-            almacen: null
+            almacen: null,
+            movimientos : null
         }
     },
     methods: {
@@ -174,6 +175,7 @@ export default {
             this.total_inv = null;
             this.salidas = null;
             this.total_sal = null;
+            this.movimientos = null;
             document.getElementById('table').rows[this.num_pas].style.backgroundColor = "white";
             document.getElementById('table').rows[key].style.backgroundColor = "#CFFCBC";
             return this.$store.dispatch('cadeco/material/historico', {
@@ -192,6 +194,7 @@ export default {
                     }
                 }).then(data => {
                     this.salidas = data.salidas;
+                    this.movimientos = data.movimientos;
                     this.total_sal = data.totales;
                 })
             })
