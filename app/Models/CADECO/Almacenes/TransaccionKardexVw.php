@@ -18,4 +18,24 @@ class TransaccionKardexVw extends Model
             return $query->where('id_obra', '=', Context::getIdObra());
         });
     }
+
+    /**
+     * Relaciones
+     */
+
+    /**
+     * Scopes
+     */
+
+    /**
+     * Atributos
+     */
+
+    /**
+     * Métodos
+     */
+    public function getHistorico()
+    {
+        dd($this);
+    }
 }

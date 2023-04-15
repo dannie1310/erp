@@ -638,4 +638,30 @@ class Material extends Model
             'por_pagar_salida' => $totales->por_pagar_salida + $totales->por_pagar_salida_m
         ];
     }
+
+    public function historico_movimientos($id, $id_almacen)
+    {
+        $suma = 0;
+        $movimientos = TransaccionKardexVw::whereRaw('id_almacen_origen = '.$id_almacen.' and id_material = '.$id)->orderBy('fecha', 'asc')->get();
+
+        foreach ($movimientos->toArray() as $i => $movimiento) {
+
+            $fecha= date_create($movimiento['fecha']);
+            $fechaR= date_create($movimiento['FechaHoraRegistro']);
+            $movimiento['fecha'] = date_format($fecha,"d/m/Y H:m:s");
+            $movimiento['FechaHoraRegistro'] = date_format($fechaR,"d/m/Y H:m:s");
+            if($movimiento['cantidad_entrada'] != null)
+            {
+                $suma = $suma + $movimiento['cantidad_entrada'];
+            }
+            if($movimiento['cantidad_salida'] != null)
+            {
+                $suma = $suma - $movimiento['cantidad_salida'];
+            }
+            $movimiento['saldo_restante'] = $suma;
+            $movimientos[$i] = $movimiento;
+        }
+
+        return $movimientos;
+    }
 }

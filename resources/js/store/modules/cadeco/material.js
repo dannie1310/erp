@@ -273,6 +273,19 @@ export default {
                     })
             });
         },
+        historicoMovimientos(context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get(URI + "historicoMovimientos", { params: payload.params })
+                    .then(r => r.data)
+                    .then(data => {
+                        resolve(data);
+                    })
+                    .catch(error => {
+                        reject(error)
+                    })
+            });
+        },
     },
 
     getters: {

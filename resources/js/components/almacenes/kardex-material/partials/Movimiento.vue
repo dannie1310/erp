@@ -33,7 +33,7 @@
                                         <tbody v-for="movimiento in movimientos">
                                             <tr>
                                                 <td style="text-align: center">
-                                                    {{movimiento.Fecha}}
+                                                    {{movimiento.fecha}}
                                                 </td>
                                                 <td style="text-align: center">
                                                     {{movimiento.FechaHoraRegistro}}
@@ -52,25 +52,6 @@
                                                 </td>
                                             </tr>
                                         </tbody>
-                                       <!-- <tfoot>
-                                            <tr v-if="totales" style="background-color: yellow;">
-                                                <td class="encabezado"><b>TOTAL</b></td>
-                                                <td style="text-align: right">
-                                                    <b>{{totales.cantidad}}</b>
-                                                </td>
-                                                <td style="text-align: right">
-                                                    <b>{{totales.total}}</b>
-                                                </td>
-                                                <td style="text-align: right">
-                                                    <b>{{totales.pagado}}</b>
-                                                </td>
-                                                <td style="text-align: right">
-                                                    <b>{{totales.x_pagar}}</b>
-                                                </td>
-                                                <td style="text-align: center">
-                                                </td>
-                                            </tr>
-                                        </tfoot>-->
                                     </table>
                                 </div>
                             </div>
@@ -92,7 +73,7 @@
 <script>
 export default {
     name: "Movimiento",
-    props: ['movimientos', 'totales'],
+    props: ['movimientos'],
     data() {
         return {
             cargando: false,
