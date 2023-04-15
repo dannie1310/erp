@@ -10,8 +10,10 @@ namespace App\Http\Controllers\v1\SEGURIDAD_ERP\Contabilidad;
 
 use App\Http\Transformers\SEGURIDAD_ERP\Contabilidad\CFDSATTransformer as Transformer;
 use App\Models\SEGURIDAD_ERP\Contabilidad\CFDISATNomina;
+use App\Models\SEGURIDAD_ERP\Fiscal\ConceptosCFDIEmitidos;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDISATNominaService;
 use App\Services\SEGURIDAD_ERP\Contabilidad\CFDSATService as Service;
+use App\Services\SEGURIDAD_ERP\Fiscal\CFDISATEmitidosService;
 use App\Traits\ControllerTrait;
 use App\Http\Controllers\Controller;
 use League\Fractal\Manager;
@@ -54,6 +56,10 @@ class CFDSATController extends Controller
 
     public function procesaDirectorioZIPCFD(Request $request)
     {
+        //$servicioCFDIEmitidos = new CFDISATEmitidosService(new ConceptosCFDIEmitidos());
+        //$servicioCFDIEmitidos->procesaDirectorioZIPCFDI();
+        //return response()->json([], 200);
+
         //$servicioCFDINomina = new CFDISATNominaService(new CFDISATNomina());
         //$servicioCFDINomina->procesaDirectorioZIPCFDI();
         //return response()->json([], 200);
@@ -65,6 +71,7 @@ class CFDSATController extends Controller
         //return response()->json([], 200);
         /*$this->service->reprocesaCFDObtenerTipo();
         return response()->json([], 200);*/
+
         $respuesta =$this->service->procesaDirectorioZIPCFD();
         return response()->json($respuesta, 200);
     }
