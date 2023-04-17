@@ -648,8 +648,8 @@ class Material extends Model
 
             $fecha= date_create($movimiento['fecha']);
             $fechaR= date_create($movimiento['FechaHoraRegistro']);
-            $movimiento['fecha'] = date_format($fecha,"d/m/Y H:m:s");
-            $movimiento['FechaHoraRegistro'] = date_format($fechaR,"d/m/Y H:m:s");
+            $movimiento['fecha'] = date_format($fecha,"d/m/Y");
+            $movimiento['FechaHoraRegistro'] = date_format($fechaR,"d/m/Y H:i");
             if($movimiento['cantidad_entrada'] != null)
             {
                 $suma = $suma + $movimiento['cantidad_entrada'];
