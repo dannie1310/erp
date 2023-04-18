@@ -642,7 +642,7 @@ class Material extends Model
     public function historico_movimientos($id, $id_almacen)
     {
         $suma = 0;
-        $movimientos = TransaccionKardexVw::whereRaw('id_almacen_origen = '.$id_almacen.' and id_material = '.$id)->orderBy('fecha', 'asc')->get();
+        $movimientos = TransaccionKardexVw::whereRaw('(id_almacen_origen = '.$id_almacen.' or id_almacen_destino = '.$id_almacen.') and id_material = '.$id)->orderBy('FechaHoraRegistro', 'asc')->get();
 
         foreach ($movimientos->toArray() as $i => $movimiento) {
 
