@@ -262,9 +262,9 @@
                                         <label class="col-sm-2 col-form-label money" style="text-align: right">$&nbsp;{{(parseFloat(subtotal)).formatMoney(4,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-md-2 col-form-label">TASA DE IVA:</label>
+                                        <label class="col-md-2 col-form-label">Tasa de IVA:</label>
                                     </div>
-                                    <div class="col-md-2 p-1" align="right">  
+                                    <div class="col-md-2 p-1" align="right">
                                         <input
                                             type="text"
                                             name="tasa_iva"
