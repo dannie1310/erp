@@ -487,6 +487,7 @@ $api->version('v1', function ($api) {
 
         $api->group(['prefix' => 'notificacion_rep'], function ($api){
             $api->get('paginate', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NotificacionREPController@paginate');
+            $api->get('{id}', 'App\Http\Controllers\v1\SEGURIDAD_ERP\Fiscal\NotificacionREPController@show')->where(['id' => '[0-9]+']);
         });
 
         $api->group(['prefix' => 'proveedor-rep'], function ($api){

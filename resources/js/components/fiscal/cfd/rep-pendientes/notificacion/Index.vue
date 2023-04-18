@@ -44,12 +44,12 @@ export default {
                 { title: '# CFDI Atendidos', field: 'cfdi_atendidos',tdClass: 'td_money80', sortable: true},
                 { title: '# CFDI Nuevos', field: 'cfdi_nuevos',tdClass: 'td_money80', sortable: true},
                 { title: '# CFDI Cancelados', field: 'cfdi_cancelados',tdClass: 'td_money80', sortable: true},
-                //{ title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtonsPorProveedor').default},
+                { title: 'Acciones', field: 'buttons',  tdComp: require('./partials/ActionButtons').default},
             ],
             data: [],
             total: 0,
             query: {
-                include: [],
+                include: ['destinatarios'],
                 scope: ['porProveedor:'+this.id], sort:'id', order: 'desc'
             },
             daterange: null,
