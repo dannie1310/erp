@@ -175,6 +175,7 @@ export default {
             this.total_inv = null;
             this.salidas = null;
             this.total_sal = null;
+            this.movimientos = null;
             document.getElementById('table').rows[this.num_pas].style.backgroundColor = "white";
             document.getElementById('table').rows[key].style.backgroundColor = "#CFFCBC";
             return this.$store.dispatch('cadeco/material/historico', {
