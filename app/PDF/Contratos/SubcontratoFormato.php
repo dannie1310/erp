@@ -135,7 +135,7 @@ class SubcontratoFormato extends FPDI
             $this->Cell(6.5,.7, $referencia,'RT',0,'R');
             $this->Ln(.7);
 
-            $this->SetFont('Arial', 'B', 20);
+            $this->SetFont('Arial', 'B', 18);
             $this->Cell(11.5, $postTitle, ($this->subcontrato->clasificacionSubcontrato?utf8_decode($this->subcontrato->clasificacionSubcontrato->tipo->descripcion):'SUBCONTRATO') , 0, 0, 'C', 0);
             $this->SetFont('Arial', 'B', 10);
             $this->Cell(4.5,.7, 'FECHA:','BL',0,'L');
