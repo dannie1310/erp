@@ -256,7 +256,7 @@
                                         <label class="col-md-2 col-form-label money" style="text-align: right">${{(parseFloat(subtotal)).formatMoney(2,'.',',')}}</label>
                                     </div>
                                     <div class=" col-md-10" align="right">
-                                        <label class="col-md-2 col-form-label">TASA DE IVA (%):</label>
+                                        <label class="col-md-2 col-form-label">Tasa de IVA (%):</label>
                                     </div>
                                     <div class="col-md-2 p-1" align="right">
                                         <input
