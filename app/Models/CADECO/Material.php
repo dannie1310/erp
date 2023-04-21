@@ -654,6 +654,15 @@ class Material extends Model
             $fechaR= date_create($movimiento['FechaHoraRegistro']);
             $movimiento['fecha'] = date_format($fecha,"d/m/Y");
             $movimiento['FechaHoraRegistro'] = date_format($fechaR,"d/m/Y H:i");
+
+            if($movimiento['tipo'] == 'TRANSFERENCIA')
+            {
+                if($movimiento['id_almacen_destino'] == $id_almacen)
+                {
+                    $movimiento['cantidad_salida'] = $movimiento['cantidad_entrada'];
+                    $movimiento['cantidad_entrada'] = NULL;
+                }
+            }
             if($movimiento['cantidad_entrada'] != null)
             {
                 $suma = $suma + $movimiento['cantidad_entrada'];
