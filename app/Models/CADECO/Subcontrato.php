@@ -122,7 +122,9 @@ class Subcontrato extends Transaccion
 
     public function estimacionesSinGlobalScope()
     {
-        return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes();
+        return $this->hasMany(Estimacion::class, 'id_antecedente', 'id_transaccion')->withoutGlobalScopes()
+            ->where('tipo_transaccion', '=', 52)
+            ->where('id_obra', '=', Context::getIdObra());
     }
 
     public function subcontratos()
