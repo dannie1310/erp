@@ -167,6 +167,11 @@ class Material extends Model
             ->where('nivel', 'LIKE',  '009.___.');
     }
 
+    public function unidadSeleccionada()
+    {
+        return $this->belongsTo(Unidad::class, 'unidad', 'unidad');
+    }
+
     public function eliminarInsumo()
     {
         try{
@@ -645,7 +650,6 @@ class Material extends Model
         $movimientos = TransaccionKardexVw::whereRaw('(id_almacen_origen = '.$id_almacen.' or id_almacen_destino = '.$id_almacen.') and id_material = '.$id)->orderBy('FechaHoraRegistro', 'asc')->get();
 
         foreach ($movimientos->toArray() as $i => $movimiento) {
-
             $fecha= date_create($movimiento['fecha']);
             $fechaR= date_create($movimiento['FechaHoraRegistro']);
             $movimiento['fecha'] = date_format($fecha,"d/m/Y");
@@ -659,9 +663,25 @@ class Material extends Model
                 $suma = $suma - $movimiento['cantidad_salida'];
             }
             $movimiento['saldo_restante'] = $suma;
+            $movimiento['dias_diferencia'] = $fecha->diff($fechaR)->days;
+            if($movimiento['dias_diferencia'] <= 3)
+            {
+                $movimiento['color'] = 'text-align: center; color: black';
+            }
+            else if($movimiento['dias_diferencia'] <= 6)
+            {
+                $movimiento['color'] = 'text-align: center; color: blue';
+            }
+            else
+            {
+                $movimiento['color'] = 'text-align: center; color: orange';
+            }
             $movimientos[$i] = $movimiento;
         }
 
-        return $movimientos;
+        return [
+            'data' => $movimientos,
+            'unidad' => $this->find($id)->unidadSeleccionada ? $this->find($id)->unidadSeleccionada->descripcion : NULL
+        ];
     }
 }

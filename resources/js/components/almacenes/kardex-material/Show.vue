@@ -13,8 +13,8 @@
         </div>
         <div v-else>
             <div class="card">
-                <div class="card-body">
-                    <div class="row">
+                <div class="card-body" v-if="materiales">
+                    <div class="row" v-if="almacen">
                         <div class="col-md-12">
                             <h4><b>{{almacen.descripcion}}</b></h4>
                         </div>
