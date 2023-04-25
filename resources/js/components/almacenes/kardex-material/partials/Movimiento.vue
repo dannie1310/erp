@@ -6,7 +6,9 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row" v-if="movimientos">
-                                <button type="button" class="btn btn-secondary" v-on:click="mostrar_fecha">
+                                <button type="button" class="btn btn-secondary" v-on:click="mostrar_fecha" v-if="v_fecha">
+                                    <i class="fa fa-times"></i>Ver Fecha de Registro</button>
+                                <button type="button" class="btn btn-secondary" v-on:click="esconder_fecha" v-if="e_fecha">
                                     <i class="fa fa-times"></i>Ver Fecha de Registro</button>
                             </div>
                             <br>
@@ -86,13 +88,23 @@ export default {
     props: ['movimientos'],
     data() {
         return {
-            cargando: false
+            cargando: false,
+            v_fecha: true,
+            e_fecha: false
         }
     },
     methods: {
         mostrar_fecha()
         {
             $('.fecha_registro').removeAttr('style');
+            this.v_fecha = false;
+            this.e_fecha = true;
+        },
+        esconder_fecha()
+        {
+            $('.fecha_registro').css('display', 'none');
+            this.v_fecha = true;
+            this.e_fecha = false;
         }
     },
 }
