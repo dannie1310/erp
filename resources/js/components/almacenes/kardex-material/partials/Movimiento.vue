@@ -6,7 +6,7 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row" v-if="movimientos">
-                                <button type="button" class="btn btn-secondary" v-on:click="mostrar_fecha" v-if="v_fecha">
+                                <button type="button" class="btn btn-secondary" v-on:click="mostrar_fecha">
                                     <i class="fa fa-times"></i>Ver Fecha de Registro</button>
                             </div>
                             <br>
