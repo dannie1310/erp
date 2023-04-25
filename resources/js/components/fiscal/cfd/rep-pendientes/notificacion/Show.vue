@@ -1,4 +1,4 @@
-<template>
+<template xmlns="http://www.w3.org/1999/html">
     <span>
         <div class="card" v-if="this.notificacion == null">
             <div class="card-body">
@@ -36,39 +36,14 @@
                                     </tr>
                                     <tr v-for="(destinatario, i) in this.notificacion.destinatarios.data">
                                         <td>{{i+1}}</td>
-                                        <td>
-                                            <input
-                                                disabled="true"
-                                                :name="`correo_${i}`"
-                                                :id="`correo_${i}`"
-                                                v-model="destinatario.correo"
-                                                type="text"
-                                                class="form-control"
-                                                v-validate="{ required: true, email:true }"
-                                                :class="{'is-invalid': errors.has(`correo_${i}`)}"
-                                            />
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has(`correo_${i}`)">{{ errors.first(`correo_${i}`) }}</div>
-                                        </td>
-                                        <td>
-                                            <input
-                                                disabled="true"
-                                                :name="`contacto_${i}`"
-                                                :id="`contacto_${i}`"
-                                                v-model="destinatario.nombre"
-                                                type="text"
-                                                class="form-control"
-                                                v-validate="{ required: true }"
-                                                :class="{'is-invalid': errors.has(`contacto_${i}`)}"
-                                            />
-                                            <div style="display:block" class="invalid-feedback" v-show="errors.has(`contacto_${i}`)">{{ errors.first(`contacto_${i}`) }}</div>
-                                        </td>
+                                        <td>{{destinatario.correo}}</td>
+                                        <td>{{destinatario.nombre}}</td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <ckeditor v-model="notificacion.cuerpo_correo" ></ckeditor>
+                            <div v-html="notificacion.cuerpo_correo" style="border: black 2px solid; padding: 10px;">
                             </div>
                         </div>
                         <div class="row">
@@ -171,7 +146,7 @@ export default {
             this.$router.go(-1);
         },
         verPDF(){
-            var url = '/api/fiscal/proveedor-rep/' + this.notificacion.proveedor_rep.id + '/comunicado-pdf?&access_token=' + this.$session.get('jwt');
+            var url = '/api/fiscal/notificacion_rep/' + this.notificacion.id + '/pdf?&access_token=' + this.$session.get('jwt');
             $(this.$refs.body).html('<iframe src="' + url + '"  frameborder="0" height="100%" width="100%">Formato Notificación</iframe>');
             $(this.$refs.modal).appendTo('body')
         },
