@@ -86,14 +86,21 @@ export default {
     props: ['movimientos'],
     data() {
         return {
-            cargando: false
+            cargando: false,
+            v_fecha: true
         }
     },
     methods: {
         mostrar_fecha()
         {
-            $('.fecha_registro').removeAttr('style');
-        }
+            if(this.v_fecha) {
+                $('.fecha_registro').removeAttr('style');
+                this.v_fecha = false;
+            }else{
+                $('.fecha_registro').css('display', 'none');
+                this.v_fecha = true;
+            }
+        },
     },
 }
 </script>
