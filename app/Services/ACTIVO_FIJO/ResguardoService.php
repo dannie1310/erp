@@ -3,6 +3,7 @@
 namespace App\Services\ACTIVO_FIJO;
 
 use App\Models\ACTIVO_FIJO\Resguardo;
+use App\PDF\ActivoFijo\ImpresionEtiquetaFormato;
 use App\PDF\ActivoFijo\ResguardoFormato;
 use App\Models\ACTIVO_FIJO\UsuarioUbicacion;
 use App\Repositories\ACTIVO_FIJO\ResguardoRepository as Repository;
@@ -28,12 +29,19 @@ class ResguardoService
     }
 
     public function getResguardos($data){
-        return $this->repository->getResguardos($data);    
+        return $this->repository->getResguardos($data);
     }
 
     public function pdfResguardo($id){
         $resguardo = $this->repository->show($id);
         $pdf = new ResguardoFormato($resguardo);
+        return $pdf->create();
+    }
+
+    public function pdfEtiquetas($id)
+    {
+        $resguardo = $this->repository->show($id);
+        $pdf = new ImpresionEtiquetaFormato($resguardo);
         return $pdf->create();
     }
 }

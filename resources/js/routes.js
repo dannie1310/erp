@@ -3383,35 +3383,56 @@ export const routes = [
                 meta: {
                     title: 'ACTIVO FIJO',
                     middleware: [auth],
-                    //permission: ['editar_poliza','configurar_visibilidad_empresa_ctpq','configurar_editabilidad_empresa_ctpq','consultar_log_edicion_poliza'],
+                    permission: ['consulta_resguardo_activo_fijo'],
                     general: true
                 }
             },
             {
-                path:"activos-administrar",
-                name:"activos-administrar",
-                component: require('./components/activo-fijo/activos/Administrar.vue').default,
-                meta: {
-                    title: 'Administrar',
-                    breadcrumb: {parent: 'activo-fijo', name: 'ADMINISTRAR'},
-                    middleware: [auth],
-
-                    //permission: ['editar_poliza','consultar_poliza'],
-                    general: true
-                }
+                path:"resguardo",
+                component: require('./components/activo-fijo/resguardos/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'resguardo',
+                        component: require('./components/activo-fijo/resguardos/Index.vue').default,
+                        meta: {
+                            title: 'Resguardos',
+                            breadcrumb: {name: 'RESGUARDOS', parent: 'activo-fijo'},
+                            middleware: [auth],
+                            permission: 'consulta_resguardo_activo_fijo',
+                            general: true
+                        }
+                    },
+                ]
             },
             {
-                path:"resguardos-index",
-                name:"resguardos-index",
-                component: require('./components/activo-fijo/resguardos/Index.vue').default,
-                meta: {
-                    title: 'Resguardos',
-                    breadcrumb: {parent: 'activo-fijo', name: 'RESGUARDOS'},
-                    middleware: [auth],
-
-                    //permission: ['editar_poliza','consultar_poliza'],
-                    general: true
-                }
+                path:"activo",
+                component: require('./components/activo-fijo/activo/Layout.vue').default,
+                children: [
+                    {
+                        path: '/',
+                        name: 'activo',
+                        component: require('./components/activo-fijo/activo/Index.vue').default,
+                        meta: {
+                            title: 'Activos',
+                            breadcrumb: {name: 'ACTIVOS', parent: 'activo-fijo'},
+                            middleware: [auth],
+                            permission: '',
+                            general: true
+                        }
+                    },
+                    {
+                        path: 'impresion-etiqueta',
+                        name: 'impresion-etiqueta',
+                        component: require('./components/activo-fijo/activo/impresion-etiqueta/Index').default,
+                        meta: {
+                            title: 'Impresión de Etiqueta',
+                            breadcrumb: {name: 'Impresión', parent: 'activo'},
+                            middleware: [auth, permission],
+                            permission: 'consultar_banco'
+                        }
+                    },
+                ]
             },
         ],
     },
