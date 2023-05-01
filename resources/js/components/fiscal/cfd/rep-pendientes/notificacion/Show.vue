@@ -49,7 +49,7 @@
                         <br>
                         <div class="row">
                             <div class="col-md-12">
-                                <iframe :src="pdf"  frameborder="0" height="700" width="550">Formato Notificación</iframe>
+                                <iframe :src="pdf"  frameborder="0" height="700" width="650">Formato Notificación</iframe>
                             </div>
                         </div>
                     </div>
