@@ -6,8 +6,10 @@
                     <form role="form" @submit.prevent="validate">
                         <div class="modal-body">
                             <div class="row" v-if="movimientos">
-                                <button type="button" class="btn btn-secondary" v-on:click="mostrar_fecha">
-                                    <i class="fa fa-times"></i>Ver Fecha de Registro</button>
+                                <div class="form-check form-check-inline">
+                                    <input v-model="v_fecha" class="form-check-input" type="checkbox" id="v_fecha" value="v_fecha">
+                                    <label class="form-check-label" for="v_fecha">Ver Fecha de Registro</label>
+                                </div>
                             </div>
                             <br>
                             <div class="row" v-if="movimientos">
@@ -18,7 +20,7 @@
                                                 <th class="encabezado" rowspan="3">
                                                     Fecha
                                                 </th>
-                                                <th class="encabezado fecha_registro"  style="display: none" rowspan="3">
+                                                <th class="encabezado v_fecha"  style="display: none" rowspan="3">
                                                     Fecha de Registro
                                                 </th>
                                                 <th class="encabezado" colspan="2" rowspan="2">
@@ -42,7 +44,7 @@
                                                 <td style="text-align: center; color: black" :style="movimiento.color">
                                                     {{movimiento.fecha}}
                                                 </td>
-                                                <td style="text-align: center; display: none" class="fecha_registro">
+                                                <td style="text-align: center; display: none" class="v_fecha">
                                                     {{movimiento.FechaHoraRegistro}}
                                                 </td>
                                                  <td style="text-align: left">
@@ -87,18 +89,16 @@ export default {
     data() {
         return {
             cargando: false,
-            v_fecha: true
+            v_fecha: false
         }
     },
-    methods: {
-        mostrar_fecha()
+    watch: {
+        v_fecha(val)
         {
-            if(this.v_fecha) {
-                $('.fecha_registro').removeAttr('style');
-                this.v_fecha = false;
+            if(val) {
+                $('.v_fecha').removeAttr('style');
             }else{
-                $('.fecha_registro').css('display', 'none');
-                this.v_fecha = true;
+                $('.v_fecha').css('display', 'none');
             }
         },
     },
