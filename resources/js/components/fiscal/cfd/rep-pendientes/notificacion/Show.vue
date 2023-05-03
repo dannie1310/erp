@@ -46,12 +46,6 @@
                             <div v-html="notificacion.cuerpo_correo" style="border: black 2px solid; padding: 10px;">
                             </div>
                         </div>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-12">
-                                <iframe :src="pdf"  frameborder="0" height="700" width="650">Formato Notificación</iframe>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="row" style="margin-bottom: 5px">
@@ -89,6 +83,12 @@
                                         </td>
                                     </tr>
                                 </table>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <iframe :src="pdf"  frameborder="0" height="620" width="620">Formato Notificación</iframe>
                             </div>
                         </div>
                     </div>
