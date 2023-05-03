@@ -31,6 +31,6 @@ class NotificacionREPService
         if(is_file($dir_descarga)){
             return response()->file($dir_descarga);
         }
-       return abort(400,"No se encontro el archivo.");
+       return "PDF no enconktrado.";
     }
 }
