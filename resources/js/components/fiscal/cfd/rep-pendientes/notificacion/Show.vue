@@ -46,10 +46,6 @@
                             <div v-html="notificacion.cuerpo_correo" style="border: black 2px solid; padding: 10px;">
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="modal-body modal-lg" style="height: 600px" ref="body">
-                            </div>
-                        </div>
                     </div>
                     <div class="col-md-6">
                         <div class="row" style="margin-bottom: 5px">
@@ -89,6 +85,12 @@
                                 </table>
                             </div>
                         </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <iframe :src="pdf"  frameborder="0" height="620" width="620">Formato Notificación</iframe>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -112,6 +114,7 @@ export default {
         return{
             cargando : true,
             notificacion: null,
+            pdf : '/api/fiscal/notificacion_rep/' + this.id + '/pdf?&access_token=' + this.$session.get('jwt')
         }
     },
     mounted() {
