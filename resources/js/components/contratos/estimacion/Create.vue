@@ -189,15 +189,15 @@
                                     {{concepto.descripcion_concepto}}
                                 </td>
                                 <td class="centrado">{{concepto.unidad}}</td>
-                                <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(2) }}</td>
-                                <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(2) }}</td>
+                                <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.cantidad_subcontrato).formatMoney(3) }}</td>
+                                <td style="display: none" class="numerico contratado">{{ parseFloat(concepto.precio_unitario_subcontrato).formatMoney(3) }}</td>
                                 <td style="display: none" class="numerico avance-volumen"></td>
-                                <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(2) }}</td>
+                                <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.cantidad_estimada_anterior).formatMoney(3) }}</td>
                                 <td style="display: none" class="numerico avance-volumen">{{ parseFloat(concepto.porcentaje_avance).formatMoney(3) }}</td>
                                 <td style="display: none" class="numerico avance-importe"></td>
-                                <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(4) }}</td>
-                                <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,2) }}</td>
-                                <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(4) }}</td>
+                                <td style="display: none" class="numerico avance-importe">{{ parseFloat(concepto.importe_estimado_anterior).formatMoney(3) }}</td>
+                                <td style="display: none" class="numerico saldo">{{  toFix(concepto.cantidad_por_estimar,3) }}</td>
+                                <td style="display: none" class="numerico saldo">{{ parseFloat(concepto.importe_por_estimar).formatMoney(3) }}</td>
                                 <td class="editable-cell numerico">
                                     <input v-on:change="changeCantidad(concepto)"
                                            class="text"
@@ -210,7 +210,7 @@
                                 <td class="editable-cell numerico">
                                     <input v-on:change="changePorcentaje(concepto)"
                                            v-validate="{max_value: parseFloat(100 - parseFloat(concepto.porcentaje_avance).toFixed(3)).toFixed(3) }"
-                                           class="text" 
+                                           class="text"
                                            :name="`porcentaje[${concepto.id}]`"
                                            v-model="concepto.porcentaje_estimado"
                                            :class="{'is-invalid': errors.has(`porcentaje[${concepto.id}]`)}" />
@@ -221,7 +221,7 @@
                                     <input v-on:change="changeImporte(concepto)"
                                            class="text"
                                            :name="`importe[${concepto.id}]`"
-                                           v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(2)}"
+                                           v-validate="{max_value: parseFloat(concepto.importe_por_estimar).toFixed(3)}"
                                            v-model="concepto.importe_estimacion"
                                            :class="{'is-invalid': errors.has(`importe[${concepto.id}]`)}" />
                                      <div class="invalid-feedback" v-show="errors.has(`importe[${concepto.id}]`)">{{ errors.first(`importe[${concepto.id}]`) }}</div>
@@ -287,11 +287,11 @@
             },
             changeCantidad(concepto) {
                 concepto.porcentaje_estimado = this.toFix(((concepto.cantidad_estimacion / concepto.cantidad_subcontrato) * 100),3);
-                concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),2);
+                concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),3);
             },
             changePorcentaje(concepto) {
                 concepto.cantidad_estimacion = this.toFix(((concepto.cantidad_subcontrato * concepto.porcentaje_estimado) / 100),3);
-                concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),2);
+                concepto.importe_estimacion = this.toFix((concepto.cantidad_estimacion * concepto.precio_unitario_subcontrato),3);
             },
             changeImporte(concepto) {
                 concepto.cantidad_estimacion = this.toFix((concepto.importe_estimacion / concepto.precio_unitario_subcontrato),3);

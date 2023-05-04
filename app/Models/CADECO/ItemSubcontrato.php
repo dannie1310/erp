@@ -120,7 +120,7 @@ class ItemSubcontrato extends Item
 
     public function getPrecioUnitarioFormatAttribute()
     {
-        return '$' . number_format($this->precio_unitario, 2, '.', ',');
+        return '$' . number_format($this->precio_unitario, 3, '.', ',');
     }
 
     public function getCantidadFormatAttribute()
@@ -170,16 +170,16 @@ class ItemSubcontrato extends Item
             'importe_subcontrato' => $this->cantidad * $this->precio_unitario,
             'precio_unitario_subcontrato_format' => $this->precio_unitario_format,
             'id_item_estimacion' => $estimacion ? $estimacion->id_item : 0,
-            'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 2, '.', '') : 0,
-            'porcentaje_avance' => (float)number_format((($porcentaje_avance) * 100), 3, '.', ''),
+            'cantidad_estimacion' => $estimacion ? number_format($estimacion->cantidad, 3, '.', '') : 0,
+            'porcentaje_avance' => number_format((($porcentaje_avance) * 100), 3, '.', ''),
             'cantidad_estimada_total' => $cantidad_estimada_total ? $cantidad_estimada_total : 0,
             'cantidad_estimada_anterior' => $cantidad_estimado_anterior,
             'importe_estimado_anterior' => ($cantidad_estimado_anterior * $precio_unitario),
             'importe_acumulado' => ($cantidad_estimada_total ? $cantidad_estimada_total : 0) * $precio_unitario,
             'cantidad_por_estimar' => $this->cantidad - $cantidad_estimado_anterior,
             'importe_por_estimar' => (($this->cantidad - $cantidad_estimado_anterior) * $precio_unitario),
-            'porcentaje_estimado' => (float)number_format((($porcentaje_estimado) * 100), 2, '.', ''),
-            'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 2, '.', '') : 0,
+            'porcentaje_estimado' => number_format((($porcentaje_estimado) * 100), 3, '.', ''),
+            'importe_estimacion' => $estimacion ? number_format($estimacion->importe, 3, '.', '') : 0,
             'destino_path' => $path_corta,
             'destino_path_larga' => $path,
             'id_destino' => $id_destino,
