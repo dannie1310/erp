@@ -31,6 +31,6 @@ class NotificacionREPService
         if(is_file($dir_descarga)){
             return response()->file($dir_descarga);
         }
-       return "PDF no enconktrado.";
+       return "PDF no encontrado.";
     }
 }
