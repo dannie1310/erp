@@ -47,29 +47,21 @@ class ImpresionEtiquetaFormato extends Rotation
         $this->Cell(8.3, 0.4, utf8_decode("PRUEBA"), 0, 0, 'C');
 */
     }
-
-    function etiquetas()
-    {
-        $this->SetRounds(array('1234'));
-        $this->SetRadius(array(.2));
-        $this->SetFont('Arial', 'b', 9);
-        $this->SetAligns(array('L'));
-        $this->SetWidths(array(4.4));
-        $this->SetFills(array('255,255,255'));
-        $this->SetHeights(array(1.3));
-       // $this->SetY($this->GetY() + 0.5);
-        for($i=0; $i<20; $i++) {
-            $this->Row(array(utf8_decode($i+1 . "  Prueba")));
-            $this->SetX(5.2);
-            $this->SetY($this->GetY() );
-            $this->Row(array(utf8_decode($i+1 . "  Prueba")));
+    function logo($x, $y){
+        $file = public_path('img/logo-empresa/GLN.png');
+        $data = unpack("H*", file_get_contents($file));
+        $data = bin2hex($data[1]);
+        $data = pack('H*', hex2bin($data));
+        $file = public_path('/img/logo_temp.png');
+        if (file_put_contents($file, $data) !== false) {
+            $this->Image($file, $x+3.5, $y+0.6, 0.5, 0.3);
+            unlink($file);
         }
-
     }
 
     function caracteristicas(){
 
-        $cantP = count($this->partidas);
+        $cantP = count($this->partidas)+157;
         $part = $this->partidas;
         /*foreach($part as $p){
             $p->push($p->partidaCaracteristicas);
@@ -78,25 +70,56 @@ class ImpresionEtiquetaFormato extends Rotation
        */
         $partidas = $part->toArray();
       //  $caract1 = 0;
+        $x= 4;
 
         for($i = 0; $i < $cantP; $i++){
-            $j = 0;
             $this->x_c = $this->GetX();//0.7
             $this->y_c = $this->GetY();//1.1
             $this->x_p = $this->GetX();//0.7
+            $x--;
+            $this->SetXY($this->x_c, $this->y_c);
+            $this->SetFont('code39', '', 6);
+           // $this->Cell(3, 1.5, '*'.$partidas[$i]['CodigoEquipo'].'*', 0, 1, 'C');
+            $this->Cell(4.4, 1.2, '*v7T82H6*', 1, 0, 'C');
 
-            $this->SetXY($this->x_c,$this->y_c);
-            $this->SetFont('code39', '', 7);
-            $this->Cell(3, 2, '*'.$partidas[$i]['CodigoEquipo'].'*', 0, 0, 'C');
-            if(array_key_exists($i+1, $partidas)){
-                $this->SetFont('code39', '', 7);
-                $this->x_p = $this->x_c+5;
-                $this->SetXY(($this->x_c + 3.8),$this->y_c);
-                $this->Cell(3, 2, '*'.$partidas[$i+1]['CodigoEquipo'].'*', 0, 0, 'C');
+            $this->SetFont('Arial', '', 4);
+            $this->SetXY($this->x_c, $this->y_c);
+            $this->Cell(4.4, 1.7, 'ACTIVO FIJO', 0, 0, 'L');
+
+            $this->SetFont('Arial', '', 4);
+            $this->SetXY($this->x_c, $this->y_c);
+            $this->Cell(4.4, 1.9, 'MONITOR', 0, 0, 'C');
+$this->logo($this->x_c, $this->y_c);
+            //$this->image('../../img/subcontrato/LOGOTIPO_REHABILITACION_ATLACOMULCO.png',1,.3,5,2);
+
+            $this->SetXY($this->x_c, $this->y_c);
+            $this->Cell(4.4, 2.2, 'CN-05GND2-641806CK-04UT-A00-'.$x, 0, 0, 'C');
+
+            $this->x_c = $this->x_c+0.8;
+            $this->SetXY(($this->x_c + 4.4),$this->y_c);
+
+            if($i == $cantP-4)
+            {
+               // dd($this->x_c, $this->y_c, $this->x_p,$x, $cantP, $i);
             }
 
-        }$this->SetXY(($this->x_c),$this->y_c+1.3);
+            if($x == 0)
+            {
+                $this->Ln(1.28);
+                $x = 4;
+            }
+            $currentPage = $this->PageNo();
+            if($currentPage == 2) {
+                dd($currentPage);
+            }
+            if($currentPage>1){
 
+                $this->Ln(0.7);
+
+                $this->SetX(0.7);
+                $this->SetY(1.1);
+            }
+        }
 
  }
 
@@ -107,7 +130,7 @@ class ImpresionEtiquetaFormato extends Rotation
         $this->SetMargins(0.7, 1.1, 0.7);
         $this->AliasNbPages();
         $this->AddPage();
-        $this->SetAutoPageBreak(true, 0.5);
+        $this->SetAutoPageBreak(true, 0.1);
         $this->caracteristicas();
 
         try {
