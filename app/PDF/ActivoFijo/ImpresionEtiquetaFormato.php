@@ -47,19 +47,19 @@ class ImpresionEtiquetaFormato extends Rotation
         $data = pack('H*', hex2bin($data));
         $file = public_path('/img/logo_temp.png');
         if (file_put_contents($file, $data) !== false) {
-            $this->Image($file, $x+3.5, $y+0.6, 0.5, 0.3);
+            $this->Image($file, $x+3.6, $y+0.7, 0.2, 0.2);
             unlink($file);
         }
     }
 
     function caracteristicas(){
 
-        $cantP = count($this->partidas)+400;
+        $cantP = count($this->partidas);
         $part = $this->partidas;
         $partidas = $part->toArray();
         $x= 4;
 
-        for($i = 0; $i < $cantP; $i++){
+        for($i = 0; $i < $cantP; $i++){dd($this->partidas[$i]);
             $this->x_c = $this->GetX();//0.7
             $this->y_c = $this->GetY();//1.1
             $this->x_p = $this->GetX();//0.7
@@ -67,7 +67,7 @@ class ImpresionEtiquetaFormato extends Rotation
             $this->SetXY($this->x_c, $this->y_c);
 
             $this->SetFont('code39', '', 6);
-           // $this->Cell(3, 1.5, '*'.$partidas[$i]['CodigoEquipo'].'*', 0, 1, 'C');
+           // $this->Cell(4.4, 1.2, '*'.$partidas[$i]['CodigoEquipo'].'*', 0, 1, 'C');
             $this->Cell(4.4, 1.2, '*v7T82H6*', 0, 0, 'C');
             $this->SetFont('Arial', '', 4);
             $this->SetXY($this->x_c, $this->y_c);
@@ -75,11 +75,11 @@ class ImpresionEtiquetaFormato extends Rotation
 
             $this->SetFont('Arial', '', 4);
             $this->SetXY($this->x_c, $this->y_c);
-            $this->Cell(4.4, 1.9, 'MONITOR', 0, 0, 'C');
+            $this->Cell(4.4, 1.8, 'MONITOR', 0, 0, 'C');
             $this->logo($this->x_c, $this->y_c);
 
             $this->SetXY($this->x_c, $this->y_c);
-            $this->Cell(4.4, 2.2, 'CN-05GND2-641806CK-04UT-A00-'.$x, 0, 0, 'C');
+            $this->Cell(4.4, 2.1, 'CN-05GND2-641806CK-04UT-A00-'.$x, 0, 0, 'C');
 
             $this->x_c = $this->x_c+0.8;
             $this->SetXY(($this->x_c + 4.4),$this->y_c);
