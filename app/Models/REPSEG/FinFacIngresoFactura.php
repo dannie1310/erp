@@ -314,13 +314,15 @@ class FinFacIngresoFactura extends Model
             $factura = $this->create($datos_factura);
 
             foreach (array_only($data, 'conceptos')['conceptos'] as $concepto) {
-                $clave_sat = FinDimClaveSatIngreso::where('idclave_sat',$concepto['clave_sat'])->where('idtipo_ingreso',$concepto['idconcepto'])->first();
-                if($clave_sat == null)
+                if(array_key_exists('clave_sat',$concepto))
                 {
-                    FinDimClaveSatIngreso::create([
-                        'idclave_sat' => $concepto['clave_sat'],
-                        'idtipo_ingreso' => $concepto['idconcepto']
-                    ]);
+                    $clave_sat = FinDimClaveSatIngreso::where('idclave_sat', $concepto['clave_sat'])->where('idtipo_ingreso', $concepto['idconcepto'])->first();
+                    if ($clave_sat == null) {
+                        FinDimClaveSatIngreso::create([
+                            'idclave_sat' => $concepto['clave_sat'],
+                            'idtipo_ingreso' => $concepto['idconcepto']
+                        ]);
+                    }
                 }
                 $factura->conceptos()->create($concepto);
             }
