@@ -29,19 +29,19 @@ class SendRegistroFalloConcursoNotificationWA
      */
     public function handle(RegistroFalloConcurso $event)
     {
-        $fecha_registro_apertura = new DateTime($event->concurso->fecha_hora_inicio_apertura);
-        $fecha_registro_apertura->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $fecha_apertura = new DateTime($event->concurso->fecha);
-        $fecha_apertura->setTimezone(new DateTimeZone('America/Mexico_City'));
-        $diferencia_dias = $fecha_registro_apertura->diff($fecha_apertura)->days;
+        $fecha_registro_fallo = new DateTime($event->concurso->fecha_hora_registro_fallo);
+        $fecha_registro_fallo->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $fecha_fallo = new DateTime($event->concurso->fecha_fallo);
+        $fecha_fallo->setTimezone(new DateTimeZone('America/Mexico_City'));
+        $diferencia_dias = $fecha_registro_fallo->diff($fecha_fallo)->days;
 
         if($diferencia_dias == 0) {
             $suscripciones = Suscripcion::activa()->where("id_evento", $event->tipo)->get();
             $usuarios_notificacion = Usuario::suscripcion($suscripciones)->get();
 
-            $body = "Se le informa que se ha registrado el fallo del concurso *" . $event->concurso->nombre . "* mismo que se llevó a cabo el {{2}}, quedando como ganador:
+            $body = "Se le informa que se ha registrado el fallo del concurso *" . $event->concurso->nombre . "* mismo que se llevó a cabo el ".$event->concurso->fecha_fallo_format.", quedando como ganador:
 
- *" . $event->concurso->participanteGanador . "*.
+ *" . $event->concurso->participanteGanador->nombre . "*.
 
 Puede consultar mas detalles del concurso visitando el sitio web de seguimiento.";
             foreach ($usuarios_notificacion as $usuario) {
@@ -49,7 +49,6 @@ Puede consultar mas detalles del concurso visitando el sitio web de seguimiento.
                 $twilio_whatsapp_number = config('app.env_variables.TWILIO_WHATSAPP_NUMBER');
                 $account_sid = config('app.env_variables.TWILIO_SID');
                 $auth_token = config('app.env_variables.TWILIO_AUTH_TOKEN');
-
 
                 $client = new Client($account_sid, $auth_token);
                 $client->messages->create($recipient, array(
