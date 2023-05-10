@@ -167,12 +167,12 @@ class InformeCierre extends Rotation
 
         $this->setXY(1, 3);
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4, .5, utf8_decode('Fecha de Apertura: '), 0, 0, 'L');
+        $this->Cell(4, .7, utf8_decode('Fecha de Apertura: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(4, .5, $this->concurso->fecha_format, 0, 0, 'L');
+        $this->Cell(4, .7, $this->concurso->fecha_format, 0, 0, 'L');
 
 
-        $this->SetFont('Arial', 'B', 13);
+        $this->SetFont('Arial', 'B', 10);
         $this->Cell(8, .7, utf8_decode('Estado de Apertura: '), 0, 0, 'R');
         if($this->concurso->estatus == 1)
         {
@@ -187,8 +187,8 @@ class InformeCierre extends Rotation
 
         if($diferencia_dias == 0)
         {
-            $this->Cell(1, .5, '', 0, 0, 'L');
-            $this->SetFont('Arial', '', 13);
+            $this->Cell(1, .7, '', 0, 0, 'L');
+            $this->SetFont('Arial', '', 10);
             $this->Cell(2.5, .7, $this->concurso->estado_apertura, 0, 1, 'C',1);
         } else if($diferencia_dias != 0 && $this->concurso->estatus == 1){
             $this->SetTextColor('255', '255', '255');
@@ -197,14 +197,14 @@ class InformeCierre extends Rotation
             $x = $this->getX();
             $y = $this->getY();
 
-            $this->SetFont('Arial', '', 13);
-            $this->CellFitScale(3.7, .7, 'Finalizada', 0, 1, 'C',1);
+            $this->SetFont('Arial', '', 10);
+            $this->CellFitScale(3.7, .5, 'Finalizada', 0, 1, 'C',1);
             $this->setXY($x,$y+.5);
-            $this->CellFitScale(3.7, .7, 'Capturando Datos', 0, 1, 'C',1);
+            $this->CellFitScale(3.7, .5, 'Capturando Datos', 0, 1, 'C',1);
             $this->setY($y + 0.7);
         } else {
             //$this->Cell(1, .5, '', 0, 0, 'L');
-            $this->SetFont('Arial', '', 13);
+            $this->SetFont('Arial', '', 10);
             $this->Cell(3.7, .7, $this->concurso->estado_apertura, 0, 1, 'C',1);
         }
 
@@ -213,11 +213,11 @@ class InformeCierre extends Rotation
         $this->SetTextColor('0', '0', '0');
 
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4, .5, utf8_decode('No. de Licitación: '), 0, 0, 'L');
+        $this->Cell(4, .7, utf8_decode('No. de Licitación: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(7, .5, $this->concurso->numero_licitacion, 0, 0, 'L');
+        $this->Cell(7, .7, $this->concurso->numero_licitacion, 0, 0, 'L');
 
-        $this->SetFont('Arial', 'B', 13);
+        $this->SetFont('Arial', 'B', 10);
         $this->Cell(5, .7, utf8_decode('Estado del Fallo: '), 0, 0, 'R');
 
         if($this->concurso->estatus == 3)
@@ -229,29 +229,28 @@ class InformeCierre extends Rotation
             $this->SetFillColor(245,147,28);
         }
 
-        $this->SetFont('Arial', '', 13);
+        $this->SetFont('Arial', '', 10);
         $this->Cell(3.7, .7, $this->concurso->estado_fallo_txt, 0, 1, 'C',1);
 
         $this->SetFillColor(255,255,255);
         $this->SetTextColor('0', '0', '0');
-        $this->ln(0.2);
 
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4, .5, utf8_decode('Entidad Licitante: '), 0, 0, 'L');
+        $this->Cell(4, .7, utf8_decode('Entidad Licitante: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(6.5, .5, utf8_decode($this->concurso->entidad_licitante), 0, 1, 'L');
+        $this->Cell(6.5, .7, utf8_decode($this->concurso->entidad_licitante), 0, 1, 'L');
 
         $this->ln(0.3);
 
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(4, .5, utf8_decode('Resultado de Apertura: '), 0, 0, 'L');
+        $this->Cell(4, .7, utf8_decode('Resultado de Apertura: '), 0, 0, 'L');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(6.5, .5, $this->concurso->resultado_txt, 0, 0, 'L');
+        $this->Cell(6.5, .7, $this->concurso->resultado_txt, 0, 0, 'L');
 
         $this->SetFont('Arial', 'B', 10);
-        $this->Cell(5.5, .5, utf8_decode('Resultado del Fallo: '), 0, 0, 'R');
+        $this->Cell(5.5, .7, utf8_decode('Resultado del Fallo: '), 0, 0, 'R');
         $this->SetFont('Arial', '', 10);
-        $this->Cell(3.8, .5, $this->concurso->resultado_fallo_txt, 0, 1, 'L');
+        $this->Cell(3.8, .7, $this->concurso->resultado_fallo_txt, 0, 1, 'L');
 
 
         $this->ln(0.2);
@@ -385,7 +384,7 @@ class InformeCierre extends Rotation
 //hermes
         $data4y = $this->concurso->datos_oferta_hermes_linea;
 
-        $indicador_hermes = $this->concurso->datos_indicador_hermes;
+        $indicador_ganador = $this->concurso->datos_indicador_ganador;
 
 
 // Create the graph. These two calls are always required
@@ -417,7 +416,6 @@ class InformeCierre extends Rotation
         $b2plot = new BarPlot($data2y);
 // Create the line plot promedio
         $lplot = new LinePlot($data6y);
-
 // Create the line plot mejor oferta
         $l2plot = new LinePlot($data5y);
 // Create the line plot oferta hermes
@@ -469,10 +467,13 @@ class InformeCierre extends Rotation
         $graph->legend->SetColumns(6);
         $graph->legend->SetColor('#4E4E4E','#00A78A');
 
-        /*$band = new PlotBand(VERTICAL,BAND_RDIAG,$indicador_hermes[0],$indicador_hermes[1], [125,182,70]);
-        $band->ShowFrame(true);
-        $band->SetOrder(DEPTH_BACK);
-        $graph->Add($band);*/
+        if($this->concurso->estatus == 3)
+        {
+            $band = new PlotBand(VERTICAL,BAND_RDIAG,$indicador_ganador[0],$indicador_ganador[1], [242,221,15]);
+            $band->ShowFrame(false);
+            $band->SetOrder(DEPTH_BACK);
+            $graph->Add($band);
+        }
 
         $graph->title->Set("Ofertas de Licitación para Proyecto ".$this->concurso->nombre);
         @unlink(public_path('downloads/concursos/graficas/'.$this->concurso->id.".png"));
